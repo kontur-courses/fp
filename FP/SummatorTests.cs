@@ -16,6 +16,8 @@ namespace FP
 		[SetUp]
 		public void SetUp()
 		{
+			Directory.SetCurrentDirectory(
+				TestContext.CurrentContext.WorkDirectory);
 			summator = new Summator(
 				() => new DataSource(LargeInputFilename),
 				new HexSumFormatter(),

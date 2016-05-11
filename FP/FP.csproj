@@ -52,6 +52,7 @@
     <Compile Include="Summator.cs" />
     <Compile Include="SummatorTests.cs" />
     <Compile Include="DataSource.cs" />
+    <Compile Include="Summator_Solved.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

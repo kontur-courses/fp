@@ -7,36 +7,45 @@ namespace ConwaysGameOfLife
 	{
 		public int Width { get; }
 		public int Height { get; }
-		private readonly IGameUi ui;
 
 		private bool[,] isAlive;
 
-		public Game(Size size, IGameUi ui)
+		public Game(Size size)
 		{
-			this.ui = ui;
 			Width = size.Width;
 			Height = size.Height;
 			isAlive = new bool[Width, Height];
+		}
+
+		private Game(bool[,] alive)
+		{
+			Width = alive.GetLength(0);
+			Height = alive.GetLength(1);
+			isAlive = alive;
 		}
 
 		public void Revive(params Point[] cells)
 		{
 			foreach (var pos in cells)
 				isAlive[(pos.X + Width) % Width, (pos.Y + Height) % Height] = true;
-			ui.UpdateAll(this);
 		}
 
-		public void Step()
+		public StepResult Step()
 		{
 			var willBeAlive = new bool[Width, Height];
+			var changes = new List<ChangedCell>();
 			for (int y = 0; y < Height; y++)
 				for (int x = 0; x < Width; x++)
 				{
 					willBeAlive[x, y] = WillBeAlive(x, y);
 					if (willBeAlive[x, y] != isAlive[x, y])
-						ui.UpdateCell(x, y, willBeAlive[x, y]);
+					{
+						var change = new ChangedCell(x, y, willBeAlive[x, y]);
+						changes.Add(change);
+					}
 				}
 			isAlive = willBeAlive;
+			return new StepResult(new Game(willBeAlive), changes);
 		}
 
 		private bool WillBeAlive(int x, int y)
@@ -79,5 +88,32 @@ namespace ConwaysGameOfLife
 				));
 			return string.Join("\n", rows);
 		}
+	}
+
+	public class StepResult
+	{
+		public List<ChangedCell> ChangedCells { get; set; }
+		public readonly Game NextState;
+
+		public StepResult(Game nextState, List<ChangedCell> changes)
+		{
+			ChangedCells = changes;
+			NextState = nextState;
+		}
+
+	}
+
+	public class ChangedCell
+	{
+		public ChangedCell(int x, int y, bool isAlive)
+		{
+			X = x;
+			Y = y;
+			IsAlive = isAlive;
+		}
+
+		public int X { get; private set; }
+		public int Y { get; private set; }
+		public bool IsAlive { get; private set; }
 	}
 }
