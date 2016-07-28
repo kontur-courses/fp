@@ -17,10 +17,8 @@ namespace FileSending.Solved
 		public DateTime Created { get; }
 		public string Format { get; }
 		public byte[] Content { get; }
-		public Document WithContent(byte[] newContent)
-		{
-			return new Document(Name, newContent, Created, Format);
-		}
+		public Document WithContent(byte[] newContent) 
+			=> new Document(Name, newContent, Created, Format);
 	}
 
 	public class FileContent

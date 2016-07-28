@@ -110,8 +110,7 @@ namespace FP.MaybeImpl
 				.OnSuccess(hex => parsed.Value + " -> " + Guid.Parse(hex + hex + hex + hex));
 			res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
 		}
-
-/*
+		/*
 		[Test]
 		public void SupportLinqMethodChaining()
 		{
@@ -187,6 +186,6 @@ namespace FP.MaybeImpl
 				select guid;
 			res.ShouldBeEquivalentTo(Result.Fail<Guid>("error is here"));
 		}
-*/
+		*/
 	}
 }
