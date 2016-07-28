@@ -31,7 +31,7 @@ namespace FP
 			var actualResultFile = new FileInfo(OutputFilename);
 			if (actualResultFile.Exists) actualResultFile.Delete();
 
-			summator.Process();
+			summator.ProcessOld();
 
 			CollectionAssert.AreEqual(
 				File.ReadAllLines(ExpectedOutputFilename),
@@ -47,7 +47,7 @@ namespace FP
 				var consoleOutput = new StringWriter();
 				Console.SetOut(consoleOutput);
 
-				summator.Process();
+				summator.ProcessOld();
 
 				var actualOutput = consoleOutput.ToString()
 					.TrimEnd()

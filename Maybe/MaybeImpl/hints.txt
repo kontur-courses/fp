@@ -1,0 +1,18 @@
+﻿## Maybe
+
+Чтобы заработал Linq синтаксис, надо определить такую пару методов расширения:
+
+		public static Result<TOut> SelectMany<TIn, TTemp, TOut>(
+			this Result<TIn> input,
+			Func<TIn, TTemp> map,
+			Func<TIn, TTemp, TOut> res)
+		{
+		}
+
+		public static Result<TOut> SelectMany<TIn, TOut>(
+			this Result<TIn> input,
+			Func<TIn, TOut> map)
+		{
+			throw new NotImplementedException("TODO");
+		}
+
