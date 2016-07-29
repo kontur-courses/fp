@@ -2,7 +2,8 @@
 
 namespace FP.MaybeImpl
 {
-	public static class Result{
+	public static class Result
+	{
 		public static Result<T> Ok<T>(T value)
 		{
 			return new Result<T>(null, value);
