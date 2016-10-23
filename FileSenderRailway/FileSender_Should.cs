@@ -8,7 +8,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace FileSending
+namespace FileSenderRailway
 {
 	[TestFixture]
 	[UseReporter(typeof(DiffReporter))]

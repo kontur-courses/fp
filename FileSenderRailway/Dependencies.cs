@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 
-namespace FileSending
+namespace FileSenderRailway
 {
 	public interface ICryptographer
 	{
@@ -60,5 +60,4 @@ namespace FileSending
 		public string Error { get; }
 		public bool IsSuccess => Error == null;
 	}
-
 }

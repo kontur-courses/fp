@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Maybe")]
+[assembly: AssemblyTitle("FileSenderRailway")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Maybe")]
+[assembly: AssemblyProduct("FileSenderRailway")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8aeb060f-02f0-4ae0-b02c-10612b1320c2")]
+[assembly: Guid("be6a64ef-33bc-4a58-b486-0fdee87bb07a")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
-namespace FileSending
+namespace FileSenderRailway
 {
 	public class FileSender
 	{

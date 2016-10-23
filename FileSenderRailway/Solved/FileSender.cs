@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using CSharpFunctionalExtensions;
 
-namespace FileSending.Solved
+namespace FileSenderRailway.Solved
 {
 	public class FileSender
 	{

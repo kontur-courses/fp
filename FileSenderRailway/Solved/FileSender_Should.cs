@@ -9,7 +9,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace FileSending.Solved
+namespace FileSenderRailway.Solved
 {
 	[TestFixture]
 	[UseReporter(typeof(DiffReporter))]
