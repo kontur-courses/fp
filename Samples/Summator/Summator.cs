@@ -48,15 +48,7 @@ namespace FP
 
 		public void ProcessRefactored()
 		{
-			SumRecords(openDatasource(), formatter, outputFilename);
-		}
-
-		public static void SumRecords(
-			DataSource dataSource,
-			ISumFormatter formatter,
-			string outputFilename)
-		{
-			var res = SumRecords(dataSource, formatter)
+			var res = SumRecords(openDatasource(), formatter)
 				.AfterEvery(100, c => Console.WriteLine("processed {0} items", c));
 			File.WriteAllLines(outputFilename, res);
 		}
@@ -80,7 +72,8 @@ namespace FP
 		public static IEnumerable<int[]> ReadIntRecords(this DataSource data, int radix)
 		{
 			return data.ReadRecords()
-				.Select(record => record.Select(f => Convert.ToInt32(f, radix)).ToArray());
+				.Select(record => record.Select(f => Convert.ToInt32(f, radix))
+				.ToArray());
 		}
 	}
 
