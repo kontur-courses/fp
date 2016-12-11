@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ErrorHandling
+namespace ResultOfTask
 {
 	public static class ResultQueryExpressionExtensions
 	{

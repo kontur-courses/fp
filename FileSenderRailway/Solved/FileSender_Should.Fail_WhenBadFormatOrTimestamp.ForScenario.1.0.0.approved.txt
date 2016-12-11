@@ -1,1 +1,1 @@
-﻿Неверный формат Format=1.0
+﻿Can't prepare file to send. Invalid format version '1.0'

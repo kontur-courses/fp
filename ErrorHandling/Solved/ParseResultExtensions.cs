@@ -1,6 +1,6 @@
 using System;
 
-namespace ErrorHandlingSolved
+namespace ResultOf
 {
 	public static class ParseResultExtensions
 	{

@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway.Solved
 {
@@ -35,14 +36,14 @@ namespace FileSenderRailway.Solved
 
 	public class FileSendResult
 	{
-		public FileSendResult(FileContent file, CSharpFunctionalExtensions.Result result)
+		public FileSendResult(FileContent file, string error)
 		{
 			File = file;
-			Result = result;
+			Error = error;
 		}
 
 		public FileContent File { get; }
-		public CSharpFunctionalExtensions.Result Result { get; }
+		public string Error { get; }
 	}
 
 	public interface ICryptographer
@@ -52,11 +53,11 @@ namespace FileSenderRailway.Solved
 
 	public interface IRecognizer
 	{
-		CSharpFunctionalExtensions.Result<Document> Recognize(FileContent file);
+		Result<Document> Recognize(FileContent file);
 	}
 
 	public interface ISender
 	{
-		CSharpFunctionalExtensions.Result Send(Document content);
+		Result<None> Send(Document content);
 	}
 }

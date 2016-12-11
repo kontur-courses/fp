@@ -3,7 +3,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ErrorHandlingSolved
+namespace ResultOf
 {
 	[TestFixture]
 	public class Result_Should
@@ -50,7 +50,7 @@ namespace ErrorHandlingSolved
 		}
 
 		[Test]
-		public void RunOnSuccess_WhenOk()
+		public void RunThen_WhenOk()
 		{
 			var res = Result.Ok(42)
 				.Then(n => n + 10);
@@ -58,7 +58,7 @@ namespace ErrorHandlingSolved
 		}
 
 		[Test]
-		public void SkipOnSuccess_WhenFail()
+		public void SkipThen_WhenFail()
 		{
 			var fail = Result.Fail<int>("ошибка");
 			var called = false;
@@ -71,7 +71,7 @@ namespace ErrorHandlingSolved
 		}
 
 		[Test]
-		public void OnSuccess_ReturnsFail_OnException()
+		public void Then_ReturnsFail_OnException()
 		{
 			Func<int, int> continuation = n =>
 			{
@@ -105,7 +105,7 @@ namespace ErrorHandlingSolved
 		}
 
 		[Test]
-		public void RunOnSuccess_WhenOk_Scenario()
+		public void RunThen_WhenOk_Scenario()
 		{
 			var res =
 				Result.Ok("1358571172")
@@ -116,13 +116,47 @@ namespace ErrorHandlingSolved
 		}
 
 		[Test]
-		public void RunOnSuccess_WhenOk_ComplexScenario()
+		public void RunThen_WhenOk_ComplexScenario()
 		{
 			var parsed = Result.Ok("1358571172").Then(int.Parse);
 			var res = parsed
 				.Then(i => Convert.ToString(i, 16))
 				.Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
 			res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+		}
+
+		[Test]
+		public void ReplaceError_IfFail()
+		{
+			Result.Fail<None>("error")
+				.ReplaceError(e => "replaced")
+				.ShouldBeEquivalentTo(Result.Fail<None>("replaced"));
+		}
+
+		[Test]
+		public void ReplaceError_DoNothing_IfSuccess()
+		{
+			Result.Ok(42)
+				.ReplaceError(e => "replaced")
+				.ShouldBeEquivalentTo(Result.Ok(42));
+		}
+
+		[Test]
+		public void ReplaceError_DontReplace_IfCalledBeforeError()
+		{
+			Result.Ok(42)
+				.ReplaceError(e => "replaced")
+				.Then(n => Result.Fail<int>("error"))
+				.ShouldBeEquivalentTo(Result.Fail<int>("error"));
+		}
+
+		[Test]
+		public void RefineError_AddErrorMessageBeforePreviousErrorText()
+		{
+			var calculation = Result.Fail<None>("No connection");
+			calculation
+				.RefineError("Posting results to db")
+				.ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
 		}
 	}
 }

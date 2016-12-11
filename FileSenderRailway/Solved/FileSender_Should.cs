@@ -4,10 +4,10 @@ using System.Security.Cryptography.X509Certificates;
 using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
-using CSharpFunctionalExtensions;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 
 namespace FileSenderRailway.Solved
 {
@@ -18,7 +18,6 @@ namespace FileSenderRailway.Solved
 		private FileSender fileSender;
 		private ICryptographer cryptographer;
 		private IRecognizer recognizer;
-
 
 		[SetUp]
 		public void SetUp()
@@ -44,15 +43,14 @@ namespace FileSenderRailway.Solved
 			var result = fileSender.PrepareFileToSend(file, certificate);
 
 			result.ShouldBeEquivalentTo(
-				Result.Ok(document.WithContent(signedContent)), 
-				c => c.Excluding(r => r.Error));
+				Result.Ok(document.WithContent(signedContent)));
 		}
 
 		[Test]
 		public void Fail_WhenNotRecognized()
 		{
 			A.CallTo(() => recognizer.Recognize(file))
-				.Returns(Result.Fail<Document>("not recognized"));
+				.Returns(Result.Fail<Document>("Can't recognize"));
 
 			VerifyErrorOnPrepareFile(file, certificate);
 		}
