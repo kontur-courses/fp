@@ -3,7 +3,7 @@
 В [задаче из блока di](https://github.com/kontur-csharper/di/tree/master/TagsCloudApp) создайте отдельную ветку "fp".
 Там переработайте обработку ошибок следующим образом:
 
-1. Вместо исключений всюду в программе используйте паттерн Result<T> (см. [пример](https://github.com/kontur-csharper/fp/blob/master/FileSenderRailway/Solved/FileSender.cs))
+1. Вместо исключений всюду в программе используйте паттерн Result\<T\> (см. [пример](https://github.com/kontur-csharper/fp/blob/master/FileSenderRailway/Solved/FileSender.cs))
 
 2. Подумайте, какие исключительные ситуации могут возникать в вашей программе. 
 Сделайте так, чтобы на каждую из них программа вела себя адекватно. Например, выдавала сообщение об ошибке, 
