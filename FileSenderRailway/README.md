@@ -1,4 +1,4 @@
-## Задания
+## Задание FileSenderRailway
 
 1. Сделать класс Document неизменяемым
 2. Отделить чистую функцию PrepareFileToSend от Side-эффектов

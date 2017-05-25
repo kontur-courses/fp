@@ -1,4 +1,4 @@
-## Задача "Game of Life"
+## Задача Game of Life
 
 1. Уберите зависимость Game от IGameUi.
 

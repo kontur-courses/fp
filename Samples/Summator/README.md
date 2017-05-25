@@ -1,4 +1,4 @@
-## Задача "Functional Style"
+## Задача Functional Style
 
 Проект Summator написан в стиле SOLID.
 
