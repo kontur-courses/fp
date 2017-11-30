@@ -12,6 +12,8 @@
 
 ## Необходимые знания
 
+Понадобится знание C#
+
 Рекомендуется пройти блоки [SOLID](https://github.com/kontur-csharper/solid-design) и [Mocks](https://github.com/kontur-csharper/mocks)
 
 
