@@ -1,7 +1,8 @@
 # Задание TagsCloudResult
 
-В [задаче из блока Dependency Injection Container](https://github.com/kontur-csharper/di/blob/master/HomeExercise.md) создай отдельную ветку "fp".
-Там переработай обработку ошибок следующим образом:
+Задание следует выполнять на основе решения [задачи из блока Dependency Injection Container](https://github.com/kontur-csharper/di/blob/master/HomeExercise.md).
+
+Переработай обработку ошибок следующим образом:
 
 1. Вместо исключений всюду в программе используй паттерн Result\<T\> (см. [пример](https://github.com/kontur-csharper/fp/blob/master/FileSenderRailway/Solved/FileSender.cs))
 
