@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows.Forms;
+using TagCloud.ExceptionHandler;
 using TagCloud.Interfaces;
 using TagCloud.TagCloudVisualization.Analyzer;
 using TagCloud.Words;
@@ -12,12 +13,15 @@ namespace TagCloud.Actions
         private readonly IExcludingRepository wordsRepository;
         private IWordAnalyzer analyzer;
         private IReader reader;
+        private IExceptionHandler exceptionHandler;
 
-        public LoadExcludingWordsAction(IExcludingRepository wordsRepository, IWordAnalyzer analyzer, IReader reader)
+        public LoadExcludingWordsAction(IExcludingRepository wordsRepository, IWordAnalyzer analyzer, 
+            IReader reader, IExceptionHandler exceptionHandler)
         {
             this.wordsRepository = wordsRepository;
             this.analyzer = analyzer;
             this.reader = reader;
+            this.exceptionHandler = exceptionHandler;
         }
         public string Category { get; } = "File";
         public string Name { get; } = "Excluding Words";
@@ -29,9 +33,11 @@ namespace TagCloud.Actions
                 openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() != DialogResult.OK)
                     return;
-                var fileContent = reader.Read(openFileDialog.FileName);
-                var splittedWords = analyzer.SplitWords(fileContent);
-                wordsRepository.Load(splittedWords);
+                Result.Of(() => reader.Read(openFileDialog.FileName))
+                    .Then(fileContent => analyzer.SplitWords(fileContent))
+                    .Then(splittedWords => wordsRepository.Load(splittedWords))
+                    .RefineError("Failed, trying to load excluding words")
+                    .OnFail(exceptionHandler.HandleException);
             }
             
         }

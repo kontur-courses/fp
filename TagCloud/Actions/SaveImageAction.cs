@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using TagCloud.ExceptionHandler;
 using TagCloud.Forms;
 
 namespace TagCloud
@@ -9,11 +10,12 @@ namespace TagCloud
     public class SaveImageAction : IUiAction
     {
         private readonly ImageBox imageBox;
+        private readonly IExceptionHandler exceptionHandler;
 
-
-        public SaveImageAction(ImageBox imageBox)
+        public SaveImageAction(ImageBox imageBox, IExceptionHandler exceptionHandler)
         {
             this.imageBox = imageBox;
+            this.exceptionHandler = exceptionHandler;
         }
 
         public string Category => "Image";
@@ -30,8 +32,12 @@ namespace TagCloud
                 openFileDialog.Filter = "Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png|Gif (*.gif)|*.gif |JPEG (*.jpeg)|*.jpeg  |All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var currentExtension = GetImageFormat(openFileDialog.FileName);
-                    imageBox.SaveImage(openFileDialog.FileName, currentExtension);
+                    Result.Of(() => GetImageFormat(openFileDialog.FileName))
+                        .Then(format => imageBox.SaveImage(openFileDialog.FileName, format))
+                        .RefineError("Failed, tryng to save image")
+                        .OnFail(exceptionHandler.HandleException);
+//                    var currentExtension = GetImageFormat(openFileDialog.FileName);
+//                    imageBox.SaveImage(openFileDialog.FileName, currentExtension);
                 }
             }
 

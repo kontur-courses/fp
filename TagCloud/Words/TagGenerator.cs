@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TagCloud.ExceptionHandler;
 using TagCloud.Filters;
 using TagCloud.Interfaces;
 using TagCloud.TagCloudVisualization.Analyzer;
@@ -12,19 +13,25 @@ namespace TagCloud.Words
         private readonly WordManager wordManager;
         private readonly ITagCloudLayouter tagLayouter;
         private IWordAnalyzer wordAnalyzer;
+        private IExceptionHandler exceptionHandler;
 
-        public TagGenerator(WordManager wordManager, ITagCloudLayouter tagLayouter, IWordAnalyzer wordAnalyzer)
+        public TagGenerator(WordManager wordManager, ITagCloudLayouter tagLayouter, 
+            IWordAnalyzer wordAnalyzer, IExceptionHandler exceptionHandler)
         {
             this.wordManager = wordManager;
             this.tagLayouter = tagLayouter;
             this.wordAnalyzer = wordAnalyzer;
+            this.exceptionHandler = exceptionHandler;
         }
         
-        public List<Tag> GetTags(IEnumerable<string> words)
+        public Result<List<Tag>> GetTags(IEnumerable<string> words)
         {
-            var filteredWords = wordManager.ApplyFilters(words);
-            var weightedWords = wordAnalyzer.WeightWords(filteredWords);
-            return tagLayouter.GetCloudTags(weightedWords).ToList();
+            return wordManager.ApplyFilters(words)
+                .Then(filtered => wordAnalyzer.WeightWords(filtered))
+                .Then(weighted => tagLayouter.GetCloudTags(weighted))
+                .Then(tags => tags.ToList())
+                .RefineError("Failed, trying to get Cloud Tags")
+                .OnFail(exceptionHandler.HandleException);
         }
     }
 } 

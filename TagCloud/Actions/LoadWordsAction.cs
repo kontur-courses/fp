@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using TagCloud.ExceptionHandler;
 using TagCloud.Interfaces;
 using TagCloud.TagCloudVisualization.Analyzer;
 using TagCloud.Words;
@@ -12,12 +13,15 @@ namespace TagCloud.Actions
         private readonly IRepository wordsRepository;
         private IWordAnalyzer wordAnalyzer;
         private IReader reader;
+        private IExceptionHandler exceptionHandler;
 
-        public LoadWordsAction(IRepository wordsRepository, IWordAnalyzer wordAnalyzer, IReader reader)
+        public LoadWordsAction(IRepository wordsRepository, IWordAnalyzer wordAnalyzer, 
+            IReader reader, IExceptionHandler exceptionHandler)
         {
             this.wordsRepository = wordsRepository;
             this.wordAnalyzer = wordAnalyzer;
             this.reader = reader;
+            this.exceptionHandler = exceptionHandler;
         }
 
         public string Category => "File";
@@ -31,9 +35,11 @@ namespace TagCloud.Actions
                 openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() != DialogResult.OK)
                     return;
-                var fileContent = reader.Read(openFileDialog.FileName);
-                var splittedWords = wordAnalyzer.SplitWords(fileContent);
-                wordsRepository.Load(splittedWords);
+                Result.Of(() => reader.Read(openFileDialog.FileName))
+                    .Then(fileContent => wordAnalyzer.SplitWords(fileContent))
+                    .Then(splittedWords => wordsRepository.Load(splittedWords))
+                    .RefineError("Failed, trying to load tag words")
+                    .OnFail(exceptionHandler.HandleException);
             }
 
         }

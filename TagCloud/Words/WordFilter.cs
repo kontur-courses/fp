@@ -13,9 +13,9 @@ namespace TagCloud.Words
             this.excludingWordsRepository = excludingWordsRepository;
         }
         
-        public IEnumerable<string> Filter(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> words)
         {
-            return words.Where(w => !excludingWordsRepository.Contains(w));
+            return words.Where(w => !excludingWordsRepository.Contains(w)).AsResult();
         }
     }
 } 
