@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="QuerySyntax\ParseResultExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
     <Compile Include="QuerySyntax\ResultQueryExpressionExtensions.cs" />
     <Compile Include="QuerySyntax\ResultQueryExpression_Should.cs" />
     <Compile Include="Result_Should.cs" />
