@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using TagCloud.TagCloudVisualization.Analyzer;
 
-namespace TagCloud.Interfaces
+namespace TagCloud.Words
 {
     public interface ITagGenerator
     {

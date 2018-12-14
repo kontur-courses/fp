@@ -1,4 +1,4 @@
-namespace TagCloud.Interfaces
+namespace TagCloud.Words
 {
     public interface IReader
     {

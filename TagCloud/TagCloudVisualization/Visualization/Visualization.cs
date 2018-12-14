@@ -10,11 +10,11 @@ namespace TagCloud.TagCloudVisualization.Visualization
 {
     public abstract class Visualization
     {
+        protected Graphics Graphics;
         public ImageBox ImageBox;
         protected ImageSettings ImageSettings;
-        protected Graphics Graphics;
-        private Size bitmapSize { get; set; }
         protected IEnumerable<Rectangle> Rectangles;
+        private Size bitmapSize { get; set; }
 
         private void DetermineBitmapSizes()
         {

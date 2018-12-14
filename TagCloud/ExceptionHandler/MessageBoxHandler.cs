@@ -2,7 +2,7 @@ using System.Windows.Forms;
 
 namespace TagCloud.ExceptionHandler
 {
-    public class MessageBoxHandler :IExceptionHandler
+    public class MessageBoxHandler : IExceptionHandler
     {
         public void HandleException(string message)
         {

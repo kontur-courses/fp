@@ -3,9 +3,8 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.TagCloudVisualization.Extensions;
 
-namespace TagsCloudVisualization
+namespace TagsCloudVisualization_Tests
 {
-
     [TestFixture]
     public class PointExtension_Should
     {
@@ -17,6 +16,5 @@ namespace TagsCloudVisualization
             centerRectanglePoint.ShiftToLeftRectangleCorner(rectangleSize)
                 .Should().Be(new Point(60, 80));
         }
-     
     }
 }

@@ -24,9 +24,9 @@ namespace TagCloud.TagCloudVisualization.Visualization
             foreach (var tag in tags)
             {
                 var shiftedRectangle = ShiftRectangleToCenter(tag.Rectangle);
-                Graphics.DrawString(tag.Word, tag.Font, new SolidBrush(ImageSettings.TextColor), shiftedRectangle.Location);
+                Graphics.DrawString(tag.Word, tag.Font, new SolidBrush(ImageSettings.TextColor),
+                    shiftedRectangle.Location);
             }
         }
-
     }
 }

@@ -5,7 +5,7 @@ using TagCloud.Settings;
 
 namespace TagCloud.Forms
 {
-    class ApplicationWindow : Form, IClient
+    internal class ApplicationWindow : Form, IClient
     {
         public ApplicationWindow(IUiAction[] actions, ImageBox imageBox, ImageSettings imageSettings)
         {
@@ -22,4 +22,4 @@ namespace TagCloud.Forms
             Application.Run(this);
         }
     }
-} 
+}

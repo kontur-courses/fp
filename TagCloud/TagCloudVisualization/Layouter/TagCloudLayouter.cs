@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TagCloud.Interfaces;
 using TagCloud.Settings;
 using TagCloud.TagCloudVisualization.Analyzer;
 
@@ -11,10 +10,10 @@ namespace TagCloud.TagCloudVisualization.Layouter
 {
     public class TagCloudLayouter : ITagCloudLayouter
     {
-        private readonly ICloudLayouter layouter;
         private readonly FontSettings fontSettings;
-        private int minFrequency;
+        private readonly ICloudLayouter layouter;
         private int maxFrequency;
+        private int minFrequency;
 
         public TagCloudLayouter(FontSettings fontSettings, ICloudLayouter layouter)
         {
@@ -22,17 +21,15 @@ namespace TagCloud.TagCloudVisualization.Layouter
             this.layouter = layouter;
         }
 
-        public List<Tag> GetCloudTags(Dictionary<String, int> weightedWords)
+        public List<Tag> GetCloudTags(Dictionary<string, int> weightedWords)
         {
             layouter.Clear();
             var tags = new List<Tag>();
-            if (weightedWords.Count == 0)
-            {
-                return tags;
-            }
+            if (weightedWords.Count == 0) return tags;
+
             minFrequency = weightedWords.Values.Min();
             maxFrequency = weightedWords.Values.Max();
-            
+
             foreach (var weightedWord in weightedWords)
             {
                 var fontSize = GetFontSize(weightedWord.Value);
@@ -41,6 +38,7 @@ namespace TagCloud.TagCloudVisualization.Layouter
                 var frame = layouter.PutNextRectangle(frameSize);
                 tags.Add(new Tag(weightedWord.Key, font, frame));
             }
+
             return tags;
         }
 
@@ -48,9 +46,8 @@ namespace TagCloud.TagCloudVisualization.Layouter
         {
             var medianFrequency = maxFrequency - minFrequency;
             var medianFontSize = fontSettings.MaxFontSize - fontSettings.MinFontSize;
-            var fontScaler = maxFrequency == minFrequency ? 1 : (double)currentWeight / medianFrequency;
-            return (int)Math.Round(fontSettings.MinFontSize + fontScaler * medianFontSize);
+            var fontScaler = maxFrequency == minFrequency ? 1 : (double) currentWeight / medianFrequency;
+            return (int) Math.Round(fontSettings.MinFontSize + fontScaler * medianFontSize);
         }
-
     }
 }

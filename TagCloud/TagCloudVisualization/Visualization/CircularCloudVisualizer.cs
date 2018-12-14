@@ -18,6 +18,5 @@ namespace TagCloud.TagCloudVisualization.Visualization
                 Graphics.DrawRectangle(new Pen(Color.Black, 5), shiftedRectangle);
             }
         }
-
     }
 }

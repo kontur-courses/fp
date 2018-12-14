@@ -59,11 +59,6 @@
     <Compile Include="Actions\UiActionExtensions.cs" />
     <Compile Include="ExceptionHandler\IExceptionHandler.cs" />
     <Compile Include="ExceptionHandler\MessageBoxHandler.cs" />
-    <Compile Include="Filters &amp; Preprocessors\BasicFormConverter.cs" />
-    <Compile Include="Filters &amp; Preprocessors\ExcludingWordRemover.cs" />
-    <Compile Include="Filters &amp; Preprocessors\IWordFilter.cs" />
-    <Compile Include="Filters &amp; Preprocessors\IWordProcessor.cs" />
-    <Compile Include="Filters &amp; Preprocessors\WordManager.cs" />
     <Compile Include="Forms\ApplicationWindow.cs" />
     <Compile Include="Forms\IClient.cs" />
     <Compile Include="Forms\ImageBox.cs" />
@@ -88,6 +83,11 @@
     <Compile Include="TagCloudVisualization\Visualization\Visualization.cs" />
     <Compile Include="Words\ExcludingWordsRepository.cs" />
     <Compile Include="Words\FileReader.cs" />
+    <Compile Include="Words\Filters &amp; Preprocessors\BasicFormConverter.cs" />
+    <Compile Include="Words\Filters &amp; Preprocessors\ExcludingWordRemover.cs" />
+    <Compile Include="Words\Filters &amp; Preprocessors\IWordFilter.cs" />
+    <Compile Include="Words\Filters &amp; Preprocessors\IWordProcessor.cs" />
+    <Compile Include="Words\Filters &amp; Preprocessors\WordManager.cs" />
     <Compile Include="Words\IExcludingRepository.cs" />
     <Compile Include="Words\IReader.cs" />
     <Compile Include="Words\IRepository.cs" />

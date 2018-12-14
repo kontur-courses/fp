@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 using TagCloud.ExceptionHandler;
@@ -9,8 +8,8 @@ namespace TagCloud
 {
     public class SaveImageAction : IUiAction
     {
-        private readonly ImageBox imageBox;
         private readonly IExceptionHandler exceptionHandler;
+        private readonly ImageBox imageBox;
 
         public SaveImageAction(ImageBox imageBox, IExceptionHandler exceptionHandler)
         {
@@ -24,28 +23,24 @@ namespace TagCloud
 
         public void Perform()
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            using (var saveFileDialog = new SaveFileDialog())
             {
-                openFileDialog.CheckFileExists = false;
-                openFileDialog.DefaultExt = "png";
-                openFileDialog.FileName = "TagCloud";
-                openFileDialog.Filter = "Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png|Gif (*.gif)|*.gif |JPEG (*.jpeg)|*.jpeg  |All files (*.*)|*.*";
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Result.Of(() => GetImageFormat(openFileDialog.FileName))
-                        .Then(format => imageBox.SaveImage(openFileDialog.FileName, format))
+                saveFileDialog.CheckFileExists = false;
+                saveFileDialog.DefaultExt = "png";
+                saveFileDialog.FileName = "TagCloud";
+                saveFileDialog.Filter =
+                    "Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png|Gif (*.gif)|*.gif |JPEG (*.jpeg)|*.jpeg  |All files (*.*)|*.*";
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    Result.Of(() => GetImageFormat(saveFileDialog.FileName))
+                        .Then(format => imageBox.SaveImage(saveFileDialog.FileName, format))
                         .RefineError("Failed, tryng to save image")
                         .OnFail(exceptionHandler.HandleException);
-//                    var currentExtension = GetImageFormat(openFileDialog.FileName);
-//                    imageBox.SaveImage(openFileDialog.FileName, currentExtension);
-                }
             }
-
         }
-        
+
         private ImageFormat GetImageFormat(string fileName)
         {
-            string extension = Path.GetExtension(fileName);
+            var extension = Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(extension))
                 return ImageFormat.Png;
 

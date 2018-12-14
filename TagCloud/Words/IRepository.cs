@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TagCloud.Interfaces
+namespace TagCloud.Words
 {
     public interface IRepository
     {

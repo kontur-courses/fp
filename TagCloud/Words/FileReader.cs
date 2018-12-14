@@ -1,5 +1,4 @@
 using System.IO;
-using TagCloud.Interfaces;
 
 namespace TagCloud.Words
 {

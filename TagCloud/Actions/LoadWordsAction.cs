@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Windows.Forms;
 using TagCloud.ExceptionHandler;
 using TagCloud.Interfaces;
@@ -11,11 +9,11 @@ namespace TagCloud.Actions
     public class LoadWordsAction : IUiAction
     {
         private readonly IRepository wordsRepository;
-        private IWordAnalyzer wordAnalyzer;
-        private IReader reader;
-        private IExceptionHandler exceptionHandler;
+        private readonly IExceptionHandler exceptionHandler;
+        private readonly IReader reader;
+        private readonly IWordAnalyzer wordAnalyzer;
 
-        public LoadWordsAction(IRepository wordsRepository, IWordAnalyzer wordAnalyzer, 
+        public LoadWordsAction(IRepository wordsRepository, IWordAnalyzer wordAnalyzer,
             IReader reader, IExceptionHandler exceptionHandler)
         {
             this.wordsRepository = wordsRepository;
@@ -30,7 +28,7 @@ namespace TagCloud.Actions
 
         public void Perform()
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            using (var openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                 if (openFileDialog.ShowDialog() != DialogResult.OK)
@@ -41,10 +39,6 @@ namespace TagCloud.Actions
                     .RefineError("Failed, trying to load tag words")
                     .OnFail(exceptionHandler.HandleException);
             }
-
         }
     }
-
-
-
 }

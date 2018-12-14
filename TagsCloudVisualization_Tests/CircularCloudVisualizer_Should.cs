@@ -12,10 +12,6 @@ namespace TagsCloudVisualization_Tests
     [TestFixture]
     public class CircularCloudVisualizer_Should
     {
-        private CircularCloudLayouter layout;
-        private CircularCloudVisualizer visualizer;
-        private List<Rectangle> rectangles;
-
         [SetUp]
         public void SetUp()
         {
@@ -24,9 +20,13 @@ namespace TagsCloudVisualization_Tests
             visualizer = new CircularCloudVisualizer(rectangles);
         }
 
+        private CircularCloudLayouter layout;
+        private CircularCloudVisualizer visualizer;
+        private List<Rectangle> rectangles;
+
         private static int GetRectangleRadius(Rectangle newRectangle)
         {
-            return (int)Math.Sqrt(Math.Pow(newRectangle.Right, 2) + Math.Pow(newRectangle.Top, 2));
+            return (int) Math.Sqrt(Math.Pow(newRectangle.Right, 2) + Math.Pow(newRectangle.Top, 2));
         }
 
         [Test]

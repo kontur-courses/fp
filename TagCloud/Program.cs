@@ -2,10 +2,8 @@
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
-using TagCloud.Filters;
 using TagCloud.Forms;
 using TagCloud.Settings;
-using TagCloud.TagCloudVisualization.Layouter;
 using TagCloud.TagCloudVisualization.Visualization;
 using TagCloud.Words;
 
@@ -21,7 +19,8 @@ namespace TagCloud
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 var builder = new ContainerBuilder();
-                builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(Program))).AsImplementedInterfaces().SingleInstance();
+                builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(Program))).AsImplementedInterfaces()
+                    .SingleInstance();
                 builder.RegisterType<ImageBox>().AsSelf().SingleInstance();
                 builder.RegisterType<WordManager>().AsSelf();
                 builder.RegisterType<ApplicationWindow>().AsSelf();
@@ -31,11 +30,10 @@ namespace TagCloud
                 var mainForm = builder.Build().ResolveOptional<ApplicationWindow>();
                 mainForm.RunApplication();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
         }
-}
-
+    }
 }

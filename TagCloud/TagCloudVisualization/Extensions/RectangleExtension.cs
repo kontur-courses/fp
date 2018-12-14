@@ -8,7 +8,7 @@ namespace TagCloud.TagCloudVisualization.Extensions
         public static int GetCircumcircleRadius(this Rectangle rect)
         {
             var mostDistantPoint = GetMostDistantPointFromCenter(rect);
-            return (int)Math.Sqrt(Math.Pow(mostDistantPoint.X, 2) + Math.Pow(mostDistantPoint.Y, 2));
+            return (int) Math.Sqrt(Math.Pow(mostDistantPoint.X, 2) + Math.Pow(mostDistantPoint.Y, 2));
         }
 
         private static Point GetMostDistantPointFromCenter(Rectangle rect)

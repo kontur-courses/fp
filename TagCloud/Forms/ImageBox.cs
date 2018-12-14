@@ -17,7 +17,7 @@ namespace TagCloud.Forms
         public Graphics StartDrawing()
         {
             FailIfNotInitialized();
-            return Graphics.FromImage(Image);       
+            return Graphics.FromImage(Image);
         }
 
         private void FailIfNotInitialized()
@@ -30,7 +30,7 @@ namespace TagCloud.Forms
         {
             Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
         }
-        
+
         public void SaveImage(string fileName, ImageFormat extension)
         {
             try
