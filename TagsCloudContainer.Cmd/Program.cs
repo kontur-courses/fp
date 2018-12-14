@@ -44,7 +44,7 @@ namespace TagsCloudContainer.Cmd
                     .Then(p => HandleParserBehavour(p, p.HelpCalled, string.Empty))
                     .Then(p => HandleParserBehavour(p, p.HasErrors, p.ErrorText))
                     .Then(z => ReadCustomBoringWords(reader, parser.Object.ExcludeFilename))
-                    .Then(excluded => (new Font(parser.Object.FontFamily, (float)parser.Object.FontSize), excluded))
+                    .Then(excluded => (new Font(new FontFamily(parser.Object.FontFamily), (float)parser.Object.FontSize), excluded))
                     .Then(fontExcluded => FillConfig(scope.Resolve<Config>(), cmdArgs, parser.Object,
                         fontExcluded.Item1, fontExcluded.Item2))
                     .Then(z => reader.GetWords(parser.Object.InputFilename))
