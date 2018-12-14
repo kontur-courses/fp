@@ -48,6 +48,8 @@ namespace TagsCloudContainer.ResultRenderer
 
                 foreach (var word in words)
                 {
+                    CheckWordPositionBound(word.Position);
+
                     graphics.DrawString(
                         word.Value,
                         word.Font,
@@ -65,6 +67,15 @@ namespace TagsCloudContainer.ResultRenderer
             }
 
             return image;
+        }
+
+        private void CheckWordPositionBound(RectangleF position)
+        {
+            if (position.X < 0 || position.X + position.Width > imageSize.Width
+                || position.Y < 0 || position.Y + position.Height > imageSize.Height)
+            {
+                throw new ArgumentException("Облако слов выходит за границу изображения.", nameof(imageSize));
+            }
         }
 
         private IEnumerable<Word> CenterWords(PointF center, IEnumerable<Word> words)

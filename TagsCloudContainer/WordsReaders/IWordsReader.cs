@@ -4,6 +4,6 @@ namespace TagsCloudContainer.WordsReaders
 {
     public interface IWordsReader
     {
-        IEnumerable<string> GetWords(string filename);
+        Result<IEnumerable<string>> GetWords(string filename);
     }
 }

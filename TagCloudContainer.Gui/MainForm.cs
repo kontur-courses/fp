@@ -6,10 +6,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using TagsCloudContainer;
-using TagsCloudContainer.ResultRenderer;
-using TagsCloudContainer.WordFormatters;
-using TagsCloudContainer.WordLayouts;
-using TagsCloudContainer.WordsPreprocessors;
 using TagsCloudContainer.WordsReaders;
 
 namespace TagCloudContainer.Gui
@@ -18,7 +14,6 @@ namespace TagCloudContainer.Gui
     {
         private IContainer container;
         private Color chooseColor = Color.BlueViolet;
-        private Image resultImage; // диспозится в "partial class MainForm" и при каждой генерации картинки
 
         public MainForm()
         {
@@ -29,7 +24,7 @@ namespace TagCloudContainer.Gui
         private void MainForm_Load(object sender, EventArgs e)
         {
             resultPictureBox.BorderStyle = BorderStyle.FixedSingle;
-            resultPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            resultPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
         }
 
         private void OpenFileButton_Click(object sender, EventArgs e)
@@ -40,8 +35,10 @@ namespace TagCloudContainer.Gui
                 {
                     var reader = container
                         .Resolve<IWordsReader>();
+                    // todo: доделать обработку ошибок
                     wordsTextBox.Text = string.Join(Environment.NewLine,
-                        reader.GetWords(openFileDialog.FileName));
+                        reader.GetWords(openFileDialog.FileName)
+                            .GetValueOrThrow());
                 }
             }
         }
@@ -66,23 +63,29 @@ namespace TagCloudContainer.Gui
 
         private void GenerateButton_Click(object sender, EventArgs e)
         {
+            statusLabel.Text = "Готов к работе.";
+
             var size = new Size(int.Parse(resultWidthTextBox.Text), int.Parse(resultHeightTextBox.Text));
             var font = new Font(FontFamily.GenericMonospace, 12);
 
-            resultImage?.Dispose();
-
             using (var scope = container.BeginLifetimeScope())
             {
-                var config = scope.Resolve<Config>();
-                config.Color = chooseColor;
-                config.Font = font;
-                config.ImageSize = size;
-
-                resultImage = scope.Resolve<TagsCloudBuilder>()
-                    .Visualize(wordsTextBox.Lines);
+                scope.Resolve<Config>()
+                    .AsResult()
+                    .Then(config => FillConfig(config, font, size))
+                    .Then(c => scope.Resolve<TagsCloudBuilder>()
+                        .Visualize(wordsTextBox.Lines)
+                        .GetValueOrThrow())
+                    .Then(image => resultPictureBox.Image = image)
+                    .OnFail(err => statusLabel.Text = err);
             }
+        }
 
-            resultPictureBox.Image = resultImage;
+        private void FillConfig(Config config, Font font, Size size)
+        {
+            config.Color = chooseColor;
+            config.Font = font;
+            config.ImageSize = size;
         }
     }
 }

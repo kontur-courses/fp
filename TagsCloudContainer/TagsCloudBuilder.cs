@@ -30,19 +30,17 @@ namespace TagsCloudContainer
             this.wordsSizer = wordsSizer;
         }
 
-        public Image Visualize(IEnumerable<string> rawWords)
+        public Result<Image> Visualize(IEnumerable<string> rawWords)
         {
-            rawWords = wordsPreprocessors.Aggregate(rawWords,
-                (current, preprocessor) => preprocessor.Preprocess(current));
-            var words = wordFormatter.FormatWords(rawWords);
-            var positionedWords = words
-                .Select(word => new Word(word.Font, word.Color, word.Value)
+            return Result.Of(() => wordsPreprocessors.Aggregate(rawWords,
+                    (current, preprocessor) => preprocessor.Preprocess(current)))
+                .Then(preprocessedWords => wordFormatter.FormatWords(preprocessedWords))
+                .Then(formattedWords => formattedWords.Select(word => new Word(word.Font, word.Color, word.Value)
                 {
                     Position = layouter
                         .GetNextPosition(wordsSizer.GetWordSize(word))
-                });
-
-            return resultRenderer.Generate(positionedWords);
+                }))
+                .Then(positionedWords => resultRenderer.Generate(positionedWords));
         }
     }
 }

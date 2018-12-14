@@ -12,7 +12,7 @@ namespace TagsCloudContainer.WordsPreprocessors
             customBoringWords = new HashSet<string>(config.CustomBoringWords);
         }
 
-        public IEnumerable<string> Preprocess(IEnumerable<string> words)
+        IEnumerable<string> IWordsPreprocessor.Preprocess(IEnumerable<string> words)
         {
             return words.Where(word => !customBoringWords.Contains(word));
         }

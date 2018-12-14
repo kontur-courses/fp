@@ -32,59 +32,64 @@ namespace TagsCloudContainer.Cmd
 
             var cmdArgs = ConfigureParser(parser);
 
-            var parserResult = parser.Parse(args);
-
-            if (parserResult.HasErrors)
-            {
-                Console.WriteLine(parserResult.ErrorText);
-
-                return;
-            }
-
-            if (parserResult.HelpCalled)
-            {
-                return;
-            }
-
             var containerBuilder = new CloudContainerBuilder();
 
             var tagsCloudContainer = containerBuilder.BuildTagsCloudContainer();
             var reader = tagsCloudContainer
                 .Resolve<IWordsReader>();
 
-            var font = new Font(parser.Object.FontFamily, (float)parser.Object.FontSize);
-
-            var boringWords = Enumerable.Empty<string>();
-
-            if (parser.Object.ExcludeFilename != null)
-            {
-                boringWords = reader
-                    .GetWords(parser.Object.ExcludeFilename);
-            }
-
-            var words = reader
-                .GetWords(parser.Object.InputFilename);
-
             using (var scope = tagsCloudContainer.BeginLifetimeScope())
             {
-                var config = scope.Resolve<Config>();
-                config.Color = cmdArgs.Color;
-                config.Font = font;
-                config.CustomBoringWords = boringWords;
-                config.ImageSize = cmdArgs.ImageSize;
-                config.CenterPoint = cmdArgs.SpiralOffset;
-                config.AngleDelta = parser.Object.SpiralAngleStep;
-
-                scope.Resolve<TagsCloudBuilder>()
-                    .Visualize(words)
-                    .Save(parser.Object.OutputFilename, ImageFormat.Png);
+                Result.Of(() => parser.Parse(args))
+                    .Then(p => HandleParserBehavour(p, p.HelpCalled, string.Empty))
+                    .Then(p => HandleParserBehavour(p, p.HasErrors, p.ErrorText))
+                    .Then(z => ReadCustomBoringWords(reader, parser.Object.ExcludeFilename))
+                    .Then(excluded => (new Font(parser.Object.FontFamily, (float)parser.Object.FontSize), excluded))
+                    .Then(fontExcluded => FillConfig(scope.Resolve<Config>(), cmdArgs, parser.Object,
+                        fontExcluded.Item1, fontExcluded.Item2))
+                    .Then(z => reader.GetWords(parser.Object.InputFilename))
+                    .Then(words => scope.Resolve<TagsCloudBuilder>()
+                        .Visualize(words))
+                    .Then(image => image.Save(parser.Object.OutputFilename, ImageFormat.Png))
+                    .OnFail(Console.WriteLine);
             }
+        }
+
+        private static Result<ICommandLineParserResult> HandleParserBehavour(
+            ICommandLineParserResult parserResult,
+            bool isFailed,
+            string errorMessage)
+        {
+            return isFailed
+                ? Result.Fail<ICommandLineParserResult>(errorMessage)
+                : Result.Ok(parserResult);
+        }
+
+        private static Result<IEnumerable<string>> ReadCustomBoringWords(IWordsReader reader, string filename)
+        {
+            if (filename == null)
+            {
+                return Result.Ok(Enumerable.Empty<string>());
+            }
+
+            return reader
+                .GetWords(filename);
+        }
+
+        private static void FillConfig(Config config, CmdArguments cmdArgs, ParserArgs parserArgs,
+            Font font, IEnumerable<string> boringWords)
+        {
+            config.Color = cmdArgs.Color;
+            config.Font = font;
+            config.CustomBoringWords = boringWords;
+            config.ImageSize = cmdArgs.ImageSize;
+            config.CenterPoint = cmdArgs.SpiralOffset;
+            config.AngleDelta = parserArgs.SpiralAngleStep;
         }
 
         private static CmdArguments ConfigureParser(FluentCommandLineParser<ParserArgs> parser)
         {
             var callbacks = new CmdCallbacks();
-            ;
 
             parser.Setup(arg => arg.InputFilename)
                 .As("input")
