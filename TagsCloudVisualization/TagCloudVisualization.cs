@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using ResultOfTask;
@@ -105,6 +106,8 @@ namespace TagsCloudVisualization
             var imageFormat = ParseImageFormat(imageExtension);
             if (imageFormat == null)
                 return Result.Fail<None>("Invalid image format.");
+            if (!Directory.Exists(directory))
+                return Result.Fail<None>("Invalid output path.");
             bitmap.Save($"{directory}\\{bitmapName}.{imageExtension}", imageFormat);
 
             return Result.Ok();
