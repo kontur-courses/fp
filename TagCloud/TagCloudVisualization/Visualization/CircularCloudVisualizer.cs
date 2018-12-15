@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagCloud.Settings;
 
 namespace TagCloud.TagCloudVisualization.Visualization
 {
     public class CircularCloudVisualizer : Visualization
     {
-        public CircularCloudVisualizer(List<Rectangle> rectangles)
+        public CircularCloudVisualizer(ImageSettings imageSettings, IEnumerable<Rectangle> rectangles)
         {
             Rectangles = rectangles;
+            ImageSettings = imageSettings;
         }
 
         protected override void DrawElements()

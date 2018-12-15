@@ -92,6 +92,7 @@
     <Compile Include="Words\IReader.cs" />
     <Compile Include="Words\IWordRepository.cs" />
     <Compile Include="Words\ITagGenerator.cs" />
+    <Compile Include="Words\NHunspellSettings.cs" />
     <Compile Include="Words\WordsRepository.cs" />
     <Compile Include="Words\TagGenerator.cs" />
     <Compile Include="Words\WordFilter.cs" />

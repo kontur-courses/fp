@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FakeItEasy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c">
+      <HintPath>..\packages\FakeItEasy.5.0.0-alpha.1\lib\net45\FakeItEasy.dll</HintPath>
+    </Reference>
     <Reference Include="FluentAssertions, Version=4.17.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.4.17.0\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>

@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using TagCloud.Settings;
 using TagCloud.TagCloudVisualization.Extensions;
 using TagCloud.TagCloudVisualization.Layouter;
 using TagCloud.TagCloudVisualization.Visualization;
@@ -19,7 +20,7 @@ namespace TagsCloudVisualization_Tests
         {
             layout = new CircularCloudLayouter();
             rectangles = new List<Rectangle>();
-            visualizer = new CircularCloudVisualizer(rectangles);
+            visualizer = new CircularCloudVisualizer(new ImageSettings(), rectangles);
             defaultSize = new Size(100, 50);
         }
 

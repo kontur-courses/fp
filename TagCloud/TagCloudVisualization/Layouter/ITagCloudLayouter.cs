@@ -5,6 +5,6 @@ namespace TagCloud.TagCloudVisualization.Layouter
 {
     public interface ITagCloudLayouter
     {
-        List<Tag> GetCloudTags(Dictionary<string, int> weightedWords);
+        Result<IEnumerable<Tag>> GetCloudTags(Dictionary<string, int> weightedWords);
     }
 }

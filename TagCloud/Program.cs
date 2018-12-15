@@ -23,8 +23,14 @@ namespace TagCloud
                     .SingleInstance();
                 builder.RegisterType<ImageBox>().AsSelf().SingleInstance();
                 builder.RegisterType<WordManager>().AsSelf();
+
                 builder.RegisterType<ApplicationWindow>().AsSelf();
-                builder.RegisterType<TagCloudVisualizer>().AsSelf();
+                builder.RegisterType<TagCloudVisualizer>().AsSelf();                
+                builder.RegisterInstance(new NHunspellSettings
+                {
+                    AffFile = "Dictionaries/ru_RU.aff", 
+                    DictFile = "Dictionaries/ru_RU.dic"
+                }).SingleInstance();
                 builder.RegisterInstance(new ImageSettings()).AsSelf().SingleInstance();
                 builder.RegisterInstance(new FontSettings()).AsSelf().SingleInstance();
                 var mainForm = builder.Build().ResolveOptional<ApplicationWindow>();

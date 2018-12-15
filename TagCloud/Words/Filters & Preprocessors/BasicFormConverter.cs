@@ -1,23 +1,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using NHunspell;
+using TagCloud.ExceptionHandler;
 
 namespace TagCloud.Words
 {
     public class BasicFormConverter : IWordProcessor
     {
+        private readonly NHunspellSettings settings;
+        private readonly IExceptionHandler exceptionHandler;
+
+        public BasicFormConverter(NHunspellSettings settings, IExceptionHandler exceptionHandler)
+        {
+            this.settings = settings;
+            this.exceptionHandler = exceptionHandler;
+        }
+        
         public IEnumerable<string> Preprocess(IEnumerable<string> words)
         {
-            List<string> wordsInBasicForm;
-            using (var hunspell = new Hunspell("Dictionaries/ru_RU.aff", "Dictionaries/ru_RU.dic"))
-            {
-                wordsInBasicForm = (from word in words
-                    select hunspell.Stem(word).Any()
-                        ? hunspell.Stem(word).First()
-                        : word).ToList();
-            }
-
-            return wordsInBasicForm;
+            var convertedWords = Result.Of(()=> new Hunspell(settings.AffFile, settings.DictFile))
+                .Then(hs => (from word in words
+                    select hs.Stem(word).Any()
+                        ? hs.Stem(word).First()
+                        : word).ToList())
+                .RefineError("Failed, trying to init NHunspell")
+                .OnFail(exceptionHandler.HandleException);
+            return convertedWords.Value;
         }
     }
 }

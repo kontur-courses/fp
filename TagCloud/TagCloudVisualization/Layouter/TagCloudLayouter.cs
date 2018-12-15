@@ -5,41 +5,49 @@ using System.Linq;
 using System.Windows.Forms;
 using TagCloud.Settings;
 using TagCloud.TagCloudVisualization.Analyzer;
+using TagCloud.TagCloudVisualization.Extensions;
 
 namespace TagCloud.TagCloudVisualization.Layouter
 {
     public class TagCloudLayouter : ITagCloudLayouter
     {
         private readonly FontSettings fontSettings;
+        private readonly ImageSettings imageSettings;
+        private Rectangle AvailableCloudArea => new Rectangle(-imageSettings.Width/2, -imageSettings.Height/2, 
+                                                                            imageSettings.Width, imageSettings.Height);
         private readonly ICloudLayouter layouter;
         private int maxFrequency;
         private int minFrequency;
 
-        public TagCloudLayouter(FontSettings fontSettings, ICloudLayouter layouter)
+        public TagCloudLayouter(FontSettings fontSettings, ImageSettings imageSettings, ICloudLayouter layouter)
         {
             this.fontSettings = fontSettings;
             this.layouter = layouter;
+            this.imageSettings = imageSettings;
         }
 
-        public List<Tag> GetCloudTags(Dictionary<string, int> weightedWords)
+        public Result<IEnumerable<Tag>> GetCloudTags(Dictionary<string, int> weightedWords)
         {
             layouter.Clear();
-            var tags = new List<Tag>();
-            if (weightedWords.Count == 0) return tags;
+            if (weightedWords.Count == 0) 
+                return Result.Ok(Enumerable.Empty<Tag>());
 
             minFrequency = weightedWords.Values.Min();
             maxFrequency = weightedWords.Values.Max();
 
-            foreach (var weightedWord in weightedWords)
-            {
-                var fontSize = GetFontSize(weightedWord.Value);
-                var font = new Font(fontSettings.FontFamily, fontSize);
-                var frameSize = TextRenderer.MeasureText(weightedWord.Key, font);
-                var frame = layouter.PutNextRectangle(frameSize);
-                tags.Add(new Tag(weightedWord.Key, font, frame));
-            }
+            return Result.Of(() => weightedWords.Select(GenerateTag));
+        }
 
-            return tags;
+        
+        private Tag GenerateTag(KeyValuePair<string, int> weightedWord)
+        {
+            var fontSize = GetFontSize(weightedWord.Value);
+            var font = new Font(fontSettings.FontFamily, fontSize);
+            var frameSize = TextRenderer.MeasureText(weightedWord.Key, font);
+            var frame = layouter.PutNextRectangle(frameSize);
+            if (!AvailableCloudArea.Contains(frame))
+                throw new Exception("TagCloud doesn't fit in given picture sizes. Try to reduce the font sizes");
+            return new Tag(weightedWord.Key, font, frame);
         }
 
         private int GetFontSize(int currentWeight)

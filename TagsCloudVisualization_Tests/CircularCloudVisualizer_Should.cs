@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud.Settings;
 using TagCloud.TagCloudVisualization.Extensions;
 using TagCloud.TagCloudVisualization.Layouter;
 using TagCloud.TagCloudVisualization.Visualization;
@@ -17,7 +18,7 @@ namespace TagsCloudVisualization_Tests
         {
             layout = new CircularCloudLayouter();
             rectangles = new List<Rectangle>();
-            visualizer = new CircularCloudVisualizer(rectangles);
+            visualizer = new CircularCloudVisualizer(new ImageSettings(), rectangles);
         }
 
         private CircularCloudLayouter layout;
@@ -42,7 +43,8 @@ namespace TagsCloudVisualization_Tests
         public void ShiftRectangleToCenter_ShiftSingleRectangle_CorrectShift()
         {
             var newRectangle = layout.PutNextRectangle(new Size(300, 300));
-            visualizer.ShiftRectangleToCenter(newRectangle).Should().Be(new Rectangle(-150, -150, 300, 300));
+
+            visualizer.ShiftRectangleToCenter(newRectangle).Should().Be(new Rectangle(100, 100, 300, 300));
         }
     }
 }
