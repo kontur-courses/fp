@@ -5,6 +5,6 @@ namespace TagsCloudContainer.ResultRenderer
 {
     public interface IResultRenderer
     {
-        Image Generate(IEnumerable<Word> words);
+        Result<Image> Generate(IEnumerable<Word> words);
     }
 }

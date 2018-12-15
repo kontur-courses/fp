@@ -20,7 +20,7 @@ namespace TagsCloudContainer.Tests
         [SetUp]
         public void DoBeforeAnyTest()
         {
-            layouter = new CircularCloudLayouter(new Config{CenterPoint = startPoint});
+            layouter = new CircularCloudLayouter(new Config {CenterPoint = startPoint});
             word = new CustomWord();
             rectangles = new List<RectangleF>();
         }
@@ -43,6 +43,7 @@ namespace TagsCloudContainer.Tests
                 var config = new Config {ImageSize = new Size(2000, 2000)};
                 var imageRenderer = new ImageRenderer(config) {DrawRectangles = true};
                 imageRenderer.Generate(words)
+                    .GetValueOrThrow()
                     .Save(savePath, ImageFormat.Png);
             }
         }

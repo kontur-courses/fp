@@ -35,9 +35,9 @@ namespace TagCloudContainer.Gui
                 {
                     container.Resolve<IWordsReader>()
                         .AsResult()
-                        .Then(reader => string.Join(Environment.NewLine,
-                            reader.GetWords(openFileDialog.FileName)))
-                        .Then(words => wordsTextBox.Text = words)
+                        .Then(reader => reader.GetWords(openFileDialog.FileName))
+                        .Then(words => string.Join(Environment.NewLine, words))
+                        .Then(result => wordsTextBox.Text = result)
                         .OnFail(err => statusLabel.Text = err);
                 }
             }

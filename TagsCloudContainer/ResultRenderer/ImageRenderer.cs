@@ -16,7 +16,7 @@ namespace TagsCloudContainer.ResultRenderer
             imageSize = config.ImageSize;
         }
 
-        public Image Generate(IEnumerable<Word> words)
+        public Result<Image> Generate(IEnumerable<Word> words)
         {
             if (words == null)
             {
@@ -25,9 +25,7 @@ namespace TagsCloudContainer.ResultRenderer
 
             if (imageSize.Width <= 0 || imageSize.Height <= 0)
             {
-                throw new ArgumentException(
-                    "Width and height of image have to be > 0",
-                    nameof(imageSize));
+                return Result.Fail<Image>("Width and height of image have to be > 0");
             }
 
             var center = new PointF(imageSize.Width / 2f, imageSize.Height / 2f);
@@ -37,7 +35,7 @@ namespace TagsCloudContainer.ResultRenderer
             return GenerateImage(centeredWords);
         }
 
-        private Image GenerateImage(IEnumerable<Word> words)
+        private Result<Image> GenerateImage(IEnumerable<Word> words)
         {
             var image = new Bitmap(imageSize.Width, imageSize.Height);
 
@@ -48,7 +46,11 @@ namespace TagsCloudContainer.ResultRenderer
 
                 foreach (var word in words)
                 {
-                    CheckWordPositionBound(word.Position);
+                    if (word.Position.X < 0 || word.Position.X + word.Position.Width > imageSize.Width
+                        || word.Position.Y < 0 || word.Position.Y + word.Position.Height > imageSize.Height)
+                    {
+                        return Result.Fail<Image>("Облако слов выходит за границу изображения.");
+                    }
 
                     graphics.DrawString(
                         word.Value,
@@ -67,15 +69,6 @@ namespace TagsCloudContainer.ResultRenderer
             }
 
             return image;
-        }
-
-        private void CheckWordPositionBound(RectangleF position)
-        {
-            if (position.X < 0 || position.X + position.Width > imageSize.Width
-                || position.Y < 0 || position.Y + position.Height > imageSize.Height)
-            {
-                throw new ArgumentException("Облако слов выходит за границу изображения.", nameof(imageSize));
-            }
         }
 
         private IEnumerable<Word> CenterWords(PointF center, IEnumerable<Word> words)
