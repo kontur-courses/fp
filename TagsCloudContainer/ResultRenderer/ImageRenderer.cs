@@ -14,13 +14,6 @@ namespace TagsCloudContainer.ResultRenderer
         public ImageRenderer(IResultRendererConfig config)
         {
             imageSize = config.ImageSize;
-
-            if (imageSize.Width <= 0 || imageSize.Height <= 0)
-            {
-                throw new ArgumentException(
-                    "Width and height of image have to be > 0",
-                    nameof(imageSize));
-            }
         }
 
         public Image Generate(IEnumerable<Word> words)
@@ -28,6 +21,13 @@ namespace TagsCloudContainer.ResultRenderer
             if (words == null)
             {
                 throw new ArgumentException("Given words can't be null", nameof(words));
+            }
+
+            if (imageSize.Width <= 0 || imageSize.Height <= 0)
+            {
+                throw new ArgumentException(
+                    "Width and height of image have to be > 0",
+                    nameof(imageSize));
             }
 
             var center = new PointF(imageSize.Width / 2f, imageSize.Height / 2f);

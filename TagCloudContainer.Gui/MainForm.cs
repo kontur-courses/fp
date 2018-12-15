@@ -33,12 +33,12 @@ namespace TagCloudContainer.Gui
             {
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var reader = container
-                        .Resolve<IWordsReader>();
-                    // todo: доделать обработку ошибок
-                    wordsTextBox.Text = string.Join(Environment.NewLine,
-                        reader.GetWords(openFileDialog.FileName)
-                            .GetValueOrThrow());
+                    container.Resolve<IWordsReader>()
+                        .AsResult()
+                        .Then(reader => string.Join(Environment.NewLine,
+                            reader.GetWords(openFileDialog.FileName)))
+                        .Then(words => wordsTextBox.Text = words)
+                        .OnFail(err => statusLabel.Text = err);
                 }
             }
         }
@@ -74,8 +74,7 @@ namespace TagCloudContainer.Gui
                     .AsResult()
                     .Then(config => FillConfig(config, font, size))
                     .Then(c => scope.Resolve<TagsCloudBuilder>()
-                        .Visualize(wordsTextBox.Lines)
-                        .GetValueOrThrow())
+                        .Visualize(wordsTextBox.Lines))
                     .Then(image => resultPictureBox.Image = image)
                     .OnFail(err => statusLabel.Text = err);
             }
