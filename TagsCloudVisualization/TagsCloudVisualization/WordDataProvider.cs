@@ -9,7 +9,7 @@ namespace TagsCloudVisualization
 {
     public class WordDataProvider : IWordDataProvider
     {
-        public List<CloudWordData> GetData(CircularCloudLayouter cloud, List<string> words)
+        public Result<List<CloudWordData>> GetData(CircularCloudLayouter cloud, List<string> words)
         {
             var wordWeightTuples = GetWordWeightTuples(words);
             var startPoints = GetStartPoints(cloud, wordWeightTuples);

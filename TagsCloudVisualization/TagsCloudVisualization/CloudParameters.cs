@@ -9,7 +9,7 @@ namespace TagsCloudVisualization
     {
         public Size ImageSize { get; set; }
         public Func<float, Color> ColorFunc { get; set; }
-        public string FontName { get; set; }
+        public Result<string> FontName { get; set; }
         public IPointGenerator PointGenerator { get; set; }
         public ImageFormat OutFormat { get; set; }
     }

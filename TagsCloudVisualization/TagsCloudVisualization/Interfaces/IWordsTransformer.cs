@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Interfaces
 {
     public interface IWordsTransformer
     {
-        List<string> GetStems(List<string> words);
+        Result<List<string>> GetStems(List<string> words);
     }
 }

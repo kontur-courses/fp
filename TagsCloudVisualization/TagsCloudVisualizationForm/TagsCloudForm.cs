@@ -35,8 +35,11 @@ namespace TagsCloudVisualizationForm
         private void inputFilePathBtn_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = @"txt files (*.txt)|*.txt|doc files (*.doc;*.docx)|*.doc;*docx";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                     inputFilePath = openFileDialog.SafeFileName;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using Autofac;
-using CommandLine;
+﻿using System;
+using System.Drawing.Imaging;
+using Autofac;
 using TagsCloudVisualization.Interfaces;
 using TagsCloudVisualization.Settings;
 
@@ -34,14 +35,14 @@ namespace TagsCloudVisualization
 
         public void Run(Options options, IContainer container)
         {
-            var parameters = cloudParametersParser.Parse(options);
-            parameters.PointGenerator = pointGeneratorDetector.GetPointGenerator(options.PointGenerator);
-            var cloud = new CircularCloudLayouter(parameters.PointGenerator, pointGeneratorSettings);
-            var words = wordsExtractor.Extract(options.FilePath, wordsExtractorSettings);
-            words = wordsTransformer.GetStems(words);
-            var data = wordDataProvider.GetData(cloud, words);
-            var picture = TagsCloudVisualizer.GetPicture(data, parameters);
-            TagsCloudVisualizer.SavePicture(picture, parameters.OutFormat);
+            cloudParametersParser.Parse(options)
+                .Then(param => wordsExtractor.Extract(options.FilePath, wordsExtractorSettings)
+                    .Then(words => wordsTransformer.GetStems(words))
+                    .Then(words => wordDataProvider
+                        .GetData(new CircularCloudLayouter(param.PointGenerator, pointGeneratorSettings), words)
+                        .Then(data => TagsCloudVisualizer.GetPicture(data, param))
+                        .Then(bitmap => TagsCloudVisualizer.SavePicture(bitmap, param.OutFormat))
+                        .OnFail(Console.WriteLine)));
         }
     }
 }

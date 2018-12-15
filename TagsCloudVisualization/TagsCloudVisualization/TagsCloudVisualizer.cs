@@ -11,23 +11,23 @@ namespace TagsCloudVisualization
     {
         private const int EdgeLength = 150;
 
-        public static Bitmap GetPicture(List<CloudWordData> data, CloudParameters parameters)
+        public static Result<Bitmap> GetPicture(List<CloudWordData> data, CloudParameters parameters)
         {
             var width = parameters.ImageSize.Width;
             var height = parameters.ImageSize.Height;
             var brushes = GetBrushes(parameters.ColorFunc, data.Count);
             var fontName = parameters.FontName;
             var bitmap = new Bitmap(width + EdgeLength, height + EdgeLength);
+            var horizontalOffset = (float)(width + EdgeLength) / 2;
+            var verticalOffset = (float)height / 2 + (float)EdgeLength * 3 / 4;
 
             using (var graphics = Graphics.FromImage(bitmap))
             {
                 graphics.Clear(Color.Transparent);
-                var horizontalOffset = (float) (width + EdgeLength) / 2;
-                var verticalOffset = (float) height / 2 + (float) EdgeLength * 3 / 4;
                 graphics.TranslateTransform(horizontalOffset, verticalOffset);
 
                 foreach (var wordData in data.Select((el, id) => new {element = el, id}))
-                    graphics.DrawString(wordData.element.Word, new Font(fontName, wordData.element.Weight * 14),
+                    graphics.DrawString(wordData.element.Word, new Font(fontName.Value, wordData.element.Weight * 14),
                         brushes[wordData.id],
                         wordData.element.StartPoint);
             }

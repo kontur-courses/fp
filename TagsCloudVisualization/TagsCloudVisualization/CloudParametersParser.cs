@@ -1,23 +1,38 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudVisualization
 {
     public class CloudParametersParser : ICloudParametersParser
     {
-        public CloudParameters Parse(Options options)
+        private readonly IPointGeneratorDetector pointGeneratorDetector;
+
+        public CloudParametersParser(IPointGeneratorDetector pointGeneratorDetector)
         {
-            var parameters = new CloudParameters
+            this.pointGeneratorDetector = pointGeneratorDetector;
+        }
+
+        public Result<CloudParameters> Parse(Options options)
+        {
+            return new CloudParameters
             {
                 ColorFunc = GetColor(options.Color),
                 ImageSize = GetImageSize(options.ImageSize),
-                FontName = options.FontName,
-                OutFormat = GetImageFormat(options.OutFormat)
+                FontName = ValidateFontIsSupported(options.FontName)
+                    .OnFail(Console.WriteLine),
+                OutFormat = GetImageFormat(options.OutFormat),
+                PointGenerator = pointGeneratorDetector.GetPointGenerator(options.PointGenerator)
             };
+        }
 
-            return parameters;
+        private Result<string> ValidateFontIsSupported(string fontName)
+        {
+            return Result.Validate(fontName,
+                f => string.Equals(new Font(f, 10).Name, f, StringComparison.InvariantCultureIgnoreCase),
+                $"Invalid font name '{fontName}'");
         }
 
         private ImageFormat GetImageFormat(string input)

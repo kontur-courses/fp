@@ -12,25 +12,24 @@ namespace TagsCloudVisualization
 {
     public class WordsExtractor : IWordsExtractor
     {
-        public List<string> Extract(string path, IWordsExtractorSettings settings)
+        public Result<List<string>> Extract(string path, IWordsExtractorSettings settings)
         {
-            var format = path.Substring(path.IndexOf(".", StringComparison.Ordinal) + 1);
-            var text = GetTotalText(path, format);
-
-            text = text
-                .Replace("\n", " ")
-                .Replace("\r", " ")
-                .Replace("\t", " ");
-            text = settings.StopChars.Aggregate(text, (current, c) => current.Replace(c, ' '));
-            var words = text.Split(' ')
-                .Where(w => w.Length >= 3 && w != string.Empty && !settings.StopWords.Contains(w))
-                .Select(w => w.Trim().ToLowerInvariant()).ToList();
-            return words;
+            return ValidateFormatIsSupported(path)
+                .Then(f => GetTotalText(path).Value.Replace("\n", " ")
+                    .Replace("\r", " ")
+                    .Replace("\t", " "))
+                .Then(t => settings.StopChars.Aggregate(t,
+                    (current, c) => current.Replace(c, ' ')))
+                .Then(t => t.Split(' ')
+                    .Where(w => w.Length >= 3 && w != string.Empty && !settings.StopWords.Contains(w))
+                    .Select(w => w.Trim().ToLowerInvariant()).ToList())
+                .OnFail(Console.WriteLine);
         }
 
-        private static string GetTotalText(string path, string format)
+        private Result<string> GetTotalText(string path)
         {
-            if (format.StartsWith("doc"))
+            var format = Path.GetExtension(path);
+            if (format != null && format.Equals(".doc"))
             {
                 var textBuilder = new StringBuilder();
                 var word = new Application();
@@ -49,10 +48,16 @@ namespace TagsCloudVisualization
                 return textBuilder.ToString();
             }
 
-            if (format.Equals("txt"))
+            if (format != null && format.Equals(".txt"))
                 return File.ReadAllText(path, Encoding.Default);
 
-            throw new ArgumentException($"Unknown format: {format}");
+            return null;
+        }
+
+        private Result<string> ValidateFormatIsSupported(string path)
+        {
+            var format = Path.GetExtension(path);
+            return Result.Validate(format, f => f == ".txt" || f == ".doc" || f == ".docx", $"Invalid format '{format}'");
         }
     }
 }

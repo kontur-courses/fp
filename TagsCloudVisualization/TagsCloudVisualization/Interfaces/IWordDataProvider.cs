@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Interfaces
 {
     public interface IWordDataProvider
     {
-        List<CloudWordData> GetData(CircularCloudLayouter cloud, List<string> words);
+        Result<List<CloudWordData>> GetData(CircularCloudLayouter cloud, List<string> words);
     }
 }
