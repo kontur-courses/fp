@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing.Imaging;
+﻿using System.Windows.Forms;
 using Autofac;
 using TagsCloudVisualization.Interfaces;
 using TagsCloudVisualization.Settings;
@@ -9,7 +8,6 @@ namespace TagsCloudVisualization
     public class TagsCloudApp
     {
         private readonly ICloudParametersParser cloudParametersParser;
-        private readonly IPointGeneratorDetector pointGeneratorDetector;
         private readonly IPointGeneratorSettings pointGeneratorSettings;
         protected readonly IWordDataProvider wordDataProvider;
         private readonly IWordsExtractor wordsExtractor;
@@ -20,7 +18,6 @@ namespace TagsCloudVisualization
             IWordsExtractorSettings wordsExtractorSettings,
             IPointGeneratorSettings pointGeneratorSettings,
             ICloudParametersParser cloudParametersParser,
-            IPointGeneratorDetector pointGeneratorDetector,
             IWordsExtractor wordsExtractor,
             IWordsTransformer wordsTransformer)
         {
@@ -28,7 +25,6 @@ namespace TagsCloudVisualization
             this.wordsExtractorSettings = wordsExtractorSettings;
             this.pointGeneratorSettings = pointGeneratorSettings;
             this.cloudParametersParser = cloudParametersParser;
-            this.pointGeneratorDetector = pointGeneratorDetector;
             this.wordsExtractor = wordsExtractor;
             this.wordsTransformer = wordsTransformer;
         }
@@ -42,7 +38,9 @@ namespace TagsCloudVisualization
                         .GetData(new CircularCloudLayouter(param.PointGenerator, pointGeneratorSettings), words)
                         .Then(data => TagsCloudVisualizer.GetPicture(data, param))
                         .Then(bitmap => TagsCloudVisualizer.SavePicture(bitmap, param.OutFormat))
-                        .OnFail(Console.WriteLine)));
+                        .OnFail(error => MessageBox.Show(error, "Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error))));
         }
     }
 }

@@ -14,9 +14,9 @@ namespace TagsCloudVisualization
         {
             return GetPath()
                 .Then(path => IsHunspellDictExists($"{path}en_us.dic")
-                .Then(t => IsHunspellDictExists($"{path}en_us.aff"))
-                .Then(t => GetStemsHunSpell(words, path))
-                .OnFail(Console.WriteLine));
+                    .Then(t => IsHunspellDictExists($"{path}en_us.aff"))
+                    .Then(t => GetStemsHunSpell(words, path))
+                    .OnFail(Console.WriteLine));
         }
 
         private static Result<string> GetPath()
@@ -30,13 +30,17 @@ namespace TagsCloudVisualization
             var stems = new List<string>();
 
             using (var hunspell = new Hunspell($"{path}en_us.aff", $"{path}en_us.dic"))
+            {
                 foreach (var word in words)
                     stems.Add(hunspell.Stem(word).FirstOrDefault() ?? word);
+            }
 
             return stems;
         }
 
-        private Result<string> IsHunspellDictExists(string dic) =>
-            Result.Validate(dic, File.Exists, $"Hunspell dictionary not found in '{dic}'");
+        private Result<string> IsHunspellDictExists(string dic)
+        {
+            return Result.Validate(dic, File.Exists, $"Hunspell dictionary not found in '{dic}'");
+        }
     }
 }

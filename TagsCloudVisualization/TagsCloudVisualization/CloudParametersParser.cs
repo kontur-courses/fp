@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
+using System.Windows.Forms;
 using TagsCloudVisualization.Interfaces;
-using TagsCloudVisualization.PointGenerators;
 
 namespace TagsCloudVisualization
 {
@@ -30,7 +29,9 @@ namespace TagsCloudVisualization
                         pointGeneratorDetector.GetPointGenerator(options.PointGenerator),
                         GetImageFormat(options.OutFormat))
                     .AsResult())
-                .OnFail(Console.WriteLine);
+                .OnFail(error => MessageBox.Show(error, "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error));
         }
 
         private Result<string> ValidateFontIsSupported(string fontName)
@@ -96,10 +97,10 @@ namespace TagsCloudVisualization
         public static Color GetRainbowColor(float progress)
         {
             var div = Math.Abs(progress % 1) * 6;
-            var ascending = (int)(div % 1 * 255);
+            var ascending = (int) (div % 1 * 255);
             var descending = 255 - ascending;
 
-            switch ((int)div)
+            switch ((int) div)
             {
                 case 0:
                     return Color.FromArgb(255, 255, ascending, 0);

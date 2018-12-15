@@ -21,7 +21,8 @@ namespace TagsCloudVisualization
 
         public Result<string> ValidatePointGeneratorIsSupported(string pointGenerator)
         {
-            return Result.Validate(pointGenerator, g => g == pointGenerator.GetType().Name.ToLower(), $"Invalid point generator name '{pointGenerator}'");
+            return Result.Validate(pointGenerator, n => pointGenerators.Any(g => g.GetType().Name.ToLower() == n),
+                $"Invalid point generator name '{pointGenerator}'");
         }
     }
 }

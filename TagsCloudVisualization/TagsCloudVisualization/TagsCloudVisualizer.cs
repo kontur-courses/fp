@@ -18,8 +18,8 @@ namespace TagsCloudVisualization
             var brushes = GetBrushes(parameters.ColorFunc, data.Count);
             var fontName = parameters.FontName;
             var bitmap = new Bitmap(width + EdgeLength, height + EdgeLength);
-            var horizontalOffset = (float)(width + EdgeLength) / 2;
-            var verticalOffset = (float)height / 2 + (float)EdgeLength * 3 / 4;
+            var horizontalOffset = (float) (width + EdgeLength) / 2;
+            var verticalOffset = (float) height / 2 + (float) EdgeLength * 3 / 4;
 
             using (var graphics = Graphics.FromImage(bitmap))
             {
@@ -39,7 +39,7 @@ namespace TagsCloudVisualization
         {
             var brushes = new List<SolidBrush>();
             for (var i = 0; i < dataCount; i++)
-                brushes.Add(new SolidBrush(colorFunc((float)i/dataCount)));
+                brushes.Add(new SolidBrush(colorFunc((float) i / dataCount)));
             return brushes;
         }
 
@@ -47,7 +47,7 @@ namespace TagsCloudVisualization
         {
             var path = Application.StartupPath;
             picture.Save($"{path}\\CloudTags.{format}", format);
-            Console.WriteLine($"Pictures saved in {path}\\CloudTags.{format}");
+            MessageBox.Show($@"Image saved in {path}\\CloudTags.{format}", @"Save", MessageBoxButtons.OK);
         }
     }
 }

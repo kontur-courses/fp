@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Microsoft.Office.Interop.Word;
+using System.Windows.Forms;
 using TagsCloudVisualization.Interfaces;
 using TagsCloudVisualization.Settings;
+using Application = Microsoft.Office.Interop.Word.Application;
 
 namespace TagsCloudVisualization
 {
@@ -23,7 +23,9 @@ namespace TagsCloudVisualization
                 .Then(t => t.Split(' ')
                     .Where(w => w.Length >= 3 && w != string.Empty && !settings.StopWords.Contains(w))
                     .Select(w => w.Trim().ToLowerInvariant()).ToList())
-                .OnFail(Console.WriteLine);
+                .OnFail(error => MessageBox.Show(error, "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error));
         }
 
         private Result<string> GetTotalText(string path)
@@ -57,7 +59,8 @@ namespace TagsCloudVisualization
         private Result<string> ValidateFormatIsSupported(string path)
         {
             var format = Path.GetExtension(path);
-            return Result.Validate(format, f => f == ".txt" || f == ".doc" || f == ".docx", $"Invalid format '{format}'");
+            return Result.Validate(format, f => f == ".txt" || f == ".doc" || f == ".docx",
+                $"Invalid format '{format}'");
         }
     }
 }

@@ -21,7 +21,8 @@ namespace TagsCloudVisualization
         [Option('g', "pointgen", Required = true, HelpText = "Input one of them: spiral | heart | astroid")]
         public string PointGenerator { get; set; }
 
-        [Option('f', "outformat", Required = false, HelpText = "Input one of them formats: png | jpeg | tiff", DefaultValue = "jpeg")]
+        [Option('f', "outformat", Required = false, HelpText = "Input one of them formats: png | jpeg | tiff",
+            DefaultValue = "jpeg")]
         public string OutFormat { get; set; }
 
         [HelpOption]

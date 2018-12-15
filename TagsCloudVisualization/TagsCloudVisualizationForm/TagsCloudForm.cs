@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using TagsCloudVisualization;
 using Autofac;
@@ -27,7 +28,6 @@ namespace TagsCloudVisualizationForm
             };
             var container = TagsCloudVisualizationContainerConfig.GetCompositionRoot();
             container.Resolve<TagsCloudApp>().Run(options, container);
-            MessageBox.Show($"Картинка сохранена в {Application.StartupPath}\\CloudTags.{options.OutFormat}", "Сохранение", MessageBoxButtons.OK);
         }
 
         private void exitBtn_Click(object sender, EventArgs e) => Close();
