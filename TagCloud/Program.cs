@@ -56,7 +56,9 @@ namespace TagCloud
                 FontFamily = new FontFamily(settings.FontFamily),
                 MinFontSize = settings.MinFontSize,
                 MaxFontSize = settings.MaxFontSize
-            }).GetValueOrThrow();
+            })
+                .RefineError($"Failed to load file 'Settings.settings'. Path {Environment.CurrentDirectory}")
+                .GetValueOrThrow();
         }
 
         private static ImageSettings GetImageSettings(Properties.Settings settings)
@@ -67,7 +69,9 @@ namespace TagCloud
                 Height = settings.Height,
                 TextColor = settings.TextColor,
                 BackgroundColor = settings.BackgroudColor
-            }).GetValueOrThrow();
+            })                
+                .RefineError($"Failed to load file 'Settings.settings'. Path {Environment.CurrentDirectory}")
+                .GetValueOrThrow();
         }
     }
 }
