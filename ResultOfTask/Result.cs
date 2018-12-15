@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ResultOfTask
 {
@@ -28,21 +27,6 @@ namespace ResultOfTask
         }
 
         public bool IsSuccess => Error == null;
-
-        public Result<T> RefineError(string newError)
-        {
-//            return ReplaceError(() => $"{newError}. {this.Error}");
-            return IsSuccess 
-                ? this 
-                : new Result<T>($"{newError}. {Error}");
-        }
-
-        public Result<T> ReplaceError(Func<Result<T>, string> func)
-        {
-            return IsSuccess 
-                ? this 
-                : new Result<T>(func(this));
-        }
     }
 
     public static class Result
@@ -97,6 +81,24 @@ namespace ResultOfTask
             if (!input.IsSuccess)
                 handleError(input.Error);
             return input;
+        }
+        
+        public static Result<TInput> RefineError<TInput>(
+            this Result<TInput> input, 
+            string newError)
+        {
+            return input.IsSuccess 
+                ? input
+                : new Result<TInput>($"{newError}. {input.Error}");
+        }
+
+        public static Result<TInput> ReplaceError<TInput>(
+            this Result<TInput> input, 
+            Func<Result<TInput>, string> func)
+        {
+            return input.IsSuccess 
+                ? input
+                : new Result<TInput>(func(input));
         }
     }
 }
