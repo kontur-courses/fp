@@ -112,7 +112,7 @@ namespace Functional
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
-            Func<string, TInput> handleError)
+            Func<string, Result<TInput>> handleError)
         {
             return input.IsSuccess ? input : handleError(input.Error);
         }

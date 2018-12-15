@@ -25,18 +25,10 @@ namespace TagCloudCreation
 
         public Result<Bitmap> CreateImage(IEnumerable<string> words, TagCloudCreationOptions options)
         {
-            var result = PrepareWords(words, options);
-                var r= result
-                         .Then(ws => generator.GenerateStats(ws));
-                    var r2 = r
-                         .Then(PrepareStats);
-                        var r3 =r2
-                         .Then(wis =>
-                            {
-                                var tagCloudImage = imageCreator.CreateTagCloudImage(wis, options.ImageOptions);
-                                return tagCloudImage;
-                            });
-            return r3;
+            return PrepareWords(words, options)
+                   .Then(ws => generator.GenerateStats(ws))
+                   .Then(PrepareStats)
+                   .Then(wis => imageCreator.CreateTagCloudImage(wis, options.ImageOptions));
         }
 
         private Result<IEnumerable<WordInfo>> PrepareStats(IEnumerable<WordInfo> stats)
@@ -45,15 +37,26 @@ namespace TagCloudCreation
             var minCount = stats.Min(w => w.Count);
 
             return Result.Of(() => stats.OrderByDescending(wi => wi.Count)
-                                        .Select(wordInfo => wordInfo.With(GetScale(wordInfo.Count, maxCount, minCount))));
+                                        .Select(wordInfo =>
+                                                    wordInfo.With(GetScale(wordInfo.Count, maxCount, minCount))));
         }
 
         private Result<IEnumerable<string>> PrepareWords(IEnumerable<string> words, TagCloudCreationOptions options)
         {
-            return preparers.Select(preparer => preparer.Prepare(words, options))
-                            .AsResultSilently()
-                            .Then(r =>r.Aggregate((current, previous) => current.Concat(previous)));
-        }
+            foreach (var preparer in preparers)
+            {
+                var result = words.Select(w => preparer.PrepareWord(w, options))
+                                  .AsResult()
+                                  .Then(i => i.Where(w => w.HasValue)
+                                              .Select(w => w.Value));
+                if (!result.IsSuccess)
+                    return result;
+                words = result.Value;
+            }
+
+            return words.AsResult();
+
+                    }
 
         /// <summary>
         ///     Gets relative scale for given count of words in tag cloud

@@ -17,7 +17,7 @@ namespace TagCloudApp
             container.RegisterType<CircularCloudLayouter>()
                      .AsSelf();
 
-            container.RegisterTypes(typeof(WhitespaceTextReader)) //etc.
+            container.RegisterTypes(typeof(WhitespaceTextReader)) 
                      .As<ITextReader>();
 
             container.RegisterTypes(typeof(ShortWordDrawer), typeof(BasicDrawer)).WithOrder()
@@ -29,8 +29,10 @@ namespace TagCloudApp
             container.RegisterType<RoundSpiralGenerator>()
                      .As<AbstractSpiralGenerator>();
 
-            container.RegisterTypes(typeof(FixedBoringWordsRemover), typeof(LowerCaseSetter), typeof(Formatter))
-                                    //typeof(SelectedBoringWordsRemover), typeof(VerbRemover), typeof(PrepositionRemover))
+            container.RegisterTypes(typeof(FixedBoringWordsRemover), typeof(LowerCaseSetter), typeof(Formatter),
+                                    /*typeof(SelectedBoringWordsRemover),*/ typeof(VerbRemover), typeof(PrepositionRemover)) // можно раскомментировать,
+                                                                                                                            // но тогда нужно указать файл со списком "скучных" слов
+                                                                                                                           // во входных аргументах (просто как пример)
                      .As<IWordPreparer>();
 
             container.RegisterType<TagCloudStatsGenerator>()

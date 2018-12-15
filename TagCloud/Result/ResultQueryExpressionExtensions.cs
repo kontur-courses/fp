@@ -42,7 +42,14 @@ namespace Functional
         /// <returns>Successful <see cref="Result"/> if all of elements of sequence is successful. Otherwise returns Failure</returns>
         public static Result<IEnumerable<T>> AsResult<T>(this IEnumerable<Result<T>> sequence)
         {
-            return Result.Of(() => sequence.Select(r => r.GetValueOrThrow()));
+            var result = new List<T>();
+            foreach (var element in sequence)
+            {
+                if (!element.IsSuccess)
+                    return Result.Fail<IEnumerable<T>>(element.Error);
+                result.Add(element.Value);
+            }
+            return ((IEnumerable<T>)result).AsResult();
         }
     }
 }

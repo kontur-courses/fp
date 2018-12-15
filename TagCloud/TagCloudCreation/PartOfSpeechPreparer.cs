@@ -16,7 +16,7 @@ namespace TagCloudCreation
             ["VBN"] = PartOfSpeech.Verb, ["VBZ"] = PartOfSpeech.Verb, ["JJ"] = PartOfSpeech.Adjective,
             ["JJR"] = PartOfSpeech.Adjective, ["JJS"] = PartOfSpeech.Adjective, ["MD"] = PartOfSpeech.Modal,
             ["NN"] = PartOfSpeech.Noun, ["NNS"] = PartOfSpeech.Noun, ["NNP"] = PartOfSpeech.Noun,
-            ["NNPS"] = PartOfSpeech.Noun, ["UH"] = PartOfSpeech.Interjection, ["IN"] = PartOfSpeech.Preposition
+            ["NNPS"] = PartOfSpeech.Noun, ["UH"] = PartOfSpeech.Interjection, ["I" + "N"] = PartOfSpeech.Preposition
         };
 
         protected PartOfSpeechPreparer()
@@ -31,7 +31,12 @@ namespace TagCloudCreation
         {
             return Tagger.GetTag(word)
                   .Then(tag => TagMapping.Get(tag))
-                  .OnFail(error => PartOfSpeech.Untagged)
+                  .OnFail(error =>
+                         {
+                             if (word == "for")
+                                Console.WriteLine($@"Setting untagged for word {word} from err {error}");
+                             return PartOfSpeech.Untagged;
+                         })
                   .Then(tag => wordTagActor(tag, word));
         }
     }

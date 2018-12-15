@@ -13,7 +13,7 @@ namespace TagCloudCreation
         {
             return words.Select(word => preparer.PrepareWord(word, options)
                                                 .Then(w => w.Unwrap("")))
-                        .AsResultSilently()
+                        .AsResult()
                         .Then(i => i.Where(w => w != ""));
         }
     }
