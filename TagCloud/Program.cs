@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
-using IniParser;
-using IniParser.Model;
 using TagCloud.Forms;
 using TagCloud.Settings;
 using TagCloud.TagCloudVisualization.Visualization;
@@ -19,9 +17,7 @@ namespace TagCloud
         {
             try
             {
-                var parser = new FileIniDataParser();
-                var settings = Result.Of(() => parser.ReadFile("settings.ini"))
-                    .RefineError($"Failed to load file 'settings.ini'. Path {Environment.CurrentDirectory}").GetValueOrThrow();
+                var settings = Properties.Settings.Default;
                 var fontSettings = GetFontSettings(settings);
                 var imageSettings = GetImageSettings(settings);
 
@@ -53,39 +49,24 @@ namespace TagCloud
             }
         }
         
-        private static KeyDataCollection GetSectionSettings(IniData settings, string section)
+        private static FontSettings GetFontSettings(Properties.Settings settings)
         {
-            return Result.Of(() => settings[section])
-                .RefineError($"Section '{section}' was not found in 'settings.ini'. Check {Environment.CurrentDirectory}").GetValueOrThrow();
-
-        }
-        private static FontSettings GetFontSettings(IniData settings)
-        {
-            var sectionSettings = GetSectionSettings(settings, "FontSettings");
             return Result.Of(() => new FontSettings
             {
-                FontFamily = Result.Of(() => new FontFamily(sectionSettings["FontFamily"]))
-                    .RefineError("Error, trying to get 'FontFamily' value").GetValueOrThrow(),
-                MinFontSize = Result.Of(() => int.Parse(sectionSettings["MinFontSize"]))
-                    .RefineError("Error, trying to get 'MinFontSize' value").GetValueOrThrow(),
-                MaxFontSize = Result.Of(() => int.Parse(sectionSettings["MaxFontSize"]))
-                    .RefineError("Error, trying to get 'MaxFontSize' value").GetValueOrThrow()
+                FontFamily = new FontFamily(settings.FontFamily),
+                MinFontSize = settings.MinFontSize,
+                MaxFontSize = settings.MaxFontSize
             }).GetValueOrThrow();
         }
 
-        private static ImageSettings GetImageSettings(IniData settings)
+        private static ImageSettings GetImageSettings(Properties.Settings settings)
         {
-            var sectionSettings = GetSectionSettings(settings, "ImageSettings");
             return Result.Of(() => new ImageSettings
             {
-                Width = Result.Of(() => int.Parse(sectionSettings["Width"]))
-                    .RefineError("Error, trying to get 'Width' value").GetValueOrThrow(),
-                Height = Result.Of(() => int.Parse(sectionSettings["Height"]))
-                    .RefineError("Error, trying to get 'Height' value").GetValueOrThrow(),
-                TextColor = Result.Of(() => Color.FromName(sectionSettings["TextColor"]))
-                    .RefineError("Error, trying to get 'TextColor' value").GetValueOrThrow(),
-                BackgroundColor = Result.Of(() => Color.FromName(sectionSettings["BackgroundColor"]))
-                    .RefineError("Error, trying to get 'BackgroundColor' value").GetValueOrThrow()
+                Width = settings.Width,
+                Height = settings.Height,
+                TextColor = settings.TextColor,
+                BackgroundColor = settings.BackgroudColor
             }).GetValueOrThrow();
         }
     }
