@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TagCloud
+namespace TagCloud.Actions
 {
     public static class UiActionExtensions
     {
@@ -22,7 +22,7 @@ namespace TagCloud
             return new ToolStripMenuItem(category, null, menuItems);
         }
 
-        public static ToolStripItem ToMenuItem(this IUiAction action)
+        private static ToolStripItem ToMenuItem(this IUiAction action)
         {
             return
                 new ToolStripMenuItem(action.Name, null, (sender, args) => action.Perform())

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TagCloud.Words
 {
-    public class ExcludingWordsRepository : IExcludingRepository
+    public class ExcludingWordsRepository : IExcludingWordRepository
     {
         private readonly HashSet<string> excludingWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

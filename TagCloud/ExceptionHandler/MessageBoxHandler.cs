@@ -6,7 +6,9 @@ namespace TagCloud.ExceptionHandler
     {
         public void HandleException(string message)
         {
-            MessageBox.Show(message);
+            MessageBox.Show(message, "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
     }
 }

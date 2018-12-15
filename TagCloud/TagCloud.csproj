@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9A49EC66-6F37-47BC-A074-93C5489A0431}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TagCloud</RootNamespace>
     <AssemblyName>TagCloud</AssemblyName>
@@ -88,9 +88,9 @@
     <Compile Include="Words\Filters &amp; Preprocessors\IWordFilter.cs" />
     <Compile Include="Words\Filters &amp; Preprocessors\IWordProcessor.cs" />
     <Compile Include="Words\Filters &amp; Preprocessors\WordManager.cs" />
-    <Compile Include="Words\IExcludingRepository.cs" />
+    <Compile Include="Words\IExcludingWordRepository.cs" />
     <Compile Include="Words\IReader.cs" />
-    <Compile Include="Words\IRepository.cs" />
+    <Compile Include="Words\IWordRepository.cs" />
     <Compile Include="Words\ITagGenerator.cs" />
     <Compile Include="Words\WordsRepository.cs" />
     <Compile Include="Words\TagGenerator.cs" />

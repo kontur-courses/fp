@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TagCloud.Words
 {
-    public class WordsRepository : IRepository
+    public class WordsRepository : IWordRepository
     {
         private List<string> words = new List<string>();
 

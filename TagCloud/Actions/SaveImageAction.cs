@@ -33,7 +33,7 @@ namespace TagCloud
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     Result.Of(() => GetImageFormat(saveFileDialog.FileName))
                         .Then(format => imageBox.SaveImage(saveFileDialog.FileName, format))
-                        .RefineError("Failed, tryng to save image")
+                        .RefineError("Failed, trying to save image")
                         .OnFail(exceptionHandler.HandleException);
             }
         }

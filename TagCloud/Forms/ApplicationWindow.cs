@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using TagCloud.Actions;
 using TagCloud.Interfaces;
 using TagCloud.Settings;
 

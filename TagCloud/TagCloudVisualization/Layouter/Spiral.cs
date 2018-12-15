@@ -6,21 +6,20 @@ namespace TagCloud.TagCloudVisualization.Layouter
 {
     public class Spiral
     {
-        private readonly double angleShift = 0.05;
+        private const double AngleShift = 0.05;
+        private const int DistanceBetweenTurnings = 1;
         private double currentSpiralAngle;
 
         private void IncreaseSpiralAngle()
         {
-            currentSpiralAngle += angleShift;
+            currentSpiralAngle += AngleShift;
         }
 
         public IEnumerable<Point> GenerateRectangleLocation()
         {
             while (true)
             {
-                var distanceBetweenTurnings = 1;
-                var radius = distanceBetweenTurnings * currentSpiralAngle;
-
+                var radius = DistanceBetweenTurnings * currentSpiralAngle;
                 var x = (int) (radius * Math.Cos(currentSpiralAngle));
                 var y = (int) (radius * Math.Sin(currentSpiralAngle));
                 yield return new Point(x, y);

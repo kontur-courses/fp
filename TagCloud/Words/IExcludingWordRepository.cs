@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace TagCloud.Words
 {
-    public interface IRepository
+    public interface IExcludingWordRepository
     {
         void Load(IEnumerable<string> words);
-        IEnumerable<string> Get();
+        bool Contains(string word);
     }
 }

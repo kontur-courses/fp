@@ -8,12 +8,12 @@ namespace TagCloud.Actions
 {
     public class LoadWordsAction : IUiAction
     {
-        private readonly IRepository wordsRepository;
+        private readonly IWordRepository wordsRepository;
         private readonly IExceptionHandler exceptionHandler;
         private readonly IReader reader;
         private readonly IWordAnalyzer wordAnalyzer;
 
-        public LoadWordsAction(IRepository wordsRepository, IWordAnalyzer wordAnalyzer,
+        public LoadWordsAction(IWordRepository wordsRepository, IWordAnalyzer wordAnalyzer,
             IReader reader, IExceptionHandler exceptionHandler)
         {
             this.wordsRepository = wordsRepository;
@@ -24,7 +24,7 @@ namespace TagCloud.Actions
 
         public string Category => "File";
         public string Name => "Tag Words";
-        public string Description => "Load file with Tag WordsRepository";
+        public string Description => "Select file with text, you would like to convert into TagCloud";
 
         public void Perform()
         {
@@ -35,7 +35,7 @@ namespace TagCloud.Actions
                     return;
                 Result.Of(() => reader.Read(openFileDialog.FileName))
                     .Then(fileContent => wordAnalyzer.SplitWords(fileContent))
-                    .Then(splittedWords => wordsRepository.Load(splittedWords))
+                    .Then(splitWords => wordsRepository.Load(splitWords))
                     .RefineError("Failed, trying to load tag words")
                     .OnFail(exceptionHandler.HandleException);
             }

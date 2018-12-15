@@ -7,6 +7,6 @@ namespace TagCloud.Settings
         public int Width { get; set; } = 500;
         public int Height { get; set; } = 500;
         public Color TextColor { get; set; } = Color.White;
-        public Color BackdgoundColor { get; set; } = Color.DimGray;
+        public Color BackgroundColor { get; set; } = Color.DimGray;
     }
 }

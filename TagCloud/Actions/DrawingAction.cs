@@ -13,9 +13,9 @@ namespace TagCloud.Actions
         private readonly ImageBox imageBox;
         private readonly ImageSettings imageSettings;
         private readonly ITagGenerator tagGenerator;
-        private readonly IRepository wordsRepository;
+        private readonly IWordRepository wordsRepository;
 
-        public DrawingAction(ImageBox imageBox, IRepository wordsRepository,
+        public DrawingAction(ImageBox imageBox, IWordRepository wordsRepository,
             ITagGenerator tagGenerator, ImageSettings imageSettings, IExceptionHandler exceptionHandler)
         {
             this.imageBox = imageBox;
