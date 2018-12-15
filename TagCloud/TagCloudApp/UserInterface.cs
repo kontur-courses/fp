@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Functional;
+using Result;
 using TagCloudCreation;
 
 namespace TagCloudApp
@@ -22,8 +22,7 @@ namespace TagCloudApp
         protected Result<IEnumerable<string>> Read(string path)
         {
             return Readers.Get(Path.GetExtension(path))
-                   .Then(reader => reader.ReadWords(path));
-
-            }
+                          .Then(reader => reader.ReadWords(path));
+        }
     }
 }

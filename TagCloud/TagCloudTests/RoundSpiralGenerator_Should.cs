@@ -13,7 +13,8 @@ namespace TagCloudTests
         [SetUp]
         public void SetUp()
         {
-            generator = new RoundSpiralGenerator().Begin(Point.Empty).GetValueOrThrow();
+            generator = new RoundSpiralGenerator().Begin(Point.Empty)
+                                                  .GetValueOrThrow();
         }
 
         private const int FullCircleAmount = 64 * 2;

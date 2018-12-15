@@ -1,14 +1,7 @@
 ﻿using System;
 
-namespace Functional
+namespace Result
 {
-    public class None
-    {
-        private None()
-        {
-        }
-    }
-
     public struct Result<T>
     {
         public Result(string error, T value = default(T))
@@ -16,42 +9,31 @@ namespace Functional
             Error = error;
             Value = value;
         }
-        public static implicit operator Result<T>(T v)
-        {
-            return Result.Ok(v);
-        }
+
+        public static implicit operator Result<T>(T v) => Result.Ok(v);
 
         public string Error { get; }
         public T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess)
                 return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
     public static class Result
     {
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
+        public static Result<T> AsResult<T>(this T value) => Ok(value);
 
-        public static Result<T> Ok<T>(T value)
-        {
-            return new Result<T>(null, value);
-        }
-        public static Result<None> Ok()
-        {
-            return Ok<None>(null);
-        }
+        public static Result<T> Ok<T>(T value) => new Result<T>(null, value);
 
-        public static Result<T> Fail<T>(string e)
-        {
-            return new Result<T>(e);
-        }
+        public static Result<None> Ok() => Ok<None>(null);
+
+        public static Result<T> Fail<T>(string e) => new Result<T>(e);
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
@@ -85,25 +67,17 @@ namespace Functional
             return input.Then(inp => Of(() => continuation(inp)));
         }
 
-        public static Result<None> Then<TInput>(
-            this Result<TInput> input,
-            Action<TInput> continuation)
+        public static Result<None> Then<TInput>(this Result<TInput> input, Action<TInput> continuation)
         {
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
-        {
-            return input.IsSuccess
-                ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
-        }
+            Func<TInput, Result<TOutput>> continuation) =>
+            input.IsSuccess ? continuation(input.Value) : Fail<TOutput>(input.Error);
 
-        public static Result<TInput> OnFail<TInput>(
-            this Result<TInput> input,
-            Action<string> handleError)
+        public static Result<TInput> OnFail<TInput>(this Result<TInput> input, Action<string> handleError)
         {
             if (!input.IsSuccess)
                 handleError(input.Error);
@@ -112,21 +86,16 @@ namespace Functional
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
-            Func<string, Result<TInput>> handleError)
-        {
-            return input.IsSuccess ? input : handleError(input.Error);
-        }
-        public static Result<TInput> ReplaceError<TInput>(
-            this Result<TInput> input,
-            Func<string, string> replaceError)
+            Func<string, Result<TInput>> handleError) =>
+            input.IsSuccess ? input : handleError(input.Error);
+
+        public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input, Func<string, string> replaceError)
         {
             if (input.IsSuccess) return input;
             return Fail<TInput>(replaceError(input.Error));
         }
 
-        public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input,
-            string errorMessage)
+        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
         }

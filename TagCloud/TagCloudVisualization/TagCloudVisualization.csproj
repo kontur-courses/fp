@@ -49,6 +49,8 @@
     <Compile Include="AbstractSpiralGenerator.cs" />
     <Compile Include="CompositeDrawer.cs" />
     <Compile Include="ImageCreatingOptions.cs" />
+    <Compile Include="ResultExtensions.cs" />
+    <Compile Include="ShortWordDrawer.cs" />
     <Compile Include="TagCloudImageCreator.cs" />
     <Compile Include="IWordDrawer.cs" />
     <Compile Include="Point.cs" />
@@ -61,9 +63,9 @@
     <Compile Include="WordInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Result\Functional.csproj">
+    <ProjectReference Include="..\Result\Result.csproj">
       <Project>{013B163F-9DC9-4939-A30C-BC5C828ADB2B}</Project>
-      <Name>Functional</Name>
+      <Name>Result</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

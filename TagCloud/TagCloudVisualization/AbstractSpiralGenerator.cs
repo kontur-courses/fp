@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Functional;
-using static Functional.Result;
+﻿using System.Collections.Generic;
+using Result;
+using static Result.Result;
+
 namespace TagCloudVisualization
 {
-    public static class ResultExtensions
-    {
-
-    }
-
     public abstract class AbstractSpiralGenerator
     {
         private protected IEnumerator<Point> Enumerator;
@@ -19,7 +14,7 @@ namespace TagCloudVisualization
         {
             if (Enumerator != null)
                 return Fail<AbstractSpiralGenerator>("Begin method must be called only once");
-            
+
             Center = center;
             Enumerator = GetEnumerator();
             Enumerator.MoveNext();

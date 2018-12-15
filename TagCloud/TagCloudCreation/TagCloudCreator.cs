@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Functional;
+using Result;
 using TagCloudVisualization;
 
 namespace TagCloudCreation
@@ -36,7 +36,7 @@ namespace TagCloudCreation
             var maxCount = stats.Max(w => w.Count);
             var minCount = stats.Min(w => w.Count);
 
-            return Result.Of(() => stats.OrderByDescending(wi => wi.Count)
+            return Result.Result.Of(() => stats.OrderByDescending(wi => wi.Count)
                                         .Select(wordInfo =>
                                                     wordInfo.With(GetScale(wordInfo.Count, maxCount, minCount))));
         }
@@ -45,18 +45,14 @@ namespace TagCloudCreation
         {
             foreach (var preparer in preparers)
             {
-                var result = words.Select(w => preparer.PrepareWord(w, options))
-                                  .AsResult()
-                                  .Then(i => i.Where(w => w.HasValue)
-                                              .Select(w => w.Value));
+                var result = preparer.PrepareWords(words, options);
                 if (!result.IsSuccess)
                     return result;
                 words = result.Value;
             }
 
             return words.AsResult();
-
-                    }
+        }
 
         /// <summary>
         ///     Gets relative scale for given count of words in tag cloud

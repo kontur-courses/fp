@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Functional;
+using Result;
 using TagCloudVisualization;
 
 namespace TagCloudCreation
@@ -11,7 +11,8 @@ namespace TagCloudCreation
         public Result<IEnumerable<WordInfo>> GenerateStats(IEnumerable<string> words)
         {
             return words.GroupBy(w => w, StringComparer.InvariantCulture)
-                        .Select(g => new WordInfo(g.Key, g.Count())).AsResult();
+                        .Select(g => new WordInfo(g.Key, g.Count()))
+                        .AsResult();
         }
     }
 }

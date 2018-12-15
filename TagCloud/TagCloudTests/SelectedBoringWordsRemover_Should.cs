@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloudApp;
 using TagCloudCreation;
-using TagCloudVisualization;
 
 namespace TagCloudTests
 {
@@ -38,7 +36,5 @@ namespace TagCloudTests
                    .Should()
                    .Be("b");
         }
-
-        
     }
 }

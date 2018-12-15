@@ -17,22 +17,25 @@ namespace TagCloudApp
             container.RegisterType<CircularCloudLayouter>()
                      .AsSelf();
 
-            container.RegisterTypes(typeof(WhitespaceTextReader)) 
+            container.RegisterTypes(typeof(WhitespaceTextReader))
                      .As<ITextReader>();
 
-            container.RegisterTypes(typeof(ShortWordDrawer), typeof(BasicDrawer)).WithOrder()
+            container.RegisterTypes(typeof(ShortWordDrawer), typeof(BasicDrawer))
+                     .WithOrder()
                      .As<IWordDrawer>();
 
             container.RegisterType<CompositeDrawer>()
-                     .AsSelf().WithParameter(new ResolvedParameter((i,c)=>true, (i,c)=>c.ResolveOrdered<IWordDrawer>()));
+                     .AsSelf()
+                     .WithParameter(new ResolvedParameter((i, c) => true, (i, c) => c.ResolveOrdered<IWordDrawer>()));
 
             container.RegisterType<RoundSpiralGenerator>()
                      .As<AbstractSpiralGenerator>();
 
             container.RegisterTypes(typeof(FixedBoringWordsRemover), typeof(LowerCaseSetter), typeof(Formatter),
-                                    /*typeof(SelectedBoringWordsRemover),*/ typeof(VerbRemover), typeof(PrepositionRemover)) // можно раскомментировать,
-                                                                                                                            // но тогда нужно указать файл со списком "скучных" слов
-                                                                                                                           // во входных аргументах (просто как пример)
+                                    /*typeof(SelectedBoringWordsRemover),*/ typeof(VerbRemover),
+                                    typeof(PrepositionRemover)) // можно раскомментировать,
+                     // но тогда нужно указать файл со списком "скучных" слов
+                     // во входных аргументах (просто как пример)
                      .As<IWordPreparer>();
 
             container.RegisterType<TagCloudStatsGenerator>()

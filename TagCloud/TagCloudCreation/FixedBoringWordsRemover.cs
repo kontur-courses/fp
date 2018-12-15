@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Functional;
+using Result;
 
 namespace TagCloudCreation
 {
@@ -14,8 +14,7 @@ namespace TagCloudCreation
             "an"
         };
 
-        public Result<Maybe<string>> PrepareWord(string word, TagCloudCreationOptions _) => boringWords.Contains(word) ? Maybe<string>.None : word;
+        public Result<Maybe<string>> PrepareWord(string word, TagCloudCreationOptions _) =>
+            boringWords.Contains(word) ? Maybe<string>.None : word;
     }
-
-    
 }

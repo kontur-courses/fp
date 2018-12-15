@@ -7,6 +7,7 @@ namespace TagCloudVisualization
     {
         public static IEnumerable<Point> Take(this AbstractSpiralGenerator generator, int amount) =>
             Enumerable.Range(0, amount)
-                      .Select(_ => generator.Next().GetValueOrThrow());
+                      .Select(_ => generator.Next()
+                                            .GetValueOrThrow());
     }
 }

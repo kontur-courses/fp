@@ -61,9 +61,9 @@
     <Compile Include="SelectedBoringWordsRemover_Should.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Result\Functional.csproj">
+    <ProjectReference Include="..\Result\Result.csproj">
       <Project>{013b163f-9dc9-4939-a30c-bc5c828adb2b}</Project>
-      <Name>Functional</Name>
+      <Name>Result</Name>
     </ProjectReference>
     <ProjectReference Include="..\TagCloudApp\TagCloudApp.csproj">
       <Project>{a9e6fc2a-f6ef-4b9d-acb7-8aeda94f971f}</Project>

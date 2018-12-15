@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Functional;
-using static Functional.Result;
+using Result;
+using static Result.Result;
 
 namespace TagCloudVisualization
 {
@@ -75,6 +75,7 @@ namespace TagCloudVisualization
             rectangles.Any(rectangle.IntersectsWith);
 
         public IEnumerable<Rectangle> PutNextRectangles(IEnumerable<Size> rectanglesSizes) =>
-            rectanglesSizes.Select(PutNextRectangle).Select(w=>w.GetValueOrThrow());
+            rectanglesSizes.Select(PutNextRectangle)
+                           .Select(w => w.GetValueOrThrow());
     }
 }

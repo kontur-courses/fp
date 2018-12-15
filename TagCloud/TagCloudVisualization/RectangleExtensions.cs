@@ -40,7 +40,6 @@ namespace TagCloudVisualization
             using (var image = new Bitmap(width, height))
             {
                 using (var graphics = Graphics.FromImage(image))
-                {
                     foreach (var rectangle in rectangleList)
                     {
                         var imageCenter = new Point(width / 2, height / 2) - center;
@@ -48,7 +47,6 @@ namespace TagCloudVisualization
                         graphics.DrawRectangle(new Pen(Color.LimeGreen, 5), rectangle);
                         graphics.FillRectangle(Brushes.White, rectangle);
                     }
-                }
 
                 image.Save(path);
             }

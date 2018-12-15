@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Functional;
+using Result;
 
 namespace TagCloudCreation
 {
     public static class WordPreparerExtensions
     {
-        public static Result<IEnumerable<string>> Prepare(
+        public static Result<IEnumerable<string>> PrepareWords(
             this IWordPreparer preparer,
             IEnumerable<string> words,
             TagCloudCreationOptions options)

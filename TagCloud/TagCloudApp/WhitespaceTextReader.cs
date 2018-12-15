@@ -1,6 +1,6 @@
-﻿using Functional;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using Result;
 
 namespace TagCloudApp
 {
@@ -15,7 +15,7 @@ namespace TagCloudApp
             }
             catch (IOException ex)
             {
-                return Functional.Result.Fail<IEnumerable<string>>(ex.Message);
+                return Result.Result.Fail<IEnumerable<string>>(ex.Message);
             }
         }
 

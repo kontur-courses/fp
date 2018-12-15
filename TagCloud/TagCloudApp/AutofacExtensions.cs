@@ -14,17 +14,15 @@ namespace TagCloudApp
 
         public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle>
             WithOrder<TLimit, TActivatorData, TRegistrationStyle>(
-                this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> registrationBuilder)
-        {
-            return registrationBuilder.WithMetadata(OrderString, Interlocked.Increment(ref orderCounter));
-        }
+                this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> registrationBuilder) =>
+            registrationBuilder.WithMetadata(OrderString, Interlocked.Increment(ref orderCounter));
 
         public static IOrderedEnumerable<TComponent> ResolveOrdered<TComponent>(this IComponentContext context)
         {
-            return
-                context.Resolve<IEnumerable<Meta<TComponent>>>()
-                       .OrderBy(m => m.Metadata[OrderString])
-                       .Select(m => m.Value).OrderBy(c => true);
+            return context.Resolve<IEnumerable<Meta<TComponent>>>()
+                          .OrderBy(m => m.Metadata[OrderString])
+                          .Select(m => m.Value)
+                          .OrderBy(c => true);
         }
     }
 }

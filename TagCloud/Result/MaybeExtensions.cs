@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Functional
+namespace Result
 {
     public static class MaybeExtensions
     {

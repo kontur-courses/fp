@@ -67,9 +67,9 @@
     <None Include="Properties\english-bidirectional-distsim.tagger" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Result\Functional.csproj">
+    <ProjectReference Include="..\Result\Result.csproj">
       <Project>{013B163F-9DC9-4939-A30C-BC5C828ADB2B}</Project>
-      <Name>Functional</Name>
+      <Name>Result</Name>
     </ProjectReference>
     <ProjectReference Include="..\TagCloudCreation\TagCloudCreation.csproj">
       <Project>{f6c2cf79-8cec-4075-91b4-2eb119d1d960}</Project>

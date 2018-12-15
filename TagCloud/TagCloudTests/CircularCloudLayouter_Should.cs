@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Specialized;
-using Functional;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using Result;
 using TagCloudVisualization;
 using Point = TagCloudVisualization.Point;
 
@@ -129,8 +129,10 @@ namespace TagCloudTests
         [Test]
         public void PutSecondRectangle_SoThatItDoesNotIntersectsWithFirst()
         {
-            var first = layouter.PutNextRectangle(new Size(3, 4)).Value;
-            var second = layouter.PutNextRectangle(new Size(5, 6)).Value;
+            var first = layouter.PutNextRectangle(new Size(3, 4))
+                                .Value;
+            var second = layouter.PutNextRectangle(new Size(5, 6))
+                                 .Value;
             second.IntersectsWith(first)
                   .Should()
                   .BeFalse();

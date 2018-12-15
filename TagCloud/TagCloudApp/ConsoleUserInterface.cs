@@ -6,7 +6,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using Fclp;
-using Functional;
+using Result;
 using TagCloudCreation;
 using TagCloudVisualization;
 using Point = System.Drawing.Point;
@@ -68,7 +68,6 @@ namespace TagCloudApp
                 .Then(i => i.Save(outputPath))
                 .Then(none => End($"Here you go{Environment.NewLine}\tFile is saved successfully into {outputPath}"))
                 .OnFail(err => End(error: err));
-            
         }
 
         private static void End(string message = null, string error = null)

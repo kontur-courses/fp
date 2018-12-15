@@ -1,94 +1,79 @@
 ﻿using System;
 
-namespace Functional
+namespace Result
 {
     public struct Maybe<T> : IEquatable<Maybe<T>>
     {
-        private readonly Maybe<T>.MaybeValueWrapper _value;
+        private readonly MaybeValueWrapper _value;
 
         public T Value
         {
             get
             {
-                if (this.HasNoValue)
+                if (HasNoValue)
                     throw new InvalidOperationException();
-                return this._value.Value;
+                return _value.Value;
             }
         }
 
         public static Maybe<T> None => new Maybe<T>();
 
-        public bool HasValue => this._value != null;
+        public bool HasValue => _value != null;
 
         public bool HasNoValue => !HasValue;
 
         private Maybe(T value)
         {
-            this._value = (object)value == null ? (Maybe<T>.MaybeValueWrapper)null : new Maybe<T>.MaybeValueWrapper(value);
+            _value = (object) value == null ? null : new MaybeValueWrapper(value);
         }
 
-        public static implicit operator Maybe<T>(T value)
-        {
-            return new Maybe<T>(value);
-        }
+        public static implicit operator Maybe<T>(T value) => new Maybe<T>(value);
 
-        public static Maybe<T> From(T obj)
-        {
-            return new Maybe<T>(obj);
-        }
+        public static Maybe<T> From(T obj) => new Maybe<T>(obj);
 
         public static bool operator ==(Maybe<T> maybe, T value)
         {
             if (maybe.HasNoValue)
                 return false;
-            return maybe.Value.Equals((object)value);
+            return maybe.Value.Equals(value);
         }
 
-        public static bool operator !=(Maybe<T> maybe, T value)
-        {
-            return !(maybe == value);
-        }
+        public static bool operator !=(Maybe<T> maybe, T value) => !(maybe == value);
 
-        public static bool operator ==(Maybe<T> first, Maybe<T> second)
-        {
-            return first.Equals(second);
-        }
+        public static bool operator ==(Maybe<T> first, Maybe<T> second) => first.Equals(second);
 
-        public static bool operator !=(Maybe<T> first, Maybe<T> second)
-        {
-            return !(first == second);
-        }
+        public static bool operator !=(Maybe<T> first, Maybe<T> second) => !(first == second);
 
         public override bool Equals(object obj)
         {
             if (obj is T)
-                obj = (object)new Maybe<T>((T)obj);
+                obj = new Maybe<T>((T) obj);
             if (!(obj is Maybe<T>))
                 return false;
-            return this.Equals((Maybe<T>)obj);
+            return Equals((Maybe<T>) obj);
         }
 
         public bool Equals(Maybe<T> other)
         {
-            if (this.HasNoValue && other.HasNoValue)
+            if (HasNoValue && other.HasNoValue)
                 return true;
-            if (this.HasNoValue || other.HasNoValue)
+            if (HasNoValue || other.HasNoValue)
                 return false;
-            return this._value.Value.Equals((object)other._value.Value);
+            return _value.Value.Equals(other._value.Value);
         }
 
         public override int GetHashCode()
         {
-            if (this.HasNoValue)
+            if (HasNoValue)
                 return 0;
-            return this._value.Value.GetHashCode();
+            return _value.Value.GetHashCode();
         }
 
         public override string ToString()
         {
-            if (this.HasNoValue)
+            if (HasNoValue)
                 return "No value";
-            return this.Value.ToString();
+            return Value.ToString();
         }
 
         private class MaybeValueWrapper
@@ -97,7 +82,7 @@ namespace Functional
 
             public MaybeValueWrapper(T value)
             {
-                this.Value = value;
+                Value = value;
             }
         }
     }

@@ -22,7 +22,6 @@ namespace TagCloudVisualization
 
         public override string ToString() => $"{{{Word}, {Rectangle}, {Count}, {Scale}}}";
 
-
         public WordInfo With(Rectangle rectangle) => new WordInfo(Word, Count) {Rectangle = rectangle, Scale = Scale};
 
         public WordInfo With(float scale)
@@ -31,5 +30,4 @@ namespace TagCloudVisualization
             return new WordInfo(Word, Count) {Scale = scale, Rectangle = Rectangle};
         }
     }
-    
 }

@@ -22,7 +22,8 @@ namespace TagCloudVisualization
 
         public virtual Bitmap CreateTagCloudImage(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
         {
-            tagCloud = SetRectanglesToCloud(tagCloud, options).ToList();
+            tagCloud = SetRectanglesToCloud(tagCloud, options)
+                .ToList();
 
             var (width, height, center) = GetTagCloudDimensions(tagCloud);
 
@@ -37,12 +38,10 @@ namespace TagCloudVisualization
             using (var graphics = Graphics.FromImage(image))
                 foreach (var wordInfo in tagCloud)
                 {
-
                     if (wordInfo.Scale.HasNoValue || wordInfo.Rectangle.HasNoValue)
                         throw new ArgumentException();
 
                     var rectangle = wordInfo.Rectangle.Value;
-
 
                     var fontScale = wordInfo.Scale.Value;
 
@@ -59,7 +58,7 @@ namespace TagCloudVisualization
         private static (int width, int height, Point center) GetTagCloudDimensions(IEnumerable<WordInfo> tagCloud)
         {
             tagCloud = tagCloud.ToList();
-            if (tagCloud.Any(w=>w.Rectangle.HasNoValue))
+            if (tagCloud.Any(w => w.Rectangle.HasNoValue))
                 throw new ArgumentException();
             var areaSize = tagCloud.Select(w => w.Rectangle.Value)
                                    .GetUnitedSize();
