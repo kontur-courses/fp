@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -83,11 +84,14 @@ namespace TagsCloudVisualization
         }
 
         //ToDo Вынести определение размера шрифта в метод
-        public void SaveTagCloud(
+        public Result<None> SaveTagCloud(
             string bitmapName,
             string directory,
-            Dictionary<string, int> words)
+            Result<Dictionary<string, int>> wordsResult)
         {
+            if (!wordsResult.IsSuccess) return Result.Fail<None>(wordsResult.Error);
+            var words = wordsResult.GetValueOrThrow();
+            
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             var g = Graphics.FromImage(bitmap);
             //ToDo вынести из этого класса и убрать ICloudLayouter из конструктора
@@ -100,11 +104,10 @@ namespace TagsCloudVisualization
 
             var imageFormat = ParseImageFormat(imageExtension);
             if (imageFormat == null)
-            {
-                Console.WriteLine("Invalid image format. Tag cloud was save in .png");
-                imageFormat = ImageFormat.Png;
-            }
+                return Result.Fail<None>("Invalid image format.");
             bitmap.Save($"{directory}\\{bitmapName}.{imageExtension}", imageFormat);
+
+            return Result.Ok();
         }
 
         private static ImageFormat ParseImageFormat(string str)

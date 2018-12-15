@@ -4,6 +4,7 @@ using System.Linq;
 using TagsCloudPreprocessor;
 using TagsCloudPreprocessor.Preprocessors;
 using TagsCloudVisualization;
+using ResultOfTask;
 
 namespace TagCloudContainer
 {
@@ -32,27 +33,31 @@ namespace TagCloudContainer
             this.parser = parser;
         }
 
-        public void SaveTagCloud()
+        public Result<None> SaveTagCloud()
         {
             var words = parser
-                .GetWords(fileReader.ReadFromFile(config.InputFile))
-                .ToList();
+                .GetWords(fileReader
+                    .ReadFromFile(config.InputFile))
+                .Then(x => x.ToList());
 
             words = wordsExcluder.PreprocessWords(words);
             words = wordsStemer.PreprocessWords(words);
-            
-            tagCloudVisualization.SaveTagCloud(
+
+            return tagCloudVisualization.SaveTagCloud(
                 config.FileName,
                 config.OutPath,
                 GetFrequencyDictionary(words)
-                    .OrderBy(x => x.Value)
-                    .Reverse()
-                    .Take(config.Count)
-                    .ToDictionary(x => x.Key, x => x.Value));
+                    .Then(x => x.OrderBy(p => p.Value))
+                    .Then(x => x.Reverse())
+                    .Then(x => x.Take(config.Count))
+                    .Then(x => x.ToDictionary(p => p.Key, p => p.Value)));
         }
 
-        private Dictionary<string, int> GetFrequencyDictionary(IEnumerable<string> words)
+        private Result<Dictionary<string, int>> GetFrequencyDictionary(Result<List<string>> wordsResult)
         {
+            if (!wordsResult.IsSuccess) return Result.Fail<Dictionary<string, int>>(wordsResult.Error);
+
+            var words = wordsResult.GetValueOrThrow();
             var frequencyDictionary = new Dictionary<string, int>();
             foreach (var word in words)
             {
@@ -61,7 +66,7 @@ namespace TagCloudContainer
                 frequencyDictionary[word]++;
             }
 
-            return frequencyDictionary;
+            return Result.Ok(frequencyDictionary);
         }
     }
 }

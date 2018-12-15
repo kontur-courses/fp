@@ -40,6 +40,11 @@ namespace ResultOfTask
         {
             return new Result<T>(null, value);
         }
+        
+        public static Result<None> Ok()
+        {
+            return new Result<None>(null);
+        }
 
         public static Result<T> Fail<T>(string e)
         {
@@ -55,6 +60,19 @@ namespace ResultOfTask
             catch (Exception e)
             {
                 return Fail<T>(error ?? e.Message);
+            }
+        }
+        
+        public static Result<None> Of(Action f, string error = null)
+        {
+            try
+            {
+                f();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Fail<None>(error ?? e.Message);
             }
         }
 

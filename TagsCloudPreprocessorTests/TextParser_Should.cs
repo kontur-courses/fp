@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using ResultOfTask;
 using TagsCloudPreprocessor;
 
 namespace TagsCloudPreprocessorTests
@@ -10,7 +11,7 @@ namespace TagsCloudPreprocessorTests
     {
         private IEnumerable<string> ParseText(string text)
         {
-            return new TextParser().GetWords(text);
+            return new TextParser().GetWords(Result.Ok(text)).GetValueOrThrow();
         }
 
         [TestCase("a a a", ExpectedResult = new[] { "a", "a", "a" }, TestName = "By white space")]

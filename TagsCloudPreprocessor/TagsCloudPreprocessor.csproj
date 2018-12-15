@@ -65,7 +65,6 @@
     <Compile Include="IFileReader.cs" />
     <Compile Include="ITextParser.cs" />
     <Compile Include="IWordExcluder.cs" />
-    <Compile Include="LinesWithWordsParser.cs" />
     <Compile Include="Preprocessors\IPreprocessor.cs" />
     <Compile Include="Preprocessors\WordsExcluder.cs" />
     <Compile Include="Preprocessors\WordsStemer.cs" />
@@ -95,6 +94,12 @@
     <Content Include="..\Resources\ExcludedWords\ru_RU.dic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResultOfTask\ResultOfTask.csproj">
+      <Project>{68b18620-a1fa-46c8-901e-e9213e454d64}</Project>
+      <Name>ResultOfTask</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

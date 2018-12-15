@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using ResultOfTask;
 
 namespace TagsCloudPreprocessor.Preprocessors
 {
     public interface IPreprocessor
     {
-        List<string> PreprocessWords(List<string> words);
+        Result<List<string>> PreprocessWords(Result<List<string>> words);
     }
 }

@@ -81,7 +81,7 @@ namespace TagCloudContainer
             
             var container = builder.Build();
             
-            container.Resolve<TagCloudProgram>().SaveTagCloud();
+            Console.WriteLine(container.Resolve<TagCloudProgram>().SaveTagCloud().Error);
         }
     }
 }

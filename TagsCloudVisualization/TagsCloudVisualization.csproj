@@ -65,5 +65,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResultOfTask\ResultOfTask.csproj">
+      <Project>{68b18620-a1fa-46c8-901e-e9213e454d64}</Project>
+      <Name>ResultOfTask</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

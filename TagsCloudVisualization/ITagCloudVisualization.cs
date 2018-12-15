@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -11,9 +12,9 @@ namespace TagsCloudVisualization
             List<Rectangle> rectangles,
             Point center);
 
-        void SaveTagCloud(
+        Result<None> SaveTagCloud(
             string bitmapName,
             string directory,
-            Dictionary<string, int> words);
+            Result<Dictionary<string, int>> words);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using ResultOfTask;
 
 namespace TagsCloudPreprocessor
 {
@@ -15,31 +16,37 @@ namespace TagsCloudPreprocessor
         private readonly XmlSerializer hashSetSerializer = new XmlSerializer(typeof(HashSet<string>));
         private readonly string filename;
 
-        public HashSet<string> GetExcludedWords()
+        public Result<HashSet<string>> GetExcludedWords()
         {
             return ReadForbiddenWords();
         }
 
-        public void SetExcludedWord(string word)
+        public Result<None> SetExcludedWord(string word)
         {
             var forbiddenWords = ReadForbiddenWords();
-            forbiddenWords.Add(word);
-            WriteForbiddenWords(forbiddenWords);
+            forbiddenWords
+                .Then(x => x.Add(word));
+            return WriteForbiddenWords(forbiddenWords);
         }
 
-        private HashSet<string> ReadForbiddenWords()
+        private Result<HashSet<string>> ReadForbiddenWords()
         {
             using (var file = new FileStream(filename, FileMode.OpenOrCreate))
             {
-                return (HashSet<string>)hashSetSerializer.Deserialize(file);   
+                return Result.Of(() =>
+                        (HashSet<string>) hashSetSerializer.Deserialize(file),
+                    "Can not read dictionary with forbidden words");
             }
         }
 
-        private void WriteForbiddenWords(HashSet<string> forbiddenWords)
+        private Result<None> WriteForbiddenWords(Result<HashSet<string>> forbiddenWords)
         {
+            if (!forbiddenWords.IsSuccess) return Result.Fail<None>(forbiddenWords.Error);
             using (var file = new FileStream(filename, FileMode.Create))
             {
-                hashSetSerializer.Serialize(file, forbiddenWords);
+                return Result.Of(() =>
+                        hashSetSerializer.Serialize(file, forbiddenWords),
+                    "Can not write dictionary with forbidden words");
             }
         }
     }

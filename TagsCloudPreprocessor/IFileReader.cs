@@ -1,7 +1,9 @@
+using ResultOfTask;
+
 namespace TagsCloudPreprocessor
 {
     public interface IFileReader
     {
-        string ReadFromFile(string path);
+        Result<string> ReadFromFile(string path);
     }
 }
