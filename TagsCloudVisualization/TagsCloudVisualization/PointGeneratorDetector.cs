@@ -18,5 +18,10 @@ namespace TagsCloudVisualization
         {
             return pointGenerators.FirstOrDefault(pointGenerator => name == pointGenerator.GetType().Name.ToLower());
         }
+
+        public Result<string> ValidatePointGeneratorIsSupported(string pointGenerator)
+        {
+            return Result.Validate(pointGenerator, g => g == pointGenerator.GetType().Name.ToLower(), $"Invalid point generator name '{pointGenerator}'");
+        }
     }
 }

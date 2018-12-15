@@ -27,7 +27,7 @@ namespace TagsCloudVisualization
                 graphics.TranslateTransform(horizontalOffset, verticalOffset);
 
                 foreach (var wordData in data.Select((el, id) => new {element = el, id}))
-                    graphics.DrawString(wordData.element.Word, new Font(fontName.Value, wordData.element.Weight * 14),
+                    graphics.DrawString(wordData.element.Word, new Font(fontName, wordData.element.Weight * 14),
                         brushes[wordData.id],
                         wordData.element.StartPoint);
             }

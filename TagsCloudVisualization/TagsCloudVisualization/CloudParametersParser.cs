@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.PointGenerators;
 
 namespace TagsCloudVisualization
 {
@@ -17,15 +18,19 @@ namespace TagsCloudVisualization
 
         public Result<CloudParameters> Parse(Options options)
         {
-            return new CloudParameters
-            {
-                ColorFunc = GetColor(options.Color),
-                ImageSize = GetImageSize(options.ImageSize),
-                FontName = ValidateFontIsSupported(options.FontName)
-                    .OnFail(Console.WriteLine),
-                OutFormat = GetImageFormat(options.OutFormat),
-                PointGenerator = pointGeneratorDetector.GetPointGenerator(options.PointGenerator)
-            };
+            return ValidateFontIsSupported(options.FontName)
+                .Then(x => ValidateColorIsExists(options.Color))
+                .Then(x => ValidateImageFormatIsSupported(options.OutFormat))
+                .Then(x => ValidateImageSize(options.ImageSize))
+                .Then(x => pointGeneratorDetector.ValidatePointGeneratorIsSupported(options.PointGenerator))
+                .Then(x => new CloudParameters(
+                        GetImageSize(options.ImageSize),
+                        GetColor(options.Color),
+                        options.FontName,
+                        pointGeneratorDetector.GetPointGenerator(options.PointGenerator),
+                        GetImageFormat(options.OutFormat))
+                    .AsResult())
+                .OnFail(Console.WriteLine);
         }
 
         private Result<string> ValidateFontIsSupported(string fontName)
@@ -33,6 +38,23 @@ namespace TagsCloudVisualization
             return Result.Validate(fontName,
                 f => string.Equals(new Font(f, 10).Name, f, StringComparison.InvariantCultureIgnoreCase),
                 $"Invalid font name '{fontName}'");
+        }
+
+        private Result<string> ValidateColorIsExists(string colorName)
+        {
+            return Result.Validate(colorName, c => Color.FromName(c).IsKnownColor || c == "random" || c == "rainbow",
+                $"Invalid color name '{colorName}'");
+        }
+
+        private Result<string> ValidateImageSize(string imageSize)
+        {
+            return Result.Validate(imageSize, s => s.Contains("x"), $"Invalid imageSize name '{imageSize}'");
+        }
+
+        private Result<string> ValidateImageFormatIsSupported(string imageFormat)
+        {
+            return Result.Validate(imageFormat, f => f == "tiff" || f == "png" || f == "jpeg",
+                $"Invalid image format '{imageFormat}'");
         }
 
         private ImageFormat GetImageFormat(string input)
