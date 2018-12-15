@@ -65,6 +65,7 @@
     <Compile Include="DataProviders\DataProvider.cs" />
     <Compile Include="DataProviders\IDataProvider.cs" />
     <Compile Include="Ioc.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="ResultFormatters\CircularCloudLayouterResultFormatter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
