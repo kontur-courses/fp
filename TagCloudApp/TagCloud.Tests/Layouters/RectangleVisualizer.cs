@@ -10,7 +10,7 @@ namespace TagCloud.Tests.Layouters
         internal static Bitmap Visualize(IReadOnlyCollection<RectangleF> rectangles)
         {
             var (bitmapSize, offsetFromCenter) = GetNecessarySizeForBitmapAndOffset(rectangles);
-            var center = new PointF((float)bitmapSize.Width / 2, (float)bitmapSize.Height / 2);
+            var center = new PointF((float) bitmapSize.Width / 2, (float) bitmapSize.Height / 2);
             var offsetForRectangles = center.Add(offsetFromCenter);
 
             var canvas = new Bitmap(bitmapSize.Width, bitmapSize.Height);
@@ -21,7 +21,7 @@ namespace TagCloud.Tests.Layouters
             using (var graphics = Graphics.FromImage(canvas))
             {
                 graphics.Clear(Color.Black);
-                    graphics.DrawRectangles(penForRectangles, resRectangles);
+                graphics.DrawRectangles(penForRectangles, resRectangles);
             }
 
             return canvas;
@@ -48,7 +48,7 @@ namespace TagCloud.Tests.Layouters
             var height = rightBottomCorner.Y - leftTopCorner.Y + 1;
             var dx = (rightBottomCorner.X + leftTopCorner.X + 1) / 2;
             var dy = (rightBottomCorner.Y + leftTopCorner.Y + 1) / 2;
-            return (new Size((int)width + 1, (int)height + 1), new PointF(-dx, -dy));
+            return (new Size((int) width + 1, (int) height + 1), new PointF(-dx, -dy));
         }
     }
 }

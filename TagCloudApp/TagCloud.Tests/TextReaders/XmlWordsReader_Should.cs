@@ -17,18 +17,18 @@ namespace TagCloud.Tests.TextReaders
         }
 
         [Test]
-        public void ReadOneWord_WhenFileHasOnlyOneWord()
+        public void ReadFewWords_WhenFileHasFewWords()
         {
-            var expectedRes = new List<string> { "word" };
-            var res = reader.ReadFrom(baseDir + "one_word.xml").GetValueOrThrow();
+            var expectedRes = new List<string> {"word1", "word2", "word3"};
+            var res = reader.ReadFrom(baseDir + "few_words.xml").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
         [Test]
-        public void ReadFewWords_WhenFileHasFewWords()
+        public void ReadOneWord_WhenFileHasOnlyOneWord()
         {
-            var expectedRes = new List<string> { "word1", "word2", "word3" };
-            var res = reader.ReadFrom(baseDir + "few_words.xml").GetValueOrThrow();
+            var expectedRes = new List<string> {"word"};
+            var res = reader.ReadFrom(baseDir + "one_word.xml").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 

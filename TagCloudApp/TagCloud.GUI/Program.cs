@@ -1,7 +1,7 @@
-﻿using Autofac;
-using Autofac.Core;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Autofac;
+using Autofac.Core;
 using TagCloud.Core.Layouters;
 using TagCloud.Core.Painters;
 using TagCloud.Core.Settings.Interfaces;
@@ -15,13 +15,13 @@ using TagCloud.GUI.Settings;
 
 namespace TagCloud.GUI
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             var builder = new ContainerBuilder();
             InjectDependencies(builder);
@@ -32,13 +32,13 @@ namespace TagCloud.GUI
             Application.Run(container.Resolve<MainForm>());
         }
 
-        static void InjectDependencies(ContainerBuilder builder)
+        private static void InjectDependencies(ContainerBuilder builder)
         {
             builder.RegisterType<MainForm>().AsSelf();
 
             builder.RegisterType<Core.TagCloud>().AsSelf();
             builder.RegisterSettings<GuiTagCloudSettings>().As<ITagCloudSettings>();
-            
+
             builder.RegisterType<TxtWordsReader>().As<IWordsReader>();
             builder.RegisterType<XmlWordsReader>().As<IWordsReader>();
             builder.RegisterType<GeneralWordsReader>();
@@ -46,10 +46,10 @@ namespace TagCloud.GUI
             builder.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
             builder.RegisterSettings<GuiTextParsingSettings>().As<ITextParsingSettings>();
             builder.RegisterType<WordsParser>()
-                   .WithParameter(new ResolvedParameter(
-                       (pi, ctx) => pi.ParameterType == typeof(IWordsReader),
-                       (pi, ctx) => ctx.Resolve<GeneralWordsReader>()))
-                   .AsSelf();
+                .WithParameter(new ResolvedParameter(
+                    (pi, ctx) => pi.ParameterType == typeof(IWordsReader),
+                    (pi, ctx) => ctx.Resolve<GeneralWordsReader>()))
+                .AsSelf();
 
             builder.RegisterType<SimpleTagCloudVisualizer>().As<ITagCloudVisualizer>();
             builder.RegisterSettings<GuiVisualizingSettings>().As<IVisualizingSettings>();

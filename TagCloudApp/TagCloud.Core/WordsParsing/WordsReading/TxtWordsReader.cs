@@ -17,6 +17,7 @@ namespace TagCloud.Core.WordsParsing.WordsReading
 
         private IEnumerable<string> ReadUnsafe(string path)
         {
+            var res = new List<string>();
             using (var r = new StreamReader(path))
             {
                 var curWord = string.Empty;
@@ -29,13 +30,17 @@ namespace TagCloud.Core.WordsParsing.WordsReading
                         curWord = curWord + c;
                         continue;
                     }
+
                     if (curWord.Trim() == string.Empty) continue;
-                    yield return curWord;
+                    res.Add(curWord);
                     curWord = string.Empty;
                 }
+
                 if (curWord != string.Empty)
-                    yield return curWord;
+                    res.Add(curWord);
             }
+
+            return res;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
     public interface IWordsProcessor
     {
         Result<IEnumerable<TagStat>> Process(IEnumerable<string> words,
-                                             HashSet<string> boringWords = null,
-                                             int? maxUniqueWordsCount = null);
+            HashSet<string> boringWords = null,
+            int? maxUniqueWordsCount = null);
     }
 }

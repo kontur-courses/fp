@@ -1,9 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using TagCloud.Core.Layouters;
 using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Tests.Extensions;
@@ -12,8 +11,8 @@ namespace TagCloud.Tests.Layouters
 {
     public class CircularCloudLayouter_Should
     {
-        private List<RectangleF> resRectangles;
         private CircularCloudLayouter layouter;
+        private List<RectangleF> resRectangles;
 
         [SetUp]
         public void SetUp()
@@ -64,11 +63,11 @@ namespace TagCloud.Tests.Layouters
             layouter.RefreshWith(new PointF(1, -1));
             var rectangleSize = new Size(10, 10);
 
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
                 resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
-            for (int i = 0; i < rectanglesCount; i++)
-            for (int j = i + 1; j < rectanglesCount; j++)
+            for (var i = 0; i < rectanglesCount; i++)
+            for (var j = i + 1; j < rectanglesCount; j++)
                 resRectangles[i].IntersectsWith(resRectangles[j]).Should().BeFalse();
         }
 
@@ -79,11 +78,11 @@ namespace TagCloud.Tests.Layouters
             layouter.RefreshWith(new PointF(1, 1));
             var rectangleSize = new Size(10, 10);
 
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
                 resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
-            for (int i = 0; i < rectanglesCount; i++)
-            for (int j = i + 1; j < rectanglesCount; j++)
+            for (var i = 0; i < rectanglesCount; i++)
+            for (var j = i + 1; j < rectanglesCount; j++)
                 resRectangles[i].Should().NotBe(resRectangles[j]);
         }
 
@@ -96,21 +95,22 @@ namespace TagCloud.Tests.Layouters
             layouter.RefreshWith(new PointF());
             var rectangleSize = new Size(3, 4);
 
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
                 resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
             foreach (var rectangle in resRectangles)
                 rectangle.Location.GetDistanceTo(center).Should().BeLessThan(radius);
         }
 
-        [Test, Timeout(500)]
+        [Test]
+        [Timeout(500)]
         public void Put1000RectanglesIn500Milliseconds()
         {
             const int rectanglesCount = 1000;
             layouter.RefreshWith(new PointF(1, -1));
             var rectangleSize = new Size(10, 10);
 
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
                 layouter.PutNextRectangle(rectangleSize);
         }
     }

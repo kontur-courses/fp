@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagCloud.Core.Util;
 
 namespace TagCloud.Core.Settings.Interfaces
 {
@@ -6,11 +7,10 @@ namespace TagCloud.Core.Settings.Interfaces
     {
         int Width { get; set; }
         int Height { get; set; }
-        string FontName { get; set; }
         float MinFontSize { get; set; }
         float MaxFontSize { get; set; }
 
         PointF CenterPoint { get; }
-        Font DefaultFont { get; }
+        Result<Font> DefaultFontResult { get; }
     }
 }

@@ -10,9 +10,9 @@ namespace TagCloud.Core.Visualizers
 {
     public class SimpleTagCloudVisualizer : ITagCloudVisualizer
     {
-        private readonly IVisualizingSettings settings;
         private readonly ICloudLayouter layouter;
         private readonly IPainter painter;
+        private readonly IVisualizingSettings settings;
 
         private Bitmap bitmap;
         private Graphics graphics;
@@ -86,11 +86,18 @@ namespace TagCloud.Core.Visualizers
         private Result<Tag> CreateTagFrom(TagStat tagStat, double fontSizeMultiplier, double averageWordsCount)
         {
             var fontSizeDelta = (tagStat.RepeatsCount - averageWordsCount) * fontSizeMultiplier;
-            var font = settings.DefaultFont.WithModifiedFontSizeOf((float)fontSizeDelta);
-            var stringSize = graphics.MeasureString(tagStat.Word, font);
+            Font resFont;
+            if (settings.DefaultFontResult.IsSuccess)
+                resFont = settings.DefaultFontResult.Value.WithModifiedFontSizeOf((float) fontSizeDelta);
+            else
+                return Result.Fail<Tag>(settings.DefaultFontResult.Error);
 
-            return layouter.PutNextRectangle(stringSize)
-                .Then(tagPlace => new Tag(tagStat, font, tagPlace));
+            return Result
+                .Of(() => graphics.MeasureString(tagStat.Word, resFont))
+                .Then(stringSize => layouter.PutNextRectangle(stringSize))
+                .Then(tagPlace => new RectangleF(new PointF(0, 0), bitmap.Size).Contains(tagPlace)
+                    ? new Tag(tagStat, resFont, tagPlace)
+                    : Result.Fail<Tag>($"Can't visualize all tags inside bitmap of size {bitmap.Size}"));
         }
     }
 }

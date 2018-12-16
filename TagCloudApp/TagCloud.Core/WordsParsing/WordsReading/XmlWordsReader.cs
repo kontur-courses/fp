@@ -8,7 +8,6 @@ namespace TagCloud.Core.WordsParsing.WordsReading
 {
     public class XmlWordsReader : IWordsReader
     {
-        public Regex AllowedFileExtension { get; }
         private readonly XmlSerializer serializer;
 
         public XmlWordsReader()
@@ -16,6 +15,8 @@ namespace TagCloud.Core.WordsParsing.WordsReading
             AllowedFileExtension = new Regex(@"\.xml$", RegexOptions.IgnoreCase);
             serializer = new XmlSerializer(typeof(string[]));
         }
+
+        public Regex AllowedFileExtension { get; }
 
         public Result<IEnumerable<string>> ReadFrom(string path)
         {
@@ -26,7 +27,7 @@ namespace TagCloud.Core.WordsParsing.WordsReading
         {
             using (var r = new StreamReader(path))
             {
-                return (string[])serializer.Deserialize(r);
+                return (string[]) serializer.Deserialize(r);
             }
         }
     }

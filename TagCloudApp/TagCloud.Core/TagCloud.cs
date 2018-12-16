@@ -9,9 +9,9 @@ namespace TagCloud.Core
 {
     public class TagCloud
     {
-        private readonly WordsParser wordsParser;
-        private readonly ITagCloudVisualizer visualizer;
         private readonly ITagCloudSettings settings;
+        private readonly ITagCloudVisualizer visualizer;
+        private readonly WordsParser wordsParser;
 
         public TagCloud(WordsParser wordsParser, ITagCloudVisualizer visualizer, ITagCloudSettings settings)
         {
@@ -32,11 +32,10 @@ namespace TagCloud.Core
                 .Then(tagStats => visualizer.Render(tagStats));
         }
 
-        public void Save(Image image)
+        public Result<None> Save(Image image)
         {
-            ImageFormatResolver.TryResolveFromFileName(settings.PathForResultImage)
-                .Then(imageFormat => image.Save(settings.PathForResultImage, imageFormat))
-                .OnFail(err => image.Save(settings.PathForResultImage, ImageFormat.Png));
+            return ImageFormatResolver.ResolveFromFileName(settings.PathForResultImage)
+                .Then(imageFormat => image.Save(settings.PathForResultImage, imageFormat));
         }
     }
 }

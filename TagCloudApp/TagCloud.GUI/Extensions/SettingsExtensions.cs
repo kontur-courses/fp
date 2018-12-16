@@ -19,20 +19,18 @@ namespace TagCloud.GUI.Extensions
 
         private static ToolStripMenuItem CreateTopLevelMenuItem(string name, ICollection<ISettings> items)
         {
-            if (items.Count == 1 && name == items.First().GetSettingsName())
-            {
-                return items.First().ToMenuItem();
-            }
+            if (items.Count == 1 && name == items.First().GetSettingsName()) return items.First().ToMenuItem();
             var menuItems = items.Select(a => a.ToMenuItem()).ToArray();
             return new ToolStripMenuItem(name, null, menuItems);
         }
 
         public static ToolStripMenuItem ToMenuItem(this ISettings settings)
         {
-            return new ToolStripMenuItem(settings.GetSettingsName(), null, (sender, args) => { SettingsForm.For(settings).ShowDialog(); })
-                {
-                    Tag = settings
-                };
+            return new ToolStripMenuItem(settings.GetSettingsName(), null,
+                (sender, args) => { SettingsForm.For(settings).ShowDialog(); })
+            {
+                Tag = settings
+            };
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace TagCloud.Core.Util
 {
@@ -126,7 +125,7 @@ namespace TagCloud.Core.Util
             this Result<TInput> input,
             string errorMessage)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            return input.ReplaceError(err => errorMessage + err);
         }
     }
 }

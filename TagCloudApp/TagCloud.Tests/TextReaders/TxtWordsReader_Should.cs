@@ -17,17 +17,17 @@ namespace TagCloud.Tests.TextReaders
         }
 
         [Test]
-        public void ReadOneWord_WhenFileHasOnlyOneWord()
+        public void DivideWords_ByAnyNonLetterOrNonDigitCharacter()
         {
-            var expectedRes = new List<string> {"word"};
-            var res = reader.ReadFrom(baseDir + "one_word.txt").GetValueOrThrow();
+            var expectedRes = "qwertyuiopasdfghjklzxcvbnm1234567890".Select(c => c.ToString()).ToList();
+            var res = reader.ReadFrom(baseDir + "words_with_different_delimiters.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
         [Test]
         public void ReadFewWords_WhenFileHasFewWords()
         {
-            var expectedRes = new List<string> { "Hello", "world", "Heh" };
+            var expectedRes = new List<string> {"Hello", "world", "Heh"};
             var res = reader.ReadFrom(baseDir + "few_words.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
@@ -35,16 +35,16 @@ namespace TagCloud.Tests.TextReaders
         [Test]
         public void ReadLastWord_WhenNoEscapeCharInTheEnd()
         {
-            var expectedRes = new List<string> { "word" };
+            var expectedRes = new List<string> {"word"};
             var res = reader.ReadFrom(baseDir + "one_word_without_escape_char_in_the_end.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
         [Test]
-        public void DivideWords_ByAnyNonLetterOrNonDigitCharacter()
+        public void ReadOneWord_WhenFileHasOnlyOneWord()
         {
-            var expectedRes = "qwertyuiopasdfghjklzxcvbnm1234567890".Select(c => c.ToString()).ToList();
-            var res = reader.ReadFrom(baseDir + "words_with_different_delimiters.txt").GetValueOrThrow();
+            var expectedRes = new List<string> {"word"};
+            var res = reader.ReadFrom(baseDir + "one_word.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
     }

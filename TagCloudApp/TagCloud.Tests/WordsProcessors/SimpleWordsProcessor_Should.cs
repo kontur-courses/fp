@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -21,10 +20,10 @@ namespace TagCloud.Tests.WordsProcessors
         }
 
         [Test]
-        public void MergeTwoTheSameUnhandledWordsIntoOneWord()
+        public void BeCaseSensitiveByDefault()
         {
-            var unhandledWords = new List<string> {"w1", "w1"};
-            var expectedWords = new List<TagStat> {new TagStat("w1", 2)};
+            var unhandledWords = new List<string> {"word", "wOrD"};
+            var expectedWords = unhandledWords.Select(unhandledWord => new TagStat(unhandledWord, 1));
 
             var res = wordsProcessor.Process(unhandledWords).GetValueOrThrow();
 
@@ -32,10 +31,23 @@ namespace TagCloud.Tests.WordsProcessors
         }
 
         [Test]
-        public void BeCaseSensitiveByDefault()
+        public void ExcludeBoringWords_WhenTheyGiven()
         {
-            var unhandledWords = new List<string> { "word", "wOrD" };
-            var expectedWords = unhandledWords.Select(unhandledWord => new TagStat(unhandledWord, 1));
+            const string boringWord = "boring_word";
+            const string interestingWord = "interesting_word";
+            var unhandledWords = new List<string> {interestingWord, boringWord};
+            var expectedWords = new List<TagStat> {new TagStat(interestingWord, 1)};
+
+            var res = wordsProcessor.Process(unhandledWords, new HashSet<string> {boringWord}).GetValueOrThrow();
+
+            res.Should().BeEquivalentTo(expectedWords);
+        }
+
+        [Test]
+        public void MergeTwoTheSameUnhandledWordsIntoOneWord()
+        {
+            var unhandledWords = new List<string> {"w1", "w1"};
+            var expectedWords = new List<TagStat> {new TagStat("w1", 2)};
 
             var res = wordsProcessor.Process(unhandledWords).GetValueOrThrow();
 
@@ -54,19 +66,6 @@ namespace TagCloud.Tests.WordsProcessors
         public void ReturnError_WhenGivenNull()
         {
             wordsProcessor.Process(null).IsSuccess.Should().BeFalse();
-        }
-
-        [Test]
-        public void ExcludeBoringWords_WhenTheyGiven()
-        {
-            const string boringWord = "boring_word";
-            const string interestingWord = "interesting_word";
-            var unhandledWords = new List<string> { interestingWord, boringWord };
-            var expectedWords = new List<TagStat> { new TagStat(interestingWord, 1) };
-
-            var res = wordsProcessor.Process(unhandledWords, new HashSet<string>{boringWord}).GetValueOrThrow();
-
-            res.Should().BeEquivalentTo(expectedWords);
         }
     }
 }

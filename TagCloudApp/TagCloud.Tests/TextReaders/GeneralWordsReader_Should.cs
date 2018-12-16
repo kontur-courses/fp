@@ -1,7 +1,6 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using FluentAssertions;
+﻿using System.Text.RegularExpressions;
 using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.Core.WordsParsing.WordsReading;
 
@@ -28,6 +27,12 @@ namespace TagCloud.Tests.TextReaders
         }
 
         [Test]
+        public void ReturnError_WhenCantFindReaderForParticularFileExtension()
+        {
+            generalWordsReader.ReadFrom("file.with_wrong_format").IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
         public void UseDifferentInnerReaders_OnFilesWithDifferentFormats()
         {
             const string pathForExt1 = "my_fake_words.ext1";
@@ -38,12 +43,6 @@ namespace TagCloud.Tests.TextReaders
 
             A.CallTo(() => ext1WordsReader.ReadFrom(pathForExt1)).MustHaveHappenedOnceExactly();
             A.CallTo(() => ext2WordsReader.ReadFrom(pathForExt2)).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void ReturnError_WhenCantFindReaderForParticularFileExtension()
-        {
-            generalWordsReader.ReadFrom("file.with_wrong_format").IsSuccess.Should().BeFalse();
         }
     }
 }

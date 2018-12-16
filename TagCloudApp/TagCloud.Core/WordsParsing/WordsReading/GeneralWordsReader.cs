@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Core.Util;
@@ -8,8 +7,6 @@ namespace TagCloud.Core.WordsParsing.WordsReading
 {
     public class GeneralWordsReader : IWordsReader
     {
-        public Regex AllowedFileExtension { get; }
-
         private readonly IWordsReader[] wordsReaders;
 
         public GeneralWordsReader(IWordsReader[] wordsReaders)
@@ -17,6 +14,8 @@ namespace TagCloud.Core.WordsParsing.WordsReading
             this.wordsReaders = wordsReaders;
             AllowedFileExtension = new Regex(@".*$");
         }
+
+        public Regex AllowedFileExtension { get; }
 
         public Result<IEnumerable<string>> ReadFrom(string path)
         {

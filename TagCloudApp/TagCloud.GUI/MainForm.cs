@@ -1,8 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using TagCloud.Core.Settings;
-using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Core.Settings.Interfaces;
 using TagCloud.Core.Util;
 using TagCloud.GUI.Extensions;
@@ -12,9 +9,9 @@ namespace TagCloud.GUI
 {
     public class MainForm : Form
     {
+        private readonly PictureBox pictureBox;
         private readonly Core.TagCloud tagCloud;
         private readonly ITagCloudSettings tagCloudSettings;
-        private readonly PictureBox pictureBox;
 
         public MainForm(ISettings[] settings, ITagCloudSettings tagCloudSettings, Core.TagCloud tagCloud)
         {
@@ -26,13 +23,13 @@ namespace TagCloud.GUI
             var mainMenu = BuildMainMenu(settings);
             Controls.Add(mainMenu);
 
-            pictureBox = new PictureBox { Dock = DockStyle.Fill };
+            pictureBox = new PictureBox {Dock = DockStyle.Fill};
             Controls.Add(pictureBox);
         }
 
         private MenuStrip BuildMainMenu(ISettings[] settings)
         {
-            var mainMenu = new MenuStrip { Dock = DockStyle.Top };
+            var mainMenu = new MenuStrip {Dock = DockStyle.Top};
 
             var fileItem = new ToolStripMenuItem("File");
             fileItem.DropDownItems.Add(new ToolStripMenuItem(
@@ -54,14 +51,14 @@ namespace TagCloud.GUI
 
         private void ChooseFileWithTags()
         {
-            var dialog = new OpenFileDialog { CheckPathExists = true };
+            var dialog = new OpenFileDialog {CheckPathExists = true};
             if (dialog.ShowDialog() == DialogResult.OK)
                 tagCloudSettings.PathToWords = dialog.FileName;
         }
 
         private void ChooseFileWithBoringWords()
         {
-            var dialog = new OpenFileDialog { CheckPathExists = true };
+            var dialog = new OpenFileDialog {CheckPathExists = true};
             if (dialog.ShowDialog() == DialogResult.OK)
                 tagCloudSettings.PathToBoringWords = dialog.FileName;
         }
@@ -73,13 +70,12 @@ namespace TagCloud.GUI
                 ShowErrorMessage(@"You should render tag cloud before saving it");
                 return;
             }
-            if (tagCloudSettings.PathForResultImage == null)
-            {
-                var dialog = new SaveFileDialog {CheckPathExists = true};
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    tagCloudSettings.PathForResultImage = dialog.FileName;
-            }
-            tagCloud.Save(pictureBox.Image);
+
+            if (string.IsNullOrEmpty(tagCloudSettings.PathForResultImage))
+                SaveAs();
+            else
+                tagCloud.Save(pictureBox.Image)
+                    .OnFail(ShowErrorMessage);
         }
 
         private void SaveAs()
@@ -89,10 +85,13 @@ namespace TagCloud.GUI
                 ShowErrorMessage(@"You should render tag cloud before saving it");
                 return;
             }
-            var dialog = new SaveFileDialog { CheckPathExists = true };
+
+            var dialog = new SaveFileDialog {CheckPathExists = true};
             if (dialog.ShowDialog() != DialogResult.OK) return;
+
             tagCloudSettings.PathForResultImage = dialog.FileName;
-            tagCloud.Save(pictureBox.Image);
+            tagCloud.Save(pictureBox.Image)
+                .OnFail(ShowErrorMessage);
         }
 
         private void Render()

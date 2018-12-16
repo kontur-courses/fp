@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.Core.Settings.Interfaces;
@@ -21,8 +19,11 @@ namespace TagCloud.Core.Painters
         {
             if (tags == null)
                 return Result.Fail<None>("Tags can't be null");
+            if (!settings.TagBrushResult.IsSuccess)
+                return Result.Fail<None>($"Incorrect brush given: {settings.TagBrushResult.Error}");
+
             var tagsList = tags.ToList();
-            tagsList.ApplyForeach(tag => tag.Brush = settings.TagBrush);
+            tagsList.ApplyForeach(tag => tag.Brush = settings.TagBrushResult.Value);
             return Result.Ok();
         }
 
@@ -30,8 +31,10 @@ namespace TagCloud.Core.Painters
         {
             if (graphics == null)
                 return Result.Fail<None>("Graphics can't be null");
+            if (!settings.BackgroundColorResult.IsSuccess)
+                return Result.Fail<None>($"Incorrect background color given: {settings.BackgroundColorResult.Error}");
 
-            graphics.Clear(settings.BackgroundColor);
+            graphics.Clear(settings.BackgroundColorResult.Value);
             return Result.Ok();
         }
     }

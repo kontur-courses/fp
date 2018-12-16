@@ -9,10 +9,10 @@ namespace TagCloud.Core.Layouters
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
-        private PointF center;
+        private readonly ILayoutingSettings settings;
         private readonly List<RectangleF> usedRectangles;
         private float angle;
-        private readonly ILayoutingSettings settings;
+        private PointF center;
 
         public CircularCloudLayouter(ILayoutingSettings settings)
         {
@@ -49,8 +49,8 @@ namespace TagCloud.Core.Layouters
         private PointF GetNextPoint()
         {
             angle++;
-            var dx = (float)(Math.Cos(angle) * angle * settings.SpiralStepMultiplier);
-            var dy = (float)(Math.Sin(angle) * angle * settings.SpiralStepMultiplier);
+            var dx = (float) (Math.Cos(angle) * angle * settings.SpiralStepMultiplier);
+            var dy = (float) (Math.Sin(angle) * angle * settings.SpiralStepMultiplier);
             return new PointF(center.X + dx, center.Y + dy);
         }
     }

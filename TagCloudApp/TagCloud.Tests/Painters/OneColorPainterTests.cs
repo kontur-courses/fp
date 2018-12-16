@@ -1,8 +1,7 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
+using FluentAssertions;
+using NUnit.Framework;
 using TagCloud.Core.Painters;
 using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Core.Util;
@@ -23,12 +22,6 @@ namespace TagCloud.Tests.Painters
         }
 
         [Test]
-        public void PaintTags_ShouldReturnError_WhenNullIsGiven()
-        {
-            painter.PaintTags(null).IsSuccess.Should().BeFalse();
-        }
-
-        [Test]
         public void PaintTags_ShouldPaintAllGivenTags()
         {
             var tags = new[] {"a", "b", "c"}
@@ -38,7 +31,13 @@ namespace TagCloud.Tests.Painters
 
             painter.PaintTags(tags);
 
-            tags.All(tag => tag.Brush.Equals(settings.TagBrush)).Should().BeTrue();
+            tags.All(tag => tag.Brush.Equals(settings.TagBrushResult.GetValueOrThrow())).Should().BeTrue();
+        }
+
+        [Test]
+        public void PaintTags_ShouldReturnError_WhenNullIsGiven()
+        {
+            painter.PaintTags(null).IsSuccess.Should().BeFalse();
         }
     }
 }

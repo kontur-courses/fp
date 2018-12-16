@@ -15,9 +15,9 @@ using TagCloud.Core.WordsParsing.WordsReading;
 
 namespace TagCloud.CUI
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
             InjectDependencies(builder);
@@ -25,10 +25,15 @@ namespace TagCloud.CUI
             if (args.Length == 0)
                 args = new[]
                 {
-                    @"-p", @"test_words.txt",
-                    @"-i", @"result.bmp",
-                    @"--backgroundcolor", "blue",
-                    @"--maxtagscount", @"10",
+                    "-p", "test_words.txt",
+
+                    // Each line below leads to an error:
+                    "-i", "result_image.wrong_format",
+                    //"-b", "boring_words.wrong_format",
+                    //"-b", "nonexistence_boring_words.txt",
+                    //"-f", "wrong_font",
+                    //"--backgroundcolor", "asdf",
+                    //"--tagbrush", "dfasdf",
                 };
 
             Parser.Default
@@ -49,7 +54,7 @@ namespace TagCloud.CUI
                 .OnFail(Console.WriteLine);
         }
 
-        static void InjectDependencies(ContainerBuilder builder)
+        private static void InjectDependencies(ContainerBuilder builder)
         {
             builder.RegisterType<Core.TagCloud>().AsSelf();
 
