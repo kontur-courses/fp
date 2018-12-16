@@ -42,7 +42,7 @@ namespace TagCloud.Tests.Layouters
             var centerPoint = new PointF(0, 0);
             layouter.RefreshWith(centerPoint);
 
-            var firstRectangle = layouter.PutNextRectangle(new Size(10, 10));
+            var firstRectangle = layouter.PutNextRectangle(new Size(10, 10)).GetValueOrThrow();
 
             firstRectangle.Location.Should().Be(centerPoint);
         }
@@ -54,8 +54,7 @@ namespace TagCloud.Tests.Layouters
         public void ThrowArgumentException_OnPuttingInvalidRectangle(int width, int height)
         {
             layouter.RefreshWith(new PointF(0, 0));
-            Action putIncorrectSizeAction = () => layouter.PutNextRectangle(new Size(width, height));
-            putIncorrectSizeAction.Should().Throw<ArgumentException>();
+            layouter.PutNextRectangle(new Size(width, height)).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -66,7 +65,7 @@ namespace TagCloud.Tests.Layouters
             var rectangleSize = new Size(10, 10);
 
             for (int i = 0; i < rectanglesCount; i++)
-                resRectangles.Add(layouter.PutNextRectangle(rectangleSize));
+                resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
             for (int i = 0; i < rectanglesCount; i++)
             for (int j = i + 1; j < rectanglesCount; j++)
@@ -81,7 +80,7 @@ namespace TagCloud.Tests.Layouters
             var rectangleSize = new Size(10, 10);
 
             for (int i = 0; i < rectanglesCount; i++)
-                resRectangles.Add(layouter.PutNextRectangle(rectangleSize));
+                resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
             for (int i = 0; i < rectanglesCount; i++)
             for (int j = i + 1; j < rectanglesCount; j++)
@@ -98,7 +97,7 @@ namespace TagCloud.Tests.Layouters
             var rectangleSize = new Size(3, 4);
 
             for (int i = 0; i < rectanglesCount; i++)
-                resRectangles.Add(layouter.PutNextRectangle(rectangleSize));
+                resRectangles.Add(layouter.PutNextRectangle(rectangleSize).GetValueOrThrow());
 
             foreach (var rectangle in resRectangles)
                 rectangle.Location.GetDistanceTo(center).Should().BeLessThan(radius);

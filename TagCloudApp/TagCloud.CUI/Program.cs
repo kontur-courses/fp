@@ -1,12 +1,14 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Autofac.Core;
 using CommandLine;
 using TagCloud.Core.Layouters;
 using TagCloud.Core.Painters;
 using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Core.Settings.Interfaces;
-using TagCloud.Core.TextParsing;
+using TagCloud.Core.Util;
 using TagCloud.Core.Visualizers;
+using TagCloud.Core.WordsParsing;
 using TagCloud.Core.WordsParsing.WordsProcessing;
 using TagCloud.Core.WordsParsing.WordsProcessing.WordsProcessingUtilities;
 using TagCloud.Core.WordsParsing.WordsReading;
@@ -25,23 +27,26 @@ namespace TagCloud.CUI
                 {
                     @"-p", @"test_words.txt",
                     @"-i", @"result.bmp",
-                    @"maxtagscount", @"10"
+                    @"--backgroundcolor", "blue",
+                    @"--maxtagscount", @"10",
                 };
 
             Parser.Default
                 .ParseArguments<Options>(args)
-                .WithParsed(options => builder.RegisterInstance(options)
-                    .As<IPaintingSettings>()
-                    .As<IVisualizingSettings>()
-                    .As<ITagCloudSettings>()
-                    .As<ITextParsingSettings>()
-                    .As<ILayoutingSettings>()
-                );
+                .WithParsed(options =>
+                {
+                    builder.RegisterInstance(options)
+                        .As<IPaintingSettings>()
+                        .As<IVisualizingSettings>()
+                        .As<ITagCloudSettings>()
+                        .As<ITextParsingSettings>()
+                        .As<ILayoutingSettings>();
+                });
 
-
-            var container = builder.Build();
-            var tagCloud = container.Resolve<Core.TagCloud>();
-            tagCloud.MakeTagCloudAndSave();
+            Result.Of(() => builder.Build())
+                .Then(container => container.Resolve<Core.TagCloud>())
+                .Then(tagCloud => tagCloud.MakeTagCloudAndSave())
+                .OnFail(Console.WriteLine);
         }
 
         static void InjectDependencies(ContainerBuilder builder)

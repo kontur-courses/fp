@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using TagCloud.Core.Settings;
 using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Core.Settings.Interfaces;
+using TagCloud.Core.Util;
 using TagCloud.GUI.Extensions;
 using TagCloud.GUI.Settings;
 
@@ -69,8 +70,7 @@ namespace TagCloud.GUI
         {
             if (pictureBox.Image == null)
             {
-                MessageBox.Show(@"You should render tag cloud before saving it", @"Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessage(@"You should render tag cloud before saving it");
                 return;
             }
             if (tagCloudSettings.PathForResultImage == null)
@@ -86,8 +86,7 @@ namespace TagCloud.GUI
         {
             if (pictureBox.Image == null)
             {
-                MessageBox.Show(@"You should render tag cloud before saving it", @"Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessage(@"You should render tag cloud before saving it");
                 return;
             }
             var dialog = new SaveFileDialog { CheckPathExists = true };
@@ -100,15 +99,24 @@ namespace TagCloud.GUI
         {
             if (tagCloudSettings.PathToWords == null)
             {
-                MessageBox.Show(@"You should choose file with tags before rendering", @"Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessage("You should choose file with tags before rendering");
                 return;
             }
-            var bitmap = tagCloud.MakeTagCloud();
-            pictureBox.Image = bitmap;
-            Size = bitmap.Size;
-            pictureBox.Size = bitmap.Size;
-            pictureBox.Refresh();
+
+            tagCloud.MakeTagCloud()
+                .Then(bitmap =>
+                {
+                    pictureBox.Image = bitmap;
+                    Size = bitmap.Size;
+                    pictureBox.Size = bitmap.Size;
+                    pictureBox.Refresh();
+                })
+                .OnFail(ShowErrorMessage);
+        }
+
+        private void ShowErrorMessage(string errorMessage)
+        {
+            MessageBox.Show(errorMessage, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

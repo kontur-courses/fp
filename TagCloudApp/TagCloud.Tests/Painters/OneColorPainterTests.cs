@@ -23,10 +23,9 @@ namespace TagCloud.Tests.Painters
         }
 
         [Test]
-        public void PaintTags_ShouldThrowArgumentNullException_WhenNullIsGiven()
+        public void PaintTags_ShouldReturnError_WhenNullIsGiven()
         {
-            Action tagsPaintingAction = () => painter.PaintTags(null);
-            tagsPaintingAction.Should().Throw<ArgumentNullException>();
+            painter.PaintTags(null).IsSuccess.Should().BeFalse();
         }
 
         [Test]

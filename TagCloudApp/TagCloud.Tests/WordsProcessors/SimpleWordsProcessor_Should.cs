@@ -26,7 +26,7 @@ namespace TagCloud.Tests.WordsProcessors
             var unhandledWords = new List<string> {"w1", "w1"};
             var expectedWords = new List<TagStat> {new TagStat("w1", 2)};
 
-            var res = wordsProcessor.Process(unhandledWords);
+            var res = wordsProcessor.Process(unhandledWords).GetValueOrThrow();
 
             res.Should().BeEquivalentTo(expectedWords);
         }
@@ -37,7 +37,7 @@ namespace TagCloud.Tests.WordsProcessors
             var unhandledWords = new List<string> { "word", "wOrD" };
             var expectedWords = unhandledWords.Select(unhandledWord => new TagStat(unhandledWord, 1));
 
-            var res = wordsProcessor.Process(unhandledWords);
+            var res = wordsProcessor.Process(unhandledWords).GetValueOrThrow();
 
             res.Should().BeEquivalentTo(expectedWords);
         }
@@ -45,16 +45,15 @@ namespace TagCloud.Tests.WordsProcessors
         [Test]
         public void ReturnEmptyList_WhenEmptyListOfUnhandledWordsGiven()
         {
-            var res = wordsProcessor.Process(new List<string>());
+            var res = wordsProcessor.Process(new List<string>()).GetValueOrThrow();
             res.Should().NotBeNull();
             res.Count().Should().Be(0);
         }
 
         [Test]
-        public void ThrowArgumentException_WhenGivenNull()
+        public void ReturnError_WhenGivenNull()
         {
-            Action action = () => wordsProcessor.Process(null);
-            action.Should().Throw<ArgumentException>();
+            wordsProcessor.Process(null).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace TagCloud.Tests.WordsProcessors
             var unhandledWords = new List<string> { interestingWord, boringWord };
             var expectedWords = new List<TagStat> { new TagStat(interestingWord, 1) };
 
-            var res = wordsProcessor.Process(unhandledWords, new HashSet<string>{boringWord});
+            var res = wordsProcessor.Process(unhandledWords, new HashSet<string>{boringWord}).GetValueOrThrow();
 
             res.Should().BeEquivalentTo(expectedWords);
         }

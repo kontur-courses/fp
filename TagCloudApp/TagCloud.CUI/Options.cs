@@ -13,43 +13,14 @@ namespace TagCloud.CUI
 
 
         #region PaintingSettings
-        private Color tagColor;
-        private string tagBrushName;
-        private string backgroundColorName;
-
-        public Color BackgroundColor { get; set; }
-        public Brush TagBrush { get; private set; }
-        public Color TagColor
-        {
-            get => tagColor;
-            set
-            {
-                tagColor = value;
-                TagBrush = new SolidBrush(value);
-            }
-        }
-
         [Option("backgroundcolor", Default = "white")]
-        public string BackgroundColorName
-        {
-            get => backgroundColorName;
-            set
-            {
-                BackgroundColor = Color.FromName(value);
-                backgroundColorName = value;
-            }
-        }
+        public string BackgroundColorName { get; set; }
 
         [Option("tagbrush", Default = "black")]
-        public string TagBrushName
-        {
-            get => tagBrushName;
-            set
-            {
-                TagColor = Color.FromName(value);
-                tagBrushName = value;
-            }
-        }
+        public string TagBrushName { get; set; }
+
+        public Color BackgroundColor => Color.FromName(BackgroundColorName);
+        public Brush TagBrush => new SolidBrush(Color.FromName(TagBrushName));
         #endregion
 
 

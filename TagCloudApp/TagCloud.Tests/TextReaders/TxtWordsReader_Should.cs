@@ -20,7 +20,7 @@ namespace TagCloud.Tests.TextReaders
         public void ReadOneWord_WhenFileHasOnlyOneWord()
         {
             var expectedRes = new List<string> {"word"};
-            var res = reader.ReadFrom(baseDir + "one_word.txt");
+            var res = reader.ReadFrom(baseDir + "one_word.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
@@ -28,7 +28,7 @@ namespace TagCloud.Tests.TextReaders
         public void ReadFewWords_WhenFileHasFewWords()
         {
             var expectedRes = new List<string> { "Hello", "world", "Heh" };
-            var res = reader.ReadFrom(baseDir + "few_words.txt");
+            var res = reader.ReadFrom(baseDir + "few_words.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
@@ -36,7 +36,7 @@ namespace TagCloud.Tests.TextReaders
         public void ReadLastWord_WhenNoEscapeCharInTheEnd()
         {
             var expectedRes = new List<string> { "word" };
-            var res = reader.ReadFrom(baseDir + "one_word_without_escape_char_in_the_end.txt");
+            var res = reader.ReadFrom(baseDir + "one_word_without_escape_char_in_the_end.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
 
@@ -44,7 +44,7 @@ namespace TagCloud.Tests.TextReaders
         public void DivideWords_ByAnyNonLetterOrNonDigitCharacter()
         {
             var expectedRes = "qwertyuiopasdfghjklzxcvbnm1234567890".Select(c => c.ToString()).ToList();
-            var res = reader.ReadFrom(baseDir + "words_with_different_delimiters.txt");
+            var res = reader.ReadFrom(baseDir + "words_with_different_delimiters.txt").GetValueOrThrow();
             res.Should().BeEquivalentTo(expectedRes);
         }
     }

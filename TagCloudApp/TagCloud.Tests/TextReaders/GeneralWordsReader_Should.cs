@@ -41,10 +41,9 @@ namespace TagCloud.Tests.TextReaders
         }
 
         [Test]
-        public void ThrowArgumentException_WhenCantFindReaderForParticularFileExtension()
+        public void ReturnError_WhenCantFindReaderForParticularFileExtension()
         {
-            Action readingAction = () => generalWordsReader.ReadFrom("file.with_wrong_format");
-            readingAction.Should().Throw<ArgumentException>();
+            generalWordsReader.ReadFrom("file.with_wrong_format").IsSuccess.Should().BeFalse();
         }
     }
 }
