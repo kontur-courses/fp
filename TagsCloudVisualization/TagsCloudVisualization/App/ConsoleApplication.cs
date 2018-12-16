@@ -78,6 +78,8 @@ namespace TagsCloudVisualization
 
         private Result<CloudArguments> SetImageSize(CloudArguments arguments)
         {
+            if (arguments.Width <= 0 || arguments.Height <= 0)
+                return Result.Fail<CloudArguments>("Image size must be positive?");
             imageSize = new Size(arguments.Width, arguments.Height);
             return Result.Ok(arguments);
         }

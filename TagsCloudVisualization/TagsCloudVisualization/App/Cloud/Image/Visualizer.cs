@@ -5,7 +5,7 @@ namespace TagsCloudVisualization
 {
     public class Visualizer : IVisualizer
     {
-        public Image Render(IEnumerable<GraphicWord> words, int width, int height, IWordPalette palette)
+        public Result<Bitmap> Render(IEnumerable<GraphicWord> words, int width, int height, IWordPalette palette)
         {
             palette.ColorWords(words);
             var image = new Bitmap(width, height);
@@ -24,7 +24,7 @@ namespace TagsCloudVisualization
                         word.Rectangle.Y + (word.Rectangle.Height / 2)), stringFormat);
             }
 
-            return image;
+            return Result.Ok(image);
         }
     }
 }

@@ -5,6 +5,6 @@ namespace TagsCloudVisualization
 {
     public interface IVisualizer
     {
-        Image Render(IEnumerable<GraphicWord> words, int width, int height, IWordPalette palette);
+        Result<Bitmap> Render(IEnumerable<GraphicWord> words, int width, int height, IWordPalette palette);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -26,25 +27,38 @@ namespace TagsCloudVisualization
             }
         }
 
-        private List<string> SpellCheck(List<string> words)
+        private Result<List<string>> SpellCheck(List<string> words)
         {
             var checkedWords = new List<string>();
-            using (var hunspell = new Hunspell("ru.aff", "ru.dic"))
+            try
             {
-                foreach (var word in words)
+
+                using (var hunspell = new Hunspell("ru.aff", "ru.dic"))
                 {
-                    var variants = hunspell.Stem(word);
-                    checkedWords.Add(variants.Count == 0 ? word : variants.First());
+                    foreach (var word in words)
+                    {
+                        var variants = hunspell.Stem(word);
+                        checkedWords.Add(variants.Count == 0 ? word : variants.First());
+                    }
                 }
+
+                return Result.Ok(checkedWords);
             }
-            return checkedWords;
+            catch (Exception e)
+            {
+                return Result.Fail<List<string>>(e.Message);
+            }
         }
 
         public Result<List<GraphicWord>> Count(string row)
         {
             var words = Regex.Split(row.ToLower(), @"\W+").ToList();
+
+            var result = SpellCheck(words);
+            if (result.IsSuccess)
+                words = result.Value;
+
             var countedWords = new Dictionary<string, GraphicWord>();
-            words = SpellCheck(words);
             foreach (var word in words)
             {
                 if (!countedWords.ContainsKey(word))
@@ -55,13 +69,18 @@ namespace TagsCloudVisualization
 
             foreach (var dictValue in countedWords.Values)
             {
-                dictValue.Font = new Font(Font.Name, dictValue.Rate + Font.Size);
+                SetFontSize(dictValue);
             }
 
             return Result.Ok(countedWords
                 .Values
                 .Where(w => w.Rate > 1 && !stopWords.Contains(w.Value))
                 .OrderByDescending(w => w.Rate).ToList());
+        }
+
+        private void SetFontSize(GraphicWord word)
+        {
+            word.Font = new Font(Font.Name, word.Rate + Font.Size);
         }
     }
 }
