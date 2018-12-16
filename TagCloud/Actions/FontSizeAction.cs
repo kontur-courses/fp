@@ -6,9 +6,9 @@ namespace TagCloud.Actions
     public class FontSizeAction : IUiAction
     {
         private FontSettings fontSettings;
-        private SettingsChecker watcher;
+        private SettingsLoader watcher;
 
-        public FontSizeAction(FontSettings fontSettings, SettingsChecker watcher)
+        public FontSizeAction(FontSettings fontSettings, SettingsLoader watcher)
         {
             this.fontSettings = fontSettings;
             this.watcher = watcher;

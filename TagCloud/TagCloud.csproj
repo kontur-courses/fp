@@ -36,10 +36,6 @@
       <HintPath>..\packages\Autofac.4.9.0-beta1\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c">
-      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -77,7 +73,7 @@
     <Compile Include="Result.cs" />
     <Compile Include="Settings\FontSettings.cs" />
     <Compile Include="Settings\ImageSettings.cs" />
-    <Compile Include="Settings\SettingsChecker.cs" />
+    <Compile Include="Settings\SettingsLoader.cs" />
     <Compile Include="TagCloudVisualization\Analyzer\IWordAnalyzer.cs" />
     <Compile Include="TagCloudVisualization\Analyzer\Tag.cs" />
     <Compile Include="TagCloudVisualization\Analyzer\WordAnalyzer.cs" />

@@ -44,7 +44,7 @@ namespace TagsCloudVisualization_Tests
         {
             var newRectangle = layout.PutNextRectangle(new Size(300, 300));
 
-            visualizer.ShiftRectangleToCenter(newRectangle).Should().Be(new Rectangle(100, 100, 300, 300));
+            visualizer.ShiftRectangleToCenter(newRectangle).Should().Be(new Rectangle(250, 250, 300, 300));
         }
     }
 }

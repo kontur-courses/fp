@@ -12,18 +12,21 @@ namespace TagCloud.TagCloudVisualization.Layouter
     public class TagCloudLayouter : ITagCloudLayouter
     {
         private readonly FontSettings fontSettings;
-        private readonly ImageSettings imageSettings;
-        private Rectangle AvailableCloudArea => new Rectangle(-imageSettings.Width/2, -imageSettings.Height/2, 
-                                                                            imageSettings.Width, imageSettings.Height);
+        private readonly SettingsLoader settingsLoader;
+        private Rectangle AvailableCloudArea => new Rectangle(-settingsLoader.ImageSettings.Width/2, 
+                                                                -settingsLoader.ImageSettings.Height/2, 
+                                                                settingsLoader.ImageSettings.Width, 
+                                                                settingsLoader.ImageSettings.Height);
         private readonly ICloudLayouter layouter;
         private int maxFrequency;
         private int minFrequency;
 
-        public TagCloudLayouter(FontSettings fontSettings, ImageSettings imageSettings, ICloudLayouter layouter)
+        public TagCloudLayouter(FontSettings fontSettings,
+                    ICloudLayouter layouter, SettingsLoader settingsLoader)
         {
             this.fontSettings = fontSettings;
             this.layouter = layouter;
-            this.imageSettings = imageSettings;
+            this.settingsLoader = settingsLoader;
         }
 
         public Result<IEnumerable<Tag>> GetCloudTags(Dictionary<string, int> weightedWords)

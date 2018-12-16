@@ -29,7 +29,7 @@ namespace TagCloud
                 builder.RegisterType<WordManager>().AsSelf();
                 builder.RegisterType<ApplicationWindow>().AsSelf();
                 builder.RegisterType<TagCloudVisualizer>().AsSelf();
-                builder.RegisterInstance(new SettingsChecker());
+                builder.RegisterInstance(new SettingsLoader());
                 builder.RegisterInstance(new NHunspellSettings
                 {
                     AffFile = "Dictionaries/ru_RU.aff",

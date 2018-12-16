@@ -7,9 +7,9 @@
       "MaxFontSize": 50
     },
     {
-      "Width": 700,
-      "Height": 700,
-      "TextColor": "Red",
-      "BackgroundColor": "DimGray"
+      "Width": 800,
+      "Height": 800,
+      "TextColor": "White",
+      "BackgroundColor": "Black"
     }
 ]

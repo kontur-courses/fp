@@ -7,9 +7,9 @@ namespace TagCloud.Actions
     {
         private readonly ImageBox imageBox;
         private ImageSettings imageSettings;
-        private SettingsChecker watcher;
+        private SettingsLoader watcher;
 
-        public ImageSettingAction(ImageBox imageBox, ImageSettings imageSettings, SettingsChecker watcher)
+        public ImageSettingAction(ImageBox imageBox, ImageSettings imageSettings, SettingsLoader watcher)
         {
             this.imageBox = imageBox;
             this.imageSettings = imageSettings;

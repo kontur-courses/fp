@@ -6,24 +6,26 @@ using Newtonsoft.Json.Linq;
 
 namespace TagCloud.Settings
 {
-    public class SettingsChecker
+    public class SettingsLoader
     {
         public ImageSettings ImageSettings;
         public FontSettings FontSettings;
 
-        public SettingsChecker()
+        public SettingsLoader()
         {
             CreateFileWatcher(Environment.CurrentDirectory);
         }
 
-        public void CreateFileWatcher(string path)
+        private void CreateFileWatcher(string path)
         {
             ReadJson($"{path}\\settings.json");
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = path;
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-                                                            | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            watcher.Filter = "*.json";
+            var watcher = new FileSystemWatcher
+            {
+                Path = path,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                                                        | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                Filter = "*.json"
+            };
 
             watcher.Changed += OnChanged;
             watcher.Created += OnChanged;
@@ -34,8 +36,7 @@ namespace TagCloud.Settings
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            MessageBox.Show("File: " + e.FullPath + " " + e.ChangeType);
-            ReadJson(e.FullPath);
+            Result.OfAction(() => ReadJson(e.FullPath)).RefineError($"Error, trying to load json file {e.FullPath}");
         }
 
         private void ReadJson(string path)
