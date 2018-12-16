@@ -13,18 +13,16 @@ namespace TagCloud.Actions
         private readonly ImageBox imageBox;
         private readonly ITagGenerator tagGenerator;
         private readonly IWordRepository wordsRepository;
-        private readonly SettingsLoader settingsLoader;
         private ImageSettings imageSettings;
 
         public DrawingAction(ImageBox imageBox, IWordRepository wordsRepository,
             ITagGenerator tagGenerator, ImageSettings imageSettings,
-            IExceptionHandler exceptionHandler, SettingsLoader settingsLoader)
+            IExceptionHandler exceptionHandler)
         {
             this.imageBox = imageBox;
             this.wordsRepository = wordsRepository;
             this.tagGenerator = tagGenerator;
             this.exceptionHandler = exceptionHandler;
-            this.settingsLoader = settingsLoader;
             this.imageSettings = imageSettings;
         }
 
@@ -34,8 +32,9 @@ namespace TagCloud.Actions
 
         public void Perform()
         {
+            imageSettings.UpdateSettings();
             tagGenerator.GetTags(wordsRepository.Get())
-                .Then(tags => new TagCloudVisualizer(imageBox, settingsLoader.ImageSettings, tags))
+                .Then(tags => new TagCloudVisualizer(imageBox, imageSettings, tags))
                 .Then(tagCloud => tagCloud.GetTagCloudImage())
                 .RefineError("Failed, trying to get a Tag Cloud image")
                 .OnFail(exceptionHandler.HandleException);

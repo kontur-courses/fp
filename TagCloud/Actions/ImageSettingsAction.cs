@@ -7,13 +7,11 @@ namespace TagCloud.Actions
     {
         private readonly ImageBox imageBox;
         private ImageSettings imageSettings;
-        private SettingsLoader watcher;
 
-        public ImageSettingAction(ImageBox imageBox, ImageSettings imageSettings, SettingsLoader watcher)
+        public ImageSettingAction(ImageBox imageBox, ImageSettings imageSettings)
         {
             this.imageBox = imageBox;
             this.imageSettings = imageSettings;
-            this.watcher = watcher;
         }
 
         public string Category => "Settings";
@@ -22,7 +20,7 @@ namespace TagCloud.Actions
 
         public void Perform()
         {
-            imageSettings = watcher.ImageSettings;
+            imageSettings.UpdateSettings();
             SettingsForm.For(imageSettings).ShowDialog();
             imageBox.RecreateImage(imageSettings);
         }
