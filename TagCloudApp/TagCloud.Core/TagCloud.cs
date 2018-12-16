@@ -1,11 +1,9 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using TagCloud.Core.Settings;
-using TagCloud.Core.Settings.DefaultImplementations;
 using TagCloud.Core.Settings.Interfaces;
-using TagCloud.Core.TextParsing;
 using TagCloud.Core.Util;
 using TagCloud.Core.Visualizers;
+using TagCloud.Core.WordsParsing;
 
 namespace TagCloud.Core
 {
@@ -22,24 +20,23 @@ namespace TagCloud.Core
             this.settings = settings;
         }
 
-        public void MakeTagCloudAndSave()
+        public Result<None> MakeTagCloudAndSave()
         {
-            var bitmap = MakeTagCloud();
-            Save(bitmap);
+            return MakeTagCloud()
+                .Then(Save);
         }
 
-        public Bitmap MakeTagCloud()
+        public Result<Bitmap> MakeTagCloud()
         {
-            var tagStats = wordsParser.Parse(settings.PathToWords, settings.PathToBoringWords);
-            return visualizer.Render(tagStats);
+            return wordsParser.Parse(settings.PathToWords, settings.PathToBoringWords)
+                .Then(tagStats => visualizer.Render(tagStats));
         }
 
         public void Save(Image image)
         {
-            var imageFormat = ImageFormatResolver.TryResolveFromFileName(settings.PathForResultImage, out var res)
-                ? res
-                : ImageFormat.Png;
-            image.Save(settings.PathForResultImage, imageFormat);
+            ImageFormatResolver.TryResolveFromFileName(settings.PathForResultImage)
+                .Then(imageFormat => image.Save(settings.PathForResultImage, imageFormat))
+                .OnFail(err => image.Save(settings.PathForResultImage, ImageFormat.Png));
         }
     }
 }

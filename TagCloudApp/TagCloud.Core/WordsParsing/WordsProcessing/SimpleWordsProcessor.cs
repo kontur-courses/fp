@@ -15,10 +15,10 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
             this.utilities = utilities;
         }
    
-        public IEnumerable<TagStat> Process(IEnumerable<string> words, HashSet<string> boringWords = null, int? maxUniqueWordsCount = null)
+        public Result<IEnumerable<TagStat>> Process(IEnumerable<string> words, HashSet<string> boringWords = null, int? maxUniqueWordsCount = null)
         {
             if (words is null)
-                throw new ArgumentNullException(nameof(words));
+                return Result.Fail<IEnumerable<TagStat>>("Given words can't be null");
 
             var wordsCounter = new Dictionary<string, int>();
             var resWords = utilities.Aggregate(words, (current, processingUtility) => processingUtility.Process(current));
@@ -32,7 +32,7 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
                 wordsCounter[resWord] = resCount;
             }
 
-            return HandleWordsCounter(wordsCounter, maxUniqueWordsCount);
+            return Result.Ok(HandleWordsCounter(wordsCounter, maxUniqueWordsCount));
         }
 
         private static IEnumerable<TagStat> HandleWordsCounter(Dictionary<string, int> wordsCounter, int? maxUniqueWordsCount)

@@ -6,6 +6,6 @@ namespace TagCloud.Core.Visualizers
 {
     public interface ITagCloudVisualizer
     {
-        Bitmap Render(IEnumerable<TagStat> tagStats);
+        Result<Bitmap> Render(IEnumerable<TagStat> tagStats);
     }
 }

@@ -4,8 +4,7 @@ namespace TagCloud.Core.Settings.Interfaces
 {
     public interface IPaintingSettings
     {
-        Color BackgroundColor { get; set; }
+        Color BackgroundColor { get; }
         Brush TagBrush { get; }
-        Color TagColor { get; set; }
     }
 }

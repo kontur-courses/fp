@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TagCloud.Core.Util;
 
 namespace TagCloud.Core.WordsParsing.WordsReading
 {
     public class GeneralWordsReader : IWordsReader
     {
+        public Regex AllowedFileExtension { get; }
+
         private readonly IWordsReader[] wordsReaders;
 
         public GeneralWordsReader(IWordsReader[] wordsReaders)
@@ -15,14 +18,11 @@ namespace TagCloud.Core.WordsParsing.WordsReading
             AllowedFileExtension = new Regex(@".*$");
         }
 
-        public IEnumerable<string> ReadFrom(string path)
+        public Result<IEnumerable<string>> ReadFrom(string path)
         {
-            var suitedReader = wordsReaders.FirstOrDefault(r => r.AllowedFileExtension.Match(path).Success);
-            if (suitedReader is null)
-                throw new ArgumentException($"Can't find WordsReader for file \"{path}\". Wrong extension");
-            return suitedReader.ReadFrom(path);
+            return Result.Of(() => wordsReaders.First(r => r.AllowedFileExtension.Match(path).Success))
+                .ReplaceError(err => $"Can't find WordsReader for file \"{path}\". Wrong extension")
+                .Then(suitedReader => suitedReader.ReadFrom(path));
         }
-
-        public Regex AllowedFileExtension { get; }
     }
 }

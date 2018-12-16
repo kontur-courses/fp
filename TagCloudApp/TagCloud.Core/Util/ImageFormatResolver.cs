@@ -6,15 +6,13 @@ namespace TagCloud.Core.Util
 {
     public class ImageFormatResolver
     {
-        public static bool TryResolveFromFileName(string fileName, out ImageFormat imageFormat)
+        public static Result<ImageFormat> TryResolveFromFileName(string fileName)
         {
-            imageFormat = null;
-            var prop = typeof(ImageFormat).GetProperties().FirstOrDefault(
-                p => fileName.EndsWith(p.Name, StringComparison.InvariantCultureIgnoreCase));
-            if (prop == null)
-                return false;
-            imageFormat = prop.GetValue(prop) as ImageFormat;
-            return true;
+            return Result
+                .Of(() => typeof(ImageFormat).GetProperties().FirstOrDefault(
+                    p => fileName.EndsWith(p.Name, StringComparison.InvariantCultureIgnoreCase)))
+                .Then(i => i.GetValue(i) as ImageFormat)
+                .RefineError($"Can't recognize format of file \"{fileName}\".\n");
         }
     }
 }

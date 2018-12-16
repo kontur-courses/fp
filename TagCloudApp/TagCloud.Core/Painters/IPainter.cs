@@ -6,7 +6,7 @@ namespace TagCloud.Core.Painters
 {
     public interface IPainter
     {
-        void PaintTags(IEnumerable<Tag> tags);
-        void SetBackgroundColorFor(Graphics graphics);
+        Result<None> PaintTags(IEnumerable<Tag> tags);
+        Result<None> SetBackgroundColorFor(Graphics graphics);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using TagCloud.Core.Util;
 
 namespace TagCloud.Core.WordsParsing.WordsReading
 {
@@ -9,7 +10,12 @@ namespace TagCloud.Core.WordsParsing.WordsReading
     {
         public Regex AllowedFileExtension { get; } = new Regex(@"\.txt$", RegexOptions.IgnoreCase);
 
-        public IEnumerable<string> ReadFrom(string path)
+        public Result<IEnumerable<string>> ReadFrom(string path)
+        {
+            return Result.Of(() => ReadUnsafe(path));
+        }
+
+        private IEnumerable<string> ReadUnsafe(string path)
         {
             using (var r = new StreamReader(path))
             {

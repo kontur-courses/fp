@@ -24,17 +24,23 @@ namespace TagCloud.Core.Visualizers
             this.painter = painter;
         }
 
-        public Bitmap Render(IEnumerable<TagStat> tagStats)
+        public Result<Bitmap> Render(IEnumerable<TagStat> tagStats)
         {
-            bitmap = new Bitmap(settings.Width, settings.Height);
-            graphics = Graphics.FromImage(bitmap);
+            return Initialize()
+                .Then(none => layouter.RefreshWith(settings.CenterPoint))
+                .Then(none => painter.SetBackgroundColorFor(graphics))
+                .Then(none => GetResultTags(tagStats))
+                .Then(tags => tags.ApplyForeach(graphics.DrawTag))
+                .Then(_ => bitmap);
+        }
 
-            layouter.RefreshWith(settings.CenterPoint);
-            var resTags = GetResultTags(tagStats);
-            painter.SetBackgroundColorFor(graphics);
-            foreach (var tag in resTags)
-                graphics.DrawTag(tag);
-            return bitmap;
+        private Result<None> Initialize()
+        {
+            return Result.OfAction(() =>
+            {
+                bitmap = new Bitmap(settings.Width, settings.Height);
+                graphics = Graphics.FromImage(bitmap);
+            });
         }
 
         private (double fontSizeMultiplier, double averageRepeatsCount) GetFontSizeMultiplierAndAverageRepeatsCount(
@@ -56,25 +62,35 @@ namespace TagCloud.Core.Visualizers
             return (fontSizeMultiplier, averageRepeatsCount);
         }
 
-        private IEnumerable<Tag> GetResultTags(IEnumerable<TagStat> tagStats)
+        private Result<IEnumerable<Tag>> GetResultTags(IEnumerable<TagStat> tagStats)
         {
             var tagStatsList = tagStats.ToList();
             var (fontSizeMultiplier, averageRepeatsCount) = GetFontSizeMultiplierAndAverageRepeatsCount(tagStatsList);
-            var res = tagStatsList
-                .Select(tagStat => CreateTagFrom(tagStat, fontSizeMultiplier, averageRepeatsCount))
-                .ToList();
 
-            painter.PaintTags(res);
-            return res;
+            var resTags = new List<Tag>();
+            foreach (var tagStat in tagStatsList)
+            {
+                var tagResult = CreateTagFrom(tagStat, fontSizeMultiplier, averageRepeatsCount);
+                if (tagResult.IsSuccess)
+                    resTags.Add(tagResult.Value);
+                else
+                    return Result.Fail<IEnumerable<Tag>>(tagResult.Error);
+            }
+
+            var paintingResult = painter.PaintTags(resTags);
+            return paintingResult.IsSuccess
+                ? resTags
+                : Result.Fail<IEnumerable<Tag>>(paintingResult.Error);
         }
 
-        private Tag CreateTagFrom(TagStat tagStat, double fontSizeMultiplier, double averageWordsCount)
+        private Result<Tag> CreateTagFrom(TagStat tagStat, double fontSizeMultiplier, double averageWordsCount)
         {
             var fontSizeDelta = (tagStat.RepeatsCount - averageWordsCount) * fontSizeMultiplier;
             var font = settings.DefaultFont.WithModifiedFontSizeOf((float)fontSizeDelta);
             var stringSize = graphics.MeasureString(tagStat.Word, font);
-            var tagPlace = layouter.PutNextRectangle(stringSize);
-            return new Tag(tagStat, font, tagPlace);
+
+            return layouter.PutNextRectangle(stringSize)
+                .Then(tagPlace => new Tag(tagStat, font, tagPlace));
         }
     }
 }

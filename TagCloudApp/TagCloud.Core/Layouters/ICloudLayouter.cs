@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using TagCloud.Core.Util;
 
 namespace TagCloud.Core.Layouters
 {
     public interface ICloudLayouter
     {
-        RectangleF PutNextRectangle(SizeF rectangleSize);
-        void RefreshWith(PointF newCenterPoint);
+        Result<RectangleF> PutNextRectangle(SizeF rectangleSize);
+        Result<None> RefreshWith(PointF newCenterPoint);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagCloud.Core.Settings.Interfaces;
 using TagCloud.Core.Util;
 
@@ -15,17 +17,22 @@ namespace TagCloud.Core.Painters
             this.settings = settings;
         }
 
-        public void PaintTags(IEnumerable<Tag> tags)
+        public Result<None> PaintTags(IEnumerable<Tag> tags)
         {
             if (tags == null)
-                throw new ArgumentNullException(nameof(tags));
-            foreach (var tag in tags)
-                tag.Brush = settings.TagBrush;
+                return Result.Fail<None>("Tags can't be null");
+            var tagsList = tags.ToList();
+            tagsList.ApplyForeach(tag => tag.Brush = settings.TagBrush);
+            return Result.Ok();
         }
 
-        public void SetBackgroundColorFor(Graphics graphics)
+        public Result<None> SetBackgroundColorFor(Graphics graphics)
         {
+            if (graphics == null)
+                return Result.Fail<None>("Graphics can't be null");
+
             graphics.Clear(settings.BackgroundColor);
+            return Result.Ok();
         }
     }
 }
