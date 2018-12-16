@@ -14,13 +14,14 @@ namespace TagsCloudContainer.Tests
         private readonly Color color = Color.MidnightBlue;
         private IWordFormatter formatter;
         private IWordsWeighter wordsWeighter;
+        private Config config;
 
         [SetUp]
         public void DoBeforeAnyTest()
         {
             wordsWeighter = A.Fake<IWordsWeighter>();
-            var config = new Config {Font = font, Color = color};
-            formatter = new SimpleFormatter(wordsWeighter, config);
+            config = new Config {Font = font, Color = color, FontMultiplier = 7, FrequentWordsAsHuge = true};
+            formatter = new SimpleFormatter(wordsWeighter);
         }
 
         [Test]
@@ -28,7 +29,7 @@ namespace TagsCloudContainer.Tests
         {
             var data = Enumerable.Empty<string>();
 
-            var formattedWords = formatter.FormatWords(data);
+            var formattedWords = formatter.WithConfig(config).FormatWords(data);
 
             formattedWords
                 .Should()
@@ -61,7 +62,7 @@ namespace TagsCloudContainer.Tests
 
             ConfigureWordsWeighter(words);
 
-            var formattedWords = formatter.FormatWords(words);
+            var formattedWords = formatter.WithConfig(config).FormatWords(words);
 
             formattedWords
                 .Should()
@@ -84,7 +85,7 @@ namespace TagsCloudContainer.Tests
 
             ConfigureWordsWeighter(words);
 
-            var formattedWords = formatter.FormatWords(words);
+            var formattedWords = formatter.WithConfig(config).FormatWords(words);
 
             formattedWords
                 .Select(z => z.Value)

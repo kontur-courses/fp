@@ -28,5 +28,10 @@ namespace TagsCloudContainer.WordsPreprocessors
                 }
             }
         }
+
+        public IWordsPreprocessor WithConfig(Config config)
+        {
+            return this;
+        }
     }
 }

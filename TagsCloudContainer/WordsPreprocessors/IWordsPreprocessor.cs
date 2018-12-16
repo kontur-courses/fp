@@ -5,5 +5,6 @@ namespace TagsCloudContainer.WordsPreprocessors
     public interface IWordsPreprocessor
     {
         IEnumerable<string> Preprocess(IEnumerable<string> words);
+        IWordsPreprocessor WithConfig(Config config);
     }
 }

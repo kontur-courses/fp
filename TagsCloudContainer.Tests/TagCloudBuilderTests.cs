@@ -22,6 +22,7 @@ namespace TagsCloudContainer.Tests
         private IResultRenderer renderer;
         private TagsCloudBuilder builder;
         private WordsSizer wordsSizer;
+        private Config config;
 
         [OneTimeSetUp]
         public void DoBeforeAllTest()
@@ -35,6 +36,8 @@ namespace TagsCloudContainer.Tests
             builder = new TagsCloudBuilder(
                 new[] {preprocessor1, preprocessor2},
                 formatter, layouter, renderer, wordsSizer);
+            config = new Config();
+
         }
 
         [Test]
@@ -47,20 +50,40 @@ namespace TagsCloudContainer.Tests
             };
 
             ConfigureFakes(words, formattedWords);
-            builder.Visualize(words);
+            builder.Visualize(words, config);
             AssertVisualizeSuccessful(words, formattedWords);
         }
 
         private void ConfigureFakes(IEnumerable<string> words, IEnumerable<Word> formattedWords)
         {
+            A.CallTo(() => preprocessor1.WithConfig(config))
+                .WithAnyArguments()
+                .Returns(preprocessor1);
+
             A.CallTo(() => preprocessor1.Preprocess(words))
                 .Returns(words);
+
+            A.CallTo(() => preprocessor2.WithConfig(config))
+                .WithAnyArguments()
+                .Returns(preprocessor2);
 
             A.CallTo(() => preprocessor2.Preprocess(words))
                 .Returns(words);
 
+            A.CallTo(() => formatter.WithConfig(config))
+                .WithAnyArguments()
+                .Returns(formatter);
+
+            A.CallTo(() => layouter.WithConfig(config))
+                .WithAnyArguments()
+                .Returns(layouter);
+
             A.CallTo(() => formatter.FormatWords(words))
                 .Returns(formattedWords);
+
+            A.CallTo(() => renderer.WithConfig(config))
+                .WithAnyArguments()
+                .Returns(renderer);
 
             A.CallTo(() => renderer.Generate(null))
                 .WithAnyArguments()

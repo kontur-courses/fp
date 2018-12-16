@@ -10,5 +10,10 @@ namespace TagsCloudContainer.WordsPreprocessors
         {
             return words.Select(word => word.ToLower(CultureInfo.CurrentCulture));
         }
+
+        public IWordsPreprocessor WithConfig(Config config)
+        {
+            return this;
+        }
     }
 }

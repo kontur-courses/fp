@@ -15,10 +15,8 @@ namespace TagsCloudContainer
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<Config>()
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .SingleInstance();
+            builder.Register(z => new Config())
+                .AsSelf();
 
             builder.RegisterType<ImageRenderer>()
                 .As<IResultRenderer>();
@@ -31,8 +29,7 @@ namespace TagsCloudContainer
                 .SingleInstance();
 
             builder.Register(z => new SimpleFormatter(
-                    z.Resolve<IWordsWeighter>(),
-                    z.Resolve<Config>()))
+                    z.Resolve<IWordsWeighter>()))
                 .As<IWordFormatter>();
 
             builder.RegisterType<CircularCloudLayouter>()

@@ -7,19 +7,14 @@ namespace TagsCloudContainer.WordFormatters
     public class SimpleFormatter : IWordFormatter
     {
         private readonly IWordsWeighter wordsWeighter;
-        private readonly Font font;
-        private readonly Color color;
-        private readonly bool frequentWordsAsHuge;
-        private readonly float fontMultiplier;
+        private Font font;
+        private Color color;
+        private bool frequentWordsAsHuge;
+        private float fontMultiplier;
 
         public SimpleFormatter(
-            IWordsWeighter wordsWeighter,
-            IFormatterConfig config)
+            IWordsWeighter wordsWeighter)
         {
-            font = config.Font;
-            color = config.Color;
-            frequentWordsAsHuge = config.FrequentWordsAsHuge;
-            fontMultiplier = config.FontMultiplier;
             this.wordsWeighter = wordsWeighter;
         }
 
@@ -48,6 +43,15 @@ namespace TagsCloudContainer.WordFormatters
                     yield return new Word(newFont, color, word);
                 }
             }
+        }
+
+        public IWordFormatter WithConfig(IFormatterConfig config)
+        {
+            font = config.Font;
+            color = config.Color;
+            frequentWordsAsHuge = config.FrequentWordsAsHuge;
+            fontMultiplier = config.FontMultiplier;
+            return this;
         }
     }
 }

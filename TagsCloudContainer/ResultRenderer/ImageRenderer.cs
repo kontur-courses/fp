@@ -7,14 +7,10 @@ namespace TagsCloudContainer.ResultRenderer
 {
     public class ImageRenderer : IResultRenderer
     {
-        private readonly Size imageSize;
+        private Size imageSize;
 
         public bool DrawRectangles { get; set; }
 
-        public ImageRenderer(IResultRendererConfig config)
-        {
-            imageSize = config.ImageSize;
-        }
 
         public Result<Image> Generate(IEnumerable<Word> words)
         {
@@ -33,6 +29,13 @@ namespace TagsCloudContainer.ResultRenderer
             var centeredWords = CenterWords(center, words);
 
             return GenerateImage(centeredWords);
+        }
+
+        public IResultRenderer WithConfig(IResultRendererConfig config)
+        {
+            imageSize = config.ImageSize;
+
+            return this;
         }
 
         private Result<Image> GenerateImage(IEnumerable<Word> words)

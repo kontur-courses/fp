@@ -16,10 +16,11 @@ namespace TagsCloudContainer.Tests
         [TestCase(-1, -1)]
         public void Generate_ReturnsFail_OnInvalidSize(int width, int height)
         {
-            var renderer = new ImageRenderer(new Config {ImageSize = new Size(width, height)});
+            var config = new Config {ImageSize = new Size(width, height)};
+            var renderer = new ImageRenderer();
             var expected = Result.Fail<Image>("Width and height of image have to be > 0");
 
-            renderer.Generate(Enumerable.Empty<Word>())
+            renderer.WithConfig(config).Generate(Enumerable.Empty<Word>())
                 .Should()
                 .BeEquivalentTo(expected);
         }
@@ -27,7 +28,8 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void Generate_ThrowsArgumentException_OnNullWords()
         {
-            Action action = () => new ImageRenderer(new Config {ImageSize = new Size(1024, 1024)}).Generate(null);
+            var config = new Config {ImageSize = new Size(1024, 1024)};
+            Action action = () => new ImageRenderer().WithConfig(config).Generate(null);
 
             action
                 .Should()
@@ -40,10 +42,12 @@ namespace TagsCloudContainer.Tests
         public void Generate_GeneratesImageWithGivenSize(int width, int height)
         {
             var expectedSize = new Size(width, height);
+            var config = new Config {ImageSize = expectedSize};
 
-            var renderer = new ImageRenderer(new Config {ImageSize = expectedSize});
+            var renderer = new ImageRenderer();
 
             renderer
+                .WithConfig(config)
                 .Generate(Enumerable.Empty<Word>())
                 .GetValueOrThrow()
                 .Size.Should()

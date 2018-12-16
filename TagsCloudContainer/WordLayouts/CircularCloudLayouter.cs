@@ -7,15 +7,13 @@ namespace TagsCloudContainer.WordLayouts
     public class CircularCloudLayouter : ILayouter
     {
         private readonly List<RectangleF> rectangles;
-        private readonly PointF centerPoint;
-        private readonly double angleDelta;
+        private PointF centerPoint;
+        private double angleDelta;
         private double angle;
 
-        public CircularCloudLayouter(ILayouterConfig config)
+        public CircularCloudLayouter()
         {
             rectangles = new List<RectangleF>();
-            centerPoint = config.CenterPoint;
-            angleDelta = config.AngleDelta;
         }
 
         public RectangleF GetNextPosition(SizeF size)
@@ -43,6 +41,14 @@ namespace TagsCloudContainer.WordLayouts
 
             throw new InvalidOperationException(
                 $"{nameof(GetPoints)} method didn't return new point by undefined reason.");
+        }
+
+        public ILayouter WithConfig(ILayouterConfig config)
+        {
+            centerPoint = config.CenterPoint;
+            angleDelta = config.AngleDelta;
+
+            return this;
         }
 
         private IEnumerable<PointF> GetPoints()

@@ -16,13 +16,15 @@ namespace TagsCloudContainer.Tests
         private CircularCloudLayouter layouter;
         private IPosition word;
         private List<RectangleF> rectangles;
+        private Config config;
 
         [SetUp]
         public void DoBeforeAnyTest()
         {
-            layouter = new CircularCloudLayouter(new Config {CenterPoint = startPoint});
+            layouter = new CircularCloudLayouter();
             word = new CustomWord();
             rectangles = new List<RectangleF>();
+            config = new Config {CenterPoint = startPoint, AngleDelta = 10};
         }
 
         [TearDown]
@@ -41,8 +43,8 @@ namespace TagsCloudContainer.Tests
                     return result;
                 });
                 var config = new Config {ImageSize = new Size(2000, 2000)};
-                var imageRenderer = new ImageRenderer(config) {DrawRectangles = true};
-                imageRenderer.Generate(words)
+                var imageRenderer = new ImageRenderer {DrawRectangles = true};
+                imageRenderer.WithConfig(config).Generate(words)
                     .GetValueOrThrow()
                     .Save(savePath, ImageFormat.Png);
             }
@@ -55,7 +57,7 @@ namespace TagsCloudContainer.Tests
             var expected = word;
             expected.Position = new RectangleF(PointF.Empty, size);
 
-            var result = layouter.GetNextPosition(size);
+            var result = layouter.WithConfig(config).GetNextPosition(size);
 
             result
                 .Equals(expected.Position)
@@ -71,7 +73,7 @@ namespace TagsCloudContainer.Tests
             for (var i = 0; i < 100; i++)
             {
                 var size = new Size(random.Next(1, 100), random.Next(1, 100));
-                var generatedRectangle = layouter.GetNextPosition(size);
+                var generatedRectangle = layouter.WithConfig(config).GetNextPosition(size);
 
                 foreach (var rectangle in rectangles)
                 {
@@ -104,7 +106,7 @@ namespace TagsCloudContainer.Tests
         [TestCaseSource(nameof(OnInvalidSizes))]
         public void PutNextRectangle_ThrowsException_OnInvalidSize(Size size)
         {
-            Action action = () => layouter.GetNextPosition(size);
+            Action action = () => layouter.WithConfig(config).GetNextPosition(size);
 
             action
                 .Should()
@@ -179,7 +181,7 @@ namespace TagsCloudContainer.Tests
             for (var i = 0; i < amount; i++)
             {
                 var size = new Size(random.Next(1, 100), random.Next(1, 100));
-                var rectangle = layouter.GetNextPosition(size);
+                var rectangle = layouter.WithConfig(config).GetNextPosition(size);
                 rectangles.Add(rectangle);
             }
         }

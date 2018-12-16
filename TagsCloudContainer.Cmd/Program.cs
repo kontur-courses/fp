@@ -38,18 +38,33 @@ namespace TagsCloudContainer.Cmd
             var reader = tagsCloudContainer
                 .Resolve<IWordsReader>();
 
+            var words = Enumerable.Empty<string>();
+
             using (var scope = tagsCloudContainer.BeginLifetimeScope())
             {
                 Result.Of(() => parser.Parse(args))
                     .Then(p => HandleParserBehavour(p, p.HelpCalled, string.Empty))
                     .Then(p => HandleParserBehavour(p, p.HasErrors, p.ErrorText))
-                    .Then(z => ReadCustomBoringWords(reader, parser.Object.ExcludeFilename))
-                    .Then(excluded => (new Font(new FontFamily(parser.Object.FontFamily), (float)parser.Object.FontSize), excluded))
-                    .Then(fontExcluded => FillConfig(scope.Resolve<Config>(), cmdArgs, parser.Object,
-                        fontExcluded.Item1, fontExcluded.Item2))
-                    .Then(z => reader.GetWords(parser.Object.InputFilename))
-                    .Then(words => scope.Resolve<TagsCloudBuilder>()
-                        .Visualize(words))
+                    .Then(p => reader.GetWords(parser.Object.InputFilename))
+                    .Then(rawWords => words = rawWords)
+                    .Then(config => ReadCustomBoringWords(reader, parser.Object.ExcludeFilename))
+                    .Then(excluded =>
+                    {
+                        var config = scope.Resolve<Config>()
+                            .CreateConfig(cmdArgs.ImageSize, cmdArgs.Color);
+                        config.CustomBoringWords = excluded;
+
+                        return config;
+                    })
+                    .Then(config =>
+                    {
+                        config.Font = new Font(new FontFamily(parser.Object.FontFamily),
+                            (float)parser.Object.FontSize);
+
+                        return config;
+                    })
+                    .Then(config => scope.Resolve<TagsCloudBuilder>()
+                        .Visualize(words, config))
                     .Then(image => image.Save(parser.Object.OutputFilename, ImageFormat.Png))
                     .OnFail(Console.WriteLine);
             }
@@ -74,17 +89,6 @@ namespace TagsCloudContainer.Cmd
 
             return reader
                 .GetWords(filename);
-        }
-
-        private static void FillConfig(Config config, CmdArguments cmdArgs, ParserArgs parserArgs,
-            Font font, IEnumerable<string> boringWords)
-        {
-            config.Color = cmdArgs.Color;
-            config.Font = font;
-            config.CustomBoringWords = boringWords;
-            config.ImageSize = cmdArgs.ImageSize;
-            config.CenterPoint = cmdArgs.SpiralOffset;
-            config.AngleDelta = parserArgs.SpiralAngleStep;
         }
 
         private static CmdArguments ConfigureParser(FluentCommandLineParser<ParserArgs> parser)

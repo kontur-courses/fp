@@ -72,19 +72,22 @@ namespace TagCloudContainer.Gui
             {
                 scope.Resolve<Config>()
                     .AsResult()
-                    .Then(config => FillConfig(config, font, size))
-                    .Then(c => scope.Resolve<TagsCloudBuilder>()
-                        .Visualize(wordsTextBox.Lines))
+                    .Then(config => config.CreateConfig(size, chooseColor))
+                    .Then(config =>
+                    {
+                        config.Font = font;
+
+                        return config;
+                    })
+                    .Then(config => scope.Resolve<TagsCloudBuilder>()
+                        .Visualize(wordsTextBox.Lines, config))
                     .Then(image => resultPictureBox.Image = image)
                     .OnFail(err => statusLabel.Text = err);
             }
         }
 
-        private void FillConfig(Config config, Font font, Size size)
+        private void panel2_Paint(object sender, PaintEventArgs e)
         {
-            config.Color = chooseColor;
-            config.Font = font;
-            config.ImageSize = size;
         }
     }
 }
