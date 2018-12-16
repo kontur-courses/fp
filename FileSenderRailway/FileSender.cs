@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -27,27 +28,25 @@ namespace FileSenderRailway
         {
             foreach (var file in files)
             {
-                string errorMessage = null;
-                try
-                {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
-                    sender.Send(doc);
-                }
-                catch (FormatException e)
-                {
-                    errorMessage = "Can't prepare file to send. " + e.Message;
-                }
-                catch (InvalidOperationException e)
-                {
-                    errorMessage = "Can't send. " + e.Message;
-                }
-                yield return new FileSendResult(file, errorMessage);
+
+                var doc = PrepareFileToSend(file, certificate);
+                if (doc.IsSuccess)
+                    sender.Send(doc.Value);
+
+                yield return new FileSendResult(file, doc.Error);
             }
+        }
+
+        public Result<Document> PrepareFileToSend(FileContent file, X509Certificate certificate)
+        {           
+            var resultDoc = recognizer.Recognize(file);
+            if (!resultDoc.IsSuccess)
+                return Result.Fail<Document>("Can't recognize");
+            if (!IsValidFormatVersion(resultDoc.Value))
+                return resultDoc.RefineError($"Can't prepare file to send. Invalid format version {resultDoc.Value.Format}");
+            if (!IsValidTimestamp(resultDoc.Value))
+                return resultDoc.RefineError($"Can't prepare file to send. Too old document {resultDoc.Value.Created}");
+                return resultDoc.Value.DocumentUpdate(cryptographer.Sign(resultDoc.Value.Content, certificate));
         }
 
         private bool IsValidFormatVersion(Document doc)

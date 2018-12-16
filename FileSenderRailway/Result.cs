@@ -127,7 +127,7 @@ namespace ResultOf
             this Result<TInput> input,
             string errorMessage)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            return new Result<TInput>(errorMessage + ". " + input.Error, input.Value);
         }
     }
 }

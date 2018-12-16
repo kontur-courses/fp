@@ -23,6 +23,8 @@ namespace ResultOfTask
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
+
+
     }
 
     public static class Result
@@ -58,21 +60,34 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(param => Of(() => continuation(param)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return !input.IsSuccess ? new Result<TOutput>(input.Error) : continuation(input.Value);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+                handleError(input.Error);
+            return input;
+        }
+        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string postingResultsToDb)
+        {
+            return new Result<TInput>(postingResultsToDb + ". "+ input.Error, input.Value);
+        }
+
+        public static Result<T> ReplaceError<T>(this Result<T> input, Func<string, string> func)
+        {
+            if (input.IsSuccess)
+                return input;
+            return Fail<T>(func(input.Error));
         }
     }
 }
