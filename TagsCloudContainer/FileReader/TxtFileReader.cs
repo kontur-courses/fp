@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using ResultOf;
+using TagsCloudContainer.Preprocessing;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.FileReader
@@ -15,13 +16,13 @@ namespace TagsCloudContainer.FileReader
             this.provider = provider;
         }
 
-        public ReadFileResult Read()
+        public OperationResult<IEnumerable<string>> Read()
         {
             var result = Result.Of(
                 () => File.ReadAllLines(provider.WordsFilePath)
                 .Where(str => str != ""))
                 .RefineError("Can't read file " + provider.WordsFilePath);
-            return new ReadFileResult(result.Value, result.Error);
+            return new OperationResult<IEnumerable<string>>(result.Value, result.Error);
         }
     }
 }

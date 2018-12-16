@@ -63,13 +63,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileReader\ReadFileResult.cs" />
     <Compile Include="Layouter\ITagCloudLayouter.cs" />
     <Compile Include="Painter\RandomPainter.cs" />
     <Compile Include="Preprocessing\BoringWordsExcluder.cs" />
     <Compile Include="Preprocessing\FrequencyCounter.cs" />
     <Compile Include="Preprocessing\InitialFormSetter.cs" />
     <Compile Include="Preprocessing\IWordsPreprocessor.cs" />
+    <Compile Include="OperationResult.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Settings\PainterType.cs" />
     <Compile Include="Painter\SolidPainter.cs" />

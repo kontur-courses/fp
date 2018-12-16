@@ -12,7 +12,12 @@ namespace TagsCloudContainer.Preprocessing
             this.settings = settings;
         }
 
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        public OperationResult<IEnumerable<string>> Process(IEnumerable<string> words)
+        {
+            return new OperationResult<IEnumerable<string>>(ExcludeBoringWords(words), null);
+        }
+
+        private IEnumerable<string> ExcludeBoringWords(IEnumerable<string> words)
         {
             return words.Select(word => word.ToLower())
                 .Where(word => word.Length > settings.BoringWordsLength && !settings.ExcludedWords.Contains(word));

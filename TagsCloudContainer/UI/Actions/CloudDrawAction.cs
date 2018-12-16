@@ -5,6 +5,9 @@ using TagsCloudContainer.Settings;
 using TagsCloudContainer.FileReader;
 using TagsCloudContainer.Painter;
 using TagsCloudContainer.Preprocessing;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
 
 namespace TagsCloudContainer.UI.Actions
 {
@@ -44,6 +47,7 @@ namespace TagsCloudContainer.UI.Actions
 
         public void Perform()
         {
+            var errorOccured = false;
             var dialog = new OpenFileDialog
             {
                 InitialDirectory = Path.GetFullPath(filePath.WordsFilePath),
@@ -54,22 +58,29 @@ namespace TagsCloudContainer.UI.Actions
             if (res != DialogResult.OK)
                 return;
             filePath.WordsFilePath = dialog.FileName;
-            var wordsResult = reader.Read();
-            if (wordsResult.ErrorMessage != null)
-            {
-                MessageBox.Show(wordsResult.ErrorMessage);
-                return;
-            }
 
-            var words = wordsResult.ReadData;
+            var words = CheckResult(() => reader.Read(), () => errorOccured = true);
+            if (errorOccured) return;
             res = SettingsForm.For(preprocessorSettings).ShowDialog();
             if (res != DialogResult.OK)
                 return;
-            var preprocessed = preprocessors.Aggregate(words, (current, preprocessor) => preprocessor.Process(current));
-            var infos = frequencyCounter.CountWordFrequencies(preprocessed);
+
+            words = preprocessors.Aggregate(words, (current, preprocessor) => CheckResult(() => preprocessor.Process(current), () => errorOccured = true));
+            if (errorOccured) return;
+            var infos = frequencyCounter.CountWordFrequencies(words);
             var wordInfos = applicator.GetWordsAndRectangles(infos);
             painter.Paint(applicator.WordsCenter, wordInfos);
             imageHolder.UpdateUi();
+        }
+
+        private T CheckResult<T>(Func<OperationResult<T>> predicate, Action errorHandler)
+        {
+            var result = predicate();
+            if (result.ErrorMessage == null)
+                return result.ResultData;
+            MessageBox.Show(result.ErrorMessage);
+            errorHandler();
+            return result.ResultData;
         }
     }
 }

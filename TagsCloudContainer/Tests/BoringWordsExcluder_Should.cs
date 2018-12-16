@@ -39,7 +39,7 @@ namespace TagsCloudContainer.Tests
 
             var result = preprocessor.Process(words);
 
-            result.Should().NotContain(wordsToExclude);
+            result.ResultData.Should().NotContain(wordsToExclude);
         }
 
         [TestCase(4)]
@@ -54,7 +54,7 @@ namespace TagsCloudContainer.Tests
 
             var result = preprocessor.Process(words);
 
-            result.Should().NotContain(str => str.Length < length);
+            result.ResultData.Should().NotContain(str => str.Length < length);
         }
 
         [Test]
