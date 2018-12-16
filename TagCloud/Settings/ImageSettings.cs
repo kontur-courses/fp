@@ -5,6 +5,7 @@ namespace TagCloud.Settings
 {
     public class ImageSettings
     {
+        private readonly SettingsLoader settingsLoader = new SettingsLoader();
         public int Width { get; set; } = 800;
         public int Height { get; set; } = 800;
         public Color TextColor { get; set; } = Color.White;
@@ -12,7 +13,7 @@ namespace TagCloud.Settings
         
         public void UpdateSettings()
         {
-            var settings = new SettingsLoader().Settings["ImageSettings"];
+            var settings = settingsLoader.Settings["ImageSettings"];
             var imageSettings = JsonConvert.DeserializeObject<ImageSettings>(settings);
             Width = imageSettings.Width;
             Height = imageSettings.Height;
