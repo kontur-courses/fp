@@ -3,7 +3,7 @@ using Fclp;
 
 namespace TagsCloudVisualization
 {
-    public class ConsoleApplication : IApplication
+    public class ConsoleApplication
     {
         private IFileReader fileReader;
         private IVisualizer visualizer;
