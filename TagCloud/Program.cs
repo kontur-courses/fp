@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using Autofac;
 using Fclp;
 using TagCloud.ColorPicker;
@@ -24,29 +23,28 @@ namespace TagCloud
         [STAThread]
         public static void Main(string[] args)
         {
-            var output = new StringBuilder();
-            var arguments = TryGetArguments(args, output);
+            GetArguments(args)
+                .Then(Run)
+                .OnFail(Console.WriteLine);
+        }
 
-            if (output.Length > 0)
-            {
-                Console.WriteLine(output);
-                return;
-            }
-
+        private static void Run(Arguments arguments)
+        {
             var builder = new ContainerBuilder();
             SetUpContainer(builder, arguments);
             var container = builder.Build();
             container.Resolve<TagCloudGenerator>().Generate(arguments);
         }
 
-        private static Arguments TryGetArguments(string[] args, StringBuilder output)
+        private static Result<Arguments> GetArguments(string[] args)
         {
             var arguments = new Arguments();
+            var help = "";
 
             var parser = new FluentCommandLineParser();
             parser
                 .SetupHelp("h", "?", "help")
-                .Callback(str => output.Append(str))
+                .Callback(str => help = str)
                 .WithHeader("Program to create tag cloud. Options:");
             parser
                 .Setup<string>('w')
@@ -81,39 +79,44 @@ namespace TagCloud
                 .Callback(save => arguments.ToEnableClipboardSaver = true)
                 .WithDescription("Save image to clipboard");
 
-            parser.Parse(args);
+            var result = parser.Parse(args);
 
-            CheckArguments(arguments, output);
-
-            return arguments;
+            return result.HelpCalled 
+                ? Result.Fail<Arguments>(help) 
+                : CheckArguments(arguments);
         }
 
-        private static void CheckArguments(Arguments arguments, StringBuilder output)
+        private static Result<Arguments> CheckArguments(Arguments arguments)
         {
-            CheckFile("Words", arguments.WordsFileName, output);
-            CheckFile("Boring words", arguments.BoringWordsFileName, output);
-
             var format = TextFileReader.GetFormat(arguments.ImageFileName);
-            CheckArgument(FileImageSaver.Formats.Keys, "image format", format, output);
-
-            CheckArgument(CloudDrawer.Colors, "words color", arguments.WordsColorName, output);
-            CheckArgument(CloudDrawer.Colors, "background color", arguments.BackgroundColorName, output);
-            CheckArgument(CloudWordsLayouter.Fonts, "font", arguments.FontFamilyName, output);
-
-            if (arguments.Multiplier <= 0)
-                output.AppendLine("Font size multiplier should be positive");
+            return CheckFile(arguments, "Words", arguments.WordsFileName)
+                .Then(args => CheckFile(args, "Boring words", arguments.BoringWordsFileName))
+                .Then(args => CheckArgument(args, FileImageSaver.Formats.Keys, "image format", format))
+                .Then(args => CheckArgument(args, CloudDrawer.Colors, "words color", arguments.WordsColorName))
+                .Then(args => CheckArgument(args, CloudDrawer.Colors, "background color", arguments.BackgroundColorName))
+                .Then(args => CheckArgument(args, CloudWordsLayouter.Fonts, "font", arguments.FontFamilyName))
+                .Then(CheckMultiplier);
         }
 
-        private static void CheckFile(string argumentName, string fileName, StringBuilder output)
+        private static Result<Arguments> CheckMultiplier(Arguments arguments)
         {
-            if (!File.Exists(fileName))
-                output.AppendLine($"{argumentName} file not found {fileName}");
+            return arguments.Multiplier > 0
+                ? Result.Ok(arguments)
+                : Result.Fail<Arguments>("Font size multiplier should be positive");
         }
 
-        private static void CheckArgument<T>(ICollection<T> variants, string argumentName, T argument, StringBuilder output)
+        private static Result<Arguments> CheckFile(Arguments arguments, string argumentName, string fileName)
         {
-            if (!variants.Contains(argument))
-                output.AppendLine($"Unknown {argumentName} {argument}");
+            return File.Exists(fileName)
+                ? Result.Ok(arguments)
+                : Result.Fail<Arguments>($"{argumentName} file not found {fileName}");
+        }
+
+        private static Result<Arguments> CheckArgument<T>(Arguments arguments, ICollection<T> variants, string argumentName, T argument)
+        {
+            return variants.Contains(argument)
+                ? Result.Ok(arguments)
+                : Result.Fail<Arguments>($"Unknown {argumentName} {argument}");
         }
 
         public static void SetUpContainer(ContainerBuilder builder, Arguments arguments)
