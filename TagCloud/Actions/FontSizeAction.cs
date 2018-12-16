@@ -5,11 +5,13 @@ namespace TagCloud.Actions
 {
     public class FontSizeAction : IUiAction
     {
-        private readonly FontSettings fontSettings;
+        private FontSettings fontSettings;
+        private SettingsChecker watcher;
 
-        public FontSizeAction(FontSettings fontSettings)
+        public FontSizeAction(FontSettings fontSettings, SettingsChecker watcher)
         {
             this.fontSettings = fontSettings;
+            this.watcher = watcher;
         }
 
         public string Category => "Settings";
@@ -18,6 +20,7 @@ namespace TagCloud.Actions
 
         public void Perform()
         {
+            fontSettings = watcher.FontSettings;
             SettingsForm.For(fontSettings).ShowDialog();
         }
     }

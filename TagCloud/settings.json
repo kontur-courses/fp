@@ -1,0 +1,15 @@
+[
+    {
+      "FontFamily": {
+        "Name": "Times New Roman"
+      },
+      "MinFontSize": 10,
+      "MaxFontSize": 50
+    },
+    {
+      "Width": 700,
+      "Height": 700,
+      "TextColor": "Red",
+      "BackgroundColor": "DimGray"
+    }
+]
