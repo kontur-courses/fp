@@ -18,7 +18,7 @@ namespace TagsCloudVisualization
         {
             try
             {
-                stopWords = Regex.Split(new TxtReader().Read("Stopwords.txt").ToLower(), @"\W+").ToList();
+                stopWords = Regex.Split(new TxtReader().Read("Stopwords.txt").Value.ToLower(), @"\W+").ToList();
             }
             catch
             {
@@ -40,16 +40,11 @@ namespace TagsCloudVisualization
             return checkedWords;
         }
 
-        public List<GraphicWord> Count(bool withSpellCheck=true, params string[] row)
+        public Result<List<GraphicWord>> Count(string row)
         {
-            var words = new List<string>();
-            foreach (var s in row)
-            {
-                words.AddRange(Regex.Split(s.ToLower(), @"\W+"));
-            }
+            var words = Regex.Split(row.ToLower(), @"\W+").ToList();
             var countedWords = new Dictionary<string, GraphicWord>();
-            if (withSpellCheck)
-                words = SpellCheck(words);
+            words = SpellCheck(words);
             foreach (var word in words)
             {
                 if (!countedWords.ContainsKey(word))
@@ -63,10 +58,10 @@ namespace TagsCloudVisualization
                 dictValue.Font = new Font(Font.Name, dictValue.Rate + Font.Size);
             }
 
-            return countedWords
+            return Result.Ok(countedWords
                 .Values
                 .Where(w => w.Rate > 1 && !stopWords.Contains(w.Value))
-                .OrderByDescending(w => w.Rate).ToList();
+                .OrderByDescending(w => w.Rate).ToList());
         }
     }
 }

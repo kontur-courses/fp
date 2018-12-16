@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 using Fclp;
 
 namespace TagsCloudVisualization
@@ -11,58 +14,93 @@ namespace TagsCloudVisualization
         private ISizeDefiner sizeDefiner;
         private ICloudLayouter cloudLayouter;
         private WordCounter counter = new WordCounter();
-        private IImageSettings imageSettings;
-        private string path;
+        private Size imageSize;
 
         public ConsoleApplication(IFileReader fileReader, IVisualizer visualizer, 
-            IWordPalette wordPalette, ISizeDefiner sizeDefiner, 
-            IImageSettings imageSettings, ICloudLayouter cloudLayouter)
+            IWordPalette wordPalette, ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter)
         {
             this.fileReader = fileReader;
             this.visualizer = visualizer;
             this.wordPalette = wordPalette;
             this.sizeDefiner = sizeDefiner;
             this.cloudLayouter = cloudLayouter;
-            this.imageSettings = imageSettings;
         }
 
-        private void ParseArguments(string[] args)
+        public void GenerateImage(string[] args)
         {
-            var parser = new FluentCommandLineParser<CloundArguments>();
+            Result.Ok(ParseArguments(args))
+                .Then(SetFont)
+                .Then(SetImageSize)
+                .Then(r => fileReader.Read(r.FileName))
+                .Then(counter.Count)
+                .Then(LayoutWords)
+                .Then(r => visualizer.Render(r, imageSize.Width, imageSize.Height, wordPalette))
+                .Then(i => ImageSaver.WriteToFile("output.png", i));
+        }
+
+        private Result<IEnumerable<GraphicWord>> LayoutWords(IEnumerable<GraphicWord> words)
+        {
+            cloudLayouter.Process(words, sizeDefiner, GetImageCenter(imageSize.Width, imageSize.Height));
+            return Result.Ok(words);
+        }
+
+        private CloudArguments ParseArguments(string[] args)
+        {
+            var parser = SetupParser();
+            parser.Parse(args);
+
+            var settings = parser.Object;
+
+            return settings;
+        }
+
+        private FluentCommandLineParser<CloudArguments> SetupParser()
+        {
+            var parser = new FluentCommandLineParser<CloudArguments>();
             parser.Setup(arg => arg.FileName).As('p', "path").Required();
             parser.Setup(arg => arg.Width).As('w', "width").SetDefault(800);
             parser.Setup(arg => arg.Height).As('h', "height").SetDefault(800);
             parser.Setup(arg => arg.Font).As('f', "font").SetDefault("Arial");
 
-            parser.Parse(args);
-
-            var settings = parser.Object;
-            imageSettings.Size = new Size(settings.Width, settings.Height);
-            imageSettings.Center = new Point(settings.Width / 2, settings.Height / 2);
-            counter.Font = new Font(settings.Font, 14);
-            path = settings.FileName;
-
+            return parser;
         }
 
-        public void GenerateImage(string[] args)
+        private Result<CloudArguments> SetFont(CloudArguments arguments)
         {
-            ParseArguments(args);
+            var result = ValidateFontName(arguments);
+            if (result.IsSuccess)
+            {
+                counter.Font = new Font(arguments.Font, 8);
+            }
 
-            var file = fileReader.Read(path);
-            var words = counter.Count(true, file);
-            cloudLayouter.Process(words, sizeDefiner, imageSettings.Center);
-            var image = visualizer.Render(words, imageSettings.Size.Width, imageSettings.Size.Height, wordPalette);
-            ImageSaver.WriteToFile("output.png", image);
-
+            return result;
         }
-    }
 
-    class CloundArguments
-    {
-        public string FileName { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Font { get; set; }
+        private Result<CloudArguments> SetImageSize(CloudArguments arguments)
+        {
+            imageSize = new Size(arguments.Width, arguments.Height);
+            return Result.Ok(arguments);
+        }
 
+        private Result<CloudArguments> ValidateFontName(CloudArguments arguments)
+        {
+            var font = new Font(arguments.Font, 8);
+            return Validate(arguments,
+                f => arguments.Font.Equals(font.Name, 
+                    StringComparison.InvariantCultureIgnoreCase),
+                $"Invalid font name: {arguments.Font}");
+        }
+
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
+        {
+            return predicate(obj)
+                ? Result.Ok(obj)
+                : Result.Fail<T>(errorMessage);
+        }
+
+        private Point GetImageCenter(int width, int height)
+        {
+            return new Point(width / 2, height / 2);
+        }
     }
 }

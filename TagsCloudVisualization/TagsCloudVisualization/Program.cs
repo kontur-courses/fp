@@ -16,7 +16,6 @@ namespace TagsCloudVisualization
             builder.RegisterType<NWordSizer>().As<ISizeDefiner>();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
-            builder.RegisterType<ImageSettings>().As<IImageSettings>();
             builder.RegisterType<MonochromePalette>().As<IWordPalette>();
             var container = builder.Build();
 
