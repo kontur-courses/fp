@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TagsCloud.TagsCloudVisualization.ColorSchemes.ColorSchemes.SizeDefiners
+namespace TagsCloud.TagsCloudVisualization
 {
     public interface ITagCloudLayouter
     {

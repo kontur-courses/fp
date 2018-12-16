@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using TagsCloud.CloudStructure;
+using TagsCloud.TagsCloudVisualization.SizeDefiners;
 
-namespace TagsCloud.TagsCloudVisualization.ColorSchemes.ColorSchemes.SizeDefiners
+namespace TagsCloud.TagsCloudVisualization
 {
     public class TagCloudLayouter: ITagCloudLayouter
     {

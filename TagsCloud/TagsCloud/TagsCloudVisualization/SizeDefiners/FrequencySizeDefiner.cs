@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tuple = System.Tuple;
 
-namespace TagsCloud.TagsCloudVisualization
+namespace TagsCloud.TagsCloudVisualization.SizeDefiners
 {
     public class FrequencySizeDefiner: ISizeDefiner
     {
@@ -14,7 +15,7 @@ namespace TagsCloud.TagsCloudVisualization
         private readonly int maxFontSize;
         private readonly int minFontSize;
 
-        private FrequencySizeDefiner(string fontName, int minFontSize = 10, int maxFontSize = 100)
+        public FrequencySizeDefiner(string fontName, int minFontSize = 10, int maxFontSize = 100)
         {
             this.fontName = fontName;
             this.maxFontSize = maxFontSize;

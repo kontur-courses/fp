@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TagsCloud.TagsCloudVisualization
+namespace TagsCloud.TagsCloudVisualization.SizeDefiners
 {
     public interface ISizeDefiner
     {

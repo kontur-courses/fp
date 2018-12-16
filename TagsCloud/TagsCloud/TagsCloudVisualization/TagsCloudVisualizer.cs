@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using TagsCloud.CloudStructure;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners.ColorSchemes;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners.ColorSchemes;
+using TagsCloud.ErrorHandling;
+using TagsCloud.TagsCloudVisualization.ColorSchemes;
 
-namespace TagsCloud.TagsCloudVisualization.ColorSchemes.ColorSchemes.SizeDefiners
+namespace TagsCloud.TagsCloudVisualization
 {
 
     public class TagsCloudVisualizer: ITagsCloudVisualizer
@@ -25,27 +24,34 @@ namespace TagsCloud.TagsCloudVisualization.ColorSchemes.ColorSchemes.SizeDefiner
             ColorScheme = colorScheme;
         }
 
-        public Bitmap GetCloudVisualization(List<Tag> tags)
+        public Result<Bitmap> GetCloudVisualization(List<Tag> tags)
         {
             var pictureRectangle = GetPictureRectangle(tags);
-            var bitmap = new Bitmap(pictureRectangle.Width, pictureRectangle.Height);
-            using (var graphics = Graphics.FromImage(bitmap))
+            var bitmap = Result.Of(() => new Bitmap(pictureRectangle.Width, pictureRectangle.Height));
+            if (!bitmap.IsSuccess)
+                return bitmap;
+            using (var graphics = Graphics.FromImage(bitmap.Value))
             {
                 graphics.Clear(BackgroundColor);
                 graphics.TranslateTransform(-pictureRectangle.X, -pictureRectangle.Y);
                 foreach (var tag in tags)
                 {
-                    Brush brush = new SolidBrush(ColorScheme.DefineColor(tag.Frequency).Value);
+                    var color = ColorScheme.DefineColor(tag.Frequency);
+                    if (!color.IsSuccess)
+                        return Result.Fail<Bitmap>(color.Error);
+                    Brush brush = new SolidBrush(color.Value);
                     graphics.DrawString(tag.Word, new Font(FontName, tag.FontSize), brush, tag.PosRectangle.Location);
                     graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
                 }
-            } 
-            var resultBitmap = new Bitmap(PictureSize.Width, PictureSize.Height);
-            using (var graphics = Graphics.FromImage(resultBitmap))
-            {
-                graphics.DrawImage(bitmap, 0, 0, PictureSize.Width, PictureSize.Height);
             }
 
+            var  resultBitmap = Result.Of(() => new Bitmap(PictureSize.Width, PictureSize.Height));
+            if (!resultBitmap.IsSuccess)
+                return resultBitmap.ReplaceError(s=> "Wrong bitmap parameters");
+            using (var graphics = Graphics.FromImage(resultBitmap.Value))
+            {
+                graphics.DrawImage(bitmap.Value, 0, 0, PictureSize.Width, PictureSize.Height);
+            }
             return resultBitmap;
         }
 

@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 
 
 namespace TagsCloud
@@ -8,9 +9,14 @@ namespace TagsCloud
         public static void Main(string[] args)
         {
             var options = Options.Parse(args);
-            var container = Ioc.Configure(options);
+            if (!options.IsSuccess)
+            {
+                Console.WriteLine(options.Error);
+                return;
+            }
+            var container = Ioc.Configure(options.Value);
             var app = container.Resolve<Application>();
-            app.Run(options);
+            app.Run(options.Value);
         }
     }
 }

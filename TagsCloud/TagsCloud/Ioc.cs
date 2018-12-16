@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using Autofac;
 using Autofac.Core;
 using TagsCloud.CloudStructure;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners.ColorSchemes;
+using TagsCloud.ErrorHandling;
+using TagsCloud.TagsCloudVisualization;
+using TagsCloud.TagsCloudVisualization.ColorSchemes;
+using TagsCloud.TagsCloudVisualization.SizeDefiners;
 using TagsCloud.WordPrework;
 
 
@@ -16,9 +19,13 @@ namespace TagsCloud
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<ConsoleHandler>().As<IErrorHandler>();
             builder.RegisterType<FileReader>().As<IWordsGetter>().WithParameter("fileName", options.File);
-            builder.RegisterType<WordAnalyzer>().As<IWordAnalyzer>().WithParameter("useInfinitiveForm", options.Infinitive);
 
+            builder.Register(c => c.Resolve<IWordsGetter>().GetWords());
+
+            builder.RegisterType<WordAnalyzer>().As<IWordAnalyzer>().WithParameter("useInfinitiveForm", options.Infinitive);
+            
             builder.RegisterType<SpiralPointGenerator>().As<IPointGenerator>().WithParameter("dAngle", options.DAngle);
             builder.RegisterType<PointCloudLayouter>().As<ICloudLayouter>().WithParameter("center", new Point()).SingleInstance();
 

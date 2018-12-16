@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagsCloud.ErrorHandling;
 
-namespace TagsCloud.TagsCloudVisualization.ColorSchemes.ColorSchemes.SizeDefiners
+namespace TagsCloud.TagsCloudVisualization
 {
     public interface ITagsCloudVisualizer
     {
-        Bitmap GetCloudVisualization(List<Tag> tags);
+        Result<Bitmap> GetCloudVisualization(List<Tag> tags);
     }
 }

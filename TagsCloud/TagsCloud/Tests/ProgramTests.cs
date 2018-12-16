@@ -8,7 +8,7 @@ using Autofac;
 using CommandLine;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners;
+using TagsCloud.TagsCloudVisualization;
 
 namespace TagsCloud.Tests
 {
@@ -23,17 +23,10 @@ namespace TagsCloud.Tests
 
         private static List<Tag> GetTags(string[] args)
         {
-            var options = Options.Parse(args);
+            var options = Options.Parse(args).Value;
             var container = Ioc.Configure(options);
             var app = container.Resolve<Application>();
-            return app.GetTags(options);
-        }
-
-        [Test]
-        public void GetTags_ThrowException_OnWrongArgs()
-        {
-            Action act = () => GetTags(new []{ "--something" });
-            act.ShouldThrow<ArgumentException>();
+            return app.GetTags(options).Value;
         }
 
         [Test]

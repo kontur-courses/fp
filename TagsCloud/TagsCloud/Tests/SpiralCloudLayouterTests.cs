@@ -33,16 +33,6 @@ namespace TagsCloud.Tests
             cloud.Rectangles.Should().BeEmpty();
         }
 
-        [TestCase(-1, 1, TestName = "Negative width")]
-        [TestCase(1, -1, TestName = "Negative height")]
-        [TestCase(0, 1, TestName = "Zero width")]
-        [TestCase(1, 0, TestName = "Zero height")]
-        public void Constructor_ThrowsException_OnWrongArguments(int width, int height)
-        {
-            Action act = () => cloud.PutNextRectangle(new Size(width, height));
-            act.ShouldThrow<ArgumentException>();
-        }
-
         [TestCase(4, 2, TestName = "With even size")]
         [TestCase(1, 3, TestName = "With odd size")]
         public void PutNextRectangle_ReturnsCenterRectangle_OnFirstPut(int width, int height)

@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagsCloud.ErrorHandling;
 
-namespace TagsCloud.TagsCloudVisualization.SizeDefiners.SizeDefiners.ColorSchemes
+namespace TagsCloud.TagsCloudVisualization.ColorSchemes
 {
     public class RandomColorScheme : IColorScheme
     {

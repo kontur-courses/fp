@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using MyStemWrapper;
 using Newtonsoft.Json.Linq;
+using TagsCloud.ErrorHandling;
 
 
 namespace TagsCloud.WordPrework
@@ -35,18 +36,18 @@ namespace TagsCloud.WordPrework
             PartOfSpeech.PronounNoun, PartOfSpeech.PronounAdjective
         };
 
-        private readonly IEnumerable<Result<string>> words;
         private readonly Dictionary<string, int> WordsFrequency = new Dictionary<string, int>();
         private MyStem stemmer = new MyStem();
         private char[] delimiters = new char[] {',','.',' ',':',';','(',')', '—', '–'};
 
-        public WordAnalyzer(IWordsGetter wordsGetter,bool useInfinitiveForm = false)
+        public WordAnalyzer(IEnumerable<Result<string>> words, bool useInfinitiveForm = false)
         {
             stemmer.PathToMyStem = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mystem.exe");
             stemmer.Parameters = "-i --format json";
-            words = wordsGetter.GetWords(delimiters);
             foreach (var word in words)
             {
+                if (!word.IsSuccess)
+                    break;
                 String wordForm;
                 if (useInfinitiveForm)
                 {

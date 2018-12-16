@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.CloudStructure;
-using TagsCloud.TagsCloudVisualization.ColorSchemes.SizeDefiners.ColorSchemes;
+using TagsCloud.ErrorHandling;
+using TagsCloud.TagsCloudVisualization.ColorSchemes;
 using TagsCloud.WordPrework;
 
 namespace TagsCloud.Tests
@@ -22,10 +21,35 @@ namespace TagsCloud.Tests
                         Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory))),
                 "Tests", "TestFile.txt");
 
-        private static WordAnalyzer CreateTestWordAnalyzer(IEnumerable<string> words, bool useInfinitiveForm = false)
+        [TestCase(-1, 1, TestName = "Negative width")]
+        [TestCase(1, -1, TestName = "Negative height")]
+        [TestCase(0, 1, TestName = "Zero width")]
+        [TestCase(1, 0, TestName = "Zero height")]
+        public void PutNextRectangle_ReturnsResultWithError_OnWrongArguments(int width, int height)
         {
-            var wordGetter = new SimpleWordGetter(words);
-            return new WordAnalyzer(wordGetter, useInfinitiveForm);
+            var cloud = new PointCloudLayouter(new Point(0, 0), new SpiralPointGenerator(Math.PI / 16));
+            var result = cloud.PutNextRectangle(new Size(width, height));
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void OptionsParse_ReturnsResultWithError_OnWrongArguments()
+        {
+            var options = Options.Parse(new[] { "--something" });
+            options.IsSuccess.Should().BeFalse();
+        }
+
+        [TestCase(new object[]{ "--height", "-5" }, TestName = "Negative height")]
+        [TestCase(new object[] { "--width", "-5" }, TestName = "Negative width")]
+        [TestCase(new object[] { "--dangle", "-5" }, TestName = "Negative dangle")]
+        [TestCase(new object[] { "--minFontSize", "-5" }, TestName = "Negative minFontSize")]
+        [TestCase(new object[] { "--maxFontSize", "5" , "--minFontSize", "10"}, TestName = "MinFontSize is greater than maxFontSize")]
+        [TestCase(new object[] { "--bgcolor", "-SOMECOLOR" }, TestName = "Unknown color name")]
+        [TestCase(new object[] { "--font", "-SOMEFONT" }, TestName = "Unknown font name")]
+        public void OptionsParse_ReturnsResultWithError_On(params string[] args)
+        {
+            var options = Options.Parse(args);
+            options.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -100,7 +124,7 @@ namespace TagsCloud.Tests
         [Test]
         public void WordAnalyzer_ReturnsResultWithError_OnWrongWords()
         {
-            var wordAnalyzer = CreateTestWordAnalyzer(new List<string> { "汉", "字" });
+            var wordAnalyzer = new WordAnalyzer(new List<Result<string>> { "汉", "字" });
             var result = wordAnalyzer.GetWordFrequency();
             result.IsSuccess.Should().BeFalse();
         }
@@ -108,7 +132,7 @@ namespace TagsCloud.Tests
         [Test]
         public void GetWordFrequency_ReturnsResultWithCorrectError_OnWrongWords()
         {
-            var wordAnalyzer = CreateTestWordAnalyzer(new List<string> { "汉", "字" });
+            var wordAnalyzer = new WordAnalyzer(new List<Result<string>> { "汉", "字" });
             var result = wordAnalyzer.GetWordFrequency();
             result.Error.Should().Be("Error in getting word frequency. " +
                     "Exception in getting the part of the speech of the word '汉'");
@@ -117,7 +141,7 @@ namespace TagsCloud.Tests
         [Test]
         public void GetSpecificWordFrequency_ReturnsResultWithCorrectError_OnWrongWords()
         {
-            var wordAnalyzer = CreateTestWordAnalyzer(new List<string> { "Hi", "汉", "字" });
+            var wordAnalyzer = new WordAnalyzer(new List<Result<string>> { "Hi", "汉", "字" });
             var result = wordAnalyzer.GetSpecificWordFrequency(new List<PartOfSpeech>
                 {PartOfSpeech.Adjective, PartOfSpeech.Noun});
             result.Error.Should().Be("Error in getting specific word frequency. " +
@@ -127,7 +151,7 @@ namespace TagsCloud.Tests
         [Test]
         public void WordAnalyzer_ReturnsCorrectResult_OnCorrectWords()
         {
-            var wordAnalyzer = CreateTestWordAnalyzer(new List<string> { "Привет", "рад", "познакомиться" });
+            var wordAnalyzer = new WordAnalyzer(new List<Result<string>> { "Привет", "рад", "познакомиться" });
             var result = wordAnalyzer.GetWordFrequency();
             result.IsSuccess.Should().BeTrue();
         }

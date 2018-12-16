@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TagsCloud.TagsCloudVisualization
+namespace TagsCloud.TagsCloudVisualization.SizeDefiners
 {
     public class RandomSizeDefiner: ISizeDefiner
     {

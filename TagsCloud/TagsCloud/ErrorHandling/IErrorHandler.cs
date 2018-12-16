@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TagsCloud.TagsCloudVisualization.SizeDefiners
+namespace TagsCloud.ErrorHandling
 {
-    public enum SizeDefiner
+    public interface IErrorHandler
     {
-        Random,
-        Frequency
+        void Handle(string error);
     }
 }
