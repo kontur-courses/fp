@@ -1,4 +1,4 @@
-﻿namespace Result
+﻿namespace Functional
 {
     public class None
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Result
+namespace Functional
 {
     public struct Result<T>
     {

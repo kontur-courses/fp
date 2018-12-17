@@ -49,6 +49,7 @@
     <Compile Include="AbstractSpiralGenerator.cs" />
     <Compile Include="CompositeDrawer.cs" />
     <Compile Include="ImageCreatingOptions.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="ResultExtensions.cs" />
     <Compile Include="ShortWordDrawer.cs" />
     <Compile Include="TagCloudImageCreator.cs" />

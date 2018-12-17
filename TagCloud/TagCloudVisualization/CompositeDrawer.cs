@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Functional;
 
 namespace TagCloudVisualization
 {
@@ -18,14 +19,9 @@ namespace TagCloudVisualization
             this.drawers = drawers.ToList();
         }
 
-        /// <summary>
-        ///     Sets the drawer with highest priority that checks given wordInfo to draw next word.
-        ///     Priority sets as order of drawers in constructor: earlier position means higher priority.
-        /// </summary>
-        public bool TryGetDrawer(WordInfo wordInfo, out IWordDrawer drawer)
+        public Result<IWordDrawer> GetDrawer(WordInfo wordInfo)
         {
-            drawer = drawers.FirstOrDefault(d => d.Check(wordInfo));
-            return drawer != null;
+            return drawers.GetFirst(d => d.Check(wordInfo));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Result;
+using Functional;
 using TagCloudVisualization;
 
 namespace TagCloudCreation

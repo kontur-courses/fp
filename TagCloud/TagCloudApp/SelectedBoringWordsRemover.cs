@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Result;
+using Functional;
 using TagCloudCreation;
 
 namespace TagCloudApp
@@ -23,8 +23,8 @@ namespace TagCloudApp
         public Result<HashSet<string>> InitializeBoringWords(TagCloudCreationOptions options)
         {
             if (options.PathToBoringWords.HasNoValue)
-                return Result.Result.Fail<HashSet<string>>("No path was given");
-            return boringWords == null ? ReadWords(options.PathToBoringWords.Value) : Result.Result.Ok(boringWords);
+                return Result.Fail<HashSet<string>>("No path was given");
+            return boringWords == null ? ReadWords(options.PathToBoringWords.Value) : Result.Ok(boringWords);
         }
 
         private Result<HashSet<string>> ReadWords(string path)

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using edu.stanford.nlp.tagger.maxent;
-using Result;
-using static Result.Result;
+using Functional;
+using static Functional.Result;
 
 namespace TagCloudCreation
 {

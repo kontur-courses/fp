@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using edu.stanford.nlp.tagger.maxent;
-using Result;
+using Functional;
 
 namespace TagCloudCreation
 {

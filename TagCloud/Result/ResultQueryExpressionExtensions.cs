@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Result
+namespace Functional
 {
     public static class ResultQueryExpressionExtensions
     {

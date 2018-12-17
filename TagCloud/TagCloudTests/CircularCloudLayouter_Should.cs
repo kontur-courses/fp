@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Specialized;
+using Functional;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using Result;
 using TagCloudVisualization;
 using Point = TagCloudVisualization.Point;
 

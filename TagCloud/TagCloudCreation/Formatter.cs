@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Result;
+using Functional;
 
 namespace TagCloudCreation
 {

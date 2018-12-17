@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Result;
+using Functional;
 using TagCloudVisualization;
 
 namespace TagCloudCreation
@@ -36,7 +36,7 @@ namespace TagCloudCreation
             var maxCount = stats.Max(w => w.Count);
             var minCount = stats.Min(w => w.Count);
 
-            return Result.Result.Of(() => stats.OrderByDescending(wi => wi.Count)
+            return Result.Of(() => stats.OrderByDescending(wi => wi.Count)
                                         .Select(wordInfo =>
                                                     wordInfo.With(GetScale(wordInfo.Count, maxCount, minCount))));
         }

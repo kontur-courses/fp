@@ -6,7 +6,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using Fclp;
-using Result;
+using Functional;
 using TagCloudCreation;
 using TagCloudVisualization;
 using Point = System.Drawing.Point;

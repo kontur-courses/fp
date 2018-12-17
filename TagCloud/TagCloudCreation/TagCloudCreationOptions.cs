@@ -1,4 +1,4 @@
-﻿using Result;
+﻿using Functional;
 using TagCloudVisualization;
 
 namespace TagCloudCreation

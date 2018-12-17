@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Result;
-using static Result.Result;
+using Functional;
+using static Functional.Result;
 
 namespace TagCloudVisualization
 {

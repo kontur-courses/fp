@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Result;
+using Functional;
 using TagCloudCreation;
 
 namespace TagCloudApp

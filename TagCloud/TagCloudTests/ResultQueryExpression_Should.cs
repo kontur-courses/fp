@@ -1,8 +1,8 @@
 using System;
 using FluentAssertions;
+using Functional;
 using NUnit.Framework;
-using Result;
-using static Result.Result;
+using static Functional.Result;
 
 namespace TagCloudTests
 {

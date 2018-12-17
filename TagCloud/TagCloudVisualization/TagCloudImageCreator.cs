@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Functional;
 
 namespace TagCloudVisualization
 {
@@ -20,29 +21,30 @@ namespace TagCloudVisualization
 
         public float MaxFontSize => 100;
 
-        public virtual Bitmap CreateTagCloudImage(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
+        public virtual Result<Bitmap> CreateTagCloudImage(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
         {
-            tagCloud = SetRectanglesToCloud(tagCloud, options)
-                .ToList();
+            return SetRectanglesToCloud(tagCloud, options)
+                   .Then(p => DrawTagCloud(p, options))
+                   .ReplaceError(err => "Can't create image: " + err);
+        }
 
-            var (width, height, center) = GetTagCloudDimensions(tagCloud);
+        private Result<Bitmap> DrawTagCloud(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
+        {
+            tagCloud = tagCloud.ToList();
+            var image = CreateImage(tagCloud, options);
 
-            if (options.ImageSize != null)
-            {
-                width = options.ImageSize.Value.Width;
-                height = options.ImageSize.Value.Height;
-            }
+            if (!image.IsSuccess)
+                return Result.Fail<Bitmap>(image.Error);
 
-            var image = new Bitmap(width, height);
+            var center = new Point(image.Value.Size.Width / 2, image.Value.Size.Height / 2);
 
-            using (var graphics = Graphics.FromImage(image))
+            using (var graphics = Graphics.FromImage(image.Value))
                 foreach (var wordInfo in tagCloud)
                 {
                     if (wordInfo.Scale.HasNoValue || wordInfo.Rectangle.HasNoValue)
-                        throw new ArgumentException();
+                        return Result.Fail<Bitmap>("WordInfo have not enough values");
 
                     var rectangle = wordInfo.Rectangle.Value;
-
                     var fontScale = wordInfo.Scale.Value;
 
                     using (var font = new Font(options.FontName, fontScale))
@@ -55,11 +57,22 @@ namespace TagCloudVisualization
             return image;
         }
 
+        private static Result<Bitmap> CreateImage(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
+        {
+            var (width, height, _) = GetTagCloudDimensions(tagCloud);
+
+            if (options.ImageSize == null)
+                return new Bitmap(width, height);
+
+            width = options.ImageSize.Value.Width;
+            height = options.ImageSize.Value.Height;
+
+            return new Bitmap(width, height);
+        }
+
         private static (int width, int height, Point center) GetTagCloudDimensions(IEnumerable<WordInfo> tagCloud)
         {
             tagCloud = tagCloud.ToList();
-            if (tagCloud.Any(w => w.Rectangle.HasNoValue))
-                throw new ArgumentException();
             var areaSize = tagCloud.Select(w => w.Rectangle.Value)
                                    .GetUnitedSize();
 
@@ -71,33 +84,44 @@ namespace TagCloudVisualization
             return (width, height, center);
         }
 
-        private IEnumerable<WordInfo> SetRectanglesToCloud(IEnumerable<WordInfo> tagCloud, ImageCreatingOptions options)
+        private Result<IEnumerable<WordInfo>> SetRectanglesToCloud(
+            IEnumerable<WordInfo> tagCloud,
+            ImageCreatingOptions options)
         {
             var layouter = layouterFactory(options.Center);
-            foreach (var wordInfo in tagCloud)
-            {
-                Size size;
-                if (wordInfo.Scale.HasNoValue)
-                    throw new ArgumentException();
-                using (var font = new Font(options.FontName, wordInfo.Scale.Value))
-                    size = TextRenderer.MeasureText(wordInfo.Word, font);
+            var results = tagCloud
+                          .Select(wordInfo => (wordInfo, rectangle: GetRectangleForWord(layouter, wordInfo, options)))
+                          .ToList();
+            return results.Any(p => !p.rectangle.IsSuccess)
+                       ? Result.Fail<IEnumerable<WordInfo>>("Can't add rectangle to Cloud")
+                       : results.Select(p => p.wordInfo.With(p.rectangle.Value))
+                                .AsResult();
+        }
 
+        private static Result<Rectangle> GetRectangleForWord(
+            CircularCloudLayouter layouter,
+            WordInfo wordInfo,
+            ImageCreatingOptions options)
+        {
+            if (wordInfo.Scale.HasNoValue)
+                return Result.Fail<Rectangle>("Scale has no value");
+            using (var font = new Font(options.FontName, wordInfo.Scale.Value))
+            {
+                var size = TextRenderer.MeasureText(wordInfo.Word, font);
                 var rectangle = layouter.PutNextRectangle(size);
-                if (rectangle.IsSuccess)
-                    yield return wordInfo.With(rectangle.Value);
+                return rectangle;
             }
         }
 
-        private protected void DrawSingleWord(
+        private protected Result<None> DrawSingleWord(
             Graphics graphics,
             ImageCreatingOptions options,
             WordInfo wordInfo,
             Font font)
         {
-            if (compositeDrawer.TryGetDrawer(wordInfo, out var drawer))
-                drawer.DrawWord(graphics, options, wordInfo, font);
-            else
-                throw new ArgumentException($"There is no drawer that can draw given word: {wordInfo.Word}");
+            return compositeDrawer.GetDrawer(wordInfo)
+                                  .Then(d => d.DrawWord(graphics, options, wordInfo, font))
+                                  .RefineError($"There is no drawer that can draw given word: {wordInfo.Word}");
         }
     }
 }
