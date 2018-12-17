@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{ACBC03B3-A778-4F66-9D6D-43C77D64CC23}"
 EndProject
@@ -12,6 +12,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summator\Summator.csproj", "{ADB55562-4353-4FC2-9486-E6C343C2F7F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudVisualization", "TagsCloudVisualization\TagsCloudVisualization.csproj", "{2FF49238-09DE-4E13-B5F4-D7C1B893E446}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudVisualizationTest", "TagsCloudVisualizationTest\TagsCloudVisualizationTest.csproj", "{3875F4E8-CD54-4076-9425-3FB6830B15D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudConsole", "TagsCloudConsole\TagsCloudConsole.csproj", "{26E1CC41-DF4F-49E8-9C4F-B74D3C4B33FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultOf", "ResultOf\ResultOf.csproj", "{CFBF8A5A-A567-4664-A66D-73B32D2946E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,11 +43,30 @@ Global
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FF49238-09DE-4E13-B5F4-D7C1B893E446}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FF49238-09DE-4E13-B5F4-D7C1B893E446}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FF49238-09DE-4E13-B5F4-D7C1B893E446}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FF49238-09DE-4E13-B5F4-D7C1B893E446}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3875F4E8-CD54-4076-9425-3FB6830B15D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3875F4E8-CD54-4076-9425-3FB6830B15D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3875F4E8-CD54-4076-9425-3FB6830B15D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3875F4E8-CD54-4076-9425-3FB6830B15D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26E1CC41-DF4F-49E8-9C4F-B74D3C4B33FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E1CC41-DF4F-49E8-9C4F-B74D3C4B33FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E1CC41-DF4F-49E8-9C4F-B74D3C4B33FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E1CC41-DF4F-49E8-9C4F-B74D3C4B33FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFBF8A5A-A567-4664-A66D-73B32D2946E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFBF8A5A-A567-4664-A66D-73B32D2946E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFBF8A5A-A567-4664-A66D-73B32D2946E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFBF8A5A-A567-4664-A66D-73B32D2946E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ADB55562-4353-4FC2-9486-E6C343C2F7F6} = {53B60782-5F18-4FD1-9FC0-A6F2474751CB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBDBB9A1-359B-445B-945D-8F561FE7CDFE}
 	EndGlobalSection
 EndGlobal
