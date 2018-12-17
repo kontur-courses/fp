@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using TagsCloudResult.Settings;
@@ -44,7 +45,9 @@ namespace TagsCloudResult.Algorithms
             });
         }
 
-        private Rectangle PutNextRectangle(Size rectangleSize)
+        public ReadOnlyCollection<Rectangle> GetRectangles() => rectangles.AsReadOnly();
+
+        public Rectangle PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 1 || rectangleSize.Width < 1)
                 throw new ArgumentException("Размер прямоугольника должен быть больше 0");

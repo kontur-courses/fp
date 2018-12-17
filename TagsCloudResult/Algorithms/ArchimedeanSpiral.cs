@@ -21,6 +21,8 @@ namespace TagsCloudResult.Algorithms
                 .RefineError("Не удалось получить следующую точку для размещения прямоугольника");
         }
 
+        public double GetCurrentSpiralAngle() => spiralAngle;
+
         private Result<(int x, int y)> GenerateCoordinates()
         {
             spiralAngle++;
