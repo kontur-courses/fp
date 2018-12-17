@@ -1,12 +1,26 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace TagsCloudVisualization
 {
     public static class ImageSaver
     {
-        public static void WriteToFile(string fileName, Image bitmap)
+        public static Result<FileSendResult> WriteToFile(string fileName, Image bitmap)
         {
-            bitmap.Save(fileName, bitmap.RawFormat);
+            try
+            {
+                bitmap.Save(fileName, bitmap.RawFormat);
+                return Result.Ok(new FileSendResult());
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<FileSendResult>(e.Message);
+            }
         }
+    }
+
+    public class FileSendResult
+    {
+
     }
 }
