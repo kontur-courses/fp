@@ -46,18 +46,15 @@ namespace TagCloudContainer
             return tagCloudVisualization.SaveTagCloud(
                 config.FileName,
                 config.OutPath,
-                GetFrequencyDictionary(words)
+                words.Then(GetFrequencyDictionary)
                     .Then(x => x.OrderBy(p => p.Value))
                     .Then(x => x.Reverse())
                     .Then(x => x.Take(config.Count))
                     .Then(x => x.ToDictionary(p => p.Key, p => p.Value)));
         }
 
-        private Result<Dictionary<string, int>> GetFrequencyDictionary(Result<List<string>> wordsResult)
+        private Dictionary<string, int> GetFrequencyDictionary(List<string> words)
         {
-            if (!wordsResult.IsSuccess) return Result.Fail<Dictionary<string, int>>(wordsResult.Error);
-
-            var words = wordsResult.GetValueOrThrow();
             var frequencyDictionary = new Dictionary<string, int>();
             foreach (var word in words)
             {
@@ -66,7 +63,7 @@ namespace TagCloudContainer
                 frequencyDictionary[word]++;
             }
 
-            return Result.Ok(frequencyDictionary);
+            return frequencyDictionary;
         }
     }
 }
