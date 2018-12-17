@@ -2,7 +2,7 @@
 
 namespace TagsCloudResult.TextPreprocessors.Filters
 {
-    class BoringWordFilter : IWordFilter
+    public class BoringWordFilter : IWordFilter
     {
         private readonly string[] boringWords = { "который", "большой" };
 

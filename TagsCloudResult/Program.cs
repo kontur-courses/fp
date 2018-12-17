@@ -7,7 +7,7 @@ namespace TagsCloudResult
     class Program
     {
         private static IContainer Container { get; set; }
-        static void Main(string[] args)
+        static void Main()
         {
             Container = new Ioc().GetContainer();
 

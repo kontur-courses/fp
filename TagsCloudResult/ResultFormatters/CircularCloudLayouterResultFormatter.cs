@@ -31,9 +31,9 @@ namespace TagsCloudResult.ResultFormatters
                     foreach (var entry in dataProvider.GetData().Value)
                     {
                         var font = new Font(fontSettings.FontFamily, 10);
-                        var generatedFont = GetFont(graphics, entry.Key, entry.Value.Item1.Size, font);
+                        var generatedFont = GetFont(graphics, entry.Text, entry.Rectangle.Size, font);
 
-                        graphics.DrawString(entry.Key, generatedFont, fontSettings.Brush, entry.Value.Item1);
+                        graphics.DrawString(entry.Text, generatedFont, fontSettings.Brush, entry.Rectangle);
 
                     }
                     bitmap.Save(outputFileName);
@@ -41,9 +41,9 @@ namespace TagsCloudResult.ResultFormatters
             }
         }
 
-        private Font GetFont(Graphics g, string longString, Size room, Font preferredFont)
+        private Font GetFont(Graphics graphics, string longString, Size room, Font preferredFont)
         {
-            var realSize = g.MeasureString(longString, preferredFont);
+            var realSize = graphics.MeasureString(longString, preferredFont);
             var heightScaleRatio = room.Height / realSize.Height;
             var widthScaleRatio = room.Width / realSize.Width;
 

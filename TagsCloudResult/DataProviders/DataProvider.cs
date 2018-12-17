@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using TagsCloudResult.Algorithms;
 using TagsCloudResult.Settings;
@@ -23,11 +22,11 @@ namespace TagsCloudResult.DataProviders
             this.algorithm = algorithm;
         }
 
-        public Result<IReadOnlyDictionary<string, (Rectangle, int)>> GetData()
+        public Result<IReadOnlyCollection<Tag>> GetData()
         {
             return Result.Of(textReader.ReadText)
                 .Then(lines => wordsPreprocessor.PreprocessWords(lines.Value))
-                .Then(preprocessedWords => algorithm.GenerateRectanglesSet(preprocessedWords
+                .Then(preprocessedWords => algorithm.GenerateTags(preprocessedWords
                     .OrderByDescending(e => e.Value)
                     .Take(cloudSettings.WordsToDisplay).ToDictionary(e => e.Key, e => e.Value)).Value);
         }
