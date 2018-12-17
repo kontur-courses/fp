@@ -96,7 +96,7 @@ namespace TagCloud.GUI
 
         private void Render()
         {
-            if (tagCloudSettings.PathToWords == null)
+            if (string.IsNullOrEmpty(tagCloudSettings.PathToWords))
             {
                 ShowErrorMessage("You should choose file with tags before rendering");
                 return;

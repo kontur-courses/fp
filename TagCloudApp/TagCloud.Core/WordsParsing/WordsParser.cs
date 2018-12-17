@@ -26,11 +26,12 @@ namespace TagCloud.Core.WordsParsing
             if (!wordsResult.IsSuccess)
                 return Result.Fail<IEnumerable<TagStat>>(wordsResult.Error);
 
-            var boringWordsResult = pathToBoringWords == null
+            var boringWordsResult = string.IsNullOrEmpty(pathToBoringWords)
                 ? Result.Ok(new HashSet<string>())
                 : wordsReader.ReadFrom(pathToBoringWords)
                     .Then(readWords => new HashSet<string>(readWords))
                     .RefineError($"Can't read boring words from \"{pathToBoringWords}\":\n");
+
             return boringWordsResult.IsSuccess
                 ? wordsProcessor.Process(wordsResult.Value, boringWordsResult.Value, settings.MaxUniqueWordsCount)
                 : Result.Fail<IEnumerable<TagStat>>(boringWordsResult.Error);

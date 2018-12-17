@@ -33,10 +33,10 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
                 wordsCounter[resWord] = resCount;
             }
 
-            return Result.Ok(HandleWordsCounter(wordsCounter, maxUniqueWordsCount));
+            return HandleWordsCounter(wordsCounter, maxUniqueWordsCount);
         }
 
-        private static IEnumerable<TagStat> HandleWordsCounter(Dictionary<string, int> wordsCounter,
+        private static Result<IEnumerable<TagStat>> HandleWordsCounter(Dictionary<string, int> wordsCounter,
             int? maxUniqueWordsCount)
         {
             var allTagsStats = new List<TagStat>();
@@ -46,9 +46,14 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
                 allTagsStats.Add(new TagStat(word, count));
             }
 
-            return maxUniqueWordsCount.HasValue
-                ? allTagsStats.OrderBy(ts => ts.RepeatsCount).Take(maxUniqueWordsCount.Value).ToList()
-                : allTagsStats;
+            if (maxUniqueWordsCount.HasValue)
+            {
+                return maxUniqueWordsCount.Value >= 0
+                    ? allTagsStats.OrderBy(ts => ts.RepeatsCount).Take(maxUniqueWordsCount.Value).ToList()
+                    : Result.Fail<IEnumerable<TagStat>>("MaxUniqueWordsCount should be positive number");
+            }
+
+            return allTagsStats;
         }
     }
 }

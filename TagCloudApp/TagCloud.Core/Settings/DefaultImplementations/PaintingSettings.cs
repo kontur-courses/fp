@@ -7,6 +7,7 @@ namespace TagCloud.Core.Settings.DefaultImplementations
     public class PaintingSettings : IPaintingSettings
     {
         private Color tagColor;
+        private Color backgroundColor;
 
         public PaintingSettings()
         {
@@ -21,6 +22,16 @@ namespace TagCloud.Core.Settings.DefaultImplementations
             {
                 tagColor = value;
                 TagBrushResult = new SolidBrush(value);
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get => backgroundColor;
+            set
+            {
+                backgroundColor = value;
+                BackgroundColorResult = backgroundColor;
             }
         }
 

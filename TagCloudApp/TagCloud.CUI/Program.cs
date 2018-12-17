@@ -28,6 +28,12 @@ namespace TagCloud.CUI
                     "-p", "test_words.txt",
 
                     // Each line below leads to an error:
+                    //"-w", "-800",
+                    //"-h", "-600",
+                    //"--spiralstep", "-1",
+                    //"--maxtagscount", "-10",
+                    //"--minfontsize", "-100",
+                    //"--maxfontsize", "-100",
                     "-i", "result_image.wrong_format",
                     //"-b", "boring_words.wrong_format",
                     //"-b", "nonexistence_boring_words.txt",

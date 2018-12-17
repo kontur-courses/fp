@@ -24,6 +24,8 @@ namespace TagCloud.Core.Layouters
 
         public Result<None> RefreshWith(PointF newCenterPoint)
         {
+            if (settings.SpiralStepMultiplier <= 0)
+                return Result.Fail<None>($"Spiral step should be positive number. Got {settings.SpiralStepMultiplier}");
             center = newCenterPoint;
             angle = -1;
             usedRectangles.Clear();

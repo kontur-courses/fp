@@ -67,12 +67,14 @@ namespace TagCloud.CUI
 
 
         #region VisualizingSettings
-        [Option('w', "width", Default = 800)] public int Width { get; set; } = 800;
+        [Option('w', "width", Default = 800)]
+        public int Width { get; set; }
 
-        [Option('h', "height", Default = 600)] public int Height { get; set; } = 600;
+        [Option('h', "height", Default = 600)]
+        public int Height { get; set; }
 
         [Option('f', "font", Default = "arial")]
-        public string FontName { get; set; } = "arial";
+        public string FontName { get; set; }
         
         [Option("minfontsize", Default = 15)]
         public float MinFontSize { get; set; }

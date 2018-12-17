@@ -36,11 +36,10 @@ namespace TagCloud.Core.Visualizers
 
         private Result<None> Initialize()
         {
-            return Result.OfAction(() =>
-            {
+            return Result.OfAction(() => {
                 bitmap = new Bitmap(settings.Width, settings.Height);
                 graphics = Graphics.FromImage(bitmap);
-            });
+            }).RefineError($"Can't create bitmap from these settings: width={settings.Width}, height={settings.Height}.\n");
         }
 
         private (double fontSizeMultiplier, double averageRepeatsCount) GetFontSizeMultiplierAndAverageRepeatsCount(
@@ -64,6 +63,10 @@ namespace TagCloud.Core.Visualizers
 
         private Result<IEnumerable<Tag>> GetResultTags(IEnumerable<TagStat> tagStats)
         {
+            if (settings.MinFontSize < 0 || settings.MaxFontSize < settings.MinFontSize)
+                return Result.Fail<IEnumerable<Tag>>("MinFontSize and MaxFontSize should satisfy next inequality:\n" +
+                                                     "\t0 <= MinFontSize <= MaxFontSize");
+
             var tagStatsList = tagStats.ToList();
             var (fontSizeMultiplier, averageRepeatsCount) = GetFontSizeMultiplierAndAverageRepeatsCount(tagStatsList);
 
