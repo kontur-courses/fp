@@ -9,10 +9,11 @@ namespace TagCloudContainer
 {
     public class ConsoleClient : IUserInterface
     {
+        public Config Config { get; private set; }
+
         private readonly string[] args;
         private readonly IWordExcluder wordExcluder;
         private bool toExit = true;
-        public Config Config { get; private set; }
 
         public ConsoleClient(string[] args, IWordExcluder wordExcluder)
         {
