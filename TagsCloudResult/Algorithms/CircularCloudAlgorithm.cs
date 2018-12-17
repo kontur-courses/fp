@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using TagsCloudResult.Settings;
@@ -14,37 +15,38 @@ namespace TagsCloudResult.Algorithms
 
         public CircularCloudAlgorithm(ICloudSettings cloudSettings, ISpiral spiral)
         {
-            
+
             rectangles = new List<Rectangle>();
             this.cloudSettings = cloudSettings;
             this.spiral = spiral;
         }
 
-        public Result<IReadOnlyDictionary<string, (Rectangle, int)>> GenerateRectanglesSet(IReadOnlyDictionary<string, int> processedWords)
+        public Result<IReadOnlyCollection<Tag>> GenerateTags(IReadOnlyDictionary<string, int> processedWords)
         {
             return Result.Of(() =>
             {
-                var result = new Dictionary<string, (Rectangle, int)>();
-                var wordsList = processedWords.ToList();
+                var result = new Collection<Tag>();
 
-                var relativeWeightsSum = wordsList.Sum(e => e.Value);
+                var relativeWeightsSum = processedWords.Sum(e => e.Value);
 
                 var relativeWeightUnit = (double)relativeWeightsSum / cloudSettings.CenterPoint.X * 2;
 
-                foreach (var word in wordsList)
+                foreach (var word in processedWords)
                 {
                     var wordWeight = word.Value * relativeWeightUnit;
                     var size = new Size((int)wordWeight, (int)(wordWeight / 2));
 
                     var newRectangle = PutNextRectangle(size);
 
-                    result[word.Key] = (newRectangle, word.Value);
+                    result.Add(new Tag { Text = word.Key, Rectangle = newRectangle });
                 }
-                return (IReadOnlyDictionary<string, (Rectangle, int)>)result;
+                return (IReadOnlyCollection<Tag>)result;
             });
         }
 
-        private Rectangle PutNextRectangle(Size rectangleSize)
+        public ReadOnlyCollection<Rectangle> GetRectangles() => rectangles.AsReadOnly();
+
+        public Rectangle PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 1 || rectangleSize.Width < 1)
                 throw new ArgumentException("Размер прямоугольника должен быть больше 0");
@@ -81,35 +83,30 @@ namespace TagsCloudResult.Algorithms
         }
         private Rectangle MoveRectangleCloserToCenterByY(Rectangle rectangle)
         {
-            while (true)
+            while (!(GetRectangleCenter(rectangle).Y == cloudSettings.CenterPoint.Y ||
+                     rectangles.Any(e => e.IntersectsWith(rectangle))))
             {
-                var result = rectangle;
-
                 if (GetRectangleCenter(rectangle).Y > cloudSettings.CenterPoint.Y)
                     rectangle.Y--;
 
                 if (GetRectangleCenter(rectangle).Y < cloudSettings.CenterPoint.Y)
                     rectangle.Y++;
-
-                if (GetRectangleCenter(rectangle).Y == cloudSettings.CenterPoint.Y || rectangles.Any(e => e.IntersectsWith(rectangle)))
-                    return result;
             }
+            return rectangle;
+
         }
         private Rectangle MoveRectangleCloserToCenterByX(Rectangle rectangle)
         {
-            while (true)
+            while (!(GetRectangleCenter(rectangle).X == cloudSettings.CenterPoint.X ||
+                     rectangles.Any(e => e.IntersectsWith(rectangle))))
             {
-                var result = rectangle;
-
                 if (GetRectangleCenter(rectangle).X > cloudSettings.CenterPoint.X)
                     rectangle.X--;
 
                 if (GetRectangleCenter(rectangle).X < cloudSettings.CenterPoint.X)
                     rectangle.X++;
-
-                if (GetRectangleCenter(rectangle).X == cloudSettings.CenterPoint.X || rectangles.Any(e => e.IntersectsWith(rectangle)))
-                    return result;
             }
+            return rectangle;
         }
 
         private Rectangle CreateNewRectangle(Size rectangleSize)

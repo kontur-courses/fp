@@ -2,6 +2,6 @@
 {
     public interface ISourceFileSettings
     {
-        string FilePath { get; set; }
+        string FilePath { get; }
     }
 }

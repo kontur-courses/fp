@@ -84,6 +84,7 @@
     <Compile Include="SourceTextReaders\ISourceTextReader.cs" />
     <Compile Include="SourceTextReaders\TxtSourceTextReader.cs" />
     <Compile Include="Algorithms\ArchimedeanSpiral.cs" />
+    <Compile Include="Tag.cs" />
     <Compile Include="TextPreprocessors\BasicWordsPreprocessor.cs" />
     <Compile Include="TextPreprocessors\IWordsPreprocessor.cs" />
     <Compile Include="TextPreprocessors\Filters\BoringWordFilter.cs" />

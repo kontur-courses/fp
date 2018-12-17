@@ -4,8 +4,8 @@ namespace TagsCloudResult.Settings
 {
     public interface ICloudSettings
     {
-        int WordsToDisplay { get; set; }
+        int WordsToDisplay { get; }
         Point CenterPoint { get; }
-        Size Size { get; set; }
+        Size Size { get; }
     }
 }

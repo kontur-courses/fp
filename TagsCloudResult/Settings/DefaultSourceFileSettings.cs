@@ -4,6 +4,6 @@ namespace TagsCloudResult.Settings
 {
     public class DefaultSourceFileSettings : ISourceFileSettings
     {
-        public string FilePath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "1984_lines.txt");
+        public string FilePath { get; } = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "1984_lines.txt");
     }
 }
