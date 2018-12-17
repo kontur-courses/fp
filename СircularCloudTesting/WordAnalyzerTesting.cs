@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using FluentAssertions;
+using NHunspell;
 using NUnit.Framework;
+using TagsCloudVisualization;
 using TagsCloudVisualization.WordProcessing;
 
 namespace СircularCloudTesting
@@ -30,6 +33,31 @@ namespace СircularCloudTesting
             { PathToFile = $"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/" + fileName });
             var result = wordAnalyzer.MakeWordFrequencyDictionary();
             result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public void MakeWordFrequencyDictionary_Should_Fail_WhenHanspellCanNotFindDictionaries()
+        {
+            var wordAnalyzer = new WordAnalyzer(new WordsSettings()
+            { PathToFile = $"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/testTxtFile.txt" });
+            var field = typeof(WordAnalyzer)
+                .GetField("hunspell", BindingFlags.Instance | BindingFlags.NonPublic);
+            field.SetValue(wordAnalyzer, Result.Of(() => new Hunspell(@"D:\dict.aff", @"C:\dict.dic")));
+            var result = wordAnalyzer.MakeWordFrequencyDictionary();
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().BeEquivalentTo(@"One of the external libraries failed. AFF File not found: D:\dict.aff");
+        }
+
+        [Test]
+        public void MakeWordFrequencyDictionary_Should_Fail_WhenFailReadFile()
+        {
+            var wordAnalyzer = new WordAnalyzer(new WordsSettings()
+            { PathToFile = @"D:\badFile.txt" });
+            var result = wordAnalyzer.MakeWordFrequencyDictionary();
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().BeEquivalentTo(@"The settings file could not be read. Файл 'D:\badFile.txt' не найден.");
         }
     }
 }

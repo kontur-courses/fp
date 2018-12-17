@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Activation;
 using System.Windows.Forms;
 using TagsCloudVisualization.InterfacesForSettings;
 
@@ -21,20 +22,12 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
         }
         public Result<Bitmap> DrawCircularCloud()
         {
-            if (cloudSettings.WordsSettings.PathToFile == null)
-                return Result.Fail<Bitmap>("File not found.");
-
-            var center = cloudSettings.ImageSettings.Center;
-            var imageSize = cloudSettings.ImageSettings.ImageSize;
-            if (center.X < 0 || center.Y < 0 || center.X > imageSize.Width || center.Y > imageSize.Height)
-                return Result.Fail<Bitmap>("Image settings are incorrect.");
-
-            var wordFrequency = cloudSettings.WordsSettings.WordAnalyzer.MakeWordFrequencyDictionary();
-            var processedWords = wordFrequency.Then(ProcessWords);
-            if (processedWords.IsSuccess && wordFrequency.IsSuccess &&
-                processedWords.Value.Count() != wordFrequency.Value.Count)
-                return Result.Fail<Bitmap>("Tag cloud does not fit the image of the specified size.");
-            return processedWords.Then(MakeImage);
+            return new Result<None>()
+                .Then(() => cloudSettings.WordsSettings.PathToFile == null, "File not found.")
+                .Then(CheckCenterCoordinates, "Image settings are incorrect.")
+                .Then(() => cloudSettings.WordsSettings.WordAnalyzer.MakeWordFrequencyDictionary())
+                .Then(ProcessWords, "Tag cloud does not fit the image of the specified size.")
+                .Then(MakeImage);
         }
 
         private Bitmap MakeImage(IEnumerable<(Rectangle Region, string word, int RepetitionsCount)> processedWords)
@@ -83,6 +76,13 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
             return circularCloudLayouter.PutNextRectangle
                                 (new Size((int)(tuple.Word.Length * fontSize * tuple.Frequency),
                                 (int)(fontSize * HeightStretchFactor * tuple.Frequency)));
+        }
+
+        private bool CheckCenterCoordinates()
+        {
+            var center = cloudSettings.ImageSettings.Center;
+            var imageSize = cloudSettings.ImageSettings.ImageSize;
+            return center.X < 0 || center.Y < 0 || center.X > imageSize.Width || center.Y > imageSize.Height;
         }
     }
 }

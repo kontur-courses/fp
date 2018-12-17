@@ -11,7 +11,7 @@ namespace TagsCloudVisualization.App
 
         public Result<None> FailIfNotInitialized()
         {
-            return Image == null || OriginalImage == null ? Result.Fail<None>("Image is missing.") : Result.Ok();
+            return new Result<None>().Then(() => Image == null || OriginalImage == null, "Image is missing.");
         }
 
         public void RecreateImage(ITagsCloudSettings tagCloudSettings)
@@ -26,13 +26,10 @@ namespace TagsCloudVisualization.App
             Image = new Bitmap(image, Size);
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            var result = FailIfNotInitialized();
-            if (result.IsSuccess)
-                OriginalImage.Save(fileName, ImageFormat.Png);
-            else MessageBox.Show(result.Error, "Ошибка",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return FailIfNotInitialized()
+                .Then(() => OriginalImage.Save(fileName, ImageFormat.Png), "Invalid path to file specified.");
         }
     }
 }

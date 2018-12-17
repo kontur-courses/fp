@@ -13,15 +13,15 @@ namespace TagsCloudVisualization.App.Actions
         }
         public void Perform()
         {
-            var result = imageHolder.FailIfNotInitialized();
-            if (result.IsSuccess)
-                result = Result.OfAction(SaveImage).RefineError("Failed to save file.");
+            var result = imageHolder.FailIfNotInitialized()
+                .Then(SaveImage)
+                .RefineError("Failed to save file.");
             if (!result.IsSuccess)
                 MessageBox.Show(result.Error, "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void SaveImage()
+        private Result<None> SaveImage()
         {
             var dialog = new SaveFileDialog
             {
@@ -33,8 +33,7 @@ namespace TagsCloudVisualization.App.Actions
                 Filter = "Изображения (*.png)|*.png",
                 ShowHelp = true
             };
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-            imageHolder.SaveImage(dialog.FileName);
+            return dialog.ShowDialog() != DialogResult.OK ? Result.Ok() : imageHolder.SaveImage(dialog.FileName);
         }
     }
 }

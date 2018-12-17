@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TagsCloudVisualization
 {
@@ -34,10 +36,6 @@ namespace TagsCloudVisualization
 
     public static class Result
     {
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
 
         public static Result<T> Ok<T>(T value)
         {
@@ -66,11 +64,11 @@ namespace TagsCloudVisualization
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> OfAction(Action action, string error = null)
         {
             try
             {
-                f();
+                action();
                 return Ok();
             }
             catch (Exception e)
@@ -93,6 +91,44 @@ namespace TagsCloudVisualization
             return input.IsSuccess
                 ? Ok(continuation(input.Value))
                 : Fail<TOutput>(input.Error);
+        }
+
+        public static Result<TOutput> Then<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<Result<TOutput>> continuation)
+        {
+            return input.IsSuccess
+                ? continuation()
+                : Fail<TOutput>(input.Error);
+        }
+
+        public static Result<None> Then<TInput>(
+            this Result<TInput> input,
+            Action action, string error = null)
+        {
+            return input.IsSuccess ? OfAction(action, error) : Fail<None>(input.Error);
+        }
+
+
+        public static Result<TInput> Then<TInput>(
+            this Result<TInput> input,
+            Func<bool> continuation, string error)
+        {
+            if (input.IsSuccess)
+                return continuation() ? Fail<TInput>(error) : input;
+            return Fail<TInput>(input.Error);
+        }
+
+        public static Result<IEnumerable<TOutput>> Then<TOutput>(
+            this Result<Dictionary<string, int>> input,
+            Func<Dictionary<string, int>, IEnumerable<TOutput>> continuation, string error)
+        {
+            if (!input.IsSuccess)
+                return Fail<IEnumerable<TOutput>>(input.Error);
+            var result = Of(() => continuation(input.Value));
+            if (!result.IsSuccess)
+                return Fail<IEnumerable<TOutput>>(result.Error);
+            return result.Value.Count() == input.Value.Count ? Ok(result.Value) : Fail<IEnumerable<TOutput>>(error);
         }
     }
 }
