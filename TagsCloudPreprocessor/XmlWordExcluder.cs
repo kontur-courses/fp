@@ -41,7 +41,7 @@ namespace TagsCloudPreprocessor
 
         private Result<None> WriteForbiddenWords(Result<HashSet<string>> forbiddenWords)
         {
-            if (!forbiddenWords.IsSuccess) return Result.Fail<None>(forbiddenWords.Error);
+            if (!forbiddenWords.IsSuccess) return Result.Fail(forbiddenWords.Error);
             using (var file = new FileStream(filename, FileMode.Create))
             {
                 return Result.Of(() =>

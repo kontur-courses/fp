@@ -50,6 +50,11 @@ namespace ResultOfTask
         {
             return new Result<T>(e);
         }
+        
+        public static Result<None> Fail(string e)
+        {
+            return new Result<None>(e);
+        }
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {

@@ -90,7 +90,7 @@ namespace TagsCloudVisualization
             string directory,
             Result<Dictionary<string, int>> wordsResult)
         {
-            if (!wordsResult.IsSuccess) return Result.Fail<None>(wordsResult.Error);
+            if (!wordsResult.IsSuccess) return Result.Fail(wordsResult.Error);
             var words = wordsResult.GetValueOrThrow();
             
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
@@ -105,9 +105,9 @@ namespace TagsCloudVisualization
 
             var imageFormat = ParseImageFormat(imageExtension);
             if (imageFormat == null)
-                return Result.Fail<None>("Invalid image format.");
+                return Result.Fail("Invalid image format.");
             if (!Directory.Exists(directory))
-                return Result.Fail<None>("Invalid output path.");
+                return Result.Fail("Invalid output path.");
             bitmap.Save($"{directory}\\{bitmapName}.{imageExtension}", imageFormat);
 
             return Result.Ok();

@@ -125,7 +125,7 @@ namespace TagCloudContainer
                 });
 
             if (!config.IsSuccess)
-                return Result.Fail<None>(config.Error);
+                return Result.Fail(config.Error);
             if (configChanged)
             {
                 Config = config.GetValueOrThrow();
