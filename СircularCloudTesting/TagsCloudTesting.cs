@@ -42,7 +42,7 @@ namespace СircularCloudTesting
         {
             CircularCloudLayouter.IsCompressedCloud = true;
             var image = visualizer.DrawCircularCloud();
-            var result = image.WithBitmapData(bmpData => bmpData.GetColorValues());
+            var result = image.GetValueOrThrow().WithBitmapData(bmpData => bmpData.GetColorValues());
             var expectedImage = new Bitmap($"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/CompressedTagCloud.png");
             var expectedResult = expectedImage.WithBitmapData(bmpData => bmpData.GetColorValues());
 
@@ -54,7 +54,7 @@ namespace СircularCloudTesting
         {
             CircularCloudLayouter.IsCompressedCloud = false;
             var image = visualizer.DrawCircularCloud();
-            var result = image.WithBitmapData(bmpData => bmpData.GetColorValues());
+            var result = image.GetValueOrThrow().WithBitmapData(bmpData => bmpData.GetColorValues());
             var expectedImage = new Bitmap($"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/NormalTagCloud.png");
             var expectedResult = expectedImage.WithBitmapData(bmpData => bmpData.GetColorValues());
 

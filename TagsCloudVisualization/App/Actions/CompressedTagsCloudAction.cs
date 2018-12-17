@@ -18,19 +18,21 @@ namespace TagsCloudVisualization.App.Actions
         }
         public void Perform()
         {
-            try
+            CircularCloudLayouter.IsCompressedCloud = true;
+            var resultImage = visualizer.DrawCircularCloud();
+            if (resultImage.IsSuccess)
             {
-                CircularCloudLayouter.IsCompressedCloud = true;
-                var image = visualizer.DrawCircularCloud();
+                var image = resultImage.Value;
                 imageHolder.RecreateImage(image);
                 imageHolder.Refresh();
                 Application.DoEvents();
             }
-            catch (Exception exception)
+            else
             {
-                MessageBox.Show(exception.Message, "Ошибка",
+                MessageBox.Show(resultImage.Error, "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
     }
 }

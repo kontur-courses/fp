@@ -25,16 +25,6 @@ namespace СircularCloudTesting
                 Assert.AreEqual(new Point(x, y), cloud.Center);
             }
 
-            [TestCase(-1, 2, TestName = "x is negative")]
-            [TestCase(2, -1, TestName = "y is negative")]
-            [TestCase(10000, 2, TestName = "x larger than window size")]
-            [TestCase(-1, 30000, TestName = "y larger than window size")]
-            public void Should_ThrowArgumentException_When(int x, int y)
-            {
-                var center = new Point(x, y);
-                Assert.Throws<ArgumentException>(() => new CircularCloudLayouter(center, new Size(2000, 2000)));
-            }
-
             [Test]
             public void Should_InitializeRectangles()
             {
@@ -72,14 +62,6 @@ namespace СircularCloudTesting
                     var message = $"Tag cloud visualization saved to file<{path}>";
                     Console.WriteLine(message);
                 }
-            }
-
-            [TestCase(-1, 7, TestName = "Width is negative")]
-            [TestCase(5, -7, TestName = "Height is negative")]
-            public void Should_ThrowArgumentException_When(int width, int height)
-            {
-                var size = new Size(width, height);
-                Assert.Throws<ArgumentException>(() => cloud.PutNextRectangle(size));
             }
 
             [Test]

@@ -16,10 +16,8 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
 
         public CircularCloudLayouter(Point center, Size windowSize)
         {
-            WindowSize = windowSize;
-            if (center.X < 0 || center.Y < 0 || center.X > WindowSize.Width || center.Y > WindowSize.Height)
-                throw new ArgumentException("Center coordinates must not exceed the window size");
             Center = center;
+            WindowSize = windowSize;
             Rectangles = new List<Rectangle>();
             CloudCompactor = new CloudCompactor(this);
             RectangleGenerator = new RectangleGenerator(this);
@@ -27,13 +25,27 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
 
         public Rectangle PutNextRectangle(Size size)
         {
-            if (size.Height < 0 || size.Width < 0)
-                throw new ArgumentException("Size should be positive");
             var resultRect = RectangleGenerator.GetNextRectangle(size);
             if (IsCompressedCloud)
                 resultRect = CloudCompactor.ShiftRectangleToTheNearest(resultRect);
             Rectangles.Add(resultRect);
             return resultRect;
+        }
+
+        public bool CheckPositionRectangle(Rectangle rectangle)
+        {
+            return rectangle.X < 0 || rectangle.Y < 0 ||
+                   rectangle.X + rectangle.Width > WindowSize.Width ||
+                   rectangle.Y + rectangle.Height > WindowSize.Height;
+        }
+
+        public void RefreshCircularCloudLayouter(Point center, Size windowSize)
+        {
+            Center = center;
+            WindowSize = windowSize;
+            Rectangles = new List<Rectangle>();
+            RectangleGenerator = new RectangleGenerator(this);
+
         }
     }
 }

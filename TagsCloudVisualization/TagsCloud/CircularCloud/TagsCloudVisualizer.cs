@@ -10,23 +10,42 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
     public class TagsCloudVisualizer
     {
         private readonly ITagsCloudSettings cloudSettings;
+        private readonly CircularCloudLayouter circularCloudLayouter;
         private const double HeightStretchFactor = 1.5;
         public TagsCloudVisualizer(ITagsCloudSettings cloudSettings)
         {
             this.cloudSettings = cloudSettings;
+            circularCloudLayouter =
+                new CircularCloudLayouter(cloudSettings.ImageSettings.Center, cloudSettings.ImageSettings.ImageSize);
+
         }
-        public Bitmap DrawCircularCloud()
+        public Result<Bitmap> DrawCircularCloud()
         {
             if (cloudSettings.WordsSettings.PathToFile == null)
-                throw new ArgumentException("No file with words specified.");
+                return Result.Fail<Bitmap>("File not found.");
+
+            var center = cloudSettings.ImageSettings.Center;
+            var imageSize = cloudSettings.ImageSettings.ImageSize;
+            if (center.X < 0 || center.Y < 0 || center.X > imageSize.Width || center.Y > imageSize.Height)
+                return Result.Fail<Bitmap>("Image settings are incorrect.");
+
+            var wordFrequency = cloudSettings.WordsSettings.WordAnalyzer.MakeWordFrequencyDictionary();
+            var processedWords = wordFrequency.Then(ProcessWords);
+            if (processedWords.IsSuccess && wordFrequency.IsSuccess &&
+                processedWords.Value.Count() != wordFrequency.Value.Count)
+                return Result.Fail<Bitmap>("Tag cloud does not fit the image of the specified size.");
+            return processedWords.Then(MakeImage);
+        }
+
+        private Bitmap MakeImage(IEnumerable<(Rectangle Region, string word, int RepetitionsCount)> processedWords)
+        {
             var imageSettings = cloudSettings.ImageSettings;
             var bmp = new Bitmap(imageSettings.ImageSize.Width, imageSettings.ImageSize.Height);
             var graphics = Graphics.FromImage(bmp);
-            var wordFrequency = cloudSettings.WordsSettings.WordAnalyzer.MakeWordFrequencyDictionary();
-            var processedWords = ProcessWords(wordFrequency);
             var wordsColor = cloudSettings.Palette.WordsColor;
             var font = imageSettings.Font;
-            const TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.NoClipping;
+            const TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter |
+                                          TextFormatFlags.NoClipping;
 
             graphics.Clear(cloudSettings.Palette.BackgroundColor);
             foreach (var processedWord in processedWords)
@@ -42,15 +61,22 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
             ProcessWords(Dictionary<string, int> frequenciesByWords)
         {
             var imageSettings = cloudSettings.ImageSettings;
-            var circularCloudLayouter = new CircularCloudLayouter(imageSettings.Center, imageSettings.ImageSize);
+            if (circularCloudLayouter.Rectangles.Count != 0)
+                circularCloudLayouter.RefreshCircularCloudLayouter(imageSettings.Center, imageSettings.ImageSize);
 
-            return frequenciesByWords.OrderByDescending(pair => pair.Key.Length)
+            var tuples = frequenciesByWords.OrderByDescending(pair => pair.Key.Length)
                 .OrderByDescending(pair => pair.Value)
-                .Select(pair => (Word: pair.Key, Frequency: pair.Value))
-                .Select(tuple => (GetRectangle(tuple, circularCloudLayouter), tuple.Word, tuple.Frequency));
+                .Select(pair => (Word: pair.Key, Frequency: pair.Value));
+            foreach (var tuple in tuples)
+            {
+                var nextRegion = GetRectangle(tuple);
+                if (circularCloudLayouter.CheckPositionRectangle(nextRegion))
+                    yield break;
+                yield return (nextRegion, tuple.Word, tuple.Frequency);
+            }
         }
 
-        private Rectangle GetRectangle((string Word, int Frequency) tuple, CircularCloudLayouter circularCloudLayouter)
+        private Rectangle GetRectangle((string Word, int Frequency) tuple)
         {
             var fontSize = cloudSettings.ImageSettings.Font.Size;
 

@@ -13,6 +13,16 @@ namespace TagsCloudVisualization.App.Actions
         }
         public void Perform()
         {
+            var result = imageHolder.FailIfNotInitialized();
+            if (result.IsSuccess)
+                result = Result.OfAction(SaveImage).RefineError("Failed to save file.");
+            if (!result.IsSuccess)
+                MessageBox.Show(result.Error, "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void SaveImage()
+        {
             var dialog = new SaveFileDialog
             {
                 Title = "Сохранить картинку как...",
@@ -24,15 +34,7 @@ namespace TagsCloudVisualization.App.Actions
                 ShowHelp = true
             };
             if (dialog.ShowDialog() != DialogResult.OK) return;
-            try
-            {
-                imageHolder.SaveImage(dialog.FileName);
-            }
-            catch
-            {
-                MessageBox.Show("Невозможно сохранить изображение", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            imageHolder.SaveImage(dialog.FileName);
         }
     }
 }

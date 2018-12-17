@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using TagsCloudVisualization.TagsCloud.CircularCloud;
 
 namespace TagsCloudVisualization.App.Actions
@@ -18,17 +17,18 @@ namespace TagsCloudVisualization.App.Actions
         }
         public void Perform()
         {
-            try
+            CircularCloudLayouter.IsCompressedCloud = false;
+            var resultImage = visualizer.DrawCircularCloud();
+            if (resultImage.IsSuccess)
             {
-                CircularCloudLayouter.IsCompressedCloud = false;
-                var image = visualizer.DrawCircularCloud();
+                var image = resultImage.Value;
                 imageHolder.RecreateImage(image);
                 imageHolder.Refresh();
                 Application.DoEvents();
             }
-            catch (Exception exception)
+            else
             {
-                MessageBox.Show(exception.Message, "Ошибка",
+                MessageBox.Show(resultImage.Error, "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

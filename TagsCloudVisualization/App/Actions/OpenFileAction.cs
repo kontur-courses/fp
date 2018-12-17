@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using Spire.Pdf.General.Render.Decode.Jpeg2000.j2k;
 using TagsCloudVisualization.InterfacesForSettings;
 using TagsCloudVisualization.TagsCloud;
 
@@ -18,20 +19,20 @@ namespace TagsCloudVisualization.App.Actions
 
         public void Perform()
         {
+            var result = Result.OfAction(OpenFile).RefineError("Could not open file.");
+            if(!result.IsSuccess)
+            MessageBox.Show(result.Error, "Ошибка",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OpenFile()
+        {
             var dialog = new OpenFileDialog
             {
                 Filter = @"Text files(*.txt;*.doc;*.docx)|*.txt;*.doc;*.docx|All files (*.*)|*.*"
             };
             if (dialog.ShowDialog() != DialogResult.OK) return;
-            try
-            {
                 tagCloudSettings.WordsSettings.PathToFile = dialog.FileName;
-            }
-            catch
-            {
-                MessageBox.Show("Невозможно открыть выбранный файл", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace СircularCloudTesting
             var wordAnalyzer = new WordAnalyzer(new WordsSettings()
             { PathToFile = $"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/" + fileName });
             var result = wordAnalyzer.MakeWordFrequencyDictionary();
-            result.Should().BeEquivalentTo(expectedResult);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
         }
     }
 }

@@ -103,6 +103,7 @@
     <Compile Include="InterfacesForSettings\IImageSettings.cs" />
     <Compile Include="InterfacesForSettings\ITagsCloudSettings.cs" />
     <Compile Include="InterfacesForSettings\IWordsSettings.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="TagsCloud\ImageSettings.cs" />
     <Compile Include="TagsCloud\Palette.cs" />
     <Compile Include="TagsCloud\TagsCloudSettings.cs" />
