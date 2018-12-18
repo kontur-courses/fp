@@ -16,10 +16,11 @@ namespace TagsCloudPreprocessor
 
             var words = letters
                 .Split(separators)
-                .Select(w => w.ToLower());
+                .Select(w => w.ToLower())
+                .ToList();
 
-            return words.Any()
-                ? words.AsResult()
+            return words.Count != 0
+                ? words.AsResult<IEnumerable<string>>()
                 : Result.Fail<IEnumerable<string>>("Can not parse input text");
         }
     }
