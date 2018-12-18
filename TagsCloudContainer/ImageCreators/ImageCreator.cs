@@ -28,18 +28,19 @@ namespace TagsCloudContainer.ImageCreators
         {
             var bitmap = GetBitmap();
             var labels = GetDrawingLabels(wordInfos);
-            return DrawLabelsOnBitmap(bitmap, labels)
+            return Result.Of(GetBitmap) 
+                .Then(x => DrawLabelsOnBitmap(x, labels))
                 .Then(x => (Image)x);
         }
 
-        private Result<Bitmap> DrawLabelsOnBitmap(Result<Bitmap> bitmap, IEnumerable<Label> labels)
+        private Result<Bitmap> DrawLabelsOnBitmap(Bitmap bitmap, IEnumerable<Label> labels)
         {
             var circularCloudLayouter = circularCloudLayouterFactory.Invoke();
-
+            var resultBitmap = bitmap.AsResult();
             foreach (var label in labels)
-                bitmap = bitmap.Then(x => DrawLabelOnBitmap(x, label, circularCloudLayouter));
+                resultBitmap = resultBitmap.Then(x => DrawLabelOnBitmap(x, label, circularCloudLayouter));
 
-            return bitmap;
+            return resultBitmap;
         }
 
         private Result<Bitmap> DrawLabelOnBitmap(Bitmap bitmap, Label label,
