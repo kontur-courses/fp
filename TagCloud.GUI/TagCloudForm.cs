@@ -12,10 +12,12 @@ namespace TagCloud.GUI
 {
     public partial class TagCloudForm : Form
     {
-        private readonly Options options = Options.Standart;
+        private readonly Options options = 
+            Options.Standart;
 
         public TagCloudForm()
         {
+            options.PathToPicture = null;
             InitializeComponent();
             SetUp();
         }
@@ -136,7 +138,11 @@ namespace TagCloud.GUI
 
             TagCloudProgram
                 .Execute(options)
-                .OnFail(er => Output.Text = "ERROR: " + er)
+                .OnFail(er => Output.Text = 
+                    "ERROR:\n " +
+                    Environment.NewLine +
+                    Environment.NewLine + 
+                    er)
                 .Then(x => Picture.Image = Image.FromFile(options.PathToPicture));
         }
 
