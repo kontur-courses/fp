@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using ResultOfTask;
@@ -13,13 +15,21 @@ namespace TagsCloudPreprocessorTests
         [Test]
         public void ExcludeForbiddenWords()
         {
-            var excluder = new XmlWordExcluder();
-            var preprocessor = new WordsExcluder(excluder);
-            var excludedWords = excluder.GetExcludedWords();
+            var excluder = A.Fake<IWordExcluder>();
+            var excludedWordsHashSet = new HashSet<string> {"a", "b", "c", "d"};
+            A.CallTo(() => excluder.GetExcludedWords()).Returns(excludedWordsHashSet.AsResult());
 
-            preprocessor.PreprocessWords(excludedWords
+            var preprocessor = new WordsExcluder(excluder);
+            var wordsToPreprocess = new List<string> {"a", "b", "e", "f"};
+
+            var result = preprocessor
+                .PreprocessWords(wordsToPreprocess
+                    .AsResult()
                     .Then(x => x.ToList()))
-                .GetValueOrThrow().Should().BeEmpty();
+                .GetValueOrThrow();
+            var expectedResult = new List<string> {"e", "f"};
+
+            result.ShouldBeEquivalentTo(expectedResult);
         }
     }
 }
