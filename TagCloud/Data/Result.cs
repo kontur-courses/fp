@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace TagCloud
+namespace TagCloud.Data
 {
     public class None
     {
@@ -128,6 +130,21 @@ namespace TagCloud
             string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
+        }
+
+        public static Result<IEnumerable<TOutput>> OfEnumerable<TInput, TOutput>(
+            IEnumerable<TInput> collection,
+            Func<TInput, Result<TOutput>> func)
+        {
+            var results = new List<TOutput>();
+            foreach (var item in collection)
+            {
+                var result = func(item);
+                if (!result.IsSuccess)
+                    return Fail<IEnumerable<TOutput>>(result.Error);
+                results.Add(result.Value);
+            }
+            return Ok(results.AsEnumerable());
         }
     }
 }
