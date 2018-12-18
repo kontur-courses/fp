@@ -6,6 +6,6 @@ namespace TagCloud.WordsLayouter
 {
     public interface IWordsLayouter
     {
-        IEnumerable<WordImageInfo> GenerateLayout(IEnumerable<WordInfo> words, FontFamily fontFamily, int fontMultiplier);
+        Result<IEnumerable<WordImageInfo>> GenerateLayout(IEnumerable<WordInfo> words, FontFamily fontFamily, int fontMultiplier);
     }
 }
