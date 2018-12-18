@@ -36,7 +36,7 @@ namespace TagCloudContainer
         private Result<Config> GetConfig(SaveOptions opts)
         {
             var center = new Point(500, 500);
-            var pathToSave = opts.PathToSave;
+            var pathToInputFile = opts.PathToInputFile;
             var count = opts.Count;
             var font = new Font(opts.FontName, opts.FontSize);
             var fileName = opts.FileName;
@@ -50,7 +50,7 @@ namespace TagCloudContainer
             if (!FontFamily.Families.Any(x =>
                 x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
                 return Result.Fail<Config>("Can not parse font name.");
-            if (!File.Exists(fileName))
+            if (!File.Exists(pathToInputFile))
                 return Result.Fail<Config>("Input file does not exist.");
             if (imageFormat == null)
                 return Result.Fail<Config>("Invalid image format.");
@@ -60,7 +60,7 @@ namespace TagCloudContainer
 
             return Result.Ok(new Config(
                 center,
-                pathToSave,
+                pathToInputFile,
                 count,
                 font,
                 fileName,
@@ -142,7 +142,7 @@ namespace TagCloudContainer
             public string InputExtension { get; set; }
 
             [Value(0, Required = true, HelpText = "Path to input file.")]
-            public string PathToSave { get; set; }
+            public string PathToInputFile { get; set; }
 
 
             //ToDo Выбор разрешения сохраняемого файла
