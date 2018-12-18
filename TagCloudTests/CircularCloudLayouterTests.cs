@@ -110,9 +110,9 @@ namespace TagCloudTests
             layouter = new CircularCloudLayouter(center, pointsGenerator);
             var invalidRectangleSize = new Size(width, height);
 
-            Action action = () => layouter.PutNextRectangle(invalidRectangleSize);
+            var result = layouter.PutNextRectangle(invalidRectangleSize);
 
-            action.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace TagCloudTests
             layouter = new CircularCloudLayouter(center, pointsGenerator);
             rectangleSize = new Size(10, 10);
 
-            var firstRectangle = layouter.PutNextRectangle(rectangleSize);
+            var firstRectangle = layouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
             var isRectangleInCenter = firstRectangle.Contains(center);
 
             isRectangleInCenter.Should().BeTrue();
@@ -138,7 +138,7 @@ namespace TagCloudTests
             rectangleSize = new Size(10, 10);
 
             var firstRectangle = layouter.PutNextRectangle(rectangleSize);
-            var firstRectangleCenter = firstRectangle.GetCenter();
+            var firstRectangleCenter = firstRectangle.GetValueOrThrow().GetCenter();
 
             firstRectangleCenter.Should().Be(center);
         }

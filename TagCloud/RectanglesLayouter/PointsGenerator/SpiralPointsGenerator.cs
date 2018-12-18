@@ -17,6 +17,14 @@ namespace TagCloud.RectanglesLayouter.PointsGenerator
             this.angleIncrement = angleIncrement;
         }
 
+        public static Result<SpiralPointsGenerator> GetGenerator(int distanceBetweenPoints, double angleIncrement)
+        {
+            return distanceBetweenPoints <= 0 || angleIncrement <= 0
+                ? Result.Fail<SpiralPointsGenerator>(
+                    "Distance between points and angle increment should be positive numbers")
+                : new SpiralPointsGenerator(distanceBetweenPoints, angleIncrement);
+        }
+
         public IEnumerable<Point> GetPoints()
         {
             double currentSpiralAngle = 0;

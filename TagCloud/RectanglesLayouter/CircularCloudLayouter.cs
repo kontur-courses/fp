@@ -19,10 +19,10 @@ namespace TagCloud.RectanglesLayouter
 
         public List<Rectangle> Rectangles { get; } = new List<Rectangle>();
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("Rectangle width and height should be positive numbers");
+                return Result.Fail<Rectangle>("Rectangle width and height should be positive numbers");
             Rectangle newRectangle;
             do
             {
