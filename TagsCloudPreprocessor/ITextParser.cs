@@ -5,6 +5,6 @@ namespace TagsCloudPreprocessor
 {
     public interface ITextParser
     {
-        Result<IEnumerable<string>> GetWords(Result<string> text);
+        Result<IEnumerable<string>> GetWords(string text);
     }
 }

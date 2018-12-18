@@ -34,13 +34,13 @@ namespace TagCloudContainer
 
         public Result<None> SaveTagCloud()
         {
-            var words = parser
-                .GetWords(fileReader
-                    .ReadFromFile(config.InputFile))
-                .Then(x => x.ToList());
+            var words = fileReader
+                .ReadFromFile(config.InputFile)
+                .Then(parser.GetWords)
+                .Then(x => x.ToList())
+                .Then(wordsExcluder.PreprocessWords)
+                .Then(wordsStemer.PreprocessWords);
 
-            words = wordsExcluder.PreprocessWords(words);
-            words = wordsStemer.PreprocessWords(words);
 
             return tagCloudVisualization.SaveTagCloud(
                 config.FileName,

@@ -13,7 +13,7 @@ namespace TagsCloudPreprocessor.Preprocessors
             this.wordExcluder = wordExcluder;
         }
 
-        public Result<List<string>> PreprocessWords(Result<List<string>> words)
+        public Result<List<string>> PreprocessWords(List<string> words)
         {
             var validWords = ExcludeForbiddenWords(words)
                 .Then(x => x.ToList());
@@ -30,7 +30,7 @@ namespace TagsCloudPreprocessor.Preprocessors
             return wordExcluder.GetExcludedWords();
         }
 
-        private Result<IEnumerable<string>> ExcludeForbiddenWords(Result<List<string>> words)
+        private Result<IEnumerable<string>> ExcludeForbiddenWords(List<string> words)
         {
             var forbiddenWordsResult = GetForbiddenWords();
 
@@ -39,7 +39,7 @@ namespace TagsCloudPreprocessor.Preprocessors
 
             var forbiddenWords = forbiddenWordsResult.GetValueOrThrow();
 
-            return words.Then(x => x.Where(w => !forbiddenWords.Contains(w)));
+            return words.Where(w => !forbiddenWords.Contains(w)).AsResult();
         }
     }
 }

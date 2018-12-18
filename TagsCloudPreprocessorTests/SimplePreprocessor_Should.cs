@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
@@ -23,9 +22,7 @@ namespace TagsCloudPreprocessorTests
             var wordsToPreprocess = new List<string> {"a", "b", "e", "f"};
 
             var result = preprocessor
-                .PreprocessWords(wordsToPreprocess
-                    .AsResult()
-                    .Then(x => x.ToList()))
+                .PreprocessWords(wordsToPreprocess)
                 .GetValueOrThrow();
             var expectedResult = new List<string> {"e", "f"};
 
