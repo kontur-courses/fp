@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using TagsCloudContainer.Configuration;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainerCLI.CommandLineParser
 {
-    public interface ICommandLineParser<out TConfiguration> where TConfiguration : IConfiguration
+    public interface ICommandLineParser<TConfiguration> where TConfiguration : IConfiguration
     {
-        TConfiguration Parse(IEnumerable<string> args);
+        Result<TConfiguration> Parse(IEnumerable<string> args);
     }
 }

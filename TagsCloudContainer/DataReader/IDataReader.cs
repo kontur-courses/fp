@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainer.DataReader
 {
     public interface IDataReader
     {
-        IEnumerable<string> Read(string filename);
+        Result<IEnumerable<string>> Read(string filename);
     }
 }

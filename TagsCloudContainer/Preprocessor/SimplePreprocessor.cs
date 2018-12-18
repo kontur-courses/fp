@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using TagsCloudContainer.Converter;
 using TagsCloudContainer.Filter;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainer.Preprocessor
 {
@@ -16,11 +16,17 @@ namespace TagsCloudContainer.Preprocessor
             this.filters = filters;
         }
 
-        public IEnumerable<string> PrepareWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> PrepareWords(IEnumerable<string> words)
         {
-            words = converters.Aggregate(words, (current, converter) => converter.Convert(current));
+            foreach (var convert in converters)
+                words = convert.Convert(words);
 
-            return filters.Aggregate(words, (current, filter) => filter.FilterOut(current));
+            var newWords = words.AsResult();
+
+            foreach (var filter in filters)
+                newWords = newWords.Then(x => filter.FilterOut(x));
+
+            return newWords;
         }
     }
 }

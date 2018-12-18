@@ -5,32 +5,51 @@ using System.Drawing.Imaging;
 using System.Linq;
 using CommandLine;
 using TagsCloudContainer.Configuration;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainerCLI.CommandLineParser
 {
     public class SimpleCommandLineParser : ICommandLineParser<SimpleConfiguration>
     {
-        public SimpleConfiguration Parse(IEnumerable<string> args)
+        public Result<SimpleConfiguration> Parse(IEnumerable<string> args)
         {
-            var configuration = new SimpleConfiguration();
-            Parser.Default.ParseArguments<ParseTemplate>(args)
-                .WithParsed(parsed =>
-                {
-                    configuration.PathToWordsFile = parsed.PathToWordsFile;
-                    configuration.BoringWordsFileName = parsed.BoringWordsFileName;
-                    configuration.DirectoryToSave = parsed.DirectoryToSave;
-                    configuration.OutFileName = parsed.OutFileName;
-                    configuration.FontFamily = CommandLineArgumentConverter.ConvertToFontFamily(parsed.FontFamily);
-                    configuration.Color = CommandLineArgumentConverter.ConvertToColor(parsed.Color);
-                    configuration.MinFontSize = parsed.MinFontSize;
-                    configuration.MaxFontSize = parsed.MaxFontSize;
-                    configuration.ImageWidth = parsed.ImageWidth;
-                    configuration.ImageHeight = parsed.ImageHeight;
-                    configuration.ImageFormat = CommandLineArgumentConverter.ConvertToImageFormat(parsed.ImageFormat);
-                    configuration.RotationAngle = parsed.RotationAngle;
-                    configuration.CenterX = parsed.CenterX;
-                    configuration.CenterY = parsed.CenterY;
-                });
+            var configuration = new SimpleConfiguration().AsResult();
+
+            var parser = Parser.Default.ParseArguments<ParseTemplate>(args);
+
+            configuration = configuration.ThenAction(
+                    config => parser.WithParsed(parsed => config.PathToWordsFile = parsed.PathToWordsFile))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.BoringWordsFileName = parsed.BoringWordsFileName))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.DirectoryToSave = parsed.DirectoryToSave))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.OutFileName = parsed.OutFileName))
+                .ThenAction(
+                    config => parser.WithParsed(parsed =>
+                        config.FontFamily = CommandLineArgumentConverter.ConvertToFontFamily(parsed.FontFamily)),
+                    "Font with this name was not found in the system")
+                .ThenAction(
+                    config => parser.WithParsed(parsed =>
+                        config.Color = CommandLineArgumentConverter.ConvertToColor(parsed.Color)),
+                    "This color is not found in the system")
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.MinFontSize = parsed.MinFontSize))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.MaxFontSize = parsed.MaxFontSize))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.ImageWidth = parsed.ImageWidth))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.ImageHeight = parsed.ImageHeight))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.ImageFormat = CommandLineArgumentConverter.ConvertToImageFormat(parsed.ImageFormat)),
+                    "This image format is not found in the system")
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.RotationAngle = parsed.RotationAngle))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.CenterX = parsed.CenterX))
+                .ThenAction(
+                    config => parser.WithParsed(parsed => config.CenterY = parsed.CenterY));
 
             return configuration;
         }
@@ -66,7 +85,7 @@ namespace TagsCloudContainerCLI.CommandLineParser
             public string BoringWordsFileName { get; set; }
 
             [Value(2, Required = true,
-                HelpText ="Directory to save TagCloud image")]
+                HelpText = "Directory to save TagCloud image")]
             public string DirectoryToSave { get; set; }
 
             [Value(3, Required = true,

@@ -5,6 +5,7 @@ using Autofac;
 using TagsCloudContainer.Configuration;
 using TagsCloudContainer.Controller;
 using TagsCloudContainer.DataReader;
+using TagsCloudContainer.ResultOf;
 using TagsCloudContainerCLI.CommandLineParser;
 
 namespace TagsCloudContainerCLI
@@ -15,21 +16,16 @@ namespace TagsCloudContainerCLI
         {
             var configuration = new SimpleCommandLineParser().Parse(args);
 
-            if (string.IsNullOrEmpty(configuration.PathToWordsFile)
-                || string.IsNullOrEmpty(configuration.DirectoryToSave)
-                || string.IsNullOrEmpty(configuration.OutFileName))
-                return;
-
-            var container = BuildContainer(configuration);
-
-            var tagsCloudController = container.Resolve<ITagsCloudController>();
-
-            tagsCloudController.Save();
-
-            Console.WriteLine("Visualization has been saved to " +
-                              Path.Combine(configuration.DirectoryToSave, configuration.OutFileName));
-
-            Console.ReadKey();
+            configuration
+                .Then(BuildContainer)
+                .Then(container => container.Resolve<ITagsCloudController>())
+                .Then(tagsCloudController => tagsCloudController.Save())
+                .ThenAction(() => configuration.Then(config =>
+                    Console.WriteLine("Visualization has been saved to " +
+                                      Path.Combine(config.DirectoryToSave,
+                                          $"{config.OutFileName}.{config.ImageFormat}"))))
+                .Then(none => Console.ReadKey())
+                .OnFail(Console.WriteLine);
         }
 
         private static IContainer BuildContainer(IConfiguration configuration)

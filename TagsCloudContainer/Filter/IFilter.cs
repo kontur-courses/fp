@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainer.Filter
 {
     public interface IFilter
     {
-        IEnumerable<string> FilterOut(IEnumerable<string> words);
+        Result<IEnumerable<string>> FilterOut(IEnumerable<string> words);
     }
 }

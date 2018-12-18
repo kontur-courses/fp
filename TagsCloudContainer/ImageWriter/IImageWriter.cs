@@ -1,7 +1,9 @@
+using TagsCloudContainer.ResultOf;
+
 namespace TagsCloudContainer.ImageWriter
 {
     public interface IImageWriter
     {
-        void Write(byte[] image, string imageName, string imageFormat, string pathToSave);
+        Result<None> Write(byte[] image, string pathToSave);
     }
 }

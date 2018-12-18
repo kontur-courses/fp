@@ -1,7 +1,9 @@
+using TagsCloudContainer.ResultOf;
+
 namespace TagsCloudContainer.Controller
 {
     public interface ITagsCloudController
     {
-        void Save();
+        Result<None> Save();
     }
 }

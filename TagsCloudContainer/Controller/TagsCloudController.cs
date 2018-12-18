@@ -1,7 +1,9 @@
+using System.IO;
 using TagsCloudContainer.Configuration;
 using TagsCloudContainer.DataReader;
 using TagsCloudContainer.ImageWriter;
 using TagsCloudContainer.Preprocessor;
+using TagsCloudContainer.ResultOf;
 using TagsCloudContainer.TagsGenerator;
 using TagsCloudContainer.Visualizer;
 using TagsCloudContainer.WordsCounter;
@@ -36,14 +38,19 @@ namespace TagsCloudContainer.Controller
             this.imageWriter = imageWriter;
         }
 
-        public void Save()
+        public Result<None> Save()
         {
-            var words = reader.Read(configuration.PathToWordsFile);
-            var preparedWords = preprocessor.PrepareWords(words);
-            var wordsFrequency = wordsCounter.GetWordsFrequency(preparedWords);
-            var tags = tagsGenerator.GenerateTags(wordsFrequency);
-            var image = visualizer.Visualize(tags);
-            imageWriter.Write(image, configuration.OutFileName, configuration.ImageFormat.ToString(), configuration.DirectoryToSave);
+            var pathToSave = Path.Combine(configuration.DirectoryToSave,
+                $"{configuration.OutFileName}.{configuration.ImageFormat}");
+
+            return reader.Read(configuration.PathToWordsFile)
+                .Then(words => preprocessor.PrepareWords(words))
+                .Then(preparedWords => wordsCounter.GetWordsFrequency(preparedWords))
+                .Then(wordsFrequency => tagsGenerator.GenerateTags(wordsFrequency))
+                .Then(tags => visualizer.Visualize(tags))
+                .Then(image => imageWriter.Write(
+                    image, pathToSave)
+                .RefineError("Failed to save file"));
         }
     }
 }

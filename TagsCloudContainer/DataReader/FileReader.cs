@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
+using TagsCloudContainer.ResultOf;
 
 namespace TagsCloudContainer.DataReader
 {
     public class FileReader : IDataReader
     {
-        public IEnumerable<string> Read(string filename)
+        public Result<IEnumerable<string>> Read(string filename)
         {
-            return File.ReadLines(filename);
+            return Result.Of(() => File.ReadLines(filename), $"File {filename} not found or not available");
         }
     }
 }

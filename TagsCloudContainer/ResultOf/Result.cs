@@ -83,6 +83,44 @@ namespace TagsCloudContainer.ResultOf
             }
         }
 
+        public static Result<TInput> ThenAction<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<TInput, TOutput> continuation, string error = null)
+        {
+            if (input.IsSuccess)
+            {
+                try
+                {
+                    continuation(input.Value);
+                }
+                catch (Exception e)
+                {
+                    return Fail<TInput>(error ?? e.Message);
+                }
+            }
+
+            return input;
+        }
+
+        public static Result<TInput> ThenAction<TInput>(
+            this Result<TInput> input,
+            Action action, string error = null)
+        {
+            if (input.IsSuccess)
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception e)
+                {
+                    return Fail<TInput>(error ?? e.Message);
+                }
+            }
+
+            return input;
+        }
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
