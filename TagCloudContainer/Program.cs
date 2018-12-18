@@ -80,7 +80,9 @@ namespace TagCloudContainer
 
             var container = builder.Build();
 
-            Console.WriteLine(container.Resolve<TagCloudProgram>().SaveTagCloud().Error);
+            var result = container.Resolve<TagCloudProgram>().SaveTagCloud();
+
+            Console.WriteLine(result.IsSuccess ? "Success" : result.Error);
         }
     }
 }
