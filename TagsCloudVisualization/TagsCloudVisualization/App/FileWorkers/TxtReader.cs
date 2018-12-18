@@ -10,7 +10,7 @@ namespace TagsCloudVisualization
             try
             {
                 var file = File.ReadAllText(fileName);
-                return Result.Ok(file);
+                return file;
             }
             catch (Exception e)
             {

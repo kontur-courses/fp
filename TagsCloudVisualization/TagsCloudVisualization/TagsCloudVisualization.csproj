@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\CloudArguments.cs" />
+    <Compile Include="App\FileWorkers\FileSaveResult.cs" />
     <Compile Include="App\Infrastructure\ConsoleApplicationRunner.cs" />
     <Compile Include="App\Cloud\Image\IImageSettings.cs" />
     <Compile Include="App\Cloud\Palette\GradientPalette.cs" />

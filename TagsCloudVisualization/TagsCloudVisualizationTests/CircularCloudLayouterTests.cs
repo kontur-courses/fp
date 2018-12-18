@@ -37,7 +37,7 @@ namespace TagsCloudVisualizationTests
 
             var visualizer = new Visualizer();
             var image = visualizer.Render(countedWords, 800, 800, new MonochromePalette(Color.Black, Color.White));
-            ImageSaver.WriteToFile(TestContext.CurrentContext.Test.Name, image);
+            ImageSaver.WriteToFile(TestContext.CurrentContext.Test.Name, image.GetValueOrThrow());
         }
 
         [TestCase(0, 0, 10, 6, Description = "Zero center")]
@@ -108,9 +108,9 @@ namespace TagsCloudVisualizationTests
                 rawString.Append(" " + new string(chars[random.Next(chars.Length)], random.Next(minLength, maxLength)));
             }
 
-            countedWords = counter.Count(false, rawString.ToString());
-            layouter.Process(countedWords, new LinearSizer(), center);
-            return countedWords;
+            var countedWords = counter.Count(rawString.ToString());
+            layouter.Process(countedWords.GetValueOrThrow(), new LinearSizer(), center);
+            return countedWords.GetValueOrThrow();
         }
     }
 }

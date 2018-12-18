@@ -13,17 +13,16 @@ namespace TagsCloudVisualization
     public class WordCounter
     {
         public Font Font { get; set; } = new Font("Consolas", 14);
-        private List<string> stopWords;
 
-        public WordCounter()
+        public Result<List<string>> GetStopWords()
         {
             try
             {
-                stopWords = Regex.Split(new TxtReader().Read("Stopwords.txt").Value.ToLower(), @"\W+").ToList();
+                return Regex.Split(new TxtReader().Read("Stopwords.txt").Value.ToLower(), @"\W+").ToList();
             }
-            catch
+            catch (Exception e)
             {
-                stopWords = new List<string>();
+                return Result.Fail<List<string>>(e.Message);
             }
         }
 
@@ -32,7 +31,6 @@ namespace TagsCloudVisualization
             var checkedWords = new List<string>();
             try
             {
-
                 using (var hunspell = new Hunspell("ru.aff", "ru.dic"))
                 {
                     foreach (var word in words)
@@ -42,7 +40,7 @@ namespace TagsCloudVisualization
                     }
                 }
 
-                return Result.Ok(checkedWords);
+                return checkedWords;
             }
             catch (Exception e)
             {
@@ -54,10 +52,27 @@ namespace TagsCloudVisualization
         {
             var words = Regex.Split(row.ToLower(), @"\W+").ToList();
 
-            var result = SpellCheck(words);
-            if (result.IsSuccess)
-                words = result.Value;
+            var spellCheckResult = SpellCheck(words);
+            if (!spellCheckResult.IsSuccess)
+                return Result.Fail<List<GraphicWord>>(spellCheckResult.Error);
+            
+            var countedWords = CountWords(spellCheckResult.Value);
+            SetFontSize(countedWords.Values);
+            
+            var stopWordsResult = GetStopWords();
+            if (!stopWordsResult.IsSuccess)
+                return Result.Fail<List<GraphicWord>>(stopWordsResult.Error);
 
+            var stopWords = stopWordsResult.Value;
+
+            return countedWords
+                .Values
+                .Where(w => w.Rate > 1 && !stopWords.Contains(w.Value))
+                .OrderByDescending(w => w.Rate).ToList();
+        }
+
+        private Dictionary<string, GraphicWord> CountWords(List<string> words)
+        {
             var countedWords = new Dictionary<string, GraphicWord>();
             foreach (var word in words)
             {
@@ -67,15 +82,15 @@ namespace TagsCloudVisualization
                     countedWords[word].Rate++;
             }
 
-            foreach (var dictValue in countedWords.Values)
-            {
-                SetFontSize(dictValue);
-            }
+            return countedWords;
+        }
 
-            return Result.Ok(countedWords
-                .Values
-                .Where(w => w.Rate > 1 && !stopWords.Contains(w.Value))
-                .OrderByDescending(w => w.Rate).ToList());
+        private void SetFontSize(IEnumerable<GraphicWord> words)
+        {
+            foreach (var graphicWord in words)
+            {
+                SetFontSize(graphicWord);
+            }
         }
 
         private void SetFontSize(GraphicWord word)

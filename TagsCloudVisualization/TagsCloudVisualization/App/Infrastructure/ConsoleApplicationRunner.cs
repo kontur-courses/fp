@@ -1,4 +1,6 @@
-﻿namespace TagsCloudVisualization
+﻿using System.Windows.Forms;
+
+namespace TagsCloudVisualization
 {
     public class ConsoleApplicationRunner : IApplicationRunner
     {
@@ -11,7 +13,8 @@
 
         public void Run(string[] args)
         {
-            app.GenerateImage(args);
+            var result = app.GenerateImage(args);
+            MessageBox.Show(result.IsSuccess ? "OK" : "Error: " + result.Error);
         }
     }
 }

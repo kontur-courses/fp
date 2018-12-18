@@ -9,6 +9,18 @@ namespace TagsCloudVisualization
         [STAThread]
         public static void Main(string[] args)
         {
+            try
+            {
+                GetRunner().Run(args);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private static IApplicationRunner GetRunner()
+        {
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleApplication>().AsSelf();
             builder.RegisterType<ConsoleApplicationRunner>().As<IApplicationRunner>();
@@ -17,11 +29,10 @@ namespace TagsCloudVisualization
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
             builder.RegisterType<MonochromePalette>().As<IWordPalette>();
-            var container = builder.Build();
 
-            var runner = container.Resolve<IApplicationRunner>();
-
-            runner.Run(args);
+            return builder
+                .Build()
+                .Resolve<IApplicationRunner>();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using Fclp;
 
 namespace TagsCloudVisualization
@@ -15,6 +16,7 @@ namespace TagsCloudVisualization
         private ICloudLayouter cloudLayouter;
         private WordCounter counter = new WordCounter();
         private Size imageSize;
+        private string fileName;
 
         public ConsoleApplication(IFileReader fileReader, IVisualizer visualizer, 
             IWordPalette wordPalette, ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter)
@@ -26,16 +28,23 @@ namespace TagsCloudVisualization
             this.cloudLayouter = cloudLayouter;
         }
 
-        public void GenerateImage(string[] args)
+        public Result<FileSaveResult> GenerateImage(string[] args)
         {
-            Result.Ok(ParseArguments(args))
-                .Then(SetFont)
-                .Then(SetImageSize)
-                .Then(r => fileReader.Read(r.FileName))
+            return Result.Ok(ParseArguments(args))
+                .Then(ApplySettings)
+                .Then(r => fileReader.Read(r.Path))
                 .Then(counter.Count)
                 .Then(LayoutWords)
                 .Then(r => visualizer.Render(r, imageSize.Width, imageSize.Height, wordPalette))
-                .Then(i => ImageSaver.WriteToFile("output.png", i));
+                .Then(i => ImageSaver.WriteToFile(fileName, i));
+        }
+
+        private Result<CloudArguments> ApplySettings(CloudArguments arguments)
+        {
+            return Result.Ok(arguments)
+                .Then(SetFont)
+                .Then(SetImageSize)
+                .Then(SetFileName);
         }
 
         private Result<IEnumerable<GraphicWord>> LayoutWords(IEnumerable<GraphicWord> words)
@@ -57,10 +66,11 @@ namespace TagsCloudVisualization
         private FluentCommandLineParser<CloudArguments> SetupParser()
         {
             var parser = new FluentCommandLineParser<CloudArguments>();
-            parser.Setup(arg => arg.FileName).As('p', "path").Required();
+            parser.Setup(arg => arg.Path).As('p', "path").Required();
             parser.Setup(arg => arg.Width).As('w', "width").SetDefault(800);
             parser.Setup(arg => arg.Height).As('h', "height").SetDefault(800);
             parser.Setup(arg => arg.Font).As('f', "font").SetDefault("Arial");
+            parser.Setup(arg => arg.FileName).As('n', "name").SetDefault("output.png");
 
             return parser;
         }
@@ -81,7 +91,13 @@ namespace TagsCloudVisualization
             if (arguments.Width <= 0 || arguments.Height <= 0)
                 return Result.Fail<CloudArguments>("Image size must be positive?");
             imageSize = new Size(arguments.Width, arguments.Height);
-            return Result.Ok(arguments);
+            return arguments;
+        }
+
+        private Result<CloudArguments> SetFileName(CloudArguments arguments)
+        {
+            fileName = arguments.FileName;
+            return arguments;
         }
 
         private Result<CloudArguments> ValidateFontName(CloudArguments arguments)
@@ -96,7 +112,7 @@ namespace TagsCloudVisualization
         private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
         {
             return predicate(obj)
-                ? Result.Ok(obj)
+                ? obj
                 : Result.Fail<T>(errorMessage);
         }
 
