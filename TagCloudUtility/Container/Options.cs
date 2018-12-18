@@ -8,6 +8,7 @@ namespace TagCloud.Utility.Container
         public static Options Standart = new Options
         {
             DrawFormat = DrawFormat.WordsInRectangles,
+            PathToPicture = "result.png",
             Brush = "#000000",
             Color = "#FFFFFF",
             Size = "1000x1000",

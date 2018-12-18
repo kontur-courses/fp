@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -14,17 +13,17 @@ namespace TagCloud.Tests.ForTagUtility
         [Test]
         public void ThrowArgumentException_WhenOptionsAreNull()
         {
-            Action execute = () => TagCloudProgram.Execute(null);
+            var result = TagCloudProgram.Execute(null);
 
-            execute.Should().Throw<ArgumentException>();
+            result.Error.Should().NotBeNullOrEmpty();
         }
 
         [Test]
         public void ThrowArgumentException_WhenFilesDoesNotExists()
         {
-            Action execute = () => TagCloudProgram.Execute(Options.Standart);
+            var result = TagCloudProgram.Execute(Options.Standart);
 
-            execute.Should().Throw<ArgumentException>();
+            result.Error.Should().NotBeNullOrEmpty();
         }
 
         [Test]
