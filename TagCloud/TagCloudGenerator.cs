@@ -36,25 +36,33 @@ namespace TagCloud
             this.savers = savers;
         }
 
-        public void Generate(Arguments arguments)
+        public Result<None> Generate(Arguments arguments)
         {
-            var words = wordsFileReader.ReadWords(arguments.WordsFileName);
             var wordsColor = Color.FromName(arguments.WordsColorName);
             var backgroundColor = Color.FromName(arguments.BackgroundColorName);
             var font = new FontFamily(arguments.FontFamilyName);
 
-            foreach (var wordsProcessor in processors)
-                words = wordsProcessor.Process(words);
+            return wordsFileReader
+                .ReadWords(arguments.WordsFileName)
+                .Then(Process)
+                .Then(words => counter.GetWordsInfo(words))
+                .Then(wordInfos => wordsLayouter.GenerateLayout(wordInfos, font, arguments.Multiplier))
+                .Then(layout => wordsDrawer.CreateImage(layout, wordsColor, backgroundColor))
+                .Then(image => Save(image, arguments));
+        }
 
-            var wordInfos = counter.GetWordsInfo(words);
-            var layout = wordsLayouter.GenerateLayout(wordInfos, font, arguments.Multiplier);
-            var image = wordsDrawer.CreateImage(layout, wordsColor, backgroundColor);
+        private Result<IEnumerable<string>> Process(IEnumerable<string> initialWords)
+        {
+            return processors.Aggregate(Result.Ok(initialWords),
+                (current, wordsProcessor) => current.Then(wordsProcessor.Process));
+        }
 
-            var imageSavers = savers
-                .Where(saver => saver.GetType() != typeof(ClipboardImageSaver) ||
-                                arguments.ToEnableClipboardSaver);
-            foreach (var saver in imageSavers)
-                saver.Save(image, arguments.ImageFileName);
+        private Result<None> Save(Bitmap image, Arguments arguments)
+        {
+            return savers
+                .Where(saver => saver.GetType() != typeof(ClipboardImageSaver) || arguments.ToEnableClipboardSaver)
+                .Aggregate(Result.Ok<None>(null),
+                    (current, saver) => current.Then(_ => saver.Save(image, arguments.ImageFileName)));
         }
     }
 }
