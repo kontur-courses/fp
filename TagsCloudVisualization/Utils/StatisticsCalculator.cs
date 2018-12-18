@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 
 
 namespace TagsCloudVisualization.Utils
 {
     public class StatisticsCalculator
     {
-        public Statistics CalculateStatistics(IEnumerable<string> words)
+        public Result<Statistics> CalculateStatistics(IEnumerable<string> words)
         {
             var allWordsCount = 0;
             var wordsCounts = new Dictionary<string, int>();

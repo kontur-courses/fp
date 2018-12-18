@@ -11,15 +11,9 @@ namespace TagsCloudVisualization.Preprocessing
         public DullWordsFilter(HashSet<string> dullWords)
         {
             this.dullWords = dullWords;
-
         }
 
-        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
-        {
-            return Result.Of(() => FilterWordsNotPure(words));
-        }
-
-        private IEnumerable<string> FilterWordsNotPure(IEnumerable<string> words)
+        public IEnumerable<string> FilterWords(IEnumerable<string> words)
         {
             foreach (var word in words)
                 if (!dullWords.Contains(word.ToLower()))

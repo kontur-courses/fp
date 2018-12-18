@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="CustomParser.cs" />
-    <Compile Include="ParseResultExtension.cs" />
+    <Compile Include="ParserResultExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

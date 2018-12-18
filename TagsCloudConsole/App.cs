@@ -1,4 +1,5 @@
-﻿using TagsCloudVisualization.CloudGenerating;
+﻿using ResultOf;
+using TagsCloudVisualization.CloudGenerating;
 using TagsCloudVisualization.ImageSaving;
 using TagsCloudVisualization.Preprocessing;
 using TagsCloudVisualization.Utils;
@@ -32,21 +33,19 @@ namespace TagsCloudConsole
             this.imageSaverSelector = imageSaverSelector;
         }
 
-        public void Run(string imageFileName, string wordsFileName, string mode)
+        public Result<None> Run(string imageFileName, string wordsFileName, string mode)
         {
-            var reader = fileReaderSelector.SelectFileReader(wordsFileName);
-            var parser = parserSelector.SelectParser(mode);
-            var imageSaver = imageSaverSelector.SelectImageSaver(imageFileName);
-
-            var words = parser.ParseText(
-                reader.ReadText(wordsFileName));
-            var wordsStatistics = new StatisticsCalculator()
-                .CalculateStatistics(preprocessor.Preprocess(words));
-            
-            var tagCloud = tagsCloudGenerator.GenerateTagsCloud(wordsStatistics);
-
-            var picture = cloudVisualizer.GetPictureOfRectangles(tagCloud);
-            imageSaver.SaveImage(picture, imageFileName);
+            return fileReaderSelector.SelectFileReader(wordsFileName)
+                .Then(reader => reader.ReadText(wordsFileName))
+                .Then(words => parserSelector.SelectParser(mode)
+                    .Then(parser => parser.ParseText(words))
+                    .Then(parsedWords => new StatisticsCalculator()
+                        .CalculateStatistics(preprocessor.Preprocess(parsedWords))
+                        .Then(stat => tagsCloudGenerator.GenerateTagsCloud(stat))
+                        .Then(tagCloud => cloudVisualizer.GetPictureOfRectangles(tagCloud).AsResult()
+                            .Then(picture => imageSaverSelector.SelectImageSaver(imageFileName)
+                                .Then(imageSaver => imageSaver.SaveImage(picture, imageFileName))
+                            ))));
         }
     }
 }

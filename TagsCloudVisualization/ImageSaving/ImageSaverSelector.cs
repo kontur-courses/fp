@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudVisualization.ImageSaving
 {
@@ -17,13 +16,13 @@ namespace TagsCloudVisualization.ImageSaving
                     imageSaverByExtension[extension] = imageSaver;
         }
 
-        public IImageSaver SelectImageSaver(string imageFileName)
+        public Result<IImageSaver> SelectImageSaver(string imageFileName)
         {
             var extension = imageFileName.ExtractFileExtension();
             if (extension != null && imageSaverByExtension.ContainsKey(extension))
-                return imageSaverByExtension[extension];
+                return Result.Ok(imageSaverByExtension[extension]);
 
-            throw new ArgumentException("Image type is not supported");
+            return Result.Fail<IImageSaver>("Image type is not supported");
         }
     }
 }

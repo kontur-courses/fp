@@ -64,6 +64,7 @@
     <Compile Include="ImageSaving\IImageSaver.cs" />
     <Compile Include="ImageSaving\ImageSaverSelector.cs" />
     <Compile Include="ImageSaving\StandardImageSaver.cs" />
+    <Compile Include="Preprocessing\DullWordsLoader.cs" />
     <Compile Include="Preprocessing\Preprocessor.cs" />
     <Compile Include="Preprocessing\StemmingTransformer.cs" />
     <Compile Include="StringExtension.cs" />

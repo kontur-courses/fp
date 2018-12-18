@@ -19,24 +19,12 @@ namespace TagsCloudConsole
         {
             var parser = new CustomParser();
 
-            var arguments = parser.Parse(args);
-            if (!arguments.IsSuccess)
-            {
-                Console.WriteLine(arguments.Error);
-                return;
-            }
-
-            var argsValue = arguments.GetValueOrThrow();
-            var container = BuildContainer(argsValue);
-            var app = container.Resolve<App>();
-            try
-            {
-                app.Run(argsValue.ImageFileName, argsValue.WordsFileName, argsValue.Mode);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            parser.Parse(args)
+                .Then(arguments => BuildContainer(arguments).AsResult()
+                    .Then(container => container.Resolve<App>())
+                    .Then(app => app.Run(arguments.ImageFileName, arguments.WordsFileName, arguments.Mode))
+                )
+                .OnFail(e => Console.WriteLine(e));
         }
 
         private static IContainer BuildContainer(CustomArgs arguments)
