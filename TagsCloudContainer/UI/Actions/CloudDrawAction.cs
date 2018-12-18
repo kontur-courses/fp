@@ -6,8 +6,7 @@ using TagsCloudContainer.FileReader;
 using TagsCloudContainer.Painter;
 using TagsCloudContainer.Preprocessing;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
+using ResultOf;
 
 namespace TagsCloudContainer.UI.Actions
 {
@@ -73,14 +72,14 @@ namespace TagsCloudContainer.UI.Actions
             imageHolder.UpdateUi();
         }
 
-        private T CheckResult<T>(Func<OperationResult<T>> predicate, Action errorHandler)
+        private T CheckResult<T>(Func<Result<T>> predicate, Action errorHandler)
         {
             var result = predicate();
-            if (result.ErrorMessage == null)
-                return result.ResultData;
-            MessageBox.Show(result.ErrorMessage);
+            if (result.Error == null)
+                return result.GetValueOrThrow();
+            MessageBox.Show(result.GetValueOrThrow().ToString());
             errorHandler();
-            return result.ResultData;
+            return result.GetValueOrThrow();
         }
     }
 }

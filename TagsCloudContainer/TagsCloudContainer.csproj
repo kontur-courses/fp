@@ -70,7 +70,6 @@
     <Compile Include="Preprocessing\InitialFormSetter.cs" />
     <Compile Include="Preprocessing\IWordsPreprocessor.cs" />
     <Compile Include="OperationResult.cs" />
-    <Compile Include="Result.cs" />
     <Compile Include="Settings\PainterType.cs" />
     <Compile Include="Painter\SolidPainter.cs" />
     <Compile Include="Settings\AppSettings.cs" />
@@ -135,6 +134,12 @@
     <None Include="Hunspellx86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

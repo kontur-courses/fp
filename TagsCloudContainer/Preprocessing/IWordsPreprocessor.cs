@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.Preprocessing
 {
     public interface IWordsPreprocessor
     {
-        OperationResult<IEnumerable<string>> Process(IEnumerable<string> words);
+        Result<IEnumerable<string>> Process(IEnumerable<string> words);
     }
 }

@@ -85,18 +85,6 @@ namespace TagsCloudContainer.Tests
             (rectsSumSquare / limitingCircleSquare).Should().BeGreaterOrEqualTo(0.7);
         }
 
-        //[TearDown]
-        //public void DrawPictureIfFailed()
-        //{
-        //    if (TestContext.CurrentContext.Result.Outcome.Status != TestStatus.Failed)
-        //        return;
-        //    var directory = TestContext.CurrentContext.TestDirectory;
-        //    var bitmap = new Visualizer().Visualize(layouter.Rectangles.ToArray());
-        //    var path = Path.Combine(directory, $"{TestContext.CurrentContext.Test.Name}.bmp");
-        //    bitmap.Save(path);
-        //    TestContext.Out.WriteLine($"Tag cloud visualization saved to file {directory}");
-        //}
-
         private double GetLimitingCircleSquare(IEnumerable<Rectangle> rects)
         {
             var xDelta = rects.Select(rect => rect.Right).Max() - rects.Select(rect => rect.Left).Min();

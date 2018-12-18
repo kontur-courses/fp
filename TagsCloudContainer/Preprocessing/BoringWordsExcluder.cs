@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 
 namespace TagsCloudContainer.Preprocessing
 {
@@ -12,9 +13,9 @@ namespace TagsCloudContainer.Preprocessing
             this.settings = settings;
         }
 
-        public OperationResult<IEnumerable<string>> Process(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
-            return new OperationResult<IEnumerable<string>>(ExcludeBoringWords(words), null);
+            return Result.Of(() => ExcludeBoringWords(words));
         }
 
         private IEnumerable<string> ExcludeBoringWords(IEnumerable<string> words)

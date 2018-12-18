@@ -60,11 +60,11 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void ThrowException_WhenWordsAreNull()
         {
-            var settings = new WordsPreprocessorSettings();
-            var preprocessor = new BoringWordsExcluder(settings);
+            var frequencyConter = new FrequencyCounter();
 
-            Action runner = () => preprocessor.Process(null);
-            runner.Should().Throw<ArgumentNullException>();
+            Action resultAction = () => frequencyConter.CountWordFrequencies(null);
+
+            resultAction.Should().Throw<ArgumentNullException>();
         }
 
     }

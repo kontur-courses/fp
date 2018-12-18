@@ -39,7 +39,7 @@ namespace TagsCloudContainer.Tests
 
             var result = preprocessor.Process(words);
 
-            result.ResultData.Should().NotContain(wordsToExclude);
+            result.GetValueOrThrow().Should().NotContain(wordsToExclude);
         }
 
         [TestCase(4)]
@@ -54,7 +54,7 @@ namespace TagsCloudContainer.Tests
 
             var result = preprocessor.Process(words);
 
-            result.ResultData.Should().NotContain(str => str.Length < length);
+            result.GetValueOrThrow().Should().NotContain(str => str.Length < length);
         }
 
         [Test]
@@ -63,8 +63,9 @@ namespace TagsCloudContainer.Tests
             var settings = new WordsPreprocessorSettings();
             var preprocessor = new BoringWordsExcluder(settings);
 
-            Action runner = () => preprocessor.Process(null);
-            runner.Should().Throw<ArgumentNullException>();
+            var result = preprocessor.Process(null);
+
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }
