@@ -6,6 +6,6 @@ namespace TagsCloudVisualization.Preprocessing
 {
     public interface IFilter
     {
-        IEnumerable<string> FilterWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> FilterWords(IEnumerable<string> words);
     }
 }

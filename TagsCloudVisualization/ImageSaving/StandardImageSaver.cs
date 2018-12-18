@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using ResultOf;
 
 
 namespace TagsCloudVisualization.ImageSaving
@@ -19,10 +20,10 @@ namespace TagsCloudVisualization.ImageSaving
             { "icon", ImageFormat.Icon }
         };
 
-        public void SaveImage(Image image, string path)
+        public Result<None> SaveImage(Image image, string path)
         {
-            var extension = path.ExtractFileExtension();
-            image.Save(path, ImageFormats[extension]);
+            return Result.Of(() => path.ExtractFileExtension())
+                .Then(extension => image.Save(path, ImageFormats[extension]));
         }
 
         public string[] SupportedTypes()

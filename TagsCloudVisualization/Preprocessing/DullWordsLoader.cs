@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
 using ResultOf;
 using System.IO;
-using System.Reflection;
 
 namespace TagsCloudVisualization.Preprocessing
 {
     public class DullWordsLoader
     {
-        public static Result<HashSet<string>> LoadDullWords(string fileName)
-        {
-            var pathToAssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var pathToDullWords = Path.Combine(
-                pathToAssemblyDirectory, "Resources", "dull_words.txt"
-            );
+        private readonly string fileName;
 
-            return Result.Of(() => ReadWordsFromFile(pathToDullWords));
+        public DullWordsLoader(string fileName)
+        {
+            this.fileName = fileName;
         }
 
-        private static HashSet<string> ReadWordsFromFile(string pathToFile)
+        public Result<HashSet<string>> LoadDullWords()
+        { 
+            return Result.Of(() => ReadWordsFromFile(fileName));
+        }
+
+        private HashSet<string> ReadWordsFromFile(string pathToFile)
         {
             var dullWords = new HashSet<string>();
 

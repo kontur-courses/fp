@@ -39,13 +39,14 @@ namespace TagsCloudConsole
                 .Then(reader => reader.ReadText(wordsFileName))
                 .Then(words => parserSelector.SelectParser(mode)
                     .Then(parser => parser.ParseText(words))
-                    .Then(parsedWords => new StatisticsCalculator()
-                        .CalculateStatistics(preprocessor.Preprocess(parsedWords))
-                        .Then(stat => tagsCloudGenerator.GenerateTagsCloud(stat))
-                        .Then(tagCloud => cloudVisualizer.GetPictureOfRectangles(tagCloud).AsResult()
-                            .Then(picture => imageSaverSelector.SelectImageSaver(imageFileName)
-                                .Then(imageSaver => imageSaver.SaveImage(picture, imageFileName))
-                            ))));
+                    .Then(parsedWords => preprocessor.Preprocess(parsedWords))
+                    .Then(preprocessedWords => new StatisticsCalculator().CalculateStatistics(preprocessedWords))
+                    .Then(stat => tagsCloudGenerator.GenerateTagsCloud(stat))
+                    .Then(tagCloud => cloudVisualizer.GetPictureOfRectangles(tagCloud))
+                    .Then(picture => imageSaverSelector.SelectImageSaver(imageFileName)
+                        .Then(imageSaver => imageSaver.SaveImage(picture, imageFileName))
+                    )
+                );
         }
     }
 }

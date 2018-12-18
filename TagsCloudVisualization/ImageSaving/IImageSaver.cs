@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudVisualization.ImageSaving
 {
     public interface IImageSaver
     {
-        void SaveImage(Image image, string path);
+        Result<None> SaveImage(Image image, string path);
         string[] SupportedTypes();
     }
 }

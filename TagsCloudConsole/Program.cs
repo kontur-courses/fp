@@ -64,6 +64,11 @@ namespace TagsCloudConsole
             builder.RegisterType<ArchimedeanSpiralGenerator>().AsSelf();
             builder.RegisterType<ArchimedeanSpiralGenerator>().As<ISpiralGenerator>();
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
+            builder.RegisterType<DullWordsLoader>()
+                .AsSelf()
+                .WithParameter(
+                    "fileName", 
+                    Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "dull_words.txt"));
             builder.RegisterType<DullWordsFilter>().As<IFilter>();
             builder.RegisterType<ToLowerTransformer>().As<IWordTransformer>();
 

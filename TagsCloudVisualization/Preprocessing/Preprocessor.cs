@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 
 namespace TagsCloudVisualization.Preprocessing
 {
@@ -14,12 +15,13 @@ namespace TagsCloudVisualization.Preprocessing
             this.transformers = transformers;
         }
 
-        public IEnumerable<string> Preprocess(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
+            Result<IEnumerable<string>> filterResult = words.AsResult();
             foreach (var filter in filters)
-                words = filter.FilterWords(words);
-
-            return words.Select(ApplyAllTransforms);
+                filterResult = filterResult.Then(filteredWords => filter.FilterWords(filteredWords));
+            
+            return filterResult.Then(filteredWords => filteredWords.Select(ApplyAllTransforms));
         }
 
         private string ApplyAllTransforms(string word)
