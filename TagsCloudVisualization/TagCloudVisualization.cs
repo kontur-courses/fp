@@ -23,16 +23,16 @@ namespace TagsCloudVisualization
         private readonly Font defaultFont = new Font("Times New Roman", 40);
 
         private readonly Font font;
-        private readonly string imageExtension;
+        private readonly ImageFormat imageFormat;
 
         public TagCloudVisualization(
             ICloudLayouter cloudLayouter,
             Font font,
             Color color,
             Color backgroundColor,
-            string imageExtension)
+            ImageFormat imageFormat)
         {
-            this.imageExtension = imageExtension;
+            this.imageFormat = imageFormat;
             this.font = font;
             this.color = color;
             this.backgroundColor = backgroundColor;
@@ -80,7 +80,7 @@ namespace TagsCloudVisualization
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             var g = Graphics.FromImage(bitmap);
             DrawBackgroundRectangles(g, rectangles, center);
-            var path = $"{directory}\\{bitmapName}-{rectangles.Count}.{imageExtension}";
+            var path = $"{directory}\\{bitmapName}-{rectangles.Count}.{imageFormat}";
 
             bitmap.Save(path, ImageFormat.Png);
         }
@@ -104,21 +104,10 @@ namespace TagsCloudVisualization
             DrawBackgroundEllipses(g, wordsInCloud.Select(w => w.Value.rectangle));
             DrawWordsOfCloud(g, wordsInCloud);
 
-            var imageFormat = ParseImageFormat(imageExtension);
-            if (imageFormat == null)
-                return Result.Fail("Invalid image format.");
-            if (!Directory.Exists(directory))
-                return Result.Fail("Invalid output path.");
-            bitmap.Save($"{directory}\\{bitmapName}.{imageExtension}", imageFormat);
+            
+            bitmap.Save($"{directory}\\{bitmapName}.{imageFormat}", imageFormat);
 
             return Result.Ok();
-        }
-
-        private static ImageFormat ParseImageFormat(string str)
-        {
-            return (ImageFormat) typeof(ImageFormat)
-                .GetProperty(str, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
-                ?.GetValue(null);
         }
 
         private void DrawBackgroundEllipses(

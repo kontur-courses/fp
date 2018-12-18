@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using CommandLine;
 using ResultOfTask;
 using TagsCloudPreprocessor;
@@ -35,9 +38,6 @@ namespace TagCloudContainer
             var center = new Point(500, 500);
             var pathToSave = opts.PathToSave;
             var count = opts.Count;
-            if (!FontFamily.Families.Any(x =>
-                x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
-                return Result.Fail<Config>("Can not parse font name.");
             var font = new Font(opts.FontName, opts.FontSize);
             var fileName = opts.FileName;
             var outPath = opts.OutPath ?? Environment.CurrentDirectory;
@@ -45,6 +45,19 @@ namespace TagCloudContainer
             var backColor = Color.FromName(opts.BackgroundColor);
             var imageExtension = opts.ImageExtension;
             var inputExtension = opts.InputExtension;
+            var imageFormat = ParseImageFormat(imageExtension);
+
+            if (!FontFamily.Families.Any(x =>
+                x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
+                return Result.Fail<Config>("Can not parse font name.");
+            if (!File.Exists(fileName))
+                return Result.Fail<Config>("Input file does not exist.");
+            if (imageFormat == null)
+                return Result.Fail<Config>("Invalid image format.");
+            if (!Directory.Exists(outPath))
+                return Result.Fail<Config>("Invalid output path.");
+
+
             return Result.Ok(new Config(
                 center,
                 pathToSave,
@@ -54,8 +67,15 @@ namespace TagCloudContainer
                 outPath,
                 color,
                 backColor,
-                imageExtension,
+                imageFormat,
                 inputExtension));
+        }
+
+        private static ImageFormat ParseImageFormat(string str)
+        {
+            return (ImageFormat) typeof(ImageFormat)
+                .GetProperty(str, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
+                ?.GetValue(null);
         }
 
         private Result<None> HandleArgs()

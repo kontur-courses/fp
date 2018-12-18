@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace TagCloudContainer
 {
@@ -13,7 +14,8 @@ namespace TagCloudContainer
             string outPath,
             Color color,
             Color backgroundColor,
-            string imageExtension, string inputExtension)
+            ImageFormat imageFormat,
+            string inputExtension)
         {
             Center = center;
             InputFile = inputFile;
@@ -23,11 +25,11 @@ namespace TagCloudContainer
             OutPath = outPath;
             Color = color;
             BackgroundColor = backgroundColor;
-            ImageExtension = imageExtension;
+            ImageFormat = imageFormat;
             InputExtension = inputExtension;
         }
 
-        public string ImageExtension { get; }
+        public ImageFormat ImageFormat { get; }
         public Point Center { get; }
         public string InputFile { get; }
         public int Count { get; }
