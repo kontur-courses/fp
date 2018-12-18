@@ -13,8 +13,8 @@ namespace TagsCloudContainerTests.CircularCloudLayouter_Tests
     {
         private RandomAngleChooser randomAngleChooser;
         private readonly Random random = new Random();
-        private const double deltaAngle = Math.PI / 3;
-        private const int countSteps = (int)(Math.PI * 2 / deltaAngle);
+        private const double DeltaAngle = Math.PI / 3;
+        private const int CountSteps = (int)(Math.PI * 2 / DeltaAngle);
 
         [SetUp]
         public void SetUp()
@@ -25,11 +25,11 @@ namespace TagsCloudContainerTests.CircularCloudLayouter_Tests
         [Test]
         public void Current_ReturnsAngles_WithStepsBetween()
         {
-            var angles = randomAngleChooser.GetAngles(countSteps);
+            var angles = randomAngleChooser.GetAngles(CountSteps);
             var differencesBetweenAngles = GetDifferencesBetweenAngles(angles);
 
 
-            differencesBetweenAngles.Should().OnlyContain(x => Math.Abs(x - deltaAngle) <= 1e-6);
+            differencesBetweenAngles.Should().OnlyContain(x => Math.Abs(x - DeltaAngle) <= 1e-6);
         }
 
         [Test]
