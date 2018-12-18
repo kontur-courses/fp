@@ -69,11 +69,15 @@ namespace TagCloudContainer
                             (pi, ctx) => pi.Name == "fileReader",
                             (pi, ctx) =>
                             {
-                                if (ctx.Resolve<IUserInterface>().Config.InputExtension == "txt")
-                                    return ctx.ResolveKeyed<IFileReader>("TxtFileReader");
-                                if (ctx.Resolve<IUserInterface>().Config.InputExtension == "docx")
-                                    return ctx.ResolveKeyed<IFileReader>("DocFileReader");
-                                return ctx.ResolveKeyed<IFileReader>("TxtFileReader");
+                                switch (ctx.Resolve<IUserInterface>().Config.InputExtension)
+                                {
+                                    case "txt":
+                                        return ctx.ResolveKeyed<IFileReader>("TxtFileReader");
+                                    case "docx":
+                                        return ctx.ResolveKeyed<IFileReader>("DocFileReader");
+                                    default:
+                                        return ctx.ResolveKeyed<IFileReader>("TxtFileReader");
+                                }
                             })
                     })
                 .AsSelf();
