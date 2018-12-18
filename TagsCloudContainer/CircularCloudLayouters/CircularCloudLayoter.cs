@@ -12,7 +12,7 @@ namespace TagsCloudContainer.CircularCloudLayouters
         private readonly IFilter<Rectangle> rectanglesFilter;
         private const int MaxDirectionChoosingIterationsForOneRectangle = 2000;
 
-        public CircularCloudLayouter(IEnumerator<Point> pointsOrder, IFilter<Rectangle> rectanglesFilter)
+        public CircularCloudLayouter(ICircularPointsChooser pointsOrder, IFilter<Rectangle> rectanglesFilter)
         {
             this.pointsOrder = pointsOrder;
             this.rectanglesFilter = rectanglesFilter;

@@ -26,7 +26,6 @@ namespace TagsCloudContainer.ImageCreators
 
         public Result<Image> GetImage(IEnumerable<WordInfo> wordInfos)
         {
-            var bitmap = GetBitmap();
             var labels = GetDrawingLabels(wordInfos);
             return Result.Of(GetBitmap) 
                 .Then(x => DrawLabelsOnBitmap(x, labels))

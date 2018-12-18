@@ -7,7 +7,7 @@ using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.CircularCloudLayouters
 {
-    public class CircularPointsChooser : IEnumerator<Point>
+    public class CircularPointsChooser : ICircularPointsChooser
     {
         private readonly Point centerPoint;
         private IEnumerator<Point> pointsOrder;

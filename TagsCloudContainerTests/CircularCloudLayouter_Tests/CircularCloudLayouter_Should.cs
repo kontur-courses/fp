@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace TagsCloudContainerTests.CircularCloudLayouter_Tests
     {
         private IFilter<Rectangle> filterPoints;
         private readonly List<Point> basePoints = new List<Point>();
-        private IEnumerator<Point> pointsOrder;
+        private ICircularPointsChooser circularPointsChooser;
         private CircularCloudLayouter circularCloudLayouter;
 
         [OneTimeSetUp]
@@ -101,8 +102,9 @@ namespace TagsCloudContainerTests.CircularCloudLayouter_Tests
 
         private void SetBaseLayouterWithCurrentPoints(IEnumerable<Point> points)
         {
-            pointsOrder = points.GetEnumerator();
-            circularCloudLayouter = new CircularCloudLayouter(pointsOrder, filterPoints);
+            circularPointsChooser = A.Fake<ICircularPointsChooser>();
+            A.CallTo(() => circularPointsChooser.Current).ReturnsNextFromSequence(points.ToArray());
+            circularCloudLayouter = new CircularCloudLayouter(circularPointsChooser, filterPoints);
         }
     }
 }
