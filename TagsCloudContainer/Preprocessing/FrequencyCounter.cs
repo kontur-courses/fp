@@ -21,7 +21,7 @@ namespace TagsCloudContainer.Preprocessing
         public IEnumerable<WordInfo> CountWordFrequencies(IEnumerable<string> words)
         {
             if (words == null)
-                throw new ArgumentNullException(nameof(words));
+                throw new ArgumentNullException(nameof(words), "word must be not null");
             var wordsFrequencies = new Dictionary<string, int>();
             foreach (var word in words)
             {

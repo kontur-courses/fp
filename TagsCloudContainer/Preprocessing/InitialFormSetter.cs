@@ -18,10 +18,13 @@ namespace TagsCloudContainer.Preprocessing
         public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
             var separator = Path.DirectorySeparatorChar;
-            return Result.Of(() => new Hunspell($"NHunspellDictionary{separator}ru_RU.aff",
-                $"NHunspellDictionary{separator}ru_RU.dic"))
-                .Then(hunspell => !settings.BringInTheInitialForm ? words : words.Select(word => ToInitialForm(word, hunspell)))
-                .RefineError("Can't set words to initial form");
+            var result = Result.Of(() => new Hunspell($"NHunspellDictionary{separator}ru_RU.aff",
+                    $"NHunspellDictionary{separator}ru_RU.dic"))
+                .Then(hunspell => !settings.BringInTheInitialForm
+                    ? words
+                    : words.Select(word => ToInitialForm(word, hunspell)))
+            .RefineError("Can't set words to initial form");
+            return result;
         }
 
         private string ToInitialForm(string word, Hunspell hunspell)

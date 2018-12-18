@@ -60,9 +60,9 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void ThrowException_WhenWordsAreNull()
         {
-            var frequencyConter = new FrequencyCounter();
+            var frequencyCounter = new FrequencyCounter();
 
-            Action resultAction = () => frequencyConter.CountWordFrequencies(null);
+            Action resultAction = () => frequencyCounter.CountWordFrequencies(null);
 
             resultAction.Should().Throw<ArgumentNullException>();
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Settings;
 using TagsCloudContainer.Layouter;
 
@@ -20,7 +21,7 @@ namespace TagsCloudContainer.Preprocessing
             this.fontSettings = fontSettings;
         }
 
-        public IEnumerable<WordInfo> GetWordsAndRectangles(IEnumerable<WordInfo> wordsAndFrequencies)
+        public IEnumerable<Result<WordInfo>> GetWordsAndRectangles(IEnumerable<WordInfo> wordsAndFrequencies)
         {
             if (wordsAndFrequencies == null)
                 throw new ArgumentNullException(nameof(wordsAndFrequencies));

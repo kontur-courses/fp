@@ -5,7 +5,6 @@ using TagsCloudContainer.Settings;
 using TagsCloudContainer.FileReader;
 using TagsCloudContainer.Painter;
 using TagsCloudContainer.Preprocessing;
-using System;
 using ResultOf;
 
 namespace TagsCloudContainer.UI.Actions
@@ -46,7 +45,31 @@ namespace TagsCloudContainer.UI.Actions
 
         public void Perform()
         {
-            var errorOccured = false;
+            var operationRes = ShowOpenFileDialog<string>()
+                .Then(s => reader.Read())
+                .Then(ShowSettingsDialog)
+                .Then(words => preprocessors.Aggregate(words,
+                    (current, wordsPreprocessor) => wordsPreprocessor.Process(current).GetValueOrThrow()))
+                .Then(frequencyCounter.CountWordFrequencies)
+                .Then(applicator.GetWordsAndRectangles)
+                .Then(wordInfos =>
+                    painter.Paint(applicator.WordsCenter, wordInfos.Select(result => result.GetValueOrThrow())))
+                .Then(none => imageHolder.UpdateUi());
+
+            if (!operationRes.IsSuccess && operationRes.Error != "")
+                MessageBox.Show(operationRes.Error);
+        }
+
+        private Result<T> ShowSettingsDialog<T>(T input)
+        {
+            var res = SettingsForm.For(preprocessorSettings).ShowDialog();
+            return res != DialogResult.OK 
+                ? Result.Fail<T>("") 
+                : Result.Ok(input);
+        }
+
+        private Result<T> ShowOpenFileDialog<T>(T input = default(T))
+        {
             var dialog = new OpenFileDialog
             {
                 InitialDirectory = Path.GetFullPath(filePath.WordsFilePath),
@@ -55,31 +78,9 @@ namespace TagsCloudContainer.UI.Actions
             };
             var res = dialog.ShowDialog();
             if (res != DialogResult.OK)
-                return;
+                return Result.Fail<T>("");
             filePath.WordsFilePath = dialog.FileName;
-
-            var words = CheckResult(() => reader.Read(), () => errorOccured = true);
-            if (errorOccured) return;
-            res = SettingsForm.For(preprocessorSettings).ShowDialog();
-            if (res != DialogResult.OK)
-                return;
-
-            words = preprocessors.Aggregate(words, (current, preprocessor) => CheckResult(() => preprocessor.Process(current), () => errorOccured = true));
-            if (errorOccured) return;
-            var infos = frequencyCounter.CountWordFrequencies(words);
-            var wordInfos = applicator.GetWordsAndRectangles(infos);
-            painter.Paint(applicator.WordsCenter, wordInfos);
-            imageHolder.UpdateUi();
-        }
-
-        private T CheckResult<T>(Func<Result<T>> predicate, Action errorHandler)
-        {
-            var result = predicate();
-            if (result.Error == null)
-                return result.GetValueOrThrow();
-            MessageBox.Show(result.GetValueOrThrow().ToString());
-            errorHandler();
-            return result.GetValueOrThrow();
+            return Result.Ok(input);
         }
     }
 }

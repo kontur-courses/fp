@@ -54,7 +54,7 @@ namespace TagsCloudContainer.Tests
             var result = applicator.GetWordsAndRectangles(wordInfos);
 
             foreach (var info in result)
-                info.FontSize.Should().Be(info.Frequency * fontFactor);
+                info.GetValueOrThrow().FontSize.Should().Be(info.GetValueOrThrow().Frequency * fontFactor);
         }
 
         [Test]
