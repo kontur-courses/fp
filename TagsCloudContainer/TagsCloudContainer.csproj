@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E87C0A15-065A-47A5-867D-7A7DA20D8C69}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagsCloudContainer</RootNamespace>
+    <AssemblyName>TagsCloudContainer</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.2.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.2.0\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.3.0\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SautinSoft.Document, Version=3.6.12.4, Culture=neutral, PublicKeyToken=e759c76c7515592a, processorArchitecture=MSIL">
+      <HintPath>..\packages\sautinsoft.document.3.6.12.4\lib\net45\SautinSoft.Document.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\packages\System.Windows.Forms.4.0.0.0\lib\System.Windows.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BoringWordsGetters\IBoringWordsGetter.cs" />
+    <Compile Include="BoringWordsGetters\PrepositionAndPronounsGetter.cs" />
+    <Compile Include="CircularCloudLayouters\CircularCloudLayoter.cs" />
+    <Compile Include="CircularCloudLayouters\CircularPointsChooser.cs" />
+    <Compile Include="CircularCloudLayouters\IAngleChooser.cs" />
+    <Compile Include="CircularCloudLayouters\ICircularCloudLayoter.cs" />
+    <Compile Include="CircularCloudLayouters\RandomAngleChooser.cs" />
+    <Compile Include="CircularCloudLayouters\RandomCircularCloudLayouter.cs" />
+    <Compile Include="CircularCloudLayouters\Vector.cs" />
+    <Compile Include="Clients\ConsoleClient.cs" />
+    <Compile Include="Clients\IClient.cs" />
+    <Compile Include="Dictionaries\HunspellDictionary.cs" />
+    <Compile Include="Dictionaries\IGrammarDictionary.cs" />
+    <Compile Include="Dictionaries\IReaderResources.cs" />
+    <Compile Include="Dictionaries\ResourcesReader.cs" />
+    <Compile Include="Extensions\PointExtensions.cs" />
+    <Compile Include="Extensions\RectangleExtensions.cs" />
+    <Compile Include="FontSizesChoosers\FontSizeChooser.cs" />
+    <Compile Include="FontSizesChoosers\IFontSizeChooser.cs" />
+    <Compile Include="FontSizesChoosers\PrintedWordInfo.cs" />
+    <Compile Include="ImageCreators\IColorChooser.cs" />
+    <Compile Include="ImageCreators\IImageCreator.cs" />
+    <Compile Include="ImageCreators\ImageCreator.cs" />
+    <Compile Include="ImageCreators\SingleColorChooser.cs" />
+    <Compile Include="ImageSavers\IImageSaver.cs" />
+    <Compile Include="ImageSavers\ImageSaver.cs" />
+    <Compile Include="None.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProjectSettings\ConsoleClientOptions.cs" />
+    <Compile Include="ProjectSettings\ProjectConfiguration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readers\DocumentsReader.cs" />
+    <Compile Include="Readers\FilesReader.cs" />
+    <Compile Include="Readers\IReader.cs" />
+    <Compile Include="RectanglesFilters\FilterRectanglesWhichAreNotInsideImage.cs" />
+    <Compile Include="Result.cs" />
+    <Compile Include="Settings\IImageSettings.cs" />
+    <Compile Include="Settings\ImageSettings.cs" />
+    <Compile Include="Settings\IPalette.cs" />
+    <Compile Include="Settings\ISettingsManager.cs" />
+    <Compile Include="Settings\ITextSettings.cs" />
+    <Compile Include="Settings\Palette.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\TextSettings.cs" />
+    <Compile Include="WordsFilters\BoringsWordsExcluder.cs" />
+    <Compile Include="WordsFilters\IFilter.cs" />
+    <Compile Include="WordsFilters\UnknownWordsExcluder.cs" />
+    <Compile Include="WordsHandlers\IWordsHandler.cs" />
+    <Compile Include="WordsHandlers\WordInfo.cs" />
+    <Compile Include="WordsHandlers\WordsHandler.cs" />
+    <Compile Include="WordsTransformers\IWordsTransformer.cs" />
+    <Compile Include="WordsTransformers\WordsMistakesCorrector.cs" />
+    <Compile Include="WordsTransformers\WordsTransformerToLowerCase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="DictionaryFiles\en_US.aff" />
+    <EmbeddedResource Include="DictionaryFiles\en_US.dic" />
+    <None Include="packages.config" />
+    <None Include="WordsExamples\ManyWords.docx" />
+    <None Include="WordsExamples\RussianWords.docx" />
+    <None Include="WordsExamples\WordsWithMistakes.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Updates.txt" />
+    <None Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="WordsExamples\EmptyFile.txt" />
+    <Content Include="WordsExamples\ManyWords.txt" />
+    <Content Include="WordsExamples\OneRepeatingWord.txt" />
+    <Content Include="WordsExamples\WordsWithArticles.txt" />
+    <Content Include="WordsExamples\WordsWithDifferentFrequencies.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
