@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{64A17BDF-3665-4286-AE3C-C4DEB6E2DBD3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagCloud</RootNamespace>
+    <AssemblyName>TagCloud</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArialFontScheme.cs" />
+    <Compile Include="Enums\SpiralType.cs" />
+    <Compile Include="Enums\ColorScheme.cs" />
+    <Compile Include="Enums\FontScheme.cs" />
+    <Compile Include="Enums\SizeScheme.cs" />
+    <Compile Include="FileReader.cs" />
+    <Compile Include="FileReaderByLines.cs" />
+    <Compile Include="InfinitiveCastProcessor.cs" />
+    <Compile Include="Interfaces\ISpiral.cs" />
+    <Compile Include="Interfaces\IWordProcessor.cs" />
+    <Compile Include="IntermediateClasses\FrequentedWord.cs" />
+    <Compile Include="ImageSaver.cs" />
+    <Compile Include="Interfaces\ICloudLayouter.cs" />
+    <Compile Include="Interfaces\IColorScheme.cs" />
+    <Compile Include="Interfaces\IFileReader.cs" />
+    <Compile Include="Interfaces\IImageSaver.cs" />
+    <Compile Include="Interfaces\IFontScheme.cs" />
+    <Compile Include="Interfaces\ISizeScheme.cs" />
+    <Compile Include="Interfaces\IStatisticsCollector.cs" />
+    <Compile Include="Interfaces\IVisualizer.cs" />
+    <Compile Include="Interfaces\IWordFilter.cs" />
+    <Compile Include="Layouter\SpiralCloudLayouter.cs" />
+    <Compile Include="Layouter\CurcularCloudExtensions.cs" />
+    <Compile Include="Layouter\Point.cs" />
+    <Compile Include="Layouter\Rectangle.cs" />
+    <Compile Include="Layouter\RectangleExtensions.cs" />
+    <Compile Include="Layouter\Size.cs" />
+    <Compile Include="Layouter\Spirals\ArithmeticSpiral.cs" />
+    <Compile Include="Layouter\Spirals\SquareSpiral.cs" />
+    <Compile Include="Layouter\Vector.cs" />
+    <Compile Include="LinearSizeScheme.cs" />
+    <Compile Include="IntermediateClasses\PositionedElement.cs" />
+    <Compile Include="ProgramExecuter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomColorScheme.cs" />
+    <Compile Include="RedColorScheme.cs" />
+    <Compile Include="StatisticsCollector.cs" />
+    <Compile Include="Visualizer\VisualElement.cs" />
+    <Compile Include="Visualizer\VisualizerExtensions.cs" />
+    <Compile Include="Visualizer\Visualizer.cs" />
+    <Compile Include="WordFilter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mystem.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
