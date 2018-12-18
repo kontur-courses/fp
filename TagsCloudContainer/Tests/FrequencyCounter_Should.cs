@@ -8,7 +8,8 @@ namespace TagsCloudContainer.Tests
 {
     public class FrequencyCounter_Should
     {
-        private string[] words = {
+        private readonly string[] words =
+        {
             "something",
             "foo",
             "shpora",
@@ -30,7 +31,7 @@ namespace TagsCloudContainer.Tests
 
         [Test]
         public void OrderWordsByFrequency_DyDescending()
-        { 
+        {
             var frequencyCounter = new FrequencyCounter();
 
             var result = frequencyCounter.CountWordFrequencies(words).GetValueOrThrow().Select(info => info.Frequency);
@@ -66,6 +67,5 @@ namespace TagsCloudContainer.Tests
 
             resultAction.Should().Throw<ArgumentNullException>();
         }
-
     }
 }

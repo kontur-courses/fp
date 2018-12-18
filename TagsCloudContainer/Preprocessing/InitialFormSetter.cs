@@ -23,7 +23,7 @@ namespace TagsCloudContainer.Preprocessing
                 .Then(hunspell => !settings.BringInTheInitialForm
                     ? words
                     : words.Select(word => ToInitialForm(word, hunspell)))
-            .RefineError("Can't set words to initial form");
+                .RefineError("Can't set words to initial form");
             return result;
         }
 

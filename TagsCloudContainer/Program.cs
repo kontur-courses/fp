@@ -1,8 +1,8 @@
-﻿using Autofac;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Autofac;
 using FluentAssertions.Common;
 using TagsCloudContainer.FileReader;
 using TagsCloudContainer.Layouter;
@@ -13,10 +13,10 @@ using TagsCloudContainer.UI;
 
 namespace TagsCloudContainer
 {
-    class Program
+    internal class Program
     {
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

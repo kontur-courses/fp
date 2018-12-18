@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Preprocessing;
 
@@ -7,7 +6,8 @@ namespace TagsCloudContainer.Tests
 {
     public class BoringWordsExcluder_Should
     {
-        private string[] words = {
+        private readonly string[] words =
+        {
             "something",
             "foo",
             "shpora",

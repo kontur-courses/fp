@@ -6,11 +6,7 @@ namespace TagsCloudContainer.Settings
 {
     public class ImageSettings
     {
-        private Dictionary<string, ICloudColorPainter> painters;
-
-        public int Width { get; set; } = 800;
-        public int Height { get; set; } = 600;
-        public PainterType CloudPainter { get; set; } = PainterType.GradientPainter;
+        private readonly Dictionary<string, ICloudColorPainter> painters;
 
         public ImageSettings(ICloudColorPainter[] painters)
         {
@@ -18,6 +14,10 @@ namespace TagsCloudContainer.Settings
             foreach (var painter in painters)
                 this.painters[painter.GetType().Name.Split('.').Last()] = painter;
         }
+
+        public int Width { get; set; } = 800;
+        public int Height { get; set; } = 600;
+        public PainterType CloudPainter { get; set; } = PainterType.GradientPainter;
 
         public ICloudColorPainter GetCloudPainterClass()
         {

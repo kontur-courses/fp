@@ -1,24 +1,24 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using TagsCloudContainer.Settings;
+using ResultOf;
 using TagsCloudContainer.FileReader;
 using TagsCloudContainer.Painter;
 using TagsCloudContainer.Preprocessing;
-using ResultOf;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.UI.Actions
 {
     public class CloudDrawAction : IUiAction
     {
-        private readonly IFileReader reader;
-        private readonly IWordsPreprocessor[] preprocessors;
-        private readonly FrequencyCounter frequencyCounter;
-        private readonly WordsPreprocessorSettings preprocessorSettings;
-        private readonly IFilePathProvider filePath;
-        private readonly TagCloudPainter painter;
         private readonly LayouterApplicator applicator;
+        private readonly IFilePathProvider filePath;
+        private readonly FrequencyCounter frequencyCounter;
         private readonly PictureBoxImageHolder imageHolder;
+        private readonly TagCloudPainter painter;
+        private readonly IWordsPreprocessor[] preprocessors;
+        private readonly WordsPreprocessorSettings preprocessorSettings;
+        private readonly IFileReader reader;
 
         public CloudDrawAction(IFileReader reader,
             IWordsPreprocessor[] preprocessors,
@@ -63,8 +63,8 @@ namespace TagsCloudContainer.UI.Actions
         private Result<T> ShowSettingsDialog<T>(T input)
         {
             var res = SettingsForm.For(preprocessorSettings).ShowDialog();
-            return res != DialogResult.OK 
-                ? Result.Fail<T>("") 
+            return res != DialogResult.OK
+                ? Result.Fail<T>("")
                 : Result.Ok(input);
         }
 

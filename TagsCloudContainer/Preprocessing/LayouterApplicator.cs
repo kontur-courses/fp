@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using ResultOf;
-using TagsCloudContainer.Settings;
 using TagsCloudContainer.Layouter;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Preprocessing
 {
     public class LayouterApplicator
     {
-        private readonly Func<ITagCloudLayouter> layouterGenerator;
         private readonly FontSettings fontSettings;
-        
-        public Point WordsCenter { get; private set; }
+        private readonly Func<ITagCloudLayouter> layouterGenerator;
 
         public LayouterApplicator(Func<ITagCloudLayouter> layouterGenerator, FontSettings fontSettings)
         {
             this.layouterGenerator = layouterGenerator;
             this.fontSettings = fontSettings;
         }
+
+        public Point WordsCenter { get; private set; }
 
         public IEnumerable<Result<WordInfo>> GetWordsAndRectangles(IEnumerable<WordInfo> wordsAndFrequencies)
         {

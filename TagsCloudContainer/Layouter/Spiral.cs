@@ -6,9 +6,9 @@ namespace TagsCloudContainer.Layouter
     public class Spiral : IPositionGenerator
     {
         private readonly SpiralSettings settings;
+        private double angleDelta;
         private double currentAngle;
         private int piFactor = 2;
-        private double angleDelta;
 
         public Spiral(SpiralSettings settings)
         {
@@ -18,8 +18,8 @@ namespace TagsCloudContainer.Layouter
 
         public Point GetNextPosition()
         {
-            var x = settings.Center.X + (int)(settings.SpiralWidth * currentAngle * Math.Cos(currentAngle));
-            var y = settings.Center.Y + (int)(settings.SpiralWidth * currentAngle * Math.Sin(currentAngle));
+            var x = settings.Center.X + (int) (settings.SpiralWidth * currentAngle * Math.Cos(currentAngle));
+            var y = settings.Center.Y + (int) (settings.SpiralWidth * currentAngle * Math.Sin(currentAngle));
             currentAngle += angleDelta;
             if (!(currentAngle > piFactor * Math.PI))
                 return new Point(x, y);
@@ -28,6 +28,9 @@ namespace TagsCloudContainer.Layouter
             return new Point(x, y);
         }
 
-        public Point GetCenter() => settings.Center;
+        public Point GetCenter()
+        {
+            return settings.Center;
+        }
     }
 }

@@ -18,10 +18,9 @@ namespace TagsCloudContainer.FileReader
         public Result<IEnumerable<string>> Read()
         {
             return Result.Of(
-                () => File.ReadAllLines(provider.WordsFilePath)
-                .Where(str => str != ""))
+                    () => File.ReadAllLines(provider.WordsFilePath)
+                        .Where(str => str != ""))
                 .RefineError("Can't read file " + provider.WordsFilePath);
-            //return new Result<IEnumerable<string>>(result.Value, result.Error);
         }
     }
 }

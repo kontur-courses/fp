@@ -20,6 +20,17 @@ namespace TagsCloudContainer
             return Graphics.FromImage(Image);
         }
 
+        public void RecreateImage(ImageSettings settings)
+        {
+            Image = new Bitmap(settings.Width, settings.Height, PixelFormat.Format24bppRgb);
+        }
+
+        public void SaveImage(string fileName)
+        {
+            FailIfNotInitialized();
+            Image.Save(fileName);
+        }
+
         private void FailIfNotInitialized()
         {
             if (Image == null)
@@ -31,17 +42,6 @@ namespace TagsCloudContainer
         {
             Refresh();
             Application.DoEvents();
-        }
-
-        public void RecreateImage(ImageSettings settings)
-        {
-            Image = new Bitmap(settings.Width, settings.Height, PixelFormat.Format24bppRgb);
-        }
-
-        public void SaveImage(string fileName)
-        {
-            FailIfNotInitialized();
-            Image.Save(fileName);
         }
     }
 }

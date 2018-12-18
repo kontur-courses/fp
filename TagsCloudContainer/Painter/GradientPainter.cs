@@ -15,9 +15,9 @@ namespace TagsCloudContainer.Painter
         public Color GetRectangleColor(Point cloudCenter, Rectangle currentRectangle, int cloudRadius)
         {
             var distanceToCenter = currentRectangle.Location.DistanceTo(cloudCenter);
-            var red = (int)(255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.R));
-            var green = (int)(255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.G));
-            var blue = (int)(255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.B));
+            var red = (int) (255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.R));
+            var green = (int) (255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.G));
+            var blue = (int) (255 - distanceToCenter / cloudRadius * (255 - palette.PrimaryColor.B));
             return Color.FromArgb(red, green, blue);
         }
     }

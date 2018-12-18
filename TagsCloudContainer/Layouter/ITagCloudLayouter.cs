@@ -4,7 +4,7 @@ namespace TagsCloudContainer.Layouter
 {
     public interface ITagCloudLayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
         Point Center { get; }
+        Rectangle PutNextRectangle(Size rectangleSize);
     }
 }

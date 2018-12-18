@@ -20,13 +20,11 @@ namespace TagsCloudContainer.Tests
             layouter = () => new CircularCloudLayouter(new Spiral(new SpiralSettings()));
             var wordInfosList = new List<WordInfo>();
             for (var i = 1; i <= 20; i++)
-            {
                 wordInfosList.Add(new WordInfo
                 {
                     Frequency = i,
                     Word = new string('a', i)
                 });
-            }
 
             wordInfos = wordInfosList.ToArray();
         }

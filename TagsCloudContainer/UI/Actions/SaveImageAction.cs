@@ -6,8 +6,8 @@ namespace TagsCloudContainer.UI.Actions
 {
     public class SaveImageAction : IUiAction
     {
-        private readonly IImageDirectoryProvider imageDirectory;
         private readonly IImageHolder image;
+        private readonly IImageDirectoryProvider imageDirectory;
 
         public SaveImageAction(IImageDirectoryProvider imageDirectory, IImageHolder image)
         {

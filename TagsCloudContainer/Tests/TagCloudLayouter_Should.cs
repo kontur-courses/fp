@@ -10,9 +10,9 @@ namespace TagsCloudContainer.Tests
 {
     public class TagCloudLayouter_Should
     {
+        private readonly Size defaultSize = new Size(2, 4);
         private Point center;
         private CircularCloudLayouter layouter;
-        private readonly Size defaultSize = new Size(2, 4);
 
 
         [SetUp]
@@ -66,8 +66,8 @@ namespace TagsCloudContainer.Tests
         public void PlaceFirstRectInARelativeCenter()
         {
             var rects = AssignLayouter(Enumerable.Repeat(defaultSize, 10)).ToArray();
-            var middleX = (float)rects.Sum(rect => rect.X) / rects.Length;
-            var middleY = (float)rects.Sum(rect => rect.Y) / rects.Length;
+            var middleX = (float) rects.Sum(rect => rect.X) / rects.Length;
+            var middleY = (float) rects.Sum(rect => rect.Y) / rects.Length;
             var relativeCenter = new PointF(middleX, middleY);
             var distanceToFirst = rects.First().Location.DistanceTo(relativeCenter);
             foreach (var rectangle in rects.Skip(1))
@@ -93,7 +93,9 @@ namespace TagsCloudContainer.Tests
             return Math.PI * radius * radius;
         }
 
-        private IEnumerable<Rectangle> AssignLayouter(IEnumerable<Size> sizes) =>
-            sizes.Select(size => layouter.PutNextRectangle(size));
+        private IEnumerable<Rectangle> AssignLayouter(IEnumerable<Size> sizes)
+        {
+            return sizes.Select(size => layouter.PutNextRectangle(size));
+        }
     }
 }
