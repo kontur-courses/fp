@@ -28,6 +28,7 @@ namespace TagCloud.Utility.Runner
             this.pathToPicture = pathToPicture;
             this.format = format;
         }
+
         public void Run()
         {
             var words = wordReader

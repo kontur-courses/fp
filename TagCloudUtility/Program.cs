@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using TagCloud.Utility.Container;
 using TagCloud.Utility.Runner;
 
@@ -7,18 +6,35 @@ namespace TagCloud.Utility
 {
     public static class TagCloudProgram
     {
-        public static void Execute(Options options)
+        public static Result<None> Execute(Options options)
         {
-            if (options == null)
-                throw new ArgumentNullException($"{nameof(options)} was null");
+            return options.AsResult()
+                .Then(CheckOptionsOnNull)
+                .Then(Helper.CheckPaths)
+                .Then(ContainerConfig.Configure)
+                .Then(ResolveRunner)
+                .Then(RunProgram);
+        }
 
-            Helper.CheckPaths(options);
+        private static Result<None> RunProgram(ITagCloudRunner container)
+        {
+            return Result
+                .OfAction(container.Run)
+                .RefineError("Error while running a program");
+        }
 
-            var container = ContainerConfig.Configure(options);
+        private static Result<ITagCloudRunner> ResolveRunner(IContainer container)
+        {
+            return Result
+                .Of(container.Resolve<ITagCloudRunner>)
+                .RefineError("Error while resolving runner");
+        }
 
-            var runner = container.Resolve<ITagCloudRunner>();
-
-            runner.Run();
+        private static Result<Options> CheckOptionsOnNull(Options options)
+        {
+            return options != null
+                ? Result.Ok(options)
+                : Result.Fail<Options>($"{nameof(options)} was null)");
         }
     }
 }

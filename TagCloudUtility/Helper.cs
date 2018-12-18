@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.IO;
 using TagCloud.Utility.Container;
 
@@ -12,39 +11,38 @@ namespace TagCloud.Utility
             return Path.GetExtension(path);
         }
 
-        public static void CheckPaths(Options options)
+        public static Result<Options> CheckPaths(Options options)
         {
             if (!File.Exists(options.PathToWords))
-                throw new ArgumentException(
+                return Result.Fail<Options>(
                     $"File {options.PathToWords} doesn't exists!");
             if (!Path.HasExtension(options.PathToWords))
-                throw new ArgumentException(
+                return Result.Fail<Options>(
                     $"Path to words should contain file type, but was {options.PathToWords}");
 
             if (!Path.HasExtension(options.PathToPicture))
-                throw new ArgumentException(
+                return Result.Fail<Options>(
                     $"Path to picture should contain picture type, but was {options.PathToPicture}");
 
 
             if (options.PathToTags != null)
             {
                 if (!File.Exists(options.PathToTags))
-                    throw new ArgumentException(
-                        $"File {options.PathToTags} doesn't exists!");
+                    return Result.Fail<Options>($"File {options.PathToTags} doesn't exists!");
                 if (!Path.HasExtension(options.PathToTags))
-                    throw new ArgumentException(
-                        $"Path to tags should contain file type, but was {options.PathToTags}");
+                    return Result.Fail<Options>($"Path to tags should contain file type, but was {options.PathToTags}");
             }
 
             if (options.PathToStopWords != null)
             {
                 if (!File.Exists(options.PathToStopWords))
-                    throw new ArgumentException(
-                        $"File {options.PathToStopWords} doesn't exists!");
+                    return Result.Fail<Options>($"File {options.PathToStopWords} doesn't exists!");
                 if (!Path.HasExtension(options.PathToStopWords))
-                    throw new ArgumentException(
+                    return Result.Fail<Options>(
                         $"Path to stopwords should contain file type, but was {options.PathToStopWords}");
             }
+
+            return options.AsResult();
         }
 
         public static string GetPath(string path)
@@ -52,11 +50,11 @@ namespace TagCloud.Utility
             return Path.Combine(Directory.GetCurrentDirectory(), path);
         }
 
-        public static ImageFormat GetImageFormat(string fileName)
+        public static Result<ImageFormat> GetImageFormat(string fileName)
         {
             var extension = Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(extension))
-                throw new ArgumentException(
+                return Result.Fail<ImageFormat>(
                     $"Unable to determine file extension for {fileName}");
 
             switch (extension.ToLower())
@@ -85,7 +83,7 @@ namespace TagCloud.Utility
                     return ImageFormat.Wmf;
 
                 default:
-                    throw new ArgumentException(
+                    return Result.Fail<ImageFormat>(
                         $"Unable to determine picture extension for file: {fileName}");
             }
         }
