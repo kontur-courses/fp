@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Container\ContainerConfig.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="None.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="Runner\ITagCloudRunner.cs" />
     <Compile Include="Models\Tag\FrequencyGroup.cs" />
     <Compile Include="Models\Tag\Container\ITagContainer.cs" />
