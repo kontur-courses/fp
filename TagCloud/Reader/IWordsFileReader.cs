@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.Data;
 
 namespace TagCloud.Reader
 {
     public interface IWordsFileReader
     {
-        IEnumerable<string> ReadWords(string fileName);
+        Result<IEnumerable<string>> ReadWords(string fileName);
     }
 }
