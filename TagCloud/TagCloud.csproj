@@ -85,6 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomColorScheme.cs" />
     <Compile Include="RedColorScheme.cs" />
+    <Compile Include="Result\Result.cs" />
     <Compile Include="StatisticsCollector.cs" />
     <Compile Include="Visualizer\VisualElement.cs" />
     <Compile Include="Visualizer\VisualizerExtensions.cs" />
@@ -107,5 +108,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

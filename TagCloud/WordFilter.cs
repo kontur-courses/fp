@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -16,7 +17,7 @@ namespace TagCloud
             string path,
             bool ignoreBoring)
         {
-            stopWords = path == "" ? new string[0] : fileReader.Read(path).ToArray();
+            stopWords = path == "" ? new string[0] : fileReader.Read(path).GetValueOrThrow().ToArray();
             this.ignoreBoring = ignoreBoring;
             parsePartOfSpeechRegex = new Regex(@"\w*?=(\w+)");
             ignoringPartsOfSpeech = new[]
@@ -30,16 +31,18 @@ namespace TagCloud
             };
         }
 
-        public bool ToExclude(string word)
+        public Result<bool> ToExclude(string word)
         {
-            return stopWords.Contains(word) || ignoreBoring && IsBoring(word);
+            return IsBoring(word).Then(s => stopWords.Contains(word));
         }
 
-        private bool IsBoring(string word)
+        private Result<bool> IsBoring(string word)
         {
-            var output = ProgramExecuter.RunProgram(@"mystem.exe", "-l -i", word);
-            var partOfSpeech = parsePartOfSpeechRegex.Match(output).Groups[1].Value;
-            return ignoringPartsOfSpeech.Contains(partOfSpeech);
+            return ignoreBoring
+                ? ProgramExecuter.RunProgram(@"mystem.exe", "-l -i", word)
+                    .Then(o => parsePartOfSpeechRegex.Match(o).Groups[1].Value)
+                    .Then(partOfSpeech => ignoringPartsOfSpeech.Contains(partOfSpeech))
+                : false;
         }
     }
 }

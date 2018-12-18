@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using JetBrains.Annotations;
+using TagCloud.Result;
 
 namespace TagCloud
 {
     public static class ProgramExecuter
     {
-        public static string RunProgram(string command, string paramsString, string content)
+        public static Result<string> RunProgram(string command, string paramsString, string content)
         {
             using (var process = CreateProcess(command, paramsString))
             {
@@ -31,15 +33,15 @@ namespace TagCloud
             };
         }
 
-        public static void WriteToStream(Process process, string content)
+        public static Result<None> WriteToStream(Process process, string content)
         {
             using (var writer = new StreamWriter(process.StandardInput.BaseStream))
             {
-                writer.WriteLine(content);
+                return Result.Result.OfAction(() => writer.WriteLine(content));
             }
         }
 
-        public static string ReadFromStream(Process process)
+        public static Result<string> ReadFromStream(Process process)
         {
             using (var reader = new StreamReader(process.StandardOutput.BaseStream))
             {

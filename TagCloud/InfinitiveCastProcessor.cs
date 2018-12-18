@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using NHunspell;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -14,10 +15,12 @@ namespace TagCloud
             hunspell = new Hunspell(affixFileData, dictionaryFileData);
         }
 
-        [CanBeNull]
-        public string Process(string word)
+        public Result<string> Process(string word)
         {
-            return hunspell.Stem(word).FirstOrDefault();
+            var result = hunspell.Stem(word).FirstOrDefault();
+            if (result == null)
+                return new Result<string>("HUnspell error: no such infinitive words found");
+            return new Result<string>(null, result);
         }
     }
 }

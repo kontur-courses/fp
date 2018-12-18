@@ -2,12 +2,13 @@
 using System.Linq;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloud
 {
     public class StatisticsCollector : IStatisticsCollector
     {
-        public IEnumerable<FrequentedWord> GetStatistics(IEnumerable<string> words)
+        public Result<IEnumerable<FrequentedWord>> GetStatistics(IEnumerable<string> words)
         {
             var statistics = new Dictionary<string, int>();
             foreach (var word in words)
@@ -17,7 +18,7 @@ namespace TagCloud
                 statistics[word]++;
             }
 
-            return statistics.Select(p => new FrequentedWord(p.Key, p.Value));
+            return statistics.Select(p => new FrequentedWord(p.Key, p.Value)).ToArray();
         }
     }
 }

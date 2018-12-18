@@ -2,6 +2,7 @@
 using System.Drawing;
 using CommandLine;
 using TagCloud.Enums;
+using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -18,23 +19,25 @@ namespace TagCloud
         public SizeScheme SizeScheme { get; set; }
         public bool IgnoreBoring { get; set; }
 
-        public static Configuration FromArguments(string[] args)
+        public static Result<Configuration> FromArguments(string[] args)
         {
-            var configuration = new Configuration();
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(o => configuration.InputFile = o.Input)
-                .WithParsed(o => configuration.OutputFile = o.Output)
-                .WithParsed(o => configuration.StopWordsFile = o.Stopwords)
-                .WithParsed(o => configuration.BackgroundColor = Color.FromName(o.Background))
-                .WithParsed(o => configuration.ImageSize = new Size(o.Width, o.Height))
-                .WithParsed(o => configuration.ColorScheme = o.ColorScheme)
-                .WithParsed(o => configuration.FontScheme = o.FontScheme)
-                .WithParsed(o => configuration.LayouterType = o.Layouter)
-                .WithParsed(o => configuration.SizeScheme = o.SizeScheme)
-                .WithParsed(o => configuration.IgnoreBoring = o.IgnoreBoring)
-                .WithNotParsed(o => throw new ArgumentException("Wrong command line arguments"));
-
-            return configuration;
+            return Result.Result.Of(() => new Configuration())
+                .Then(configuration =>
+                {
+                    Parser.Default.ParseArguments<Options>(args)
+                        .WithParsed(o => configuration.InputFile = o.Input)
+                        .WithParsed(o => configuration.OutputFile = o.Output)
+                        .WithParsed(o => configuration.StopWordsFile = o.Stopwords)
+                        .WithParsed(o => configuration.BackgroundColor = Color.FromName(o.Background))
+                        .WithParsed(o => configuration.ImageSize = new Size(o.Width, o.Height))
+                        .WithParsed(o => configuration.ColorScheme = o.ColorScheme)
+                        .WithParsed(o => configuration.FontScheme = o.FontScheme)
+                        .WithParsed(o => configuration.LayouterType = o.Layouter)
+                        .WithParsed(o => configuration.SizeScheme = o.SizeScheme)
+                        .WithParsed(o => configuration.IgnoreBoring = o.IgnoreBoring)
+                        .WithNotParsed(o => throw new ArgumentException("Wrong command line arguments"));
+                    return configuration;
+                });
         }
     }
 }

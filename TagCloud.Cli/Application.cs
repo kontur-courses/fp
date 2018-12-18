@@ -2,6 +2,7 @@
 using System.Linq;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloudCreator
 {
@@ -36,33 +37,34 @@ namespace TagCloudCreator
             this.wordProcessor = wordProcessor;
         }
 
-        public void Run(string inputFile, string outputFile)
+        public Result<None> Run(string inputFile, string outputFile)
         {
-            var input = fileReader.Read(inputFile);
-            input = input.Select(s => s.ToLower());
-            input = ProcessWords(input, wordProcessor);
-            var filteredInput = ExcludeWords(input, wordFilter);
-            var statistics = statisticsCollector.GetStatistics(filteredInput);
-            var positionedElements = FillCloud(statistics);
-            var image = visualizer.Visualize(positionedElements);
-            imageSaver.Save(image, outputFile);
+            return fileReader.Read(inputFile)
+                .Then(inp => inp.Select(s => s.ToLower()))
+                .Then(inp => ProcessWords(inp, wordProcessor))
+                .Then(inp => ExcludeWords(inp, wordFilter))
+                .Then(inp => statisticsCollector.GetStatistics(inp))
+                .Then(FillCloud)
+                .Then(visualizer.Visualize)
+                .Then(img => imageSaver.Save(img, outputFile));
         }
 
-        private IEnumerable<string> ProcessWords(IEnumerable<string> words, IWordProcessor processor)
+        private Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words, IWordProcessor processor)
         {
             var result = new List<string>();
             foreach (var word in words)
             {
-                var processed = processor.Process(word);
-                result.Add(processed ?? word);
+                processor.Process(word)
+                    .Then(p => result.Add(p))
+                    .OnFail(s => result.Add(word));
             }
 
             return result;
         }
 
-        private IEnumerable<string> ExcludeWords(IEnumerable<string> words, IWordFilter filter)
+        private Result<IEnumerable<string>> ExcludeWords(IEnumerable<string> words, IWordFilter filter)
         {
-            return words.Where(w => !filter.ToExclude(w)).ToArray();
+            return words.Where(w => !filter.ToExclude(w).GetValueOrThrow()).ToArray();
         }
 
         private IEnumerable<PositionedElement> FillCloud(
@@ -71,10 +73,9 @@ namespace TagCloudCreator
             var elements = new List<PositionedElement>();
             foreach (var word in statistics)
             {
-                var size = sizeScheme.GetSize(word);
-                var rectangle = layouter.PutNextRectangle(size);
-                var element = new PositionedElement(word, rectangle);
-                elements.Add(element);
+                sizeScheme.GetSize(word)
+                    .Then(size => layouter.PutNextRectangle(size))
+                    .Then(rect => elements.Add(new PositionedElement(word, rect)));
             }
 
             return elements;

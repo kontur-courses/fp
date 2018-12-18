@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface IFileReader
     {
-        IEnumerable<string> Read(string path);
+        Result<IEnumerable<string>> Read(string path);
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface IStatisticsCollector
     {
-        IEnumerable<FrequentedWord> GetStatistics(IEnumerable<string> words);
+        Result<IEnumerable<FrequentedWord>> GetStatistics(IEnumerable<string> words);
     }
 }

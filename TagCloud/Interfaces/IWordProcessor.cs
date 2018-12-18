@@ -1,7 +1,9 @@
-﻿namespace TagCloud.Interfaces
+﻿using TagCloud.Result;
+
+namespace TagCloud.Interfaces
 {
     public interface IWordProcessor
     {
-        string Process(string word);
+        Result<string> Process(string word);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -9,7 +10,7 @@ namespace TagCloud
         public const int MaxChannelValue = 255;
         public const int MaxChannelDelta = 200;
 
-        public Color Process(PositionedElement element)
+        public Result<Color> Process(PositionedElement element)
         {
             return Color.FromArgb(MaxChannelValue - MaxChannelDelta / element.Frequency, Color.Red);
         }

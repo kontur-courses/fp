@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface IVisualizer
     {
-        Image Visualize(IEnumerable<PositionedElement> objects);
+        Result<Image> Visualize(IEnumerable<PositionedElement> objects);
     }
 }

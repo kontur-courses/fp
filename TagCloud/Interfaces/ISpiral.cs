@@ -1,9 +1,10 @@
 ﻿using TagCloud.Layouter;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface ISpiral
     {
-        Point Put(Point origin, double angle, double turnsInterval);
+        Result<Point> Put(Point origin, double angle, double turnsInterval);
     }
 }

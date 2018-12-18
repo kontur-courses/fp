@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 using Point = TagCloud.Layouter.Point;
 
 namespace TagCloud.Visualizer
@@ -27,7 +28,7 @@ namespace TagCloud.Visualizer
         public Color BackgroundColor { get; set; }
         public Size Size { get; }
 
-        public Image Visualize(IEnumerable<PositionedElement> objects)
+        public Result<Image> Visualize(IEnumerable<PositionedElement> objects)
         {
             var source = PrepareToVisualize(objects);
             var sourceToDraw = source.Select(NormalizePosition);
@@ -90,9 +91,9 @@ namespace TagCloud.Visualizer
 
         private void DrawElement(Graphics graphics, VisualElement element)
         {
-            using (var pen = new Pen(element.Color))
+            using (var pen = new Pen(element.Color.GetValueOrThrow()))
             {
-                var font = AdjustFontSize(graphics, element.Font, element.Size.ToSize(), element.Word);
+                var font = AdjustFontSize(graphics, element.Font.GetValueOrThrow(), element.Size.ToSize(), element.Word);
                 graphics.DrawString(element.Word, font, pen.Brush, ExtractRectangleF(element));
             }
         }

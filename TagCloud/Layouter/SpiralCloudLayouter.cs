@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud.Layouter
 {
@@ -25,7 +26,7 @@ namespace TagCloud.Layouter
             return rectanglesList;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             var rectangle = PutOnSpiral(rectangleSize);
             if (rectangle == null)
@@ -58,8 +59,8 @@ namespace TagCloud.Layouter
             while (newRectangle.IsIntersectsWithAnyRect(rectanglesList))
             {
                 currentSpiralAngle += SpiralAngleInterval;
-                var rectCenter = spiral.Put(origin, currentSpiralAngle, SpiralTurnsInterval);
-                newRectangle.Center = rectCenter;
+                spiral.Put(origin, currentSpiralAngle, SpiralTurnsInterval)
+                    .Then(center => newRectangle.Center = center);
             }
 
             return newRectangle;

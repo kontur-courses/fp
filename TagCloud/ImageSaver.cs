@@ -1,14 +1,15 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud
 {
     public class ImageSaver : IImageSaver
     {
-        public void Save(Image image, string path)
+        public Result<None> Save(Image image, string path)
         {
-            image.Save(path, ImageFormat.Png);
+            return Result.Result.OfAction(() => image.Save(path, ImageFormat.Png));
         }
     }
 }

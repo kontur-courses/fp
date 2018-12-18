@@ -2,12 +2,13 @@
 using System.IO;
 using System.Text;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud
 {
     public class FileReaderByLines : IFileReader
     {
-        public IEnumerable<string> Read(string path)
+        public Result<IEnumerable<string>> Read(string path)
         {
             var result = new List<string>();
             using (var sr = new StreamReader(path, Encoding.Default))

@@ -1,5 +1,6 @@
 ﻿using System;
 using TagCloud.Interfaces;
+using TagCloud.Result;
 
 namespace TagCloud.Layouter.Spirals
 {
@@ -8,7 +9,7 @@ namespace TagCloud.Layouter.Spirals
         private double x;
         private double y;
 
-        public Point Put(Point origin, double angle, double turnsInterval)
+        public Result<Point> Put(Point origin, double angle, double turnsInterval)
         {
             var degrees = ToDegrees(angle);
             var normalizedAngle = ExcludeFullTurns(degrees);

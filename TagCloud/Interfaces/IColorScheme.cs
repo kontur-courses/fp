@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using TagCloud.IntermediateClasses;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface IColorScheme
     {
-        Color Process(PositionedElement element);
+        Result<Color> Process(PositionedElement element);
     }
 }

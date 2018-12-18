@@ -7,13 +7,14 @@ using Castle.Windsor;
 using TagCloud;
 using TagCloud.Interfaces;
 using TagCloud.Layouter;
+using TagCloud.Result;
 using TagCloud.Visualizer;
 
 namespace TagCloudCreator
 {
     public static class ContainerBuilder
     {
-        public static IWindsorContainer ConfigureContainer(Configuration configuration)
+        public static Result<IWindsorContainer> ConfigureContainer(Configuration configuration)
         {
             var layouters = TypesCollector.CollectLayouters();
             var colorSchemes = TypesCollector.CollectColorSchemes();
@@ -21,7 +22,7 @@ namespace TagCloudCreator
             var sizeSchemes = TypesCollector.CollectSizeSchemes();
             var container = new WindsorContainer();
 
-            container.Register(
+            return Result.Of(() => container.Register(
                 GetRegistration<IWordFilter, WordFilter>()
                     .WithArgument("path", configuration.StopWordsFile)
                     .WithArgument("ignoreBoring", configuration.IgnoreBoring),
@@ -30,9 +31,9 @@ namespace TagCloudCreator
                     .WithArgument("imageSize", configuration.ImageSize),
                 GetRegistration<IWordProcessor, InfinitiveCastProcessor>()
                     .WithArgument("affixFileData",
-                        ReadEmbeddedFile("TagCloudCreator.Dictionaries.Russian.ru_RU.aff"))
+                        ReadEmbeddedFile("TagCloudCreator.Dictionaries.Russian.ru_RU.aff").GetValueOrThrow())
                     .WithArgument("dictionaryFileData",
-                        ReadEmbeddedFile("TagCloudCreator.Dictionaries.Russian.ru_RU.dic")),
+                        ReadEmbeddedFile("TagCloudCreator.Dictionaries.Russian.ru_RU.dic").GetValueOrThrow()),
                 GetRegistration<IStatisticsCollector, StatisticsCollector>(),
                 GetRegistration<ICloudLayouter, SpiralCloudLayouter>(),
                 GetRegistration<IImageSaver, ImageSaver>(),
@@ -42,19 +43,22 @@ namespace TagCloudCreator
                 GetRegistration(typeof(ISpiral), layouters[configuration.LayouterType]),
                 GetRegistration(typeof(IColorScheme), colorSchemes[configuration.ColorScheme]),
                 GetRegistration(typeof(IFontScheme), fontSchemes[configuration.FontScheme]),
-                GetRegistration(typeof(ISizeScheme), sizeSchemes[configuration.SizeScheme]));
-
-            return container;
+                GetRegistration(typeof(ISizeScheme), sizeSchemes[configuration.SizeScheme])));
         }
 
-        public static byte[] ReadEmbeddedFile(string resourceName)
+        public static Result<byte[]> ReadEmbeddedFile(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return Encoding.ASCII.GetBytes(reader.ReadToEnd());
-            }
+            return Result.Of(() => assembly.GetManifestResourceStream(resourceName))
+                .Then(stream =>
+                {
+                    var sr = new StreamReader(stream);
+                    var content = sr.ReadToEnd();
+                    sr.Dispose();
+                    return content;
+                })
+                .Then(content => Encoding.ASCII.GetBytes(content))
+                .ReplaceError(error => "Cannot open embedded resource: " + resourceName);
         }
 
         public static ComponentRegistration<object> GetRegistration(Type elementFor, Type by)

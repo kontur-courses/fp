@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {
     public interface IImageSaver
     {
-        void Save(Image image, string path);
+        Result<None> Save(Image image, string path);
     }
 }
