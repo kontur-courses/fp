@@ -25,13 +25,26 @@ namespace TagCloud.Drawer
             this.colorPicker = colorPicker;
         }
 
-        public Bitmap CreateImage(IEnumerable<WordImageInfo> infos, Color wordsColor, Color backgroundColor)
+        public Result<Bitmap> CreateImage(IEnumerable<WordImageInfo> infos, Color wordsColor, Color backgroundColor)
         {
             var imageInfos = infos as WordImageInfo[] ?? infos.ToArray();
             var rectangles = imageInfos.Select(info => info.Rectangle).ToArray();
 
-            var image = GetImage(rectangles);
+            return Result.Of(() => GetImage(rectangles))
+                .Then(image => DrawWords(wordsColor, backgroundColor, image, rectangles, imageInfos));
+        }
 
+        public Result<Bitmap> CreateImage(IEnumerable<Rectangle> rectangles)
+        {
+            var rectanglesArray = rectangles as Rectangle[] ?? rectangles.ToArray();
+
+            return Result.Of(() => GetImage(rectanglesArray))
+                .Then(image => DrawRectangles(image, rectanglesArray));
+        }
+
+        private Result<Bitmap> DrawWords(Color wordsColor, Color backgroundColor, Bitmap image,
+            Rectangle[] rectangles, IEnumerable<WordImageInfo> imageInfos)
+        {
             using (var graphics = Graphics.FromImage(image))
             {
                 FillBitmap(new SolidBrush(backgroundColor), graphics, image);
@@ -42,16 +55,11 @@ namespace TagCloud.Drawer
                     graphics.DrawString(info.Word, info.Font, brush, info.Rectangle);
                 }
             }
-
             return image;
         }
 
-        public Bitmap CreateImage(IEnumerable<Rectangle> rectangles)
+        private static Bitmap DrawRectangles(Bitmap image, Rectangle[] rectanglesArray)
         {
-            var rectanglesArray = rectangles as Rectangle[] ?? rectangles.ToArray();
-
-            var image = GetImage(rectanglesArray);
-
             using (var graphics = Graphics.FromImage(image))
             {
                 FillBitmap(Brushes.White, graphics, image);
@@ -59,7 +67,6 @@ namespace TagCloud.Drawer
                 foreach (var rectangle in rectanglesArray)
                     graphics.DrawRectangle(Pens.Black, rectangle);
             }
-
             return image;
         }
 

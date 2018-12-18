@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagCloud.Data;
 
 namespace TagCloud.Drawer
 {
     public interface IRectanglesDrawer
     {
-        Bitmap CreateImage(IEnumerable<Rectangle> rectangles);
+        Result<Bitmap> CreateImage(IEnumerable<Rectangle> rectangles);
     }
 }
