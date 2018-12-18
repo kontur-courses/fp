@@ -34,8 +34,8 @@ namespace TagsCloudVisualization
                     .Then(words => wordDataProvider
                         .GetData(new CircularCloudLayouter(param.PointGenerator, pointGeneratorSettings), words))
                     .Then(data => TagsCloudVisualizer.GetPicture(data, param))
-                    .Then(bitmap => TagsCloudVisualizer.SavePicture(bitmap, param.OutFormat))
-                    .OnFail(reporter.process));
+                    .Then(bitmap => TagsCloudVisualizer.SavePicture(bitmap, param.OutFormat)))
+                .OnFail(reporter.process);
         }
     }
 }
