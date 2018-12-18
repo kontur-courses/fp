@@ -18,17 +18,14 @@ namespace TagCloud.Core.WordsParsing.WordsReading
 
         public Regex AllowedFileExtension { get; }
 
-        public Result<IEnumerable<string>> ReadFrom(string path)
+        public Result<IEnumerable<string>> ReadFrom(Stream stream)
         {
-            return Result.Of(() => ReadUnsafe(path));
+            return Result.Of(() => ReadUnsafeFrom(stream));
         }
 
-        public IEnumerable<string> ReadUnsafe(string path)
+        private IEnumerable<string> ReadUnsafeFrom(Stream stream)
         {
-            using (var r = new StreamReader(path))
-            {
-                return (string[]) serializer.Deserialize(r);
-            }
+            return (string[]) serializer.Deserialize(stream);
         }
     }
 }

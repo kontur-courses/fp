@@ -21,17 +21,15 @@ namespace TagCloud.Core.WordsParsing.WordsProcessing
                 return Result.Fail<IEnumerable<TagStat>>("Given words can't be null");
 
             var wordsCounter = new Dictionary<string, int>();
-            var resWords =
-                utilities.Aggregate(words, (current, processingUtility) => processingUtility.Process(current));
-            foreach (var resWord in resWords)
-            {
-                if (boringWords != null && boringWords.Contains(resWord))
-                    continue;
-                var resCount = 1;
-                if (wordsCounter.TryGetValue(resWord, out var currentCount))
-                    resCount = currentCount + 1;
-                wordsCounter[resWord] = resCount;
-            }
+            utilities.Aggregate(words, (currentWords, processingUtility) => processingUtility.Process(currentWords))
+                .Where(word => boringWords == null || !boringWords.Contains(word))
+                .ApplyForeach(word =>
+                {
+                    var resCount = 1;
+                    if (wordsCounter.TryGetValue(word, out var currentCount))
+                        resCount = currentCount + 1;
+                    wordsCounter[word] = resCount;
+                });
 
             return HandleWordsCounter(wordsCounter, maxUniqueWordsCount);
         }

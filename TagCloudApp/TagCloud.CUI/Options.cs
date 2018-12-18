@@ -28,29 +28,17 @@ namespace TagCloud.CUI
         [Option("tagbrush", Default = "black")]
         public string TagBrushName { get; set; }
 
-        public Result<Color> BackgroundColorResult
+        public Color BackgroundColor => Color.FromName(BackgroundColorName);
+
+        public Brush TagBrush
         {
             get
             {
-                return Result
-                    .Of(() => Color.FromName(BackgroundColorName))
-                    .Then(color => color.IsKnownColor
-                        ? color
-                        : Result.Fail<Color>($"Can't load color with name \"{BackgroundColorName}\""));
+                var color = Color.FromName(TagBrushName);
+                return color.IsKnownColor ? new SolidBrush(color) : null;
             }
         }
 
-        public Result<Brush> TagBrushResult
-        {
-            get
-            {
-                return Result
-                    .Of(() => Color.FromName(TagBrushName))
-                    .Then(color => color.IsKnownColor
-                        ? new SolidBrush(color)
-                        : Result.Fail<Brush>($"Can't load color with name \"{TagBrushName}\""));
-            }
-        }
         #endregion
 
 
@@ -84,15 +72,12 @@ namespace TagCloud.CUI
 
         public PointF CenterPoint => new PointF((float) Width / 2, (float) Height / 2);
 
-        public Result<Font> DefaultFontResult
+        public Font DefaultFont
         {
             get
             {
-                return Result
-                    .Of(() => new Font(FontName, (MaxFontSize + MinFontSize) / 2))
-                    .Then(font => font.Name.Equals(FontName, StringComparison.CurrentCultureIgnoreCase)
-                        ? font
-                        : Result.Fail<Font>($"Can't load font with name \"{FontName}\""));
+                var font = new Font(FontName, (MaxFontSize + MinFontSize) / 2);
+                return font.Name.Equals(FontName, StringComparison.CurrentCultureIgnoreCase) ? font : null;
             }
         }
         #endregion

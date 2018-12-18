@@ -31,7 +31,7 @@ namespace TagCloud.Tests.Painters
 
             painter.PaintTags(tags);
 
-            tags.All(tag => tag.Brush.Equals(settings.TagBrushResult.GetValueOrThrow())).Should().BeTrue();
+            tags.All(tag => tag.Brush.Equals(settings.TagBrush)).Should().BeTrue();
         }
 
         [Test]

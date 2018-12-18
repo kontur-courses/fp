@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using TagCloud.Core.Util;
 
@@ -16,6 +17,6 @@ namespace TagCloud.Core.WordsParsing.WordsReading
         /// </remarks>
         Regex AllowedFileExtension { get; }
 
-        Result<IEnumerable<string>> ReadFrom(string path);
+        Result<IEnumerable<string>> ReadFrom(Stream stream);
     }
 }

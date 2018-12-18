@@ -79,7 +79,6 @@
     <Compile Include="Layouters\RectangleVisualizer.cs" />
     <Compile Include="Painters\OneColorPainterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextReaders\AbstractWordsReader_Should.cs" />
     <Compile Include="TextReaders\GeneralWordsReader_Should.cs" />
     <Compile Include="TextReaders\TxtWordsReader_Should.cs" />
     <Compile Include="TextReaders\XmlWordsReader_Should.cs" />
@@ -96,15 +95,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\txt\few_words.txt" />
-    <Content Include="Resources\xml\few_words.xml" />
-    <Content Include="Resources\txt\one_word.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\xml\one_word.xml" />
-    <Content Include="Resources\txt\one_word_without_escape_char_in_the_end.txt" />
-    <Content Include="Resources\txt\words_with_different_delimiters.txt" />
-    <Content Include="Resources\xml\zero_words.xml" />
+    <Content Include="Resources\fake\fake_file.ext1" />
+    <Content Include="Resources\fake\fake_file.ext2" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

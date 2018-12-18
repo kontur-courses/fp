@@ -7,12 +7,11 @@ namespace TagCloud.Core.Settings.DefaultImplementations
     public class PaintingSettings : IPaintingSettings
     {
         private Color tagColor;
-        private Color backgroundColor;
 
         public PaintingSettings()
         {
             TagColor = Color.Navy;
-            BackgroundColorResult = Color.White;
+            BackgroundColor = Color.White;
         }
 
         public Color TagColor
@@ -21,21 +20,11 @@ namespace TagCloud.Core.Settings.DefaultImplementations
             set
             {
                 tagColor = value;
-                TagBrushResult = new SolidBrush(value);
+                TagBrush = new SolidBrush(value);
             }
         }
 
-        public Color BackgroundColor
-        {
-            get => backgroundColor;
-            set
-            {
-                backgroundColor = value;
-                BackgroundColorResult = backgroundColor;
-            }
-        }
-
-        public Result<Color> BackgroundColorResult { get; set; }
-        public Result<Brush> TagBrushResult { get; private set; }
+        public Color BackgroundColor { get; set; }
+        public Brush TagBrush { get; private set; }
     }
 }

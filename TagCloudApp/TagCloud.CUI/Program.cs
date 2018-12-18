@@ -20,7 +20,7 @@ namespace TagCloud.CUI
         private static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
-            InjectDependencies(builder);
+            ConfigureDependencies(builder);
 
             if (args.Length == 0)
                 args = new[]
@@ -33,8 +33,8 @@ namespace TagCloud.CUI
                     //"--spiralstep", "-1",
                     //"--maxtagscount", "-10",
                     //"--minfontsize", "-100",
-                    //"--maxfontsize", "-100",
-                    "-i", "result_image.wrong_format",
+                    "--maxfontsize", "-100",
+                    //"-i", "result_image.wrong_format",
                     //"-b", "boring_words.wrong_format",
                     //"-b", "nonexistence_boring_words.txt",
                     //"-f", "wrong_font",
@@ -51,7 +51,8 @@ namespace TagCloud.CUI
                         .As<IVisualizingSettings>()
                         .As<ITagCloudSettings>()
                         .As<ITextParsingSettings>()
-                        .As<ILayoutingSettings>();
+                        .As<ILayoutingSettings>()
+                        .SingleInstance();
                 });
 
             Result.Of(() => builder.Build())
@@ -60,7 +61,7 @@ namespace TagCloud.CUI
                 .OnFail(Console.WriteLine);
         }
 
-        private static void InjectDependencies(ContainerBuilder builder)
+        private static void ConfigureDependencies(ContainerBuilder builder)
         {
             builder.RegisterType<Core.TagCloud>().AsSelf();
 
@@ -69,12 +70,7 @@ namespace TagCloud.CUI
             builder.RegisterType<GeneralWordsReader>().AsSelf();
             builder.RegisterType<LowerCaseUtility>().As<IWordsProcessingUtility>();
             builder.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
-            builder.RegisterType<TextParsingSettings>().As<ITextParsingSettings>().AsSelf().SingleInstance();
-            builder.RegisterType<WordsParser>()
-                .WithParameter(new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IWordsReader),
-                    (pi, ctx) => ctx.Resolve<GeneralWordsReader>()))
-                .AsSelf();
+            builder.RegisterType<WordsParser>().AsSelf();
 
             builder.RegisterType<SimpleTagCloudVisualizer>().As<ITagCloudVisualizer>();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();

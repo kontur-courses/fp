@@ -39,7 +39,7 @@ namespace TagCloud.Core.Visualizers
             return Result.OfAction(() => {
                 bitmap = new Bitmap(settings.Width, settings.Height);
                 graphics = Graphics.FromImage(bitmap);
-            }).RefineError($"Can't create bitmap from these settings: width={settings.Width}, height={settings.Height}.\n");
+            }).AppendToErrorFromLeft($"Can't create bitmap from these settings: width={settings.Width}, height={settings.Height}.\n");
         }
 
         private (double fontSizeMultiplier, double averageRepeatsCount) GetFontSizeMultiplierAndAverageRepeatsCount(
@@ -80,20 +80,18 @@ namespace TagCloud.Core.Visualizers
                     return Result.Fail<IEnumerable<Tag>>(tagResult.Error);
             }
 
-            var paintingResult = painter.PaintTags(resTags);
-            return paintingResult.IsSuccess
-                ? resTags
-                : Result.Fail<IEnumerable<Tag>>(paintingResult.Error);
+            return painter.PaintTags(resTags)
+                .Then(none => (Result<IEnumerable<Tag>>)resTags);
         }
 
         private Result<Tag> CreateTagFrom(TagStat tagStat, double fontSizeMultiplier, double averageWordsCount)
         {
             var fontSizeDelta = (tagStat.RepeatsCount - averageWordsCount) * fontSizeMultiplier;
             Font resFont;
-            if (settings.DefaultFontResult.IsSuccess)
-                resFont = settings.DefaultFontResult.Value.WithModifiedFontSizeOf((float) fontSizeDelta);
+            if (settings.DefaultFont != null)
+                resFont = settings.DefaultFont.WithModifiedFontSizeOf((float) fontSizeDelta);
             else
-                return Result.Fail<Tag>(settings.DefaultFontResult.Error);
+                return Result.Fail<Tag>("Incorrect font given");
 
             return Result
                 .Of(() => graphics.MeasureString(tagStat.Word, resFont))

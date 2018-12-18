@@ -121,7 +121,7 @@ namespace TagCloud.Core.Util
                 : Fail<TInput>(replaceError(input.Error));
         }
 
-        public static Result<TInput> RefineError<TInput>(
+        public static Result<TInput> AppendToErrorFromLeft<TInput>(
             this Result<TInput> input,
             string errorMessage)
         {

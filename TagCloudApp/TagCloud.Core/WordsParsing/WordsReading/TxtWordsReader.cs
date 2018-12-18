@@ -10,19 +10,19 @@ namespace TagCloud.Core.WordsParsing.WordsReading
     {
         public Regex AllowedFileExtension { get; } = new Regex(@"\.txt$", RegexOptions.IgnoreCase);
 
-        public Result<IEnumerable<string>> ReadFrom(string path)
+        public Result<IEnumerable<string>> ReadFrom(Stream stream)
         {
-            return Result.Of(() => ReadUnsafe(path));
+            return Result.Of(() => ReadUnsafeFrom(stream));
         }
 
-        private IEnumerable<string> ReadUnsafe(string path)
+        private IEnumerable<string> ReadUnsafeFrom(Stream stream)
         {
             var res = new List<string>();
-            using (var r = new StreamReader(path))
+            using (var reader = new StreamReader(stream))
             {
                 var curWord = string.Empty;
                 int i;
-                while ((i = r.Read()) != -1)
+                while ((i = reader.Read()) != -1)
                 {
                     var c = Convert.ToChar(i);
                     if (char.IsLetterOrDigit(c))

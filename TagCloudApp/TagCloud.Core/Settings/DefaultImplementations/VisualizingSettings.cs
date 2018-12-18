@@ -14,16 +14,12 @@ namespace TagCloud.Core.Settings.DefaultImplementations
         public float MaxFontSize { get; set; } = 35;
 
         public PointF CenterPoint => new PointF((float) Width / 2, (float) Height / 2);
-
-        public Result<Font> DefaultFontResult
+        public Font DefaultFont
         {
             get
             {
-                return Result
-                    .Of(() => new Font(FontName, (MaxFontSize + MinFontSize) / 2))
-                    .Then(font => font.Name.Equals(FontName, StringComparison.CurrentCultureIgnoreCase)
-                        ? font
-                        : Result.Fail<Font>($"Can't load font with name \"{FontName}\""));
+                var font = new Font(FontName, (MaxFontSize + MinFontSize) / 2);
+                return font.Name.Equals(FontName, StringComparison.CurrentCultureIgnoreCase) ? font : null;
             }
         }
     }

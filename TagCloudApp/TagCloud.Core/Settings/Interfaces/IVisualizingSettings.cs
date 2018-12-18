@@ -11,6 +11,6 @@ namespace TagCloud.Core.Settings.Interfaces
         float MaxFontSize { get; set; }
 
         PointF CenterPoint { get; }
-        Result<Font> DefaultFontResult { get; }
+        Font DefaultFont { get; }
     }
 }

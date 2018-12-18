@@ -10,27 +10,27 @@ namespace TagCloud.Core.WordsParsing
     {
         private readonly ITextParsingSettings settings;
         private readonly IWordsProcessor wordsProcessor;
-        private readonly IWordsReader wordsReader;
+        private readonly GeneralWordsReader generalWordsReader;
 
-        public WordsParser(IWordsReader wordsReader, IWordsProcessor wordsProcessor, ITextParsingSettings settings)
+        public WordsParser(GeneralWordsReader generalWordsReader, IWordsProcessor wordsProcessor, ITextParsingSettings settings)
         {
-            this.wordsReader = wordsReader;
+            this.generalWordsReader = generalWordsReader;
             this.wordsProcessor = wordsProcessor;
             this.settings = settings;
         }
 
         public Result<IEnumerable<TagStat>> Parse(string pathToWords, string pathToBoringWords = null)
         {
-            var wordsResult = wordsReader.ReadFrom(pathToWords)
-                .RefineError($"Can't read words from \"{pathToWords}\":\n");
+            var wordsResult = generalWordsReader.ReadFrom(pathToWords)
+                .AppendToErrorFromLeft($"Can't read words from \"{pathToWords}\":\n");
             if (!wordsResult.IsSuccess)
                 return Result.Fail<IEnumerable<TagStat>>(wordsResult.Error);
 
             var boringWordsResult = string.IsNullOrEmpty(pathToBoringWords)
                 ? Result.Ok(new HashSet<string>())
-                : wordsReader.ReadFrom(pathToBoringWords)
+                : generalWordsReader.ReadFrom(pathToBoringWords)
                     .Then(readWords => new HashSet<string>(readWords))
-                    .RefineError($"Can't read boring words from \"{pathToBoringWords}\":\n");
+                    .AppendToErrorFromLeft($"Can't read boring words from \"{pathToBoringWords}\":\n");
 
             return boringWordsResult.IsSuccess
                 ? wordsProcessor.Process(wordsResult.Value, boringWordsResult.Value, settings.MaxUniqueWordsCount)

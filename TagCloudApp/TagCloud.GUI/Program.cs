@@ -24,7 +24,7 @@ namespace TagCloud.GUI
         private static void Main()
         {
             var builder = new ContainerBuilder();
-            InjectDependencies(builder);
+            ConfigureDependencies(builder);
             var container = builder.Build();
 
             Application.EnableVisualStyles();
@@ -32,7 +32,7 @@ namespace TagCloud.GUI
             Application.Run(container.Resolve<MainForm>());
         }
 
-        private static void InjectDependencies(ContainerBuilder builder)
+        private static void ConfigureDependencies(ContainerBuilder builder)
         {
             builder.RegisterType<MainForm>().AsSelf();
 
@@ -41,15 +41,11 @@ namespace TagCloud.GUI
 
             builder.RegisterType<TxtWordsReader>().As<IWordsReader>();
             builder.RegisterType<XmlWordsReader>().As<IWordsReader>();
-            builder.RegisterType<GeneralWordsReader>();
+            builder.RegisterType<GeneralWordsReader>().AsSelf();
             builder.RegisterType<LowerCaseUtility>().As<IWordsProcessingUtility>();
             builder.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
             builder.RegisterSettings<GuiTextParsingSettings>().As<ITextParsingSettings>();
-            builder.RegisterType<WordsParser>()
-                .WithParameter(new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IWordsReader),
-                    (pi, ctx) => ctx.Resolve<GeneralWordsReader>()))
-                .AsSelf();
+            builder.RegisterType<WordsParser>().AsSelf();
 
             builder.RegisterType<SimpleTagCloudVisualizer>().As<ITagCloudVisualizer>();
             builder.RegisterSettings<GuiVisualizingSettings>().As<IVisualizingSettings>();
