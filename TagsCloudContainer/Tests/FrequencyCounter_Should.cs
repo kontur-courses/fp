@@ -33,7 +33,7 @@ namespace TagsCloudContainer.Tests
         { 
             var frequencyCounter = new FrequencyCounter();
 
-            var result = frequencyCounter.CountWordFrequencies(words).Select(info => info.Frequency);
+            var result = frequencyCounter.CountWordFrequencies(words).GetValueOrThrow().Select(info => info.Frequency);
 
             var previous = int.MaxValue;
             foreach (var frequency in result)
@@ -48,7 +48,7 @@ namespace TagsCloudContainer.Tests
         {
             var frequencyCounter = new FrequencyCounter();
 
-            var result = frequencyCounter.CountWordFrequencies(words);
+            var result = frequencyCounter.CountWordFrequencies(words).GetValueOrThrow();
 
             foreach (var info in result)
             {

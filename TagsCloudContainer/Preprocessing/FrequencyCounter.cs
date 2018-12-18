@@ -18,7 +18,7 @@ namespace TagsCloudContainer.Preprocessing
                 });
         }
 
-        public IEnumerable<WordInfo> CountWordFrequencies(IEnumerable<string> words)
+        private IEnumerable<WordInfo> CountFrequencies(IEnumerable<string> words)
         {
             if (words == null)
                 throw new ArgumentNullException(nameof(words), "word must be not null");
@@ -30,6 +30,11 @@ namespace TagsCloudContainer.Preprocessing
             }
 
             return OrderWordFrequencies(wordsFrequencies);
+        }
+
+        public Result<IEnumerable<WordInfo>> CountWordFrequencies(IEnumerable<string> words)
+        {
+            return Result.Of(() => CountFrequencies(words));
         }
     }
 }
