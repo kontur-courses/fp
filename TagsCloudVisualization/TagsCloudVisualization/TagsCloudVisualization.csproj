@@ -78,10 +78,8 @@
   <ItemGroup>
     <Compile Include="CloudParametersParser.cs" />
     <Compile Include="Interfaces\ICloudParametersParser.cs" />
-    <Compile Include="Interfaces\IPointGeneratorDetector.cs" />
     <Compile Include="Interfaces\IWordsTransformer.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="PointGeneratorDetector.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Settings\IPointGeneratorSettings.cs" />
     <Compile Include="Settings\IWordsExtractorSettings.cs" />

@@ -1,61 +1,72 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.PointGenerators;
 
 namespace TagsCloudVisualization
 {
     public class CloudParametersParser : ICloudParametersParser
     {
-        private readonly IPointGeneratorDetector pointGeneratorDetector;
+        private readonly IEnumerable<IPointGenerator> pointGenerators;
 
-        public CloudParametersParser(IPointGeneratorDetector pointGeneratorDetector)
+        public CloudParametersParser(IEnumerable<IPointGenerator> pointGenerators)
         {
-            this.pointGeneratorDetector = pointGeneratorDetector;
+            this.pointGenerators = pointGenerators;
         }
 
         public Result<CloudParameters> Parse(Options options)
         {
-            return ValidateFontIsSupported(options.FontName)
-                .Then(x => ValidateColorIsExists(options.Color))
-                .Then(x => ValidateImageFormatIsSupported(options.OutFormat))
-                .Then(x => ValidateImageSize(options.ImageSize))
-                .Then(x => pointGeneratorDetector.ValidatePointGeneratorIsSupported(options.PointGenerator))
-                .Then(x => new CloudParameters(
-                        GetImageSize(options.ImageSize),
-                        GetColor(options.Color),
-                        options.FontName,
-                        pointGeneratorDetector.GetPointGenerator(options.PointGenerator),
-                        GetImageFormat(options.OutFormat))
-                    .AsResult())
-                .OnFail(error => MessageBox.Show(error, "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error));
+            return ValidateFontIsSupported(options)
+                .Then(ValidateColorIsExists)
+                .Then(ValidateImageFormatIsSupported)
+                .Then(ValidateImageSize)
+                .Then(ValidatePointGeneratorIsSupported)
+                .Then(o => new CloudParameters(
+                        GetImageSize(o.ImageSize),
+                        GetColor(o.Color),
+                        o.FontName,
+                        GetPointGenerator(o.PointGenerator),
+                        GetImageFormat(o.OutFormat)))
+                .OnFail(Console.WriteLine);
         }
 
-        private Result<string> ValidateFontIsSupported(string fontName)
+        public Result<Options> ValidatePointGeneratorIsSupported(Options options)
         {
-            return Result.Validate(fontName,
-                f => string.Equals(new Font(f, 10).Name, f, StringComparison.InvariantCultureIgnoreCase),
-                $"Invalid font name '{fontName}'");
+            return Result.Validate(options, o => pointGenerators.Any(g => g.GetType().Name.ToLower() == o.PointGenerator),
+                $"Invalid point generator name '{options.PointGenerator}'");
         }
 
-        private Result<string> ValidateColorIsExists(string colorName)
+        private Result<Options> ValidateFontIsSupported(Options options)
         {
-            return Result.Validate(colorName, c => Color.FromName(c).IsKnownColor || c == "random" || c == "rainbow",
-                $"Invalid color name '{colorName}'");
+            return Result.Validate(options,
+                o => string.Equals(new Font(o.FontName, 10).Name, o.FontName, StringComparison.InvariantCultureIgnoreCase),
+                $"Invalid font name '{options.FontName}'");
         }
 
-        private Result<string> ValidateImageSize(string imageSize)
+        private Result<Options> ValidateColorIsExists(Options options)
         {
-            return Result.Validate(imageSize, s => s.Contains("x"), $"Invalid imageSize name '{imageSize}'");
+            return Result.Validate(options, o => Color.FromName(o.Color).IsKnownColor || o.Color == "random" || o.Color == "rainbow",
+                $"Invalid color name '{options.Color}'");
         }
 
-        private Result<string> ValidateImageFormatIsSupported(string imageFormat)
+        private Result<Options> ValidateImageSize(Options options)
         {
-            return Result.Validate(imageFormat, f => f == "tiff" || f == "png" || f == "jpeg",
-                $"Invalid image format '{imageFormat}'");
+            return Result.Validate(options, o => o.ImageSize.Contains("x"), $"Invalid imageSize name '{options.ImageSize}'");
+        }
+
+        private Result<Options> ValidateImageFormatIsSupported(Options options)
+        {
+            return Result.Validate(options, o => o.OutFormat == "tiff" || o.OutFormat == "png" || o.OutFormat == "jpeg",
+                $"Invalid image format '{options.OutFormat}'");
+        }
+
+        public IPointGenerator GetPointGenerator(string name)
+        {
+            return pointGenerators.FirstOrDefault(pointGenerator => name == pointGenerator.GetType().Name.ToLower());
         }
 
         private ImageFormat GetImageFormat(string input)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,20 +13,34 @@ namespace TagsCloudVisualization
 {
     public class WordsExtractor : IWordsExtractor
     {
-        public Result<List<string>> Extract(string path, IWordsExtractorSettings settings)
+
+        private readonly IWordsExtractorSettings settings;
+
+        public WordsExtractor(IWordsExtractorSettings settings)
+        {
+            this.settings = settings;
+        }
+
+        public Result<List<string>> Extract(string path)
         {
             return ValidateFormatIsSupported(path)
-                .Then(f => GetTotalText(path).Value.Replace("\n", " ")
-                    .Replace("\r", " ")
-                    .Replace("\t", " "))
-                .Then(t => settings.StopChars.Aggregate(t,
-                    (current, c) => current.Replace(c, ' ')))
-                .Then(t => t.Split(' ')
-                    .Where(w => w.Length >= 3 && w != string.Empty && !settings.StopWords.Contains(w))
-                    .Select(w => w.Trim().ToLowerInvariant()).ToList())
-                .OnFail(error => MessageBox.Show(error, "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error));
+                .Then(t => GetTotalText(path))
+                .Then(ReplaceSpecialCharacters)
+                .Then(DeleteStopWords)
+                .OnFail(Console.WriteLine);
+        }
+
+        private Result<List<string>> DeleteStopWords(string text)
+        {
+            return text.Split(' ')
+                .Where(w => w.Length >= 3 && w != string.Empty && !settings.StopWords.Contains(w))
+                .Select(w => w.Trim().ToLowerInvariant()).ToList();
+        }
+
+        private Result<string> ReplaceSpecialCharacters(string text)
+        {
+            var textWithoutStopChars = settings.StopChars.Aggregate(text, (current, c) => current.Replace(c, ' '));
+            return textWithoutStopChars.Replace("\n", " ").Replace("\r", " ").Replace("\t", " ");
         }
 
         private Result<string> GetTotalText(string path)

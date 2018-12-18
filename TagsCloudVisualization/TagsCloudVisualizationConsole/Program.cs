@@ -13,8 +13,7 @@ namespace TagsCloudVisualizationConsole
             if (!Parser.Default.ParseArguments(args, options))
                 return;
 
-            var container = TagsCloudVisualizationContainerConfig.GetCompositionRoot();
-            container.Resolve<TagsCloudApp>().Run(options, container);
+            TagsCloudVisualizationContainerConfig.GetContainer().Resolve<TagsCloudApp>().Run(options);
         }
     }
 }
