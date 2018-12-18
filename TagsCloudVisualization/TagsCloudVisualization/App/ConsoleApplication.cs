@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Linq;
 using Fclp;
 
 namespace TagsCloudVisualization
@@ -35,6 +34,7 @@ namespace TagsCloudVisualization
                 .Then(r => fileReader.Read(r.Path))
                 .Then(counter.Count)
                 .Then(LayoutWords)
+                .Then(ValidateImageSize)
                 .Then(r => visualizer.Render(r, imageSize.Width, imageSize.Height, wordPalette))
                 .Then(i => ImageSaver.WriteToFile(fileName, i));
         }
@@ -47,10 +47,10 @@ namespace TagsCloudVisualization
                 .Then(SetFileName);
         }
 
-        private Result<IEnumerable<GraphicWord>> LayoutWords(IEnumerable<GraphicWord> words)
+        private Result<List<GraphicWord>> LayoutWords(List<GraphicWord> words)
         {
             cloudLayouter.Process(words, sizeDefiner, GetImageCenter(imageSize.Width, imageSize.Height));
-            return Result.Ok(words);
+            return words;
         }
 
         private CloudArguments ParseArguments(string[] args)
@@ -98,6 +98,19 @@ namespace TagsCloudVisualization
         {
             fileName = arguments.FileName;
             return arguments;
+        }
+
+        private Result<List<GraphicWord>> ValidateImageSize(List<GraphicWord> words)
+        {
+            foreach (var graphicWord in words)
+            {
+                if (Geometry.GetVertices(graphicWord.Rectangle)
+                    .Any(vertex => vertex.X > imageSize.Width || vertex.X < 0 || 
+                                   vertex.Y > imageSize.Height || vertex.Y < 0))
+                    return Result.Fail<List<GraphicWord>>("Cloud is out of image, try set image size bigger");
+            }
+
+            return words;
         }
 
         private Result<CloudArguments> ValidateFontName(CloudArguments arguments)
