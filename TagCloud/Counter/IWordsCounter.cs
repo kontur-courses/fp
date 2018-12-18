@@ -5,6 +5,6 @@ namespace TagCloud.Counter
 {
     public interface IWordsCounter
     {
-        IEnumerable<WordInfo> GetWordsInfo(IEnumerable<string> words);
+        Result<IEnumerable<WordInfo>> GetWordsInfo(IEnumerable<string> words);
     }
 }
