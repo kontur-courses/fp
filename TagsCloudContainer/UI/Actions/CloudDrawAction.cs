@@ -45,7 +45,7 @@ namespace TagsCloudContainer.UI.Actions
 
         public void Perform()
         {
-            var operationRes = ShowOpenFileDialog<string>()
+            ShowOpenFileDialog<string>()
                 .Then(s => reader.Read())
                 .Then(ShowSettingsDialog)
                 .Then(words => preprocessors.Aggregate(words,
@@ -54,10 +54,12 @@ namespace TagsCloudContainer.UI.Actions
                 .Then(applicator.GetWordsAndRectangles)
                 .Then(wordInfos =>
                     painter.Paint(applicator.WordsCenter, wordInfos.Select(result => result.GetValueOrThrow())))
-                .Then(none => imageHolder.UpdateUi());
-
-            if (!operationRes.IsSuccess && operationRes.Error != "")
-                MessageBox.Show(operationRes.Error);
+                .Then(none => imageHolder.UpdateUi())
+                .OnFail(error =>
+                {
+                    if (error != "")
+                        MessageBox.Show(error);
+                });
         }
 
         private Result<T> ShowSettingsDialog<T>(T input)
