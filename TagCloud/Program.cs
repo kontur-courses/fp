@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using Autofac;
 using Fclp;
-using TagCloud.ColorPicker;
-using TagCloud.Counter;
 using TagCloud.Data;
+using TagCloud.Data.ContainerModules;
 using TagCloud.Drawer;
 using TagCloud.Processor;
 using TagCloud.Reader;
-using TagCloud.Reader.FormatReader;
-using TagCloud.RectanglesLayouter;
-using TagCloud.RectanglesLayouter.PointsGenerator;
 using TagCloud.Saver;
 using TagCloud.WordsLayouter;
 
@@ -28,12 +23,13 @@ namespace TagCloud
                 .OnFail(Console.WriteLine);
         }
 
-        private static void Run(Arguments arguments)
+        private static Result<None> Run(Arguments arguments)
         {
-            var builder = new ContainerBuilder();
-            SetUpContainer(builder, arguments);
-            var container = builder.Build();
-            container.Resolve<TagCloudGenerator>().Generate(arguments);
+            return GetContainer(arguments)
+                .Then(container => container
+                    .Build()
+                    .Resolve<TagCloudGenerator>()
+                    .Generate(arguments));
         }
 
         private static Result<Arguments> GetArguments(string[] args)
@@ -119,31 +115,32 @@ namespace TagCloud
                 : Result.Fail<Arguments>($"Unknown {argumentName} {argument}");
         }
 
-        public static void SetUpContainer(ContainerBuilder builder, Arguments arguments)
+        public static Result<ContainerBuilder> GetContainer(Arguments arguments)
         {
-            builder.RegisterType<TagCloudGenerator>().AsSelf();
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<ConfigurationModule>();
 
-            builder.RegisterType<CloudWordsLayouter>().As<IWordsLayouter>();
-            builder.RegisterType<CloudDrawer>().As<IWordsDrawer>();
-            builder.RegisterType<TextFileReader>().As<IWordsFileReader>();
-            builder.RegisterType<WordsCounter>().As<IWordsCounter>();
-            builder.RegisterType<FileImageSaver>().As<IImageSaver>();
-            builder.RegisterType<ClipboardImageSaver>().As<IImageSaver>();
+            return GetWords(arguments)
+                .Then(words => RegisterProcessors(builder, words));
+        }
 
-            builder.RegisterType<CircularCloudLayouter>().As<IRectangleLayouter>();
-            builder.Register(c => new Point()).As<Point>();
-            builder.Register(c => new SpiralPointsGenerator(1, 0.01)).As<IPointsGenerator>();
+        private static Result<IEnumerable<string>> GetWords(Arguments arguments)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<ReadersModule>();
 
-            builder.RegisterType<DocxReader>().As<IFormatReader>();
-            builder.RegisterType<BrightnessColorPicker>().As<IColorPicker>();
+            return builder
+                .Build()
+                .Resolve<IWordsFileReader>()
+                .ReadWords(arguments.BoringWordsFileName);
+        }
 
+        private static Result<ContainerBuilder> RegisterProcessors(ContainerBuilder builder, IEnumerable<string> boringWords)
+        {
             builder.RegisterType<WordsToLowerProcessor>().As<IWordsProcessor>();
-            builder
-                .Register(c => new BoringWordsProcessor(c
-                    .Resolve<IWordsFileReader>()
-                    .ReadWords(arguments.BoringWordsFileName)))
-                .As<IWordsProcessor>();
+            builder.Register(c => new BoringWordsProcessor(boringWords)).As<IWordsProcessor>();
             builder.RegisterType<StemWordsProcessor>().As<IWordsProcessor>();
+            return builder;
         }
     }
 }
