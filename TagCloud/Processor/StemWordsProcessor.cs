@@ -1,13 +1,23 @@
 ﻿using System.Collections.Generic;
 using NHunspell;
+using TagCloud.Data;
 
 namespace TagCloud.Processor
 {
     public class StemWordsProcessor : IWordsProcessor
     {
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        private const string AffFile = @"..\..\Dictionaries\ru.aff";
+        private const string DictFile = @"..\..\Dictionaries\ru.dic";
+
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
-            using (var hunspell = new Hunspell(@"..\..\Dictionaries\ru.aff", @"..\..\Dictionaries\ru.dic"))
+            return Result.Of(() => StemWords(words),
+                $"Hunspell dictionaries not found. Check existence of {AffFile} and {DictFile}");
+        }
+
+        private static IEnumerable<string> StemWords(IEnumerable<string> words)
+        {
+            using (var hunspell = new Hunspell(AffFile, DictFile))
             {
                 foreach (var word in words)
                 {

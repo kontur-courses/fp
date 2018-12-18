@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.Data;
 
 namespace TagCloud.Processor
 {
     public class WordsToLowerProcessor : IWordsProcessor
     {
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
-            return words.Select(word => word.ToLower());
+            return Result.Ok(words.Select(word => word.ToLower()));
         }
     }
 }

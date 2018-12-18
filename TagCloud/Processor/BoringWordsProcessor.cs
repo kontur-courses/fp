@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.Data;
 
 namespace TagCloud.Processor
 {
@@ -12,9 +13,9 @@ namespace TagCloud.Processor
             this.boringWords = new HashSet<string>(boringWords);
         }
 
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
-            return words.Where(word => !boringWords.Contains(word));
+            return Result.Ok(words.Where(word => !boringWords.Contains(word)));
         }
     }
 }
