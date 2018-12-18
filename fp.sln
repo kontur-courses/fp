@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{ACBC03B3-A778-4F66-9D6D-43C77D64CC23}"
 EndProject
@@ -12,6 +12,50 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summator\Summator.csproj", "{ADB55562-4353-4FC2-9486-E6C343C2F7F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagCloud", "TagCloud", "{4280E350-2503-42D8-A57C-199B9E530032}"
+	ProjectSection(SolutionItems) = preProject
+		TagCloud\BoringWords.txt = TagCloud\BoringWords.txt
+		TagCloud\BoringWordsFilter.cs = TagCloud\BoringWordsFilter.cs
+		TagCloud\BoundingCoordinate.cs = TagCloud\BoundingCoordinate.cs
+		TagCloud\CircularCloudLayouter.cs = TagCloud\CircularCloudLayouter.cs
+		TagCloud\CircularSpiral.cs = TagCloud\CircularSpiral.cs
+		TagCloud\CoordinatesAtImage.cs = TagCloud\CoordinatesAtImage.cs
+		TagCloud\DifferentCases.txt = TagCloud\DifferentCases.txt
+		TagCloud\Empty.txt = TagCloud\Empty.txt
+		TagCloud\FrequencyCollection.cs = TagCloud\FrequencyCollection.cs
+		TagCloud\ICloudLayouter.cs = TagCloud\ICloudLayouter.cs
+		TagCloud\ICoordinateSequence.cs = TagCloud\ICoordinateSequence.cs
+		TagCloud\IFrequencyCollection.cs = TagCloud\IFrequencyCollection.cs
+		TagCloud\IGraphics.cs = TagCloud\IGraphics.cs
+		TagCloud\ImageSettings.cs = TagCloud\ImageSettings.cs
+		TagCloud\INotBoringWordsCollection.cs = TagCloud\INotBoringWordsCollection.cs
+		TagCloud\ITagCloudLayouter.cs = TagCloud\ITagCloudLayouter.cs
+		TagCloud\IWordCollection.cs = TagCloud\IWordCollection.cs
+		TagCloud\LowerWord.cs = TagCloud\LowerWord.cs
+		TagCloud\packages.config = TagCloud\packages.config
+		TagCloud\Picture.cs = TagCloud\Picture.cs
+		TagCloud\PictureCreator.cs = TagCloud\PictureCreator.cs
+		TagCloud\Tag.cs = TagCloud\Tag.cs
+		TagCloud\TagCloud.csproj = TagCloud\TagCloud.csproj
+		TagCloud\TagCloud.csproj.user = TagCloud\TagCloud.csproj.user
+		TagCloud\TagCloudLayouter.cs = TagCloud\TagCloudLayouter.cs
+		TagCloud\TagCloudRender.cs = TagCloud\TagCloudRender.cs
+		TagCloud\Text.docx = TagCloud\Text.docx
+		TagCloud\Text.txt = TagCloud\Text.txt
+		TagCloud\words.txt = TagCloud\words.txt
+		TagCloud\WordsFromFile.cs = TagCloud\WordsFromFile.cs
+		TagCloud\WordsFromMicrosoftWord.cs = TagCloud\WordsFromMicrosoftWord.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagCloudConsole", "TagCloudConsole", "{28F1C42B-897D-45EB-B9C6-200707A73938}"
+	ProjectSection(SolutionItems) = preProject
+		TagCloudConsole\BoringWords.txt = TagCloudConsole\BoringWords.txt
+		TagCloudConsole\EntryPoint.cs = TagCloudConsole\EntryPoint.cs
+		TagCloudConsole\Options.cs = TagCloudConsole\Options.cs
+		TagCloudConsole\packages.config = TagCloudConsole\packages.config
+		TagCloudConsole\TagCloudConsole.csproj = TagCloudConsole\TagCloudConsole.csproj
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,5 +85,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ADB55562-4353-4FC2-9486-E6C343C2F7F6} = {53B60782-5F18-4FD1-9FC0-A6F2474751CB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E9FA727-CDC3-45A2-B7FB-A95B23207FF0}
 	EndGlobalSection
 EndGlobal
