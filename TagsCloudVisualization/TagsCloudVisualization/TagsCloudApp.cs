@@ -26,7 +26,7 @@ namespace TagsCloudVisualization
             this.wordsTransformer = wordsTransformer;
         }
 
-        public void Run(Options options)
+        public void Run(Options options, ExceptionReporter reporter)
         {
             cloudParametersParser.Parse(options)
                 .Then(param => wordsExtractor.Extract(options.FilePath)
@@ -35,7 +35,7 @@ namespace TagsCloudVisualization
                         .GetData(new CircularCloudLayouter(param.PointGenerator, pointGeneratorSettings), words))
                     .Then(data => TagsCloudVisualizer.GetPicture(data, param))
                     .Then(bitmap => TagsCloudVisualizer.SavePicture(bitmap, param.OutFormat))
-                    .OnFail(Console.WriteLine));
+                    .OnFail(reporter.process));
         }
     }
 }

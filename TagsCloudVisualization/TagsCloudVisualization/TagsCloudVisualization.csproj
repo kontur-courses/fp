@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CloudParametersParser.cs" />
+    <Compile Include="ExceptionReporter.cs" />
     <Compile Include="Interfaces\ICloudParametersParser.cs" />
     <Compile Include="Interfaces\IWordsTransformer.cs" />
     <Compile Include="Options.cs" />

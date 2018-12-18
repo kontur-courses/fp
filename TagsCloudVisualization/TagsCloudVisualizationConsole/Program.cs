@@ -1,3 +1,4 @@
+using System;
 using Autofac;
 using CommandLine;
 using TagsCloudVisualization;
@@ -13,7 +14,8 @@ namespace TagsCloudVisualizationConsole
             if (!Parser.Default.ParseArguments(args, options))
                 return;
 
-            TagsCloudVisualizationContainerConfig.GetContainer().Resolve<TagsCloudApp>().Run(options);
+            var reporter = new ExceptionReporter(Console.WriteLine);
+            TagsCloudVisualizationContainerConfig.GetContainer().Resolve<TagsCloudApp>().Run(options, reporter);
         }
     }
 }

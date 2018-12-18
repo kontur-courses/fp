@@ -15,8 +15,7 @@ namespace TagsCloudVisualization
             return GetPath()
                 .Then(path => IsHunspellDictExists($"{path}en_us.dic")
                     .Then(t => IsHunspellDictExists($"{path}en_us.aff"))
-                    .Then(t => GetStemsHunSpell(words, path))
-                    .OnFail(Console.WriteLine));
+                    .Then(t => GetStemsHunSpell(words, path)));
         }
 
         private static Result<string> GetPath()

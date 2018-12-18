@@ -18,14 +18,12 @@ namespace TagsCloudVisualizationForm
 
         private void GenerateBtn_Click(object sender, EventArgs e)
         {
-            GetOptions()
-                .Then(tagsCloudApp.Run)
-                .OnFail(error => MessageBox.Show(error, @"Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error));
+            tagsCloudApp.Run(GetOptions(),
+                new ExceptionReporter(error => MessageBox.Show(error, @"Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error)));
         }
 
-        private Result<Options> GetOptions()
+        private Options GetOptions()
         {
             return new Options
             {
