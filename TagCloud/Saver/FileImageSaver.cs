@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using TagCloud.Data;
+using TagCloud.Reader;
 
 namespace TagCloud.Saver
 {
@@ -13,9 +15,10 @@ namespace TagCloud.Saver
             ["bmp"] = ImageFormat.Bmp
         };
 
-        public void Save(Image image, string fileName)
+        public Result<None> Save(Image image, string fileName)
         {
-            image.Save(fileName, Formats[fileName.Split('.')[1]]);
+            var format = TextFileReader.GetFormat(fileName);
+            return Result.OfAction(() => image.Save(fileName, Formats[format]), $"Unknown file format {format}");
         }
     }
 }

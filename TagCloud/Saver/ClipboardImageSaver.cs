@@ -1,13 +1,14 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using TagCloud.Data;
 
 namespace TagCloud.Saver
 {
     public class ClipboardImageSaver : IImageSaver
     {
-        public void Save(Image image, string fileName)
+        public Result<None> Save(Image image, string fileName)
         {
-            Clipboard.SetImage(image);
+            return Result.OfAction(() => Clipboard.SetImage(image), "Unable to save to clipboard");
         }
     }
 }
