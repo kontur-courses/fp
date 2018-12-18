@@ -13,49 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagCloud", "TagCloud", "{4280E350-2503-42D8-A57C-199B9E530032}"
-	ProjectSection(SolutionItems) = preProject
-		TagCloud\BoringWords.txt = TagCloud\BoringWords.txt
-		TagCloud\BoringWordsFilter.cs = TagCloud\BoringWordsFilter.cs
-		TagCloud\BoundingCoordinate.cs = TagCloud\BoundingCoordinate.cs
-		TagCloud\CircularCloudLayouter.cs = TagCloud\CircularCloudLayouter.cs
-		TagCloud\CircularSpiral.cs = TagCloud\CircularSpiral.cs
-		TagCloud\CoordinatesAtImage.cs = TagCloud\CoordinatesAtImage.cs
-		TagCloud\DifferentCases.txt = TagCloud\DifferentCases.txt
-		TagCloud\Empty.txt = TagCloud\Empty.txt
-		TagCloud\FrequencyCollection.cs = TagCloud\FrequencyCollection.cs
-		TagCloud\ICloudLayouter.cs = TagCloud\ICloudLayouter.cs
-		TagCloud\ICoordinateSequence.cs = TagCloud\ICoordinateSequence.cs
-		TagCloud\IFrequencyCollection.cs = TagCloud\IFrequencyCollection.cs
-		TagCloud\IGraphics.cs = TagCloud\IGraphics.cs
-		TagCloud\ImageSettings.cs = TagCloud\ImageSettings.cs
-		TagCloud\INotBoringWordsCollection.cs = TagCloud\INotBoringWordsCollection.cs
-		TagCloud\ITagCloudLayouter.cs = TagCloud\ITagCloudLayouter.cs
-		TagCloud\IWordCollection.cs = TagCloud\IWordCollection.cs
-		TagCloud\LowerWord.cs = TagCloud\LowerWord.cs
-		TagCloud\packages.config = TagCloud\packages.config
-		TagCloud\Picture.cs = TagCloud\Picture.cs
-		TagCloud\PictureCreator.cs = TagCloud\PictureCreator.cs
-		TagCloud\Tag.cs = TagCloud\Tag.cs
-		TagCloud\TagCloud.csproj = TagCloud\TagCloud.csproj
-		TagCloud\TagCloud.csproj.user = TagCloud\TagCloud.csproj.user
-		TagCloud\TagCloudLayouter.cs = TagCloud\TagCloudLayouter.cs
-		TagCloud\TagCloudRender.cs = TagCloud\TagCloudRender.cs
-		TagCloud\Text.docx = TagCloud\Text.docx
-		TagCloud\Text.txt = TagCloud\Text.txt
-		TagCloud\words.txt = TagCloud\words.txt
-		TagCloud\WordsFromFile.cs = TagCloud\WordsFromFile.cs
-		TagCloud\WordsFromMicrosoftWord.cs = TagCloud\WordsFromMicrosoftWord.cs
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloud", "TagCloud\TagCloud.csproj", "{15B7C142-82FD-43FD-A1EB-09E670703862}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagCloudConsole", "TagCloudConsole", "{28F1C42B-897D-45EB-B9C6-200707A73938}"
-	ProjectSection(SolutionItems) = preProject
-		TagCloudConsole\BoringWords.txt = TagCloudConsole\BoringWords.txt
-		TagCloudConsole\EntryPoint.cs = TagCloudConsole\EntryPoint.cs
-		TagCloudConsole\Options.cs = TagCloudConsole\Options.cs
-		TagCloudConsole\packages.config = TagCloudConsole\packages.config
-		TagCloudConsole\TagCloudConsole.csproj = TagCloudConsole\TagCloudConsole.csproj
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudConsole", "TagCloudConsole\TagCloudConsole.csproj", "{87721A83-3E64-428A-B82A-B86EA364ECB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +39,14 @@ Global
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15B7C142-82FD-43FD-A1EB-09E670703862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15B7C142-82FD-43FD-A1EB-09E670703862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15B7C142-82FD-43FD-A1EB-09E670703862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15B7C142-82FD-43FD-A1EB-09E670703862}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87721A83-3E64-428A-B82A-B86EA364ECB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87721A83-3E64-428A-B82A-B86EA364ECB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87721A83-3E64-428A-B82A-B86EA364ECB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87721A83-3E64-428A-B82A-B86EA364ECB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

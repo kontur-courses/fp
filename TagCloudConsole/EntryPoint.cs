@@ -59,12 +59,13 @@ namespace TagCloudConsole
                     new CircularCloudLayouter(
                         center, new CircularSpiral(center, width, step)))
                 .As<ICloudLayouter>();
-            var imageSettings = new ImageSettings(new Size(options.Height, options.Width), new FontFamily(options.FontFamily),
-                 Color.FromName(options.Color),
-                        GetImageFormat(options.Format), 
-                        options.Name);
+            var imageSettings = new ImageSettings(new Size(options.Height, options.Width),
+                new FontFamily(options.FontFamily),
+                Color.FromName(options.Color),
+                GetImageFormat(options.Format),
+                options.Name);
             containerBuilder.RegisterInstance(new Picture(imageSettings)).As<IGraphics>();
-            
+
             using (var container = containerBuilder.Build())
             {
                 var render = container.Resolve<TagCloudRender>();

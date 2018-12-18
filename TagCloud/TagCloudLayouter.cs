@@ -18,6 +18,8 @@ namespace TagsCloud
             var result = new List<Tag>();
             foreach (var keyValuePair in words)
             {
+                if (keyValuePair.Key == "")
+                    continue;
                 var width = (int) Math.Round(keyValuePair.Key.Length * keyValuePair.Value);
                 var height = (int) Math.Round(keyValuePair.Value);
                 var size = new Size(width, height);
