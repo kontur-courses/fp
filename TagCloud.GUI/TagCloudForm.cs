@@ -134,17 +134,10 @@ namespace TagCloud.GUI
             if (options.PathToPicture == null)
                 return;
 
-            try
-            {
-                TagCloudProgram.Execute(options);
-                Picture.Image = Image.FromFile(options.PathToPicture);
-            }
-            catch (Exception exception)
-            {
-                while (exception.InnerException != null)
-                    exception = exception.InnerException;
-                Output.Text = "ERROR: " + exception.Message;
-            }
+            TagCloudProgram
+                .Execute(options)
+                .OnFail(er => Output.Text = "ERROR: " + er)
+                .Then(x => Picture.Image = Image.FromFile(options.PathToPicture));
         }
 
         private void CollectInfo()

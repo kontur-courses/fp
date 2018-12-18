@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using CommandLine;
 using TagCloud.Utility;
 using TagCloud.Utility.Container;
@@ -26,15 +25,9 @@ namespace TagCloud.Console
 
         private static void Run(Options options)
         {
-            try
-            {
-                TagCloudProgram.Execute(options);
-                System.Console.WriteLine($"Picture saved to {options.PathToPicture}");
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-            }
+            TagCloudProgram.Execute(options)
+                .OnFail(System.Console.WriteLine)
+                .Then(x => System.Console.WriteLine($"Picture saved to {options.PathToPicture}"));
         }
     }
 }
