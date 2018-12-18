@@ -9,7 +9,7 @@ namespace TagsCloudVisualization.App
     {
         public MainForm(IUiAction[] actions, ITagsCloudSettings tagCloudSettings, PictureBoxImageHolder imageHolder)
         {
-            ClientSize = new Size(800, 600);
+            ClientSize = new Size(1200, 800);
             var mainMenu = new MenuStrip();
             mainMenu.Items.AddRange(actions.ToMenuItems());
             Controls.Add(mainMenu);

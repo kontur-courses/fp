@@ -11,16 +11,20 @@ namespace TagsCloudVisualization.WordProcessing.FileHandlers
         {
             PathToFile = pathToFile;
         }
-        public IEnumerable<string> ReadFile()
+        public Result<IEnumerable<string>> ReadFile()
         {
-            var result = new List<string>();
+            return Result.Ok(new List<string>())
+                .Then(ReadWords, "Could not read file.")
+                .Then(words => (IEnumerable<string>)words);
+        }
+
+        private void ReadWords(List<string> words)
+        {
             using (var streamReader = new StreamReader(PathToFile))
             {
                 while (!streamReader.EndOfStream)
-                    result.Add(streamReader.ReadLine());
+                    words.Add(streamReader.ReadLine());
             }
-
-            return result;
         }
     }
 }

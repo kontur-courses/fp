@@ -15,7 +15,7 @@ namespace TagsCloudVisualization.WordProcessing
         {
             var txtHandler =
                 new TxtFileHandler($"{AppDomain.CurrentDomain.BaseDirectory}/ProjectFiles/BoringWords.txt");
-            BoringWords = new HashSet<string>(txtHandler.ReadFile());
+            BoringWords = new HashSet<string>(txtHandler.ReadFile().Value);
             WordAnalyzer = new WordAnalyzer(this);
         }
     }

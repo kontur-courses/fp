@@ -14,9 +14,10 @@ namespace TagsCloudVisualization.WordProcessing.FileHandlers
         {
             PathToFile = pathToFile;
         }
-        public IEnumerable<string> ReadFile()
+        public Result<IEnumerable<string>> ReadFile()
         {
-            return File.ReadAllLines(PathToFile, Encoding.Default);
+            return Result.Of(() => (IEnumerable<string>)File.ReadAllLines(PathToFile, Encoding.Default),
+                "Could not read txt file.");
         }
     }
 }

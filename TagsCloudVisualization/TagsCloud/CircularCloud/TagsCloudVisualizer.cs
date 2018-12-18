@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Activation;
 using System.Windows.Forms;
 using TagsCloudVisualization.InterfacesForSettings;
 
@@ -12,9 +10,12 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
     {
         private readonly ITagsCloudSettings cloudSettings;
         private readonly CircularCloudLayouter circularCloudLayouter;
-        private const double HeightStretchFactor = 1.5;
+        private readonly double heightStretchFactor;
+        private readonly double widthStretchFactor;
         public TagsCloudVisualizer(ITagsCloudSettings cloudSettings)
         {
+            heightStretchFactor = 1.8;
+            widthStretchFactor = 1.2;
             this.cloudSettings = cloudSettings;
             circularCloudLayouter =
                 new CircularCloudLayouter(cloudSettings.ImageSettings.Center, cloudSettings.ImageSettings.ImageSize);
@@ -23,8 +24,8 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
         public Result<Bitmap> DrawCircularCloud()
         {
             return new Result<None>()
-                .Then(() => cloudSettings.WordsSettings.PathToFile == null, "File not found.")
-                .Then(CheckCenterCoordinates, "Image settings are incorrect.")
+                .CheckCondition(() => cloudSettings.WordsSettings.PathToFile == null, "File not found.")
+                .CheckCondition(CheckCenterCoordinates, "Image settings are incorrect.")
                 .Then(() => cloudSettings.WordsSettings.WordAnalyzer.MakeWordFrequencyDictionary())
                 .Then(ProcessWords, "Tag cloud does not fit the image of the specified size.")
                 .Then(MakeImage);
@@ -74,8 +75,8 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
             var fontSize = cloudSettings.ImageSettings.Font.Size;
 
             return circularCloudLayouter.PutNextRectangle
-                                (new Size((int)(tuple.Word.Length * fontSize * tuple.Frequency),
-                                (int)(fontSize * HeightStretchFactor * tuple.Frequency)));
+                                (new Size((int)(tuple.Word.Length * fontSize * tuple.Frequency * widthStretchFactor),
+                                (int)(fontSize * heightStretchFactor * tuple.Frequency)));
         }
 
         private bool CheckCenterCoordinates()

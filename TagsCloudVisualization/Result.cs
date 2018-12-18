@@ -64,6 +64,19 @@ namespace TagsCloudVisualization
             }
         }
 
+        public static Result<T> Of<T>(Action<T> action, T value, string error = null)
+        {
+            try
+            {
+                action(value);
+                return Ok(value);
+            }
+            catch (Exception e)
+            {
+                return Fail<T>(error ?? e.Message);
+            }
+        }
+
         public static Result<None> OfAction(Action action, string error = null)
         {
             try
@@ -109,13 +122,20 @@ namespace TagsCloudVisualization
             return input.IsSuccess ? OfAction(action, error) : Fail<None>(input.Error);
         }
 
-
         public static Result<TInput> Then<TInput>(
             this Result<TInput> input,
-            Func<bool> continuation, string error)
+            Action<TInput> action, string error = null)
+        {
+            return input.IsSuccess ? Of(action, input.Value, error) : Fail<TInput>(input.Error);
+        }
+
+
+        public static Result<TInput> CheckCondition<TInput>(
+            this Result<TInput> input,
+            Func<bool> checkFunc, string error)
         {
             if (input.IsSuccess)
-                return continuation() ? Fail<TInput>(error) : input;
+                return checkFunc() ? Fail<TInput>(error) : input;
             return Fail<TInput>(input.Error);
         }
 

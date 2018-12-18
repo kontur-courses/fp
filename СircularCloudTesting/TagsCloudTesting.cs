@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Reflection;
 using Autofac;
 using FluentAssertions;
 using NUnit.Framework;
@@ -35,6 +36,12 @@ namespace СircularCloudTesting
             wordsSettings = container.Resolve<IWordsSettings>();
             wordsSettings.PathToFile = $"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/testText.txt";
             visualizer = container.Resolve<TagsCloudVisualizer>();
+            var heightStretchFactor = typeof(TagsCloudVisualizer)
+                .GetField("heightStretchFactor", BindingFlags.Instance | BindingFlags.NonPublic);
+            heightStretchFactor.SetValue(visualizer, 1.5);
+            var widthStretchFactor = typeof(TagsCloudVisualizer)
+                .GetField("widthStretchFactor", BindingFlags.Instance | BindingFlags.NonPublic);
+            widthStretchFactor.SetValue(visualizer, 1);
 
         }
 

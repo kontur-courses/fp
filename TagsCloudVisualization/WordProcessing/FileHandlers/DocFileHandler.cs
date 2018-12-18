@@ -14,12 +14,13 @@ namespace TagsCloudVisualization.WordProcessing.FileHandlers
         {
             PathToFile = pathToFile;
         }
-        public IEnumerable<string> ReadFile()
+        public Result<IEnumerable<string>> ReadFile()
         {
-            var doc = new Document();
-            doc.LoadFromFile(PathToFile);
-            var text = doc.GetText();
-            return text.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            return Result.Ok(new Document())
+                .Then(doc => doc.LoadFromFile(PathToFile), "Could not read doc or docx file.")
+                .RefineError("One of the external libraries failed.")
+                .Then(doc => doc.GetText())
+                .Then(text => (IEnumerable<string>)text.Split(new[] { "\r\n" }, StringSplitOptions.None));
         }
     }
 }

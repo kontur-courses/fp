@@ -5,6 +5,6 @@ namespace TagsCloudVisualization.WordProcessing.FileHandlers
     public interface IFileHandler
     {
         string PathToFile { get; }
-        IEnumerable<string> ReadFile();
+        Result<IEnumerable<string>> ReadFile();
     }
 }

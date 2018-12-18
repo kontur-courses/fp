@@ -135,6 +135,9 @@
     <Content Include="RuDictionary\affRU.aff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ProjectFiles\SampleFile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="App.config" />
     <Fakes Include="Fakes\FluentAssertions.fakes" />
     <Fakes Include="Fakes\FluentAssertions01.fakes" />

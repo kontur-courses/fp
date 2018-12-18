@@ -50,14 +50,37 @@ namespace СircularCloudTesting
         }
 
         [Test]
-        public void MakeWordFrequencyDictionary_Should_Fail_WhenFailReadFile()
+        public void MakeWordFrequencyDictionary_Should_WhenFailReadTxtFile()
         {
             var wordAnalyzer = new WordAnalyzer(new WordsSettings()
             { PathToFile = @"D:\badFile.txt" });
             var result = wordAnalyzer.MakeWordFrequencyDictionary();
 
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().BeEquivalentTo(@"The settings file could not be read. Файл 'D:\badFile.txt' не найден.");
+            result.Error.Should().BeEquivalentTo(@"The settings file could not be read. Could not read txt file.");
+        }
+
+        [Test]
+        public void MakeWordFrequencyDictionary_Should_WhenFailReadDocFile()
+        {
+            var wordAnalyzer = new WordAnalyzer(new WordsSettings()
+            { PathToFile = @"D:\badFile.doc" });
+            var result = wordAnalyzer.MakeWordFrequencyDictionary();
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().BeEquivalentTo("The settings file could not be read. One of the external" +
+                                                 " libraries failed. Could not read doc or docx file.");
+        }
+
+        [Test]
+        public void MakeWordFrequencyDictionary_Should_WhenFailReadFile()
+        {
+            var wordAnalyzer = new WordAnalyzer(new WordsSettings()
+            { PathToFile = @"D:\badFile.rtf" });
+            var result = wordAnalyzer.MakeWordFrequencyDictionary();
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().BeEquivalentTo("The settings file could not be read. Could not read file.");
         }
     }
 }

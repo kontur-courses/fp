@@ -11,7 +11,7 @@ namespace TagsCloudVisualization.App
 
         public Result<None> FailIfNotInitialized()
         {
-            return new Result<None>().Then(() => Image == null || OriginalImage == null, "Image is missing.");
+            return new Result<None>().CheckCondition(() => Image == null || OriginalImage == null, "Image is missing.");
         }
 
         public void RecreateImage(ITagsCloudSettings tagCloudSettings)

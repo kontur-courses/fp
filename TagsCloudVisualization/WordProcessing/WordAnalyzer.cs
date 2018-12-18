@@ -26,7 +26,7 @@ namespace TagsCloudVisualization.WordProcessing
                 return Result.Fail<Dictionary<string, int>>(hunspell.Error)
                     .RefineError("One of the external libraries failed.");
             var fileType = RecognizeFileType(WordsSettings.PathToFile);
-            return Result.Of(() => fileType.ReadFile())
+            return fileType.ReadFile()
                 .Then(FilterWords)
                 .Then(FillDictionary)
                 .RefineError("The settings file could not be read.");
