@@ -69,7 +69,6 @@
     <Compile Include="Preprocessing\FrequencyCounter.cs" />
     <Compile Include="Preprocessing\InitialFormSetter.cs" />
     <Compile Include="Preprocessing\IWordsPreprocessor.cs" />
-    <Compile Include="OperationResult.cs" />
     <Compile Include="Settings\PainterType.cs" />
     <Compile Include="Painter\SolidPainter.cs" />
     <Compile Include="Settings\AppSettings.cs" />
