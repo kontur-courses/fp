@@ -9,8 +9,22 @@ using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
-    public class TagCloudVisualization:ITagCloudVisualization
+    public class TagCloudVisualization : ITagCloudVisualization
     {
+        private readonly Color backgroundColor;
+        private readonly int bitmapHeight;
+
+        private readonly int bitmapWidth;
+        private readonly ICloudLayouter cloudLayouter;
+        private readonly Color color;
+        private readonly Color defaultBackColor = Color.White;
+        private readonly Color defaultColor = Color.Black;
+
+        private readonly Font defaultFont = new Font("Times New Roman", 40);
+
+        private readonly Font font;
+        private readonly string imageExtension;
+
         public TagCloudVisualization(
             ICloudLayouter cloudLayouter,
             Font font,
@@ -23,11 +37,11 @@ namespace TagsCloudVisualization
             this.color = color;
             this.backgroundColor = backgroundColor;
             this.cloudLayouter = cloudLayouter;
-            
+
             bitmapHeight = 1000;
             bitmapWidth = 1000;
         }
-       
+
         public TagCloudVisualization(
             ICloudLayouter cloudLayouter)
         {
@@ -35,12 +49,12 @@ namespace TagsCloudVisualization
             color = defaultColor;
             backgroundColor = defaultBackColor;
             this.cloudLayouter = cloudLayouter;
-            
+
             bitmapHeight = 1000;
             bitmapWidth = 1000;
         }
 
-        
+
         public TagCloudVisualization(
             ICloudLayouter cloudLayouter,
             Font font,
@@ -52,28 +66,15 @@ namespace TagsCloudVisualization
             this.color = color;
             this.backgroundColor = backgroundColor;
             this.cloudLayouter = cloudLayouter;
-            
+
             bitmapHeight = size.Height;
             bitmapWidth = size.Width;
         }
-        
-        private readonly Font font;
-        private readonly Color color;
-        private readonly Color backgroundColor;
-        private readonly ICloudLayouter cloudLayouter;
-        private readonly string imageExtension;
-        
-        private readonly int bitmapWidth;
-        private readonly int bitmapHeight;
-        
-        private readonly Font defaultFont = new Font("Times New Roman", 40);
-        private readonly Color defaultColor = Color.Black;
-        private readonly Color defaultBackColor = Color.White;
 
         public void SaveRectanglesCloud(
-            string bitmapName, 
-            string directory, 
-            List<Rectangle> rectangles, 
+            string bitmapName,
+            string directory,
+            List<Rectangle> rectangles,
             Point center)
         {
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
@@ -92,7 +93,7 @@ namespace TagsCloudVisualization
         {
             if (!wordsResult.IsSuccess) return Result.Fail(wordsResult.Error);
             var words = wordsResult.GetValueOrThrow();
-            
+
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             var g = Graphics.FromImage(bitmap);
             //ToDo вынести из этого класса и убрать ICloudLayouter из конструктора
@@ -115,7 +116,7 @@ namespace TagsCloudVisualization
 
         private static ImageFormat ParseImageFormat(string str)
         {
-            return (ImageFormat)typeof(ImageFormat)
+            return (ImageFormat) typeof(ImageFormat)
                 .GetProperty(str, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
                 ?.GetValue(null);
         }
@@ -143,7 +144,7 @@ namespace TagsCloudVisualization
             IEnumerable<Rectangle> rectangles,
             Point center)
         {
-            var maxDist = (int)rectangles
+            var maxDist = (int) rectangles
                 .Select(x => GetDistanceFromRectangleToPoint(x, center))
                 .Max();
 
@@ -169,14 +170,14 @@ namespace TagsCloudVisualization
                 num++;
             }
         }
-        
+
 
         private Color GetColorOfRectangle(Rectangle rectangle, Point center, int maxDist)
         {
             var dist = GetDistanceFromRectangleToPoint(rectangle, center);
-            var r = (int)(dist / maxDist * color.R);
-            var g = (int)(dist / maxDist * color.G);
-            var b = (int)(dist / maxDist * color.B);
+            var r = (int) (dist / maxDist * color.R);
+            var g = (int) (dist / maxDist * color.G);
+            var b = (int) (dist / maxDist * color.B);
 
             return Color.FromArgb(r, g, b);
         }
@@ -188,9 +189,9 @@ namespace TagsCloudVisualization
 
         private Color GetColorOfWord(int num, int count)
         {
-            var r = (int)((GetSmooth((double)num / count)) * color.R);
-            var g = (int)((GetSmooth((double)num / count)) * color.G);
-            var b = (int)((GetSmooth((double)num / count)) * color.B);
+            var r = (int) (GetSmooth((double) num / count) * color.R);
+            var g = (int) (GetSmooth((double) num / count) * color.G);
+            var b = (int) (GetSmooth((double) num / count) * color.B);
 
             return Color.FromArgb(r, g, b);
         }

@@ -7,9 +7,9 @@ namespace TagsCloudVisualization
 {
     public class WordsCloudFiller
     {
+        private const float Coefficient = 5;
         private readonly ICloudLayouter cloudLayouter;
         private readonly Font parentFont;
-        private const float Coefficient = 5;
 
         public WordsCloudFiller(ICloudLayouter cloudLayouter, Font font)
         {
@@ -33,7 +33,7 @@ namespace TagsCloudVisualization
             foreach (var word in words)
             {
                 font = new Font(font.Name,
-                    (minFontSize + (maxFontSize - minFontSize) * ((float) word.Value / maxFrequency)));
+                    minFontSize + (maxFontSize - minFontSize) * ((float) word.Value / maxFrequency));
                 var size = g.MeasureString(word.Key, font);
                 var rec = cloudLayouter.PutNextRectangle(
                     new Size((int) Math.Ceiling(size.Width), (int) Math.Ceiling(size.Height)));

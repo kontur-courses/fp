@@ -2,6 +2,12 @@
 {
     public partial class CloudLayouter
     {
-        enum Direction { Up, Down, Left, Right };
+        private enum Direction
+        {
+            Up,
+            Down,
+            Left,
+            Right
+        }
     }
 }

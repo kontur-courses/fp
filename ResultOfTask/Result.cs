@@ -40,7 +40,7 @@ namespace ResultOfTask
         {
             return new Result<T>(null, value);
         }
-        
+
         public static Result<None> Ok()
         {
             return new Result<None>(null);
@@ -50,7 +50,7 @@ namespace ResultOfTask
         {
             return new Result<T>(e);
         }
-        
+
         public static Result<None> Fail(string e)
         {
             return new Result<None>(e);
@@ -67,7 +67,7 @@ namespace ResultOfTask
                 return Fail<T>(error ?? e.Message);
             }
         }
-        
+
         public static Result<None> Of(Action f, string error = null)
         {
             try
@@ -85,7 +85,7 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            return Then(input, (i) => Of(() => continuation(i)));
+            return Then(input, i => Of(() => continuation(i)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
@@ -105,21 +105,21 @@ namespace ResultOfTask
                 handleError(input.Error);
             return input;
         }
-        
+
         public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input, 
+            this Result<TInput> input,
             string newError)
         {
-            return input.IsSuccess 
+            return input.IsSuccess
                 ? input
                 : new Result<TInput>($"{newError}. {input.Error}");
         }
 
         public static Result<TInput> ReplaceError<TInput>(
-            this Result<TInput> input, 
+            this Result<TInput> input,
             Func<Result<TInput>, string> func)
         {
-            return input.IsSuccess 
+            return input.IsSuccess
                 ? input
                 : new Result<TInput>(func(input));
         }

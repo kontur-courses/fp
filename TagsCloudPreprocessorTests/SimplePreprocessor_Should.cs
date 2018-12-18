@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using ResultOfTask;
@@ -19,7 +18,7 @@ namespace TagsCloudPreprocessorTests
             var excludedWords = excluder.GetExcludedWords();
 
             preprocessor.PreprocessWords(excludedWords
-                .Then(x=>x.ToList()))
+                    .Then(x => x.ToList()))
                 .GetValueOrThrow().Should().BeEmpty();
         }
     }

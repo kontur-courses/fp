@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
 namespace TagsCloudVisualization
 {
     /// <summary>
-    /// Put rectangles in cloud in order of distance from Center
+    ///     Put rectangles in cloud in order of distance from Center
     /// </summary>
     public partial class CloudLayouter : ICloudLayouter
     {
@@ -17,7 +16,7 @@ namespace TagsCloudVisualization
         }
 
         public ISpiral Spiral { get; }
-        
+
         public List<Rectangle> Rectangles { get; }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
@@ -85,4 +84,3 @@ namespace TagsCloudVisualization
         }
     }
 }
-

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Security;
 using ResultOfTask;
 
 namespace TagsCloudPreprocessor
@@ -10,11 +8,11 @@ namespace TagsCloudPreprocessor
     {
         public Result<IEnumerable<string>> GetWords(Result<string> text)
         {
-            var separators = new[] { ' ', '\n' };
+            var separators = new[] {' ', '\n'};
             var letters = text
-                .Then(x=> String.Concat(
-                        x.Where(c => char.IsLetter(c) || separators.Contains(c))
-                    ));
+                .Then(x => string.Concat(
+                    x.Where(c => char.IsLetter(c) || separators.Contains(c))
+                ));
 
             var words = letters
                 .Then(x => x.Split(separators))

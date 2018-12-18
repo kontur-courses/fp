@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Authentication.ExtendedProtection;
 using Autofac;
 using Autofac.Core;
 using TagsCloudPreprocessor;
@@ -8,9 +7,9 @@ using TagsCloudVisualization;
 
 namespace TagCloudContainer
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
 
@@ -75,12 +74,12 @@ namespace TagCloudContainer
                                 if (ctx.Resolve<IUserInterface>().Config.InputExtension == "docx")
                                     return ctx.ResolveKeyed<IFileReader>("DocFileReader");
                                 return ctx.ResolveKeyed<IFileReader>("TxtFileReader");
-                            }),
+                            })
                     })
                 .AsSelf();
-            
+
             var container = builder.Build();
-            
+
             Console.WriteLine(container.Resolve<TagCloudProgram>().SaveTagCloud().Error);
         }
     }

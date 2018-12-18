@@ -1,21 +1,20 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using ResultOfTask;
 using TagsCloudPreprocessor;
 using TagsCloudPreprocessor.Preprocessors;
 using TagsCloudVisualization;
-using ResultOfTask;
 
 namespace TagCloudContainer
 {
     public class TagCloudProgram
     {
         private readonly Config config;
+        private readonly IFileReader fileReader;
         private readonly ITextParser parser;
+        private readonly ITagCloudVisualization tagCloudVisualization;
         private readonly IPreprocessor wordsExcluder;
         private readonly IPreprocessor wordsStemer;
-        private readonly IFileReader fileReader;
-        private readonly ITagCloudVisualization tagCloudVisualization;
 
         public TagCloudProgram(
             ITagCloudVisualization tagCloudVisualization,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using ResultOfTask;
@@ -8,13 +7,14 @@ namespace TagsCloudPreprocessor
 {
     public class XmlWordExcluder : IWordExcluder
     {
+        private readonly string filename;
+
+        private readonly XmlSerializer hashSetSerializer = new XmlSerializer(typeof(HashSet<string>));
+
         public XmlWordExcluder()
         {
             filename = "russianWords.xml";
         }
-
-        private readonly XmlSerializer hashSetSerializer = new XmlSerializer(typeof(HashSet<string>));
-        private readonly string filename;
 
         public Result<HashSet<string>> GetExcludedWords()
         {

@@ -9,8 +9,6 @@ namespace TagCloudContainer
 {
     public class ConsoleClient : IUserInterface
     {
-        public Config Config { get; private set; }
-
         private readonly string[] args;
         private readonly IWordExcluder wordExcluder;
         private bool toExit = true;
@@ -28,6 +26,69 @@ namespace TagCloudContainer
 
             if (toExit)
                 Environment.Exit(0);
+        }
+
+        public Config Config { get; private set; }
+
+        private Result<Config> GetConfig(SaveOptions opts)
+        {
+            var center = new Point(500, 500);
+            var pathToSave = opts.PathToSave;
+            var count = opts.Count;
+            if (!FontFamily.Families.Any(x =>
+                x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
+                return Result.Fail<Config>("Can not parse font name.");
+            var font = new Font(opts.FontName, opts.FontSize);
+            var fileName = opts.FileName;
+            var outPath = opts.OutPath ?? Environment.CurrentDirectory;
+            var color = Color.FromName(opts.Color);
+            var backColor = Color.FromName(opts.BackgroundColor);
+            var imageExtension = opts.ImageExtension;
+            var inputExtension = opts.InputExtension;
+            return Result.Ok(new Config(
+                center,
+                pathToSave,
+                count,
+                font,
+                fileName,
+                outPath,
+                color,
+                backColor,
+                imageExtension,
+                inputExtension));
+        }
+
+        private Result<None> HandleArgs()
+        {
+            var saveOptions = typeof(SaveOptions);
+            var excludeOptions = typeof(ExcludeOptions);
+            var config = default(Result<Config>);
+            var configChanged = false;
+            Parser.Default.ParseArguments(args, saveOptions, excludeOptions).WithParsed(
+                opts =>
+                {
+                    if (opts.GetType() == typeof(SaveOptions))
+                    {
+                        config = GetConfig((SaveOptions) opts);
+                        toExit = false;
+                        configChanged = true;
+                    }
+                    else if (opts.GetType() == typeof(ExcludeOptions))
+                    {
+                        AddExcludingWord(((ExcludeOptions) opts).Word);
+                    }
+                });
+
+            if (!config.IsSuccess)
+                return Result.Fail(config.Error);
+            if (configChanged) Config = config.GetValueOrThrow();
+
+            return Result.Ok();
+        }
+
+        private void AddExcludingWord(string word)
+        {
+            wordExcluder.SetExcludedWord(word);
         }
 
         [Verb("save", HelpText = "Save tag cloud.")]
@@ -74,70 +135,6 @@ namespace TagCloudContainer
             public string Word { get; set; }
 
             //ToDo Выбор разрешения сохраняемого файла
-        }
-
-        private Result<Config> GetConfig(SaveOptions opts)
-        {
-            var center = new Point(500, 500);
-            var pathToSave = opts.PathToSave;
-            var count = opts.Count;
-            if (!FontFamily.Families.Any(x =>
-                x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
-                return Result.Fail<Config>("Can not parse font name.");
-            var font = new Font(opts.FontName, opts.FontSize);
-            var fileName = opts.FileName;
-            var outPath = opts.OutPath ?? Environment.CurrentDirectory;
-            var color = Color.FromName(opts.Color);
-            var backColor = Color.FromName(opts.BackgroundColor);
-            var imageExtension = opts.ImageExtension;
-            var inputExtension = opts.InputExtension;
-            return Result.Ok(new Config(
-                center,
-                pathToSave,
-                count,
-                font,
-                fileName,
-                outPath,
-                color,
-                backColor,
-                imageExtension,
-                inputExtension));
-        }
-
-        private Result<None> HandleArgs()
-        {
-            var saveOptions = typeof(SaveOptions);
-            var excludeOptions = typeof(ExcludeOptions);
-            var config = default(Result<Config>);
-            var configChanged = false;
-            Parser.Default.ParseArguments(args, saveOptions, excludeOptions).WithParsed(
-                (opts) =>
-                {
-                    if (opts.GetType() == typeof(SaveOptions))
-                    {
-                        config = GetConfig((SaveOptions) opts);
-                        toExit = false;
-                        configChanged = true;
-                    }
-                    else if (opts.GetType() == typeof(ExcludeOptions))
-                    {
-                        AddExcludingWord(((ExcludeOptions) opts).Word);
-                    }
-                });
-
-            if (!config.IsSuccess)
-                return Result.Fail(config.Error);
-            if (configChanged)
-            {
-                Config = config.GetValueOrThrow();
-            }
-
-            return Result.Ok();
-        }
-
-        private void AddExcludingWord(string word)
-        {
-            wordExcluder.SetExcludedWord(word);
         }
     }
 }

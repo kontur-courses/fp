@@ -6,13 +6,13 @@ namespace TagCloudContainer
     {
         public Config(
             Point center,
-            string inputFile, 
-            int count, 
-            Font font, 
-            string fileName, 
-            string outPath, 
-            Color color, 
-            Color backgroundColor, 
+            string inputFile,
+            int count,
+            Font font,
+            string fileName,
+            string outPath,
+            Color color,
+            Color backgroundColor,
             string imageExtension, string inputExtension)
         {
             Center = center;
@@ -26,7 +26,7 @@ namespace TagCloudContainer
             ImageExtension = imageExtension;
             InputExtension = inputExtension;
         }
-        
+
         public string ImageExtension { get; }
         public Point Center { get; }
         public string InputFile { get; }

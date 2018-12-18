@@ -14,15 +14,15 @@ namespace TagsCloudPreprocessorTests
             return new TextParser().GetWords(Result.Ok(text)).GetValueOrThrow();
         }
 
-        [TestCase("a a a", ExpectedResult = new[] { "a", "a", "a" }, TestName = "By white space")]
-        [TestCase("a\na\na", ExpectedResult = new[] { "a", "a", "a" }, TestName = "By \\n")]
+        [TestCase("a a a", ExpectedResult = new[] {"a", "a", "a"}, TestName = "By white space")]
+        [TestCase("a\na\na", ExpectedResult = new[] {"a", "a", "a"}, TestName = "By \\n")]
         public string[] SeparateText(string text)
         {
             return ParseText(text).ToArray();
         }
 
-        [TestCase("1a 2a 3a", ExpectedResult = new[] { "a", "a", "a" }, TestName = "Numbers")]
-        [TestCase("a 'a'", ExpectedResult = new[] { "a", "a" }, TestName = "Quotes")]
+        [TestCase("1a 2a 3a", ExpectedResult = new[] {"a", "a", "a"}, TestName = "Numbers")]
+        [TestCase("a 'a'", ExpectedResult = new[] {"a", "a"}, TestName = "Quotes")]
         public string[] Exclude(string text)
         {
             return ParseText(text).ToArray();

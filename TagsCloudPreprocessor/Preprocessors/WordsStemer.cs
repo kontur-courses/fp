@@ -29,7 +29,7 @@ namespace TagsCloudPreprocessor.Preprocessors
                 .Then(x => x.ToList());
 
             if (!stems.IsSuccess) return Result.Fail<List<string>>(stems.Error);
-            
+
             return stems.GetValueOrThrow().Any()
                 ? stems
                 : Result.Fail<List<string>>("Can not stem input text");

@@ -13,6 +13,18 @@ namespace TagsCloudPreprocessor.Preprocessors
             this.wordExcluder = wordExcluder;
         }
 
+        public Result<List<string>> PreprocessWords(Result<List<string>> words)
+        {
+            var validWords = ExcludeForbiddenWords(words)
+                .Then(x => x.ToList());
+
+            if (!validWords.IsSuccess) return Result.Fail<List<string>>(validWords.Error);
+
+            return validWords.GetValueOrThrow().Any()
+                ? validWords
+                : Result.Fail<List<string>>("Can not exclude input text");
+        }
+
         private Result<HashSet<string>> GetForbiddenWords()
         {
             return wordExcluder.GetExcludedWords();
@@ -26,20 +38,8 @@ namespace TagsCloudPreprocessor.Preprocessors
                 return Result.Fail<IEnumerable<string>>("Can not load dictionary with excluded words");
 
             var forbiddenWords = forbiddenWordsResult.GetValueOrThrow();
-            
-            return words.Then(x => x.Where(w => !forbiddenWords.Contains(w)));
-        }
 
-        public Result<List<string>> PreprocessWords(Result<List<string>> words)
-        {
-            var validWords = ExcludeForbiddenWords(words)
-                .Then(x => x.ToList());
-            
-            if (!validWords.IsSuccess) return Result.Fail<List<string>>(validWords.Error);
-            
-            return validWords.GetValueOrThrow().Any()
-                ? validWords
-                : Result.Fail<List<string>>("Can not exclude input text");
+            return words.Then(x => x.Where(w => !forbiddenWords.Contains(w)));
         }
     }
 }
