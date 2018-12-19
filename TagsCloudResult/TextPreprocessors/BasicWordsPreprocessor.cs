@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using NHunspell;
 using TagsCloudResult.TextPreprocessors.Filters;
 
@@ -20,11 +21,32 @@ namespace TagsCloudResult.TextPreprocessors
                 .RefineError("Не удалось подготовить выборку");
         }
 
+        private Result<List<string>> CheckIfHunspellDictsPresent(string affFile, string dictFile)
+        {
+            var message = new StringBuilder("Необходимые для работы Hunspell файлы отсутствуют: ");
+
+            if(!CheckIfDictExists(affFile, message) | !CheckIfDictExists(dictFile, message))
+                return Result.Fail<List<string>>(message.ToString());
+
+            return Result.Ok<List<string>>(null);
+        }
+
+        private static bool CheckIfDictExists(string dictFileName, StringBuilder message)
+        {
+            if (File.Exists(dictFileName)) return true;
+            message.Append(dictFileName);
+            return false;
+        }
+
         private Result<List<string>> PrepareWords(IEnumerable<string> words)
         {
             var dir = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "HunspellDicts", "Russian");
             var affFile = Path.Combine(dir, "ru.aff");
             var dictFile = Path.Combine(dir, "ru.dic");
+
+            var hunspellDictsPresent = CheckIfHunspellDictsPresent(affFile, dictFile);
+            if (!hunspellDictsPresent.IsSuccess)
+                return hunspellDictsPresent;
 
             var preprocessedWords = new List<string>();
 

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using TagsCloudResult.Algorithms;
 using TagsCloudResult.DataProviders;
+using TagsCloudResult.Loggers;
 using TagsCloudResult.ResultFormatters;
 using TagsCloudResult.Settings;
 using TagsCloudResult.SourceTextReaders;
@@ -25,7 +26,7 @@ namespace TagsCloudResult
             builder.RegisterType<CircularCloudLayouterResultFormatter>().As<IResultFormatter>();
             builder.RegisterType<DataProvider>().As<IDataProvider>();
             builder.RegisterTypes(typeof(BoringWordFilter), typeof(ShortWordFilter)).As<IWordFilter>();
-
+            builder.RegisterType<ConsoleLogger>().As<ILogger>();
             return builder.Build();
         }
     }

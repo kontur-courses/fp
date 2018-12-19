@@ -65,6 +65,8 @@
     <Compile Include="DataProviders\DataProvider.cs" />
     <Compile Include="DataProviders\IDataProvider.cs" />
     <Compile Include="Ioc.cs" />
+    <Compile Include="Loggers\ConsoleLogger.cs" />
+    <Compile Include="Loggers\ILogger.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="ResultFormatters\CircularCloudLayouterResultFormatter.cs" />
     <Compile Include="Program.cs" />
@@ -113,15 +115,15 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\1984_lines.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\1984_lines.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
