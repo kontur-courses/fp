@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -111,8 +112,9 @@ namespace TagsCloudContainer.UI
                     if (o.TagsCloudCenter.Any())
                     {
                         var name = "center";
-                        TagsCloudCenter = ValidateArgumentsCount(o.TagsCloudCenter, 2, name)
-                            .Then(x => ParseNumbers(o.TagsCloudCenter, name))
+                        var center = new ReadOnlyCollection<string>(o.TagsCloudCenter.ToList());
+                        TagsCloudCenter = ValidateArgumentsCount(center, 2, name)
+                            .Then(x => ParseNumbers(center, name))
                             .Then(x => ValidatePositiveNumbers(x, name))
                             .Then(x => new Point(x.ToArray()[0], x.ToArray()[1]));
                     }
@@ -121,8 +123,9 @@ namespace TagsCloudContainer.UI
                     if (o.LetterSize.Any())
                     {
                         var name = "letter size";
-                        LetterSize = ValidateArgumentsCount(o.TagsCloudCenter, 2, name)
-                            .Then(x => ParseNumbers(o.TagsCloudCenter, name))
+                        var letterSize = new ReadOnlyCollection<string>(o.LetterSize.ToList());
+                        LetterSize = ValidateArgumentsCount(letterSize, 2, name)
+                            .Then(x => ParseNumbers(letterSize, name))
                             .Then(x => ValidatePositiveNumbers(x, name))
                             .Then(x => new Size(x.ToArray()[0], x.ToArray()[1]));
                     }
@@ -138,8 +141,9 @@ namespace TagsCloudContainer.UI
 
                     if (o.ImageSize.Any())
                     {
+                        var imageSize = new ReadOnlyCollection<string>(o.ImageSize.ToList());
                         var name = "image size";
-                        ImageSize = ValidateArgumentsCount(o.TagsCloudCenter, 2, name)
+                        ImageSize = ValidateArgumentsCount(imageSize, 2, name)
                             .Then(x => ParseNumbers(x, name))
                             .Then(x => ValidatePositiveNumbers(x, name))
                             .Then(x => new Size(x.ToArray()[0], x.ToArray()[1]));
@@ -152,27 +156,28 @@ namespace TagsCloudContainer.UI
                 });
         }
 
-        private Result<List<int>> ParseNumbers(IEnumerable<string> input, string argName)
+        private Result<ReadOnlyCollection<int>> ParseNumbers(ReadOnlyCollection<string> input, string argName)
         {
-            return Result.Of(() => input.Select(int.Parse).ToList(),
+            return Result.Of(() => new ReadOnlyCollection<int>(input.Select(int.Parse).ToList()),
                 $"Entered Argument '{argName}' value '{string.Join(" ", input)}' contains not number values");
         }
 
-        private Result<IEnumerable<string>> ValidateArgumentsCount(IEnumerable<string> input, int count, string argName)
+        private Result<ReadOnlyCollection<string>> ValidateArgumentsCount(ReadOnlyCollection<string> input, int count,
+            string argName)
         {
             if (input.Count() == count)
             {
-                return Result.Ok(input);
+                return Result.Ok((input));
             }
 
-            return Result.Fail<IEnumerable<string>>(
+            return Result.Fail<ReadOnlyCollection<string>>(
                 $"Argument '{argName}' should contain {count} numbers, but was {input.Count()} (Entered value: '{string.Join(" ", input)}')");
         }
 
-        private Result<List<int>> ValidatePositiveNumbers(List<int> input, string argName)
+        private Result<ReadOnlyCollection<int>> ValidatePositiveNumbers(ReadOnlyCollection<int> input, string argName)
         {
             return input.Any(x => x <= 0)
-                ? Result.Fail<List<int>>
+                ? Result.Fail<ReadOnlyCollection<int>>
                     ($"Argument '{argName}' should contain only positive numbers (Entered value: '{string.Join(" ", input)}')")
                 : Result.Ok(input);
         }
