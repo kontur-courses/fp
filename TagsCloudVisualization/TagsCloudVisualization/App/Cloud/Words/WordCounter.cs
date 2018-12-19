@@ -14,12 +14,24 @@ namespace TagsCloudVisualization
     public class WordCounter : IWordCounter
     {
         public Font Font { get; set; } = new Font("Consolas", 14);
+        private string hunspellAffName;
+        private string hunspellDicName;
+        private string stopWordsName;
+        public WordCounter(
+            string hunspellAffName = "ru.aff", 
+            string hunspellDicName = "ru.dic", 
+            string stopWordsName = "Stopwords.txt")
+        {
+            this.hunspellAffName = hunspellAffName;
+            this.hunspellDicName = hunspellDicName;
+            this.stopWordsName = stopWordsName;
+        }
 
         private Result<List<string>> GetStopWords()
         {
             try
             {
-                return Regex.Split(new TxtReader().Read("Stopwords.txt").Value.ToLower(), @"\W+").ToList();
+                return Regex.Split(new TxtReader().Read(stopWordsName).Value.ToLower(), @"\W+").ToList();
             }
             catch (Exception e)
             {
@@ -32,7 +44,7 @@ namespace TagsCloudVisualization
             var checkedWords = new List<string>();
             try
             {
-                using (var hunspell = new Hunspell("ru.aff", "ru.dic"))
+                using (var hunspell = new Hunspell(hunspellAffName, hunspellDicName))
                 {
                     foreach (var word in words)
                     {

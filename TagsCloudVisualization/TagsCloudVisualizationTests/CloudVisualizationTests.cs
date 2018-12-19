@@ -22,6 +22,8 @@ namespace TagsCloudVisualizationTests
         private IWordPalette wordPalette;
         private IImageSaver imageSaver;
         private IWordCounter wordCounter;
+        private ISizeDefiner sizeDefiner;
+        private ICloudLayouter cloudLayouter;
 
         [SetUp]
         public void SetUp()
@@ -44,8 +46,8 @@ namespace TagsCloudVisualizationTests
             A.CallTo(() => visualizer.Render(graphicWords, 1000, 1000, wordPalette))
                 .WithAnyArguments()
                 .Returns(new Bitmap(1000, 1000));
-            var sizeDefiner = A.Fake<ISizeDefiner>();
-            var cloudLayouter = A.Fake<ICloudLayouter>();
+            sizeDefiner = A.Fake<ISizeDefiner>();
+            cloudLayouter = A.Fake<ICloudLayouter>();
             A.CallTo(() => cloudLayouter.
                 Process(graphicWords, sizeDefiner, new Point(500, 500))).WithAnyArguments();
             wordCounter = A.Fake<IWordCounter>();
@@ -118,6 +120,18 @@ namespace TagsCloudVisualizationTests
             A.CallTo(() => wordCounter.Count(String.Empty)).WithAnyArguments()
                 .Returns(Result.Fail<List<GraphicWord>>("counting error"));
             var result = app.GenerateImage(new[] {"--path", "test.txt"});
+            Assert.IsFalse(result.IsSuccess);
+        }
+
+        [Test]
+        public void App_Fails_WhenNoAffFile()
+        {
+            var counter = new WordCounter();
+            wordCounter = counter;
+            app = new ConsoleApplication(fileReader, visualizer, wordPalette, sizeDefiner, cloudLayouter, wordCounter, imageSaver);
+
+            var result = app.GenerateImage(new[] { "--path", "test.txt" });
+            Console.WriteLine(result.Error);
             Assert.IsFalse(result.IsSuccess);
         }
     }
