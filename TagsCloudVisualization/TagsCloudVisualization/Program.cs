@@ -31,6 +31,7 @@ namespace TagsCloudVisualization
             builder.RegisterType<Visualizer>().As<IVisualizer>();
             builder.RegisterType<MonochromePalette>().As<IWordPalette>();
             builder.RegisterType<WordCounter>().As<IWordCounter>();
+            builder.RegisterType<ImageSaver>().As<IImageSaver>();
 
             return builder
                 .Build()

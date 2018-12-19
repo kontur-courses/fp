@@ -3,9 +3,9 @@ using System.Drawing;
 
 namespace TagsCloudVisualization
 {
-    public static class ImageSaver
+    public class ImageSaver : IImageSaver
     {
-        public static Result<FileSaveResult> WriteToFile(string fileName, Image bitmap)
+        public Result<FileSaveResult> WriteToFile(string fileName, Image bitmap)
         {
             try
             {

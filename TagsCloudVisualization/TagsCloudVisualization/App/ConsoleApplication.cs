@@ -15,11 +15,12 @@ namespace TagsCloudVisualization
         private ISizeDefiner sizeDefiner;
         private ICloudLayouter cloudLayouter;
         private IWordCounter wordCounter;
+        private IImageSaver imageSaver;
         private Size imageSize;
         private string fileName;
 
-        public ConsoleApplication(IFileReader fileReader, IVisualizer visualizer, 
-            IWordPalette wordPalette, ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter, IWordCounter wordCounter)
+        public ConsoleApplication(IFileReader fileReader, IVisualizer visualizer, IWordPalette wordPalette, 
+            ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter, IWordCounter wordCounter, IImageSaver imageSaver)
         {
             this.fileReader = fileReader;
             this.visualizer = visualizer;
@@ -27,18 +28,19 @@ namespace TagsCloudVisualization
             this.sizeDefiner = sizeDefiner;
             this.cloudLayouter = cloudLayouter;
             this.wordCounter = wordCounter;
+            this.imageSaver = imageSaver;
         }
 
         public Result<FileSaveResult> GenerateImage(string[] args)
         {
-            return Result.Ok(ParseArguments(args))
+            return ParseArguments(args)
                 .Then(ApplySettings)
                 .Then(r => fileReader.Read(r.Path))
                 .Then(wordCounter.Count)
                 .Then(LayoutWords)
                 .Then(ValidateImageSize)
                 .Then(r => visualizer.Render(r, imageSize.Width, imageSize.Height, wordPalette))
-                .Then(i => ImageSaver.WriteToFile(fileName, i));
+                .Then(i => imageSaver.WriteToFile(fileName, i));
         }
 
         private Result<CloudArguments> ApplySettings(CloudArguments arguments)
@@ -55,10 +57,13 @@ namespace TagsCloudVisualization
             return words;
         }
 
-        private CloudArguments ParseArguments(string[] args)
+        private Result<CloudArguments> ParseArguments(string[] args)
         {
             var parser = SetupParser();
-            parser.Parse(args);
+            var result = parser.Parse(args);
+
+            if (result.HasErrors)
+                return Result.Fail<CloudArguments>(result.ErrorText);
 
             var settings = parser.Object;
 
