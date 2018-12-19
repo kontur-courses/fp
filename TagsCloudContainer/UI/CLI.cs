@@ -30,8 +30,8 @@ namespace TagsCloudContainer.UI
             InputPath = AppDomain.CurrentDomain.BaseDirectory + "\\cloud.docx";
             OutputPath = "output.png";
             BlacklistPath = "blacklist.txt";
-            ImageSize = Result.Ok(new Size(1920, 1080));
-            TagsCloudCenter = new Point(ImageSize.GetValueOrThrow().Width, ImageSize.GetValueOrThrow().Height);
+            ImageSize = new Size(1920, 1080);
+            TagsCloudCenter = ImageSize.Then(x => new Point(x.Width / 2, x.Height / 2));
             TextColor = Color.DarkBlue;
             LetterSize = new Size(16, 20);
             FontFamily = FontFamily.GenericMonospace;
@@ -39,30 +39,44 @@ namespace TagsCloudContainer.UI
 
 
             ParseArguments(args);
-            CheckArguments();
+            var checkingResult = CheckArguments();
+            if (!checkingResult.IsSuccess)
+            {
+                Console.WriteLine(checkingResult.Error);
+                Environment.Exit(0);
+            }
 
             ApplicationSettings = new ApplicationSettings
-            (InputPath.GetValueOrThrow(), BlacklistPath.GetValueOrThrow(), TagsCloudCenter.GetValueOrThrow(),
-                new ImageSettings(FontFamily, ImageSize.GetValueOrThrow(), LetterSize.GetValueOrThrow(), OutputPath,
-                    TextColor.GetValueOrThrow(),
-                    AutoSize));
+            (GetValue(InputPath), GetValue(BlacklistPath), GetValue(TagsCloudCenter),
+                new ImageSettings
+                    (FontFamily, GetValue(ImageSize), GetValue(LetterSize), OutputPath, GetValue(TextColor), AutoSize));
         }
 
-        private void CheckArguments()
+        private T GetValue<T>(Result<T> result)
+        {
+            var value = default(T);
+            result.Then(x => value = x);
+            return value;
+        }
+
+        private Result<None> CheckArguments()
         {
             var errors = new List<string>()
             {
                 TagsCloudCenter.Error, LetterSize.Error, TextColor.Error,
                 ImageSize.Error, InputPath.Error, BlacklistPath.Error
             };
-            foreach (var result in errors)
+            foreach (var error in errors)
             {
-                if (result != null)
+                if (error != null)
                 {
-                    Console.WriteLine(result);
-                    Environment.Exit(0);
+                    var result = Result.Fail<None>(error);
+                    result.RefineError("Parsing arguments error");
+                    return result;
                 }
             }
+
+            return new Result<None>();
         }
 
         private class Options

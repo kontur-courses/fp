@@ -16,12 +16,13 @@ namespace TagsCloudContainer.Filtering
 
         public Result<ReadOnlyCollection<string>> FilterWords(ReadOnlyCollection<string> words)
         {
+            var result = Result.Ok(words);
             foreach (var filter in filters)
             {
-                words = filter.Filter(words).GetValueOrThrow();
+                result = result.Then(x => filter.Filter(x));
             }
 
-            return Result.Ok(new ReadOnlyCollection<string>(words));
+            return result;
         }
 
         public void AddFilter(IWordsFilter wordsFilter)

@@ -48,22 +48,27 @@ namespace TagsCloudContainer
         {
             var ui = new CLI(args);
             var appSettings = ui.ApplicationSettings;
-            boringWordsRepository.LoadWords(appSettings.BlackListPath);
+            var wordsLoadResult = boringWordsRepository.LoadWords(appSettings.BlackListPath);
+            if (!wordsLoadResult.IsSuccess)
+            {
+                Console.WriteLine(wordsLoadResult.Error);
+            }
+
             var generator = new TagsCloudGenerator
                 (wordsSizer, layouterFactory.CreateTagsCloudLayouter(appSettings.TagsCloudCenter, tagsCloudFactory));
 
-            var wordsPreparing = reader.ReadWords(appSettings.InputPath)
+            var result = reader.ReadWords(appSettings.InputPath)
                 .Then(words => formattingComponent.FormatWords(words))
                 .Then(words => filteringComponent.FilterWords(words))
                 .Then(words => generator.CreateCloud(words, appSettings.ImageSettings.LetterSize))
                 .Then(tagsCloud => renderer.RenderIntoFile(appSettings.ImageSettings, colorManager, tagsCloud));
 
-            if (!wordsPreparing.IsSuccess)
+            if (!result.IsSuccess)
             {
-                Console.WriteLine(wordsPreparing.Error);
+                Console.WriteLine(result.Error);
             }
 
-            return wordsPreparing;
+            return result;
         }
     }
 }
