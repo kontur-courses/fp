@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using ResultOf;
 using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Layouter;
@@ -24,11 +23,11 @@ namespace TagsCloudVisualization.Visualizer
         {
             return palette.GetColors()
                 .Then(colors => wordsCloudBuilder.Build()
-                    .Then(words => GetBitmap(words)
+                    .Then(words => GetBitmap()
                         .Then(bmp => DrawCloud(bmp, words, colors.Item1, colors.Item2))));
         }
 
-        private Result<Bitmap> GetBitmap(IEnumerable<Word> words)
+        private Result<Bitmap> GetBitmap()
         {
             var cloudSize = wordsCloudBuilder.Radius * 2;
             if (cloudSize > Math.Min(pictureSize.Height, pictureSize.Width))

@@ -52,14 +52,14 @@ namespace TagsCloudVisualization
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine($"exit with code {Parser.Default.ParseArguments<Options>(args).MapResult(RunAndReturnExitCode, errs => 1)}");
+            Console.WriteLine($"exit with status: {Parser.Default.ParseArguments<Options>(args).MapResult(RunAndReturnStatus, errs => "Fail")}");
         }
 
-        private static int RunAndReturnExitCode(Options options)
+        private static string RunAndReturnStatus(Options options)
         {
             var result = new DIBuilder(options).Resolve().Save(options.OutFilename)
                 .OnFail(new ConsoleErrorHandler().HandleError);
-            return result.IsSuccess ? 0 : 1;
+            return result.IsSuccess ? "Success" : "Fail";
         }
     }
 }

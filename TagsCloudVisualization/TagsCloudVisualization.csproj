@@ -110,6 +110,8 @@
     <Compile Include="Visualizer\WordsCloudVisualizer.cs" />
     <Compile Include="WordsProcessing\BaseFormConverter.cs" />
     <Compile Include="WordsProcessing\BoringWordsFilter.cs" />
+    <Compile Include="WordsProcessing\EnumerableIFilterExtensions.cs" />
+    <Compile Include="WordsProcessing\EnumerableIWordsChangerExtensions.cs" />
     <Compile Include="WordsProcessing\FrequencyWeighter.cs" />
     <Compile Include="WordsProcessing\IFilter.cs" />
     <Compile Include="WordsProcessing\ISizeConverter.cs" />

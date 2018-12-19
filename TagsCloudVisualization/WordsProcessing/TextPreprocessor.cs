@@ -20,32 +20,8 @@ namespace TagsCloudVisualization.WordsProcessing
         {
             return wordsProvider
                 .Provide()
-                .Then(FilterWords)
-                .Then(ChangeWords);
-        }
-
-        private Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
-        {
-            var filteredWords = Result.Ok(words);
-            foreach (var filter in wordsFilters)
-            {
-                filteredWords = filter.FilterWords(filteredWords.Value);
-                if (!filteredWords.IsSuccess) break;
-            }
-
-            return filteredWords;
-        }
-        private Result<IEnumerable<string>> ChangeWords(IEnumerable<string> words)
-        {
-
-            var changedWords = Result.Ok(words);
-            foreach (var changer in wordsChangers)
-            {
-                changedWords = changer.ChangeWords(changedWords.Value);
-                if (!changedWords.IsSuccess) break;
-            }
-
-            return changedWords;
+                .Then(wordsFilters.FilterWords)
+                .Then(wordsChangers.ChangeWords);
         }
     }
 }
