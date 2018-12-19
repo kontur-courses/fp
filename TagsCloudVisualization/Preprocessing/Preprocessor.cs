@@ -17,11 +17,9 @@ namespace TagsCloudVisualization.Preprocessing
 
         public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
-            Result<IEnumerable<string>> filterResult = words.AsResult();
-            foreach (var filter in filters)
-                filterResult = filterResult.Then(filteredWords => filter.FilterWords(filteredWords));
-            
-            return filterResult.Then(filteredWords => filteredWords.Select(ApplyAllTransforms));
+            return filters.Aggregate(words.AsResult(), 
+                        (current, filter) => current.Then(filter.FilterWords))
+                    .Then(filteredWords => filteredWords.Select(ApplyAllTransforms));
         }
 
         private string ApplyAllTransforms(string word)

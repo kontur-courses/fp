@@ -20,10 +20,10 @@ namespace TagsCloudVisualization.WordsFileReading
         public Result<IFileReader> SelectFileReader(string fileName)
         {
             var extension = fileName.ExtractFileExtension();
-            if (extension != null && fileReaderByExtension.ContainsKey(extension))
-                return Result.Ok(fileReaderByExtension[extension]);
+            if (extension != null && fileReaderByExtension.TryGetValue(extension, out var fileReader))
+                return Result.Ok(fileReader);
 
-            return Result.Fail<IFileReader>("Input file is not supported");
+            return Result.Fail<IFileReader>("Input file format is not supported");
         }
     }
 }
