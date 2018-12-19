@@ -58,7 +58,7 @@ namespace TagsCloudContainer.Tests
         }
 
         [Test]
-        public void ThrowException_WhenWordsAreNull()
+        public void BeNotSucceed_WhenWordsAreNull()
         {
             var settings = new WordsPreprocessorSettings();
             var preprocessor = new BoringWordsExcluder(settings);

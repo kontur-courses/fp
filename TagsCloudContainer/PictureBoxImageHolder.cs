@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ResultOf;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -8,34 +8,39 @@ namespace TagsCloudContainer
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-        public Size GetImageSize()
+        public Result<Size> GetImageSize()
         {
-            FailIfNotInitialized();
-            return Image.Size;
+            return FailIfNotInitialized()
+                .Then(_ => Image.Size);
         }
 
-        public Graphics StartDrawing()
+        public Result<Graphics> StartDrawing()
         {
-            FailIfNotInitialized();
-            return Graphics.FromImage(Image);
+            return FailIfNotInitialized()
+                .Then(_ => Graphics.FromImage(Image))
+                .RefineError("Can't start drawing");
         }
 
-        public void RecreateImage(ImageSettings settings)
+        public Result<None> RecreateImage(ImageSettings settings)
         {
+            if (settings.Width <= 0 || settings.Height <= 0)
+                return Result.Fail<None>("Image sizes must be bigger than 0");
             Image = new Bitmap(settings.Width, settings.Height, PixelFormat.Format24bppRgb);
+            return Result.Ok();
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            FailIfNotInitialized();
-            Image.Save(fileName);
+            return FailIfNotInitialized()
+                .Then(_ => Image.Save(fileName))
+                .RefineError("Can't save image");
         }
 
-        private void FailIfNotInitialized()
+        private Result<None> FailIfNotInitialized()
         {
-            if (Image == null)
-                throw new InvalidOperationException(
-                    "Call    PictureBoxImageHolder.RecreateImage before other method call!");
+            return Image == null
+                ? Result.Fail<None>("Call    PictureBoxImageHolder.RecreateImage before other method call!")
+                : Result.Ok();
         }
 
         public void UpdateUi()

@@ -59,13 +59,13 @@ namespace TagsCloudContainer.Tests
         }
 
         [Test]
-        public void ThrowException_WhenWordsAreNull()
+        public void BeNotSucceed_WhenWordsAreNull()
         {
             var frequencyCounter = new FrequencyCounter();
 
-            Action resultAction = () => frequencyCounter.CountWordFrequencies(null);
+            var resultAction = frequencyCounter.CountWordFrequencies(null);
 
-            resultAction.Should().Throw<ArgumentNullException>();
+            resultAction.IsSuccess.Should().BeFalse();
         }
     }
 }

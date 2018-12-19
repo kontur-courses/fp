@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Painter
@@ -24,38 +26,56 @@ namespace TagsCloudContainer.Painter
             this.fontSettings = fontSettings;
         }
 
-        public void Paint(Point center, IEnumerable<WordInfo> wordInfosEnum)
+        public Result<None> Paint(Point center, WordInfo[] wordInfos)
         {
-            var wordInfos = wordInfosEnum.ToArray();
             var radius = (int) wordInfos.Select(wordInfo => wordInfo.Rect)
                 .Select(rect => Math.Ceiling(rect.Location.DistanceTo(center))).Max();
             var bitmapSize = GetBitmapSize(wordInfos.Select(info => info.Rect), center);
-            var imageSize = holder.GetImageSize();
-            if (imageSize.Width < bitmapSize || imageSize.Height < bitmapSize)
-            {
-                imageSettings.Height = bitmapSize;
-                imageSettings.Width = bitmapSize;
-                holder.RecreateImage(imageSettings);
-            }
+            return holder.GetImageSize()
+                .Then(imageSize => CheckImageSize(imageSize, bitmapSize))
+                .Then(imageSize => DrawPicture(imageSize, center, radius, wordInfos))
+                .RefineError("Can't draw picture");
+        }
 
-            imageSize = holder.GetImageSize();
-            using (var graphics = holder.StartDrawing())
+        private Result<None> DrawPicture(Size imageSize, Point center, int radius, IEnumerable<WordInfo> wordInfos)
+        {
+            Result<None> result;
+            using (var graphics = holder.StartDrawing().GetValueOrThrow())
             {
                 var deltaX = imageSize.Width / 2;
                 var deltaY = imageSize.Height / 2;
                 graphics.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Width,
                     imageSize.Height);
                 graphics.TranslateTransform(deltaX, deltaY);
-                foreach (var wordInfo in wordInfos)
+                result = Result.OfAction(() =>
                 {
-                    var color = imageSettings.GetCloudPainterClass().GetRectangleColor(center, wordInfo.Rect, radius);
-                    graphics.DrawString(
-                        wordInfo.Word,
-                        new Font(fontSettings.Font.FontFamily, wordInfo.FontSize),
-                        new SolidBrush(color),
-                        wordInfo.Rect);
-                }
+                    Debug.Assert(graphics != null, nameof(graphics) + " != null");
+                    Draw(graphics, wordInfos, center, radius);
+                }).RefineError("Invalid Draw Settings");
             }
+
+            return result;
+        }
+
+        private void Draw(Graphics graphics, IEnumerable<WordInfo> wordInfos, Point center, int radius)
+        {
+            foreach (var wordInfo in wordInfos)
+            {
+                var color = imageSettings.GetCloudPainterClass()
+                    .GetRectangleColor(center, wordInfo.Rect, radius);
+                graphics.DrawString(
+                    wordInfo.Word,
+                    new Font(fontSettings.Font.FontFamily, wordInfo.FontSize),
+                    new SolidBrush(color),
+                    wordInfo.Rect);
+            }
+        }
+
+        private Result<Size> CheckImageSize(Size imageSize, int bitmapSize)
+        {
+            if (imageSize.Width < bitmapSize || imageSize.Height < bitmapSize)
+                return Result.Fail<Size>("picture size is bigger than window size");
+            return imageSize;
         }
 
         private int GetBitmapSize(IEnumerable<Rectangle> rectangles, Point rectanglesCenter)

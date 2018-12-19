@@ -36,7 +36,7 @@ namespace TagsCloudContainer.Tests
 
             var result = applicator.GetWordsAndRectangles(wordInfos);
 
-            result.Count().Should().Be(wordInfos.Length);
+            result.GetValueOrThrow().Length.Should().Be(wordInfos.Length);
         }
 
         [TestCase(2.1f)]
@@ -51,22 +51,18 @@ namespace TagsCloudContainer.Tests
 
             var result = applicator.GetWordsAndRectangles(wordInfos);
 
-            foreach (var info in result)
-                info.GetValueOrThrow().FontSize.Should().Be(info.GetValueOrThrow().Frequency * fontFactor);
+            foreach (var info in result.GetValueOrThrow())
+                info.FontSize.Should().Be(info.Frequency * fontFactor);
         }
 
         [Test]
-        public void ThrowsException_WhenNullArgument()
+        public void BeNotSuccess_WhenNullArgument()
         {
             var applicator = new LayouterApplicator(layouter, new FontSettings());
 
-            Action runner = () =>
-            {
-                var en = applicator.GetWordsAndRectangles(null);
-                en.First();
-            };
+            var result = applicator.GetWordsAndRectangles(null);
 
-            runner.Should().Throw<ArgumentNullException>();
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]

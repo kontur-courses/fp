@@ -51,9 +51,8 @@ namespace TagsCloudContainer.UI.Actions
                 .Then(words => preprocessors.Aggregate(words,
                     (current, wordsPreprocessor) => wordsPreprocessor.Process(current).GetValueOrThrow()))
                 .Then(frequencyCounter.CountWordFrequencies)
-                .Then(applicator.GetWordsAndRectangles)
-                .Then(wordInfos =>
-                    painter.Paint(applicator.WordsCenter, wordInfos.Select(result => result.GetValueOrThrow())))
+                .Then(words => applicator.GetWordsAndRectangles(words.ToArray()))
+                .Then(wordInfos => painter.Paint(applicator.WordsCenter, wordInfos))
                 .Then(none => imageHolder.UpdateUi())
                 .OnFail(error =>
                 {

@@ -18,10 +18,10 @@ namespace TagsCloudContainer.Preprocessing
                 });
         }
 
-        private IEnumerable<WordInfo> CountFrequencies(IEnumerable<string> words)
+        public Result<IEnumerable<WordInfo>> CountWordFrequencies(IEnumerable<string> words)
         {
             if (words == null)
-                throw new ArgumentNullException(nameof(words), "word must be not null");
+                return Result.Fail<IEnumerable<WordInfo>>("word must be not null");
             var wordsFrequencies = new Dictionary<string, int>();
             foreach (var word in words)
             {
@@ -29,12 +29,7 @@ namespace TagsCloudContainer.Preprocessing
                 wordsFrequencies[word] = value + 1;
             }
 
-            return OrderWordFrequencies(wordsFrequencies);
-        }
-
-        public Result<IEnumerable<WordInfo>> CountWordFrequencies(IEnumerable<string> words)
-        {
-            return Result.Of(() => CountFrequencies(words));
+            return OrderWordFrequencies(wordsFrequencies).AsResult();
         }
     }
 }

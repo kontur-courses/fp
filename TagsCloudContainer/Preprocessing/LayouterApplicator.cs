@@ -21,12 +21,20 @@ namespace TagsCloudContainer.Preprocessing
 
         public Point WordsCenter { get; private set; }
 
-        public IEnumerable<Result<WordInfo>> GetWordsAndRectangles(IEnumerable<WordInfo> wordsAndFrequencies)
+        public Result<WordInfo[]> GetWordsAndRectangles(WordInfo[] wordsAndFrequencies)
         {
             if (wordsAndFrequencies == null)
-                throw new ArgumentNullException(nameof(wordsAndFrequencies));
+                return Result.Fail<WordInfo[]>(nameof(wordsAndFrequencies) + " must be not null");
             var layouter = layouterGenerator();
             WordsCenter = layouter.Center;
+
+            return Result.Of(() => GetRectangles(wordsAndFrequencies, layouter))
+                .RefineError("Invalid font settings");
+        }
+
+        private WordInfo[] GetRectangles(WordInfo[] wordsAndFrequencies, ITagCloudLayouter layouter)
+        {
+            var wordInfos = new List<WordInfo>();
             foreach (var wordAndFrequency in wordsAndFrequencies)
             {
                 var word = wordAndFrequency.Word;
@@ -35,8 +43,10 @@ namespace TagsCloudContainer.Preprocessing
                 var size = TextRenderer.MeasureText(word, font);
                 wordAndFrequency.FontSize = font.Size;
                 wordAndFrequency.Rect = layouter.PutNextRectangle(size);
-                yield return wordAndFrequency;
+                wordInfos.Add(wordAndFrequency);
             }
+
+            return wordInfos.ToArray();
         }
     }
 }

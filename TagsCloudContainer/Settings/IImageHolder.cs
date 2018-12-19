@@ -1,12 +1,13 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudContainer.Settings
 {
     public interface IImageHolder
     {
-        Size GetImageSize();
-        Graphics StartDrawing();
-        void RecreateImage(ImageSettings settings);
-        void SaveImage(string fileName);
+        Result<Size> GetImageSize();
+        Result<Graphics> StartDrawing();
+        Result<None> RecreateImage(ImageSettings settings);
+        Result<None> SaveImage(string fileName);
     }
 }
