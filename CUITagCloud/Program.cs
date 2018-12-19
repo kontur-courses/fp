@@ -2,6 +2,7 @@
 using System.Drawing;
 using Autofac;
 using CommandLine;
+using TagsCloudContainer;
 using TagsCloudContainer.CloudBuilder;
 using TagsCloudContainer.CloudDrawers;
 using TagsCloudContainer.CloudLayouters;
@@ -25,23 +26,20 @@ namespace CUITagCloud
         {
             var container = BuildContainer(options);
             var cloudTagController = container.Resolve<ICloudTagController>();
-                
+
             cloudTagController.Work();
         }
 
         private static IContainer BuildContainer(Option options)
         {
-            
-            var imageSettings = new ImageSettings(options.Height, options.Width, options.OutputFile, options.Theme);
-            var fileSettings = new FileSettings(options.InputFileName);
-            var filterSettings = new FilterSettings(options.BoringWordsFileName, options.SmallestLength);
-            var textSettings = new TextSettings(options.CountWords, options.Filters, options.Converters, filterSettings);
-            
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(fileSettings).As<FileSettings>();
-            builder.RegisterInstance(imageSettings).As<ImageSettings>();
-            builder.RegisterInstance(textSettings).As<TextSettings>();
+            builder.RegisterInstance(options).As<Option>();
+
+            builder.RegisterType<ImageSettings>();
+            builder.RegisterType<FileSettings>();
+            builder.RegisterType<FilterSettings>();
+            builder.RegisterType<TextSettings>();
 
             builder.RegisterType<TextFileReader>().As<IFileReader>();
             builder.RegisterType<InitialFormWordConverter>().As<IWordConverter>();
@@ -51,7 +49,7 @@ namespace CUITagCloud
             builder.RegisterType<CloudDrawer>().As<ICloudDrawer>();
             builder.RegisterType<ArchimedesSpiralPointGenerator>().As<IEnumerable<Point>>();
             builder.RegisterType<CloudTagController>().As<ICloudTagController>();
-                
+
             return builder.Build();
         }
     }

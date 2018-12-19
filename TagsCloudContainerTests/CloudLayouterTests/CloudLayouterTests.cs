@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer;
 using TagsCloudContainer.CloudLayouters;
 using TagsCloudContainer.CloudLayouters.PointGenerators;
 using TagsCloudContainer.Settings;
@@ -16,7 +17,11 @@ namespace TagsCloudContainerTests.CloudLayouterTests
         [SetUp]
         public void SetUp()
         {
-            var imageSettings = new ImageSettings(1000, 1000, "", "classic");
+            var option = new Option();
+            option.Height = 1000;
+            option.Width = 1000;
+            option.Theme = "classic";
+            var imageSettings = new ImageSettings(option);
 
             pointsGenerator = new ArchimedesSpiralPointGenerator(imageSettings);
             circularCloudLayouter = new CircularCloudLayouter(pointsGenerator);
@@ -31,13 +36,13 @@ namespace TagsCloudContainerTests.CloudLayouterTests
         [TestCase(-3, -4, TestName = "when size is negative")]
         [TestCase(-3, 4, TestName = "when size width is negative, height is positive")]
         [TestCase(3, -4, TestName = "when size width is positive, height is negative")]
-        public void PutNextRectangle_ShouldThrowArgumentException(int width, int height)
+        public void PutNextRectangle_ShouldReturnFailResult(int width, int height)
         {
             var size = new Size(width, height);
 
-            Action act = () => circularCloudLayouter.PutNextRectangle(size);
+            var result = circularCloudLayouter.PutNextRectangle(size);
 
-            act.ShouldThrow<ArgumentException>();
+            result.Error.Should().NotBeEmpty();
         }
 
 
@@ -78,7 +83,7 @@ namespace TagsCloudContainerTests.CloudLayouterTests
             for (var i = 0; i < countRectangles; i++)
             {
                 var size = GetRandomSize();
-                var rectangle = circularCloudLayouter.PutNextRectangle(size);
+                var rectangle = circularCloudLayouter.PutNextRectangle(size).Value;
                 result.Add(rectangle);
             }
 
@@ -143,7 +148,7 @@ namespace TagsCloudContainerTests.CloudLayouterTests
         {
             var size = GetRandomSize();
 
-            var rectangle = circularCloudLayouter.PutNextRectangle(size);
+            var rectangle = circularCloudLayouter.PutNextRectangle(size).Value;
 
             rectangle.Size.ShouldBeEquivalentTo(size);
         }

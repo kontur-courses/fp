@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer;
 using TagsCloudContainer.Settings;
 using TagsCloudContainer.TextParsers;
-using FakeItEasy;
 
 namespace TagsCloudContainerTests.TextParserTests
 {
@@ -15,7 +16,11 @@ namespace TagsCloudContainerTests.TextParserTests
         public void Parse_Should_ReturnWordFrequency()
         {
             var filterSettings = A.Fake<FilterSettings>();
-            var textSettings =new TextSettings(2, new string[]{}, new string[]{}, filterSettings);
+            var option = new Option();
+            option.CountWords = 2;
+            option.Converters = new string[] { };
+            option.Filters = new string[] { };
+            var textSettings = new TextSettings(option, filterSettings);
             var parser = new TextParser(textSettings);
             var expectation = new List<WordFrequency>
             {

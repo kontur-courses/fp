@@ -5,6 +5,6 @@ namespace TagsCloudContainer.CloudDrawers
 {
     public interface ICloudDrawer
     {
-        void Draw(IEnumerable<Tag> tagsCloud);
+        Result<None> Draw(IEnumerable<Tag> tagsCloud);
     }
 }

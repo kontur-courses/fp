@@ -1,18 +1,18 @@
-﻿using Ninject;
-using System;
+﻿using System;
+using Ninject;
 
 namespace ConwaysGameOfLife
 {
     public class Program
     {
+        private readonly IGameUi ui;
+        private Game game;
+
         public Program(Game game, IGameUi ui)
         {
             this.game = game;
             this.ui = ui;
         }
-
-        private Game game;
-        private IGameUi ui;
 
         private static void Main()
         {
@@ -31,7 +31,7 @@ namespace ConwaysGameOfLife
             ui.UpdateAll(game);
             while (true)
             {
-                var key = Console.ReadKey(intercept: true);
+                var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Escape) break;
                 game = DoGameStep(game, ui);
             }

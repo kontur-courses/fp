@@ -2,9 +2,9 @@ namespace TagsCloudContainer.Settings
 {
     public class FileSettings
     {
-        public FileSettings(string inputFileName)
+        public FileSettings(Option option)
         {
-            Filename = inputFileName;
+            Filename = option.InputFileName;
         }
 
         public string Filename { get; }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,10 +14,10 @@ namespace TagsCloudContainer.CloudLayouters
             this.generatorPoints = generatorPoints;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
-                throw new ArgumentException("height and width should be positive");
+                return Result.Fail<Rectangle>("height and width should be positive");
 
             var currentRectangle = new Rectangle();
             foreach (var point in generatorPoints)
@@ -35,7 +34,7 @@ namespace TagsCloudContainer.CloudLayouters
                 }
             }
 
-            return currentRectangle;
+            return Result.Ok(currentRectangle);
         }
     }
 }

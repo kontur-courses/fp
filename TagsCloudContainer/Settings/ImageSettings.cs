@@ -5,13 +5,13 @@ namespace TagsCloudContainer.Settings
 {
     public class ImageSettings
     {
-        public ImageSettings(int height, int width, string outputFile, string theme)
+        public ImageSettings(Option option)
         {
-            OutputFile = outputFile;
-            Theme = GetThemeByName(theme);
-            Height = height;
-            Width = width;
-            Center = new Point(height / 2, width / 2);
+            OutputFile = option.OutputFile;
+            Theme = GetThemeByName(option.Theme);
+            Height = option.Height;
+            Width = option.Width;
+            Center = new Point(Height / 2, Width / 2);
         }
 
         public int Height { get; }

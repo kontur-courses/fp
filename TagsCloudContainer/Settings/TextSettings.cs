@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TagsCloudContainer.WordConverter;
 using TagsCloudContainer.WordFilter;
 
@@ -6,11 +5,11 @@ namespace TagsCloudContainer.Settings
 {
     public class TextSettings
     {
-        public TextSettings(int countWords, IEnumerable<string> filters, IEnumerable<string> wordConverters, FilterSettings filterSettings)
+        public TextSettings(Option option, FilterSettings filterSettings)
         {
-            CountWords = countWords;
-            WordConverters = Converters.GetConvertersByName(wordConverters);
-            WordFilters = new Filters(filterSettings).GetFiltersByName(filters);
+            CountWords = option.CountWords;
+            WordConverters = Converters.GetConvertersByName(option.Converters).Value;
+            WordFilters = new Filters(filterSettings).GetFiltersByName(option.Filters);
         }
 
         public IFilter[] WordFilters { get; }

@@ -2,14 +2,13 @@ namespace TagsCloudContainer.Settings
 {
     public class FilterSettings
     {
-        public FilterSettings(string fileForBoringWords = null, int lengthForBoringWord = 4)
+        public FilterSettings(Option option)
         {
-            LengthForBoringWord = lengthForBoringWord;
-            FileForBoringWords = fileForBoringWords;
+            LengthForBoringWord = option.SmallestLength;
+            FileForBoringWords = option.BoringWordsFileName;
         }
 
         public int LengthForBoringWord { get; }
         public string FileForBoringWords { get; }
-        
     }
 }

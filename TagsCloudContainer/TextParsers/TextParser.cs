@@ -20,7 +20,7 @@ namespace TagsCloudContainer.TextParsers
             var words = text.Value.Split(Environment.NewLine.ToCharArray())
                 .Select(word => word.Trim())
                 .Where(word => !string.IsNullOrEmpty(word));
-            
+
             var convertedWords = new List<string>();
             foreach (var word in words)
             {
@@ -34,6 +34,7 @@ namespace TagsCloudContainer.TextParsers
                         return Result.Fail<List<WordFrequency>>(resultConverted.Error);
                     convertedWord = converter.Convert(word).Value;
                 }
+
                 convertedWords.Add(convertedWord);
             }
 

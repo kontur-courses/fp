@@ -8,12 +8,13 @@ namespace TagsCloudContainer.CloudTagController
 {
     public class CloudTagController : ICloudTagController
     {
+        private readonly ICloudBuilder cloudBuilder;
+        private readonly ICloudDrawer cloudDrawer;
         private readonly IFileReader fileReader;
         private readonly ITextParser textParser;
-        private readonly ICloudDrawer cloudDrawer;
-        private readonly ICloudBuilder cloudBuilder;
 
-        public CloudTagController(IFileReader fileReader, ITextParser textParser, ICloudDrawer cloudDrawer, ICloudBuilder cloudBuilder)
+        public CloudTagController(IFileReader fileReader, ITextParser textParser, ICloudDrawer cloudDrawer,
+            ICloudBuilder cloudBuilder)
         {
             this.fileReader = fileReader;
             this.textParser = textParser;
@@ -24,11 +25,13 @@ namespace TagsCloudContainer.CloudTagController
         public void Work()
         {
             fileReader.Read()
-                .OnFail(er => Console.WriteLine(er))
-                .Then(readedText => textParser.Parse(readedText))
-                .OnFail(er => Console.WriteLine(er))
-                .Then(_ => cloudBuilder.BuildTagsCloud(_))
-                .Then(_ => cloudDrawer.Draw(_));
+                .OnFail(exception => Console.WriteLine(exception))
+                .Then(text => textParser.Parse(text))
+                .OnFail(exception => Console.WriteLine(exception))
+                .Then(wordFrequency => cloudBuilder.BuildTagsCloud(wordFrequency))
+                .OnFail(exception => Console.WriteLine(exception))
+                .Then(tagsCloud => cloudDrawer.Draw(tagsCloud))
+                .OnFail(exception => Console.WriteLine(exception));
         }
     }
 }

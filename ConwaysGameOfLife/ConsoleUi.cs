@@ -7,13 +7,14 @@ namespace ConwaysGameOfLife
         public void UpdateAll(IReadonlyField field)
         {
             Console.SetCursorPosition(0, 0);
-            for (int y = 0; y < field.Height; y++)
+            for (var y = 0; y < field.Height; y++)
             {
-                for (int x = 0; x < field.Width; x++)
+                for (var x = 0; x < field.Width; x++)
                 {
                     var symbol = field.IsAlive(x, y) ? '#' : ' ';
                     Console.Write(symbol);
                 }
+
                 Console.WriteLine();
             }
         }
@@ -22,7 +23,6 @@ namespace ConwaysGameOfLife
         {
             Console.SetCursorPosition(x, y);
             Console.Write(alive ? '#' : ' ');
-
         }
     }
 }

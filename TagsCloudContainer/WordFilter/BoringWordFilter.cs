@@ -8,6 +8,7 @@ namespace TagsCloudContainer.WordFilter
     public class BoringWordFilter : IFilter
     {
         private readonly List<string> boringWords;
+
         public BoringWordFilter(FilterSettings filterSettings)
         {
             if (!string.IsNullOrEmpty(filterSettings.FileForBoringWords))

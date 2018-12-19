@@ -26,7 +26,7 @@ namespace TagsCloudContainer.CloudBuilder
             foreach (var tag in tags)
             {
                 var size = TextRenderer.MeasureText(tag.Word, tag.Font);
-                tag.Rectangle = cloudLayouter.PutNextRectangle(size);
+                tag.Rectangle = cloudLayouter.PutNextRectangle(size).Value;
                 yield return tag;
             }
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -15,18 +16,25 @@ namespace TagsCloudContainer.CloudDrawers
             this.imageSettings = imageSettings;
         }
 
-        public void Draw(IEnumerable<Tag> tagsCloud)
+        public Result<None> Draw(IEnumerable<Tag> tagsCloud)
         {
-            var bmp = new Bitmap(imageSettings.Height, imageSettings.Width);
+            using (var bmp = new Bitmap(imageSettings.Height, imageSettings.Width))
             using (var graphics = Graphics.FromImage(bmp))
             {
                 graphics.FillRectangle(imageSettings.Theme.BackgroundColor, 0, 0, imageSettings.Height,
                     imageSettings.Width);
                 foreach (var tag in tagsCloud)
                     graphics.DrawString(tag.Word, tag.Font, imageSettings.Theme.WordColor, tag.Rectangle.Location);
+                try
+                {
+                    bmp.Save(imageSettings.OutputFile, ImageFormat.Png);
+                    return new Result<None>();
+                }
+                catch (Exception exception)
+                {
+                    return Result.Fail<None>(exception.Message);
+                }
             }
-
-            bmp.Save(imageSettings.OutputFile, ImageFormat.Png);
         }
     }
 }

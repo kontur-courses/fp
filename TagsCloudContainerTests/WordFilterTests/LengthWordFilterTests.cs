@@ -1,6 +1,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer;
 using TagsCloudContainer.Settings;
 using TagsCloudContainer.WordFilter;
 
@@ -12,7 +13,9 @@ namespace TagsCloudContainerTests.WordFilterTests
         [Test]
         public void LengthFilter_ShouldSkipShortWords()
         {
-            var filterSettings = new FilterSettings(lengthForBoringWord: 2);
+            var option = new Option();
+            option.SmallestLength = 2;
+            var filterSettings = new FilterSettings(option);
             var text = new[] {"hi", "verylong", "medium"};
             var filter = new LengthWordFilter(filterSettings);
             var expectedResult = new[] {"verylong", "medium"};

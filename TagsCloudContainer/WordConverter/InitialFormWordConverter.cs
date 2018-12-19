@@ -10,9 +10,7 @@ namespace TagsCloudContainer.WordConverter
             var ruAff = "../../ru_RU.aff";
             var ruDic = "../../ru_RU.dic";
             if (!File.Exists(ruAff) || !File.Exists(ruDic))
-            {
                 return Result.Fail<string>($"file not found: {ruAff} or {ruDic}");
-            }
 
             using (var hunspell = new Hunspell(ruAff, ruDic))
             {

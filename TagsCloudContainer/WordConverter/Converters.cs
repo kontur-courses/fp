@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,15 +6,18 @@ namespace TagsCloudContainer.WordConverter
 {
     public class Converters
     {
-        private static readonly Dictionary<string, IWordConverter> WordConvertersDictionary =
-            new Dictionary<string, IWordConverter>
+        private static readonly Dictionary<string, Func<IWordConverter>> WordConvertersDictionary =
+            new Dictionary<string, Func<IWordConverter>>
             {
-                {"simple", new InitialFormWordConverter()}
+                {"simple", () => new InitialFormWordConverter()}
             };
-        
-        public static IWordConverter[] GetConvertersByName(IEnumerable<string> wordConverters)
+
+        public static Result<IWordConverter[]> GetConvertersByName(IEnumerable<string> wordConverters)
         {
-            return wordConverters.Select(converter => WordConvertersDictionary[converter]).ToArray();
+            foreach (var wordConverter in wordConverters)
+                if (!WordConvertersDictionary.ContainsKey(wordConverter))
+                    return Result.Fail<IWordConverter[]>($"cant find word converter {wordConverter}");
+            return wordConverters.Select(converter => WordConvertersDictionary[converter]()).ToArray();
         }
     }
 }

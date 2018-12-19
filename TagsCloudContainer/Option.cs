@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CommandLine;
 
-namespace CUITagCloud
+namespace TagsCloudContainer
 {
     public class Option
     {
@@ -31,12 +31,11 @@ namespace CUITagCloud
         [Option('v', "converters", Separator = ',', Default = new[] {"simple"},
             HelpText = "Преобразователи слов, которые можно применить к тексту. [simple]")]
         public IEnumerable<string> Converters { get; set; }
-        
+
         [Option('b', "boringwords", Required = false, HelpText = "Список скучных слов, которые будут отсеяны.")]
         public string BoringWordsFileName { get; set; }
-    
+
         [Option('l', "lengthsmallestword", Default = 4, HelpText = "Длина самого короткого слова в тексте")]
         public int SmallestLength { get; set; }
-        
     }
 }

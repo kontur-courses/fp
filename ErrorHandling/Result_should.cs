@@ -9,20 +9,20 @@ namespace ResultOfTask
     public class Result_Should
     {
         [Test]
-        public void Create_Ok()
-        {
-            var r = Result.Ok(42);
-            r.IsSuccess.Should().BeTrue();
-            r.GetValueOrThrow().Should().Be(42);
-        }
-
-        [Test]
         public void Create_Fail()
         {
             var r = Result.Fail<int>("123");
 
             r.IsSuccess.Should().BeFalse();
             r.Error.Should().Be("123");
+        }
+
+        [Test]
+        public void Create_Ok()
+        {
+            var r = Result.Ok(42);
+            r.IsSuccess.Should().BeTrue();
+            r.GetValueOrThrow().Should().Be(42);
         }
 
         [Test]
@@ -50,11 +50,54 @@ namespace ResultOfTask
         }
 
         [Test]
+        public void RunOnFail_WhenFail()
+        {
+            var fail = Result.Fail<int>("ошибка");
+            var errorHandler = A.Fake<Action<string>>();
+
+            var res = fail.OnFail(errorHandler);
+
+            A.CallTo(() => errorHandler(null)).WithAnyArguments().MustHaveHappened();
+            res.ShouldBeEquivalentTo(fail);
+        }
+
+        [Test]
         public void RunThen_WhenOk()
         {
             var res = Result.Ok(42)
                 .Then(n => n + 10);
             res.ShouldBeEquivalentTo(Result.Ok(52));
+        }
+
+        [Test]
+        public void RunThen_WhenOk_ComplexScenario()
+        {
+            var parsed = Result.Ok("1358571172").Then(int.Parse);
+            var res = parsed
+                .Then(i => Convert.ToString(i, 16))
+                .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
+            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+        }
+
+        [Test]
+        public void RunThen_WhenOk_Scenario()
+        {
+            var res =
+                Result.Ok("1358571172")
+                    .Then(int.Parse)
+                    .Then(i => Convert.ToString(i, 16))
+                    .Then(hex => Guid.Parse(hex + hex + hex + hex));
+            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+        }
+
+        [Test]
+        public void SkipOnFail_WhenOk()
+        {
+            var ok = Result.Ok(42);
+
+            var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
+
+            res.ShouldBeEquivalentTo(ok);
         }
 
         [Test]
@@ -73,57 +116,12 @@ namespace ResultOfTask
         [Test]
         public void Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
+            Func<int, int> continuation = n => { throw new Exception("123"); };
             var res = Result.Ok(42)
                 .Then(continuation);
             res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
         }
 
-        [Test]
-        public void RunOnFail_WhenFail()
-        {
-            var fail = Result.Fail<int>("ошибка");
-            var errorHandler = A.Fake<Action<string>>();
-
-            var res = fail.OnFail(errorHandler);
-
-            A.CallTo(() => errorHandler(null)).WithAnyArguments().MustHaveHappened();
-            res.ShouldBeEquivalentTo(fail);
-        }
-
-        [Test]
-        public void SkipOnFail_WhenOk()
-        {
-            var ok = Result.Ok(42);
-
-            var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
-
-            res.ShouldBeEquivalentTo(ok);
-        }
-
-        [Test]
-        public void RunThen_WhenOk_Scenario()
-        {
-            var res =
-                Result.Ok("1358571172")
-                    .Then(int.Parse)
-                    .Then(i => Convert.ToString(i, 16))
-                    .Then(hex => Guid.Parse(hex + hex + hex + hex));
-            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
-        }
-
-        [Test]
-        public void RunThen_WhenOk_ComplexScenario()
-        {
-            var parsed = Result.Ok("1358571172").Then(int.Parse);
-            var res = parsed
-                .Then(i => Convert.ToString(i, 16))
-                .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
-            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
-        }
 /*
         [Test]
         public void ReplaceError_IfFail()

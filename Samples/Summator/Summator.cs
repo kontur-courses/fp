@@ -9,6 +9,7 @@ namespace FP
     {
         private readonly ISumFormatter formatter;
         private readonly Func<DataSource> openDatasource;
+
         private readonly string outputFilename;
         /*
         Отрефакторите код.
@@ -33,7 +34,7 @@ namespace FP
                 var c = 0;
                 while (true)
                 {
-                    string[] record = input.NextRecord();
+                    var record = input.NextRecord();
                     if (record == null) break;
                     c++;
                     var nums = record.Select(part => Convert.ToInt32(part, 16)).ToArray();
@@ -73,7 +74,7 @@ namespace FP
         {
             return data.ReadRecords()
                 .Select(record => record.Select(f => Convert.ToInt32(f, radix))
-                .ToArray());
+                    .ToArray());
         }
     }
 

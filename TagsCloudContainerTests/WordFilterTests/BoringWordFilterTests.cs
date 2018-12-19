@@ -11,7 +11,7 @@ namespace TagsCloudContainerTests.WordFilterTests
         [Test]
         public void BoringWord_ShouldSkipBoringWords()
         {
-            var boringWords = new List<string>{"привет" , "стул"};   
+            var boringWords = new List<string> {"привет", "стул"};
             var filter = new BoringWordFilter(boringWords);
             var word = "привет";
 
