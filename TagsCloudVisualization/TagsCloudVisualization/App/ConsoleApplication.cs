@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Fclp;
+using TagsCloudVisualization.App.Cloud.Words;
 
 namespace TagsCloudVisualization
 {
@@ -13,18 +14,19 @@ namespace TagsCloudVisualization
         private IWordPalette wordPalette;
         private ISizeDefiner sizeDefiner;
         private ICloudLayouter cloudLayouter;
-        private WordCounter counter = new WordCounter();
+        private IWordCounter wordCounter;
         private Size imageSize;
         private string fileName;
 
         public ConsoleApplication(IFileReader fileReader, IVisualizer visualizer, 
-            IWordPalette wordPalette, ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter)
+            IWordPalette wordPalette, ISizeDefiner sizeDefiner, ICloudLayouter cloudLayouter, IWordCounter wordCounter)
         {
             this.fileReader = fileReader;
             this.visualizer = visualizer;
             this.wordPalette = wordPalette;
             this.sizeDefiner = sizeDefiner;
             this.cloudLayouter = cloudLayouter;
+            this.wordCounter = wordCounter;
         }
 
         public Result<FileSaveResult> GenerateImage(string[] args)
@@ -32,7 +34,7 @@ namespace TagsCloudVisualization
             return Result.Ok(ParseArguments(args))
                 .Then(ApplySettings)
                 .Then(r => fileReader.Read(r.Path))
-                .Then(counter.Count)
+                .Then(wordCounter.Count)
                 .Then(LayoutWords)
                 .Then(ValidateImageSize)
                 .Then(r => visualizer.Render(r, imageSize.Width, imageSize.Height, wordPalette))
@@ -80,7 +82,7 @@ namespace TagsCloudVisualization
             var result = ValidateFontName(arguments);
             if (result.IsSuccess)
             {
-                counter.Font = new Font(arguments.Font, 8);
+                wordCounter.Font = new Font(arguments.Font, 8);
             }
 
             return result;

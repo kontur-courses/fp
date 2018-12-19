@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Autofac;
+using TagsCloudVisualization.App.Cloud.Words;
 
 namespace TagsCloudVisualization
 {
@@ -29,6 +30,7 @@ namespace TagsCloudVisualization
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
             builder.RegisterType<MonochromePalette>().As<IWordPalette>();
+            builder.RegisterType<WordCounter>().As<IWordCounter>();
 
             return builder
                 .Build()

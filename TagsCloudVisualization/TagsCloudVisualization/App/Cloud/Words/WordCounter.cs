@@ -4,17 +4,18 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NHunspell;
+using TagsCloudVisualization.App.Cloud.Words;
 
 namespace TagsCloudVisualization
 {
     /// <summary>
     /// Счетчик слов, который отсекает слова, встречающиеся один раз
     /// </summary>
-    public class WordCounter
+    public class WordCounter : IWordCounter
     {
         public Font Font { get; set; } = new Font("Consolas", 14);
 
-        public Result<List<string>> GetStopWords()
+        private Result<List<string>> GetStopWords()
         {
             try
             {
