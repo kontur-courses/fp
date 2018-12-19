@@ -13,7 +13,7 @@ namespace TagsCloud
             this.layouter = layouter;
         }
 
-        public IReadOnlyCollection<Tag> GetLayout(ICollection<KeyValuePair<string, double>> words)
+        public Result<IReadOnlyCollection<Tag>> GetLayout(ICollection<KeyValuePair<string, double>> words)
         {
             var result = new List<Tag>();
             foreach (var keyValuePair in words)
@@ -23,8 +23,12 @@ namespace TagsCloud
                 var width = (int) Math.Round(keyValuePair.Key.Length * keyValuePair.Value);
                 var height = (int) Math.Round(keyValuePair.Value);
                 var size = new Size(width, height);
-                var tag = new Tag(keyValuePair.Key, layouter.PutNextRectangle(size));
-                result.Add(tag);
+                var nextRectangle = layouter.PutNextRectangle(size);
+                if (nextRectangle.IsSuccess)
+                {
+                    var tag = new Tag(keyValuePair.Key, nextRectangle.Value);
+                    result.Add(tag);
+                }
             }
 
             return result;

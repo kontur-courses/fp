@@ -24,11 +24,11 @@ namespace TagsCloud.Tests
         public void DeleteBoringWords_TextWithBoringWords_ListWithoutBoringWords()
         {
             var textPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Text.txt");
-            var words = new LowerWord(new WordsFromFile(textPath));
+            var words = new LowerWords(new WordsFromFile(textPath));
             var boringWords = new WordsFromFile(boringWordsPath).GetWords();
             var boringWordsFilter = new BoringWordsFilter(boringWords, words.ToLower());
             var withoutBoring = boringWordsFilter.DeleteBoringWords();
-            withoutBoring.Should().BeEquivalentTo(expectedWords);
+            withoutBoring.Value.Should().BeEquivalentTo(expectedWords);
         }
 
         [Test]
@@ -38,7 +38,8 @@ namespace TagsCloud.Tests
             var boringWords = new BoringWordsFilter(new WordsFromFile(boringWordsPath).GetWords()
                 , new ConstWordCollection(words).DeleteBoringWords());
             var withoutBoring = boringWords.DeleteBoringWords();
-            withoutBoring.Should().BeEmpty();
+            withoutBoring.Value.Should().BeEmpty();
         }
     }
 }
+

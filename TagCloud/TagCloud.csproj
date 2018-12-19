@@ -191,13 +191,15 @@
     <Compile Include="INotBoringWordsCollection.cs" />
     <Compile Include="IFrequencyCollection.cs" />
     <Compile Include="ITagCloudLayouter.cs" />
+    <Compile Include="None.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="TagCloudLayouter.cs" />
     <Compile Include="PictureCreator.cs" />
     <Compile Include="FrequencyCollection.cs" />
     <Compile Include="IGraphics.cs" />
     <Compile Include="Picture.cs" />
-    <Compile Include="LowerWord.cs" />
+    <Compile Include="LowerWords.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="TagCloudRender.cs" />
     <Compile Include="Tests\BigTest.cs" />

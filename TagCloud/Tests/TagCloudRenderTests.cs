@@ -26,7 +26,8 @@ namespace TagsCloud.Tests
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "image");
             var coordinatesAtImage = new CoordinatesAtImage(new Size(1000, 1000));
             var frequencyDictionary = new FrequencyCollection();
-            var imageSettings = new ImageSettings(new Size(800, 800), new FontFamily("Arial"), color, ImageFormat.Jpeg, path);
+            var imageSettings =
+                new ImageSettings(new Size(800, 800), new FontFamily("Arial"), color, ImageFormat.Jpeg, path);
             var picture = new Picture(imageSettings);
             var render = new TagCloudRender(layout, coordinatesAtImage, new ConstWordCollection(words),
                 frequencyDictionary, picture);
@@ -34,3 +35,4 @@ namespace TagsCloud.Tests
         }
     }
 }
+

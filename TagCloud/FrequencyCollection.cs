@@ -5,22 +5,26 @@ namespace TagsCloud
 {
     public class FrequencyCollection : IFrequencyCollection
     {
-        public ICollection<KeyValuePair<string, double>> GetFrequencyCollection(IEnumerable<string> words)
+        public Result<ICollection<KeyValuePair<string, double>>> GetFrequencyCollection(
+            Result<IEnumerable<string>> words)
         {
-            var frequencyDictionary = new Dictionary<string, int>();
-            var wordsList = words.ToList();
-            foreach (var word in wordsList)
-                if (frequencyDictionary.ContainsKey(word))
-                    frequencyDictionary[word]++;
-                else
-                    frequencyDictionary[word] = 1;
+            return words.Then(value =>
+            {
+                var frequencyDictionary = new Dictionary<string, int>();
+                var wordsList = value.ToList();
+                foreach (var word in wordsList)
+                    if (frequencyDictionary.ContainsKey(word))
+                        frequencyDictionary[word]++;
+                    else
+                        frequencyDictionary[word] = 1;
 
-            var normalizedDictionary = NormalizedDictionary(frequencyDictionary, wordsList.Count);
-            var orderedCollection = normalizedDictionary.OrderByDescending(x => x.Value);
-            return orderedCollection.ToList();
+                var normalizedDictionary = NormalizeDictionary(frequencyDictionary, wordsList.Count);
+                var orderedCollection = normalizedDictionary.OrderByDescending(pair => pair.Value);
+                return orderedCollection.ToList() as ICollection<KeyValuePair<string, double>>;
+            });
         }
 
-        private static ICollection<KeyValuePair<string, double>> NormalizedDictionary(
+        private static ICollection<KeyValuePair<string, double>> NormalizeDictionary(
             Dictionary<string, int> frequencyDictionary,
             int wordsCount)
         {

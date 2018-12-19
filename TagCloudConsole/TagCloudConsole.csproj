@@ -80,7 +80,6 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

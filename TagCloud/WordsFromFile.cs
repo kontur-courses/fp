@@ -12,9 +12,11 @@ namespace TagsCloud
             this.path = path;
         }
 
-        public IEnumerable<string> GetWords()
+        public Result<IEnumerable<string>> GetWords()
         {
-            return File.ReadAllLines(path);
+            if (File.Exists(path))
+                return File.ReadAllLines(path);
+            return Result.Fail<IEnumerable<string>>("File doesn`t exist");
         }
     }
 }

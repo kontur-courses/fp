@@ -11,7 +11,7 @@ namespace TagsCloud
 
         public PictureCreator(IReadOnlyCollection<Tag> tags, Graphics graphics, ImageSettings imageSettings)
         {
-           this.tags = tags;
+            this.tags = tags;
             this.graphics = graphics;
             this.imageSettings = imageSettings;
         }
@@ -24,7 +24,8 @@ namespace TagsCloud
                 Alignment = StringAlignment.Center,
                 LineAlignment = StringAlignment.Center
             };
-            graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, imageSettings.ImageSize.Width, imageSettings.ImageSize.Height));
+            graphics.FillRectangle(new SolidBrush(Color.White),
+                new Rectangle(0, 0, imageSettings.ImageSize.Width, imageSettings.ImageSize.Height));
             foreach (var tag in tags)
                 using (var brush = new SolidBrush(imageSettings.Color))
                 {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 namespace TagsCloud
@@ -17,10 +16,10 @@ namespace TagsCloud
 
         public Point Center { get; }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (SizeHaveZeroOrNegativeValue(rectangleSize))
-                throw new ArgumentException("Size cannot be zero or negative");
+                return Result.Fail<Rectangle>("Size cannot be zero or negative");
             var rectangle = GetNextRectangle(rectangleSize);
             allRectangles.Add(rectangle);
             return rectangle;

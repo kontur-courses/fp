@@ -14,15 +14,15 @@ namespace TagsCloud
             this.imageSize = imageSize;
         }
 
-        public IReadOnlyCollection<Tag> GetCoordinates(IReadOnlyCollection<Tag> words)
+        public Result<IReadOnlyCollection<Tag>> GetCoordinates(IReadOnlyCollection<Tag> words)
         {
             if (words.Count == 0)
-                return words;
+                return Result.Fail<IReadOnlyCollection<Tag>>("Empty collection");
             var boundingCoordinate = new BoundingCoordinate(words.Select(x => x.WordBox).ToList());
             return GetWordsCoordinateAtImage(words, boundingCoordinate);
         }
 
-        private IReadOnlyCollection<Tag> GetWordsCoordinateAtImage(IReadOnlyCollection<Tag> words,
+        private Result<IReadOnlyCollection<Tag>> GetWordsCoordinateAtImage(IReadOnlyCollection<Tag> words,
             BoundingCoordinate bounds)
         {
             var coefficientWidth = imageSize.Width * 1.0 / bounds.SizeX;

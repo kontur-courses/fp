@@ -24,8 +24,9 @@ namespace TagsCloud.Tests
         public void GetWords_DifferentCase_AllWordsLowerCase()
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "DifferentCases.txt");
-            var words = new LowerWord(new WordsFromFile(path)).ToLower();
-            words.Should().BeEquivalentTo(expectedWords);
+            var words = new LowerWords(new WordsFromFile(path)).ToLower();
+            words.Value.Should().BeEquivalentTo(expectedWords);
         }
     }
 }
+

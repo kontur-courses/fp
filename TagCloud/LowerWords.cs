@@ -3,19 +3,19 @@ using System.Linq;
 
 namespace TagsCloud
 {
-    public class LowerWord
+    public class LowerWords
     {
         private readonly IWordCollection words;
 
-        public LowerWord(IWordCollection words)
+        public LowerWords(IWordCollection words)
         {
             this.words = words;
         }
 
-        public IEnumerable<string> ToLower()
+        public Result<IEnumerable<string>> ToLower()
         {
             var enumerable = words.GetWords();
-            return enumerable.Select(word => word.ToLowerInvariant());
+            return enumerable.Then(x => x.Select(word => word.ToLowerInvariant()));
         }
     }
 }

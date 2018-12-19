@@ -12,7 +12,7 @@ namespace TagsCloud.Tests
         {
             var textPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Text.docx");
             var parser = new WordsFromMicrosoftWord(textPath);
-            var lowerParser = new LowerWord(parser);
+            var lowerParser = new LowerWords(parser);
             var boringWordsFromFile =
                 new WordsFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "BoringWords.txt"));
             var boringParser = new BoringWordsFilter(boringWordsFromFile.GetWords(), lowerParser.ToLower());
@@ -23,17 +23,18 @@ namespace TagsCloud.Tests
             var step = 0.01;
             var layout =
                 new TagCloudLayouter(new CircularCloudLayouter(center, new CircularSpiral(center, width, step)));
-            var wordWithCoordinate = layout.GetLayout(frequencyNormalizedCollection);
+            var wordWithCoordinate = layout.GetLayout(frequencyNormalizedCollection.Value);
             var color = Color.Black;
             var imageSize = new Size(1000, 1000);
             var coordinatesAtImage = new CoordinatesAtImage(imageSize);
-            var coordinates = coordinatesAtImage.GetCoordinates(wordWithCoordinate);
+            var coordinates = coordinatesAtImage.GetCoordinates(wordWithCoordinate.Value);
             var fontFamily = new FontFamily("Consolas");
             var imageFormat = ImageFormat.Png;
             var imageName = Path.Combine(TestContext.CurrentContext.TestDirectory, "BigCloud.png");
-            var imageSettings = new ImageSettings(imageSize,fontFamily,color,imageFormat,imageName);
+            var imageSettings = new ImageSettings(imageSize, fontFamily, color, imageFormat, imageName);
             var graphics = new Picture(imageSettings);
-            graphics.Save(coordinates);
+            graphics.Save(coordinates.Value);
         }
     }
 }
+

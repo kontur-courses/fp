@@ -19,12 +19,12 @@ namespace TagsCloud
             this.graphics = graphics;
         }
 
-        public void Render()
+        public Result<None> Render()
         {
-            var frequencyDictionary = collection.GetFrequencyCollection(words.DeleteBoringWords());
-            var wordsToDraw = layout.GetLayout(frequencyDictionary);
-            var coordinates = coordinatesAtImage.GetCoordinates(wordsToDraw);
-            graphics.Save(coordinates);
+            return collection.GetFrequencyCollection(words.DeleteBoringWords())
+                .Then(frequencyDictionary => layout.GetLayout(frequencyDictionary)
+                    .Then(wordsToDraw => coordinatesAtImage.GetCoordinates(wordsToDraw))
+                    .Then(coordinates => graphics.Save(coordinates)));
         }
     }
 }

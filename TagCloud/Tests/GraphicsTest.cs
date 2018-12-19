@@ -26,13 +26,14 @@ namespace TagsCloud.Tests
             var color = Color.Black;
             var imageSize = new Size(1000, 1000);
             var coordinatesAtImage = new CoordinatesAtImage(imageSize);
-            var coordinates = coordinatesAtImage.GetCoordinates(wordWithCoordinate);
+            var coordinates = coordinatesAtImage.GetCoordinates(wordWithCoordinate.Value);
             var fontFamily = new FontFamily("Consolas");
             var imageFormat = ImageFormat.Png;
             var imageName = Path.Combine(TestContext.CurrentContext.TestDirectory, "cloud.png");
             var imageSettings = new ImageSettings(imageSize, fontFamily, color, imageFormat, imageName);
             var graphics = new Picture(imageSettings);
-            graphics.Save(coordinates);
+            graphics.Save(coordinates.Value);
         }
     }
 }
+

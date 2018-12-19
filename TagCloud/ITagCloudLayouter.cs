@@ -4,6 +4,6 @@ namespace TagsCloud
 {
     public interface ITagCloudLayouter
     {
-        IReadOnlyCollection<Tag> GetLayout(ICollection<KeyValuePair<string, double>> words);
+        Result<IReadOnlyCollection<Tag>> GetLayout(ICollection<KeyValuePair<string, double>> words);
     }
 }

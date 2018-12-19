@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using Autofac;
 using CommandLine;
 using TagsCloud;
@@ -20,29 +19,15 @@ namespace TagCloudConsole
 
         private static void Run(Options options)
         {
-            if (!File.Exists(options.BoringWordsPath))
-            {
-                Console.WriteLine($"Incorrect input: {options.BoringWordsPath}");
-                return;
-            }
-
-            if (!File.Exists(options.TextPath))
-            {
-                Console.WriteLine($"Incorrect input: {options.TextPath}");
-                return;
-            }
-
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterType<TagCloudLayouter>().As<ITagCloudLayouter>();
             containerBuilder.RegisterType<TagCloudRender>().AsSelf();
+            var boringWords = new LowerWords(new WordsFromFile(options.BoringWordsPath)).ToLower();
+            var words = new LowerWords(GetWordsFromFile(options)).ToLower();
             containerBuilder.RegisterInstance(
                 new BoringWordsFilter(
-                    new LowerWord(
-                        new WordsFromFile(options.BoringWordsPath)
-                    ).ToLower(),
-                    new LowerWord(
-                        GetWordsFromFile(options)
-                    ).ToLower()
+                    boringWords,
+                    words
                 )
             ).As<IBoringWordsCollection>();
             containerBuilder.RegisterInstance(
@@ -59,18 +44,48 @@ namespace TagCloudConsole
                     new CircularCloudLayouter(
                         center, new CircularSpiral(center, width, step)))
                 .As<ICloudLayouter>();
-            var imageSettings = new ImageSettings(new Size(options.Height, options.Width),
-                new FontFamily(options.FontFamily),
-                Color.FromName(options.Color),
-                GetImageFormat(options.Format),
-                options.Name);
+            var imageSettings = CheckImageSettings(options);
             containerBuilder.RegisterInstance(new Picture(imageSettings)).As<IGraphics>();
 
             using (var container = containerBuilder.Build())
             {
                 var render = container.Resolve<TagCloudRender>();
-                render.Render();
+                render.Render().OnFail(Console.WriteLine);
             }
+        }
+
+        private static Result<ImageSettings> CheckImageSettings(Options options)
+        {
+            var font = new Font(options.FontFamily, 20);
+            if (options.FontFamily != font.Name)
+                return Result.Fail<ImageSettings>("Incorrect font family");
+
+            if (options.Width <= 0)
+                return Result.Fail<ImageSettings>("Incorrect width: was zero or negative");
+
+            if (options.Height <= 0)
+                return Result.Fail<ImageSettings>("Incorrect height: was zero or negative");
+
+            return GetColor(options.Color).Then(color =>
+            {
+                return GetImageFormat(options.Format)
+                    .Then(imageFormat =>
+                    {
+                        return new ImageSettings(new Size(options.Height, options.Width),
+                            new FontFamily(options.FontFamily),
+                            color,
+                            imageFormat,
+                            options.Name);
+                    });
+            });
+        }
+
+        private static Result<Color> GetColor(string colorName)
+        {
+            var color = Color.FromName(colorName);
+            if (color.IsKnownColor)
+                return color;
+            return Result.Fail<Color>("Incorrect color");
         }
 
         private static IWordCollection GetWordsFromFile(Options options)
@@ -82,15 +97,10 @@ namespace TagCloudConsole
 
         private static void HandleErrors(IEnumerable<Error> errors)
         {
-            Console.WriteLine(
-                string.Join(
-                    Environment.NewLine,
-                    errors
-                )
-            );
+            Console.WriteLine(string.Join(Environment.NewLine, errors));
         }
 
-        private static ImageFormat GetImageFormat(string format)
+        private static Result<ImageFormat> GetImageFormat(string format)
         {
             var lowerFormat = format.ToLower();
             switch (lowerFormat)
@@ -103,7 +113,8 @@ namespace TagCloudConsole
                     return ImageFormat.Jpeg;
             }
 
-            throw new ArgumentException($"Incorrect image format. Expected one of: png, jpeg, bmp, but was {format}");
+            return Result.Fail<ImageFormat>(
+                $"Incorrect image format. Expected one of: png, jpeg, bmp, but was {format}");
         }
     }
 }

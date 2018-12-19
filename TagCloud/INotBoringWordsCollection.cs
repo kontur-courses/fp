@@ -4,6 +4,6 @@ namespace TagsCloud
 {
     public interface IBoringWordsCollection
     {
-        IEnumerable<string> DeleteBoringWords();
+        Result<IEnumerable<string>> DeleteBoringWords();
     }
 }

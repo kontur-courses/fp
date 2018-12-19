@@ -1,27 +1,30 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace TagsCloud
 {
     public class Picture : IGraphics
     {
-        private readonly ImageSettings imageSettings;
+        private readonly Result<ImageSettings> imageSettings;
 
-        public Picture(ImageSettings imageSettings)
+        public Picture(Result<ImageSettings> imageSettings)
         {
             this.imageSettings = imageSettings;
         }
 
-        public void Save(IReadOnlyCollection<Tag> words)
+        public Result<None> Save(IReadOnlyCollection<Tag> words)
         {
-            using (var map = new Bitmap(imageSettings.ImageSize.Width, imageSettings.ImageSize.Height))
-            using (var graphics = Graphics.FromImage(map))
-            {
-                var image = new PictureCreator( words, graphics, imageSettings);
-                image.DrawPicture();
-                map.Save($"{imageSettings.ImageName}", imageSettings.ImageFormat);
-            }
+            return imageSettings
+                .Then(settings =>
+                {
+                    using (var map = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height))
+                    using (var graphics = Graphics.FromImage(map))
+                    {
+                        var image = new PictureCreator(words, graphics, settings);
+                        image.DrawPicture();
+                        map.Save($"{settings.ImageName}", settings.ImageFormat);
+                    }
+                });
         }
     }
 }

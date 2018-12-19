@@ -4,6 +4,6 @@ namespace TagsCloud
 {
     public interface IGraphics
     {
-        void Save(IReadOnlyCollection<Tag> words);
+        Result<None> Save(IReadOnlyCollection<Tag> words);
     }
 }

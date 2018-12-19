@@ -4,6 +4,6 @@ namespace TagsCloud
 {
     public interface IFrequencyCollection
     {
-        ICollection<KeyValuePair<string, double>> GetFrequencyCollection(IEnumerable<string> words);
+        Result<ICollection<KeyValuePair<string, double>>> GetFrequencyCollection(Result<IEnumerable<string>> words);
     }
 }

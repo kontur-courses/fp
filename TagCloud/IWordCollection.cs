@@ -4,6 +4,6 @@ namespace TagsCloud
 {
     public interface IWordCollection
     {
-        IEnumerable<string> GetWords();
+        Result<IEnumerable<string>> GetWords();
     }
 }

@@ -11,7 +11,7 @@ namespace TagsCloud.Tests
             this.words = words;
         }
 
-        public IEnumerable<string> DeleteBoringWords()
+        public Result<IEnumerable<string>> DeleteBoringWords()
         {
             return words;
         }

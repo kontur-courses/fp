@@ -21,7 +21,7 @@ namespace TagsCloud.Tests
                 "automobile"
             };
 
-            var actualDictionary = frequencyDictionary.GetFrequencyCollection(words)
+            var actualDictionary = frequencyDictionary.GetFrequencyCollection(words).Value
                 .ToDictionary(word => word.Key, word => word.Value);
             actualDictionary["car"].Should().BeInRange(32, 34);
             actualDictionary["auto"].Should().BeInRange(49, 51);
@@ -29,3 +29,4 @@ namespace TagsCloud.Tests
         }
     }
 }
+

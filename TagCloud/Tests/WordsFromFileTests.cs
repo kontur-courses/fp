@@ -27,7 +27,7 @@ namespace TagsCloud.Tests
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Empty.txt");
             var wordsFromFile = new WordsFromFile(path);
             var words = wordsFromFile.GetWords();
-            words.Should().BeEmpty();
+            words.Value.Should().BeEmpty();
         }
 
         [Test]
@@ -40,3 +40,4 @@ namespace TagsCloud.Tests
         }
     }
 }
+

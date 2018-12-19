@@ -1,17 +1,10 @@
 ﻿using System;
 
-namespace TagCloudConsole
+namespace TagsCloud
 {
-    public class None
-    {
-        private None()
-        {
-        }
-    }
-
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
