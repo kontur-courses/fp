@@ -21,6 +21,7 @@ namespace TagsCloudVisualizationTests
         private IVisualizer visualizer;
         private IWordPalette wordPalette;
         private IImageSaver imageSaver;
+        private IWordCounter wordCounter;
 
         [SetUp]
         public void SetUp()
@@ -40,15 +41,19 @@ namespace TagsCloudVisualizationTests
             wordPalette = A.Fake<IWordPalette>();
             A.CallTo(() => wordPalette.ColorWords(graphicWords)).WithAnyArguments();
             visualizer = A.Fake<IVisualizer>();
-            A.CallTo(() => visualizer.Render(graphicWords, 1000, 1000, wordPalette)).WithAnyArguments()
+            A.CallTo(() => visualizer.Render(graphicWords, 1000, 1000, wordPalette))
+                .WithAnyArguments()
                 .Returns(new Bitmap(1000, 1000));
             var sizeDefiner = A.Fake<ISizeDefiner>();
             var cloudLayouter = A.Fake<ICloudLayouter>();
-            A.CallTo(() => cloudLayouter.Process(graphicWords, sizeDefiner, new Point(500, 500))).WithAnyArguments();
-            var wordCounter = A.Fake<IWordCounter>();
-            A.CallTo(() => wordCounter.Count(words)).WithAnyArguments().Returns(new List<GraphicWord>() {new GraphicWord("aaa")});
+            A.CallTo(() => cloudLayouter.
+                Process(graphicWords, sizeDefiner, new Point(500, 500))).WithAnyArguments();
+            wordCounter = A.Fake<IWordCounter>();
+            A.CallTo(() => wordCounter.Count(words)).WithAnyArguments()
+                .Returns(new List<GraphicWord> {new GraphicWord("aaa")});
             imageSaver = A.Fake<IImageSaver>();
-            A.CallTo(() => imageSaver.WriteToFile("asd", new Bitmap(10, 10))).WithAnyArguments().Returns(Result.Ok(new FileSaveResult()));
+            A.CallTo(() => imageSaver.WriteToFile("asd", new Bitmap(10, 10)))
+                .WithAnyArguments().Returns(Result.Ok(new FileSaveResult()));
 
             app = new ConsoleApplication(fileReader, visualizer, wordPalette, sizeDefiner, cloudLayouter, wordCounter, imageSaver);
         }
@@ -104,6 +109,15 @@ namespace TagsCloudVisualizationTests
             A.CallTo(() => imageSaver.WriteToFile("output.png", new Bitmap(10, 10))).WithAnyArguments()
                 .Returns(Result.Fail<FileSaveResult>("unable to save image"));
             var result = app.GenerateImage(new[] { "--path", "test.txt" });
+            Assert.IsFalse(result.IsSuccess);
+        }
+
+        [Test]
+        public void App_Fails_WhenCanNotCountWords()
+        {
+            A.CallTo(() => wordCounter.Count(String.Empty)).WithAnyArguments()
+                .Returns(Result.Fail<List<GraphicWord>>("counting error"));
+            var result = app.GenerateImage(new[] {"--path", "test.txt"});
             Assert.IsFalse(result.IsSuccess);
         }
     }
