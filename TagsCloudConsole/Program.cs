@@ -24,7 +24,7 @@ namespace TagsCloudConsole
                     .Then(container => container.Resolve<App>())
                     .Then(app => app.Run(arguments.ImageFileName, arguments.WordsFileName, arguments.Mode))
                 )
-                .OnFail(e => Console.WriteLine(e));
+                .OnFail(Console.WriteLine);
         }
 
         private static IContainer BuildContainer(CustomArgs arguments)

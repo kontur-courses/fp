@@ -15,38 +15,59 @@ namespace TagsCloudConsole
         public readonly string ImageFileName;
         public readonly string FontName;
 
-        public CustomArgs(CmdOptions options)
+        public CustomArgs(
+            string wordsFileName, 
+            string mode,
+            Size imageSize,
+            Color backgroundColor,
+            Color textColor,
+            string imageFileName,
+            string fontName)
         {
-            WordsFileName = options.WordsFileName;
-            Mode = options.Mode;
-            ImageSize = ParseImageSize(options.RawImageSize);
-            BackgroundColor = ParseKnownColor(options.BackgroundColorName);
-            TextColor = ParseKnownColor(options.TextColorName);
-            ImageFileName = options.ImageFileName;
-            FontName = options.FontName;
+            WordsFileName = wordsFileName;
+            Mode = mode;
+            ImageSize = imageSize;
+            BackgroundColor = backgroundColor;
+            TextColor = textColor;
+            ImageFileName = imageFileName;
+            FontName = fontName;
+        }
+    }
+
+    static class CustomArgsParser
+    {
+        public static Result<CustomArgs> ParseFromOptions(CmdOptions options)
+        {
+            return ParseImageSize(options.RawImageSize)
+                .Then(imageSize => ParseKnownColor(options.BackgroundColorName)
+                    .Then(backgroundColor => ParseKnownColor(options.TextColorName)
+                        .Then(textColor => 
+                            new CustomArgs(
+                                options.WordsFileName, options.Mode,
+                                imageSize, backgroundColor,
+                                textColor, options.ImageFileName, options.FontName))));
         }
 
-        private Color ParseKnownColor(string colorName)
+        private static Result<Color> ParseKnownColor(string colorName)
         {
             var color = Color.FromName(colorName);
             if (color.IsKnownColor)
                 return color;
-            throw new ArgumentException("Color is invalid");
+            return Result.Fail<Color>("Color is invalid");
         }
 
-        private Size ParseImageSize(string imageSizeString)
+        private static Result<Size> ParseImageSize(string imageSizeString)
         {
             var displayParts = imageSizeString.Split('x');
             if (displayParts.Length != 2)
-                throw new ArgumentException("Image size has invalid format");
+                return Result.Fail<Size>("Image size has invalid format");
 
-            int height, widht;
-            var leftParsed = int.TryParse(displayParts[0], out height);
-            var rightParsed = int.TryParse(displayParts[1], out widht);
+            var leftParsed = int.TryParse(displayParts[0], out var height);
+            var rightParsed = int.TryParse(displayParts[1], out var width);
 
             if (!(leftParsed && rightParsed))
-                throw new ArgumentException("Image size has invalid format");
-            return new Size(height, widht);
+                return Result.Fail<Size>("Image size has invalid format");
+            return new Size(height, width);
         }
     }
 
@@ -81,7 +102,7 @@ namespace TagsCloudConsole
             return Parser.Default
                 .ParseArguments<CmdOptions>(args)
                 .ToResult()
-                .Then(cmdOpts => new CustomArgs(cmdOpts));
+                .Then(CustomArgsParser.ParseFromOptions);
         }
     }
 }
