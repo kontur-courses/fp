@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Autofac;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagsCloudVisualization;
+using TagsCloudVisualization.InterfacesForSettings;
+using TagsCloudVisualization.TagsCloud;
 using TagsCloudVisualization.TagsCloud.CircularCloud;
 using TagsCloudVisualization.TagsCloud.CloudConstruction;
 
@@ -17,18 +20,31 @@ namespace СircularCloudTesting
         [TestFixture]
         private class Constructor
         {
+            private IContainer container;
+
+            [SetUp]
+            public void Init()
+            {
+                container = new DependencyBuilder().CreateContainer().Build();
+            }
             [TestCase(45, 100, TestName = "Correct center point")]
             public void Should_NotThrowArgumentException_When(int x, int y)
             {
                 var center = new Point(x, y);
-                var cloud = new CircularCloudLayouter(center, new Size(2000, 2000));
+                var tagsCloudSettings = container.Resolve<ITagsCloudSettings>();
+                tagsCloudSettings.ImageSettings.Center = center;
+                tagsCloudSettings.ImageSettings.ImageSize = new Size(2000, 2000);
+                var cloud = new CircularCloudLayouter(tagsCloudSettings);
                 Assert.AreEqual(new Point(x, y), cloud.Center);
             }
 
             [Test]
             public void Should_InitializeRectangles()
             {
-                var cloud = new CircularCloudLayouter(new Point(0, 0), new Size(2000, 2000));
+                var tagsCloudSettings = container.Resolve<ITagsCloudSettings>();
+                tagsCloudSettings.ImageSettings.Center = new Point(0, 0);
+                tagsCloudSettings.ImageSettings.ImageSize = new Size(2000, 2000);
+                var cloud = new CircularCloudLayouter(tagsCloudSettings);
                 Assert.AreEqual(new List<Rectangle>(), cloud.Rectangles);
             }
         }
@@ -43,9 +59,13 @@ namespace СircularCloudTesting
             [SetUp]
             public void Init()
             {
-                CircularCloudLayouter.IsCompressedCloud = true;
                 stepAngle = PointGenerator.StepAngle;
-                cloud = new CircularCloudLayouter(new Point(1000, 1000), new Size(2000, 2000));
+                var container = new DependencyBuilder().CreateContainer().Build();
+                var tagsCloudSettings = container.Resolve<ITagsCloudSettings>();
+                tagsCloudSettings.ImageSettings.Center = new Point(1000, 1000);
+                tagsCloudSettings.ImageSettings.ImageSize = new Size(2000, 2000);
+                tagsCloudSettings.TypeTagsCloud = TypeTagsCloud.CompressedTagsCloud;
+                cloud = new CircularCloudLayouter(tagsCloudSettings);
 
                 cloudVisualizer = new CircularCloudTestVisualizer();
             }

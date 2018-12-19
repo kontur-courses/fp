@@ -7,5 +7,6 @@ namespace TagsCloudVisualization.InterfacesForSettings
         IWordsSettings WordsSettings { get; set; }
         Palette Palette { get; set; }
         IImageSettings ImageSettings { get; set; }
+        TypeTagsCloud TypeTagsCloud { get; set; }
     }
 }

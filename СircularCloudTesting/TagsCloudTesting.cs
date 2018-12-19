@@ -48,7 +48,7 @@ namespace СircularCloudTesting
         [Test]
         public void TagsCloud_Should_CorrectlyDisplayWordsWithCompression()
         {
-            CircularCloudLayouter.IsCompressedCloud = true;
+            container.Resolve<ITagsCloudSettings>().TypeTagsCloud = TypeTagsCloud.CompressedTagsCloud;
             var image = visualizer.DrawCircularCloud();
             var result = image.GetValueOrThrow().WithBitmapData(bmpData => bmpData.GetColorValues());
             var expectedImage = new Bitmap($"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/CompressedTagCloud.png");
@@ -60,7 +60,7 @@ namespace СircularCloudTesting
         [Test]
         public void TagsCloud_Should_CorrectlyDisplayWordsWithoutCompression()
         {
-            CircularCloudLayouter.IsCompressedCloud = false;
+            container.Resolve<ITagsCloudSettings>().TypeTagsCloud = TypeTagsCloud.TagsCloud;
             var image = visualizer.DrawCircularCloud();
             var result = image.GetValueOrThrow().WithBitmapData(bmpData => bmpData.GetColorValues());
             var expectedImage = new Bitmap($"{AppDomain.CurrentDomain.BaseDirectory}/TestingFiles/NormalTagCloud.png");

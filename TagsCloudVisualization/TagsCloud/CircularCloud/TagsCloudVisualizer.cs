@@ -18,7 +18,7 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
             widthStretchFactor = 1.2;
             this.cloudSettings = cloudSettings;
             circularCloudLayouter =
-                new CircularCloudLayouter(cloudSettings.ImageSettings.Center, cloudSettings.ImageSettings.ImageSize);
+                new CircularCloudLayouter(cloudSettings);
 
         }
         public Result<Bitmap> DrawCircularCloud()
@@ -56,7 +56,7 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
         {
             var imageSettings = cloudSettings.ImageSettings;
             if (circularCloudLayouter.Rectangles.Count != 0)
-                circularCloudLayouter.RefreshCircularCloudLayouter(imageSettings.Center, imageSettings.ImageSize);
+                circularCloudLayouter.RefreshCircularCloudLayouter(cloudSettings);
 
             var tuples = frequenciesByWords.OrderByDescending(pair => pair.Key.Length)
                 .OrderByDescending(pair => pair.Value)

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using TagsCloudVisualization.InterfacesForSettings;
 using TagsCloudVisualization.TagsCloud.CloudConstruction;
 
 namespace TagsCloudVisualization.TagsCloud.CircularCloud
@@ -12,12 +12,22 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
         public List<Rectangle> Rectangles { get; set; }
         public CloudCompactor CloudCompactor { get; set; }
         public RectangleGenerator RectangleGenerator { get; set; }
-        public static bool IsCompressedCloud { get; set; }
+        private readonly ITagsCloudSettings tagsCloudSettings;
 
-        public CircularCloudLayouter(Point center, Size windowSize)
+        public CircularCloudLayouter(ITagsCloudSettings tagsCloudSettings)
         {
-            Center = center;
-            WindowSize = windowSize;
+            this.tagsCloudSettings = tagsCloudSettings;
+            Center = tagsCloudSettings.ImageSettings.Center;
+            WindowSize = tagsCloudSettings.ImageSettings.ImageSize;
+            Rectangles = new List<Rectangle>();
+            CloudCompactor = new CloudCompactor(this);
+            RectangleGenerator = new RectangleGenerator(this);
+        }
+
+        public CircularCloudLayouter()
+        {
+            Center = tagsCloudSettings.ImageSettings.Center;
+            WindowSize = tagsCloudSettings.ImageSettings.ImageSize;
             Rectangles = new List<Rectangle>();
             CloudCompactor = new CloudCompactor(this);
             RectangleGenerator = new RectangleGenerator(this);
@@ -26,7 +36,7 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
         public Rectangle PutNextRectangle(Size size)
         {
             var resultRect = RectangleGenerator.GetNextRectangle(size);
-            if (IsCompressedCloud)
+            if (tagsCloudSettings.TypeTagsCloud == TypeTagsCloud.CompressedTagsCloud)
                 resultRect = CloudCompactor.ShiftRectangleToTheNearest(resultRect);
             Rectangles.Add(resultRect);
             return resultRect;
@@ -39,10 +49,10 @@ namespace TagsCloudVisualization.TagsCloud.CircularCloud
                    rectangle.Y + rectangle.Height > WindowSize.Height;
         }
 
-        public void RefreshCircularCloudLayouter(Point center, Size windowSize)
+        public void RefreshCircularCloudLayouter(ITagsCloudSettings cloudSettings)
         {
-            Center = center;
-            WindowSize = windowSize;
+            Center = cloudSettings.ImageSettings.Center;
+            WindowSize = cloudSettings.ImageSettings.ImageSize;
             Rectangles = new List<Rectangle>();
             RectangleGenerator = new RectangleGenerator(this);
 

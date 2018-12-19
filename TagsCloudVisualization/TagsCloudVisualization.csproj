@@ -121,6 +121,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TagsCloud\CloudConstruction\CloudCompactor.cs" />
     <Compile Include="TagsCloud\CloudConstruction\RectangleGenerator.cs" />
+    <Compile Include="TagsCloud\TypeTagsCloud.cs" />
     <Compile Include="WordProcessing\FileHandlers\DefaultFileHandler.cs" />
     <Compile Include="WordProcessing\FileHandlers\DocFileHandler.cs" />
     <Compile Include="WordProcessing\FileHandlers\TxtFileHandler.cs" />
