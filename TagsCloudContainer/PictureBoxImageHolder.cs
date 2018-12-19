@@ -1,7 +1,7 @@
-﻿using ResultOf;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer
