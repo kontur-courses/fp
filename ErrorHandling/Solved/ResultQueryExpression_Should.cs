@@ -2,7 +2,7 @@ using System;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultOf
+namespace TagsCloudContainer
 {
     [TestFixture]
     public class ResultQueryExpression_Should

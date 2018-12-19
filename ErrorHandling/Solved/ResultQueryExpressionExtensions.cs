@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace TagsCloudContainer
 {
     public static class ResultQueryExpressionExtensions
     {
