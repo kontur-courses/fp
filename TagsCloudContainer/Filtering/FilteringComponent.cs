@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using ResultOf;
 
 namespace TagsCloudContainer.Filtering
 {
@@ -12,14 +14,14 @@ namespace TagsCloudContainer.Filtering
             this.filters = filters.ToList();
         }
 
-        public List<string> FilterWords(List<string> words)
+        public Result<ReadOnlyCollection<string>> FilterWords(ReadOnlyCollection<string> words)
         {
             foreach (var filter in filters)
             {
-                words = filter.Filter(words);
+                words = filter.Filter(words).GetValueOrThrow();
             }
 
-            return words;
+            return Result.Ok(new ReadOnlyCollection<string>(words));
         }
 
         public void AddFilter(IWordsFilter wordsFilter)

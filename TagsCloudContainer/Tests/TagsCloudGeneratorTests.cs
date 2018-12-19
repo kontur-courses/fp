@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using NUnit.Framework;
@@ -39,7 +40,7 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void CreateCloud_CreatesWordsSizesProportionalToFrequency()
         {
-            var words = new List<string>() {"aaa", "aaa", "aaa", "bb", "bb", "c"};
+            var words = new ReadOnlyCollection<string>(new List<string>() {"aaa", "aaa", "aaa", "bb", "bb", "c"});
             var cloud = generator.CreateCloud(words, minLetterSize);
             var wordsSizes = new Dictionary<string, Size>();
             foreach (var tCWord in cloud.GetValueOrThrow().AddedWords)
@@ -64,7 +65,8 @@ namespace TagsCloudContainer.Tests
                 words.Add(RandomString(4));
             }
 
-            var cloud = generator.CreateCloud(words, minLetterSize);
+
+            var cloud = generator.CreateCloud(new ReadOnlyCollection<string>(words), minLetterSize);
             var totalSquare = cloud.GetValueOrThrow().AddedWords.Sum(x => x.Rectangle.Height * x.Rectangle.Width);
             foreach (var TCWord in cloud.GetValueOrThrow().AddedWords)
             {

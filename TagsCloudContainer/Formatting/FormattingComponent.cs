@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TagsCloudContainer.Formatting
@@ -13,7 +14,7 @@ namespace TagsCloudContainer.Formatting
         }
 
 
-        public List<string> FormatWords(List<string> words)
+        public ReadOnlyCollection<string> FormatWords(ReadOnlyCollection<string> words)
         {
             foreach (var formatter in formatters)
             {

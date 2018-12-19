@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +12,7 @@ namespace TagsCloudContainer.Formatting
 {
     public class ToInitFormFormatter : IWordsFormatter
     {
-        public List<string> Format(IEnumerable<string> words)
+        public ReadOnlyCollection<string> Format(IEnumerable<string> words)
         {
             var result = new List<string>();
 
@@ -35,7 +36,7 @@ namespace TagsCloudContainer.Formatting
             }
 
 
-            return result;
+            return new ReadOnlyCollection<string>(result);
         }
     }
 }

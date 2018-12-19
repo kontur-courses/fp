@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using CommandLine;
@@ -21,9 +22,9 @@ namespace TagsCloudContainer.TagsCloudGenerating
             this.wordsSizer = wordsSizer;
         }
 
-        public Result<ITagsCloud> CreateCloud(List<string> words, Size minLetterSize)
+        public Result<ITagsCloud> CreateCloud(ReadOnlyCollection<string> words, Size minLetterSize)
         {
-            var wordsSizes = wordsSizer.GetWordsSizes(words, minLetterSize);
+            var wordsSizes = wordsSizer.GetWordsSizes(words.ToList(), minLetterSize);
 
             foreach (var pair in wordsSizes)
             {

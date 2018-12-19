@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace TagsCloudContainer.Formatting
 {
     public interface IWordsFormatter
     {
-        List<string> Format(IEnumerable<string> words);
+        ReadOnlyCollection<string> Format(IEnumerable<string> words);
     }
 }

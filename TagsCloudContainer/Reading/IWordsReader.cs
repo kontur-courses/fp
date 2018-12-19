@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ResultOf;
 
 namespace TagsCloudContainer.Reading
 {
     public interface IWordsReader
     {
-        Result<List<string>> ReadWords(string inputPath);
+        Result<ReadOnlyCollection<string>> ReadWords(string inputPath);
     }
 }
