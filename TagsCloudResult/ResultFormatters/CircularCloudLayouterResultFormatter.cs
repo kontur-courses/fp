@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagsCloudResult.DataProviders;
+using TagsCloudResult.Loggers;
 using TagsCloudResult.Settings;
 
 namespace TagsCloudResult.ResultFormatters
@@ -9,17 +10,20 @@ namespace TagsCloudResult.ResultFormatters
         private readonly IDataProvider dataProvider;
         private readonly ICloudSettings cloudSettings;
         private readonly IFontSettings fontSettings;
+        private readonly ILogger logger;
 
         public CircularCloudLayouterResultFormatter(IDataProvider dataProvider, ICloudSettings cloudSettings,
-            IFontSettings fontSettings)
+            IFontSettings fontSettings, ILogger logger)
         {
             this.dataProvider = dataProvider;
             this.cloudSettings = cloudSettings;
             this.fontSettings = fontSettings;
+            this.logger = logger;
         }
         public Result<None> GenerateResult(string outputFileName)
         {
-            return Result.OfAction(() => PrepareResult(outputFileName));
+            return Result.OfAction(() => PrepareResult(outputFileName))
+                .OnFail(logger.Log);
         }
 
         private void PrepareResult(string outputFileName)
