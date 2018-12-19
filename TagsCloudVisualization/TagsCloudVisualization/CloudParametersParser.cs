@@ -30,7 +30,8 @@ namespace TagsCloudVisualization
                         GetColor(o.Color),
                         o.FontName,
                         GetPointGenerator(o.PointGenerator),
-                        GetImageFormat(o.OutFormat)));
+                        GetImageFormat(o.OutFormat)))
+                .RefineError("When CloudParametersParser.Parse options to CloudParameters");
         }
 
         public Result<Options> ValidatePointGeneratorIsSupported(Options options)

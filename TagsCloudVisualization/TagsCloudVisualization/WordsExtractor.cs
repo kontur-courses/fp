@@ -26,7 +26,8 @@ namespace TagsCloudVisualization
             return ValidateFormatIsSupported(path)
                 .Then(t => GetTotalText(path))
                 .Then(ReplaceSpecialCharacters)
-                .Then(DeleteStopWords);
+                .Then(DeleteStopWords)
+                .RefineError("When WordsExtractor.Extract words from file");
         }
 
         private Result<List<string>> DeleteStopWords(string text)
