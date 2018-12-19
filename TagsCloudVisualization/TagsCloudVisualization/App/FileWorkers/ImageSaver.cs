@@ -5,16 +5,16 @@ namespace TagsCloudVisualization
 {
     public class ImageSaver : IImageSaver
     {
-        public Result<FileSaveResult> WriteToFile(string fileName, Image bitmap)
+        public Result<None> WriteToFile(string fileName, Image bitmap)
         {
             try
             {
                 bitmap.Save(fileName, bitmap.RawFormat);
-                return new FileSaveResult();
+                return new None();
             }
             catch (Exception e)
             {
-                return Result.Fail<FileSaveResult>(e.Message);
+                return Result.Fail<None>(e.Message);
             }
         }
     }

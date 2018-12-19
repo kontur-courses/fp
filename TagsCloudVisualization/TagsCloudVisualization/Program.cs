@@ -10,17 +10,13 @@ namespace TagsCloudVisualization
         [STAThread]
         public static void Main(string[] args)
         {
-            try
-            {
-                GetRunner().Run(args);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            GetBuilder()
+                .Build()
+                .Resolve<IApplicationRunner>()
+                .Run(args);
         }
 
-        private static IApplicationRunner GetRunner()
+        private static ContainerBuilder GetBuilder()
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<ConsoleApplication>().AsSelf();
@@ -33,9 +29,7 @@ namespace TagsCloudVisualization
             builder.RegisterType<WordCounter>().As<IWordCounter>();
             builder.RegisterType<ImageSaver>().As<IImageSaver>();
 
-            return builder
-                .Build()
-                .Resolve<IApplicationRunner>();
+            return builder;
         }
     }
 }

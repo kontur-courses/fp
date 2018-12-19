@@ -4,7 +4,7 @@ namespace TagsCloudVisualization
 {
     public class None
     {
-        private None()
+        public None()
         {
         }
     }

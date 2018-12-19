@@ -9,6 +9,6 @@ namespace TagsCloudVisualization
 {
     public interface IImageSaver
     {
-        Result<FileSaveResult> WriteToFile(string fileName, Image bitmap);
+        Result<None> WriteToFile(string fileName, Image bitmap);
     }
 }
