@@ -39,8 +39,11 @@ namespace TagsCloudContainer.Painter
 
         private Result<None> DrawPicture(Size imageSize, Point center, int radius, IEnumerable<WordInfo> wordInfos)
         {
+            var graphicsResult = holder.StartDrawing();
+            if (!graphicsResult.IsSuccess)
+                return Result.Fail<None>("Can't start drawing");
             Result<None> result;
-            using (var graphics = holder.StartDrawing().GetValueOrThrow())
+            using (var graphics = graphicsResult.GetValueOrThrow())
             {
                 var deltaX = imageSize.Width / 2;
                 var deltaY = imageSize.Height / 2;
