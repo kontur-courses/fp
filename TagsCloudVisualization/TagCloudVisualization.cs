@@ -106,15 +106,13 @@ namespace TagsCloudVisualization
                 wordsInCloud
                     .GetValueOrThrow()
                     .Select(w => w.Value.rectangle));
-            
+
             DrawWordsOfCloud(
                 g,
                 wordsInCloud.GetValueOrThrow());
 
 
-            bitmap.Save($"{directory}\\{bitmapName}.{imageFormat}", imageFormat);
-
-            return Result.Ok();
+            return Result.Of(() => bitmap.Save($"{directory}\\{bitmapName}.{imageFormat}", imageFormat));
         }
 
         private void DrawBackgroundEllipses(
