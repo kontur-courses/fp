@@ -1,7 +1,7 @@
-﻿namespace TagsCloudContainer.UI
+﻿namespace TagsCloudContainer.Ui
 {
     public interface IUi
     {
-        (string, string) RetrievePaths(string[] args);
+        Options RetrievePaths(string[] args);
     }
 }

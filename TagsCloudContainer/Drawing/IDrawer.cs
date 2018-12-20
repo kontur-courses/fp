@@ -1,10 +1,10 @@
-﻿using System.Drawing;
+﻿using System.Drawing.Imaging;
 using TagsCloudContainer.Layout;
 
 namespace TagsCloudContainer.Drawing
 {
     public interface IDrawer
     {
-        Bitmap Draw(WordLayout layout, ImageSettings settings);
+        byte[] Draw(IWordLayout layout, ImageSettings settings, ImageFormat format);
     }
 }

@@ -5,14 +5,15 @@ using Castle.Windsor;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Output;
 using TagsCloudContainer.Processing;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
-using TagsCloudContainer.UI;
+using TagsCloudContainer.Ui;
 
 namespace TagsCloudContainer
 {
-    public class EntryPoint
+    public static class EntryPoint
     {
         private static void Main(string[] args)
         {
@@ -30,7 +31,7 @@ namespace TagsCloudContainer
 
                 Component.For<IWordConverter>().ImplementedBy<InitialFormConverter>(),
 
-                Component.For<WordParser>(),
+                Component.For<IParser>().ImplementedBy<WordParser>(),
                 Component.For<ImageSettings>().DependsOn(
                     Dependency.OnValue("size", new Size(1024, 1024)),
                     Dependency.OnValue("textFont", new Font(FontFamily.GenericMonospace, 10, FontStyle.Regular)),
@@ -43,7 +44,7 @@ namespace TagsCloudContainer
                     Dependency.OnValue("center", new Point(512, 512)),
                     Dependency.OnValue("size", new Size(1024, 1024))),
 
-                Component.For<WordLayout>(),
+                Component.For<IWordLayout>().ImplementedBy<WordLayout>(),
                 Component.For<IDrawer>().ImplementedBy<ImageDrawer>(),
                 Component.For<IWriter>().ImplementedBy<FileWriter>(),
                 Component.For<Transformer>()
@@ -51,15 +52,8 @@ namespace TagsCloudContainer
 
 
             var ui = container.Resolve<IUi>();
-
-            string textFile;
-            string imageFile;
-
-            (textFile, imageFile) = ui.RetrievePaths(args);
-
-            container.Resolve<Transformer>().TransformWords(textFile, imageFile);
-
-            
+            var options = ui.RetrievePaths(args);
+            container.Resolve<Transformer>().TransformWords(options.TextFile, options.ImageFile);
         }
     }
 }

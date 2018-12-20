@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Output;
 using TagsCloudContainer.Processing;
 
 namespace TagsCloudContainer
@@ -10,14 +11,14 @@ namespace TagsCloudContainer
     public class Transformer
     {
         private readonly IFileReader fileReader;
-        private readonly WordParser parser;
-        private readonly WordLayout layout;
+        private readonly IParser parser;
+        private readonly IWordLayout layout;
         private readonly IDrawer drawer;
         private readonly IWriter writer;
 
         private readonly ImageSettings settings;
 
-        public Transformer(IFileReader fileReader, IWriter writer, IDrawer drawer, WordParser parser, WordLayout layout, ImageSettings settings)
+        public Transformer(IFileReader fileReader, IWriter writer, IDrawer drawer, IParser parser, IWordLayout layout, ImageSettings settings)
         {
             this.fileReader = fileReader;
             this.writer = writer;
@@ -36,9 +37,9 @@ namespace TagsCloudContainer
             var parsedWords = parser.ParseWords(text);
 
             layout.PlaceWords(parsedWords);
-            var bitmap = drawer.Draw(layout, settings);
+            var bitmap = drawer.Draw(layout, settings, ImageFormat.Png);
 
-            writer.WriteToFile(bitmap, imageFile, ImageFormat.Png);
+            writer.WriteToFile(bitmap, imageFile);
         }
     }
 }

@@ -1,16 +1,13 @@
 ﻿using CommandLine;
 
-namespace TagsCloudContainer.UI
+namespace TagsCloudContainer.Ui
 {
     public class ConsoleUi : IUi
     {
-        public (string, string) RetrievePaths(string[] args)
+        public Options RetrievePaths(string[] args)
         {
-            (string, string) result = (null, null);
-            Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
-            {
-                result = (o.TextFile, o.ImageFile);
-            });
+            Options result = null;
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o => { result = o; });
 
             return result;
         }

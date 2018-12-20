@@ -6,7 +6,7 @@ using TagsCloudContainer.Processing.Filtering;
 
 namespace TagsCloudContainer.Processing
 {
-    public class WordParser
+    public class WordParser : IParser
     {
         private static readonly char[] Whitespaces = {' ', '\r', '\n', '\t'};
 
@@ -21,7 +21,7 @@ namespace TagsCloudContainer.Processing
 
         public Dictionary<string, int> ParseWords(string input)
         {
-            IEnumerable<string> words = string.Concat(input.Where(c => !char.IsPunctuation(c)))
+            var words = string.Concat(input.Where(c => !char.IsPunctuation(c)))
                 .Split(Whitespaces, StringSplitOptions.RemoveEmptyEntries)
                 .Select(w => w.ToLower());
 

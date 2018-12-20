@@ -1,28 +1,35 @@
 ﻿using System.Drawing;
-using TagsCloudContainer.Extensions;
+using System.Drawing.Imaging;
+using System.IO;
 using TagsCloudContainer.Layout;
 
 namespace TagsCloudContainer.Drawing
 {
     public class ImageDrawer : IDrawer
     {
-        public Bitmap Draw(WordLayout layout, ImageSettings settings)
+        public byte[] Draw(IWordLayout layout, ImageSettings settings, ImageFormat format)
         {
-            var bitmap = new Bitmap(settings.Size.Width, settings.Size.Height);
-            var graphics = Graphics.FromImage(bitmap);
-
-            graphics.FillRectangle(new SolidBrush(settings.BackgroundColor), new Rectangle(new Point(0, 0), settings.Size));
-
-            foreach (var pair in layout.WordRectangles)
+            using (var bitmap = new Bitmap(settings.Size.Width, settings.Size.Height))
             {
-                var rectangle = pair.Value.Item1;
-                var font = settings.TextFont.SetSize(pair.Value.Item2);
-               
-                graphics.DrawRectangle(Pens.Blue, rectangle);
-                graphics.DrawString(pair.Key, font, new SolidBrush(settings.TextColor), rectangle);
-            }
+                using (var graphics = Graphics.FromImage(bitmap))
+                {
+                    graphics.FillRectangle(
+                        new SolidBrush(settings.BackgroundColor),
+                        new Rectangle(new Point(0, 0), settings.Size));
 
-            return bitmap;
+                    foreach (var tag in layout.Tags)
+                    {
+                        graphics.DrawRectangle(Pens.Blue, tag.ContainingRectangle);
+                        graphics.DrawString(tag.Word, tag.Font, new SolidBrush(settings.TextColor), tag.ContainingRectangle);
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        bitmap.Save(stream, format);
+                        return stream.ToArray();
+                    }
+                }
+            }
         }
     }
 }
