@@ -48,16 +48,11 @@ namespace TagsCloudContainer
         {
             var ui = new CLI(args);
             var appSettings = ui.ApplicationSettings;
-            var wordsLoadResult = boringWordsRepository.LoadWords(appSettings.BlackListPath);
-            if (!wordsLoadResult.IsSuccess)
-            {
-                Console.WriteLine(wordsLoadResult.Error);
-            }
-
             var generator = new TagsCloudGenerator
                 (wordsSizer, layouterFactory.CreateTagsCloudLayouter(appSettings.TagsCloudCenter, tagsCloudFactory));
-
-            var result = reader.ReadWords(appSettings.InputPath)
+            
+            var result = boringWordsRepository.LoadWords(appSettings.BlackListPath)
+                .Then(x => reader.ReadWords(appSettings.InputPath))
                 .Then(words => formattingComponent.FormatWords(words))
                 .Then(words => filteringComponent.FilterWords(words))
                 .Then(words => generator.CreateCloud(words, appSettings.ImageSettings.LetterSize))
