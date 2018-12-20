@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.Linq;
 using Autofac;
 using TagCloud.Layouter;
 using TagCloud.PointsSequence;
@@ -29,16 +32,14 @@ namespace TagCloud.Utility.Container
 
             if (!brushColor.IsSuccess)
                 return Result.Fail<IContainer>($"Wrong format of brush color: {options.Brush}");
-            
+
             builder
                 .RegisterInstance(new SolidColorizer(brushColor.Value))
                 .As<IColorizer>()
                 .AsSelf();
 
-            var font = Result
-                .Of(() => new FontConverter().ConvertFrom(options.Font));
-
-            if (!font.IsSuccess)
+            var fc = new InstalledFontCollection();
+            if (!fc.Families.Any(ff => options.Font.StartsWith(ff.Name)))
                 return Result.Fail<IContainer>($"Wrong format of font: {options.Font}");
 
             var backgroundColor = Result
@@ -54,7 +55,7 @@ namespace TagCloud.Utility.Container
                     (pi, c) => options.DrawFormat)
                 .WithParameter(
                     (pi, c) => pi.ParameterType == typeof(Font),
-                    (pi, c) => font.Value)
+                    (pi, c) => new FontConverter().ConvertFromString(options.Font))
                 .WithParameter(
                     (pi, c) => pi.ParameterType == typeof(Color),
                     (pi, c) => backgroundColor.Value)

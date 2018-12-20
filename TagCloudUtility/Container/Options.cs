@@ -54,5 +54,10 @@ namespace TagCloud.Utility.Container
         [Option("stopWords",
             HelpText = "Path to stop words in format .../stopwords.txt (type is required)")]
         public string PathToStopWords { get; set; }
+
+        [Option("dictionaries",
+            HelpText = "Path to dictionaries in format .../dictionaries/choosed_language (no type); " +
+                       "In this directory has to be 2 files choosed_language.aff and choosed_language.dic")]
+        public string PathToDictionaries { get; set; }
     }
 }

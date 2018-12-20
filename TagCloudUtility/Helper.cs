@@ -42,6 +42,14 @@ namespace TagCloud.Utility
                         $"Path to stopwords should contain file type, but was {options.PathToStopWords}");
             }
 
+            if (options.PathToDictionaries != null)
+            {
+                if(!File.Exists(GetPath(options.PathToDictionaries + ".aff")))
+                    return Result.Fail<Options>("Path to dictionaries doesn't contain .aff file");
+                if (!File.Exists(GetPath(options.PathToDictionaries + ".dic")))
+                    return Result.Fail<Options>("Path to dictionaries doesn't contain .dic");
+            }
+
             return options.AsResult();
         }
 
