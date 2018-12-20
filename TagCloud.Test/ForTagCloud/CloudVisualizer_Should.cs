@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Autofac;
 using FluentAssertions;
@@ -59,6 +60,15 @@ namespace TagCloud.Tests.ForTagCloud
                     isArrayInitialized
                         ? new TagItem[0]
                         : null);
+
+            creation.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void ThrowArgumentException_WhenCloudSizeIsNotSuitable()
+        {
+            Action creation = ()
+                => sut.CreatePictureWithItems(new List<TagItem> {new TagItem("Big word", 10000000)});
 
             creation.Should().Throw<ArgumentException>();
         }
