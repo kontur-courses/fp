@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Autofac.Core;
+using ResultOfTask;
 using TagsCloudPreprocessor;
 using TagsCloudPreprocessor.Preprocessors;
 using TagsCloudVisualization;
@@ -82,9 +83,17 @@ namespace TagCloudContainer
                     })
                 .AsSelf();
 
-            var container = builder.Build();
+            Result<None> result;
 
-            var result = container.Resolve<TagCloudProgram>().SaveTagCloud();
+            try
+            {
+                var container = builder.Build();
+                result = container.Resolve<TagCloudProgram>().SaveTagCloud();
+            }
+            catch (Exception e)
+            {
+                result = Result.Fail(e.Message);
+            }
 
             Console.WriteLine(result.IsSuccess ? "Success" : result.Error);
         }
