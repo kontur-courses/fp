@@ -71,8 +71,9 @@ namespace FileSenderRailway
         private void PrepareDocument(FileContent content, byte[] signedContent, DateTime created, string format)
         {
             var document = new Document(content.Name, content.Content, created, format);
+            var signedDocument = new Document(content.Name, signedContent, created, format);
             A.CallTo(() => recognizer.Recognize(content)).Returns(document);
-            A.CallTo(() => cryptographer.Sign(content.Content, certificate)).Returns(signedContent);
+            A.CallTo(() => cryptographer.Sign(document, certificate)).Returns(signedDocument);
         }
 
         private void VerifyErrorOnPrepareFile(FileContent fileContent, X509Certificate x509Certificate)

@@ -1,23 +1,24 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
     public interface ICryptographer
     {
-        byte[] Sign(byte[] content, X509Certificate certificate);
+        Document Sign(Document doc, X509Certificate certificate);
     }
 
     public interface IRecognizer
     {
         /// <exception cref="FormatException">Not recognized</exception>
-        Document Recognize(FileContent file);
+        Result<Document> Recognize(FileContent file);
     }
 
     public interface ISender
     {
         /// <exception cref="InvalidOperationException">Can't send</exception>
-        void Send(Document document);
+        Result<None> Send(Document document);
     }
 
     public class Document
@@ -30,10 +31,10 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public string Name { get; }
+        public DateTime Created { get; }
+        public string Format { get; }
+        public byte[] Content { get; }
     }
 
     public class FileContent

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace ResultOfTask
 {
@@ -58,21 +59,23 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(i => Of(() => continuation(input.Value)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return !input.IsSuccess ? new Result<TOutput>(input.Error) : continuation(input.Value);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+                handleError(input.Error);
+            return input;
         }
     }
 }
