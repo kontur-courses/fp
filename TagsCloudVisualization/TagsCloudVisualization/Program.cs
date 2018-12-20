@@ -13,7 +13,9 @@ namespace TagsCloudVisualization
             GetBuilder()
                 .Build()
                 .Resolve<IApplicationRunner>()
-                .Run(args);
+                .Run(args)
+                .OnFail(err => MessageBox.Show($"Error: {err}"))
+                .Then(res => MessageBox.Show("OK"));
         }
 
         private static ContainerBuilder GetBuilder()

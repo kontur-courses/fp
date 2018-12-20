@@ -11,10 +11,9 @@ namespace TagsCloudVisualization
             app = application;
         }
 
-        public void Run(string[] args)
+        public Result<None> Run(string[] args)
         {
-            var result = app.GenerateImage(args);
-            MessageBox.Show(result.IsSuccess ? "OK" : "Error: " + result.Error);
+            return app.GenerateImage(args);
         }
     }
 }

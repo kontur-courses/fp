@@ -2,6 +2,6 @@
 {
     public interface IApplicationRunner
     {
-        void Run(string[] args);
+        Result<None> Run(string[] args);
     }
 }

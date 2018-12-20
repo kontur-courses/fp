@@ -55,7 +55,7 @@ namespace TagsCloudVisualizationTests
                 .Returns(new List<GraphicWord> {new GraphicWord("aaa")});
             imageSaver = A.Fake<IImageSaver>();
             A.CallTo(() => imageSaver.WriteToFile("asd", new Bitmap(10, 10)))
-                .WithAnyArguments().Returns(Result.Ok(new FileSaveResult()));
+                .WithAnyArguments().Returns(Result.Ok(new None()));
 
             app = new ConsoleApplication(fileReader, visualizer, wordPalette, sizeDefiner, cloudLayouter, wordCounter, imageSaver);
         }
@@ -109,7 +109,7 @@ namespace TagsCloudVisualizationTests
         public void App_Fails_WhenCanNotSaveImage()
         {
             A.CallTo(() => imageSaver.WriteToFile("output.png", new Bitmap(10, 10))).WithAnyArguments()
-                .Returns(Result.Fail<FileSaveResult>("unable to save image"));
+                .Returns(Result.Fail<None>("unable to save image"));
             var result = app.GenerateImage(new[] { "--path", "test.txt" });
             Assert.IsFalse(result.IsSuccess);
         }

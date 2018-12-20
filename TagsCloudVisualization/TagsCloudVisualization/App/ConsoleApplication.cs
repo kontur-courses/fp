@@ -31,7 +31,7 @@ namespace TagsCloudVisualization
             this.imageSaver = imageSaver;
         }
 
-        public Result<FileSaveResult> GenerateImage(string[] args)
+        public Result<None> GenerateImage(string[] args)
         {
             return ParseArguments(args)
                 .Then(ApplySettings)
