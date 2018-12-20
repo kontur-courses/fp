@@ -98,6 +98,9 @@ namespace TagsCloudVisualization
             var wordsInCloud = new WordsCloudFiller(cloudLayouter, font)
                 .GetRectanglesForWordsInCloud(g, words);
 
+            if (!wordsInCloud.IsSuccess)
+                return Result.Fail(wordsInCloud.Error);
+
             g.FillRectangle(Brushes.White, 0, 0, bitmapWidth, bitmapHeight);
 
 
