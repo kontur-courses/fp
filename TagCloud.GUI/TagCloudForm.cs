@@ -138,11 +138,15 @@ namespace TagCloud.GUI
 
             TagCloudProgram
                 .Execute(options)
-                .OnFail(er => Output.Text = 
-                    "ERROR:\n " +
-                    Environment.NewLine +
-                    Environment.NewLine + 
-                    er)
+                .OnFail(er =>
+                {
+                    Output.Text =
+                        "ERROR:\n " +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        er;
+                    Picture.Image = new Bitmap(1, 1);
+                })
                 .Then(x => Picture.Image = Image.FromFile(options.PathToPicture));
         }
 
