@@ -42,14 +42,15 @@ namespace TagCloudContainer
                 .Then(wordsStemer.PreprocessWords);
 
 
-            return tagCloudVisualization.SaveTagCloud(
-                config.FileName,
-                config.OutPath,
-                words.Then(GetFrequencyDictionary)
-                    .Then(x => x.OrderBy(p => p.Value))
-                    .Then(x => x.Reverse())
-                    .Then(x => x.Take(config.Count))
-                    .Then(x => x.ToDictionary(p => p.Key, p => p.Value)));
+            return Result.Of(() => tagCloudVisualization.SaveTagCloud(
+                    config.FileName,
+                    config.OutPath,
+                    words.Then(GetFrequencyDictionary)
+                        .Then(x => x.OrderBy(p => p.Value))
+                        .Then(x => x.Reverse())
+                        .Then(x => x.Take(config.Count))
+                        .Then(x => x.ToDictionary(p => p.Key, p => p.Value)))
+                .GetValueOrThrow());
         }
 
         private Dictionary<string, int> GetFrequencyDictionary(List<string> words)
