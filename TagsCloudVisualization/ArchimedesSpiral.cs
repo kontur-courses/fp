@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -16,12 +17,12 @@ namespace TagsCloudVisualization
 
         public Point Center { get; }
 
-        public Rectangle GetRectangleInNextLocation(Size rectangleSize)
+        public Result<Rectangle> GetRectangleInNextLocation(Size rectangleSize)
         {
             angle += AngleShift;
             var rectangle = new Rectangle(GetCurrentPositionOnTheSpiral(), rectangleSize);
 
-            return rectangle.ShiftCoordinatesToCenterRectangle();
+            return Result.Ok(rectangle.ShiftCoordinatesToCenterRectangle());
         }
 
         private Point GetCurrentPositionOnTheSpiral()

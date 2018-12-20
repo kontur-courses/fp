@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -30,14 +31,17 @@ namespace TagsCloudVisualization
 
         public Point Center { get; }
 
-        public Rectangle GetRectangleInNextLocation(Size rectangleSize)
+        public Result<Rectangle> GetRectangleInNextLocation(Size rectangleSize)
         {
-            var rectangle = new Rectangle(GetCurrentPositionOnTheSpiral(), rectangleSize);
-
-            return rectangle.ShiftCoordinatesToCenterRectangle();
+            var resultOfPosition = GetCurrentPositionOnTheSpiral();
+            return resultOfPosition.IsSuccess 
+                ? Result.Of(() => 
+                    new Rectangle(resultOfPosition.GetValueOrThrow(), rectangleSize)
+                        .ShiftCoordinatesToCenterRectangle()) 
+                : Result.Fail<Rectangle>(resultOfPosition.Error);
         }
 
-        private Point GetCurrentPositionOnTheSpiral()
+        private Result<Point> GetCurrentPositionOnTheSpiral()
         {
             num++;
             var point = Center;
@@ -57,8 +61,7 @@ namespace TagsCloudVisualization
                     break;
             }
 
-            throw new NotImplementedException("Неправильное расставление прямоугольников");
-            return point;
+            return Result.Fail<Point>("Not implemented");
         }
     }
 }

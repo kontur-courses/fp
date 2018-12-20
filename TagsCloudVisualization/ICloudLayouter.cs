@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -7,6 +8,6 @@ namespace TagsCloudVisualization
     {
         List<Rectangle> Rectangles { get; }
         ISpiral Spiral { get; }
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

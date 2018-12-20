@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using ResultOfTask;
 
 namespace TagsCloudVisualization
@@ -101,10 +99,19 @@ namespace TagsCloudVisualization
                 .GetRectanglesForWordsInCloud(g, words);
 
             g.FillRectangle(Brushes.White, 0, 0, bitmapWidth, bitmapHeight);
-            DrawBackgroundEllipses(g, wordsInCloud.Select(w => w.Value.rectangle));
-            DrawWordsOfCloud(g, wordsInCloud);
 
+
+            DrawBackgroundEllipses(
+                g,
+                wordsInCloud
+                    .GetValueOrThrow()
+                    .Select(w => w.Value.rectangle));
             
+            DrawWordsOfCloud(
+                g,
+                wordsInCloud.GetValueOrThrow());
+
+
             bitmap.Save($"{directory}\\{bitmapName}.{imageFormat}", imageFormat);
 
             return Result.Ok();

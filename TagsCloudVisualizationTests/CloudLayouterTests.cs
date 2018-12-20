@@ -45,7 +45,7 @@ namespace TagsCloudVisualizationTests
         [TestCase(2, 4, TestName = "CenterOfCloudAreEquivalentToLeftUpperBoundOfFirstRectangleOnRectangleSize")]
         public void FirstRectangleAreInCenterOfTheCloud(int width, int height)
         {
-            var firstRectangle = cloudLayouter.PutNextRectangle(new Size(width, height));
+            var firstRectangle = cloudLayouter.PutNextRectangle(new Size(width, height)).GetValueOrThrow();
             var rectangleCenter = firstRectangle.GetCenter();
 
             rectangleCenter.ShouldBeEquivalentTo(center);
@@ -68,7 +68,7 @@ namespace TagsCloudVisualizationTests
 
             foreach (var rectangleSize in rectanglesSizes)
             {
-                var rectangle = cloud.PutNextRectangle(rectangleSize);
+                var rectangle = cloud.PutNextRectangle(rectangleSize).GetValueOrThrow();
                 var distance = rectangle.GetDistanceToPoint(center);
                 distance.Should().BeGreaterOrEqualTo(lastDistance);
 
@@ -85,7 +85,7 @@ namespace TagsCloudVisualizationTests
 
             foreach (var rectangleSize in rectanglesSizes)
             {
-                var rectangle = cloudLayouter.PutNextRectangle(rectangleSize);
+                var rectangle = cloudLayouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
                 var distance = rectangle.GetDistanceToPoint(center);
 
                 distance.Should().BeGreaterOrEqualTo(lastDistance);

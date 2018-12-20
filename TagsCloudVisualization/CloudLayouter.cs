@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOfTask;
 
 namespace TagsCloudVisualization
 {
@@ -19,12 +20,22 @@ namespace TagsCloudVisualization
 
         public List<Rectangle> Rectangles { get; }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            var rectangle = Spiral.GetRectangleInNextLocation(rectangleSize);
+            var rectangleResult = Spiral.GetRectangleInNextLocation(rectangleSize);
+            if (!rectangleResult.IsSuccess)
+                return Result.Fail<Rectangle>(rectangleResult.Error);
+            
+            var rectangle = rectangleResult.GetValueOrThrow();
+            
             while (IntersectsWithPrevious(rectangle))
-                rectangle = Spiral.GetRectangleInNextLocation(rectangleSize);
-
+            {
+                rectangleResult = Spiral.GetRectangleInNextLocation(rectangleSize);
+                if (!rectangleResult.IsSuccess)
+                    return Result.Fail<Rectangle>(rectangleResult.Error);
+                rectangle = rectangleResult.GetValueOrThrow();
+            }
+            
             if (Rectangles.Count != 0)
             {
                 if (Spiral.Center.X > rectangle.X)
@@ -41,7 +52,7 @@ namespace TagsCloudVisualization
             }
 
             Rectangles.Add(rectangle);
-            return rectangle;
+            return Result.Ok(rectangle);
         }
 
         private void OffsetRectangle(Rectangle rectangle, Direction direction)

@@ -7,7 +7,7 @@ namespace TagsCloudPreprocessor.Preprocessors
 {
     public class WordsStemer : IPreprocessor
     {
-        public Result<List<string>> PreprocessWords(List<string>words)
+        public Result<List<string>> PreprocessWords(List<string> words)
         {
             return GetWordsStem(words).Then(x => x.ToList());
         }
@@ -23,9 +23,9 @@ namespace TagsCloudPreprocessor.Preprocessors
 
 
             var stems = words.Select(word => h.Stem(word))
-                    .Select(stem => stem.FirstOrDefault())
-                    .Where(wordStem => wordStem != null)
-                    .ToList();
+                .Select(stem => stem.FirstOrDefault())
+                .Where(wordStem => wordStem != null)
+                .ToList();
 
             return stems.Any()
                 ? stems.AsResult()
