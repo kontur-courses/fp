@@ -38,7 +38,6 @@ namespace TagCloudContainer
             var center = new Point(500, 500);
             var pathToInputFile = opts.PathToInputFile;
             var count = opts.Count;
-            var font = new Font(opts.FontName, opts.FontSize);
             var fileName = opts.FileName;
             var outPath = opts.OutPath ?? Environment.CurrentDirectory;
             var color = Color.FromName(opts.Color);
@@ -47,6 +46,10 @@ namespace TagCloudContainer
             var inputExtension = opts.InputExtension;
             var imageFormat = ParseImageFormat(imageExtension);
 
+            if (count < 0)
+                return Result.Fail<Config>("Invalid count of rectangles.");
+            if (opts.FontSize < 0)
+                return Result.Fail<Config>("Invalid font size");
             if (!FontFamily.Families.Any(x =>
                 x.Name.Equals(opts.FontName, StringComparison.InvariantCultureIgnoreCase)))
                 return Result.Fail<Config>("Can not parse font name.");
@@ -57,12 +60,11 @@ namespace TagCloudContainer
             if (!Directory.Exists(outPath))
                 return Result.Fail<Config>("Invalid output path.");
 
-
             return Result.Ok(new Config(
                 center,
                 pathToInputFile,
                 count,
-                font,
+                new Font(opts.FontName, opts.FontSize),
                 fileName,
                 outPath,
                 color,
