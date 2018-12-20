@@ -42,10 +42,10 @@ namespace TagsCloudContainer.Processing
 
         public static Dictionary<string, PartOfSpeech> Detect(IEnumerable<string> words)
         {
-            var validWords = words.Distinct().Where(w => !string.IsNullOrEmpty(w) && !w.Contains(" "));
+            var validWords = words.Distinct().Where(w => !string.IsNullOrEmpty(w) && !w.Contains(" ")).ToList();
 
             var analysis = Analyzer.Analysis(string.Join(" ", validWords));
-            var result = validWords.ToDictionary(w => w, _ => PartOfSpeech.Unknown);  // надо ли?
+            var result = validWords.ToDictionary(w => w, _ => PartOfSpeech.Unknown);
 
             var matches = WordRegex.Matches(analysis);
             foreach (Match match in matches)

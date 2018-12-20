@@ -18,9 +18,10 @@ namespace TagsCloudContainer.Processing.Filtering
 
         public IEnumerable<string> Filter(IEnumerable<string> words)
         {
-            var partsOfSpeech = PartOfSpeechDetector.Detect(words);
+            var wordList = words.ToList();
+            var partsOfSpeech = PartOfSpeechDetector.Detect(wordList);
 
-            return words
+            return wordList
                 .Where(w => w.Length >= MinWordLength)
                 .Where(w => partsOfSpeech.TryGetValue(w, out var part) && !CommonPartsOfSpeech.Contains(part));
         }

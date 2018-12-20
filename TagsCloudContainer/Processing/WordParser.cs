@@ -4,7 +4,7 @@ using System.Linq;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
 
-namespace TagsCloudContainer.Input
+namespace TagsCloudContainer.Processing
 {
     public class WordParser
     {

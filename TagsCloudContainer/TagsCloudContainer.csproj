@@ -78,6 +78,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -101,7 +102,7 @@
     <Compile Include="Layout\IRectangleLayout.cs" />
     <Compile Include="Layout\Spiral.cs" />
     <Compile Include="Layout\WordLayout.cs" />
-    <Compile Include="Processing\Converting\EmptyConverter.cs" />
+    <Compile Include="Processing\Converting\InitialFormConverter.cs" />
     <Compile Include="Processing\Converting\IWordConverter.cs" />
     <Compile Include="Processing\Filtering\BlackListFilter.cs" />
     <Compile Include="Processing\Filtering\CommonWordsFilter.cs" />

@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Input;
+using TagsCloudContainer.Processing;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
 

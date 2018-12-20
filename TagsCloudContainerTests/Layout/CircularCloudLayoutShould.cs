@@ -64,6 +64,7 @@ namespace TagsCloudContainerTests.Layout
         [Test]
         public void NotHaveInvalidCloudSize()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CircularCloudLayout(new Point(0, 0), new Size(-100, 12));
 
             action.Should().Throw<ArgumentException>();

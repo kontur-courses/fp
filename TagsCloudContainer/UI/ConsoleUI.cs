@@ -2,12 +2,12 @@
 
 namespace TagsCloudContainer.UI
 {
-    public class ConsoleUI : IUI
+    public class ConsoleUi : IUi
     {
         public (string, string) RetrievePaths(string[] args)
         {
             (string, string) result = (null, null);
-            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
             {
                 result = (o.TextFile, o.ImageFile);
             });

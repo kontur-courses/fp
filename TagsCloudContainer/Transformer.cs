@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Processing;
 
 namespace TagsCloudContainer
 {
@@ -35,8 +36,7 @@ namespace TagsCloudContainer
             var parsedWords = parser.ParseWords(text);
 
             layout.PlaceWords(parsedWords);
-            var bitmap = drawer.Draw(layout, settings, out var graphics);
-            // ??? я так и не понял как пробрасывать graphics в layout
+            var bitmap = drawer.Draw(layout, settings);
 
             writer.WriteToFile(bitmap, imageFile, ImageFormat.Png);
         }

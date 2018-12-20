@@ -6,10 +6,10 @@ namespace TagsCloudContainer.Drawing
 {
     public class ImageDrawer : IDrawer
     {
-        public Bitmap Draw(WordLayout layout, ImageSettings settings, out Graphics graphics)
+        public Bitmap Draw(WordLayout layout, ImageSettings settings)
         {
             var bitmap = new Bitmap(settings.Size.Width, settings.Size.Height);
-            graphics = Graphics.FromImage(bitmap);
+            var graphics = Graphics.FromImage(bitmap);
 
             graphics.FillRectangle(new SolidBrush(settings.BackgroundColor), new Rectangle(new Point(0, 0), settings.Size));
 

@@ -5,6 +5,7 @@ using Castle.Windsor;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Processing;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
 using TagsCloudContainer.UI;
@@ -19,7 +20,7 @@ namespace TagsCloudContainer
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
 
             container.Register(
-                Component.For<IUI>().ImplementedBy<ConsoleUI>(),
+                Component.For<IUi>().ImplementedBy<ConsoleUi>(),
                 Component.For<IFileReader>().ImplementedBy<TxtReader>(),
 
                 Component.For<IWordFilter>().ImplementedBy<DefaultFilter>(),
@@ -27,7 +28,7 @@ namespace TagsCloudContainer
                 Component.For<IWordFilter>().ImplementedBy<BlackListFilter>().DependsOn(
                     Dependency.OnValue("wordsToFilter", new[] {"плохой", "ужасный"})),
 
-                Component.For<IWordConverter>().ImplementedBy<EmptyConverter>(),
+                Component.For<IWordConverter>().ImplementedBy<InitialFormConverter>(),
 
                 Component.For<WordParser>(),
                 Component.For<ImageSettings>().DependsOn(
@@ -49,7 +50,7 @@ namespace TagsCloudContainer
             );
 
 
-            var ui = container.Resolve<IUI>();
+            var ui = container.Resolve<IUi>();
 
             string textFile;
             string imageFile;
@@ -57,6 +58,8 @@ namespace TagsCloudContainer
             (textFile, imageFile) = ui.RetrievePaths(args);
 
             container.Resolve<Transformer>().TransformWords(textFile, imageFile);
+
+            
         }
     }
 }
