@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ResultOfTask;
@@ -41,16 +42,22 @@ namespace TagCloudContainer
                 .Then(wordsExcluder.PreprocessWords)
                 .Then(wordsStemer.PreprocessWords);
 
-
-            return Result.Of(() => tagCloudVisualization.SaveTagCloud(
+            try
+            {
+                var result = tagCloudVisualization.SaveTagCloud(
                     config.FileName,
                     config.OutPath,
                     words.Then(GetFrequencyDictionary)
                         .Then(x => x.OrderBy(p => p.Value))
                         .Then(x => x.Reverse())
                         .Then(x => x.Take(config.Count))
-                        .Then(x => x.ToDictionary(p => p.Key, p => p.Value)))
-                .GetValueOrThrow());
+                        .Then(x => x.ToDictionary(p => p.Key, p => p.Value)));
+                return result;
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(e.Message);
+            }
         }
 
         private Dictionary<string, int> GetFrequencyDictionary(List<string> words)
