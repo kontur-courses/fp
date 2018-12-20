@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace TagsCloud
+namespace TagsCloud.Layout
 {
     public class CoordinatesAtImage
     {
@@ -14,15 +14,15 @@ namespace TagsCloud
             this.imageSize = imageSize;
         }
 
-        public Result<IReadOnlyCollection<Tag>> GetCoordinates(IReadOnlyCollection<Tag> words)
+        public Result<List<Tag>> GetCoordinates(IReadOnlyCollection<Tag> words)
         {
             if (words.Count == 0)
-                return Result.Fail<IReadOnlyCollection<Tag>>("Empty collection");
+                return Result.Fail<List<Tag>>("Empty collection");
             var boundingCoordinate = new BoundingCoordinate(words.Select(x => x.WordBox).ToList());
             return GetWordsCoordinateAtImage(words, boundingCoordinate);
         }
 
-        private Result<IReadOnlyCollection<Tag>> GetWordsCoordinateAtImage(IReadOnlyCollection<Tag> words,
+        private Result<List<Tag>> GetWordsCoordinateAtImage(IReadOnlyCollection<Tag> words,
             BoundingCoordinate bounds)
         {
             var coefficientWidth = imageSize.Width * 1.0 / bounds.SizeX;

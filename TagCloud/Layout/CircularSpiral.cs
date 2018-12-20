@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace TagsCloud
+namespace TagsCloud.Layout
 {
     public class CircularSpiral : ICoordinateSequence
     {

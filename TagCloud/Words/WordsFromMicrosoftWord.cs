@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using TagsCloud.Words;
 
 namespace TagsCloud
 {
@@ -27,7 +28,7 @@ namespace TagsCloud
             this.path = path;
         }
 
-        public Result<IEnumerable<string>> GetWords()
+        public Result<List<string>> GetWords()
         {
             var words = new List<string>();
             if (File.Exists(path))
@@ -43,7 +44,7 @@ namespace TagsCloud
                 return words;
             }
 
-            return Result.Fail<IEnumerable<string>>("File doesn`t exist");
+            return Result.Fail<List<string>>("File doesn`t exist");
         }
     }
 }

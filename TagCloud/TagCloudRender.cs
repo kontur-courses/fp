@@ -1,3 +1,7 @@
+using TagsCloud.Graphics;
+using TagsCloud.Layout;
+using TagsCloud.Words;
+
 namespace TagsCloud
 {
     public class TagCloudRender
@@ -21,7 +25,7 @@ namespace TagsCloud
 
         public Result<None> Render()
         {
-            return collection.GetFrequencyCollection(words.DeleteBoringWords())
+            return collection.GetFrequencyCollection(words.DeleteBoringWords().Value)
                 .Then(frequencyDictionary => layout.GetLayout(frequencyDictionary)
                     .Then(wordsToDraw => coordinatesAtImage.GetCoordinates(wordsToDraw))
                     .Then(coordinates => graphics.Save(coordinates)));

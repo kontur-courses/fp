@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace TagsCloud
+namespace TagsCloud.Words
 {
     public interface IWordCollection
     {
-        Result<IEnumerable<string>> GetWords();
+        Result<List<string>> GetWords();
     }
 }

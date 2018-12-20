@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace TagsCloud
+namespace TagsCloud.Layout
 {
     public class TagCloudLayouter : ITagCloudLayouter
     {
@@ -13,7 +13,7 @@ namespace TagsCloud
             this.layouter = layouter;
         }
 
-        public Result<IReadOnlyCollection<Tag>> GetLayout(ICollection<KeyValuePair<string, double>> words)
+        public Result<List<Tag>> GetLayout(ICollection<KeyValuePair<string, double>> words)
         {
             var result = new List<Tag>();
             foreach (var keyValuePair in words)

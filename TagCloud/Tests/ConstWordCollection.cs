@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TagsCloud.Words;
 
 namespace TagsCloud.Tests
 {
@@ -11,7 +12,7 @@ namespace TagsCloud.Tests
             this.words = words;
         }
 
-        public Result<IEnumerable<string>> DeleteBoringWords()
+        public Result<List<string>> DeleteBoringWords()
         {
             return words;
         }

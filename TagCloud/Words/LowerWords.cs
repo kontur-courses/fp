@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TagsCloud
+namespace TagsCloud.Words
 {
     public class LowerWords
     {
@@ -12,10 +12,10 @@ namespace TagsCloud
             this.words = words;
         }
 
-        public Result<IEnumerable<string>> ToLower()
+        public Result<List<string>> ToLower()
         {
             var enumerable = words.GetWords();
-            return enumerable.Then(x => x.Select(word => word.ToLowerInvariant()));
+            return enumerable.Then(x => x.Select(word => word.ToLowerInvariant()).ToList());
         }
     }
 }

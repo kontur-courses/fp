@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TagsCloud
+namespace TagsCloud.Words
 {
     public class FrequencyCollection : IFrequencyCollection
     {
-        public Result<ICollection<KeyValuePair<string, double>>> GetFrequencyCollection(
+        public Result<List<KeyValuePair<string, double>>> GetFrequencyCollection(
             Result<IEnumerable<string>> words)
         {
             return words.Then(value =>
@@ -20,11 +20,11 @@ namespace TagsCloud
 
                 var normalizedDictionary = NormalizeDictionary(frequencyDictionary, wordsList.Count);
                 var orderedCollection = normalizedDictionary.OrderByDescending(pair => pair.Value);
-                return orderedCollection.ToList() as ICollection<KeyValuePair<string, double>>;
+                return orderedCollection.ToList();
             });
         }
 
-        private static ICollection<KeyValuePair<string, double>> NormalizeDictionary(
+        private static Dictionary<string, double> NormalizeDictionary(
             Dictionary<string, int> frequencyDictionary,
             int wordsCount)
         {

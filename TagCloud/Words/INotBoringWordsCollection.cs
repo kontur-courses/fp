@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
-namespace TagsCloud
+namespace TagsCloud.Words
 {
     public interface IBoringWordsCollection
     {
-        Result<IEnumerable<string>> DeleteBoringWords();
+        Result<List<string>> DeleteBoringWords();
     }
 }

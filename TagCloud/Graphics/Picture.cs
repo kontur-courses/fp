@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Drawing;
+using TagsCloud.Layout;
 
-namespace TagsCloud
+namespace TagsCloud.Graphics
 {
     public class Picture : IGraphics
     {
@@ -18,7 +19,7 @@ namespace TagsCloud
                 .Then(settings =>
                 {
                     using (var map = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height))
-                    using (var graphics = Graphics.FromImage(map))
+                    using (var graphics = System.Drawing.Graphics.FromImage(map))
                     {
                         var image = new PictureCreator(words, graphics, settings);
                         image.DrawPicture();

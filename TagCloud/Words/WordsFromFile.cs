@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using TagsCloud.Words;
 
 namespace TagsCloud
 {
@@ -12,11 +14,11 @@ namespace TagsCloud
             this.path = path;
         }
 
-        public Result<IEnumerable<string>> GetWords()
+        public Result<List<string>> GetWords()
         {
             if (File.Exists(path))
-                return File.ReadAllLines(path);
-            return Result.Fail<IEnumerable<string>>("File doesn`t exist");
+                return File.ReadAllLines(path).ToList();
+            return Result.Fail<List<string>>("File doesn`t exist");
         }
     }
 }

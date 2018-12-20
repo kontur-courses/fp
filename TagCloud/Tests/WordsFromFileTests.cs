@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Words;
 
 namespace TagsCloud.Tests
 {
@@ -24,7 +25,7 @@ namespace TagsCloud.Tests
         [Test]
         public void GetWords_EmptyFile_EmptyList()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Empty.txt");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data/Empty.txt");
             var wordsFromFile = new WordsFromFile(path);
             var words = wordsFromFile.GetWords();
             words.Value.Should().BeEmpty();
@@ -33,10 +34,10 @@ namespace TagsCloud.Tests
         [Test]
         public void GetWords_GivePath_ReturnList()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Text.txt");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data/Text.txt");
             var wordsFromFile = new WordsFromFile(path);
             var words = wordsFromFile.GetWords();
-            words.Should().BeEquivalentTo(expectedWords);
+            words.Value.Should().BeEquivalentTo(expectedWords);
         }
     }
 }

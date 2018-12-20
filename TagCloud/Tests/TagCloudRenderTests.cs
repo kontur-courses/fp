@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using NUnit.Framework;
+using TagsCloud.Graphics;
+using TagsCloud.Layout;
+using TagsCloud.Words;
 
 namespace TagsCloud.Tests
 {

@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace TagsCloud
+namespace TagsCloud.Graphics
 {
     public class ImageSettings
     {

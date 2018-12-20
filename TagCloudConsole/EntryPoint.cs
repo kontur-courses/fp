@@ -5,6 +5,9 @@ using System.Drawing.Imaging;
 using Autofac;
 using CommandLine;
 using TagsCloud;
+using TagsCloud.Graphics;
+using TagsCloud.Layout;
+using TagsCloud.Words;
 
 namespace TagCloudConsole
 {

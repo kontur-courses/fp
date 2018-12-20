@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using TagsCloud.Layout;
 
-namespace TagsCloud
+namespace TagsCloud.Graphics
 {
     public interface IGraphics
     {

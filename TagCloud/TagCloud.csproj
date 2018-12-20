@@ -184,23 +184,22 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoundingCoordinate.cs" />
-    <Compile Include="CircularCloudLayouter.cs" />
-    <Compile Include="CircularSpiral.cs" />
-    <Compile Include="ImageSettings.cs" />
-    <Compile Include="INotBoringWordsCollection.cs" />
-    <Compile Include="IFrequencyCollection.cs" />
-    <Compile Include="ITagCloudLayouter.cs" />
+    <Compile Include="Graphics\IGraphics.cs" />
+    <Compile Include="Graphics\ImageSettings.cs" />
+    <Compile Include="Graphics\Picture.cs" />
+    <Compile Include="Graphics\PictureCreator.cs" />
+    <Compile Include="Layout\BoundingCoordinate.cs" />
+    <Compile Include="Layout\CircularCloudLayouter.cs" />
+    <Compile Include="Layout\CircularSpiral.cs" />
+    <Compile Include="Layout\CoordinatesAtImage.cs" />
+    <Compile Include="Layout\ICloudLayouter.cs" />
+    <Compile Include="Layout\ICoordinateSequence.cs" />
+    <Compile Include="Layout\ITagCloudLayouter.cs" />
+    <Compile Include="Layout\Tag.cs" />
+    <Compile Include="Layout\TagCloudLayouter.cs" />
     <Compile Include="None.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Result.cs" />
-    <Compile Include="TagCloudLayouter.cs" />
-    <Compile Include="PictureCreator.cs" />
-    <Compile Include="FrequencyCollection.cs" />
-    <Compile Include="IGraphics.cs" />
-    <Compile Include="Picture.cs" />
-    <Compile Include="LowerWords.cs" />
-    <Compile Include="Tag.cs" />
     <Compile Include="TagCloudRender.cs" />
     <Compile Include="Tests\BigTest.cs" />
     <Compile Include="Tests\ConstWordCollection.cs" />
@@ -210,31 +209,32 @@
     <Compile Include="Tests\TagCloudRenderTests.cs" />
     <Compile Include="Tests\BoringWordsFilterTests.cs" />
     <Compile Include="Tests\WordsFromFileTests.cs" />
-    <Compile Include="BoringWordsFilter.cs" />
-    <Compile Include="WordsFromFile.cs" />
-    <Compile Include="IWordCollection.cs" />
-    <Compile Include="CoordinatesAtImage.cs" />
-    <Compile Include="ICloudLayouter.cs" />
-    <Compile Include="ICoordinateSequence.cs" />
-    <Compile Include="WordsFromMicrosoftWord.cs" />
+    <Compile Include="Words\BoringWordsFilter.cs" />
+    <Compile Include="Words\FrequencyCollection.cs" />
+    <Compile Include="Words\IFrequencyCollection.cs" />
+    <Compile Include="Words\INotBoringWordsCollection.cs" />
+    <Compile Include="Words\IWordCollection.cs" />
+    <Compile Include="Words\LowerWords.cs" />
+    <Compile Include="Words\WordsFromFile.cs" />
+    <Compile Include="Words\WordsFromMicrosoftWord.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BoringWords.txt">
+    <Content Include="Data\BoringWords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="DifferentCases.txt">
+    <Content Include="Data\DifferentCases.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Empty.txt">
+    <Content Include="Data\Empty.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Text.docx">
+    <Content Include="Data\Text.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Text.txt">
+    <Content Include="Data\Text.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

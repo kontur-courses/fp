@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Drawing;
+using TagsCloud.Layout;
 
-namespace TagsCloud
+namespace TagsCloud.Graphics
 {
     public class PictureCreator
     {
-        private readonly Graphics graphics;
+        private readonly System.Drawing.Graphics graphics;
         private readonly ImageSettings imageSettings;
         private readonly IReadOnlyCollection<Tag> tags;
 
-        public PictureCreator(IReadOnlyCollection<Tag> tags, Graphics graphics, ImageSettings imageSettings)
+        public PictureCreator(IReadOnlyCollection<Tag> tags, System.Drawing.Graphics graphics, ImageSettings imageSettings)
         {
             this.tags = tags;
             this.graphics = graphics;

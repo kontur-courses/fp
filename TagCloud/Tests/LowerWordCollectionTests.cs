@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Words;
 
 namespace TagsCloud.Tests
 {
@@ -23,7 +24,7 @@ namespace TagsCloud.Tests
         [Test]
         public void GetWords_DifferentCase_AllWordsLowerCase()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "DifferentCases.txt");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data/DifferentCases.txt");
             var words = new LowerWords(new WordsFromFile(path)).ToLower();
             words.Value.Should().BeEquivalentTo(expectedWords);
         }

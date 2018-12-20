@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Words;
 
 namespace TagsCloud.Tests
 {
     public class WithoutBoringWordCollectionTests
     {
         private readonly string boringWordsPath =
-            Path.Combine(TestContext.CurrentContext.TestDirectory, "BoringWords.txt");
+            Path.Combine(TestContext.CurrentContext.TestDirectory, "Data/BoringWords.txt");
 
         private readonly List<string> expectedWords = new List<string>
         {
@@ -23,7 +24,7 @@ namespace TagsCloud.Tests
         [Test]
         public void DeleteBoringWords_TextWithBoringWords_ListWithoutBoringWords()
         {
-            var textPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Text.txt");
+            var textPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data/Text.txt");
             var words = new LowerWords(new WordsFromFile(textPath));
             var boringWords = new WordsFromFile(boringWordsPath).GetWords();
             var boringWordsFilter = new BoringWordsFilter(boringWords, words.ToLower());

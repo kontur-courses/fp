@@ -2,13 +2,13 @@
 using System.Drawing;
 using System.Linq;
 
-namespace TagsCloud
+namespace TagsCloud.Layout
 {
     public class BoundingCoordinate
     {
-        private readonly IReadOnlyCollection<Rectangle> allRectangles;
+        private readonly List<Rectangle> allRectangles;
 
-        public BoundingCoordinate(IReadOnlyCollection<Rectangle> allRectangles)
+        public BoundingCoordinate(List<Rectangle> allRectangles)
         {
             this.allRectangles = allRectangles;
         }
