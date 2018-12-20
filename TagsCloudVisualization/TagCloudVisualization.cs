@@ -95,24 +95,25 @@ namespace TagsCloudVisualization
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             var g = Graphics.FromImage(bitmap);
             //ToDo вынести из этого класса и убрать ICloudLayouter из конструктора
-            var wordsInCloud = new WordsCloudFiller(cloudLayouter, font)
+            var resultWordsInCloud = new WordsCloudFiller(cloudLayouter, font)
                 .GetRectanglesForWordsInCloud(g, words);
 
-            if (!wordsInCloud.IsSuccess)
-                return Result.Fail(wordsInCloud.Error);
+            if (!resultWordsInCloud.IsSuccess)
+                return Result.Fail(resultWordsInCloud.Error);
+            var wordsInCloud = resultWordsInCloud.GetValueOrThrow();
+            foreach (var rectangle in wordsInCloud.Select(x => x.Value.rectangle))
+            {
+                if (rectangle.Bottom > bitmapHeight) return Result.Fail("Too small image size");
+                if (rectangle.Top < 0) return Result.Fail("Too small image size");
+                if (rectangle.Right > bitmapWidth) return Result.Fail("Too small image size");
+                if (rectangle.Left < 0) return Result.Fail("Too small image size");
+            }
 
             g.FillRectangle(Brushes.White, 0, 0, bitmapWidth, bitmapHeight);
 
 
-            DrawBackgroundEllipses(
-                g,
-                wordsInCloud
-                    .GetValueOrThrow()
-                    .Select(w => w.Value.rectangle));
-
-            DrawWordsOfCloud(
-                g,
-                wordsInCloud.GetValueOrThrow());
+            DrawBackgroundEllipses(g, wordsInCloud.Select(w => w.Value.rectangle));
+            DrawWordsOfCloud(g, wordsInCloud);
 
 
             return Result.Of(() => bitmap.Save($"{directory}\\{bitmapName}.{imageFormat}", imageFormat));
