@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace ErrorHandling.Solved
 {
     public class None
     {

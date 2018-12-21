@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
 
-namespace ResultOfTask
+namespace ErrorHandling
 {
     public class None
     {

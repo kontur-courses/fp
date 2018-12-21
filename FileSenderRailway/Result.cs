@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace FileSenderRailway
 {
     public class None
     {

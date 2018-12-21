@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -37,7 +36,7 @@ namespace FileSenderRailway
                     cryptographer.Sign, 
                     certificate);
                 docResult
-                    Скотт Влашин Railway
+                   // Скотт Влашин Railway
                     .Then(preparedDocument => 
                         sender.Send(preparedDocument).RefineError("Can't send"))
                     .OnFail(message => errorMessage = message);
@@ -50,8 +49,8 @@ namespace FileSenderRailway
             Func<Document, Result<Document>> validateDocument, Func<Document, X509Certificate, Document> signDocument,
             X509Certificate certificate)
         {
-            var rec = Result.Of(()=> recognizeFile(inputFile)
-                .Then(recognizedFile => recognizedFile)
+            var rec = Result.Of(() => recognizeFile(inputFile)
+                .Then(recognizedFile => recognizedFile));
                 
 
             return recognizeFile(inputFile)
