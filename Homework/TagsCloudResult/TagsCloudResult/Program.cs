@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TagsCloudResult
 {
-    public class None
+    public class Program
     {
+        public static void Main(string[] args)
+        {
+
+        }
     }
 }

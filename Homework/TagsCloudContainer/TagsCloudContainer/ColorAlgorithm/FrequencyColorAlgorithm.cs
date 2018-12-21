@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloudResult;
 
 namespace TagsCloudContainer.ColorAlgorithm
 {
     public class FrequencyColorAlgorithm : IColorAlgorithm
     {
-        public Color GetColor(Dictionary<string, int> words = null, string word = "")
+        public Result<Color> GetColor(Dictionary<string, int> words = null, string word = "")
         {
             if (words == null || !words.ContainsKey(word))
-                return Color.Black;
+                return Result.Ok(Color.Black);
 
             var maxRepeatCount = words.Max(dWord => dWord.Value);
             var hue = 255 - (int)(255 * words[word] / maxRepeatCount);
 
-            return Color.FromArgb(hue, hue, hue);
+            return Result.Ok(Color.FromArgb(hue, hue, hue));
         }
     }
 }

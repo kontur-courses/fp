@@ -1,7 +1,9 @@
-﻿namespace TagsCloudBuilder.Drawer
+﻿using TagsCloudResult;
+
+namespace TagsCloudBuilder.Drawer
 {
     public interface IDrawer
     {
-        void DrawAndSaveWords();
+        Result<None> DrawAndSaveWords();
     }
 }

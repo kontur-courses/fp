@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using TagsCloudResult;
 
 namespace TagsCloudContainer.ColorAlgorithm
 {
@@ -8,9 +9,9 @@ namespace TagsCloudContainer.ColorAlgorithm
     {
         private readonly Random rnd = new Random();
 
-        public Color GetColor(Dictionary<string, int> words = null, string word = "")
+        public Result<Color> GetColor(Dictionary<string, int> words = null, string word = "")
         {
-            return Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+            return Result.Ok(Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)));
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using TagsCloudResult;
 
 namespace TagsCloudContainer.WordsFilter
 {
@@ -23,11 +25,12 @@ namespace TagsCloudContainer.WordsFilter
         }
 
 
-        public static Dictionary<string, int> RemoveWordsOutOfLengthRange(this Dictionary<string, int> words,
+        public static Result<Dictionary<string, int>> RemoveWordsOutOfLengthRange(this Dictionary<string, int> words,
             int leftBound, int rightBound = int.MaxValue)
         {
-            if (leftBound > rightBound)
-                return words;
+            if (leftBound > rightBound || Math.Min(leftBound, rightBound) < 0)
+                return Result.Fail<Dictionary<string, int>>(
+                    $"Right bound should be greater than left and both are greater than zero.");
 
             return words
                 .Where(word => word.Key.Length >= leftBound && word.Key.Length <= rightBound)

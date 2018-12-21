@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Runtime.InteropServices;
+using Autofac;
 using CommandLine;
 using TagsCloudBuilder.Drawer;
 
@@ -17,7 +18,9 @@ namespace TagsCloudBuilder
             using (var container = TagCloudConsole.BuildContainer(options))
             {
                 var drawer = container.Resolve<IDrawer>();
-                drawer.DrawAndSaveWords();
+                var drawResult = drawer.DrawAndSaveWords();
+                if (!drawResult.IsSuccess)
+                    throw new ExternalException(drawResult.Error);
             }
         }
     }

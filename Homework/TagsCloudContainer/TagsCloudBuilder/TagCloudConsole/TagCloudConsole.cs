@@ -33,11 +33,6 @@ namespace TagsCloudBuilder
 
         public static IContainer BuildContainer(Options options)
         {
-            if (!File.Exists(options.InputFilename))
-            {
-                throw new IOException($"This file {options.InputFilename} doesn't exists. Check the correctness of file path.");
-            }
-
             var builder = new ContainerBuilder();
             var imageFormat = GetImageFormat(options.OutputFileExtension);
 
@@ -99,10 +94,10 @@ namespace TagsCloudBuilder
         {
             var lowerAlgorithmName = colorAlgorithmName.ToLower();
             if (colorAlgorithmComparer.ContainsKey(lowerAlgorithmName))
-                return colorAlgorithmComparer[lowerAlgorithmName];
+                return Result.Ok(colorAlgorithmComparer[lowerAlgorithmName]);
 
             return Result.Fail<IColorAlgorithm>(
-                $"Incorrect image format name {lowerAlgorithmName}. You can use next formats: png, jpeg, bmp.");
+                $"Incorrect color algorithm name {lowerAlgorithmName}. You can use next algorithms: frequency, random, static.");
         }
     }
 }

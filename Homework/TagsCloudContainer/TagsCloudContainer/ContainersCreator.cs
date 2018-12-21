@@ -47,7 +47,7 @@ namespace TagsCloudContainer
                     text: word.Key,
                     textFont: new Font(fontName, fontSize),
                     rectangle: circularLayouter.PutNextRectangle(containerSize),
-                    textColor: colorAlgorithm.GetColor(filteredWords, word.Key)
+                    textColor: colorAlgorithm.GetColor(filteredWords, word.Key).GetValueOrThrow()
                     ));
             }
         }

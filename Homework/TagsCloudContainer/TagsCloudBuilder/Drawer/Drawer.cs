@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using TagsCloudContainer;
+using TagsCloudResult;
 
 namespace TagsCloudBuilder.Drawer
 {
@@ -25,7 +25,7 @@ namespace TagsCloudBuilder.Drawer
             this.imageFormat = imageFormat;
         }
 
-        public void DrawAndSaveWords()
+        public Result<None> DrawAndSaveWords()
         {
             var stringFormat = new StringFormat
             {
@@ -47,14 +47,11 @@ namespace TagsCloudBuilder.Drawer
                             stringFormat);
                     }
 
-                    try
-                    {
-                        bitmap.Save(fileName, imageFormat);
-                    }
-                    catch (ExternalException e)
-                    {
-                        Console.Error.WriteLine("Something went wrong. Check the path correctness.", e);
-                    }
+                    if (Result.OfAction(() => bitmap.Save(fileName, imageFormat)).IsSuccess)
+                        return Result.Ok();
+
+                    return Result.Fail<None>(
+                            $"Can't create file with this path(name): {fileName}. Check the correctness of file path.");
                 }
             }
         }

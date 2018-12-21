@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudResult;
 
 namespace TagsCloudContainer.WordsFilter.BoringWords
 {
     public interface IBoringWords
     {
-        HashSet<string> GetBoringWords { get; }
+        Result<HashSet<string>> GetBoringWords { get; }
     }
 }

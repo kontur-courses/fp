@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudResult;
 
 namespace TagsCloudBuilder
 {
     public interface IWordsPreparer
     {
-        Dictionary<string, int> GetPreparedWords();
+        Result<Dictionary<string, int>> GetPreparedWords();
     }
 }

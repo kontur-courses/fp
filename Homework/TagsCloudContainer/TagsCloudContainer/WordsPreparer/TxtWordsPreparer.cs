@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TagsCloudResult;
 
 namespace TagsCloudBuilder
 {
@@ -13,50 +15,43 @@ namespace TagsCloudBuilder
             this.fileName = fileName;
         }
 
-        public Dictionary<string, int> GetPreparedWords()
+        public Result<Dictionary<string, int>> GetPreparedWords()
         {
-            try
-            {
-                var wordsWithFrequency = new Dictionary<string, int>();
+            var wordsWithFrequency = new Dictionary<string, int>();
+            if (!File.Exists(fileName))
+                return Result.Fail<Dictionary<string, int>>(
+                    $"Something went wrong. Check the correctness of {fileName} path.");
 
-                foreach (var word in File.ReadAllLines(fileName).Where(word => word.Length > 0))
-                {
-                    var lowerWord = word.ToLower();
-                    if (!wordsWithFrequency.ContainsKey(lowerWord))
-                        wordsWithFrequency.Add(lowerWord, 1);
-                    else
-                        wordsWithFrequency[lowerWord] += 1;
-                }
-
-                return wordsWithFrequency;
-            }
-            catch (IOException e)
+            foreach (var word in File.ReadAllLines(fileName).Where(word => word.Length > 0))
             {
-                throw new IOException($"Something went wrong. Check the correctness of {fileName} path.", e);
+                var lowerWord = word.ToLower();
+                if (!wordsWithFrequency.ContainsKey(lowerWord))
+                    wordsWithFrequency.Add(lowerWord, 1);
+                else
+                    wordsWithFrequency[lowerWord] += 1;
             }
+
+            return wordsWithFrequency;
         }
 
-        public static Dictionary<string, int> ReadAllLines(string fileName)
+        public static Result<Dictionary<string, int>> ReadAllLines(string fileName)
         {
-            try
-            {
-                var wordsWithFrequency = new Dictionary<string, int>();
+            var wordsWithFrequency = new Dictionary<string, int>();
 
-                foreach (var word in File.ReadAllLines(fileName))
-                {
-                    var lowerWord = word.ToLower();
-                    if (!wordsWithFrequency.ContainsKey(lowerWord))
-                        wordsWithFrequency.Add(lowerWord, 1);
-                    else
-                        wordsWithFrequency[lowerWord] += 1;
-                }
+            if (!File.Exists(fileName))
+                return Result.Fail<Dictionary<string, int>>(
+                    $"Something went wrong. Check the correctness of {fileName} path.");
 
-                return wordsWithFrequency;
-            }
-            catch (IOException e)
+            foreach (var word in File.ReadAllLines(fileName))
             {
-                throw new IOException($"Something went wrong. Check the correctness of {fileName} path.", e);
+                var lowerWord = word.ToLower();
+                if (!wordsWithFrequency.ContainsKey(lowerWord))
+                    wordsWithFrequency.Add(lowerWord, 1);
+                else
+                    wordsWithFrequency[lowerWord] += 1;
             }
+
+            return wordsWithFrequency;
         }
     }
 }
