@@ -32,12 +32,22 @@ namespace TagsCloudContainer.Cloud
                 foreach (var wordTag in wordTags)
                 {
                     var rectangle = wordTag.DescribedRectangle;
-                    Font drawFont = new Font(fontName.GetValueOrThrow(), rectangle.Height / 2);
+                    fontName.Then((n) => ValidateFont(n));
+                    ValidateFont(fontName.Value);
+                    Font drawFont = new Font(fontName.Value, rectangle.Height / 2);
                     graphics.DrawString(wordTag.Word, drawFont, brush.GetValueOrThrow(), rectangle.X, rectangle.Y);
                 }
 
                 return image as Image;
             }).RefineError("Image generate error");
+        }
+
+        private Result<string> ValidateFont(string name)
+        {
+            var fontFamily = new FontFamily(fontName.Value);
+            if (FontFamily.Families.Contains(fontFamily))
+                return Result.Ok(name);
+            return Result.Fail<string>("Font not found");
         }
     }
 }
