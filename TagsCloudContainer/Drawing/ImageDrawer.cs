@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Drawing
 {
     public class ImageDrawer : IDrawer
     {
-        public byte[] Draw(IWordLayout layout, ImageSettings settings, ImageFormat format)
+        public byte[] Draw(IWordLayout layout, ImageSettings settings)
         {
             using (var bitmap = new Bitmap(settings.Size.Width, settings.Size.Height))
             {
@@ -19,13 +19,13 @@ namespace TagsCloudContainer.Drawing
 
                     foreach (var tag in layout.Tags)
                     {
-                        graphics.DrawRectangle(Pens.Blue, tag.ContainingRectangle);
+                        graphics.DrawRectangle(new Pen(settings.RectangleColor), tag.ContainingRectangle);
                         graphics.DrawString(tag.Word, tag.Font, new SolidBrush(settings.TextColor), tag.ContainingRectangle);
                     }
 
                     using (var stream = new MemoryStream())
                     {
-                        bitmap.Save(stream, format);
+                        bitmap.Save(stream, settings.ImageFormat);
                         return stream.ToArray();
                     }
                 }

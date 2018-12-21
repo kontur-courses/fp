@@ -8,6 +8,7 @@ using NUnit.Framework;
 using TagsCloudContainer.Processing;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainerTests.Input
 {
@@ -27,10 +28,11 @@ namespace TagsCloudContainerTests.Input
                 throw new NullReferenceException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) returns null");
         }
 
+
         [Test, TestCaseSource(nameof(InDefaultStateTestCases))]
         public void InDefaultState(string input, Dictionary<string, int> expected)
         {
-            var parser = new WordParser(new IWordFilter[0], new IWordConverter[0]);
+            var parser = new WordParser(new ParserSettings(new IWordFilter[] { }, new IWordConverter[] { }));
 
             var actual = parser.ParseWords(input);
                 
@@ -63,7 +65,7 @@ namespace TagsCloudContainerTests.Input
                 new BlackListFilter(new[] {"привет", "здорово"}),
                 new CommonWordsFilter()
             };
-            var parser = new WordParser(filters, new IWordConverter[0]);
+            var parser = new WordParser(new ParserSettings(filters, new IWordConverter[0]));
             var expected = new Dictionary<string, int>
             {
                 { "миша", 1}, {"живется", 1}, {"агрегатор", 1}

@@ -1,0 +1,12 @@
+﻿{
+    "Height": 1024,
+    "Width": 1024,
+    "Font": "Times New Roman",
+    "MaxFontSize": 100,
+    "MinFontSize": 10,
+    "BackgroundColor": "White",
+    "TextColor": "Black",
+    "RectangleColor":  "Red",
+    "ImageFormat": "Bmp",
+    "WordCount":  40
+}

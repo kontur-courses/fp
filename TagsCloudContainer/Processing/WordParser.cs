@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TagsCloudContainer.Processing.Converting;
-using TagsCloudContainer.Processing.Filtering;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Processing
 {
@@ -10,20 +9,17 @@ namespace TagsCloudContainer.Processing
     {
         private static readonly char[] Whitespaces = {' ', '\r', '\n', '\t'};
 
-        private readonly IWordFilter[] filters;
-        private readonly IWordConverter[] converters;
+        public ParserSettings Settings { get; }
 
-        public WordParser(IWordFilter[] filters, IWordConverter[] converters)
+        public WordParser(ParserSettings settings)
         {
-            this.filters = filters;
-            this.converters = converters;
+            Settings = settings;
         }
 
         public Dictionary<string, int> ParseWords(string input)
         {
-            var words = string.Concat(input.Where(c => !char.IsPunctuation(c)))
-                .Split(Whitespaces, StringSplitOptions.RemoveEmptyEntries)
-                .Select(w => w.ToLower());
+            IEnumerable<string> words = string.Concat(input.Where(c => !char.IsPunctuation(c)))
+                .Split(Whitespaces, StringSplitOptions.RemoveEmptyEntries);
 
             words = FilterWords(ConvertWords(words));
 
@@ -40,12 +36,12 @@ namespace TagsCloudContainer.Processing
 
         private IEnumerable<string> ConvertWords(IEnumerable<string> words)
         {
-            return converters.Aggregate(words, (current, converter) => converter.Convert(current));
+            return Settings.Converters.Aggregate(words, (current, converter) => converter.Convert(current));
         }
 
         private IEnumerable<string> FilterWords(IEnumerable<string> words)
         {
-            return filters.Aggregate(words, (current, filter) => filter.Filter(current));
+            return Settings.Filters.Aggregate(words, (current, filter) => filter.Filter(current));
         }
     }
 }

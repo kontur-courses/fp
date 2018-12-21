@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Drawing.Imaging;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Output;
 using TagsCloudContainer.Processing;
+using TagsCloudContainer.Settings;
+using TagsCloudContainer.Ui;
 
 namespace TagsCloudContainer
 {
@@ -28,18 +29,18 @@ namespace TagsCloudContainer
             this.settings = settings;
         }
 
-        public void TransformWords(string textFile, string imageFile)
+        public void TransformWords(Options options)
         {
-            Console.WriteLine($"Reading from: {textFile}");
-            Console.WriteLine($"Writing to: {imageFile}");
+            Console.WriteLine($"Reading from: {options.TextFile}");
+            Console.WriteLine($"Writing to: {options.ImageFile}");
 
-            var text = fileReader.Read(textFile);
+            var text = fileReader.Read(options.TextFile);
             var parsedWords = parser.ParseWords(text);
 
             layout.PlaceWords(parsedWords);
-            var bitmap = drawer.Draw(layout, settings, ImageFormat.Png);
+            var bitmap = drawer.Draw(layout, settings);
 
-            writer.WriteToFile(bitmap, imageFile);
+            writer.WriteToFile(bitmap, options.ImageFile);
         }
     }
 }

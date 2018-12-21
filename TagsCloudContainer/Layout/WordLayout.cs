@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TagsCloudContainer.Drawing;
-using TagsCloudContainer.Extensions;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Layout
 {
     public class WordLayout : IWordLayout
     {
+        private const int WidthAddition = 3;
+
         private readonly IRectangleLayout layout;
         private readonly ImageSettings settings;
 
@@ -27,14 +29,20 @@ namespace TagsCloudContainer.Layout
             var weightSum = wordWeights.Sum(p => p.Value);
             wordWeights.ToList().Sort((p1, p2) => p1.Value.CompareTo(p2.Value));
 
-            foreach (var pair in wordWeights)
+            foreach (var pair in wordWeights.Take(settings.WordCount))
             {
                 var fontSize = Math.Max((float) pair.Value / weightSum * settings.MaxFontSize, settings.MinFontSize);
-                var font = settings.TextFont.SetSize(fontSize);
+                var font = new Font(settings.FontFamily, fontSize);
 
-                var rectangle = layout.PutNextRectangle(TextRenderer.MeasureText(pair.Key, font));
+                var rectangle = layout.PutNextRectangle(MeasureWord(pair.Key, font));
                 tags.Add(new Tag(pair.Key, font, rectangle));
             }
+        }
+
+        private static Size MeasureWord(string word, Font font)
+        {
+            var size = TextRenderer.MeasureText(word, font);
+            return new Size(size.Width + WidthAddition, size.Height);
         }
     }
 }

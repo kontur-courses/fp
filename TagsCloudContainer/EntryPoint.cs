@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
@@ -9,6 +10,7 @@ using TagsCloudContainer.Output;
 using TagsCloudContainer.Processing;
 using TagsCloudContainer.Processing.Converting;
 using TagsCloudContainer.Processing.Filtering;
+using TagsCloudContainer.Settings;
 using TagsCloudContainer.Ui;
 
 namespace TagsCloudContainer
@@ -30,15 +32,9 @@ namespace TagsCloudContainer
                     Dependency.OnValue("wordsToFilter", new[] {"плохой", "ужасный"})),
 
                 Component.For<IWordConverter>().ImplementedBy<InitialFormConverter>(),
+                Component.For<IWordConverter>().ImplementedBy<DefaultConverter>(),
 
                 Component.For<IParser>().ImplementedBy<WordParser>(),
-                Component.For<ImageSettings>().DependsOn(
-                    Dependency.OnValue("size", new Size(1024, 1024)),
-                    Dependency.OnValue("textFont", new Font(FontFamily.GenericMonospace, 10, FontStyle.Regular)),
-                    Dependency.OnValue("maxFontSize", 100),
-                    Dependency.OnValue("minFontSize", 10),
-                    Dependency.OnValue("backgroundColor", Color.White),
-                    Dependency.OnValue("textColor", Color.Red)),
 
                 Component.For<IRectangleLayout>().ImplementedBy<CircularCloudLayout>().DependsOn(
                     Dependency.OnValue("center", new Point(512, 512)),
@@ -53,7 +49,22 @@ namespace TagsCloudContainer
 
             var ui = container.Resolve<IUi>();
             var options = ui.RetrievePaths(args);
-            container.Resolve<Transformer>().TransformWords(options.TextFile, options.ImageFile);
+
+            if (options == null)
+                return;
+
+            var imageSettings = SettingsCreator.CreateImageSettings(options);
+            if (imageSettings.IsFailure)
+            {
+                Console.WriteLine(imageSettings.Error);
+                return;
+            }
+
+            container.Register(
+                Component.For<ImageSettings>().Instance(imageSettings.Value),
+                Component.For<ParserSettings>().Instance(SettingsCreator.CreateParserSettings(options))
+                );
+            container.Resolve<Transformer>().TransformWords(options);
         }
     }
 }
