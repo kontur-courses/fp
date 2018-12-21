@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.ColorAlgorithm;
 using TagsCloudContainer.WordsFilter;
+using TagsCloudResult;
 using TagsCloudVisualization.CloudLayouter;
 
 namespace TagsCloudContainer

@@ -19,23 +19,17 @@ namespace TagsCloudContainer.WordsFilter
             int leftBound = 5, int rightBound = int.MaxValue)
         {
             var boringWordsResult = boringWords.GetBoringWords;
-            if (!boringWordsResult.IsSuccess)
-                throw new ArgumentException(boringWordsResult.Error);
 
             this.boringWords = boringWords.GetBoringWords
                 .GetValueOrThrow();
             var prepareWordsResult = inputWords.GetPreparedWords();
-            if (!prepareWordsResult.IsSuccess)
-                throw new ArgumentException(prepareWordsResult.Error);
 
             words = prepareWordsResult.GetValueOrThrow();
             this.leftBound = leftBound;
             this.rightBound = rightBound;
 
             RemoveBoringWords();
-            var removeWordsResult = RemoveWordsOutOfLengthRange();
-            if (!removeWordsResult.IsSuccess)
-                throw new ArgumentException(removeWordsResult.Error);
+            RemoveWordsOutOfLengthRange();
         }
 
         private void RemoveBoringWords()

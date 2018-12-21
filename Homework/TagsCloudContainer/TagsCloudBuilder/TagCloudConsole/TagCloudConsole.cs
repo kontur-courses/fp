@@ -34,7 +34,7 @@ namespace TagsCloudBuilder
         public static IContainer BuildContainer(Options options)
         {
             var builder = new ContainerBuilder();
-            var imageFormat = GetImageFormat(options.OutputFileExtension);
+            var imageFormat = GetImageFormat(options.OutputFileExtension).GetValueOrThrow();
 
             builder.RegisterType<TxtWordsPreparer>()
                 .As<IWordsPreparer>()
@@ -54,7 +54,7 @@ namespace TagsCloudBuilder
                 .As<IContainersCreator>()
                 .WithParameter("fontName", options.FontFamily)
                 .WithParameter("maxFontSize", options.MaxFontSize)
-                .WithParameter("colorAlgorithm", GetColorAlgorithm(options.ColorAlgorithmName));
+                .WithParameter("colorAlgorithm", GetColorAlgorithm(options.ColorAlgorithmName).GetValueOrThrow());
 
             if (options.Debug)
                 builder.RegisterType<DebugDrawer>()

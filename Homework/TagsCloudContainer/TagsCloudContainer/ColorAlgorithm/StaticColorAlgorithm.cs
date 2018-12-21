@@ -8,7 +8,7 @@ namespace TagsCloudContainer.ColorAlgorithm
     {
         public Result<Color> GetColor(Dictionary<string, int> words = null, string word = "")
         {
-            return Result.Ok(Color.Black);
+            return Color.Black;
         }
     }
 }
