@@ -1,0 +1,8 @@
+﻿Usage:
+  tagcloud <source-path> <stopwords-path> <image-path> [--text-color=COLOR] [--background-color=COLOR] [--font=FONT] [--image-size=SIZE]
+
+Options:
+-t=COLOR --text-color=COLOR  Text color for words [default: Black]
+-b=COLOR --background-color=COLOR  Background color [default: White]
+-f=FONT --font=FONT  Text font [default: Calibri]
+-i=SIZE --image-size=SIZE  Image size, coordinates separated by x
