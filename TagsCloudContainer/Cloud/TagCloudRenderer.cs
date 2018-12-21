@@ -32,22 +32,25 @@ namespace TagsCloudContainer.Cloud
                 foreach (var wordTag in wordTags)
                 {
                     var rectangle = wordTag.DescribedRectangle;
-                    fontName.Then((n) => ValidateFont(n));
-                    ValidateFont(fontName.Value);
-                    Font drawFont = new Font(fontName.Value, rectangle.Height / 2);
-                    graphics.DrawString(wordTag.Word, drawFont, brush.GetValueOrThrow(), rectangle.X, rectangle.Y);
+                    var drawFont = CreateFont(fontName, rectangle.Height);
+                    if (!drawFont.IsSuccess)
+                        return Result.Fail<Image>(fontName.Error);
+                    graphics.DrawString(wordTag.Word, drawFont.Value, brush.Value, rectangle.X, rectangle.Y);
                 }
 
                 return image as Image;
             }).RefineError("Image generate error");
         }
 
-        private Result<string> ValidateFont(string name)
+        private Result<Font> CreateFont(Result<string> fontName, int height)
         {
-            var fontFamily = new FontFamily(fontName.Value);
-            if (FontFamily.Families.Contains(fontFamily))
-                return Result.Ok(name);
-            return Result.Fail<string>("Font not found");
+            return fontName.Then((name) =>
+            {
+                var fontFamily = new FontFamily(fontName.Value);
+                if (FontFamily.Families.Contains(fontFamily))
+                    return Result.Ok(new Font(name, height / 2));
+                return Result.Fail<Font>("Font not found");
+            });
         }
     }
 }

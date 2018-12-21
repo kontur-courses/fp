@@ -50,22 +50,16 @@ namespace TagsCloudContainer.Arguments
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(o =>
                 {
-                    if (o.InputPath == null)
-                        InputPath = Result.Fail<string>("Input path is null");
-                    else
-                        InputPath = Result.Ok(o.InputPath);
-                    if (o.OutputPath == "")
-                        OutputPath = Result.Fail<string>("Output path is null");
-                    else
-                        OutputPath = Result.Ok(o.OutputPath);
+                    InputPath = Result.Ok(o.InputPath);
+                    OutputPath = Result.Ok(o.OutputPath);
                     FontName = Result.Ok(o.FontName);
 
                     if (brushes.TryGetValue(o.Color, out var color))
                         Brush = color;
                     else
                         Brush = Brushes.Black;
-                    
-                        WordsToExcludePath = o.WordsToExclude;
+
+                    WordsToExcludePath = o.WordsToExclude;
                 });
         }
     }

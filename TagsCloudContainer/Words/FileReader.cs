@@ -29,12 +29,12 @@ namespace TagsCloudContainer
                     var separators = new string[] { Environment.NewLine };
                     return textFromFile.Split(separators, StringSplitOptions.RemoveEmptyEntries).ToArray();
                 }
-            });
+            }).RefineError("File reading error");
         }
 
         public Result<HashSet<string>> ReadWordsInHashSet()
         {
-            return ReadWords().Then((w) => new HashSet<string>(w)).RefineError("read words in HashSet have error");
+            return ReadWords().Then((w) => new HashSet<string>(w)).RefineError("Read words in HashSet have error");
         }
     }
 }
