@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {

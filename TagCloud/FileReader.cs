@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TagCloud.Interfaces;
-using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -14,13 +13,7 @@ namespace TagCloud
 
         public Result<IEnumerable<string>> Read(string path)
         {
-            return Result.Result.Of(() => new StreamReader(path, Encoding.Default))
-                .Then(sr =>
-                {
-                    var content = sr.ReadToEnd();
-                    sr.Dispose();
-                    return content;
-                })
+            return Result.Of(() => File.ReadAllText(path, Encoding.Default))
                 .Then(content => regex
                     .Matches(content)
                     .Cast<Match>()

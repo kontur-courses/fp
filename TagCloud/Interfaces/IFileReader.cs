@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {

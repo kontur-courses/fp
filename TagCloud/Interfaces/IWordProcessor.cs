@@ -1,6 +1,4 @@
-﻿using TagCloud.Result;
-
-namespace TagCloud.Interfaces
+﻿namespace TagCloud.Interfaces
 {
     public interface IWordProcessor
     {

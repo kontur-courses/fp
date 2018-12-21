@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TagCloud.Interfaces;
-using TagCloud.Result;
 
 namespace TagCloud.Layouter
 {
@@ -28,15 +27,16 @@ namespace TagCloud.Layouter
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            var rectangle = PutOnSpiral(rectangleSize);
-            if (rectangle == null)
-                return null;
-            rectangle = MakeCloserToCenter(rectangle);
-            rectanglesList.Add(rectangle);
-            return rectangle;
+            return PutOnSpiral(rectangleSize)
+                .Then(MakeCloserToCenter)
+                .Then(rect =>
+                {
+                    rectanglesList.Add(rect);
+                    return rect;
+                });
         }
 
-        private Rectangle MakeCloserToCenter(Rectangle rectangle)
+        private Result<Rectangle> MakeCloserToCenter(Rectangle rectangle)
         {
             var directionToCenter = new Vector(rectangle.Center, origin).Normalized();
             var currentDirection = directionToCenter;
@@ -53,7 +53,7 @@ namespace TagCloud.Layouter
             return rectangle;
         }
 
-        private Rectangle PutOnSpiral(Size rectangleSize)
+        private Result<Rectangle> PutOnSpiral(Size rectangleSize)
         {
             var newRectangle = new Rectangle(origin, rectangleSize);
             while (newRectangle.IsIntersectsWithAnyRect(rectanglesList))

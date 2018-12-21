@@ -1,5 +1,4 @@
 ﻿using TagCloud.Layouter;
-using TagCloud.Result;
 
 namespace TagCloud.Interfaces
 {

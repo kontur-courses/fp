@@ -1,6 +1,5 @@
 ﻿using System;
 using TagCloud;
-using TagCloud.Result;
 
 namespace TagCloudCreator
 {

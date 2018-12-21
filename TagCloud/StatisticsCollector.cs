@@ -2,7 +2,6 @@
 using System.Linq;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 
 namespace TagCloud
 {

@@ -1,7 +1,6 @@
 ﻿using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
 using TagCloud.Layouter;
-using TagCloud.Result;
 
 namespace TagCloud
 {

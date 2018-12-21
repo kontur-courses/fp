@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 using Point = TagCloud.Layouter.Point;
 
 namespace TagCloud.Visualizer
@@ -30,25 +30,19 @@ namespace TagCloud.Visualizer
 
         public Result<Image> Visualize(IEnumerable<PositionedElement> objects)
         {
-            var source = PrepareToVisualize(objects);
-            var sourceToDraw = source.Select(NormalizePosition);
-            var bitmap = new Bitmap(Size.Width, Size.Height);
-            DrawElements(bitmap, sourceToDraw, Size);
-            return bitmap;
+            return PrepareToVisualize(objects)
+                .Then(source => source.Select(NormalizePosition))
+                .Then(elements => DrawElements(elements, Size))
+                .Then(bitmap => (Image) bitmap);
         }
 
-        private IEnumerable<VisualElement> PrepareToVisualize(IEnumerable<PositionedElement> elements)
+        private Result<IEnumerable<VisualElement>> PrepareToVisualize(IEnumerable<PositionedElement> elements)
         {
-            var result = new List<VisualElement>();
-            foreach (var element in elements)
-            {
-                var color = colorScheme.Process(element);
-                var font = fontScheme.Process(element);
-                var newElement = new VisualElement(element, font, color);
-                result.Add(newElement);
-            }
-
-            return result;
+            return Result.Of(() => elements.Select(element => colorScheme.Process(element)
+                .Then(color => fontScheme.Process(element)
+                    .Then(font => (font, color)))
+                .Then(fontInfo => new VisualElement(element, fontInfo.Item1, fontInfo.Item2))
+                .GetValueOrThrow()));
         }
 
         private Font AdjustFontSize(Graphics graphics, Font font, Size necessarySize, string word)
@@ -75,27 +69,40 @@ namespace TagCloud.Visualizer
             return element;
         }
 
-        private void DrawElements(
-            Bitmap bitmap,
+        private Bitmap DrawElements(
             IEnumerable<VisualElement> elements,
             Size size)
         {
+            var bitmap = new Bitmap(size.Width, size.Height);
             using (var graphics = Graphics.FromImage(bitmap))
             {
                 graphics.TranslateTransform(size.Width / 2, size.Height / 2);
                 graphics.Clear(BackgroundColor);
                 foreach (var element in elements)
+                {
+                    if (!IsInBounds(size, element))
+                        throw new Exception($"The element is outside the image: {size.Width}x{size.Height}");
                     DrawElement(graphics, element);
+                }
             }
+
+            return bitmap;
         }
 
         private void DrawElement(Graphics graphics, VisualElement element)
         {
-            using (var pen = new Pen(element.Color.GetValueOrThrow()))
+            using (var pen = new Pen(element.Color))
             {
-                var font = AdjustFontSize(graphics, element.Font.GetValueOrThrow(), element.Size.ToSize(), element.Word);
+                var font = AdjustFontSize(graphics, element.Font, element.Size.ToSize(), element.Word);
                 graphics.DrawString(element.Word, font, pen.Brush, ExtractRectangleF(element));
             }
+        }
+
+        private bool IsInBounds(Size bounds, VisualElement element)
+        {
+            var isFitInWidth = Math.Abs(element.Position.X + element.Size.Width / 2) <= bounds.Width / 2;
+            var isFitInHeight = Math.Abs(element.Position.Y + element.Size.Height / 2) <= bounds.Height / 2;
+            return isFitInWidth && isFitInHeight;
         }
 
         private RectangleF ExtractRectangleF(VisualElement element)

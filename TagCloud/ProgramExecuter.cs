@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using JetBrains.Annotations;
-using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -11,9 +10,9 @@ namespace TagCloud
         {
             using (var process = CreateProcess(command, paramsString))
             {
-                process.Start();
-                WriteToStream(process, content);
-                return ReadFromStream(process);
+                return Result.Of(() => process.Start())
+                    .Then(_ => WriteToStream(process, content))
+                    .Then(_ => ReadFromStream(process));
             }
         }
 
@@ -37,7 +36,7 @@ namespace TagCloud
         {
             using (var writer = new StreamWriter(process.StandardInput.BaseStream))
             {
-                return Result.Result.OfAction(() => writer.WriteLine(content));
+                return Result.OfAction(() => writer.WriteLine(content));
             }
         }
 
@@ -45,7 +44,7 @@ namespace TagCloud
         {
             using (var reader = new StreamReader(process.StandardOutput.BaseStream))
             {
-                return reader.ReadToEnd();
+                return Result.Of(() => reader.ReadToEnd());
             }
         }
     }

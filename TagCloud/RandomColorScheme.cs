@@ -2,7 +2,6 @@
 using System.Drawing;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -13,10 +12,10 @@ namespace TagCloud
 
         public Result<Color> Process(PositionedElement element)
         {
-            return Color.FromArgb(
+            return Result.Of(() => Color.FromArgb(
                 random.Next(MaxChannelValue),
                 random.Next(MaxChannelValue),
-                random.Next(MaxChannelValue));
+                random.Next(MaxChannelValue)));
         }
     }
 }

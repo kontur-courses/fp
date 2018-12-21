@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 using Point = TagCloud.Layouter.Point;
 using Size = TagCloud.Layouter.Size;
 
@@ -10,8 +9,8 @@ namespace TagCloud.Visualizer
     {
         public VisualElement(
             PositionedElement element,
-            Result<Font> font,
-            Result<Color> color)
+            Font font,
+            Color color)
         {
             Word = element.Word;
             Position = element.Rectangle.Center;
@@ -38,10 +37,10 @@ namespace TagCloud.Visualizer
         }
 
         public Point Position { get; set; }
-        public Result<Color> Color { get; }
+        public Color Color { get; }
         public string Word { get; }
         public Size Size { get; }
-        public Result<Font> Font { get; }
+        public Font Font { get; }
         public int Frequency { get; }
     }
 }

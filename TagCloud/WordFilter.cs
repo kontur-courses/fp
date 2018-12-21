@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Interfaces;
-using TagCloud.Result;
 
 namespace TagCloud
 {

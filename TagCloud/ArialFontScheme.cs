@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -12,7 +11,7 @@ namespace TagCloud
 
         public Result<Font> Process(PositionedElement element)
         {
-            return Result.Result.Of(() => new Font(FamilyName, Size));
+            return Result.Of(() => new Font(new FontFamily(FamilyName), Size));
         }
     }
 }

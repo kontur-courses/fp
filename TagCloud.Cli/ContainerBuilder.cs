@@ -7,7 +7,6 @@ using Castle.Windsor;
 using TagCloud;
 using TagCloud.Interfaces;
 using TagCloud.Layouter;
-using TagCloud.Result;
 using TagCloud.Visualizer;
 
 namespace TagCloudCreator

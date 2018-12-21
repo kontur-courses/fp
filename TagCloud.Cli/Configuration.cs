@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using CommandLine;
 using TagCloud.Enums;
-using TagCloud.Result;
 
 namespace TagCloud
 {
@@ -11,8 +11,34 @@ namespace TagCloud
         public string InputFile { get; set; }
         public string OutputFile { get; set; }
         public string StopWordsFile { get; set; }
-        public Color BackgroundColor { get; set; }
-        public Size ImageSize { get; set; }
+
+        private Color backgroundColor;
+        public Color BackgroundColor
+        {
+            get => backgroundColor;
+            set
+            {
+                if (!value.IsKnownColor)
+                    throw new ArgumentException("Unknown color for background: " + value.Name);
+                backgroundColor = value;
+            }
+        }
+
+        private Size imageSize;
+
+        public Size ImageSize
+        {
+            get => imageSize;
+            set
+            {
+                if (value.Height <= 0)
+                    throw new ArgumentException("Result image height must be a greater then zero number, but given: " + value.Height);
+                if (value.Width <= 0)
+                    throw new ArgumentException("Result image width must be a greater then zero number, but given: " + value.Width);
+                imageSize = value;
+            }
+        }
+
         public CloudLayouterType LayouterType { get; set; }
         public ColorScheme ColorScheme { get; set; }
         public FontScheme FontScheme { get; set; }
@@ -21,7 +47,7 @@ namespace TagCloud
 
         public static Result<Configuration> FromArguments(string[] args)
         {
-            return Result.Result.Of(() => new Configuration())
+            return Result.Of(() => new Configuration())
                 .Then(configuration =>
                 {
                     Parser.Default.ParseArguments<Options>(args)

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud;
 using TagCloud.Interfaces;
 using TagCloud.IntermediateClasses;
-using TagCloud.Result;
 
 namespace TagCloudCreator
 {
@@ -51,15 +51,11 @@ namespace TagCloudCreator
 
         private Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words, IWordProcessor processor)
         {
-            var result = new List<string>();
-            foreach (var word in words)
+            return Result.Of(() => words.Select(word =>
             {
-                processor.Process(word)
-                    .Then(p => result.Add(p))
-                    .OnFail(s => result.Add(word));
-            }
-
-            return result;
+                var processed = processor.Process(word);
+                return processed.IsSuccess ? processed.GetValueOrThrow() : word;
+            }));
         }
 
         private Result<IEnumerable<string>> ExcludeWords(IEnumerable<string> words, IWordFilter filter)
@@ -67,18 +63,13 @@ namespace TagCloudCreator
             return words.Where(w => !filter.ToExclude(w).GetValueOrThrow()).ToArray();
         }
 
-        private IEnumerable<PositionedElement> FillCloud(
+        private Result<IEnumerable<PositionedElement>> FillCloud(
             IEnumerable<FrequentedWord> statistics)
         {
-            var elements = new List<PositionedElement>();
-            foreach (var word in statistics)
-            {
-                sizeScheme.GetSize(word)
-                    .Then(size => layouter.PutNextRectangle(size))
-                    .Then(rect => elements.Add(new PositionedElement(word, rect)));
-            }
-
-            return elements;
+            return Result.Of(() => statistics.Select(word => sizeScheme.GetSize(word)
+                .Then(size => layouter.PutNextRectangle(size))
+                .Then(rect => new PositionedElement(word, rect))
+                .GetValueOrThrow()));
         }
     }
 }

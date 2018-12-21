@@ -2,7 +2,6 @@
 using JetBrains.Annotations;
 using NHunspell;
 using TagCloud.Interfaces;
-using TagCloud.Result;
 
 namespace TagCloud
 {

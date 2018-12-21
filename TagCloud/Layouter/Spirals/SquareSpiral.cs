@@ -1,6 +1,5 @@
 ﻿using System;
 using TagCloud.Interfaces;
-using TagCloud.Result;
 
 namespace TagCloud.Layouter.Spirals
 {
