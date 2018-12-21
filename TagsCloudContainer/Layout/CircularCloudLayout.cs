@@ -3,38 +3,34 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
+using CSharpFunctionalExtensions;
+using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Layout
 {
     public class CircularCloudLayout : IRectangleLayout
     {
-        private readonly List<Rectangle> rectangles;
         private readonly Spiral spiral;
-        private readonly Size cloudSize;
+        private readonly List<Rectangle> rectangles;
+        public IEnumerable<Rectangle> Rectangles => rectangles.ToImmutableList();
 
         public Point Center => spiral.Center;
         public double Area => Math.Pow(spiral.Radius, 2) * Math.PI;
-        public IEnumerable<Rectangle> Rectangles => rectangles.ToImmutableList();
 
-        public CircularCloudLayout(int locationX, int locationY, int width, int height)
-            : this(new Point(locationX, locationY), new Size(width, height))
+        public readonly ImageSettings Settings;
+
+        public CircularCloudLayout(ImageSettings settings)
         {
-        }
-
-        public CircularCloudLayout(Point center, Size size)
-        {
-            if (size.Width <= 0 || size.Height <= 0)
-                throw new ArgumentException(nameof(size));
-
+            Settings = settings;
+            var center = new Point(settings.Size.Width / 2, settings.Size.Height / 2);
             spiral = new Spiral(center);
             rectangles = new List<Rectangle>();
-            cloudSize = size;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (rectangleSize.Height > cloudSize.Height || rectangleSize.Width > cloudSize.Width)
-                throw new ArgumentException("Should be less than CloudSize", nameof(rectangleSize));
+            if (rectangleSize.Height > Settings.Size.Height || rectangleSize.Width > Settings.Size.Width)
+                return Result.Fail<Rectangle>("Rectangle doesn't fit in");
 
             Rectangle rectangle;
             do
@@ -45,8 +41,17 @@ namespace TagsCloudContainer.Layout
 
             } while (rectangles.Any(rectangle.IntersectsWith));
 
+            if (!IsInside(rectangle))
+                return Result.Fail<Rectangle>("Rectangle doesn't fit in");
+
             rectangles.Add(rectangle);
-            return rectangle;
+            return Result.Ok(rectangle);
+        }
+
+        private bool IsInside(Rectangle rectangle)
+        {
+            var imageRectangle = new Rectangle(new Point(0, 0), Settings.Size);
+            return rectangle.Equals(Rectangle.Intersect(rectangle, imageRectangle));
         }
     }
 }

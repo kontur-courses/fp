@@ -1,12 +1,16 @@
 ﻿using System.IO;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudContainer.Input
 {
     public class TxtReader : IFileReader
     {
-        public string Read(string filename)
+        public Result<string> Read(string path)
         {
-            return File.ReadAllText(filename);
+            if (!File.Exists(path))
+                return Result.Fail<string>("Text file not found");
+
+            return Result.Ok(File.ReadAllText(path));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace TagsCloudContainerTests.Input
             var path = Path.GetTempFileName();
             File.WriteAllText(path, "Test text. End.");
 
-            new TxtReader().Read(path).Should().Be("Test text. End.");
+            new TxtReader().Read(path).Value.Should().Be("Test text. End.");
         }
     }
 }

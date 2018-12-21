@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using TagsCloudContainer.Settings;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudContainer.Processing
 {
     public interface IParser
     {
-        ParserSettings Settings { get; }
-        Dictionary<string, int> ParseWords(string input);
+        Result<Dictionary<string, int>> ParseWords(string input);
     }
 }

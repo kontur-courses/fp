@@ -1,5 +1,7 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using CSharpFunctionalExtensions;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Settings;
 
@@ -7,7 +9,7 @@ namespace TagsCloudContainer.Drawing
 {
     public class ImageDrawer : IDrawer
     {
-        public byte[] Draw(IWordLayout layout, ImageSettings settings)
+        public Result<byte[]> Draw(HashSet<Tag> tags, ImageSettings settings)
         {
             using (var bitmap = new Bitmap(settings.Size.Width, settings.Size.Height))
             {
@@ -17,7 +19,7 @@ namespace TagsCloudContainer.Drawing
                         new SolidBrush(settings.BackgroundColor),
                         new Rectangle(new Point(0, 0), settings.Size));
 
-                    foreach (var tag in layout.Tags)
+                    foreach (var tag in tags)
                     {
                         graphics.DrawRectangle(new Pen(settings.RectangleColor), tag.ContainingRectangle);
                         graphics.DrawString(tag.Word, tag.Font, new SolidBrush(settings.TextColor), tag.ContainingRectangle);
@@ -26,7 +28,7 @@ namespace TagsCloudContainer.Drawing
                     using (var stream = new MemoryStream())
                     {
                         bitmap.Save(stream, settings.ImageFormat);
-                        return stream.ToArray();
+                        return Result.Ok(stream.ToArray());
                     }
                 }
             }

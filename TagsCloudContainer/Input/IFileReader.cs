@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Input
+﻿using CSharpFunctionalExtensions;
+
+namespace TagsCloudContainer.Input
 {
     public interface IFileReader
     {
-        string Read(string filename);
+        Result<string> Read(string path);
     }
 }

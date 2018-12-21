@@ -23,7 +23,7 @@ namespace TagsCloudContainer.Processing.Filtering
             if (!File.Exists(path))
                 return Result.Fail<BlackListFilter>("File not found");
 
-            if (Path.GetExtension(path) != "txt")
+            if (Path.GetExtension(path) != ".txt")
                 return Result.Fail<BlackListFilter>("Bad file format. Use only txt");
 
             var words = File.ReadLines(path);

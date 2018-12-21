@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSharpFunctionalExtensions;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Processing
@@ -16,7 +17,7 @@ namespace TagsCloudContainer.Processing
             Settings = settings;
         }
 
-        public Dictionary<string, int> ParseWords(string input)
+        public Result<Dictionary<string, int>> ParseWords(string input)
         {
             IEnumerable<string> words = string.Concat(input.Where(c => !char.IsPunctuation(c)))
                 .Split(Whitespaces, StringSplitOptions.RemoveEmptyEntries);
@@ -31,7 +32,7 @@ namespace TagsCloudContainer.Processing
                 wordCount[word]++;
             }
 
-            return wordCount;
+            return Result.Ok(wordCount);
         }
 
         private IEnumerable<string> ConvertWords(IEnumerable<string> words)

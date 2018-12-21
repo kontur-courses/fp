@@ -25,17 +25,19 @@ namespace TagsCloudContainerTests.Input
                 Directory.SetCurrentDirectory(dir);
             }
             else
-                throw new NullReferenceException("Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) returns null");
+                throw new NullReferenceException(
+                    "Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) returns null");
         }
 
 
         [Test, TestCaseSource(nameof(InDefaultStateTestCases))]
         public void InDefaultState(string input, Dictionary<string, int> expected)
         {
-            var parser = new WordParser(new ParserSettings(new IWordFilter[] { }, new IWordConverter[] { }));
+            var parser = new WordParser(new ParserSettings(new IWordFilter[] {new DefaultFilter()},
+                new IWordConverter[] {new DefaultConverter()}));
 
-            var actual = parser.ParseWords(input);
-                
+            var actual = parser.ParseWords(input).Value;
+
             actual.Should().BeEquivalentTo(expected);
         }
 
@@ -43,17 +45,25 @@ namespace TagsCloudContainerTests.Input
         {
             yield return new TestCaseData("hello world ha ha", new Dictionary<string, int>
             {
-                {"hello", 1}, { "world", 1}, { "ha", 2}
+                {"hello", 1},
+                {"world", 1},
+                {"ha", 2}
             }).SetName("parse simple text");
 
             yield return new TestCaseData("hello\r\r\nworld\t\t     \t\r\n\nnew", new Dictionary<string, int>
             {
-                {"hello", 1}, { "world", 1}, { "new", 1}
+                {"hello", 1},
+                {"world", 1},
+                {"new", 1}
             }).SetName("parse text with whitespaces");
 
             yield return new TestCaseData("hello, world. That's new me!!", new Dictionary<string, int>
             {
-                { "hello", 1}, {"world", 1}, {"new", 1}, {"thats", 1}, {"me", 1}
+                {"hello", 1},
+                {"world", 1},
+                {"new", 1},
+                {"thats", 1},
+                {"me", 1}
             }).SetName("parse text with punctuation marks");
         }
 
@@ -65,13 +75,15 @@ namespace TagsCloudContainerTests.Input
                 new BlackListFilter(new[] {"привет", "здорово"}),
                 new CommonWordsFilter()
             };
-            var parser = new WordParser(new ParserSettings(filters, new IWordConverter[0]));
+            var parser = new WordParser(new ParserSettings(filters, new IWordConverter[] {new DefaultConverter()}));
             var expected = new Dictionary<string, int>
             {
-                { "миша", 1}, {"живется", 1}, {"агрегатор", 1}
+                {"миша", 1},
+                {"живется", 1},
+                {"агрегатор", 1}
             };
 
-            parser.ParseWords("Привет, Миша. Здорово ли тебе живется? Ну ладно, агрегатор!").Should()
+            parser.ParseWords("Привет, Миша. Здорово ли тебе живется? Ну ладно, агрегатор!").Value.Should()
                 .BeEquivalentTo(expected);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using CSharpFunctionalExtensions;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Layout
@@ -14,19 +15,17 @@ namespace TagsCloudContainer.Layout
         private readonly IRectangleLayout layout;
         private readonly ImageSettings settings;
 
-        private readonly HashSet<Tag> tags;
-        public IReadOnlyCollection<Tag> Tags => tags;
 
         public WordLayout(IRectangleLayout layout, ImageSettings settings)
         {
             this.layout = layout;
             this.settings = settings;
-            tags = new HashSet<Tag>();
         }
 
-        public void PlaceWords(Dictionary<string, int> wordWeights)
+        public Result<HashSet<Tag>> PlaceWords(Dictionary<string, int> wordWeights)
         {
             var weightSum = wordWeights.Sum(p => p.Value);
+            var tags = new HashSet<Tag>();
             wordWeights.ToList().Sort((p1, p2) => p1.Value.CompareTo(p2.Value));
 
             foreach (var pair in wordWeights.Take(settings.WordCount))
@@ -35,8 +34,12 @@ namespace TagsCloudContainer.Layout
                 var font = new Font(settings.FontFamily, fontSize);
 
                 var rectangle = layout.PutNextRectangle(MeasureWord(pair.Key, font));
-                tags.Add(new Tag(pair.Key, font, rectangle));
+
+                if (rectangle.IsSuccess)
+                    tags.Add(new Tag(pair.Key, font, rectangle.Value));
             }
+
+            return Result.Ok(tags);
         }
 
         private static Size MeasureWord(string word, Font font)

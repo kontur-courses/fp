@@ -1,10 +1,12 @@
-﻿using TagsCloudContainer.Layout;
+﻿using System.Collections.Generic;
+using CSharpFunctionalExtensions;
+using TagsCloudContainer.Layout;
 using TagsCloudContainer.Settings;
 
 namespace TagsCloudContainer.Drawing
 {
     public interface IDrawer
     {
-        byte[] Draw(IWordLayout layout, ImageSettings settings);
+        Result<byte[]> Draw(HashSet<Tag> tags, ImageSettings settings);
     }
 }

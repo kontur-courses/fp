@@ -1,4 +1,5 @@
 ﻿using System;
+using CSharpFunctionalExtensions;
 using TagsCloudContainer.Drawing;
 using TagsCloudContainer.Input;
 using TagsCloudContainer.Layout;
@@ -34,13 +35,15 @@ namespace TagsCloudContainer
             Console.WriteLine($"Reading from: {options.TextFile}");
             Console.WriteLine($"Writing to: {options.ImageFile}");
 
-            var text = fileReader.Read(options.TextFile);
-            var parsedWords = parser.ParseWords(text);
+            fileReader
+                .Read(options.TextFile)
+                .OnSuccess(parser.ParseWords)
+                .OnSuccess(layout.PlaceWords)
+                .OnSuccess(tags => drawer.Draw(tags, settings))
+                .OnSuccess(bytes => writer.WriteToFile(bytes, options.ImageFile));
 
-            layout.PlaceWords(parsedWords);
-            var bitmap = drawer.Draw(layout, settings);
 
-            writer.WriteToFile(bitmap, options.ImageFile);
+            // TODO: проверка на валидность размера картинки
         }
     }
 }
