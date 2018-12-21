@@ -110,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Dictionaries\Russian\ru_RU.aff1" />
+    <None Include="Dictionaries\Russian\ru_RU.aff" />
     <EmbeddedResource Include="Dictionaries\Russian\ru_RU.dic" />
     <None Include="packages.config" />
     <None Include="README.md" />
