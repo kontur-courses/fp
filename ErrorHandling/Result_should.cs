@@ -3,7 +3,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultOfTask
+namespace ResultOf
 {
     [TestFixture]
     public class Result_Should
@@ -124,7 +124,7 @@ namespace ResultOfTask
                 .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
             res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
-/*
+
         [Test]
         public void ReplaceError_IfFail()
         {
@@ -158,6 +158,5 @@ namespace ResultOfTask
                 .RefineError("Posting results to db")
                 .ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
-        */
     }
 }
