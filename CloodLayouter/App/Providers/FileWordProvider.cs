@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using CloodLayouter.Infrastructer;
+using ResultOf;
 
 namespace CloodLayouter.App
 {
-    public class FileWordProvider : IProvider<IEnumerable<string>>
+    public class FileWordProvider : IProvider<IEnumerable<Result<string>>>
     {
         private readonly string[] fileNames;
 
@@ -13,22 +14,23 @@ namespace CloodLayouter.App
             this.fileNames = fileNames;
         }
 
-        public IEnumerable<string> Get()
+        public IEnumerable<Result<string>> Get()
         {
             return Read();
         }
 
-        private IEnumerable<string> Read()
+        private IEnumerable<Result<string>> Read()
         {
             foreach (var fileName in fileNames)
             {
-                var stream = new StreamReader(fileName);
-                var line = stream.ReadLine();
-                while (line != null)
-                {
-                    yield return line.ToLower();
-                    line = stream.ReadLine();
-                }
+                var fileRes = Result.Of(() => new StreamReader(fileName));
+                
+                if (!fileRes.IsSuccess)
+                    yield return Result.Fail<string>($"Can't open file {fileName}.");
+                else
+                    foreach (var line in fileRes.GetValueOrThrow().ReadLines())
+                        yield return Result.Ok(line);
+
             }
         }
     }

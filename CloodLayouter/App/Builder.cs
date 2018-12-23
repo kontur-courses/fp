@@ -19,20 +19,21 @@ namespace CloodLayouter.App
 
                 parserResult.WithParsed(opt =>
                     logicBuilder.Register(x => new FileWordProvider(opt.InputFiles.ToArray()))
-                        .As<IProvider<IEnumerable<string>>>().SingleInstance());
+                        .As<IProvider<IEnumerable<Result<string>>>>().SingleInstance());
 
-                logicBuilder.RegisterType<WordSelector>().As<IConverter<IEnumerable<string>, IEnumerable<string>>>();
+                logicBuilder.RegisterType<WordSelector>()
+                    .As<IConverter<IEnumerable<Result<string>>, IEnumerable<Result<string>>>>().SingleInstance();
                 logicBuilder.RegisterType<FromWordToTagConverter>()
-                    .As<IConverter<IEnumerable<string>, IEnumerable<Tag>>>();
-                logicBuilder.RegisterType<ConvertPerfomer>().As<IProvider<IEnumerable<Tag>>>();
-                logicBuilder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
+                    .As<IConverter<IEnumerable<Result<string>>, IEnumerable<Result<Tag>>>>().SingleInstance();
+                logicBuilder.RegisterType<ConvertPerfomer>().As<IProvider<IEnumerable<Result<Tag>>>>().SingleInstance();
+                logicBuilder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().SingleInstance();
 
 
                 parserResult.WithParsed(opt =>
                     logicBuilder.Register(x => new ImageSettings(opt.Width, opt.Heigth)).AsSelf().SingleInstance());
 
-                logicBuilder.RegisterType<TagCloudDrawer>().As<IDrawer>();
-                logicBuilder.RegisterType<ImageSaver>().As<IImageSaver>();
+                logicBuilder.RegisterType<TagCloudDrawer>().As<IDrawer>().SingleInstance();
+                logicBuilder.RegisterType<ImageSaver>().As<IImageSaver>().SingleInstance();
 
                 return Result.Of(() => logicBuilder.Build());
             }

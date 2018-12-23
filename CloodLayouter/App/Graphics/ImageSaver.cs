@@ -1,5 +1,8 @@
+using System;
+using System.Diagnostics.Contracts;
 using CloodLayouter.Infrastructer;
 using CommandLine;
+using ResultOf;
 
 namespace CloodLayouter.App
 {
@@ -15,9 +18,16 @@ namespace CloodLayouter.App
         }
 
 
-        public void Save(ParserResult<Options> result)
+        public Result<string> Save(ParserResult<Options> result)
         {
-            result.WithParsed(opt => drawer.Draw().Save(opt.OutputFile));
+            var drawRes = drawer.Draw();
+            if(drawRes.IsSuccess)
+                return Result.Of<string>(() =>
+                {
+                    result.WithParsed(opt => drawer.Draw().GetValueOrThrow().Save(opt.OutputFile));
+                    return "image saved";
+                });
+            return Result.Fail<string>("Can't save image becous -> " + drawRes.Error);
         }
     }
 }

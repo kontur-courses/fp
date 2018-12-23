@@ -67,6 +67,7 @@
     <Compile Include="Infrastructer\ImageSettings.cs" />
     <Compile Include="Infrastructer\IProvider.cs" />
     <Compile Include="Infrastructer\SizeFExtenstions.cs" />
+    <Compile Include="Infrastructer\StreamReaderExtensions.cs" />
     <Compile Include="Infrastructer\Tag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

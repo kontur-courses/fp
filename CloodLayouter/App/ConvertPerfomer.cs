@@ -1,24 +1,25 @@
 using System.Collections.Generic;
 using CloodLayouter.Infrastructer;
+using ResultOf;
 
 namespace CloodLayouter.App
 {
-    public class ConvertPerfomer : IProvider<IEnumerable<Tag>>
+    public class ConvertPerfomer : IProvider<IEnumerable<Result<Tag>>>
     {
-        private readonly IProvider<IEnumerable<string>> wordProvider;
-        private readonly IConverter<IEnumerable<string>, IEnumerable<string>> wordSelector;
-        private readonly IConverter<IEnumerable<string>, IEnumerable<Tag>> wordToTagConverter;
+        private readonly IProvider<IEnumerable<Result<string>>> wordProvider;
+        private readonly IConverter<IEnumerable<Result<string>>, IEnumerable<Result<string>>> wordSelector;
+        private readonly IConverter<IEnumerable<Result<string>>, IEnumerable<Result<Tag>>> wordToTagConverter;
 
-        public ConvertPerfomer(IProvider<IEnumerable<string>> wordProvider,
-            IConverter<IEnumerable<string>, IEnumerable<string>> wordSelector,
-            IConverter<IEnumerable<string>, IEnumerable<Tag>> wordToTagConverter)
+        public ConvertPerfomer(IProvider<IEnumerable<Result<string>>> wordProvider,
+            IConverter<IEnumerable<Result<string>>, IEnumerable<Result<string>>> wordSelector,
+            IConverter<IEnumerable<Result<string>>, IEnumerable<Result<Tag>>> wordToTagConverter)
         {
             this.wordProvider = wordProvider;
             this.wordSelector = wordSelector;
             this.wordToTagConverter = wordToTagConverter;
         }
 
-        public IEnumerable<Tag> Get()
+        public IEnumerable<Result<Tag>> Get()
         {
             return wordToTagConverter.Convert(wordSelector.Convert(wordProvider.Get()));
         }

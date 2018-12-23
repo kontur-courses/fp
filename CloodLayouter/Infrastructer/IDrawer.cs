@@ -1,9 +1,10 @@
 using System.Drawing;
+using ResultOf;
 
 namespace CloodLayouter.Infrastructer
 {
     public interface IDrawer
     {
-        Bitmap Draw();
+        Result<Bitmap> Draw();
     }
 }

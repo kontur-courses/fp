@@ -9,6 +9,15 @@ namespace ResultOf
     public class Result_Should
     {
         [Test]
+        public void Create_Fail()
+        {
+            var r = Result.Fail<int>("123");
+
+            r.IsSuccess.Should().BeFalse();
+            r.Error.Should().Be("123");
+        }
+
+        [Test]
         public void Create_Ok()
         {
             var r = Result.Ok(42);
@@ -17,12 +26,37 @@ namespace ResultOf
         }
 
         [Test]
-        public void Create_Fail()
+        public void RefineError_AddErrorMessageBeforePreviousErrorText()
         {
-            var r = Result.Fail<int>("123");
+            var calculation = Result.Fail<None>("No connection");
+            calculation
+                .RefineError("Posting results to db")
+                .ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
+        }
 
-            r.IsSuccess.Should().BeFalse();
-            r.Error.Should().Be("123");
+        [Test]
+        public void ReplaceError_DoNothing_IfSuccess()
+        {
+            Result.Ok(42)
+                .ReplaceError(e => "replaced")
+                .ShouldBeEquivalentTo(Result.Ok(42));
+        }
+
+        [Test]
+        public void ReplaceError_DontReplace_IfCalledBeforeError()
+        {
+            Result.Ok(42)
+                .ReplaceError(e => "replaced")
+                .Then(n => Result.Fail<int>("error"))
+                .ShouldBeEquivalentTo(Result.Fail<int>("error"));
+        }
+
+        [Test]
+        public void ReplaceError_IfFail()
+        {
+            Result.Fail<None>("error")
+                .ReplaceError(e => "replaced")
+                .ShouldBeEquivalentTo(Result.Fail<None>("replaced"));
         }
 
         [Test]
@@ -50,42 +84,9 @@ namespace ResultOf
         }
 
         [Test]
-        public void RunThen_WhenOk()
-        {
-            var res = Result.Ok(42)
-                .Then(n => n + 10);
-            res.ShouldBeEquivalentTo(Result.Ok(52));
-        }
-
-        [Test]
-        public void SkipThen_WhenFail()
-        {
-            var fail = Result.Fail<int>("Ó¯Ë·Í‡");
-            var called = false;
-            fail.Then(n =>
-            {
-                called = true;
-                return n;
-            });
-            called.Should().BeFalse();
-        }
-
-        [Test]
-        public void Then_ReturnsFail_OnException()
-        {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
-            var res = Result.Ok(42)
-                .Then(continuation);
-            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
-        }
-
-        [Test]
         public void RunOnFail_WhenFail()
         {
-            var fail = Result.Fail<int>("Ó¯Ë·Í‡");
+            var fail = Result.Fail<int>("–æ—à–∏–±–∫–∞");
             var errorHandler = A.Fake<Action<string>>();
 
             var res = fail.OnFail(errorHandler);
@@ -95,13 +96,21 @@ namespace ResultOf
         }
 
         [Test]
-        public void SkipOnFail_WhenOk()
+        public void RunThen_WhenOk()
         {
-            var ok = Result.Ok(42);
+            var res = Result.Ok(42)
+                .Then(n => n + 10);
+            res.ShouldBeEquivalentTo(Result.Ok(52));
+        }
 
-            var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
-
-            res.ShouldBeEquivalentTo(ok);
+        [Test]
+        public void RunThen_WhenOk_ComplexScenario()
+        {
+            var parsed = Result.Ok("1358571172").Then(int.Parse);
+            var res = parsed
+                .Then(i => Convert.ToString(i, 16))
+                .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
+            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
 
         [Test]
@@ -116,47 +125,35 @@ namespace ResultOf
         }
 
         [Test]
-        public void RunThen_WhenOk_ComplexScenario()
+        public void SkipOnFail_WhenOk()
         {
-            var parsed = Result.Ok("1358571172").Then(int.Parse);
-            var res = parsed
-                .Then(i => Convert.ToString(i, 16))
-                .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
-            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+            var ok = Result.Ok(42);
+
+            var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
+
+            res.ShouldBeEquivalentTo(ok);
         }
 
         [Test]
-        public void ReplaceError_IfFail()
+        public void SkipThen_WhenFail()
         {
-            Result.Fail<None>("error")
-                .ReplaceError(e => "replaced")
-                .ShouldBeEquivalentTo(Result.Fail<None>("replaced"));
+            var fail = Result.Fail<int>("–æ—à–∏–±–∫–∞");
+            var called = false;
+            fail.Then(n =>
+            {
+                called = true;
+                return n;
+            });
+            called.Should().BeFalse();
         }
 
         [Test]
-        public void ReplaceError_DoNothing_IfSuccess()
+        public void Then_ReturnsFail_OnException()
         {
-            Result.Ok(42)
-                .ReplaceError(e => "replaced")
-                .ShouldBeEquivalentTo(Result.Ok(42));
-        }
-
-        [Test]
-        public void ReplaceError_DontReplace_IfCalledBeforeError()
-        {
-            Result.Ok(42)
-                .ReplaceError(e => "replaced")
-                .Then(n => Result.Fail<int>("error"))
-                .ShouldBeEquivalentTo(Result.Fail<int>("error"));
-        }
-
-        [Test]
-        public void RefineError_AddErrorMessageBeforePreviousErrorText()
-        {
-            var calculation = Result.Fail<None>("No connection");
-            calculation
-                .RefineError("Posting results to db")
-                .ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
+            Func<int, int> continuation = n => { throw new Exception("123"); };
+            var res = Result.Ok(42)
+                .Then(continuation);
+            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
         }
     }
 }

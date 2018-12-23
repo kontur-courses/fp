@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CloodLayouter.Infrastructer;
+using ResultOf;
 
 namespace CloudLayouter.App
 {
@@ -21,15 +22,15 @@ namespace CloudLayouter.App
             anchorpoints.Add(center);
         }
 
-        public Rectangle PutNextRectangle(Size size)
+        public Result<Rectangle> PutNextRectangle(Size size)
         {
             if (size.IsEmpty)
-                throw new ArgumentException("Size of rectangle can't be Empty.");
+                return Result.Fail<Rectangle>("Size should not be Empty. ");
 
             var newRectangle = SearchBestValidPlace(size);
             AddAnchorPoints(newRectangle);
             rectangles.Add(newRectangle);
-            return newRectangle;
+            return Result.Ok(newRectangle);
         }
 
         private Rectangle SearchBestValidPlace(Size size)

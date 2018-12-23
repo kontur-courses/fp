@@ -1,9 +1,10 @@
 using System.Drawing;
+using ResultOf;
 
 namespace CloodLayouter.Infrastructer
 {
     public interface ICloudLayouter
     {
-        Rectangle PutNextRectangle(Size size);
+        Result<Rectangle> PutNextRectangle(Size size);
     }
 }

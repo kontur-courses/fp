@@ -1,10 +1,11 @@
 using CloodLayouter.App;
 using CommandLine;
+using ResultOf;
 
 namespace CloodLayouter.Infrastructer
 {
     public interface IImageSaver
     {
-        void Save(ParserResult<Options> result);
+        Result<string> Save(ParserResult<Options> result);
     }
 }
