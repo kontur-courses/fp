@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using CSharpFunctionalExtensions;
 using TagsCloudContainer.Processing.Converting;
@@ -28,6 +29,8 @@ namespace TagsCloudContainer.Settings
                 var blackListFilter = BlackListFilter.FromFile(options.BlackListFile);
                 if (blackListFilter.IsSuccess)
                     filters.Add(blackListFilter.Value);
+                else
+                    Console.WriteLine("Couldn't load black-list file: " + blackListFilter.Error);
             }
 
 

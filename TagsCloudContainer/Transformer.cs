@@ -40,10 +40,8 @@ namespace TagsCloudContainer
                 .OnSuccess(parser.ParseWords)
                 .OnSuccess(layout.PlaceWords)
                 .OnSuccess(tags => drawer.Draw(tags, settings))
-                .OnSuccess(bytes => writer.WriteToFile(bytes, options.ImageFile));
-
-
-            // TODO: проверка на валидность размера картинки
+                .OnSuccess(bytes => writer.WriteToFile(bytes, options.ImageFile))
+                .OnFailure(error => Console.WriteLine(error));
         }
     }
 }

@@ -9,12 +9,11 @@ namespace TagsCloudContainer.Processing
     public class WordParser : IParser
     {
         private static readonly char[] Whitespaces = {' ', '\r', '\n', '\t'};
-
-        public ParserSettings Settings { get; }
+        private readonly ParserSettings settings;
 
         public WordParser(ParserSettings settings)
         {
-            Settings = settings;
+            this.settings = settings;
         }
 
         public Result<Dictionary<string, int>> ParseWords(string input)
@@ -37,12 +36,12 @@ namespace TagsCloudContainer.Processing
 
         private IEnumerable<string> ConvertWords(IEnumerable<string> words)
         {
-            return Settings.Converters.Aggregate(words, (current, converter) => converter.Convert(current));
+            return settings.Converters.Aggregate(words, (current, converter) => converter.Convert(current));
         }
 
         private IEnumerable<string> FilterWords(IEnumerable<string> words)
         {
-            return Settings.Filters.Aggregate(words, (current, filter) => filter.Filter(current));
+            return settings.Filters.Aggregate(words, (current, filter) => filter.Filter(current));
         }
     }
 }

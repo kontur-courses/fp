@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Output
+﻿using CSharpFunctionalExtensions;
+
+namespace TagsCloudContainer.Output
 {
     public interface IWriter
     {
-        void WriteToFile(byte[] bytes, string name);
+        Result WriteToFile(byte[] bytes, string path);
     }
 }
