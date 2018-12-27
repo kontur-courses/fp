@@ -55,7 +55,7 @@ namespace TagsCloudContainer.Arguments
                     InputPath = Result.Ok(o.InputPath);
                     OutputPath = Result.Ok(o.OutputPath);
                     FontName = Result.Ok(o.FontName);
-                    Brush = (Brush)Enum.Parse(typeof(Brush), o.Color);
+                    Brush = new SolidBrush(Color.FromName(o.Color));
                     WordsToExcludePath = o.WordsToExclude;
                 });
         }

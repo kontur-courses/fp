@@ -36,7 +36,7 @@ namespace TagsCloudContainer.Util
 
             var container = new AutofacContainer(args);            
 
-            container.Brush.Value.Should().Be(Brushes.Red);
+            (container.Brush.Value as SolidBrush).Color.Should().Be((new SolidBrush(Color.FromName("red")).Color));
             container.FontName.Value.Should().Be("Arial");
             container.OutputPath.Value.Should().Be(baseDomain + "output/o.png");
 
