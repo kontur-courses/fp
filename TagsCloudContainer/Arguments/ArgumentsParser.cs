@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using ResultOf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -54,12 +55,7 @@ namespace TagsCloudContainer.Arguments
                     InputPath = Result.Ok(o.InputPath);
                     OutputPath = Result.Ok(o.OutputPath);
                     FontName = Result.Ok(o.FontName);
-                    Brush = (Brush)typeof(Brushes)
-                                .GetProperties()
-                                .First(p => p.Name == o.Color)
-                                .GetValue(null, null) 
-                            ?? Brushes.Black;
-                                  
+                    Brush = (Brush)Enum.Parse(typeof(Brush), o.Color);
                     WordsToExcludePath = o.WordsToExclude;
                 });
         }
