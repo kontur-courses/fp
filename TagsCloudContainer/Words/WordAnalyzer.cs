@@ -3,11 +3,11 @@ using ResultOf;
 
 namespace TagsCloudContainer.Words
 {
-    public class WordAnalizer
+    public class WordAnalyzer : IWordAnalyzer
     {
         public Result<WordPack[]> WordPacks { get; }
 
-        public WordAnalizer(WordPreprocessing wordPreprocessing)
+        public WordAnalyzer(WordPreprocessing wordPreprocessing)
         {
             WordPacks = wordPreprocessing
                 .Words

@@ -22,7 +22,7 @@ namespace ResultOf
         }
 
         public string Error { get; }
-        internal T Value { get; }
+        public T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;

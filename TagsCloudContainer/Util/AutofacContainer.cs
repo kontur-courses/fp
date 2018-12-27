@@ -9,10 +9,10 @@ using ResultOf;
 
 namespace TagsCloudContainer.Util
 {
-    class AutofacContainer
+    public class AutofacContainer
     {
         private IContainer container;
-        public TagCloud TagCloud => container.Resolve<TagCloud>();
+        public ITagCloud TagCloud => container.Resolve<ITagCloud>();
         public Result<Brush> Brush => container.Resolve<Result<Brush>>();
         public Result<string> FontName => container.ResolveNamed<Result<string>>("FontName");
         public Result<string> OutputPath => container.Resolve<ArgumentsParser>().OutputPath;
@@ -53,7 +53,7 @@ namespace TagsCloudContainer.Util
 
             container
                 .RegisterType<TagCloud>()
-                .As<TagCloud>()
+                .As<ITagCloud>()
                 .SingleInstance();
 
             container
@@ -70,8 +70,8 @@ namespace TagsCloudContainer.Util
                 .As<WordPreprocessing>()
                 .SingleInstance();
 
-            container.RegisterType<WordAnalizer>()
-                .AsSelf()
+            container.RegisterType<WordAnalyzer>()
+                .As<IWordAnalyzer>()
                 .SingleInstance();
 
             this.container = container.Build();

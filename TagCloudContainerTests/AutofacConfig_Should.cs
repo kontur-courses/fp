@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using Autofac;
-using TagsCloudContainer.Cloud;
 using FluentAssertions;
-using Autofac.Core;
 using System.Drawing;
-using TagsCloudContainer.Arguments;
 
 namespace TagsCloudContainer.Util
 {

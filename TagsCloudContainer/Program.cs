@@ -7,13 +7,10 @@ namespace TagsCloudContainer
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            Result.Of(() => new AutofacContainer(args))
-                .Then(container =>  new TagCloudRenderer(container.TagCloud, container.FontName, container.Brush)
+        static void Main(string[] args) => Result.Of(() => new AutofacContainer(args))
+                .Then(container => new TagCloudRenderer(container.TagCloud, container.FontName, container.Brush)
                 .GenerateImage()
                     .Then(img => img.Save(container.OutputPath.GetValueOrThrow())))
-                .OnFail(e => Console.WriteLine(e));
-        }
+                .OnFail(Console.WriteLine);
     }
 }

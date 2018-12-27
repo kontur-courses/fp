@@ -7,12 +7,12 @@ namespace TagsCloudContainer.Cloud
 {
     public class TagCloudRenderer
     {
-        private TagCloud tagCloud;
+        private ITagCloud tagCloud;
         private Result<string> fontName;
         private Result<Brush> brush;
 
 
-        public TagCloudRenderer(TagCloud tagCloud, Result<string> fontName, Result<Brush> brush)
+        public TagCloudRenderer(ITagCloud tagCloud, Result<string> fontName, Result<Brush> brush)
         {
             this.tagCloud = tagCloud;
             this.fontName = fontName;

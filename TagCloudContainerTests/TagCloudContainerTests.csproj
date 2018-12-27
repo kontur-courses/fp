@@ -5,19 +5,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B7AC1C37-661B-42FD-83CC-C15E7C61F5A3}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>TagsCloudContainer</RootNamespace>
-    <AssemblyName>TagsCloudContainer</AssemblyName>
+    <ProjectGuid>{56A61962-89F7-421F-99B1-2E5E3D9B864C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagCloudContainerTests</RootNamespace>
+    <AssemblyName>TagCloudContainerTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -27,7 +26,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,28 +37,15 @@
     <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.3.0\lib\net45\CommandLine.dll</HintPath>
-    </Reference>
     <Reference Include="FluentAssertions, Version=5.5.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.5.5.3\lib\net45\FluentAssertions.dll</HintPath>
-    </Reference>
-    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
-      <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Console, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Console.4.0.0\lib\net46\System.Console.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Reflection.TypeExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.TypeExtensions.4.1.0\lib\net46\System.Reflection.TypeExtensions.dll</HintPath>
-    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -72,43 +57,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cloud\ITagCloud.cs" />
-    <Compile Include="Result.cs" />
-    <Compile Include="TagsCloudVisualization\CircularCloudLayouter.cs" />
-    <Compile Include="TagsCloudVisualization\ICloudLayouter.cs" />
-    <Compile Include="TagsCloudVisualization\IProvider.cs" />
-    <Compile Include="TagsCloudVisualization\PointExtensions.cs" />
-    <Compile Include="TagsCloudVisualization\RectangleExtensions.cs" />
-    <Compile Include="TagsCloudVisualization\RectanglesRenderer.cs" />
-    <Compile Include="TagsCloudVisualization\SpiralPointProvider.cs" />
-    <Compile Include="TagsCloudVisualization\SuperTightCloudLayouter.cs" />
-    <Compile Include="Words\FileReader.cs" />
-    <Compile Include="Arguments\ArgumentsParser.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="AutofacConfig_Should.cs" />
+    <Compile Include="CircularCloudLayouter_Should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Cloud\TagCloud.cs" />
-    <Compile Include="Cloud\TagCloudRenderer.cs" />
-    <Compile Include="Util\AutofacContainer.cs" />
-    <Compile Include="Words\IWordAnalyzer.cs" />
-    <Compile Include="Words\IWordsReader.cs" />
-    <Compile Include="Words\WordAnalyzer.cs" />
-    <Compile Include="Words\WordPack.cs" />
-    <Compile Include="Words\WordPreprocessing.cs" />
-    <Compile Include="Words\WordTag.cs" />
+    <Compile Include="SuperTightCloudLayouter_Should.cs" />
+    <Compile Include="WordPreprocessing_Should.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Hunspellx64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Hunspellx86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
+      <Project>{b7ac1c37-661b-42fd-83cc-c15e7c61f5a3}</Project>
+      <Name>TagsCloudContainer</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

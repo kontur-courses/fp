@@ -2,6 +2,7 @@
 using ResultOf;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace TagsCloudContainer.Arguments
 {
@@ -53,12 +54,12 @@ namespace TagsCloudContainer.Arguments
                     InputPath = Result.Ok(o.InputPath);
                     OutputPath = Result.Ok(o.OutputPath);
                     FontName = Result.Ok(o.FontName);
-
-                    if (brushes.TryGetValue(o.Color, out var color))
-                        Brush = color;
-                    else
-                        Brush = Brushes.Black;
-
+                    Brush = (Brush)typeof(Brushes)
+                                .GetProperties()
+                                .First(p => p.Name == o.Color)
+                                .GetValue(null, null) 
+                            ?? Brushes.Black;
+                                  
                     WordsToExcludePath = o.WordsToExclude;
                 });
         }
