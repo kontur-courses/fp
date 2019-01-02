@@ -2,6 +2,7 @@
 using System.Linq;
 using Functional;
 
+
 namespace TagCloudVisualization
 {
     /// <summary>
