@@ -56,6 +56,14 @@ namespace ResultOfTask
                 .Then(n => n + 10);
             res.ShouldBeEquivalentTo(Result.Ok(52));
         }
+        
+        [Test]
+        public void RunThen_WhenContinuationIsOk()
+        {
+            var res = Result.Ok(42)
+                .Then(n => Result.Ok(n + 10));
+            res.ShouldBeEquivalentTo(Result.Ok(52));
+        }
 
         [Test]
         public void SkipThen_WhenFail()
@@ -77,6 +85,15 @@ namespace ResultOfTask
             {
                 throw new Exception("123");
             };
+            var res = Result.Ok(42)
+                .Then(continuation);
+            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
+        }
+        
+        [Test]
+        public void Then_ReturnsFail_OnFailedContinuation()
+        {
+            Func<int, Result<int>> continuation = n => Result.Fail<int>("123");
             var res = Result.Ok(42)
                 .Then(continuation);
             res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
