@@ -84,9 +84,15 @@ namespace FileSenderRailway
             Approvals.Verify(res.Error);
         }
 
-        private static byte[] SomeByteArray()
+        private static byte[] SomeByteArray() => Guid.NewGuid().ToByteArray();
+
+        [Test]
+        public void SignFileToSend_ReturnsNewDocumentObject()
         {
-            return Guid.NewGuid().ToByteArray();
+            var doc = new Document("Olo", null, DateTime.Now, "X");
+            var actualDocument = fileSender.SignFileToSend(certificate, doc).Value;
+
+            actualDocument.Should().NotBe(doc);
         }
     }
 }
