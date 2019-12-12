@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -25,30 +23,31 @@ namespace FileSenderRailway
             this.now = now;
         }
 
-        public IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate) =>
-            from file in files 
-            let doc = recognizer.Recognize(file) 
-            let result = PrepareDocument(doc, certificate).Then(sender.Send) 
-            select new FileSendResult(file, result.Error);
-
-        private Result<Document> PrepareDocument(Document doc, X509Certificate certificate) =>
-            ValidateDocument(doc)
-                .Then(d => SignFileToSend(certificate, d))
-                .RefineError("Can't prepare file to send");
-
-        private Result<Document> ValidateDocument(Document document)
+        public IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate)
         {
-            if (!IsValidFormatVersion(document))
-                return Result.Fail<Document>("Invalid format version");
-            if (!IsValidTimestamp(document))
-                return Result.Fail<Document>("Too old document");
-            return Result.Ok(document);
-        }
-
-        public Result<Document> SignFileToSend(X509Certificate certificate, Document doc)
-        {
-            var signedContent = cryptographer.Sign(doc.Content, certificate);
-            return new Document(doc.Name, signedContent, doc.Created, doc.Format);
+            foreach (var file in files)
+            {
+                string errorMessage = null;
+                try
+                {
+                    Document doc = recognizer.Recognize(file);
+                    if (!IsValidFormatVersion(doc))
+                        throw new FormatException("Invalid format version");
+                    if (!IsValidTimestamp(doc))
+                        throw new FormatException("Too old document");
+                    doc.Content = cryptographer.Sign(doc.Content, certificate);
+                    sender.Send(doc);
+                }
+                catch (FormatException e)
+                {
+                    errorMessage = "Can't prepare file to send. " + e.Message;
+                }
+                catch (InvalidOperationException e)
+                {
+                    errorMessage = "Can't send. " + e.Message;
+                }
+                yield return new FileSendResult(file, errorMessage);
+            }
         }
 
         private bool IsValidFormatVersion(Document doc)
