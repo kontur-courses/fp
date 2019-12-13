@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{ACBC03B3-A778-4F66-9D6D-43C77D64CC23}"
 EndProject
@@ -12,6 +12,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summator\Summator.csproj", "{ADB55562-4353-4FC2-9486-E6C343C2F7F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagCloud", "TagCloud", "{2D1BE2DD-06BD-428F-9175-DAC5476EAE56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud", "TagCloud\TagsCloud\TagsCloud.csproj", "{A628F28E-E14F-49C7-8DE9-544495439FE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagCloudCLI", "TagCloud\TagCloudCLI\TagCloudCLI.csproj", "{81F2F60F-9382-4495-8D47-63C4CACAD94E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudTests", "TagCloud\TagsCloudTests\TagsCloudTests.csproj", "{9CF47581-49AF-48CA-903A-DFD9883AD78D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,11 +43,29 @@ Global
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A628F28E-E14F-49C7-8DE9-544495439FE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A628F28E-E14F-49C7-8DE9-544495439FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A628F28E-E14F-49C7-8DE9-544495439FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A628F28E-E14F-49C7-8DE9-544495439FE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81F2F60F-9382-4495-8D47-63C4CACAD94E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81F2F60F-9382-4495-8D47-63C4CACAD94E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81F2F60F-9382-4495-8D47-63C4CACAD94E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81F2F60F-9382-4495-8D47-63C4CACAD94E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CF47581-49AF-48CA-903A-DFD9883AD78D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF47581-49AF-48CA-903A-DFD9883AD78D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF47581-49AF-48CA-903A-DFD9883AD78D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF47581-49AF-48CA-903A-DFD9883AD78D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ADB55562-4353-4FC2-9486-E6C343C2F7F6} = {53B60782-5F18-4FD1-9FC0-A6F2474751CB}
+		{A628F28E-E14F-49C7-8DE9-544495439FE6} = {2D1BE2DD-06BD-428F-9175-DAC5476EAE56}
+		{81F2F60F-9382-4495-8D47-63C4CACAD94E} = {2D1BE2DD-06BD-428F-9175-DAC5476EAE56}
+		{9CF47581-49AF-48CA-903A-DFD9883AD78D} = {2D1BE2DD-06BD-428F-9175-DAC5476EAE56}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BE90E99-D3DE-4F5D-8D7D-DF0C5E44ECCF}
 	EndGlobalSection
 EndGlobal
