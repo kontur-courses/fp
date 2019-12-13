@@ -38,7 +38,7 @@ namespace TagsCloudConsole
       --output_ext IMAGE_EXT   Image extension[default: png]
     ";
 
-        private const string Version = "Tag Cloud Generator 2.0";
+        private const string Version = "Tag Cloud Generator 3.0";
 
         public static void Main(string[] args)
         {

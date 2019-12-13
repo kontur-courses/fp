@@ -1,6 +1,9 @@
-# Tag Cloud Generator 2.0
+# Tag Cloud Generator 3.0
 
 ## Что реализовано на данный момент
+
+### Обработка ошибок
+- [ ] ~~здесь будут описаны обработанные ошибки~~
 
 #### Обязательный функционал
 
@@ -27,57 +30,57 @@
 
 ## Консольное приложение
 
->[Папка с примерами команд и результами генерации](https://github.com/Sc222/di/tree/hometask/TagsCloud/Examples/Console%20app)
+>[Папка с примерами команд и результами генерации](https://github.com/Sc222/fp/tree/hometask/TagsCloud/Examples/Console%20app)
 
 
 ## Примеры генерации облаков тегов
 
 #### Tag Cloud, сгенерированный из текста песни
 
-![](https://raw.githubusercontent.com/Sc222/di/hometask/TagsCloud/Examples/Txt/result.png)
->[Папка с примером](https://github.com/Sc222/di/tree/hometask/TagsCloud/Examples/Txt)
+![](https://raw.githubusercontent.com/Sc222/fp/hometask/TagsCloud/Examples/Txt/result.png)
+>[Папка с примером](https://github.com/Sc222/fp/tree/hometask/TagsCloud/Examples/Txt)
 
 ##### Исходные данные
 
-- [Входной текст (**txt**)](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Txt/song.txt)
-- [Исключенные слова](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Txt/exclude.txt)
+- [Входной текст (**txt**)](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Txt/song.txt)
+- [Исключенные слова](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Txt/exclude.txt)
 
 
 ##### Некоторые параметры генерации
 
-- Тема  - [`GrayDarkTheme`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/GrayDarkTheme.cs) 
-- Перемешиватель тегов - [`TokenShufflerRandom`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/TokenShufflerRandom.cs) с параметром 10
+- Тема  - [`GrayDarkTheme`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/GrayDarkTheme.cs) 
+- Перемешиватель тегов - [`RandomShuffler`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/RandomShuffler.cs) с параметром 10
 - Шрифт - **Arial Black**
 
 #### Tag Cloud, сгенерированный из фрагмента документации к игровому движку Godot
 
-![](https://raw.githubusercontent.com/Sc222/di/hometask/TagsCloud/Examples/Pdf/result.png)
+![](https://raw.githubusercontent.com/Sc222/fp/hometask/TagsCloud/Examples/Pdf/result.png)
 
->[Папка с примером](https://github.com/Sc222/di/tree/hometask/TagsCloud/Examples/Pdf)
+>[Папка с примером](https://github.com/Sc222/fp/tree/hometask/TagsCloud/Examples/Pdf)
 
 ##### Исходные данные
 
-- [Входной текст (**pdf**)](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Pdf/godot.pdf)
-- [Исключенные слова](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Pdf/exclude.txt)
+- [Входной текст (**pdf**)](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Pdf/godot.pdf)
+- [Исключенные слова](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Pdf/exclude.txt)
 ##### Некоторые параметры генерации
 
-- Тема  - [`GodotEngineTheme`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/GodotEngineTheme.cs) 
-- Перемешиватель тегов - [`TokenShufflerDescending`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/TokenShufflerDescending.cs)
+- Тема  - [`GodotEngineTheme`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/GodotEngineTheme.cs) 
+- Перемешиватель тегов - [`DescendingCountShuffler`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/DescendingCountShuffler.cs)
 - Шрифт - **Berlin Sans**
 
 #### Tag Cloud, сгенерированный из статьи про Pixel Art
 
-![](https://raw.githubusercontent.com/Sc222/di/hometask/TagsCloud/Examples/Docx/result.png)
+![](https://raw.githubusercontent.com/Sc222/fp/hometask/TagsCloud/Examples/Docx/result.png)
 
->[Папка с примером](https://github.com/Sc222/di/tree/hometask/TagsCloud/Examples/Docx)
+>[Папка с примером](https://github.com/Sc222/fp/tree/hometask/TagsCloud/Examples/Docx)
 
 ##### Исходные данные
 
-- [Входной текст (**docx**)](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Docx/pixel%20art.docx)
-- [Исключенные слова](https://github.com/Sc222/di/blob/hometask/TagsCloud/Examples/Docx/exclude.txt)
+- [Входной текст (**docx**)](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Docx/pixel%20art.docx)
+- [Исключенные слова](https://github.com/Sc222/fp/blob/hometask/TagsCloud/Examples/Docx/exclude.txt)
 
 ##### Некоторые параметры генерации
 
-- Тема  - [`PixelArtTheme`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/PixelArtTheme.cs) 
-- Перемешиватель тегов - [`TokenShufflerAscending`](https://github.com/Sc222/di/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/TokenShufflerAscending.cs)
+- Тема  - [`PixelArtTheme`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudVisualization/Styling/Themes/PixelArtTheme.cs) 
+- Перемешиватель тегов - [`AscendingCountShuffler`](https://github.com/Sc222/fp/blob/hometask/TagsCloud/TagsCloudTextProcessing/Shufflers/AscendingCountShuffler.cs)
 - Шрифт - **Bauhaus 96**
