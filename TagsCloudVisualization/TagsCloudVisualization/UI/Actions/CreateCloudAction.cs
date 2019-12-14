@@ -9,13 +9,16 @@ namespace TagsCloudVisualization.UI.Actions
         private readonly IVisualizer visualizer;
         private readonly IImageHolder imageHolder;
         private readonly IDocumentPathProvider pathProvider;
+        private readonly IUiErrorHandler errorHandler;
         public string Name { get; }
 
         public CreateCloudAction(
             IVisualizer visualizer,
             IDocumentPathProvider pathProvider,
-            IImageHolder imageHolder)
+            IImageHolder imageHolder,
+            IUiErrorHandler errorHandler)
         {
+            this.errorHandler = errorHandler;
             this.imageHolder = imageHolder;
             this.visualizer = visualizer;
             this.pathProvider = pathProvider;
@@ -27,7 +30,9 @@ namespace TagsCloudVisualization.UI.Actions
             pathProvider
                 .GetPath()
                 .Then(path => visualizer.VisualizeTextFromFile(path))
-                .Then(image => imageHolder.SetImage(image));
+                .Then(image => imageHolder.SetImage(image))
+                .RefineError("Couldn't create tag cloud")
+                .OnFail(errorHandler.PostError);
         }
     }
 }

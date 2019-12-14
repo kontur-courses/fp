@@ -72,6 +72,8 @@
     <Compile Include="Tests\ScenarioTests.cs" />
     <Compile Include="Tests\TextParserTests.cs" />
     <Compile Include="Tests\TextRetrieverTests.cs" />
+    <Compile Include="UI\UiErrorHandler.cs" />
+    <Compile Include="UI\IUiErrorHandler.cs" />
     <Compile Include="UI\BoringWordsEditor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -14,7 +14,7 @@ namespace TagsCloudVisualization.Services
 
         public Result<Image> GetImage()
         {
-            return Image ?? Result.Fail<Image>("ITag cloud was not created");
+            return Image ?? Result.Fail<Image>("Tag cloud wasn't created");
         }
     }
 }

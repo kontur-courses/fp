@@ -22,9 +22,12 @@ namespace TagsCloudVisualization.Logic
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
                 return Result.Fail<Rectangle>("Image size can't be non-positive");
-            var rectangle = CreateRectangleOnSpiral(rectangleSize);
-            taggedRectangles.Add(rectangle);
-            return rectangle;
+            return CreateRectangleOnSpiral(rectangleSize)
+                .Then(rectangle =>
+                {
+                    taggedRectangles.Add(rectangle);
+                    return rectangle;
+                });
         }
 
         public void Reset()
@@ -34,26 +37,32 @@ namespace TagsCloudVisualization.Logic
             pointLocator.Angle = 0;
         }
 
-        private Rectangle CreateRectangleOnSpiral(Size rectangleSize)
+        private Result<Rectangle> CreateRectangleOnSpiral(Size rectangleSize)
         {
-            //TODO PROCEED
-            var shiftedCenter = Geometry.ShiftPointBySizeOffsets(Point.Empty, rectangleSize).GetValueOrThrow();
-            var rectangle = new Rectangle(shiftedCenter, rectangleSize);
-            while (taggedRectangles.Any(otherRectangle => rectangle.IntersectsWith(otherRectangle)))
-            {
-                var locatedPoint = pointLocator.GetNextPoint();
-                rectangle.X = shiftedCenter.X + locatedPoint.X;
-                rectangle.Y = shiftedCenter.Y + locatedPoint.Y;
-            }
-            AlignLocatorDirection(rectangle);
-            return rectangle;
+            return Geometry.ShiftPointBySizeOffsets(Point.Empty, rectangleSize)
+                .Then(shiftedCenter =>
+                {
+                    var rectangle = new Rectangle(shiftedCenter, rectangleSize);
+                    while (taggedRectangles.Any(otherRectangle => rectangle.IntersectsWith(otherRectangle)))
+                    {
+                        var locatedPoint = pointLocator.GetNextPoint();
+                        rectangle.X = shiftedCenter.X + locatedPoint.X;
+                        rectangle.Y = shiftedCenter.Y + locatedPoint.Y;
+                    }
+                    return rectangle;
+                })
+                .Then(AlignLocatorDirection);
         }
 
-        private void AlignLocatorDirection(Rectangle rectangle)
+        private Result<Rectangle> AlignLocatorDirection(Rectangle rectangle)
         {
-            //TODO PROCESS ERROR
-            pointLocator.DistanceFromCenter -= Math.Max(pointLocator.DistanceFromCenter / 2,
-                Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, Point.Empty).GetValueOrThrow());
+            return Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, Point.Empty)
+                .Then(distanceToBorder =>
+                {
+                    pointLocator.DistanceFromCenter -=
+                        Math.Max(pointLocator.DistanceFromCenter / 2, distanceToBorder);
+                    return rectangle;
+                });
         }
     }
 }

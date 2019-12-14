@@ -5,6 +5,7 @@ using Autofac;
 using TagsCloudVisualization.Logic;
 using TagsCloudVisualization.Logic.Painter;
 using TagsCloudVisualization.Services;
+using TagsCloudVisualization.UI;
 using TagsCloudVisualization.UI.Actions;
 
 namespace TagsCloudVisualization
@@ -30,12 +31,13 @@ namespace TagsCloudVisualization
             builder.RegisterType<TextParser>().SingleInstance().As<IParser>();
             builder.RegisterType<RandomTagPainter>().SingleInstance().As<ITagPainter>();
             builder.RegisterType<MainForm>().SingleInstance().As<MainForm>();
+            builder.RegisterType<UiErrorHandler>().SingleInstance().As<IUiErrorHandler>();
             builder.RegisterType<PictureBoxImageHolder>().SingleInstance().As<IImageHolder>().As<PictureBoxImageHolder>();
             builder.RegisterType<AppSettings>()
                 .SingleInstance()
                 .As<IImageSettingsProvider>()
                 .As<IDocumentPathProvider>()
-                .As<IBoringWordsProvider>();
+                .As<IBoringWordsProvider>();    
             return builder.Build();
         }
     }

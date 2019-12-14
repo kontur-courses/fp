@@ -9,11 +9,13 @@ namespace TagsCloudVisualization.UI.Actions
     public class SaveImageAction : IUiAction
     {
         private readonly IImageHolder imageHolder;
+        private readonly IUiErrorHandler errorHandler;
         public string Name { get; }
 
-        public SaveImageAction(IImageHolder imageHolder)
+        public SaveImageAction(IImageHolder imageHolder, IUiErrorHandler errorHandler)
         {
             this.imageHolder = imageHolder;
+            this.errorHandler = errorHandler;
             Name = "Save";
         }
 
@@ -24,7 +26,9 @@ namespace TagsCloudVisualization.UI.Actions
             {
                 imageHolder
                     .GetImage()
-                    .Then(image => image.Save(saveDialog.FileName, ImageFormat.Png));
+                    .Then(image => image.Save(saveDialog.FileName, ImageFormat.Png))
+                    .RefineError("Couldn't save image")
+                    .OnFail(errorHandler.PostError);
             }
         }
     }
