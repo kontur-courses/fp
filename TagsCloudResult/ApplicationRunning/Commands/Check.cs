@@ -6,25 +6,24 @@ namespace TagsCloudResult.ApplicationRunning.Commands
 {
     public static class Check
     {
-        public static void Argument<T>(T argument, params bool[] conditions)
+        public static Result<T> Argument<T>(T argument, params bool[] conditions)
         {
             var ok = conditions.All(c => c);
-            if(!ok)
-                throw new ArgumentException($"Not a valid argument '{argument}'");
+            return ok ? Result.Ok(argument) : Result.Fail<T>($"Not a valid argument {argument}");
         }
         
-        public static void ArgumentsCountIs<T>(IEnumerable<T> arguments, int expectedCount)
+        public static Result<string[]> ArgumentsCountIs(string[] arguments, int expectedCount)
         {
             var ok = arguments.Count() == expectedCount;
-            if(!ok)
-                throw new ArgumentException($"Incorrect arguments count! Expected {expectedCount}.");
+            return ok ? 
+                Result.Ok(arguments) : 
+                Result.Fail<string[]>($"Incorrect arguments count! Expected {expectedCount}.");
         }
         
-        public static void Argument<T>(T argument, string message, params bool[] conditions)
+        public static Result<T> Argument<T>(T argument, string message, params bool[] conditions)
         {
             var ok = conditions.All(c => c);
-            if(!ok)
-                throw new ArgumentException(message);
+            return ok ? Result.Ok(argument) : Result.Fail<T>(message);
         }
     }
 }
