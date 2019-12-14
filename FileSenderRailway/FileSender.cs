@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -23,6 +24,19 @@ namespace FileSenderRailway
             this.now = now;
         }
 
+        IEnumerable<Result<Document>> PrepareFilesToSend (FileContent[] files
+            , X509Certificate certificate)
+        {
+            foreach (var file in files)
+            {
+                Document doc = recognizer.Recognize(file);
+                if (!IsValidFormatVersion(doc))
+                    yield return Result.Fail<Document>("Invalid format version");
+                if (!IsValidTimestamp(doc))
+                    yield return Result.Fail<Document>("Too old document");
+                yield return Result.Ok(doc.ChangeContent(cryptographer.Sign(doc.Content, certificate)));
+            }
+        }
         public IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate)
         {
             foreach (var file in files)
@@ -30,13 +44,8 @@ namespace FileSenderRailway
                 string errorMessage = null;
                 try
                 {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
-                    sender.Send(doc);
+                    foreach (var document in PrepareFilesToSend(files,certificate))
+                        sender.Send(document.Value);
                 }
                 catch (FormatException e)
                 {

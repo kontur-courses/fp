@@ -58,21 +58,39 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(i => Of(() => continuation(i)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            if (input.IsSuccess)
+                return continuation(input.Value);
+            return Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if(!input.IsSuccess)
+                handleError(input.Error);
+            return input;
+        }
+
+        public static Result<T> ReplaceError<T>(
+            this Result<T> input, Func<Result<T>, string> replaceExeption)
+        {
+            if(!input.IsSuccess)
+                return Fail<T>(replaceExeption(input));
+            return input;
+        }
+
+        public static Result<T> RefineError<T>(
+            this Result<T> input,string message)
+        {
+            return Fail<T>(message + ". " + input.Error);
         }
     }
 }
