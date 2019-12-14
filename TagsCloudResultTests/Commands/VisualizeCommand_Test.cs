@@ -31,8 +31,7 @@ namespace TagsCloudResultTests.Commands
         [Test]
         public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
         {
-            Following.Code(() => command.Act(new[] {"def", "1280", "720", "black", "red"}))
-                .Should().Throw<ArgumentException>();
+            command.ParseArguments(new[] {"def", "1280", "720", "black", "red"}).IsSuccess.Should().BeFalse();
         }
 
         [TestCase("0,5", TestName = "when too small")]
@@ -42,7 +41,7 @@ namespace TagsCloudResultTests.Commands
         public void Act_Should_ThrowArgumentException_When_IncorrectWidthValue(string width)
         {
             var args = new[] {"def", width, "720", "black", "red", "blue", "false", "Arial"};
-            Following.Code(() => command.Act(args)).Should().Throw<ArgumentException>();
+            command.ParseArguments(args).IsSuccess.Should().BeFalse();
         }
 
         [TestCase("0,5", TestName = "when too small")]
@@ -52,14 +51,14 @@ namespace TagsCloudResultTests.Commands
         public void Act_Should_ThrowArgumentException_When_IncorrectHeightValue(string height)
         {
             var args = new[] {"def", "1280", height, "black", "red", "blue", "false", "Arial"};
-            Following.Code(() => command.Act(args)).Should().Throw<ArgumentException>();
+            command.ParseArguments(args).IsSuccess.Should().BeFalse();
         }
 
         [Test()]
         public void Act_Should_ThrowArgumentException_When_IncorrectBitmapMaker()
         {
             var args = new[] {"idontexist", "1280", "720", "black", "red", "blue", "false", "Arial"};
-            Following.Code(() => command.Act(args)).Should().Throw<ArgumentException>();
+            command.ParseArguments(args).IsSuccess.Should().BeFalse();
         }
     }
 }

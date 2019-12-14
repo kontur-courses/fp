@@ -11,15 +11,29 @@ namespace TagsCloudResult.ApplicationRunning.Commands
     {
         private TagsCloud cloud;
         private SettingsManager manager;
+        private string path;
         public ParseCommand(TagsCloud cloud, SettingsManager manager)
         {
             this.cloud = cloud;
             this.manager = manager;
         }
-        public void Act(string[] args)
+
+        public Result<string[]> ParseArguments(string[] args)
         {
-            var path = string.Join(" ", args).Trim('\'');
-            Check.Argument(path, $"No file '{path}' found!", File.Exists(path));
+            return Check.ArgumentsCountIs(args, 1)
+                .Then(CheckPath);
+        }
+
+        private Result<string[]> CheckPath(string[] args)
+        {
+            path = string.Join(" ", args).Trim('\'');
+            var errorMessage = $"No file '{path}' found!";
+            var checkRes = Check.Argument(path, errorMessage, File.Exists(path));
+            return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
+        }
+
+        public void Act()
+        {
             var extension = Path.GetExtension(path);
             var parser = WordsParser.GetParser(extension);
             Parse(parser, path);

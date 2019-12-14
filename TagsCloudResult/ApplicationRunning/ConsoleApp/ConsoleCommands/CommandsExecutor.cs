@@ -40,14 +40,13 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
                 Console.WriteLine($"No command '{commandName}' found. Try 'help' for help on commands.");
             else
             {
-                try
-                {
-                    command.Act(args.Skip(1).ToArray());
-                }
-                catch (Exception e)
+                var parseResult = command.ParseArguments(args.Skip(1).ToArray());
+                if(parseResult.IsSuccess)
+                    command.Act();
+                else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine(parseResult.Error);
                     Console.ResetColor();
                 }
             }

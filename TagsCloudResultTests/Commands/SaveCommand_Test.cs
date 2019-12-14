@@ -32,20 +32,20 @@ namespace TagsCloudResultTests.Commands
         [Test]
         public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
         {
-            Following.Code(() => command.Act(new[] {@"D:\coolpath", "coolimage"})).Should().Throw<ArgumentException>();
+            command.ParseArguments(new[] {@"D:\coolpath", "coolimage"}).IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void Act_Should_ThrowArgumentException_When_IncorrectPath()
         {
-            Following.Code(() => command.Act(new[] {"toocooltobetrue", "coolimage"})).Should().Throw<ArgumentException>();
+            command.ParseArguments(new[] {"toocooltobetrue", "coolimage"}).IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void Act_Should_ThrowArgumentException_When_IncorrectFormat()
         {
             var path = Directory.GetCurrentDirectory();
-            Following.Code(() => command.Act(new[] {path, "maybeonedayidk"})).Should().Throw<ArgumentException>();
+            command.ParseArguments(new[] {path, "maybeonedayidk"}).IsSuccess.Should().BeFalse();
         }
     }
 }

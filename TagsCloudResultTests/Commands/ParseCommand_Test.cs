@@ -31,7 +31,7 @@ namespace TagsCloudResultTests.Commands
         [Test]
         public void Act_Should_ThrowArgumentException_When_FileDoesntExist()
         {
-            Following.Code(() => command.Act(new[] {"idontexist"})).Should().Throw<ArgumentException>();
+            command.ParseArguments(new[] {"idontexist"}).IsSuccess.Should().BeFalse();
         }
     }
 }

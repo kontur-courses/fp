@@ -2,7 +2,8 @@
 {
     public interface IConsoleCommand
     {
-        void Act(string[] args);
+        Result<string[]> ParseArguments(string[] args);
+        void Act();
         string Name { get; }
         string Description { get; }
         string Arguments { get; }
