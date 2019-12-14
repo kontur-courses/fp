@@ -14,7 +14,7 @@ namespace TagsCloudResult.ApplicationRunning.Commands
         
         public static Result<string[]> ArgumentsCountIs(string[] arguments, int expectedCount)
         {
-            var ok = arguments.Count() == expectedCount;
+            var ok = arguments.Length == expectedCount;
             return ok ? 
                 Result.Ok(arguments) : 
                 Result.Fail<string[]>($"Incorrect arguments count! Expected {expectedCount}.");
