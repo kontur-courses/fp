@@ -136,7 +136,7 @@ namespace ResultOf
         [Test]
         public void ReplaceError_DoNothing_IfSuccess()
         {
-            Result.Ok(42)
+            Result.Ok(42)   
                 .ReplaceError(e => "replaced")
                 .ShouldBeEquivalentTo(Result.Ok(42));
         }

@@ -1,9 +1,12 @@
 ﻿using System.Drawing;
+using ErrorHandler;
 
 namespace TagsCloudVisualization.Services
 {
     public interface IImageHolder
     {
-        Image Image { get; set; }
+        Result<None> SetImage(Bitmap image);
+
+        Result<Image> GetImage();
     }
 }

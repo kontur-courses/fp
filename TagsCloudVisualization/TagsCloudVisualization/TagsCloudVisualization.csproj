@@ -124,12 +124,17 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ErrorHandler\ErrorHandler.csproj">
+      <Project>{545da277-0adb-492b-aa40-1b97eaa5f2a0}</Project>
+      <Name>ErrorHandler</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="InputData\Input1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="BoringWords.txt">
+    <Content Include="Services\BoringWords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputData\Input2.txt">

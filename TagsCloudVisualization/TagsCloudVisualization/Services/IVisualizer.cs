@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ErrorHandler;
 
 namespace TagsCloudVisualization.Services
 {
     public interface IVisualizer
     {
-        Bitmap VisualizeTextFromFile(string fileName);
+        Result<Bitmap> VisualizeTextFromFile(string fileName);
     }
 }

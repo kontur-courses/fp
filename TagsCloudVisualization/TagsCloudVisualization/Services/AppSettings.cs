@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ErrorHandler;
 using TagsCloudVisualization.Logic;
 
 namespace TagsCloudVisualization.Services
@@ -10,29 +11,44 @@ namespace TagsCloudVisualization.Services
     {
         private string textDocumentPath;
         public HashSet<string> BoringWords { get; set; }
+        public ImageSettings ImageSettings { get; private set; }
 
         public AppSettings()
         {
-            BoringWords = TextRetriever
-                .RetrieveTextFromFile(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BoringWords.txt")))
-                .Split(new[] {'\r','\n'}, StringSplitOptions.RemoveEmptyEntries)
-                .ToHashSet();
+            BoringWords = ExecuteBoringWords();
             ImageSettings = ImageSettings.InitializeDefaultSettings();
         }
 
-        public ImageSettings ImageSettings { get; set; }
-        public bool TryGetPath(out string path)
+        public Result<None> SetImageSettings(ImageSettings imageSettings)
         {
-            path = null;
-            if (!File.Exists(textDocumentPath)) 
-                return false;
-            path = textDocumentPath;
-            return true;
+            if (imageSettings.ImageSize.Width <= 0 || imageSettings.ImageSize.Height <= 0)
+                return Result.Fail<None>("Image sizes can't be non-positive");
+            ImageSettings = imageSettings;
+            return Result.Ok();
+        }
+
+        public Result<string> GetPath()
+        {
+            return File.Exists(textDocumentPath) ? textDocumentPath : Result.Fail<string>("Couldn't get text document path");
         }
 
         public void SetPath(string path)
         {
             textDocumentPath = path;
+        }
+
+        private HashSet<string> ExecuteBoringWords()
+        {
+            var boringWordsText = TextRetriever
+                .RetrieveTextFromFile(
+                    Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BoringWords.txt"))
+                );
+            return boringWordsText.IsSuccess ? 
+                boringWordsText
+                    .GetValueOrThrow()
+                    .Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries)
+                    .ToHashSet()
+                : new HashSet<string>();
         }
     }
 }

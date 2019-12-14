@@ -1,18 +1,18 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using ErrorHandler;
 
 namespace TagsCloudVisualization.Logic
 {
     public static class TextRetriever
     {
-        public static string RetrieveTextFromFile(string path)
+        public static Result<string> RetrieveTextFromFile(string path)
         {
             if (path == null)
-                throw new ArgumentNullException();
+                return Result.Fail<string>("Path is null");
             if (!File.Exists(path))
-                throw new ArgumentException();
-            string text = File.ReadAllText(path, Encoding.UTF8);
+                return Result.Fail<string>("Path to text file doesn't exist");
+            var text = File.ReadAllText(path, Encoding.UTF8);
             return text;
         }
     }

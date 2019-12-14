@@ -1,8 +1,10 @@
-﻿namespace TagsCloudVisualization.Services
+﻿using ErrorHandler;
+
+namespace TagsCloudVisualization.Services
 {
     public interface IDocumentPathProvider
     {
-        bool TryGetPath(out string path);
+        Result<string> GetPath();
         void SetPath(string path);
     }
 }

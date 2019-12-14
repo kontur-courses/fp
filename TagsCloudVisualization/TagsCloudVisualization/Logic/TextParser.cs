@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ErrorHandler;
 using TagsCloudVisualization.Services;
 
 namespace TagsCloudVisualization.Logic
@@ -15,10 +16,10 @@ namespace TagsCloudVisualization.Logic
             this.boringWordsProvider = boringWordsProvider;
         }
 
-        public IEnumerable<WordToken> ParseToTokens(string text)
+        public Result<IEnumerable<WordToken>> ParseToTokens(string text)
         {
             if (text == null)
-                throw new ArgumentNullException();
+                return Result.Fail<IEnumerable<WordToken>>("Text is null");
             var wordCountDictionary = new Dictionary<string, int>();
             var splittedText = text
                 .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
@@ -32,8 +33,7 @@ namespace TagsCloudVisualization.Logic
                 else
                     wordCountDictionary[lineWord] += 1;
             }
-            foreach (var kvp in wordCountDictionary)
-                yield return new WordToken(kvp.Key, kvp.Value);
+            return wordCountDictionary.Select(kvp => new WordToken(kvp.Key, kvp.Value)).ToArray();
         }
 
         private bool IsWordInvalid(string word)

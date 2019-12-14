@@ -1,9 +1,12 @@
 ﻿using System;
 
-namespace ResultOf
+namespace ErrorHandler
 {
     public class None
     {
+        private None()
+        {
+        }
     }
 
     public struct Result<T>
@@ -13,6 +16,7 @@ namespace ResultOf
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -101,7 +105,8 @@ namespace ResultOf
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess) handleError(input.Error);
+            if (!input.IsSuccess) 
+                handleError(input.Error);
             return input;
         }
 
@@ -109,7 +114,8 @@ namespace ResultOf
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
+            if (input.IsSuccess) 
+                return input;
             return Fail<TInput>(replaceError(input.Error));
         }
 
@@ -120,4 +126,5 @@ namespace ResultOf
             return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
+
 }

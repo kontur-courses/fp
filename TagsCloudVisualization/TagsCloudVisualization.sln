@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudVisualization", "TagsCloudVisualization\TagsCloudVisualization.csproj", "{61197FD7-084B-41DB-8AF2-1511585AD3AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandler", "ErrorHandler\ErrorHandler.csproj", "{545DA277-0ADB-492B-AA40-1B97EAA5F2A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{61197FD7-084B-41DB-8AF2-1511585AD3AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61197FD7-084B-41DB-8AF2-1511585AD3AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61197FD7-084B-41DB-8AF2-1511585AD3AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545DA277-0ADB-492B-AA40-1B97EAA5F2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545DA277-0ADB-492B-AA40-1B97EAA5F2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545DA277-0ADB-492B-AA40-1B97EAA5F2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545DA277-0ADB-492B-AA40-1B97EAA5F2A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

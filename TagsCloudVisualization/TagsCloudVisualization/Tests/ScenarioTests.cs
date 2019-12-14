@@ -31,16 +31,19 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void ImageIsCreated_WithCorrectSize_AfterResizingImage()
         {
-            var settings = container.Resolve<IImageSettingsProvider>();
-            settings.ImageSettings.ImageSize = new Size(
-                settings.ImageSettings.ImageSize.Width * 2,
-                settings.ImageSettings.ImageSize.Height * 2
-            );
+            var settingsProvider = container.Resolve<IImageSettingsProvider>();
+            var newSettings = settingsProvider.ImageSettings;
+
+            newSettings.ImageSize =
+                new Size(
+                    newSettings.ImageSize.Width * 2,
+                    newSettings.ImageSize.Height * 2
+                );
+            settingsProvider.SetImageSettings(newSettings);
             var visualizer = container.Resolve<IVisualizer>();
+            var resultImage = visualizer.VisualizeTextFromFile(testTextDirectory + "animals.txt").GetValueOrThrow();
 
-            var resultImage = visualizer.VisualizeTextFromFile(testTextDirectory + "animals.txt");
-
-            resultImage.Size.Should().Be(settings.ImageSettings.ImageSize);
+            resultImage.Size.Should().Be(settingsProvider.ImageSettings.ImageSize);
         }
 
         [Test]
@@ -52,7 +55,7 @@ namespace TagsCloudVisualization.Tests
 
             boringWordsProvider.BoringWords = new HashSet<string>(boringText.Split('\n'));
 
-            textParser.ParseToTokens(boringText).Should().BeEmpty();
+            textParser.ParseToTokens(boringText).GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase("100tags.txt")]
@@ -63,6 +66,7 @@ namespace TagsCloudVisualization.Tests
             var millisecondsForEachWord = 5;
             var expectedTime = TextRetriever
                                    .RetrieveTextFromFile(testTextDirectory + fileName)
+                                   .GetValueOrThrow()
                                    .Split('\n')
                                    .Length
                                * millisecondsForEachWord;

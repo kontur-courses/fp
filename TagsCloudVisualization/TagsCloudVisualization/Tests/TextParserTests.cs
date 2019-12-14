@@ -23,15 +23,15 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void TextParser_ThrowsArgumentNullException_WhenTextIsNull()
         {
-            Action action = () => textParser.ParseToTokens(null).ToArray();
-            action.Should().Throw<ArgumentNullException>();
+            var result = textParser.ParseToTokens(null);
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void TextParser_ReturnsEmptyCollection_WhenTextIsEmpty()
         {
             var text = "";
-            textParser.ParseToTokens(text).Should().BeEmpty();
+            textParser.ParseToTokens(text).GetValueOrThrow().Should().BeEmpty();
         }
 
         [Test]
@@ -41,6 +41,7 @@ namespace TagsCloudVisualization.Tests
             var text = wordTags.Aggregate("", (current, word) => current + (word + Environment.NewLine));
             textParser
                 .ParseToTokens(text)
+                .GetValueOrThrow()
                 .Select(token => token.Word)
                 .ToArray()
                 .Should()
@@ -54,6 +55,7 @@ namespace TagsCloudVisualization.Tests
             var text = wordTags.Aggregate("", (current, word) => current + (word + Environment.NewLine));
             textParser
                 .ParseToTokens(text)
+                .GetValueOrThrow()
                 .Select(token => token.Word)
                 .ToArray()
                 .Should()
@@ -68,7 +70,7 @@ namespace TagsCloudVisualization.Tests
         {
             var wordTags = new[] { "dog", "dog", "dog", "dog"};
             var text = wordTags.Aggregate("", (current, word) => current + (word + Environment.NewLine));
-            var tokens = textParser.ParseToTokens(text).ToArray();
+            var tokens = textParser.ParseToTokens(text).GetValueOrThrow().ToArray();
             tokens.Length.Should().Be(1);
             tokens.First().Should().BeEquivalentTo(new WordToken("dog", 4));
         }

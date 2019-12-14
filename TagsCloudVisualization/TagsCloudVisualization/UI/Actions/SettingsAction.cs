@@ -16,8 +16,10 @@ namespace TagsCloudVisualization.UI.Actions
 
         public void Perform(object sender, EventArgs e)
         {
-            var settings = new SettingsForm(imageSettingsProvider.ImageSettings);
-            settings.ShowDialog();
+            var settingsForm = new SettingsForm(imageSettingsProvider.ImageSettings);
+            settingsForm.ShowDialog();
+            //TODO PROCESS FAIL
+            imageSettingsProvider.SetImageSettings(settingsForm.ModifiedSettings);
         }
     }
 }

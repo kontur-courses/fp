@@ -2,7 +2,7 @@
 
 namespace TagsCloudVisualization.Services
 {
-    public class ImageSettings
+    public struct ImageSettings
     {
         private static readonly ImageSettings DefaultSettings = InitializeDefaultSettings();
         public  Font Font { get; set; }
@@ -13,6 +13,7 @@ namespace TagsCloudVisualization.Services
         {
             BackgroundColor = backgroundColor;
             Font = font ?? DefaultSettings.Font;
+
             ImageSize = imageSize;
         }
 

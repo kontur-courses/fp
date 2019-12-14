@@ -23,11 +23,11 @@ namespace TagsCloudVisualization.Tests
         [TestCase(-1, 1, TestName = "Width is negative number")]
         [TestCase(1, -1, TestName = "Height is negative number")]
         [TestCase(int.MinValue, int.MinValue, TestName = "Both height and width are negative numbers")]
-        public void ShiftPointBySizeOffsets_ThrowsArgumentException(int width, int height)
+        public void ShiftPointBySizeOffsets_ReturnsFail(int width, int height)
         {
-            Action action = () => Geometry.ShiftPointBySizeOffsets(Point.Empty, new Size(width, height));
+            var result = Geometry.ShiftPointBySizeOffsets(Point.Empty, new Size(width, height));
 
-            action.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();
         }
 
         [TestCase(0, 0, 10, 10, TestName = "Center is zero")]
@@ -36,7 +36,7 @@ namespace TagsCloudVisualization.Tests
         [TestCase(25, -10, 10, 10, TestName = "Center is non-zero")]
         public void ShiftPointBySizeOffsets_ReturnsCorrectPoint(int x, int y, int width, int height)
         {
-            var shiftedPoint = Geometry.ShiftPointBySizeOffsets(new Point(x, y), new Size(width, height));
+            var shiftedPoint = Geometry.ShiftPointBySizeOffsets(new Point(x, y), new Size(width, height)).GetValueOrThrow();
 
             shiftedPoint.Should().Be(new Point(x - width / 2, y - height / 2));
         }
@@ -52,7 +52,7 @@ namespace TagsCloudVisualization.Tests
             var rectangle = new Rectangle(centerX, centerY, width, height);
             var endPoint = new Point(endX, endY);
 
-            var length = Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, endPoint);
+            var length = Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, endPoint).GetValueOrThrow();
 
             length.Should().BeInRange(expectedLength - epsilon, expectedLength + epsilon);
         }
@@ -60,12 +60,15 @@ namespace TagsCloudVisualization.Tests
         [TestCase(-1, 1, TestName = "Width is negative number")]
         [TestCase(1, -1, TestName = "Height is negative number")]
         [TestCase(int.MinValue, int.MinValue, TestName = "Both height and width are negative numbers")]
-        public void GetLengthFromRectangleCenterToBorderOnVector_ThrowsArgumentException(int width, int height)
+        public void GetLengthFromRectangleCenterToBorderOnVector_ReturnsFail(int width, int height)
         {
-            Action action = () =>
-                Geometry.GetLengthFromRectangleCenterToBorderOnVector(new Rectangle(0, 0, width, height), Point.Empty);
+            var result = Geometry
+                .GetLengthFromRectangleCenterToBorderOnVector(
+                    new Rectangle(0, 0, width, height),
+                    Point.Empty
+                    );
 
-            action.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();
         }
 
         [TestCase(0, 0, 10, 10, 0, 0, TestName = "Center is zero and point is zero")]
@@ -78,7 +81,7 @@ namespace TagsCloudVisualization.Tests
             var rectangle = new Rectangle(centerX, centerY, width, height);
             var endPoint = new Point(endX, endY);
 
-            var length = Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, endPoint);
+            var length = Geometry.GetLengthFromRectangleCenterToBorderOnVector(rectangle, endPoint).GetValueOrThrow();
 
             length.Should().Be(0);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ErrorHandler;
 
 namespace TagsCloudVisualization.Logic
 {
@@ -10,10 +11,11 @@ namespace TagsCloudVisualization.Logic
             return new Point((int) (ro * Math.Cos(phi)), (int) (ro * Math.Sin(phi)));
         }
 
-        public static double GetLengthFromRectangleCenterToBorderOnVector(Rectangle rect, Point vector)
+        public static Result<double> GetLengthFromRectangleCenterToBorderOnVector(Rectangle rect, Point vector)
         {
             if (rect.Width < 0 || rect.Height < 0) 
-                throw new ArgumentException();
+                return Result.Fail<double>("Rectangle can't have negative sizes");
+
             double dx = Math.Abs(rect.X - vector.X);
             double dy = Math.Abs(rect.Y - vector.Y);
             var xOffset = rect.Width / 2;
@@ -35,11 +37,11 @@ namespace TagsCloudVisualization.Logic
             return hypotenuse;
         }
 
-        public static Point ShiftPointBySizeOffsets(Point point, Size size)
+        public static Result<Point> ShiftPointBySizeOffsets(Point point, Size size)
         {
-            if (size.Width < 0 || size.Height < 0) 
-                throw new ArgumentException();
-            return new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
+            return size.Width < 0 || size.Height < 0? 
+                Result.Fail<Point>("Offsets can't be negative"): 
+                new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
         }
     }
 }

@@ -13,15 +13,15 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void TextRetriever_ThrowsNullArgumentException_WhenPathIsNull()
         {
-            Action action = () => TextRetriever.RetrieveTextFromFile(null);
-            action.Should().Throw<ArgumentNullException>();
+            var result = TextRetriever.RetrieveTextFromFile(null);
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void TextRetriever_ThrowsArgumentException_WhenFileDoesNotExists()
         {
-            Action action = () => TextRetriever.RetrieveTextFromFile("nonexistingpath");
-            action.Should().Throw<ArgumentException>();
+            var result = TextRetriever.RetrieveTextFromFile("nonexistingpath");
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace TagsCloudVisualization.Tests
         {
             var textPath = TestContext.CurrentContext.TestDirectory + "\\Tests\\TestTexts\\animals.txt";
             var expectedText = File.ReadAllText(textPath, Encoding.UTF8);
-            TextRetriever.RetrieveTextFromFile(textPath).Should().BeEquivalentTo(expectedText);
+            TextRetriever.RetrieveTextFromFile(textPath).GetValueOrThrow().Should().BeEquivalentTo(expectedText);
         }
     }
 }

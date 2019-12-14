@@ -32,10 +32,10 @@ namespace TagsCloudVisualization.Tests
         [TestCase(1, 0, TestName = "Height is zero")]
         [TestCase(-1, 1, TestName = "Width is negative number")]
         [TestCase(1, -1, TestName = "Height is negative number")]
-        public void PutNextRectangle_ThrowsArgumentException(int width, int height)
+        public void PutNextRectangle_ReturnsFail(int width, int height)
         {
-            Func<Rectangle> act = () => layouter.PutNextRectangle(new Size(width, height));
-            act.Should().Throw<ArgumentException>();
+            var result = layouter.PutNextRectangle(new Size(width, height));
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace TagsCloudVisualization.Tests
             var recSize = new Size(10, 10);
             var expectedShiftedCenter =
                 new Point(-recSize.Width / 2, -recSize.Height / 2);
-            var rectangle = layouter.PutNextRectangle(recSize);
+            var rectangle = layouter.PutNextRectangle(recSize).GetValueOrThrow();
 
             new Point(rectangle.X, rectangle.Y).Should().Be(expectedShiftedCenter);
         }
@@ -56,7 +56,9 @@ namespace TagsCloudVisualization.Tests
         {
             var rectSize = new Size(width, height);
 
-            layouter.PutNextRectangle(rectSize).Size.Should().Be(rectSize);
+            var rectangle = layouter.PutNextRectangle(rectSize).GetValueOrThrow();
+
+            rectangle.Size.Should().Be(rectSize);
         }
 
 
@@ -68,7 +70,10 @@ namespace TagsCloudVisualization.Tests
             var rectangles = new List<Rectangle>();
 
             for (var i = 1; i < rectanglesAmount; i++)
-                rectangles.Add(layouter.PutNextRectangle(new Size(i, i)));
+            {
+                var rectangle = layouter.PutNextRectangle(new Size(i, i)).GetValueOrThrow();
+                rectangles.Add(rectangle);
+            }
 
             for (var i = 0; i < rectangles.Count; i++)
             for (var j = 0; j < i; j++)
@@ -78,9 +83,9 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void PutNextRectangle_ReturnsRectangleCloseToCenter_IfSmallRectangleIsAfterLargeRectangle()
         {
-            var centerRect = layouter.PutNextRectangle(new Size(5, 5));
+            var centerRect = layouter.PutNextRectangle(new Size(5, 5)).GetValueOrThrow();
             layouter.PutNextRectangle(new Size(100, 100));
-            var smallRect = layouter.PutNextRectangle(new Size(5, 5));
+            var smallRect = layouter.PutNextRectangle(new Size(5, 5)).GetValueOrThrow();
 
             var distance = Math.Sqrt(Math.Pow(smallRect.X - centerRect.X, 2) + Math.Pow(smallRect.Y - centerRect.Y, 2));
 
