@@ -5,7 +5,8 @@ namespace TagsCloudResult.CloudVisualizers.ImageSaving
 {
     public class ImageSaver : IImageSaver
     {
-        private Func<ImageSaverSettings> settingsFactory;
+        private readonly Func<ImageSaverSettings> settingsFactory;
+
         public ImageSaver(Func<ImageSaverSettings> settingsFactory)
         {
             this.settingsFactory = settingsFactory;

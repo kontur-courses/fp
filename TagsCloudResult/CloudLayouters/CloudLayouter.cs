@@ -10,8 +10,8 @@ namespace TagsCloudResult.CloudLayouters
 {
     public class CloudLayouter : ICloudLayouter
     {
-        private Func<CloudLayouterSettings> settingsFactory;
-        
+        private readonly Func<CloudLayouterSettings> settingsFactory;
+
         public CloudLayouter(Func<CloudLayouterSettings> settingsFactory)
         {
             this.settingsFactory = settingsFactory;
@@ -35,13 +35,13 @@ namespace TagsCloudResult.CloudLayouters
             var size = TextRenderer.MeasureText(word.Word, new Font("Arial", 16));
             var width = size.Width * sizeMultiplier * word.Count;
             var height = size.Height * sizeMultiplier * word.Count;
-            return new Size((int)width, (int)height);
+            return new Size((int) width, (int) height);
         }
 
         private double GetSizeMultiplier(IOrderedEnumerable<CloudWord> ordered, CloudLayouterSettings settings)
         {
-            var maxCount = (double)ordered.First().Count;
-            var minCount = (double)ordered.Last().Count;
+            var maxCount = (double) ordered.First().Count;
+            var minCount = (double) ordered.Last().Count;
             var countDifference = maxCount - minCount == 0 ? 1 : maxCount - minCount;
             return settings.RectangleSquareMultiplier / countDifference;
         }

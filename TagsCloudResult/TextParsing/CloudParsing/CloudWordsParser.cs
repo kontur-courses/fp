@@ -5,9 +5,9 @@ namespace TagsCloudResult.TextParsing.CloudParsing
 {
     public class CloudWordsParser : ICloudWordsParser
     {
+        private readonly Func<CloudWordsParserSettings> settingsFactory;
         private Dictionary<string, CloudWord> words;
-        private Func<CloudWordsParserSettings> settingsFactory;
-       
+
 
         public CloudWordsParser(Func<CloudWordsParserSettings> settingsFactory)
         {

@@ -5,7 +5,7 @@ namespace TagsCloudResult.TextParsing.CloudParsing.ParsingRules
 {
     public class DefaultParsingRule : ICloudWordParsingRule
     {
-        private HashSet<string> wordsExceptions;
+        private readonly HashSet<string> wordsExceptions;
 
         public DefaultParsingRule()
         {
@@ -13,10 +13,11 @@ namespace TagsCloudResult.TextParsing.CloudParsing.ParsingRules
             {
                 "i", "you", "he", "she", "who", "it", "we", "they",
                 "me", "you", "whom", "her", "him", "it", "us", "them",
-                "my", "mine", "his", "her", "hers", "your", "yours", 
+                "my", "mine", "his", "her", "hers", "your", "yours",
                 "our", "ours", "their", "theirs", "whose", "it", "its"
             };
         }
+
         public bool Check(string word)
         {
             if (string.IsNullOrWhiteSpace(word)) return false;

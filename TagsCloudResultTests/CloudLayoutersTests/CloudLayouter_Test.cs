@@ -12,9 +12,6 @@ namespace TagsCloudResultTests.CloudLayoutersTests
     [TestFixture]
     public class CloudLayouter_Test
     {
-        private CloudLayouterSettings settings;
-        private CloudLayouter layouter;
-
         [SetUp]
         public void SetUp()
         {
@@ -26,6 +23,9 @@ namespace TagsCloudResultTests.CloudLayoutersTests
             settings.RectangleSquareMultiplier = 100;
             layouter = new CloudLayouter(() => settings);
         }
+
+        private CloudLayouterSettings settings;
+        private CloudLayouter layouter;
 
         [Test]
         public void GetWords_Should_ReturnDescendingOrderedCollection()

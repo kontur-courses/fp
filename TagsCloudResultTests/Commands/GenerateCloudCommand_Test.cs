@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudResult;
 using TagsCloudResult.ApplicationRunning;
@@ -14,8 +13,6 @@ namespace TagsCloudResultTests.Commands
     [TestFixture]
     public class GenerateCloudCommand_Test
     {
-        private GenerateCloudCommand command;
-
         [SetUp]
         public void SetUp()
         {
@@ -28,11 +25,7 @@ namespace TagsCloudResultTests.Commands
             command = new GenerateCloudCommand(cloud, settings);
         }
 
-        [Test]
-        public void ParseArguments_Should_ThrowArgumentException_When_WrongArgumentsCount()
-        {
-            command.ParseArguments(new[] {"circle", "100", "0,1"}).IsSuccess.Should().BeFalse();
-        }
+        private GenerateCloudCommand command;
 
         [TestCase("0,01", TestName = "when too small")]
         [TestCase("0", TestName = "when zero")]
@@ -66,6 +59,12 @@ namespace TagsCloudResultTests.Commands
         public void ParseArguments_Should_ThrowArgumentException_When_IncorrectAlgorithm()
         {
             command.ParseArguments(new[] {"notACorrectAlgorithm", "100", "0,1", "1"}).IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void ParseArguments_Should_ThrowArgumentException_When_WrongArgumentsCount()
+        {
+            command.ParseArguments(new[] {"circle", "100", "0,1"}).IsSuccess.Should().BeFalse();
         }
     }
 }

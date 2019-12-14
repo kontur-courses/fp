@@ -24,6 +24,5 @@ namespace TagsCloudResult.CloudVisualizers.ImageSaving
                     return ImageFormat.Bmp;
             }
         }
-        
     }
 }

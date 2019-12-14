@@ -21,11 +21,11 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
                 g.ScaleTransform(xRatio, yRatio);
                 g.TranslateTransform(-minX, -minY);
                 g.FillRectangle(
-                    new SolidBrush(settings.Palette.BackgroundColor), 
-                    minX, 
-                    minY, 
-                    settings.Width * (1/xRatio), 
-                    settings.Height * (1/yRatio));
+                    new SolidBrush(settings.Palette.BackgroundColor),
+                    minX,
+                    minY,
+                    settings.Width * (1 / xRatio),
+                    settings.Height * (1 / yRatio));
                 if (settings.Palette.IsGradient)
                     DrawGradient(wordsList, settings, g);
                 else
@@ -36,16 +36,17 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
                         WriteWordToRectangle(g, word, textSize, settings.Font, brush);
                     }
             }
+
             return bitmap;
         }
 
         private void DrawGradient(
-            IEnumerable<CloudVisualizationWord> words, 
+            IEnumerable<CloudVisualizationWord> words,
             CloudVisualizerSettings settings,
             Graphics g)
         {
             var gradientColors = GenerateGradientColors(
-                settings.Palette.PrimaryColor, 
+                settings.Palette.PrimaryColor,
                 settings.Palette.SecondaryColor,
                 words.Count());
             var colorCounter = 0;
@@ -67,9 +68,9 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             int gMin = second.G;
             int bMax = first.B;
             int bMin = second.B;
-            
+
             var colorList = new List<Color>();
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var rAverage = rMin + (rMax - rMin) * i / count;
                 var gAverage = gMin + (gMax - gMin) * i / count;
@@ -81,23 +82,23 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
         }
 
         private static void WriteWordToRectangle(
-            Graphics g, 
-            CloudVisualizationWord word, 
-            SizeF textSize, 
+            Graphics g,
+            CloudVisualizationWord word,
+            SizeF textSize,
             Font font,
             Brush brush)
         {
             var state = g.Save();
             g.TranslateTransform(word.Rectangle.Left, word.Rectangle.Top);
             g.ScaleTransform(word.Rectangle.Width * 1.08f / textSize.Width,
-                word.Rectangle.Height * 1.1f  / textSize.Height);
+                word.Rectangle.Height * 1.1f / textSize.Height);
             g.DrawString(word.Word, font, brush, PointF.Empty);
             g.Restore(state);
         }
 
         private static (float xRatio, float yRatio) GetSizeRatio(
-            CloudVisualizerSettings settings, 
-            IEnumerable<Rectangle> rectangles, 
+            CloudVisualizerSettings settings,
+            IEnumerable<Rectangle> rectangles,
             int minX,
             int minY)
         {
@@ -107,8 +108,8 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             var yDifference = Math.Abs(maxY - minY);
             float xRatio;
             float yRatio;
-            
-            (xRatio, yRatio) = ((float)settings.Width / xDifference, (float)settings.Height / yDifference);
+
+            (xRatio, yRatio) = ((float) settings.Width / xDifference, (float) settings.Height / yDifference);
 
             return (xRatio, yRatio);
         }

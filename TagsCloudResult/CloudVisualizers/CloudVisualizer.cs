@@ -6,7 +6,8 @@ namespace TagsCloudResult.CloudVisualizers
 {
     public class CloudVisualizer : ICloudVisualizer
     {
-        private Func<CloudVisualizerSettings> settingsFactory;
+        private readonly Func<CloudVisualizerSettings> settingsFactory;
+
         public CloudVisualizer(Func<CloudVisualizerSettings> settingsFactory)
         {
             this.settingsFactory = settingsFactory;

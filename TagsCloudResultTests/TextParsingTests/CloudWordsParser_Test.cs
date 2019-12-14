@@ -11,9 +11,6 @@ namespace TagsCloudResultTests.TextParsingTests
     [TestFixture]
     public class CloudWordsParser_Test
     {
-        private CloudWordsParser parser;
-        private CloudWordsParserSettings settings;
-
         [SetUp]
         public void SetUp()
         {
@@ -29,6 +26,41 @@ namespace TagsCloudResultTests.TextParsingTests
         {
             if (File.Exists(settings.Path))
                 File.Delete(settings.Path);
+        }
+
+        private CloudWordsParser parser;
+        private CloudWordsParserSettings settings;
+
+        [Test]
+        public void ParseFrom_Should_CountWordsRight()
+        {
+            using (var writer = new StreamWriter(settings.Path))
+            {
+                writer.WriteLine("i");
+                writer.WriteLine("sandwich");
+                writer.WriteLine("apple");
+                writer.WriteLine("you");
+                writer.WriteLine("apple");
+            }
+
+            var result = parser.Parse();
+            result.First(w => w.Word == "apple").Count.Should().Be(2);
+        }
+
+        [Test]
+        public void ParseFrom_Should_IgnoreExceptedWords_When_DefaultRule()
+        {
+            using (var writer = new StreamWriter(settings.Path))
+            {
+                writer.WriteLine("i");
+                writer.WriteLine("sandwich");
+                writer.WriteLine("apple");
+                writer.WriteLine("you");
+                writer.WriteLine("apple");
+            }
+
+            var result = parser.Parse();
+            result.Count().Should().Be(2);
         }
 
 
@@ -49,22 +81,6 @@ namespace TagsCloudResultTests.TextParsingTests
         }
 
         [Test]
-        public void ParseFrom_Should_CountWordsRight()
-        {
-            using (var writer = new StreamWriter(settings.Path))
-            {
-                writer.WriteLine("i");
-                writer.WriteLine("sandwich");
-                writer.WriteLine("apple");
-                writer.WriteLine("you");
-                writer.WriteLine("apple");
-            }
-
-            var result = parser.Parse();
-            result.First(w => w.Word == "apple").Count.Should().Be(2);
-        }
-
-        [Test]
         public void ParseFrom_Should_ParseToLowercase_When_DefaultRule()
         {
             using (var writer = new StreamWriter(settings.Path))
@@ -76,22 +92,6 @@ namespace TagsCloudResultTests.TextParsingTests
 
             var result = parser.Parse();
             result.Count().Should().Be(1);
-        }
-
-        [Test]
-        public void ParseFrom_Should_IgnoreExceptedWords_When_DefaultRule()
-        {
-            using (var writer = new StreamWriter(settings.Path))
-            {
-                writer.WriteLine("i");
-                writer.WriteLine("sandwich");
-                writer.WriteLine("apple");
-                writer.WriteLine("you");
-                writer.WriteLine("apple");
-            }
-
-            var result = parser.Parse();
-            result.Count().Should().Be(2);
         }
     }
 }

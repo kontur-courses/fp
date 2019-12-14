@@ -15,15 +15,14 @@ namespace TagsCloudContainer.ApplicationRunning.UIApp.Forms
 {
     public partial class MainForm : Form
     {
-        private SettingsManager settings;
-        private TagsCloud cloud;
+        private readonly TagsCloud cloud;
+        private readonly SettingsManager settings;
 
         public MainForm(TagsCloud cloud, SettingsManager settings)
         {
             this.cloud = cloud;
             this.settings = settings;
             InitializeComponent();
-            
         }
 
         private void ChooseTextFileButton_Click(object sender, EventArgs e)
@@ -48,9 +47,9 @@ namespace TagsCloudContainer.ApplicationRunning.UIApp.Forms
         private void GenerateButton_Click(object sender, EventArgs e)
         {
             var algorithmName = LayoutingAlgorithmComboBox.SelectedItem.ToString();
-            var step = (double)LayouterStep.Value;
-            var broadness = (int)LayouterBroadness.Value;
-            var size = (int)LayouterSquareMultiplier.Value;
+            var step = (double) LayouterStep.Value;
+            var broadness = (int) LayouterBroadness.Value;
+            var size = (int) LayouterSquareMultiplier.Value;
             var algorithm = CloudLayoutingAlgorithms.TryGetLayoutingAlgorithm(algorithmName, step, broadness);
             settings.ConfigureLayouterSettings(algorithm, size, step, broadness);
             cloud.GenerateTagCloud();

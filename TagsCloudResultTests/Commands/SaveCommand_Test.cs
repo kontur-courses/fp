@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudResult;
@@ -15,8 +14,6 @@ namespace TagsCloudResultTests.Commands
     [TestFixture]
     public class SaveCommand_Test
     {
-        private SaveCommand command;
-
         [SetUp]
         public void SetUp()
         {
@@ -29,10 +26,13 @@ namespace TagsCloudResultTests.Commands
             command = new SaveCommand(cloud, settings);
         }
 
+        private SaveCommand command;
+
         [Test]
-        public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
+        public void Act_Should_ThrowArgumentException_When_IncorrectFormat()
         {
-            command.ParseArguments(new[] {@"D:\coolpath", "coolimage"}).IsSuccess.Should().BeFalse();
+            var path = Directory.GetCurrentDirectory();
+            command.ParseArguments(new[] {path, "maybeonedayidk"}).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -42,10 +42,9 @@ namespace TagsCloudResultTests.Commands
         }
 
         [Test]
-        public void Act_Should_ThrowArgumentException_When_IncorrectFormat()
+        public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
         {
-            var path = Directory.GetCurrentDirectory();
-            command.ParseArguments(new[] {path, "maybeonedayidk"}).IsSuccess.Should().BeFalse();
+            command.ParseArguments(new[] {@"D:\coolpath", "coolimage"}).IsSuccess.Should().BeFalse();
         }
     }
 }

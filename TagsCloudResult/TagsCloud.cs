@@ -11,13 +11,12 @@ namespace TagsCloudResult
 {
     public class TagsCloud
     {
-        private List<CloudWord> parsedWords;
-        private List<CloudVisualizationWord> visualizationWords;
-        public Bitmap VisualizedBitmap { get; private set; }
-        private readonly ICloudWordsParser wordsParser;
         private readonly ICloudLayouter cloudLayouter;
         private readonly ICloudVisualizer cloudVisualizer;
         private readonly IImageSaver imageSaver;
+        private readonly ICloudWordsParser wordsParser;
+        private List<CloudWord> parsedWords;
+        private List<CloudVisualizationWord> visualizationWords;
 
         public TagsCloud(
             ICloudWordsParser wordsParser,
@@ -30,11 +29,14 @@ namespace TagsCloudResult
             this.cloudVisualizer = cloudVisualizer;
             this.imageSaver = imageSaver;
         }
+
+        public Bitmap VisualizedBitmap { get; private set; }
+
         public void ParseWords()
         {
             parsedWords = wordsParser.Parse().ToList();
         }
-        
+
         public void GenerateTagCloud()
         {
             if (parsedWords is null) throw new InvalidOperationException("You should parse your words first!");
@@ -50,7 +52,7 @@ namespace TagsCloudResult
 
         public void SaveVisualized()
         {
-            if(VisualizedBitmap is null)
+            if (VisualizedBitmap is null)
                 VisualizeCloud();
             imageSaver.Save(VisualizedBitmap);
         }

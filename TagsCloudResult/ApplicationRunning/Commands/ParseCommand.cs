@@ -9,9 +9,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
 {
     public class ParseCommand : IConsoleCommand
     {
-        private TagsCloud cloud;
-        private SettingsManager manager;
+        private readonly TagsCloud cloud;
+        private readonly SettingsManager manager;
         private string path;
+
         public ParseCommand(TagsCloud cloud, SettingsManager manager)
         {
             this.cloud = cloud;
@@ -24,14 +25,6 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 .Then(CheckPath);
         }
 
-        private Result<string[]> CheckPath(string[] args)
-        {
-            path = string.Join(" ", args).Trim('\'');
-            var errorMessage = $"No file '{path}' found!";
-            var checkRes = Check.Argument(path, errorMessage, File.Exists(path));
-            return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
-        }
-
         public void Act()
         {
             var extension = Path.GetExtension(path);
@@ -40,14 +33,22 @@ namespace TagsCloudResult.ApplicationRunning.Commands
             Console.WriteLine($"Successfully parsed words from: '{path}'");
         }
 
+        public string Name => "Parse";
+        public string Description => "Parse words from path";
+        public string Arguments => "path";
+
+        private Result<string[]> CheckPath(string[] args)
+        {
+            path = string.Join(" ", args).Trim('\'');
+            var errorMessage = $"No file '{path}' found!";
+            var checkRes = Check.Argument(path, errorMessage, File.Exists(path));
+            return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
+        }
+
         private void Parse(IFileWordsParser parser, string path)
         {
             manager.ConfigureWordsParserSettings(parser, path, new DefaultParsingRule());
             cloud.ParseWords();
         }
-
-        public string Name => "Parse";
-        public string Description => "Parse words from path";
-        public string Arguments => "path";
     }
 }

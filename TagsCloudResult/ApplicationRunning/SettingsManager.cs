@@ -10,10 +10,10 @@ namespace TagsCloudResult.ApplicationRunning
 {
     public class SettingsManager
     {
+        private CloudWordsParserSettings cloudWordsParserSettings;
+        private ImageSaverSettings imageSaverSettings;
         private CloudLayouterSettings layouterSettings;
         private CloudVisualizerSettings visualizerSettings;
-        private ImageSaverSettings imageSaverSettings;
-        private CloudWordsParserSettings cloudWordsParserSettings;
 
         public SettingsManager()
         {
@@ -22,7 +22,7 @@ namespace TagsCloudResult.ApplicationRunning
             imageSaverSettings = new ImageSaverSettings();
             cloudWordsParserSettings = new CloudWordsParserSettings();
         }
-        
+
         public void ConfigureLayouterSettings(
             ICloudLayoutingAlgorithm algorithm,
             int rectangleSquareMultiplier,
@@ -38,7 +38,7 @@ namespace TagsCloudResult.ApplicationRunning
             };
             layouterSettings = newSettings;
         }
-        
+
         public void ConfigureVisualizerSettings(
             Palette palette,
             IBitmapMaker bitmapMaker,
@@ -52,19 +52,19 @@ namespace TagsCloudResult.ApplicationRunning
             };
             visualizerSettings = newSettings;
         }
-        
+
         public void ConfigureImageSaverSettings(ImageFormat format, string savePath)
         {
             var newSettings = new ImageSaverSettings {Format = format, Path = savePath};
             imageSaverSettings = newSettings;
         }
-        
+
         public void ConfigureWordsParserSettings(IFileWordsParser wordsParser, string path, ICloudWordParsingRule rule)
         {
             var newSettings = new CloudWordsParserSettings {FileWordsParser = wordsParser, Path = path, Rule = rule};
             cloudWordsParserSettings = newSettings;
         }
-        
+
         public CloudLayouterSettings GetLayouterSettings()
         {
             return layouterSettings;
@@ -79,7 +79,7 @@ namespace TagsCloudResult.ApplicationRunning
         {
             return imageSaverSettings;
         }
-        
+
         public CloudWordsParserSettings GetWordsParserSettings()
         {
             return cloudWordsParserSettings;

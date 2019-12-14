@@ -10,9 +10,6 @@ namespace TagsCloudResultTests.CloudVisualiserTests
     [TestFixture]
     public class CloudVisualiser_Test
     {
-        private CloudVisualizer visualizer;
-        private CloudVisualizerSettings settings;
-
         [SetUp]
         public void SetUp()
         {
@@ -21,6 +18,18 @@ namespace TagsCloudResultTests.CloudVisualiserTests
                 Width = 1280, Height = 720, Palette = new Palette(), BitmapMaker = new DefaultBitmapMaker()
             };
             visualizer = new CloudVisualizer(() => settings);
+        }
+
+        private CloudVisualizer visualizer;
+        private CloudVisualizerSettings settings;
+
+        private Size GetWordRectangleSize(string word, int count)
+        {
+            var length = word.Length;
+            var ratio = count * 100 / length;
+            var width = count * 100 - ratio;
+            var height = ratio;
+            return new Size(width, height);
         }
 
         [Test]
@@ -35,15 +44,6 @@ namespace TagsCloudResultTests.CloudVisualiserTests
             var words = new List<CloudVisualizationWord> {secondWord, firstWord};
 
             visualizer.GetBitmap(words).Should().NotBeNull();
-        }
-
-        private Size GetWordRectangleSize(string word, int count)
-        {
-            var length = word.Length;
-            var ratio = count * 100 / length;
-            var width = count * 100 - ratio;
-            var height = ratio;
-            return new Size(width, height);
         }
     }
 }

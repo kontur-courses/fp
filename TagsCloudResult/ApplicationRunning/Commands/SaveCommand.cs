@@ -8,11 +8,12 @@ namespace TagsCloudResult.ApplicationRunning.Commands
 {
     public class SaveCommand : IConsoleCommand
     {
-        private TagsCloud cloud;
-        private SettingsManager manager;
+        private readonly TagsCloud cloud;
 
         private ImageFormat format;
         private string fullPath;
+        private readonly SettingsManager manager;
+
         public SaveCommand(TagsCloud cloud, SettingsManager manager)
         {
             this.cloud = cloud;
@@ -32,6 +33,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
             Console.WriteLine($"Successfully saved image at {fullPath}");
         }
 
+        public string Name => "save";
+        public string Description => "saves visualized cloud to file";
+        public string Arguments => "path name format";
+
         private Result<string[]> CheckPath(string[] args)
         {
             var errorMessage = $"Incorrect directory '{args[0]}'";
@@ -43,10 +48,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
         {
             var filename = args[1] + "." + args[2];
             fullPath = Path.Combine(args[0], filename);
-            
+
             format = SupportedImageFormats.TryGetSupportedImageFormats(args[2]);
             var errorMessage = $"Incorrect image format '{args[2]}'";
-            var checkRes =  Check.Argument(args[2], errorMessage, format != null);
+            var checkRes = Check.Argument(args[2], errorMessage, format != null);
             return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
         }
 
@@ -55,9 +60,5 @@ namespace TagsCloudResult.ApplicationRunning.Commands
             manager.ConfigureImageSaverSettings(format, path);
             cloud.SaveVisualized();
         }
-
-        public string Name => "save";
-        public string Description => "saves visualized cloud to file";
-        public string Arguments => "path name format";
     }
 }

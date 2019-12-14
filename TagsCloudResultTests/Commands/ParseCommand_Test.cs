@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudResult;
 using TagsCloudResult.ApplicationRunning;
@@ -14,8 +13,6 @@ namespace TagsCloudResultTests.Commands
     [TestFixture]
     public class ParseCommand_Test
     {
-        private ParseCommand command;
-
         [SetUp]
         public void SetUp()
         {
@@ -27,6 +24,8 @@ namespace TagsCloudResultTests.Commands
             var cloud = new TagsCloud(parser, layouter, visualizer, saver);
             command = new ParseCommand(cloud, settings);
         }
+
+        private ParseCommand command;
 
         [Test]
         public void Act_Should_ThrowArgumentException_When_FileDoesntExist()

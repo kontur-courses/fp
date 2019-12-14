@@ -6,12 +6,13 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp
 {
     public class ConsoleAppRunner : IAppRunner
     {
-        private CommandsExecutor executor;
+        private readonly CommandsExecutor executor;
+
         public ConsoleAppRunner(CommandsExecutor executor)
         {
             this.executor = executor;
         }
-        
+
         public void Run()
         {
             Console.WriteLine("Welcome to cloud visualizer. Use 'help' to see commands list.");

@@ -19,7 +19,7 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
             foreach (var info in helpInfo)
                 Console.WriteLine(info);
         }
-        
+
         private IConsoleCommand TryToFindCommandByName(string name)
         {
             return commands.FirstOrDefault(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -27,7 +27,7 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
 
         public void Execute(string[] args)
         {
-            if(args.Length == 0)
+            if (args.Length == 0)
                 Console.WriteLine("No commands. Try 'help' for help on commands.");
             var commandName = args[0];
             var command = TryToFindCommandByName(commandName);
@@ -36,13 +36,18 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
                 GetHelp();
                 return;
             }
-            if(command is null)
+
+            if (command is null)
+            {
                 Console.WriteLine($"No command '{commandName}' found. Try 'help' for help on commands.");
+            }
             else
             {
                 var parseResult = command.ParseArguments(args.Skip(1).ToArray());
-                if(parseResult.IsSuccess)
+                if (parseResult.IsSuccess)
+                {
                     command.Act();
+                }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;

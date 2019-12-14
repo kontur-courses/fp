@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudResult;
 using TagsCloudResult.ApplicationRunning;
@@ -14,8 +13,6 @@ namespace TagsCloudResultTests.Commands
     [TestFixture]
     public class VisualizeCommand_Test
     {
-        private VisualizeCommand command;
-
         [SetUp]
         public void SetUp()
         {
@@ -28,11 +25,7 @@ namespace TagsCloudResultTests.Commands
             command = new VisualizeCommand(cloud, settings);
         }
 
-        [Test]
-        public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
-        {
-            command.ParseArguments(new[] {"def", "1280", "720", "black", "red"}).IsSuccess.Should().BeFalse();
-        }
+        private VisualizeCommand command;
 
         [TestCase("0,5", TestName = "when too small")]
         [TestCase("0", TestName = "when zero")]
@@ -54,11 +47,17 @@ namespace TagsCloudResultTests.Commands
             command.ParseArguments(args).IsSuccess.Should().BeFalse();
         }
 
-        [Test()]
+        [Test]
         public void Act_Should_ThrowArgumentException_When_IncorrectBitmapMaker()
         {
             var args = new[] {"idontexist", "1280", "720", "black", "red", "blue", "false", "Arial"};
             command.ParseArguments(args).IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void Act_Should_ThrowArgumentException_When_WrongArgumentsCount()
+        {
+            command.ParseArguments(new[] {"def", "1280", "720", "black", "red"}).IsSuccess.Should().BeFalse();
         }
     }
 }

@@ -21,10 +21,6 @@ namespace TagsCloudResultTests
     [TestFixture]
     public class TagsCloud_Test
     {
-        private SettingsManager settings;
-        private TagsCloud cloud;
-        private string testFilePath;
-
         [SetUp]
         public void SetUp()
         {
@@ -43,6 +39,10 @@ namespace TagsCloudResultTests
                 File.Delete(testFilePath);
         }
 
+        private SettingsManager settings;
+        private TagsCloud cloud;
+        private string testFilePath;
+
         private void MakeTestFile()
         {
             var currentPath = Directory.GetCurrentDirectory();
@@ -58,20 +58,6 @@ namespace TagsCloudResultTests
         }
 
         [Test]
-        public void GenerateTagCloud_Should_ThrowInvalidOperationException_When_NoWordsParsed()
-        {
-            Following.Code(() => cloud.GenerateTagCloud()).Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void ParseWords_Should_ParseWithNoExceptions_When_FileExists()
-        {
-            MakeTestFile();
-            settings.ConfigureWordsParserSettings(new TxtWordParser(), testFilePath, new DefaultParsingRule());
-            Following.Code(() => cloud.ParseWords()).Should().NotThrow("file exists and is correct");
-        }
-
-        [Test]
         public void GenerateTagCloud_Should_GenerateWithNoExceptions_When_WordsAreParsed()
         {
             MakeTestFile();
@@ -83,7 +69,7 @@ namespace TagsCloudResultTests
         }
 
         [Test]
-        public void GenerateTagCloud_Should_VisualizeCloudWithNoExceptions_When_CloudIsGenerated()
+        public void GenerateTagCloud_Should_SaveCreateImage_When_AllStepsAreCorrect()
         {
             MakeTestFile();
             settings.ConfigureWordsParserSettings(new TxtWordParser(), testFilePath, new DefaultParsingRule());
@@ -93,7 +79,14 @@ namespace TagsCloudResultTests
             cloud.GenerateTagCloud();
             var font = new Font("Arial", 16);
             settings.ConfigureVisualizerSettings(new Palette(), new DefaultBitmapMaker(), 700, 700, font);
-            Following.Code(() => cloud.VisualizeCloud()).Should().NotThrow("cloud is successfully generated");
+            cloud.VisualizeCloud();
+            var currentPath = Directory.GetCurrentDirectory();
+            var filename = "test.jpg";
+            var fullpath = Path.Combine(currentPath, filename);
+            settings.ConfigureImageSaverSettings(ImageFormat.Jpeg, fullpath);
+            cloud.SaveVisualized();
+            File.Exists(fullpath).Should().BeTrue("all steps worked correctly");
+            File.Delete(fullpath);
         }
 
         [Test]
@@ -117,7 +110,13 @@ namespace TagsCloudResultTests
         }
 
         [Test]
-        public void GenerateTagCloud_Should_SaveCreateImage_When_AllStepsAreCorrect()
+        public void GenerateTagCloud_Should_ThrowInvalidOperationException_When_NoWordsParsed()
+        {
+            Following.Code(() => cloud.GenerateTagCloud()).Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void GenerateTagCloud_Should_VisualizeCloudWithNoExceptions_When_CloudIsGenerated()
         {
             MakeTestFile();
             settings.ConfigureWordsParserSettings(new TxtWordParser(), testFilePath, new DefaultParsingRule());
@@ -127,14 +126,15 @@ namespace TagsCloudResultTests
             cloud.GenerateTagCloud();
             var font = new Font("Arial", 16);
             settings.ConfigureVisualizerSettings(new Palette(), new DefaultBitmapMaker(), 700, 700, font);
-            cloud.VisualizeCloud();
-            var currentPath = Directory.GetCurrentDirectory();
-            var filename = "test.jpg";
-            var fullpath = Path.Combine(currentPath, filename);
-            settings.ConfigureImageSaverSettings(ImageFormat.Jpeg, fullpath);
-            cloud.SaveVisualized();
-            File.Exists(fullpath).Should().BeTrue("all steps worked correctly");
-            File.Delete(fullpath);
+            Following.Code(() => cloud.VisualizeCloud()).Should().NotThrow("cloud is successfully generated");
+        }
+
+        [Test]
+        public void ParseWords_Should_ParseWithNoExceptions_When_FileExists()
+        {
+            MakeTestFile();
+            settings.ConfigureWordsParserSettings(new TxtWordParser(), testFilePath, new DefaultParsingRule());
+            Following.Code(() => cloud.ParseWords()).Should().NotThrow("file exists and is correct");
         }
     }
 }
