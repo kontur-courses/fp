@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.MyStem
 {
-    class MyStemProcess
+    public class MyStemProcess
     {
         private readonly Process myStemProcess;
 
@@ -74,7 +72,7 @@ namespace TagsCloudLibrary.MyStem
 
         public Result<IEnumerable<string>> StreamToWords(Stream stream)
         {
-            return 
+            return
                 RunMystemOn(stream)
                 .Map(words => words.Select(word => word.Grammar.InitialForm));
         }
@@ -82,12 +80,10 @@ namespace TagsCloudLibrary.MyStem
         private static Stream StreamFromString(string s)
         {
             var stream = new MemoryStream();
-            using (var writer = new StreamWriter(stream))
-            {
-                writer.Write(s);
-                writer.Flush();
-                stream.Position = 0;
-            }
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
             return stream;
         }
 

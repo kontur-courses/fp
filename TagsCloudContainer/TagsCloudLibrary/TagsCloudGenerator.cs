@@ -15,14 +15,13 @@ namespace TagsCloudLibrary
 {
     public class TagsCloudGenerator
     {
-
-        private IReader reader;
-        private IWordsExtractor extractor;
-        private List<IPreprocessor> preprocessors = new List<IPreprocessor>();
-        private ILayouter layouter;
-        private IColorer colorer;
+        private readonly IReader reader;
+        private readonly IWordsExtractor extractor;
+        private readonly List<IPreprocessor> preprocessors;
+        private readonly ILayouter layouter;
+        private readonly IColorer colorer;
         private readonly FontFamily wordsFontFamily;
-        private IImageWriter imageWriter;
+        private readonly IImageWriter imageWriter;
 
         public TagsCloudGenerator(
             IReader reader,
@@ -37,7 +36,7 @@ namespace TagsCloudLibrary
             this.extractor = extractor;
 
             this.preprocessors = preprocessors.ToList();
-            this.preprocessors.Sort((p1, p2) => p1.Priority - p2.Priority);
+            this.preprocessors = this.preprocessors.OrderBy(p => p.Priority).ToList();
 
             this.layouter = layouter;
             this.colorer = colorer;
@@ -55,10 +54,9 @@ namespace TagsCloudLibrary
             using (var fs = File.OpenRead(inputFile))
             {
                 var text = reader.Read(fs);
-                var (_, isFailure, value) = extractor.ExtractWords(text);
+                var (_, isFailure, words) = extractor.ExtractWords(text);
                 if (isFailure)
                     return;
-                var words = value;
 
                 foreach (var preprocessor in preprocessors)
                 {
@@ -66,7 +64,8 @@ namespace TagsCloudLibrary
                 }
 
                 var wordStatistics = new Dictionary<string, int>();
-                foreach (var word in words)
+                var wordsArray = words.ToArray();
+                foreach (var word in wordsArray)
                 {
                     if (wordStatistics.ContainsKey(word))
                     {
@@ -78,12 +77,13 @@ namespace TagsCloudLibrary
                     }
                 }
 
-                var totalWords = words.Count();
+                var totalWords = wordsArray.Length;
 
                 var wordsWithSizes = wordStatistics
                     .Select(pair => new Tuple<string, int>(pair.Key, pair.Value))
+                    .OrderByDescending(tuple => tuple.Item2)
+                    .ThenBy(tuple => tuple.Item1)
                     .ToList();
-                wordsWithSizes.Sort((t1, t2) => (t2.Item2 - t1.Item2));
 
                 var image = new Bitmap(imageWidth, imageHeight);
                 var graphics = Graphics.FromImage(image);
@@ -91,8 +91,10 @@ namespace TagsCloudLibrary
                 {
                     var (word, size) = wordWithSize;
                     var font = new Font(wordsFontFamily, (float) size * imageHeight / totalWords * 2);
-                    var color = colorer.ColorForWord(word, size);
-                    var rectangle = layouter.PutNextRectangle(graphics.MeasureString(word, font).ToSize());
+                    var color = colorer.ColorForWord(word, (double) size / totalWords);
+                    var textSize = graphics.MeasureString(word, font).ToSize();
+                    if (textSize.Width <= 0 || textSize.Height <= 0) continue;
+                    var rectangle = layouter.PutNextRectangle(textSize);
                     graphics.DrawString(
                         word,
                         font,

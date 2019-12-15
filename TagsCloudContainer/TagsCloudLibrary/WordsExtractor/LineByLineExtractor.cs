@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.WordsExtractor
@@ -23,7 +22,6 @@ namespace TagsCloudLibrary.WordsExtractor
             {
                 return Result.Failure<IEnumerable<string>>("Cannot extract words from stream. " + e.Message);
             }
-
         }
     }
 }

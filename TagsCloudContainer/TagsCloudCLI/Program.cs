@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Autofac;
 using CommandLine;
 using TagsCloudLibrary;
@@ -28,6 +30,21 @@ namespace TagsCloudCLI
 
             [Option('o', "only", Required = false, Default = null, HelpText = "Select only specified parts of speech")]
             public IEnumerable<string> PartsOfSpeechWhiteList { get; set; }
+
+            [Option("width", Required = false, Default = 10000, HelpText = "Width of the image")]
+            public int ImageWidth { get; set; }
+
+            [Option("height", Required = false, Default = 10000, HelpText = "Width of the image")]
+            public int ImageHeight { get; set; }
+
+            [Option('f', "format", Required = false, Default = "png", HelpText = "Output image format")]
+            public string OutputFormat { get; set; }
+
+            [Option('c', "color", Required = false, Default = "black", HelpText = "Coloring algorithm or constant color")]
+            public string Color { get; set; }
+            
+            [Option("font", Required = false, Default = "Arial", HelpText = "Font family for text")]
+            public string Font { get; set; }
         }
 
         static void Main(string[] args)
@@ -37,9 +54,9 @@ namespace TagsCloudCLI
                 .WithParsed<Options>(o => { options = o; });
 
             if (options == null) return;
-
-            int imageWidth = 10000;
-            int imageHeight = 10000;
+            
+            var imageWidth = options.ImageWidth;
+            var imageHeight = options.ImageHeight;
 
             var builder = new ContainerBuilder();
 
@@ -51,23 +68,23 @@ namespace TagsCloudCLI
             else
                 builder.RegisterType<LineByLineExtractor>().As<IWordsExtractor>();
 
-
-            if (options.PartsOfSpeechWhiteList == null)
+            if (!options.PartsOfSpeechWhiteList.Any())
             {
-                builder.RegisterInstance(new List<Word.PartOfSpeech>
+                builder.RegisterInstance(new BoringWordsConfig(new List<Word.PartOfSpeech>
                 {
                     Word.PartOfSpeech.Adjective,
                     Word.PartOfSpeech.Adverb,
                     Word.PartOfSpeech.Noun,
                     Word.PartOfSpeech.Verb,
-                }).As<IEnumerable<Word.PartOfSpeech>>();
+                })).As<BoringWordsConfig>();
             }
             else
             {
                 builder.RegisterInstance(
-                        PartsOfSpeechListFromStrings(options.PartsOfSpeechWhiteList)
-                        )
-                    .As<IEnumerable<Word.PartOfSpeech>>();
+                        new BoringWordsConfig(
+                            PartsOfSpeechListFromStrings(options.PartsOfSpeechWhiteList)
+                            ))
+                    .As<BoringWordsConfig>();
             }
             
 
@@ -76,16 +93,52 @@ namespace TagsCloudCLI
 
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
 
-            builder.RegisterInstance(FontFamily.GenericSansSerif).As<FontFamily>();
-            builder.RegisterType<BlackColorer>().As<IColorer>();
+            FontFamily fontFamily;
+            try
+            {
+                fontFamily = new FontFamily(options.Font);
+            }
+            catch
+            {
+                fontFamily = FontFamily.GenericSansSerif;
+            }
+            builder.RegisterInstance(fontFamily).As<FontFamily>();
 
-            builder.RegisterType<PngWriter>().As<IImageWriter>();
+            switch (options.Color)
+            {
+                case "word":
+                    builder.RegisterType<WordColorer>().As<IColorer>();
+                    break;
+                default:
+                    var color = Color.FromName(options.Color);
+                    builder.RegisterInstance(new ConstantColorer(color)).As<IColorer>();
+                    break;
+            }
+
+            switch (options.OutputFormat)
+            {
+                case "jpeg":
+                case "jpg":
+                    builder.RegisterType<JpegWriter>().As<IImageWriter>();
+                    break;
+                case "bmp":
+                    builder.RegisterType<BmpWriter>().As<IImageWriter>();
+                    break;
+                case "png":
+                    builder.RegisterType<PngWriter>().As<IImageWriter>();
+                    break;
+                default:
+                    Console.WriteLine($"Given wrong output format {options.OutputFormat}. Reverting to png.");
+                    builder.RegisterType<PngWriter>().As<IImageWriter>();
+                    break;
+            }
 
             builder.RegisterType<TagsCloudGenerator>().AsSelf();
             
             var container = builder.Build();
 
             var tagsCloud = container.Resolve<TagsCloudGenerator>();
+
             tagsCloud.GenerateFromFile(options.InputFile, options.OutputFile, imageWidth, imageHeight);
         }
 
