@@ -112,7 +112,7 @@ namespace TagsCloudResultTests
         [Test]
         public void GenerateTagCloud_Should_ThrowInvalidOperationException_When_NoWordsParsed()
         {
-            Following.Code(() => cloud.GenerateTagCloud()).Should().Throw<InvalidOperationException>();
+            cloud.GenerateTagCloud().IsSuccess.Should().BeFalse();
         }
 
         [Test]

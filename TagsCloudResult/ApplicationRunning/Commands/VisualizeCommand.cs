@@ -35,7 +35,7 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 .Then(CheckIsGradient);
         }
 
-        public void Act()
+        public Result<None> Act()
         {
             var font = new Font(fontName, 16);
             var palette = new Palette
@@ -43,8 +43,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 BackgroundColor = backgroundColor, IsGradient = isGradient, PrimaryColor = firstColor,
                 SecondaryColor = secondColor
             };
-            Visualize(palette, maker, width, height, font);
-            Console.WriteLine("Successfully visualized cloud. Ready to save.");
+            var result = Visualize(palette, maker, width, height, font);
+            if(result.IsSuccess)
+                Console.WriteLine("Successfully visualized cloud. Ready to save.");
+            return result;
         }
 
         public string Name => "visualize";
@@ -53,10 +55,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
         public string Arguments =>
             "'bitmap maker' width height 'background color' 'first color' 'second color' 'is gradient' 'font name'";
 
-        private void Visualize(Palette palette, IBitmapMaker maker, int width, int height, Font font)
+        private Result<None> Visualize(Palette palette, IBitmapMaker maker, int width, int height, Font font)
         {
             manager.ConfigureVisualizerSettings(palette, maker, width, height, font);
-            cloud.VisualizeCloud();
+            return cloud.VisualizeCloud();
         }
 
         private Result<string[]> CheckBitmapmaker(string[] args)

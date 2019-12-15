@@ -25,12 +25,13 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 .Then(CheckPath);
         }
 
-        public void Act()
+        public Result<None> Act()
         {
             var extension = Path.GetExtension(path);
             var parser = WordsParser.GetParser(extension);
             Parse(parser, path);
             Console.WriteLine($"Successfully parsed words from: '{path}'");
+            return Result.Ok();
         }
 
         public string Name => "Parse";

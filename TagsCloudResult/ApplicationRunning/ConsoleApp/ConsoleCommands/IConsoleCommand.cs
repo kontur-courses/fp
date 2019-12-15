@@ -6,6 +6,6 @@
         string Description { get; }
         string Arguments { get; }
         Result<string[]> ParseArguments(string[] args);
-        void Act();
+        Result<None> Act();
     }
 }

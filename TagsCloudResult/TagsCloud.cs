@@ -37,24 +37,27 @@ namespace TagsCloudResult
             parsedWords = wordsParser.Parse().ToList();
         }
 
-        public void GenerateTagCloud()
+        public Result<None> GenerateTagCloud()
         {
-            if (parsedWords is null) throw new InvalidOperationException("You should parse your words first!");
+            if (parsedWords is null) return Result.Fail<None>("You should parse your words first!");
             visualizationWords = cloudLayouter.GetWords(parsedWords).ToList();
+            return Result.Ok();
         }
 
-        public void VisualizeCloud()
+        public Result<None> VisualizeCloud()
         {
             if (visualizationWords is null)
-                GenerateTagCloud();
+                return GenerateTagCloud();
             VisualizedBitmap = cloudVisualizer.GetBitmap(visualizationWords);
+            return Result.Ok();
         }
 
-        public void SaveVisualized()
+        public Result<None> SaveVisualized()
         {
             if (VisualizedBitmap is null)
-                VisualizeCloud();
+                return VisualizeCloud();
             imageSaver.Save(VisualizedBitmap);
+            return Result.Ok();
         }
     }
 }

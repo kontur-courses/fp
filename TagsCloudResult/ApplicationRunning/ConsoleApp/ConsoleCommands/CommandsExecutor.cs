@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing.Printing;
 using System.Linq;
 
 namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
@@ -46,15 +47,20 @@ namespace TagsCloudResult.ApplicationRunning.ConsoleApp.ConsoleCommands
                 var parseResult = command.ParseArguments(args.Skip(1).ToArray());
                 if (parseResult.IsSuccess)
                 {
-                    command.Act();
+                    var actResult = command.Act();
+                    if(!actResult.IsSuccess)
+                        PrintError(actResult);
                 }
                 else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(parseResult.Error);
-                    Console.ResetColor();
-                }
+                    PrintError(parseResult);
             }
+        }
+
+        private void PrintError<T>(Result<T> error)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(error.Error);
+            Console.ResetColor();
         }
     }
 }

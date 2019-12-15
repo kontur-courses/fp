@@ -27,10 +27,12 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 .Then(CheckImageFormat);
         }
 
-        public void Act()
+        public Result<None> Act()
         {
-            Save(format, fullPath);
-            Console.WriteLine($"Successfully saved image at {fullPath}");
+            var result = Save(format, fullPath);
+            if(result.IsSuccess)
+                Console.WriteLine($"Successfully saved image at {fullPath}");
+            return result;
         }
 
         public string Name => "save";
@@ -55,10 +57,10 @@ namespace TagsCloudResult.ApplicationRunning.Commands
             return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
         }
 
-        private void Save(ImageFormat format, string path)
+        private Result<None> Save(ImageFormat format, string path)
         {
             manager.ConfigureImageSaverSettings(format, path);
-            cloud.SaveVisualized();
+            return cloud.SaveVisualized();
         }
     }
 }

@@ -29,10 +29,12 @@ namespace TagsCloudResult.ApplicationRunning.Commands
                 .Then(CheckAlgorithm);
         }
 
-        public void Act()
+        public Result<None> Act()
         {
-            Generate(step, broadness, size, algorithm);
-            Console.WriteLine("Successfully generated cloud.");
+            var result = Generate(step, broadness, size, algorithm);
+            if(result.IsSuccess)
+                Console.WriteLine("Successfully generated cloud.");
+            return result;
         }
 
         public string Name => "generate";
@@ -66,15 +68,15 @@ namespace TagsCloudResult.ApplicationRunning.Commands
         private Result<string[]> CheckAlgorithm(string[] args)
         {
             algorithm = CloudLayoutingAlgorithms.TryGetLayoutingAlgorithm(args[0], step, broadness);
-            var errorMessage = $"Wrong broadness value '{args[0]}'";
+            var errorMessage = $"Wrong algorithm name '{args[0]}'";
             var checkRes = Check.Argument(args[0], errorMessage, algorithm != null);
             return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
         }
 
-        private void Generate(double step, int broadness, int size, ICloudLayoutingAlgorithm algorithm)
+        private Result<None> Generate(double step, int broadness, int size, ICloudLayoutingAlgorithm algorithm)
         {
             manager.ConfigureLayouterSettings(algorithm, size, step, broadness);
-            cloud.GenerateTagCloud();
+            return cloud.GenerateTagCloud();
         }
     }
 }
