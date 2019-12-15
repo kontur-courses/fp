@@ -41,35 +41,46 @@ namespace TagsCloudContainer
             Parser.Default.ParseArguments<Options>(args)
                    .WithParsed(o =>
                    {
-                       var containerBuilder = new ContainerBuilder();
+                       var result = Work(o);
 
-                       containerBuilder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().WithParameter("center", new Point());
-                       containerBuilder.RegisterType<SimpleWordPreprocessor>().As<IWordPreprocessor>();
-                       containerBuilder.RegisterType<SimpleWordFilter>().As<IWordFilter>();
-                       containerBuilder.RegisterType<SimpleWordCounter>().As<IWordCounter>();
-
-                       containerBuilder.RegisterType<SimplePalette>().As<IPalette>()
-                       .WithParameters(
-                           new Parameter[]
-                           {
-                               new NamedParameter("font", new Font(o.Font, o.Size)),
-                               new NamedParameter("painterWords", new SimplePainterWords(new SolidBrush(Color.FromName(o.Color))))
-                           }
-                           );
-                       containerBuilder.RegisterType<SimpleVisualizer>().As<IVisualizer>().WithParameter("imageSettings", new ImageSettings(o.Height, o.Width));
-                       containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", o.File);
-
-                       containerBuilder.RegisterType<TagsCloudGenerator>().As<TagsCloudGenerator>();
-
-                       var container = containerBuilder.Build();
-                       var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
-
-                       var result = tagsCloudGenerator.CreateTagCloud();
                        if (result.IsSuccess)
                            result.Value.Save(o.Image);
                        else
                            Console.WriteLine(result.Error);
                    });
+        }
+
+        private static Result<Bitmap> Work(Options o)
+        {
+            if (o.Size <= 0)
+                return Result.Fail<Bitmap>("Font size must be a natural number");
+            if (o.Height <= 0 || o.Width <= 0)
+                return Result.Fail<Bitmap>("Image sizes must be positive numbers.");
+
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().WithParameter("center", new Point());
+            containerBuilder.RegisterType<SimpleWordPreprocessor>().As<IWordPreprocessor>();
+            containerBuilder.RegisterType<SimpleWordFilter>().As<IWordFilter>();
+            containerBuilder.RegisterType<SimpleWordCounter>().As<IWordCounter>();
+
+            containerBuilder.RegisterType<SimplePalette>().As<IPalette>()
+            .WithParameters(
+                new Parameter[]
+                {
+                               new NamedParameter("font", new Font(o.Font, o.Size)),
+                               new NamedParameter("painterWords", new SimplePainterWords(new SolidBrush(Color.FromName(o.Color))))
+                }
+                );
+            containerBuilder.RegisterType<SimpleVisualizer>().As<IVisualizer>().WithParameter("imageSettings", new ImageSettings(o.Height, o.Width));
+            containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", o.File);
+
+            containerBuilder.RegisterType<TagsCloudGenerator>().As<TagsCloudGenerator>();
+
+            var container = containerBuilder.Build();
+            var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
+
+            var result = tagsCloudGenerator.CreateTagCloud();
+            return result;
         }
     }
 }
