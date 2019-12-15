@@ -50,7 +50,7 @@ namespace TagsCloudVisualization
         private void CheckRectangleSize(Size rectangleSize)
         {
             if (CheckIfSizeIsIncorrect(rectangleSize))
-                throw new ArgumentException($"{nameof(rectangleSize)} was incorrect");
+                throw new ArgumentException($"Can't place rectangle with size {rectangleSize}");
         }
 
         private Rectangle FindSuitableRectangle(Size rectangleSize)

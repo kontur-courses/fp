@@ -28,9 +28,11 @@ namespace TagsCloudContainer.Core
             return Result.Of(() => fileReader.ReadWords(parameters.InputFilePath))
                 .RefineError("Failed to read input file")
                 .Then(words => wordProcessor.ProcessWords(words))
+                .RefineError("Failed to process words")
                 .Then(processedWords => layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize))
                 .Then(layout =>
-                    visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors));
+                    visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors))
+                .RefineError("Failed to build layout");
         }
     }
 }

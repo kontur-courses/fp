@@ -26,7 +26,7 @@ namespace TagsCloudContainer.Algorithm
 
         public IEnumerable<(string, Rectangle)> GetLayout(IEnumerable<string> words, Size pictureSize)
         {
-            var convertedWords = words.Select(w => new Word {Value = w});
+            var convertedWords = words.Select(w => new Word { Value = w });
             var weightedWords = wordWeightSetter.SetWordsWeights(convertedWords);
             var wordsWithSize = wordSizeProvider.SetWordsSizes(weightedWords, pictureSize);
             var wordsWithoutDuplicates = wordsWithSize.GroupBy(w => w.Value).Select(g => g.First());
