@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudContainer.Core
 {
     public interface ITagCloudVisualizer
     {
-        Bitmap GetTagCloudBitmap(Parameters parameters);
+        Result<Bitmap> GetTagCloudBitmap(Parameters parameters);
     }
 }

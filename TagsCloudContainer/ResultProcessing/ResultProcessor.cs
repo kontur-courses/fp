@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ResultOf;
 using TagsCloudContainer.ResultProcessing.ImageSaving;
 using TagsCloudContainer.UserInterface;
 
@@ -16,10 +17,18 @@ namespace TagsCloudContainer.ResultProcessing
             this.resultDisplay = resultDisplay;
         }
 
-        public void ProcessResult(Bitmap bitmap, string filePath, ImageFormat imageFormat)
+        public void ProcessResult(Result<Bitmap> resultOfBitmap, string filePath, ImageFormat imageFormat)
         {
-            imageSaver.SaveBitmap(bitmap, filePath, imageFormat);
-            resultDisplay.ShowResult(bitmap);
+            if (resultOfBitmap.IsSuccess)
+            {
+                var bitmap = resultOfBitmap.GetValueOrThrow();
+                imageSaver.SaveBitmap(bitmap, filePath, imageFormat);
+                resultDisplay.ShowResult(bitmap);
+            }
+            else
+            {
+                resultDisplay.ShowError(resultOfBitmap.Error);
+            }
         }
     }
 }

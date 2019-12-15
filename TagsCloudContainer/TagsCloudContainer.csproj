@@ -96,7 +96,7 @@
     <Compile Include="ResultProcessing\IResultProcessor.cs" />
     <Compile Include="ResultProcessing\ResultProcessor.cs" />
     <Compile Include="UserInterface\ArgumentsParsing\ArgumentsParser.cs" />
-    <Compile Include="UserInterface\Console\ConsoleUserInterface.cs" />
+    <Compile Include="UserInterface\ConsoleInterface\ConsoleUserInterface.cs" />
     <Compile Include="UserInterface\UserInterfaceArguments.cs" />
     <Compile Include="UserInterface\ArgumentsParsing\IArgumentsParser.cs" />
     <Compile Include="UserInterface\IResultDisplay.cs" />
@@ -137,6 +137,10 @@
     <None Include="MyStem\mystem.exe" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{c83b0a70-dba6-45bf-a792-fd2b14528ebb}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagsCloudVisualization\TagsCloudVisualization.csproj">
       <Project>{c3427168-412d-499b-b4ba-f2c0352426e0}</Project>
       <Name>TagsCloudVisualization</Name>

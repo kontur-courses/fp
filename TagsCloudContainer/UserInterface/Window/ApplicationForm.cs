@@ -48,6 +48,12 @@ namespace TagsCloudContainer.UserInterface.Window
             }
         }
 
+        public void ShowError(string errorMessage)
+        {
+            MessageBox.Show(this, errorMessage, @"An error has occurred",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private TableLayoutPanel InitTable()
         {
             var table = new TableLayoutPanel();
@@ -97,7 +103,7 @@ namespace TagsCloudContainer.UserInterface.Window
 
             performButton.Click += (sender, args) =>
             {
-                var colors = colorSelector.Text.Split(' ').ToList();
+                var colors = colorSelector.Text.Split(' ').Where(s => s.Length > 0).ToList();
                 var arguments = new UserInterfaceArguments(inputFilePathTextBox.Text,
                     outputFileTextBox.Text, (int) widthSetter.Value, (int) heightSetter.Value,
                     fontSelector.Text, colors, formatSelector.Text);

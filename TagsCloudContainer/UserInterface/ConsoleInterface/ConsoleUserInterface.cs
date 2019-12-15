@@ -5,7 +5,7 @@ using Fclp;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.UserInterface.ArgumentsParsing;
 
-namespace TagsCloudContainer.UserInterface.Console
+namespace TagsCloudContainer.UserInterface.ConsoleInterface
 {
     public class ConsoleUserInterface : IUserInterface, IResultDisplay
     {
@@ -26,7 +26,12 @@ namespace TagsCloudContainer.UserInterface.Console
 
         public void ShowResult(Bitmap bitmap)
         {
-            System.Console.WriteLine(@"Successfully created tag cloud");
+            Console.WriteLine(@"Successfully created tag cloud");
+        }
+
+        public void ShowError(string errorMessage)
+        {
+            Console.WriteLine($@"An error has occurred: {errorMessage}");
         }
 
         private bool TryGetParameters(string[] programArgs, out Parameters parameters)
@@ -40,7 +45,7 @@ namespace TagsCloudContainer.UserInterface.Console
                 return true;
             }
 
-            System.Console.WriteLine(parseResult.ErrorText);
+            Console.WriteLine(parseResult.ErrorText);
             parameters = null;
             return false;
         }
@@ -64,7 +69,7 @@ namespace TagsCloudContainer.UserInterface.Console
             parser.Setup(arg => arg.ImageFormat).As('e', "extension").SetDefault("Png")
                 .WithDescription("extension of image file, default is Png");
 
-            parser.SetupHelp("?", "help").UseForEmptyArgs().Callback(text => System.Console.WriteLine(text))
+            parser.SetupHelp("?", "help").UseForEmptyArgs().Callback(text => Console.WriteLine(text))
                 .WithHeader("Arguments to use:");
 
             return parser;

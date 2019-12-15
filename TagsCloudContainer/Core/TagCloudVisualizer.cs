@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.Algorithm;
 using TagsCloudContainer.FileReading;
 using TagsCloudContainer.Visualizing;
@@ -22,12 +23,17 @@ namespace TagsCloudContainer.Core
             this.visualizer = visualizer;
         }
 
-        public Bitmap GetTagCloudBitmap(Parameters parameters)
+        public Result<Bitmap> GetTagCloudBitmap(Parameters parameters)
         {
-            var words = fileReader.ReadWords(parameters.InputFilePath);
-            var processedWords = wordProcessor.ProcessWords(words);
-            var layout = layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize);
-            return visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors);
+            return Result.Of(() => fileReader.ReadWords(parameters.InputFilePath))
+                .Then(words => wordProcessor.ProcessWords(words))
+                .Then(processedWords => layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize))
+                .Then(layout =>
+                    visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors));
+            //var words = fileReader.ReadWords(parameters.InputFilePath);
+            //var processedWords = wordProcessor.ProcessWords(words);
+            //var layout = layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize);
+            //return visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors);
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ResultOf;
 
 namespace TagsCloudContainer.ResultProcessing
 {
     public interface IResultProcessor
     {
-        void ProcessResult(Bitmap bitmap, string filePath, ImageFormat imageFormat);
+        void ProcessResult(Result<Bitmap> resultOfBitmap, string filePath, ImageFormat imageFormat);
     }
 }
