@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Readers
 {
@@ -9,9 +10,9 @@ namespace TagsCloudLibrary.Readers
     {
         public string Name { get; } = "txt";
 
-        public Stream Read(Stream stream)
+        public Result<Stream> Read(Stream stream)
         {
-            return stream;
+            return Result.Ok(stream);
         }
     }
 }

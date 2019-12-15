@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Readers
 {
     public interface IReader
     {
         string Name { get; }
-        Stream Read(Stream stream);
+        Result<Stream> Read(Stream stream);
     }
 }

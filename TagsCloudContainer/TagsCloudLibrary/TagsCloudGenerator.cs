@@ -106,8 +106,8 @@ namespace TagsCloudLibrary
         {
 
             return OpenFile(inputFile)
-                .Map(fs => reader.Read(fs))
-                .Bind(ds => extractor.ExtractWords(ds))
+                .Bind(reader.Read)
+                .Bind(extractor.ExtractWords)
                 .Map(ApplyPreprocessors)
                 .Map(CountWords)
                 .Map(statistics => statistics
