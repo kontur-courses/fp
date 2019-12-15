@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{ACD36824-54F7-4A2E-A0DD-83452B43CBB5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TagCloud</RootNamespace>
+    <AssemblyName>TagCloud</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.5.0.1\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\ExitAction.cs" />
+    <Compile Include="Actions\GetFontNameAction.cs" />
+    <Compile Include="Actions\GetHeightAction.cs" />
+    <Compile Include="Actions\GetPalleteNameAction.cs" />
+    <Compile Include="Actions\GetPathAction.cs" />
+    <Compile Include="Actions\GetWidthAction.cs" />
+    <Compile Include="Actions\NewImageAction.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="ClientConfig.cs" />
+    <Compile Include="IServices\FontSettingsFactory.cs" />
+    <Compile Include="IServices\IClient.cs" />
+    <Compile Include="IServices\IFontSettingsFactory.cs" />
+    <Compile Include="IServices\IPaletteDictionaryFactory.cs" />
+    <Compile Include="IServices\IPaletteNamesFactory.cs" />
+    <Compile Include="IServices\ISaveImageAction.cs" />
+    <Compile Include="IServices\ITagCollectionFactory.cs" />
+    <Compile Include="IServices\IWordsToTagsParser.cs" />
+    <Compile Include="Actions\SaveImageAction.cs" />
+    <Compile Include="Actions\ShowImageAction.cs" />
+    <Compile Include="IServices\PaletteDictionaryFactory.cs" />
+    <Compile Include="IServices\PaletteNamesFactory.cs" />
+    <Compile Include="Models\ColorTagRectangle.cs" />
+    <Compile Include="Models\FontSettings.cs" />
+    <Compile Include="Models\ImageSettings.cs" />
+    <Compile Include="Models\Palette.cs" />
+    <Compile Include="Models\Tag.cs" />
+    <Compile Include="Models\TagRectangle.cs" />
+    <Compile Include="Models\UserSettings.cs" />
+    <Compile Include="RectanglesCustomizer.cs" />
+    <Compile Include="Result.cs" />
+    <Compile Include="ShowImageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TagCollectionFactory.cs" />
+    <Compile Include="WordsHandler.cs" />
+    <Compile Include="ArchemedianSpiral.cs" />
+    <Compile Include="CircularCloudLayouter.cs" />
+    <Compile Include="Cloud.cs" />
+    <Compile Include="CloudVisualization.cs" />
+    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="IServices\IAlgorithm.cs" />
+    <Compile Include="IServices\ICircularCloudLayouter.cs" />
+    <Compile Include="IServices\ICloud.cs" />
+    <Compile Include="IServices\ICloudVisualization.cs" />
+    <Compile Include="IServices\IWordsHandler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="WordsToTagsParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BoringWords.txt" />
+    <Content Include="test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ShowImageForm.resx">
+      <DependentUpon>ShowImageForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
