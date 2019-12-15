@@ -10,7 +10,7 @@ namespace TagsCloudLibrary.WordsExtractor
         public IEnumerable<string> ExtractWords(Stream stream)
         {
             var myStem = new MyStemProcess();
-            return myStem.StreamToWords(stream);
+            return myStem.StreamToWords(stream).Value;
         }
     }
 }

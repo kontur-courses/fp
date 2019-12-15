@@ -22,7 +22,7 @@ namespace TagsCloudLibrary.Preprocessors
             var mystem = new MyStemProcess();
             var wordsWithGrammar = mystem.GetWordsWithGrammar(words);
 
-            var filteredWords = wordsWithGrammar
+            var filteredWords = wordsWithGrammar.Value
                 .Where(word => (partOfSpeechWhitelist.Contains(word.Grammar.PartOfSpeech)))
                 .Select(word => word.InitialString);
 
