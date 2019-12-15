@@ -46,6 +46,7 @@
     <Compile Include="CloudLayouter_Should.cs" />
     <Compile Include="CloudTagProvider_Should.cs" />
     <Compile Include="ImageUtilities_Should.cs" />
+    <Compile Include="Result_Should.cs" />
     <Compile Include="WordsProvider_Should.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,9 @@
   <ItemGroup>
     <PackageReference Include="Autofac">
       <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="FakeItEasy">
+      <Version>5.5.0</Version>
     </PackageReference>
     <PackageReference Include="FluentAssertions">
       <Version>5.9.0</Version>

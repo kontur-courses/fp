@@ -49,6 +49,7 @@
     <Compile Include="CloudTagProvider.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ConsoleTagCloudBuilderIOSettings.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="VisualizatorProperties.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ConstantTextColorProvider.cs" />
