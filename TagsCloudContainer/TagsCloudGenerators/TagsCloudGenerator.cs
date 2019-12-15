@@ -29,10 +29,10 @@ namespace TagsCloudContainer.TagsCloudGenerators
 
         public Result<Bitmap> CreateTagCloud()
         {
-            return Result.Of(() => reader.ReadAllLines())
-                .Then(text => wordPreprocessor.WordPreprocessing(text))
-                .Then(preprocessedWords => wordCounter.CountWords(preprocessedWords))
-                .Then(wordTokens => visualizer.VisualizeCloud(wordTokens));
+            return reader.ReadAllLines()
+                .Then(wordPreprocessor.WordPreprocessing)
+                .Then(wordCounter.CountWords)
+                .Then(visualizer.VisualizeCloud);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace TagsCloudContainer.WordPreprocessors
 {
     public interface IWordPreprocessor
     {
-        ProcessedWord[] WordPreprocessing(string[] text);
+        Result<ProcessedWord[]> WordPreprocessing(string[] text);
     }
 }

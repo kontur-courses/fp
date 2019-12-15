@@ -15,8 +15,8 @@ namespace TagsCloudContainerTests
 
             var expect = new[] { "A", "A", "A", "A", "D", "D", "B", "B", "D", "A" };
 
-            Assert.AreEqual(expect.Length, result.Length);
-            Assert.AreEqual(expect, result);
+            Assert.AreEqual(expect.Length, result.GetValueOrThrow().Length);
+            Assert.AreEqual(expect, result.GetValueOrThrow());
         }
 
         [Test]
@@ -28,8 +28,8 @@ namespace TagsCloudContainerTests
 
             var expect = new[] { "A", "A", "A", "A", "D", "D", "B", "B", "D", "A", "D" };
 
-            Assert.AreEqual(expect.Length, result.Length);
-            Assert.AreEqual(expect, result);
+            Assert.AreEqual(expect.Length, result.GetValueOrThrow().Length);
+            Assert.AreEqual(expect, result.GetValueOrThrow());
         }
 
         [Test]
@@ -41,8 +41,8 @@ namespace TagsCloudContainerTests
 
             var expect = new[] { "A", "A", "A", "A", "D", "D", "B", "B", "D", "A"};
 
-            Assert.AreEqual(expect.Length, result.Length);
-            Assert.AreEqual(expect, result);
+            Assert.AreEqual(expect.Length, result.GetValueOrThrow().Length);
+            Assert.AreEqual(expect, result.GetValueOrThrow());
         }
     }
 }

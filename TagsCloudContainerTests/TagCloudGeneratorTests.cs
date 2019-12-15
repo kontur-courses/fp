@@ -50,7 +50,7 @@ namespace TagsCloudContainerTests
             var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
 
             var bitmap = tagsCloudGenerator.CreateTagCloud();
-            bitmap.Save("image.png");
+            bitmap.GetValueOrThrow().Save("image.png");
         }
     }
 }

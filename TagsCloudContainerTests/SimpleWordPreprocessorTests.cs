@@ -31,7 +31,7 @@ namespace TagsCloudContainerTests
 
             var result = simpleWordPreprocessor.WordPreprocessing(new[] { word });
 
-            return result.Select(resultWord => resultWord.Word).ToArray();
+            return result.GetValueOrThrow().Select(resultWord => resultWord.Word).ToArray();
         }
 
         [TestCase("бегают", ExpectedResult = new[] { "бегать" })]
@@ -43,7 +43,7 @@ namespace TagsCloudContainerTests
 
             var result = simpleWordPreprocessor.WordPreprocessing(new[] { word });
 
-            return result.Select(resultWord => resultWord.Word).ToArray();
+            return result.GetValueOrThrow().Select(resultWord => resultWord.Word).ToArray();
         }
 
         [Test]
@@ -53,9 +53,9 @@ namespace TagsCloudContainerTests
             var simpleWordPreprocessor = container.Resolve<IWordPreprocessor>();
             var simpleReader = new SimpleReader(@"TagsCloudContainer\WordsRus.txt");
 
-            var result = simpleWordPreprocessor.WordPreprocessing(simpleReader.ReadAllLines());
+            var result = simpleWordPreprocessor.WordPreprocessing(simpleReader.ReadAllLines().GetValueOrThrow());
 
-            result.Should().BeEquivalentTo(new[] {
+            result.GetValueOrThrow().Should().BeEquivalentTo(new[] {
                 new ProcessedWord("огонь", "S"),
                 new ProcessedWord("полено", "S") });
         }

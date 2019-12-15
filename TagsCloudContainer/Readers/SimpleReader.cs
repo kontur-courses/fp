@@ -23,9 +23,13 @@ namespace TagsCloudContainer.Readers
             };
         }
 
-        public string[] ReadAllLines()
+        public Result<string[]> ReadAllLines()
         {
             var splitPath = path.Split('.');
+            if (!File.Exists(path))
+                return Result.Fail<string[]>("The specified file does not exist");
+            if (!readers.ContainsKey(splitPath[splitPath.Length - 1]))
+                return Result.Fail<string[]>("This file extension is not supported");
             return readers[splitPath[splitPath.Length - 1]](path);
         }
 
