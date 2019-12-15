@@ -30,10 +30,30 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public string Name { get; private set; }
+        public DateTime Created { get; private set; }
+        public string Format { get; private set; }
+        public byte[] Content { get; private set; }
+
+        public Document SetName(string name)
+        {
+            return new Document(name, Content, Created, Format);
+        }
+
+        public Document SetContent(byte[] content)
+        {
+            return new Document(Name, content, Created, Format);
+        }
+
+        public Document SetCreated(DateTime dateTime)
+        {
+            return new Document(Name, Content, dateTime, Format);
+        }
+
+        public Document SetFormat(string format)
+        {
+            return new Document(Name, Content, Created, format);
+        }
     }
 
     public class FileContent

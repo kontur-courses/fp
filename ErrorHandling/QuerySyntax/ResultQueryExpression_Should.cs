@@ -1,4 +1,5 @@
 using System;
+using ErrorHandling;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -42,8 +43,8 @@ namespace ResultOfTask
         [Test]
         public void SupportQueryExpressions_WithComplexSelect()
         {
-            // Тот сценарий, ради которого стоило делать Query Expressions для Result<T>
-            // Обратите внимание на использование i в select
+            // РўРѕС‚ СЃС†РµРЅР°СЂРёР№, СЂР°РґРё РєРѕС‚РѕСЂРѕРіРѕ СЃС‚РѕРёР»Рѕ РґРµР»Р°С‚СЊ Query Expressions РґР»СЏ Result<T>
+            // РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјР°РЅРёРµ РЅР° РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ i РІ select
             var res =
                 from i in "1358571172".ParseIntResult()
                 from hex in Convert.ToString(i, 16).AsResult()

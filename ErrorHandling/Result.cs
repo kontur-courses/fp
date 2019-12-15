@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOfTask
+namespace ErrorHandling
 {
     public class None
     {
@@ -8,6 +8,7 @@ namespace ResultOfTask
         {
         }
     }
+
     public struct Result<T>
     {
         public Result(string error, T value = default(T))
@@ -15,13 +16,16 @@ namespace ResultOfTask
             Error = error;
             Value = value;
         }
-        public string Error { get; }
+
+        public string Error { get; set; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -58,21 +62,33 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(x => Of(() => continuation(x)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return input.IsSuccess ? continuation(input.Value) : Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess) handleError(input.Error);
+            return input;
+        }
+
+        public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input,
+            Func<string, string> handleError)
+        {
+            return input.IsSuccess ? input : Fail<TInput>(handleError(input.Error));
+        }
+
+        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string errorMessage)
+        {
+            return input.ReplaceError(e => errorMessage + ". " + e);
         }
     }
 }

@@ -6,6 +6,7 @@ using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
 using FakeItEasy;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 
 namespace FileSenderRailway
@@ -88,5 +89,27 @@ namespace FileSenderRailway
         {
             return Guid.NewGuid().ToByteArray();
         }
+
+        [Test]
+        public void TryPrepareFileToSend_InvalidFormatVersion_ShouldThrowFormatException()
+        {
+            var doc = new Document("name", new byte[42], new DateTime().Date, "wrong format" );
+
+            fileSender.TryPrepareFileToSend(file, certificate, out var errorMessage);
+
+            errorMessage.Should().BeEquivalentTo("Can't prepare file to send. Invalid format version");
+        }
+
+        /*[Test]
+        public void TryPrepareFileToSend_NonValidTimeStamp_ThrowsFormatException()
+        {
+            var data = now.AddMonths(2);
+            var mock = new Mock<FileContent>();
+            mock.Setup(f => recognizer.Recognize(file)).Returns(new Document("name", new byte[42], data, "4.0"));
+            
+            fileSender.TryPrepareFileToSend(mock.Object, certificate, out var errorMessage);
+
+            errorMessage.Should().BeEquivalentTo("Can't prepare file to send. Too old document");
+        }*/
     }
 }

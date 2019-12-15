@@ -1,7 +1,11 @@
 using System;
+using ErrorHandling;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
+using None = ErrorHandling.None;
+using Result = ErrorHandling.Result;
 
 namespace ResultOfTask
 {
@@ -56,7 +60,7 @@ namespace ResultOfTask
                 .Then(n => n + 10);
             res.ShouldBeEquivalentTo(Result.Ok(52));
         }
-        
+
         [Test]
         public void RunThen_WhenContinuationIsOk()
         {
@@ -81,19 +85,16 @@ namespace ResultOfTask
         [Test]
         public void Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
+            Func<int, int> continuation = n => { throw new Exception("123"); };
             var res = Result.Ok(42)
                 .Then(continuation);
             res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
         }
-        
+
         [Test]
         public void Then_ReturnsFail_OnFailedContinuation()
         {
-            Func<int, Result<int>> continuation = n => Result.Fail<int>("123");
+            Func<int, ErrorHandling.Result<int>> continuation = n => Result.Fail<int>("123");
             var res = Result.Ok(42)
                 .Then(continuation);
             res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
@@ -141,7 +142,7 @@ namespace ResultOfTask
                 .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
             res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
-/*
+
         [Test]
         public void ReplaceError_IfFail()
         {
@@ -175,6 +176,5 @@ namespace ResultOfTask
                 .RefineError("Posting results to db")
                 .ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
-        */
     }
 }
