@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 
 namespace TagsCloud.FileParsers
 {
@@ -7,16 +9,13 @@ namespace TagsCloud.FileParsers
     {
         public string[] FileExtensions => new string[] { ".txt", ".md" };
 
-        public List<string> Parse(string filename)
+        public Result<ImmutableList<string>> Parse(string filename)
         {
-            var res = new List<string>();
             var separators = new char[] { ' ', ',', '.', '!', '?', '(', ')', '{', '}', '[', ']' };
-            foreach (var line in File.ReadAllLines(filename))
-            {
-                foreach (var word in line.Split(separators, System.StringSplitOptions.RemoveEmptyEntries))
-                    res.Add(word);
-            }
-            return res;
+
+            return Result.Of(() => File.ReadAllLines(filename))
+                .RefineError($"Can't read file '{filename}'.")
+                .Then(lines => ImmutableList<string>.Empty.AddRange(lines.SelectMany(line => line.Split(separators, StringSplitOptions.RemoveEmptyEntries))));
         }
     }
 }

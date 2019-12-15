@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using TagsCloud.Layouters;
@@ -17,28 +17,27 @@ namespace TagsCloud
             this.renderer = renderer;
         }
 
-        public Image GenerateCloud(List<string> words)
+        public Result<Image> GenerateCloud(ImmutableList<string> words)
         {
-            var tags = DetermineTags(words);
-            var layout = GetLayout(tags);
-            TagCloudImage = renderer.Render(layout);
-            return TagCloudImage;
+            return Result.Of(() => DetermineTags(words))
+                .Then(tags => GetLayout(tags))
+                .Then(layout => renderer.Render(layout))
+                .Then(image => TagCloudImage = image)
+                .RefineError("Can't generate tags cloud");
         }
 
-        private List<(string Tag, int Rate)> DetermineTags(List<string> words)
+        private ImmutableList<(string Tag, int Rate)> DetermineTags(ImmutableList<string> words)
         {
-            var tags = new List<(string Tag, int Rate)>();
-            foreach (var group in words.GroupBy(word => word))
-                tags.Add((group.Key, group.Count()));
-            return tags;
+            return ImmutableList<(string Tag, int Rate)>.Empty
+                .AddRange(words.GroupBy(word => word).Select(group => (group.Key, group.Count())));
         }
 
-        private List<LayoutItem> GetLayout(List<(string Tag, int Rate)> tags)
+        private Result<ImmutableList<LayoutItem>> GetLayout(ImmutableList<(string Tag, int Rate)> tags)
         {
-            var layoutItems = tags.ConvertAll(t => new LayoutItem(new Rectangle(Point.Empty, Size.Empty), t.Tag, t.Rate));
-            renderer.CalcTagsRectanglesSizes(layoutItems);
-            layouter.ReallocItems(layoutItems);
-            return layoutItems;
+            return Result.Of(() => tags.ConvertAll(t => new LayoutItem(new Rectangle(Point.Empty, Size.Empty), t.Tag, t.Rate)))
+                .Then(layoutItems => renderer.CalcTagsRectanglesSizes(layoutItems))
+                .Then(sizedItems => layouter.ReallocItems(sizedItems))
+                .RefineError("Can't create layout.");
         }
 
         public Image TagCloudImage { get; private set; }

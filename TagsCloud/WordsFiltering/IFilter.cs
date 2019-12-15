@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace TagsCloud.WordsFiltering
 {
     public interface IFilter
     {
-        Func<List<string>, List<string>> FilterFunc { get; }
+        Result<ImmutableList<string>> FilterWords(ImmutableList<string> words);
     }
 }

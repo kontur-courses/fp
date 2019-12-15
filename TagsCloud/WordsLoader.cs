@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using TagsCloud.FileParsers;
@@ -15,14 +14,13 @@ namespace TagsCloud
             this.parsers = parsers;
         }
 
-        public List<string> LoadWords(string filename)
+        public Result<ImmutableList<string>> LoadWords(string filename)
         {
-            var fileExtension = Path.GetExtension(filename);
-            var fileParser = parsers.FirstOrDefault(p =>
-                p.FileExtensions.Any(ext => ext == fileExtension));
-            if (fileParser == null)
-                throw new ArgumentException($"Can't select file parser for this file format ({filename})");
-            return fileParser.Parse(filename);
+            return Result.Of(() => Path.GetExtension(filename))
+                .Then(fileExtension => parsers.FirstOrDefault(p => p.FileExtensions.Any(ext => ext == fileExtension)))
+                .Then(fileParser => fileParser == null ? Result.Fail<IFileParser>($"Can't select file parser for this file format ({filename})") : Result.Ok(fileParser))
+                .Then(fileParser => fileParser.Parse(filename))
+                .RefineError($"Can't load words from file '{filename}'");
         }
     }
 }

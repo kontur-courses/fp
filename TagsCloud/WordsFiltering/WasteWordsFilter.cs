@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -24,12 +26,11 @@ namespace TagsCloud.WordsFiltering
         public bool AllowPronouns { get; set; } = false; //SPRO
         public bool AllowVerbs { get; set; } = true; //V
 
-        public Func<List<string>, List<string>> FilterFunc => words =>
-        {
-            var res = new List<string>();
-            var grammems = Task.Run(() => GetGrammems(words)).Result;
+        private readonly Dictionary<string, bool> allowDict;
 
-            var allowDict = new Dictionary<string, bool>
+        public WasteWordsFilter()
+        {
+            allowDict = new Dictionary<string, bool>
             {
                 { "A", AllowAdjectives },
                 { "ADV", AllowAdverbs },
@@ -46,41 +47,43 @@ namespace TagsCloud.WordsFiltering
                 { "SPRO", AllowPronouns },
                 { "V", AllowVerbs }
             };
+        }
 
-            var separators = new char[] { '=', ',' };
-            foreach (var grammem in grammems)
-            {
-                var grInfo = grammem.Split(separators, 4);
-                if (grInfo.Length < 2) continue;
-                if (grInfo.Length >= 3 && grInfo[2] == "сокр") continue;
-                if (!allowDict.TryGetValue(grInfo[1], out var isAllow) || !isAllow) continue;
-                res.Add(grInfo[0].Trim('?'));
-            }
-
-            return res;
-        };
-
-        private List<string> GetGrammems(List<string> words)
+        public Result<ImmutableList<string>> FilterWords(ImmutableList<string> words)
         {
-            var input = Path.GetTempFileName();
-            File.WriteAllLines(input, words);
-            var output = Path.GetTempFileName();
+            return Task.Run(() => GetGrammems(words)).Result
+                .Then(grammems => ImmutableList<string>.Empty.AddRange(grammems
+                    .Select(grammem => grammem.Split(new char[] { '=', ',' }, 4))
+                    .Where(grInfo => (grInfo.Length == 2 || (grInfo.Length >= 3 && grInfo[2] != "сокр")) && allowDict.TryGetValue(grInfo[1], out var isAllow) && isAllow)
+                    .Select(grInfo => grInfo[0].Trim('?'))));
+        }
 
-            var asmLocation = Assembly.GetExecutingAssembly().Location;
-            var path = Path.GetDirectoryName(asmLocation);
-            using (var process = new Process())
+        private Result<string[]> GetGrammems(IEnumerable<string> words)
+        {
+            return Result.Of(() =>
             {
-                process.StartInfo.FileName = $"{path}\\WordsFiltering\\mystem.exe";
-                process.StartInfo.Arguments = $"-nldig \"{input}\" \"{output}\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.EnableRaisingEvents = true;
-                process.Start();
-                if (!process.WaitForExit(30000))
-                    throw new TimeoutException("'Mystem' operation timeout reached.");
-            }
+                var input = Path.GetTempFileName();
+                File.WriteAllLines(input, words);
+                var output = Path.GetTempFileName();
 
-            return new List<string>(File.ReadAllLines(output));
+                var asmLocation = Assembly.GetExecutingAssembly().Location;
+                var path = Path.GetDirectoryName(asmLocation);
+                using (var process = new Process())
+                {
+                    process.StartInfo.FileName = $"{path}\\WordsFiltering\\mystem.exe";
+                    process.StartInfo.Arguments = $"-nldig \"{input}\" \"{output}\"";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.EnableRaisingEvents = true;
+                    process.Start();
+                    if (!process.WaitForExit(30000))
+                        throw new TimeoutException("'Mystem' operation timeout reached.");
+                }
+
+                return output;
+            })
+                .Then(output => Result.Of(() => File.ReadAllLines(output)).RefineError($"Can't read file '{output}'."))
+                .RefineError("'Mystem' can't analyse words for grammems.");
         }
     }
 }

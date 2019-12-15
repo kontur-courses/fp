@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace TagsCloud.Layouters
 {
     public interface ITagsCloudLayouter
     {
-        void ReallocItems(List<LayoutItem> items);
+        Result<ImmutableList<LayoutItem>> ReallocItems(ImmutableList<LayoutItem> items);
     }
 }

@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace TagsCloud.FileParsers
 {
     public interface IFileParser
     {
         string[] FileExtensions { get; }
-        List<string> Parse(string filename);
+        Result<ImmutableList<string>> Parse(string filename);
     }
 }

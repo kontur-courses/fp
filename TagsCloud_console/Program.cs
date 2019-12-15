@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Autofac.Core;
 using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -25,49 +25,53 @@ namespace TagsCloud_console
             Parser.Default.ParseArguments<InputOptions>(args).WithParsed(opts =>
             {
                 var knownFilters = container.Resolve<IFilter[]>().Cast<object>();
-                var selectedFilters = TryParseObjects(knownFilters, opts.Filters.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
-                if (selectedFilters == null) return;
+                var selectedFilters = ParseObjects(knownFilters, opts.Filters.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    .OnFail(msg => Console.Error.WriteLine(msg));
+                if (!selectedFilters.IsSuccess) return;
 
                 var knownLayouters = container.Resolve<ITagsCloudLayouter[]>().Cast<object>();
-                var parsedLayouters = TryParseObjects(knownLayouters, new string[] { opts.Layouter });
-                if (parsedLayouters == null) return;
-                if (parsedLayouters.Length != 1)
+                var parsedLayouters = ParseObjects(knownLayouters, new string[] { opts.Layouter })
+                    .OnFail(msg => Console.Error.WriteLine(msg));
+                if (!parsedLayouters.IsSuccess) return;
+                if (parsedLayouters.GetValueOrThrow().Length != 1)
                 {
                     Console.Error.WriteLine($"One layouter must be selected");
                     return;
                 }
-                var selectedLayouter = parsedLayouters[0];
+                var selectedLayouter = parsedLayouters.GetValueOrThrow()[0];
 
                 var knownRenderers = container.Resolve<ITagsCloudRenderer[]>().Cast<object>();
-                var parsedRenderers = TryParseObjects(knownRenderers, new string[] { opts.Renderer });
-                if (parsedRenderers == null) return;
-                if (parsedRenderers.Length != 1)
+                var parsedRenderers = ParseObjects(knownRenderers, new string[] { opts.Renderer })
+                    .OnFail(msg => Console.Error.WriteLine(msg));
+                if (!parsedRenderers.IsSuccess) return;
+                if (parsedRenderers.GetValueOrThrow().Length != 1)
                 {
                     Console.Error.WriteLine($"One renderer must be selected");
                     return;
                 }
-                var selectedRenderer = parsedRenderers[0];
+                var selectedRenderer = parsedRenderers.GetValueOrThrow()[0];
 
                 var wordsLoader = container.Resolve<WordsLoader>();
-                var words = wordsLoader.LoadWords(opts.InputFile);
-
-                var wordsFilterer = container.Resolve<WordsFilterer>(new NamedParameter("filters", selectedFilters.Cast<IFilter>().ToArray()));
-                var filteredWords = wordsFilterer.FilterWords(words);
-
+                var wordsFilterer = container.Resolve<WordsFilterer>(new NamedParameter("filters", selectedFilters.GetValueOrThrow().Cast<IFilter>().ToArray()));
                 var tagCloud = container.Resolve<TagsCloudGenerator>(
                     new NamedParameter("layouter", selectedLayouter as ITagsCloudLayouter),
                     new NamedParameter("renderer", selectedRenderer as ITagsCloudRenderer));
-                var image = tagCloud.GenerateCloud(filteredWords);
-
                 var imageSaveHelper = container.Resolve<ImageSaveHelper>();
-                imageSaveHelper.SaveTo(image, opts.OutputFile);
+
+                if (wordsLoader.LoadWords(opts.InputFile)
+                    .Then(words => wordsFilterer.FilterWords(words))
+                    .Then(filteredWords => tagCloud.GenerateCloud(filteredWords))
+                    .Then(image => imageSaveHelper.SaveTo(image, opts.OutputFile))
+                    .OnFail(msg => Console.Error.WriteLine(msg))
+                    .IsSuccess)
+                    Console.WriteLine("OK");
             });
 
-            Console.WriteLine("OK");
+            Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
 
-        private static object[] TryParseObjects(IEnumerable<object> knownObjects, string[] settings)
+        private static Result<object[]> ParseObjects(IEnumerable<object> knownObjects, string[] settings)
         {
             var res = new List<object>();
 
@@ -80,25 +84,23 @@ namespace TagsCloud_console
                     : item;
                 var findedObject = knownObjects.FirstOrDefault(o => o.GetType().Name == neededObjectTypeName);
                 if (findedObject == null)
-                {
-                    Console.Error.WriteLine($"Can't parse object '{item}'");
-                    return null;
-                }
+                    return Result.Fail<object[]>($"Can't parse object '{item}'");
 
                 if (matchObjectWithSettings.Success)
                 {
                     var objectSettings = matchObjectWithSettings.Groups[2].Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (!TryParseSettings(findedObject, objectSettings))
-                        return null;
+                    var parseSettingsResult = ParseSettings(findedObject, objectSettings);
+                    if (!parseSettingsResult.IsSuccess)
+                        return Result.Fail<object[]>(parseSettingsResult.Error);
                 }
 
                 res.Add(findedObject);
             }
 
-            return res.ToArray();
+            return Result.Ok(res.ToArray());
         }
 
-        private static bool TryParseSettings(object obj, string[] options)
+        private static Result<None> ParseSettings(object obj, string[] options)
         {
             var props = new Dictionary<string, PropertyInfo>();
             foreach (var p in obj.GetType().GetProperties().Where(p => p.CanWrite))
@@ -108,80 +110,58 @@ namespace TagsCloud_console
             {
                 var kv = option.Split(':');
                 if (kv.Length != 2)
-                {
-                    Console.Error.WriteLine($"Can't parse '{option}' as option of {obj.GetType().Name}");
-                    return false;
-                }
+                    return Result.Fail<None>($"Can't parse '{option}' as option of {obj.GetType().Name}");
 
                 var propName = kv[0];
                 if (!props.TryGetValue(propName, out var propertyInfo))
-                {
-                    Console.Error.WriteLine($"Can't parse '{option}' as option of {obj.GetType().Name}");
-                    return false;
-                }
+                    return Result.Fail<None>($"Can't parse '{option}' as option of {obj.GetType().Name}");
 
-                if (!TryParseProperty(kv[1], propertyInfo, obj))
-                    return false;
+                var parseRes = ParseProperty(kv[1], propertyInfo, obj);
+                if (!parseRes.IsSuccess)
+                    return parseRes;
             }
 
-            return true;
+            return Result.Ok();
         }
 
-        private static bool TryParseProperty(string optionString, PropertyInfo propertyInfo, object obj)
+        private static Result<None> ParseProperty(string optionString, PropertyInfo propertyInfo, object obj)
         {
-            void printError() =>
-                Console.Error.WriteLine($"Can't parse '{optionString}' as value of {propertyInfo.Name}");
-
-            if (propertyInfo.PropertyType == typeof(bool))
+            return Result.OfAction(() =>
             {
-                if (!bool.TryParse(optionString, out var val))
+                if (propertyInfo.PropertyType == typeof(bool))
                 {
-                    printError();
-                    return false;
+                    var val = bool.Parse(optionString);
+                    propertyInfo.SetValue(obj, val);
+                    return;
                 }
-                propertyInfo.SetValue(obj, val);
-                return true;
-            }
 
-            if (propertyInfo.PropertyType == typeof(int))
-            {
-                if (!int.TryParse(optionString, out var val))
+                if (propertyInfo.PropertyType == typeof(int))
                 {
-                    printError();
-                    return false;
+                    var val = int.Parse(optionString);
+                    propertyInfo.SetValue(obj, val);
+                    return;
                 }
-                propertyInfo.SetValue(obj, val);
-                return true;
-            }
 
-            if (propertyInfo.PropertyType == typeof(System.Drawing.Font))
-            {
-                var fontNames = System.Drawing.FontFamily.Families.Select(f => f.Name);
-                if (!fontNames.Contains(optionString))
+                if (propertyInfo.PropertyType == typeof(System.Drawing.Font))
                 {
-                    printError();
-                    return false;
+                    var fontNames = System.Drawing.FontFamily.Families.Select(f => f.Name);
+                    var font = new System.Drawing.Font(optionString, 16);
+                    propertyInfo.SetValue(obj, font);
+                    return;
                 }
-                var font = new System.Drawing.Font(optionString, 16);
-                propertyInfo.SetValue(obj, font);
-                return true;
-            }
 
-            if (propertyInfo.PropertyType == typeof(System.Drawing.Color))
-            {
-                var knownColorsNames = Enum.GetNames(typeof(System.Drawing.KnownColor));
-                if (!knownColorsNames.Contains(optionString))
+                if (propertyInfo.PropertyType == typeof(System.Drawing.Color))
                 {
-                    printError();
-                    return false;
+                    var knownColorsNames = Enum.GetNames(typeof(System.Drawing.KnownColor));
+                    if (!knownColorsNames.Contains(optionString))
+                        throw new ArgumentException($"Unknown color name '{optionString}'.");
+                    var color = System.Drawing.Color.FromName(optionString);
+                    propertyInfo.SetValue(obj, color);
+                    return;
                 }
-                var color = System.Drawing.Color.FromName(optionString);
-                propertyInfo.SetValue(obj, color);
-                return true;
-            }
 
-            printError();
-            return false;
+                throw new ArgumentException($"Can't parse property of type '{propertyInfo.PropertyType.Name}'");
+            }).RefineError($"Can't parse '{optionString}' as value of {propertyInfo.Name}");
         }
     }
 }

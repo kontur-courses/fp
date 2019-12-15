@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace TagsCloud.FileParsers
 {
@@ -6,9 +6,9 @@ namespace TagsCloud.FileParsers
     {
         public string[] FileExtensions => new string[] { ".doc", ".docx" };
 
-        public List<string> Parse(string filename)
+        public Result<ImmutableList<string>> Parse(string filename)
         {
-            return new List<string> { "tag1", "tag1", "tag1", "tag2", "tag2", "tag3" };
+            return Result.Of(() => ImmutableList<string>.Empty.AddRange("Съешь ещё этих мягких французских булок да выпей же чаю".Split(' ')));
         }
     }
 }

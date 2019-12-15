@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using TagsCloud.WordsFiltering;
 
 namespace TagsCloud
@@ -12,11 +12,11 @@ namespace TagsCloud
             this.filters = filters;
         }
 
-        public List<string> FilterWords(List<string> words)
+        public Result<ImmutableList<string>> FilterWords(ImmutableList<string> words)
         {
-            var res = new List<string>(words);
+            var res = Result.Ok(words);            
             foreach (var filter in filters)
-                res = filter.FilterFunc(res);
+                res = res.Then(items => filter.FilterWords(items));
             return res;
         }
     }
