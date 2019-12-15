@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Writers
 {
     public interface IImageWriter
     {
-        void WriteBitmapToFile(Bitmap bitmap, string fileName);
+        Result WriteBitmapToFile(Bitmap bitmap, string fileName);
     }
 }
