@@ -27,7 +27,7 @@ namespace TagsCloudLibrary
             IReader reader,
             IWordsExtractor extractor,
             IEnumerable<IPreprocessor> preprocessors,
-            ILayouter layouter, 
+            ILayouter layouter,
             IColorer colorer,
             FontFamily wordsFontFamily,
             IImageWriter imageWriter)
@@ -44,69 +44,79 @@ namespace TagsCloudLibrary
             this.imageWriter = imageWriter;
         }
 
-        public void GenerateFromFile(string inputFile, string outputFile, int imageWidth, int imageHeight)
+        private Result<Stream> OpenFile(string fileName)
         {
-            if (!File.Exists(inputFile))
+            if (!File.Exists(fileName))
+                return Result.Failure<Stream>($"File {fileName} not found");
+            try
             {
-                throw new FileNotFoundException($"File {inputFile} not found");
+                return Result.Ok<Stream>(File.OpenRead(fileName));
+            }
+            catch (Exception e)
+            {
+                return Result.Failure<Stream>(e.Message);
+            }
+        }
+
+        private static Dictionary<string, int> CountWords(IEnumerable<string> words)
+        {
+            return words.Aggregate(new Dictionary<string, int>(), (stats, word) =>
+            {
+                if (stats.ContainsKey(word))
+                    ++stats[word];
+                else
+                    stats[word] = 1;
+                return stats;
+            });
+        }
+
+        private IEnumerable<string> ApplyPreprocessors(IEnumerable<string> words)
+        {
+            return preprocessors.Aggregate(words, (wordsAccumulator, preprocessor) => preprocessor.Act(wordsAccumulator));
+        }
+
+        private Bitmap DrawCountedWords(int width, int height, List<Tuple<string, int>> wordsWithCounts)
+        {
+            Bitmap image = new Bitmap(width, height);
+            Graphics graphics = Graphics.FromImage(image);
+            var totalWords = wordsWithCounts.Aggregate(0, (i, tuple) => i + tuple.Item2);
+
+            foreach (var wordWithCount in wordsWithCounts)
+            {
+                var (word, count) = wordWithCount;
+                var font = new Font(wordsFontFamily, (float)count * height / totalWords * 2);
+                var color = colorer.ColorForWord(word, (double)count / totalWords);
+
+                var textSize = graphics.MeasureString(word, font).ToSize();
+
+                var (_, isFailure, rectangle) = layouter.PutNextRectangle(textSize);
+                if (isFailure) continue;
+                graphics.DrawString(
+                    word,
+                    font,
+                    new SolidBrush(color),
+                    rectangle.X + width / 2,
+                    rectangle.Y + height / 2);
             }
 
-            using (var fs = File.OpenRead(inputFile))
-            {
-                var text = reader.Read(fs);
-                var (_, isFailure, words) = extractor.ExtractWords(text);
-                if (isFailure)
-                    return;
+            return image;
+        }
 
-                foreach (var preprocessor in preprocessors)
-                {
-                    words = preprocessor.Act(words);
-                }
+        public Result GenerateFromFile(string inputFile, string outputFile, int imageWidth, int imageHeight)
+        {
 
-                var wordStatistics = new Dictionary<string, int>();
-                var wordsArray = words.ToArray();
-                foreach (var word in wordsArray)
-                {
-                    if (wordStatistics.ContainsKey(word))
-                    {
-                        ++wordStatistics[word];
-                    }
-                    else
-                    {
-                        wordStatistics[word] = 1;
-                    }
-                }
-
-                var totalWords = wordsArray.Length;
-
-                var wordsWithSizes = wordStatistics
+            return OpenFile(inputFile)
+                .Map(fs => reader.Read(fs))
+                .Bind(ds => extractor.ExtractWords(ds))
+                .Map(ApplyPreprocessors)
+                .Map(CountWords)
+                .Map(statistics => statistics
                     .Select(pair => new Tuple<string, int>(pair.Key, pair.Value))
                     .OrderByDescending(tuple => tuple.Item2)
                     .ThenBy(tuple => tuple.Item1)
-                    .ToList();
-
-                var image = new Bitmap(imageWidth, imageHeight);
-                var graphics = Graphics.FromImage(image);
-                foreach (var wordWithSize in wordsWithSizes)
-                {
-                    var (word, size) = wordWithSize;
-                    var font = new Font(wordsFontFamily, (float) size * imageHeight / totalWords * 2);
-                    var color = colorer.ColorForWord(word, (double) size / totalWords);
-                    var textSize = graphics.MeasureString(word, font).ToSize();
-                    if (textSize.Width <= 0 || textSize.Height <= 0) continue;
-                    var rectangleResult = layouter.PutNextRectangle(textSize);
-                    if (rectangleResult.IsFailure) continue;
-                    var rectangle = rectangleResult.Value;
-                    graphics.DrawString(
-                        word,
-                        font,
-                        new SolidBrush(color),
-                        rectangle.X + imageWidth / 2,
-                        rectangle.Y + imageHeight / 2);   
-                }
-                
-                imageWriter.WriteBitmapToFile(image, outputFile);
-            }
+                    .ToList())
+                .Map(wws => DrawCountedWords(imageWidth, imageHeight, wws))
+                .Bind(image => imageWriter.WriteBitmapToFile(image, outputFile));
         }
     }
 }

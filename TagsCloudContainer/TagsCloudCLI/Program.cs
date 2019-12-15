@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Autofac;
 using CommandLine;
+using CSharpFunctionalExtensions;
 using TagsCloudLibrary;
 using TagsCloudLibrary.Colorers;
 using TagsCloudLibrary.Layouters;
@@ -139,7 +140,12 @@ namespace TagsCloudCLI
 
             var tagsCloud = container.Resolve<TagsCloudGenerator>();
 
-            tagsCloud.GenerateFromFile(options.InputFile, options.OutputFile, imageWidth, imageHeight);
+            var (isSuccess, _, error) = tagsCloud.GenerateFromFile(options.InputFile, options.OutputFile, imageWidth, imageHeight);
+
+            if (isSuccess)
+                Console.WriteLine($"Tags cloud successfully generated from {options.InputFile} and saved to {options.OutputFile}");
+            else
+                Console.WriteLine("Failed to generate tags cloud: " + error);
         }
 
         private static List<Word.PartOfSpeech> PartsOfSpeechListFromStrings(IEnumerable<string> partsOfSpeechWhitelist)
