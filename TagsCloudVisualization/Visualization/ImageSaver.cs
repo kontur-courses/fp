@@ -1,24 +1,29 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.PathFinders;
 
 namespace TagsCloudVisualization.Visualization
 {
     public static class ImageSaver
     {
-        public static string SaveImageToDefaultDirectory(string name, Bitmap image, ImageFormat format)
+        public static Result<string> SaveImageToDefaultDirectory(string name, Bitmap image, ImageFormat format)
         {
-            var path = PathFinder.GetImagesPath(name, format);
-            image.Save(path, format);
-
-            return path;
+            var saveResult = Result.Of(() => PathFinder.GetImagesPath(name, format))
+                .Then(path => image.Save(path, format));
+            
+            return saveResult.IsSuccess
+                ? PathFinder.GetImagesPath(name, format).AsResult()
+                : Result.Fail<string>("Не удалось сохранить файл");
         }
-        
-        public static string SaveImage(string path, Bitmap image, ImageFormat format)
-        {
-            image.Save(path, format);
 
-            return path;
+        public static Result<string> SaveImage(string path, Bitmap image, ImageFormat format)
+        {
+            var saveResult = Result.OfAction(() => image.Save(path, format));
+            
+            return saveResult.IsSuccess
+                ? path.AsResult()
+                : Result.Fail<string>("Не удалось сохранить файл");
         }
     }
 }

@@ -13,8 +13,8 @@ namespace TagsCloudVisualization_Tests
         {
             var words = new List<string> {"один", "два", "три", "четыре", "пять"};
             var sizedWords = new FrequencyWordSizer().GetSizedWords(words);
-            var size = sizedWords.First().Size;
-            sizedWords.All(word => word.Size == size).Should().BeTrue();
+            var size = sizedWords.GetValueOrThrow().First().Size;
+            sizedWords.GetValueOrThrow().All(word => word.Size == size).Should().BeTrue();
         }
 
         [Test]
@@ -24,8 +24,8 @@ namespace TagsCloudVisualization_Tests
             var repeatingWord = "два";
             var words = new List<string> {uniqueWord, repeatingWord, repeatingWord};
             var sizedWords = new FrequencyWordSizer().GetSizedWords(words);
-            sizedWords.First(word => word.Value == repeatingWord).Size.Should()
-                .BeGreaterThan(sizedWords.First(word => word.Value == uniqueWord).Size);
+            sizedWords.GetValueOrThrow().First(word => word.Value == repeatingWord).Size.Should()
+                .BeGreaterThan(sizedWords.GetValueOrThrow().First(word => word.Value == uniqueWord).Size);
         }
     }
 }

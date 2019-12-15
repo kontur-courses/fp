@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NHunspell;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.WordConverters
 {
@@ -14,20 +15,24 @@ namespace TagsCloudVisualization.WordConverters
             this.affPath = affPath;
             this.dicPath = dicPath;
         }
-        
-        public IEnumerable<string> ConvertWords(IEnumerable<string> words)
+
+        public Result<IEnumerable<string>> ConvertWords(IEnumerable<string> words)
         {
             var normalFormWords = new List<string>();
             using (var hunspell = new Hunspell(affPath, dicPath))
             {
                 foreach (var word in words)
                 {
-                    var normalForms = hunspell.Stem(word);
-                    normalFormWords.Add( normalForms.Count > 0 ? normalForms.First() : word);
+                    var normalFormsResult = Result.Of(() => hunspell.Stem(word));
+                    if (!normalFormsResult.IsSuccess)
+                        return Result.Fail<IEnumerable<string>>("Failed to convert to normal form");
+                    normalFormWords.Add(normalFormsResult.GetValueOrThrow().Count > 0
+                        ? normalFormsResult.GetValueOrThrow().First()
+                        : word);
                 }
             }
 
-            return normalFormWords;
+            return normalFormWords.AsEnumerable().AsResult();
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.TextFilters
 {
     public interface ITextFilter
     {
-        IEnumerable<string> FilterWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> FilterWords(IEnumerable<string> words);
     }
 }

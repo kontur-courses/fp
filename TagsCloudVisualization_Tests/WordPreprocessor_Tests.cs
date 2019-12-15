@@ -15,7 +15,7 @@ namespace TagsCloudVisualization_Tests
         {
             var words = new List<string>{"У", "РЖД",  "можно", "ареНдовать", "вагонЫ", "разного", "Класса"};
             var preprocessedWords = new WordPreprocessor(new List<ITextFilter>(),
-                new List<IWordConverter>() {new LowerCaseWordConverter()}).GetPreprocessedWords(words);
+                new List<IWordConverter>() {new LowerCaseWordConverter()}).GetPreprocessedWords(words).GetValueOrThrow();
             var preprocessedText = string.Join(string.Empty, preprocessedWords);
             var upperSymbolsCount = preprocessedText.Count(char.IsUpper);
             upperSymbolsCount.Should().Be(0);

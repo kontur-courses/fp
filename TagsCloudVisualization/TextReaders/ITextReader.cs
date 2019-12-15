@@ -1,9 +1,10 @@
 ﻿using System.Text;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.TextReaders
 {
     public interface ITextReader
     {
-        string ReadText(string filePath, Encoding encoding);
+        Result<string> ReadText(string filePath, Encoding encoding);
     }
 }

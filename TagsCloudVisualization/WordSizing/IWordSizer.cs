@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.WordSizing
 {
     public interface IWordSizer
     {
-        IEnumerable<SizedWord> GetSizedWords(IEnumerable<string> words, int minSize, int step, int maxSize);
+        Result<IEnumerable<SizedWord>> GetSizedWords(IEnumerable<string> words, int minSize, int step, int maxSize);
     }
 }

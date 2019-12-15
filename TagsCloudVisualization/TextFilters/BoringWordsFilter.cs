@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.TextFilters
 {
@@ -12,9 +13,9 @@ namespace TagsCloudVisualization.TextFilters
             this.boringWords = boringWords.ToHashSet();
         }
 
-        public IEnumerable<string> FilterWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            return words.Where(word => !boringWords.Contains(word));
+            return Result.Of(() => words.Where(word => !boringWords.Contains(word)));
         }
     }
 }

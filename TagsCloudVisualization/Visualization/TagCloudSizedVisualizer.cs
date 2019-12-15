@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.CloudPainters;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.WordSizing;
 
@@ -17,17 +18,24 @@ namespace TagsCloudVisualization.Visualization
             this.visualisingOptions = visualisingOptions;
         }
 
-        public Bitmap GetVisualization(IEnumerable<string> words, ILayouter layouter,
+        public Result<Bitmap> GetVisualization(IEnumerable<string> words, ILayouter layouter,
             ICloudPainter<Tuple<SizedWord, Rectangle>> cloudPainter)
         {
-            var sizedWords = new FrequencyWordSizer().GetSizedWords(words, (int) visualisingOptions.Font.Size,
-                (int) visualisingOptions.Font.Size / 2, (int) visualisingOptions.Font.Size * 5);
-            var rectangles = GetRectanglesForWords(sizedWords, layouter);
-            return cloudPainter.GetImage(sizedWords.Zip(rectangles, Tuple.Create), visualisingOptions);
+            var sizedWords = Result.Of(() => new FrequencyWordSizer().GetSizedWords(words,
+                (int) visualisingOptions.Font.Size,
+                (int) visualisingOptions.Font.Size / 2, (int) visualisingOptions.Font.Size * 5));
+            if (!sizedWords.IsSuccess)
+                return Result.Fail<Bitmap>(sizedWords.Error);
+            
+            return Result.Of(() => GetRectanglesForWords(sizedWords.Value.Value, layouter))
+                .Then(rectangles =>
+                    cloudPainter.GetImage(sizedWords.Value.Value.Zip(rectangles.Value, Tuple.Create),
+                        visualisingOptions));
         }
 
-        private IEnumerable<Rectangle> GetRectanglesForWords(IEnumerable<SizedWord> words, ILayouter layouter)
+        private Result<IEnumerable<Rectangle>> GetRectanglesForWords(IEnumerable<SizedWord> words, ILayouter layouter)
         {
+            var rectangles = new List<Rectangle>();
             var bitmap = new Bitmap(visualisingOptions.ImageSize.Width, visualisingOptions.ImageSize.Height);
             using (var graphics = Graphics.FromImage(bitmap))
             {
@@ -35,9 +43,15 @@ namespace TagsCloudVisualization.Visualization
                 {
                     var font = new Font(visualisingOptions.Font.FontFamily, word.Size);
                     var rectangleSize = graphics.MeasureString(word.Value, font).ToSize();
-                    yield return layouter.PutNextRectangle(rectangleSize);
+                    var nextRectangleResult = layouter.PutNextRectangle(rectangleSize);
+                    if (nextRectangleResult.IsSuccess)
+                        rectangles.Add(nextRectangleResult.Value);
+                    else
+                        return Result.Fail<IEnumerable<Rectangle>>("Failed to create word layout");
                 }
             }
+
+            return rectangles.AsEnumerable().AsResult();
         }
     }
 }

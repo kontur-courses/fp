@@ -36,15 +36,15 @@ namespace TagsCloudVisualization_Tests
         [TestCase(-100, -100)]
         public void PutNextRectangle_InvalidSize_ShouldThrowException(int width, int height)
         {
-            Action act = () => cloud.PutNextRectangle(new Size(width, height));
-            act.Should().Throw<ArgumentException>();
+            var nextRectangleResult = cloud.PutNextRectangle(new Size(width, height));
+            nextRectangleResult.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void PutNextRectangle_FirstRectangle_ShouldBeInCenter()
         {
             var rectangle = cloud.PutNextRectangle(new Size(100, 50));
-            rectangle.Location.Should().Be(new Point(450, 475));
+            rectangle.GetValueOrThrow().Location.Should().Be(new Point(450, 475));
         }
 
         [TestCase(10, 15, 15, TestName = "10EqualRectangles")]
@@ -104,7 +104,8 @@ namespace TagsCloudVisualization_Tests
             var image = painter.GetImage(rectangles,
                 VisualisingOptions.GetDefaultOptions());
             var fileName = $"{testName}Failed";
-            var path = ImageSaver.SaveImageToDefaultDirectory(PathFinder.GetImagesPath(fileName, ImageFormat.Png), image, ImageFormat.Png);
+            var path = ImageSaver.SaveImageToDefaultDirectory(PathFinder.GetImagesPath(fileName, ImageFormat.Png),
+                image.GetValueOrThrow(), ImageFormat.Png);
             Console.WriteLine($"Tag cloud visualization saved to file {path}");
         }
     }

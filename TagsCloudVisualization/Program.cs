@@ -1,7 +1,9 @@
-﻿using System.Drawing.Imaging;
+﻿using System;
+using System.Drawing.Imaging;
 using Autofac;
 using CommandLine;
 using TagsCloudVisualization.ApplicationOptions;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.Visualization;
 
 namespace TagsCloudVisualization
@@ -10,12 +12,18 @@ namespace TagsCloudVisualization
     {
         public static void Main(string[] args)
         {
-            var parsedArguments = Parser.Default.ParseArguments<ApplicationOptions.ApplicationOptions>(args);
-            var applicationOptions = new ApplicationOptionsExtractor().GetOption(parsedArguments);
-            var container = new ContainerCreator().GetContainer(applicationOptions);
-            var cloudCreator = container.Resolve<CloudCreator>();
-            var cloud = cloudCreator.GetCloud(applicationOptions.TextName);
-            ImageSaver.SaveImage(applicationOptions.ImagePath, cloud, ImageFormat.Png);
+            var applicationOptions = new ApplicationOptions.ApplicationOptions();
+            var result = Result
+                .Of(() => Parser.Default.ParseArguments<ApplicationOptions.ApplicationOptions>(args))
+                .Then(parsedArguments =>new ApplicationOptionsExtractor().GetOptions(parsedArguments))
+                .Then(options => applicationOptions = options)
+                .Then(applicationOptions => new ContainerCreator().GetContainer(applicationOptions))
+                .Then(container => container.Resolve<CloudCreator>())
+                .Then(cloudCreator => cloudCreator.GetCloud(applicationOptions.TextPath))
+                .Then(cloud => ImageSaver.SaveImage(applicationOptions.ImagePath, cloud, ImageFormat.Png))
+                .OnFail(new ConsoleErrorHandler().HandleError);
+            if (result.IsSuccess)
+                Console.WriteLine($"Success! Picture saved to {applicationOptions.ImagePath}");
         }
     }
 }

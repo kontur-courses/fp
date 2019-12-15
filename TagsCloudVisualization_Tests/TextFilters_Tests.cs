@@ -27,21 +27,21 @@ namespace TagsCloudVisualization_Tests
             var words = new List<string>
                 {"ну", "слова", "попадут", "в", "результат", "э", "не", "попадут", "в", "фильтр"};
             var expectedWords = new List<string> {"слова", "попадут", "в", "результат", "не", "попадут", "в", "фильтр"};
-            boringWordsFilter.FilterWords(words).Should().BeEquivalentTo(expectedWords);
+            boringWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
         }
 
         [Test]
         public void BoringWordsFilter_WithUsersBoringWordsAndAllWordsBoring_ShouldEmptyCollection()
         {
             var words = new List<string> {"ну", "э", "э", "а", "а", "э"};
-            boringWordsFilter.FilterWords(words).Should().BeEmpty();
+            boringWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEmpty();
         }
 
         [Test]
         public void RepeatingWordsFilter_WithoutRepeatingWords_ShouldReturnUnchangedWords()
         {
             var words = new List<string> {"а", "б", "в", "г", "д", "е"};
-            repeatingWordsFilter.FilterWords(words).Should().BeEquivalentTo(words);
+            repeatingWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEquivalentTo(words);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace TagsCloudVisualization_Tests
         {
             var words = new List<string> {"а", "б", "в", "а", "а", "е", "е"};
             var expectedResult = new List<string> {"а", "б", "в", "е"};
-            repeatingWordsFilter.FilterWords(words).Should().BeEquivalentTo(expectedResult);
+            repeatingWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
         }
 
         [Test]
@@ -57,14 +57,14 @@ namespace TagsCloudVisualization_Tests
         {
             var words = new List<string> {"а", "боль", "время", "а", "он", "они", "стоп"};
             var expectedResult = new List<string> {"боль", "время", "стоп"};
-            shortWordsFilter.FilterWords(words).Should().BeEquivalentTo(expectedResult);
+            shortWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
         }
 
         [Test]
         public void ShortWordsFilter_WithoutShortWords_ShouldReturnUnchangedWords()
         {
             var words = new List<string> {"слова", "длинные", "попадут", "результат"};
-            shortWordsFilter.FilterWords(words).Should().BeEquivalentTo(words);
+            shortWordsFilter.FilterWords(words).GetValueOrThrow().Should().BeEquivalentTo(words);
         }
     }
 }

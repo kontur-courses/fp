@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Text;
 using TagsCloudVisualization.CloudPainters;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.TextPreprocessing;
 using TagsCloudVisualization.TextReaders;
@@ -31,13 +32,12 @@ namespace TagsCloudVisualization
             this.layouter = layouter;
         }
 
-        public Bitmap GetCloud(string textPath)
+        public Result<Bitmap> GetCloud(string textPath)
         {
-            var text = textReader.ReadText(textPath, Encoding.UTF8);
-            var words = wordsExtractor.GetWords(text);
-            var preprocessedWords = wordPreprocessor.GetPreprocessedWords(words);
-            var image = tagCloudVisualizer.GetVisualization(preprocessedWords, layouter, cloudPainter);
-            return image;
+            return Result.Of(() => textReader.ReadText(textPath, Encoding.UTF8))
+                .Then(text => wordsExtractor.GetWords(text.Value))
+                .Then(words => wordPreprocessor.GetPreprocessedWords(words))
+                .Then(words => tagCloudVisualizer.GetVisualization(words, layouter, cloudPainter));
         }
     }
 }

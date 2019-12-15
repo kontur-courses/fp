@@ -1,5 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Text;
+using System.Linq;
 using CommandLine;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.Visualization;
 
 namespace TagsCloudVisualization.ApplicationOptions
@@ -24,19 +28,35 @@ namespace TagsCloudVisualization.ApplicationOptions
         [Option('d', "textColor", HelpText = "Text color", Default = "Pink")]
         public string TextColorName { get; set; }
 
-        [Option('t', "textPath",  HelpText = "Text path", Required = true)]
-        public string TextName { get; set; }
+        [Option('t', "textPath", HelpText = "Text path", Required = true)]
+        public string TextPath { get; set; }
 
         [Option('i', "imagePath", HelpText = "Image path", Required = true)]
         public string ImagePath { get; set; }
-        
+
         [Option('y', "boringWords", HelpText = "Boring words")]
         public string BoringWords { get; set; }
 
-        public VisualisingOptions GetVisualizingOptions()
+        public Result<VisualisingOptions> GetVisualizingOptions()
         {
-            return new VisualisingOptions(new Font(FontFamily, MinFontSize), new Size(ImageWidth, ImageHeight),
-                Color.FromName(BackGroundColorName), Color.FromName(TextColorName));
+            if (ImageHeight < 0 || ImageWidth < 0)
+                return Result.Fail<VisualisingOptions>("Invalid Image size. Size must be positive.");
+            if (!IsFontInstalled(FontFamily))
+                return Result.Fail<VisualisingOptions>("Font not installed");
+            if (MinFontSize < 0)
+                return Result.Fail<VisualisingOptions>("Font size must be positive");
+
+            return Result.Of(() => new VisualisingOptions(new Font(FontFamily, MinFontSize),
+                new Size(ImageWidth, ImageHeight), Color.FromName(BackGroundColorName), Color.FromName(TextColorName)));
+        }
+
+        private bool IsFontInstalled(string fontName)
+        {
+            using (var fonts = new InstalledFontCollection())
+            {
+                return fonts.Families.Any(f =>
+                    string.Equals(f.Name, fontName, StringComparison.CurrentCultureIgnoreCase));
+            }
         }
     }
 }

@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.WordSizing
 {
     public class FrequencyWordSizer : IWordSizer
     {
-        public IEnumerable<SizedWord> GetSizedWords(IEnumerable<string> words, int minSize = 10, int step = 5,
+        public Result<IEnumerable<SizedWord>> GetSizedWords(IEnumerable<string> words, int minSize = 10, int step = 5,
             int maxSize = 50)
         {
             if (minSize <= 0)
-                throw new ArgumentException("Min size must be positive");
+                return Result.Fail<IEnumerable<SizedWord>>("Min size must be positive");
             if (step <= 0)
-                throw new ArgumentException("Step size must be positive");
+                return Result.Fail<IEnumerable<SizedWord>>("Step size must be positive");
             var frequencyDictionary = GetFrequencyDictionary(words);
             var sortedFrequencyDictionary = frequencyDictionary.OrderBy(pair => pair.Value)
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -31,7 +31,8 @@ namespace TagsCloudVisualization.WordSizing
             }
 
             sizedWords.Reverse();
-            return sizedWords;
+
+            return Result.Ok(sizedWords.AsEnumerable());
         }
 
         private Dictionary<string, int> GetFrequencyDictionary(IEnumerable<string> words)

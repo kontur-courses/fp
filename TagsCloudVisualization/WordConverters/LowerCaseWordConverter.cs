@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.WordConverters
 {
     public class LowerCaseWordConverter : IWordConverter
     {
-        public IEnumerable<string> ConvertWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> ConvertWords(IEnumerable<string> words)
         {
-            return words.Select(word => word.ToLower());
+            return Result.Of(() => words.Select(word => word.ToLower()));
         }
     }
 }

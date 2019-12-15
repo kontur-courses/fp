@@ -40,7 +40,7 @@ namespace TagsCloudVisualization_Tests
             var rectangles = new List<Rectangle>();
             for (var i = 0; i < rectanglesCount; i++)
             {
-                rectangles.Add(cloud.PutNextRectangle(new Size(width, height)));
+                rectangles.Add(cloud.PutNextRectangle(new Size(width, height)).GetValueOrThrow());
             }
 
             return rectangles;
@@ -54,7 +54,8 @@ namespace TagsCloudVisualization_Tests
             var rectangles = new List<Rectangle>();
             for (var i = 0; i < rectanglesCount; i++)
             {
-                rectangles.Add(cloud.PutNextRectangle(GetRandomSize(minWidth, maxWidth, minHeight, maxHeight)));
+                rectangles.Add(cloud.PutNextRectangle(GetRandomSize(minWidth, maxWidth, minHeight, maxHeight))
+                    .GetValueOrThrow());
             }
 
             return rectangles;

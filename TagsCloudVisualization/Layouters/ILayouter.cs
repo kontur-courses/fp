@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.ErrorHandling;
 
 namespace TagsCloudVisualization.Layouters
 {
     public interface ILayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

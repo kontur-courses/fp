@@ -2,6 +2,7 @@
 using System.Drawing;
 using Autofac;
 using TagsCloudVisualization.CloudPainters;
+using TagsCloudVisualization.ErrorHandling;
 using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.PathFinders;
 using TagsCloudVisualization.TextFilters;
@@ -15,9 +16,12 @@ namespace TagsCloudVisualization
 {
     public class ContainerCreator
     {
-        public IContainer GetContainer(ApplicationOptions.ApplicationOptions applicationOptions)
+        public Result<IContainer> GetContainer(ApplicationOptions.ApplicationOptions applicationOptions)
         {
-            var imageOptions = applicationOptions.GetVisualizingOptions();
+            var imageOptionsResult = applicationOptions.GetVisualizingOptions();
+            if (!imageOptionsResult.IsSuccess)
+                return Result.Fail<IContainer>(imageOptionsResult.Error);
+            var imageOptions = imageOptionsResult.Value;
             var affPath = PathFinder.GetHunspellDictionariesPath("ru_RU.aff");
             var dicPath = PathFinder.GetHunspellDictionariesPath("ru_RU.dic");
             var center = new Point(imageOptions.ImageSize.Width / 2, imageOptions.ImageSize.Height / 2);
@@ -47,7 +51,7 @@ namespace TagsCloudVisualization
             builder.RegisterType<Spiral>().AsSelf().WithParameter("center", center);
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
             builder.RegisterType<CloudCreator>().AsSelf();
-            return builder.Build();
+            return builder.Build().AsResult();
         }
     }
 }
