@@ -1,0 +1,45 @@
+﻿using FailuresProcessing;
+using System;
+using System.Reflection;
+using TagsCloudGenerator.Attributes;
+using TagsCloudGenerator.Interfaces;
+using TagsCloudGenerator.Painters;
+using TagsCloudGenerator.PointsSearchers;
+using TagsCloudGenerator.Savers;
+using TagsCloudGenerator.WordsConverters;
+using TagsCloudGenerator.WordsFilters;
+using TagsCloudGenerator.WordsLayouters;
+using TagsCloudGenerator.WordsParsers;
+
+namespace TagsCloudGenerator.Settings
+{
+    public class FactorySettings : IFactorySettings
+    {
+        public FactorySettings() => Reset();
+
+        public string PainterId { get; set; }
+        public string SaverId { get; set; }
+        public string PointsSearcherId { get; set; }
+        public string WordsParserId { get; set; }
+        public string WordsLayouterId { get; set; }
+        public string[] WordsFiltersIds { get; set; }
+        public string[] WordsConvertersIds { get; set; }
+
+        public virtual Result<None> Reset()
+        {
+            PainterId = GetFactorialIdForType(typeof(PainterWithUserColors));
+            SaverId = GetFactorialIdForType(typeof(PngSaver));
+            PointsSearcherId = GetFactorialIdForType(typeof(PointsSearcherOnSpiral));
+            WordsParserId = GetFactorialIdForType(typeof(UTF8LinesParser));
+            WordsLayouterId = GetFactorialIdForType(typeof(WordsFrequencyLayouter));
+            WordsFiltersIds = new[] { GetFactorialIdForType(typeof(BoringWordsFilter)) };
+            WordsConvertersIds = new[] { GetFactorialIdForType(typeof(WordsToLowerConverter)) };
+            return Result.Ok();
+        }
+
+        private string GetFactorialIdForType(Type type) =>
+            type
+            .GetCustomAttribute<FactorialAttribute>()
+            .FactorialId;
+    }
+}
