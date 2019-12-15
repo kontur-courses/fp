@@ -35,9 +35,10 @@ namespace TagsCloudLibraryTests
             var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
             var rectangleSize = new Size(width, height);
 
-            circularCloudLayouter
-                .Invoking(ccl => ccl.PutNextRectangle(rectangleSize))
-                .Should().Throw<ArgumentException>().WithMessage("rectangleSize is not correct rectangle size");
+            var result = circularCloudLayouter.PutNextRectangle(rectangleSize);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be("rectangleSize is not correct rectangle size");
         }
 
         [Test]
@@ -51,7 +52,7 @@ namespace TagsCloudLibraryTests
 
             var rectangle = circularCloudLayouter.PutNextRectangle(rectangleSize);
 
-            rectangle.Size.Should().Be(rectangleSize);
+            rectangle.Value.Size.Should().Be(rectangleSize);
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace TagsCloudLibraryTests
 
             var rectangle = circularCloudLayouter.PutNextRectangle(rectangleSize);
 
-            rectangle.Contains(center).Should().BeTrue();
+            rectangle.Value.Contains(center).Should().BeTrue();
         }
 
         [Test]
@@ -228,7 +229,7 @@ namespace TagsCloudLibraryTests
         {
             var rectangles = new List<Rectangle>();
             for (var i = 0; i < rectanglesCount; ++i)
-                rectangles.Add(layouter.PutNextRectangle(rectangleSize));
+                rectangles.Add(layouter.PutNextRectangle(rectangleSize).Value);
             return rectangles;
         }
 
@@ -240,7 +241,7 @@ namespace TagsCloudLibraryTests
             for (var i = 0; i < rectanglesCount; ++i)
                 rectangles.Add(layouter.PutNextRectangle(
                     new Size(random.Next(minSize.Width, maxSize.Width), random.Next(minSize.Height, maxSize.Height))
-                ));
+                ).Value);
             return rectangles;
         }
 

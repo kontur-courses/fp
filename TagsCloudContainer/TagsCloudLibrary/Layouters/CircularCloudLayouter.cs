@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Layouters
 {
@@ -22,10 +23,10 @@ namespace TagsCloudLibrary.Layouters
             _center = center;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("rectangleSize is not correct rectangle size");
+                return Result.Failure<Rectangle>("rectangleSize is not correct rectangle size");
 
             var (x, y) = GetNextUpperLeftCornerPosition(rectangleSize);
             var newRectangle = new Rectangle(x, y, rectangleSize.Width, rectangleSize.Height);
@@ -33,7 +34,7 @@ namespace TagsCloudLibrary.Layouters
                 (newRectangle.X, newRectangle.Y) = GetNextUpperLeftCornerPosition(newRectangle.Size);
 
             _placedRectangles.Add(newRectangle);
-            return newRectangle;
+            return Result.Ok(newRectangle);
         }
 
         private double _spiralPosition;

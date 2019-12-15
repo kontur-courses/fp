@@ -94,7 +94,9 @@ namespace TagsCloudLibrary
                     var color = colorer.ColorForWord(word, (double) size / totalWords);
                     var textSize = graphics.MeasureString(word, font).ToSize();
                     if (textSize.Width <= 0 || textSize.Height <= 0) continue;
-                    var rectangle = layouter.PutNextRectangle(textSize);
+                    var rectangleResult = layouter.PutNextRectangle(textSize);
+                    if (rectangleResult.IsFailure) continue;
+                    var rectangle = rectangleResult.Value;
                     graphics.DrawString(
                         word,
                         font,

@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Layouters
 {
     public interface ILayouter
     {
         string Name { get; }
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }
