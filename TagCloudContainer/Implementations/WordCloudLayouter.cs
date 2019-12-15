@@ -5,7 +5,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("wordlayouter", typeof(WordCloudLayouter))]
+    [CliElement("wordlayouter")]
     public class WordCloudLayouter : IWordCloudLayouter
     {
         private readonly ICloudLayouter rectangleLayouter;

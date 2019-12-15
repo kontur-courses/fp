@@ -4,7 +4,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("lowercase", typeof(LowercaseWordProcessor))]
+    [CliElement("lowercase")]
     public class LowercaseWordProcessor : IWordProcessor
     {
         public IEnumerable<string> Process(IEnumerable<string> words)

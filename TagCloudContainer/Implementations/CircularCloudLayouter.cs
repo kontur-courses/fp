@@ -6,7 +6,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("circular", typeof(CircularCloudLayouter))]
+    [CliElement("circular")]
     public class CircularCloudLayouter : ICloudLayouter
     {
         private float spiralCounter;

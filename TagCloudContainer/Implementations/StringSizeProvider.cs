@@ -3,7 +3,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("realsize", typeof(StringSizeProvider))]
+    [CliElement("realsize")]
     public class StringSizeProvider : IStringSizeProvider
     {
         public static Graphics GraphicsBase = Graphics.FromImage(new Bitmap(1, 1));

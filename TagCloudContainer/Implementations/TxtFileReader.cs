@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using TagCloudContainer.Api;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Implementations
 {
@@ -13,9 +14,14 @@ namespace TagCloudContainer.Implementations
             this.txtFileName = txtFileName;
         }
 
-        public IEnumerable<string> GetWords()
+        public Result<IEnumerable<string>> GetWords()
         {
-            return File.Exists(txtFileName) ? File.ReadLines(txtFileName) : new List<string>();
+            if (File.Exists(txtFileName))
+            {
+                return Result.Of(() => File.ReadLines(txtFileName));
+            }
+
+            return Result.Fail<IEnumerable<string>>($"File not found: {txtFileName}");
         }
     }
 }

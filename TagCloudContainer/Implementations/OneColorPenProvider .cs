@@ -3,7 +3,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("onecolorpen", typeof(OneColorPenProvider))]
+    [CliElement("onecolorpen")]
     public class OneColorPenProvider : IRectanglePenProvider
     {
         private readonly DrawingOptions options;

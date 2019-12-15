@@ -3,7 +3,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("onecolorbrush", typeof(OneColorBrushProvider))]
+    [CliElement("onecolorbrush")]
     public class OneColorBrushProvider : IWordBrushProvider
     {
         private readonly DrawingOptions options;

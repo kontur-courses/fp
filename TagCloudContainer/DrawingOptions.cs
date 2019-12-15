@@ -29,5 +29,31 @@ namespace TagCloudContainer
         public Pen Pen { get; set; }
         public Font Font { get; set; }
         public Size ImageSize { get; set; }
+
+
+        public DrawingOptions WithBackgroundBrush(Brush brush)
+        {
+            return new DrawingOptions(this) {BackgroundBrush = brush};
+        }
+
+        public DrawingOptions WithFont(Font font)
+        {
+            return new DrawingOptions(this) {Font = font};
+        }
+
+        public DrawingOptions WithWordBrush(Brush brush)
+        {
+            return new DrawingOptions(this) {WordBrush = brush};
+        }
+
+        public DrawingOptions WithPen(Pen pen)
+        {
+            return new DrawingOptions(this) {Pen = pen};
+        }
+
+        public DrawingOptions WithImageSize(Size size)
+        {
+            return new DrawingOptions(this) {ImageSize = size};
+        }
     }
 }

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Api
 {
+    [CliRole]
     public interface IWordProvider
     {
-        IEnumerable<string> GetWords();
+        Result<IEnumerable<string>> GetWords();
     }
 }

@@ -4,18 +4,16 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using Fclp;
+using Fclp.Internals.Parsing;
 using TagCloudContainer.Api;
 using TagCloudContainer.fluent;
 using TagCloudContainer.Implementations;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer
 {
     internal class Program
     {
-        public static Dictionary<string, Func<TagCloudConfig, IWordProvider>> wordProviders =
-            new Dictionary<string, Func<TagCloudConfig, IWordProvider>>
-                {{"txt", cfg => new TxtFileReader(cfg.InputFile)}};
-
         public static Dictionary<string, ImageFormat> imageFormats = new Dictionary<string, ImageFormat>
         {
             {"bmp", ImageFormat.Bmp}, {"emf", ImageFormat.Emf}, {"exif", ImageFormat.Exif},
@@ -24,47 +22,79 @@ namespace TagCloudContainer
             {"membmp", ImageFormat.MemoryBmp}
         };
 
-        public static Dictionary<string, Type> cliElements = new Dictionary<string, Type>();
-
         private static void Main(string[] args)
         {
-            var p = new FluentCommandLineParser();
-            TagCloudConfig config = null;
-            p.Setup<string>('f', "file").Callback(file => config = CreateTagCloud.FromFile(file)).Required();
-            p.Setup<string>('p').Callback(useParameters =>
-            {
-                if (useParameters.ToLower().Equals("true"))
-                    CollectCliElements();
-            });
-            p.Setup<string>("source-type").Callback(type => config.WordProvider = wordProviders[type](config));
-            p.Setup<string>("processor").Callback(proc => config.WordProcessor = cliElements[proc]);
-            p.Setup<string>("layout").Callback(layout => config.CloudLayouter = cliElements[layout]);
-            p.Setup<string>("wordlayouter")
-                .Callback(layouter => config.WordCloudLayouter = cliElements[layouter]);
-            p.Setup<string>("sizefunc").Callback(size => config.SizeProvider = cliElements[size]);
-            p.Setup<string>("brush").Callback(brush => config.BrushProvider = cliElements[brush]);
-            p.Setup<string>("pen").Callback(pen => config.PenProvider = cliElements[pen]);
-            p.Setup<string>("visualizer")
-                .Callback(visualizer => config.WordVisualizer = cliElements[visualizer]);
-            p.Setup<string>("format").Callback(format => config.ImageFormat = imageFormats[format]);
-            p.Setup<string>("size").Callback(size => config.SetSize(size));
-            p.Setup<string>('o', "output").Callback(file => config.SaveToFile(file)).Required();
+            var cli = new Cli();
+            var p = SetupParser(cli);
+            var config = new Result<TagCloudConfig>(value: new TagCloudConfig(cli));
 
-            p.Parse(args);
+            var parserResult = p.Parse(args);
+
+            var options = parserResult.RawResult.ParsedOptions.ToList();
+
+            var inputFile = options.Where(o => o.Key == "f").Select(o => o.Value).Last();
+            var outputFile = options.Where(o => o.Key == "o").Select(o => o.Value).Last();
+            var parameters = options.Where(o => o.Key != "o" && o.Key != "f");
+
+            config = parameters.Aggregate(config, (current, o) => ProcessOption(o, current, cli));
+
+            if (!config.IsSuccess)
+            {
+                Console.Error.WriteLine(config.Error);
+                return;
+            }
+
+            var result = config.Then(cfg => cfg.CreateCloud(inputFile, outputFile));
+            if (!result.IsSuccess)
+            {
+                Console.Error.WriteLine(result.Error);
+            }
         }
 
-        private static void CollectCliElements()
+        private static Result<TagCloudConfig> ProcessOption(ParsedOption o, Result<TagCloudConfig> config, Cli cli)
         {
-            var cliAttributeType = typeof(CliElementAttribute);
-
-            var assembly = Assembly.GetAssembly(cliAttributeType);
-            foreach (var type in assembly.DefinedTypes.Where(t =>
-                t.GetCustomAttributes(cliAttributeType).Any()))
+            var value = o.Value;
+            config = o.Key switch
             {
-                var attributes = type.GetCustomAttributes(cliAttributeType).Select(t => (CliElementAttribute) t);
-                var attribute = attributes.First();
-                cliElements.Add(attribute.CliName, attribute.TargetType);
-            }
+                "source-type" => config.Then(cfg => cfg.UsingWordProvider(value, cli)),
+                "format" => config.Then(cfg => cfg.SetImageFormat(imageFormats[value])),
+                "size" => config.Then(cfg => cfg.SetSize(value)),
+                "wordProcessor" => config.Then(cfg => cfg.UsingWordProcessor(value, cli)),
+                "layout" => config.Then(cfg => cfg.UsingCloudLayouter(value, cli)),
+                "wordLayouter" => config.Then(cfg => cfg.UsingWordCloudLayouter(value, cli)),
+                "sizeProvider" => config.Then(cfg => cfg.UsingStringSizeProvider(value, cli)),
+                "brushProvider" => config.Then(cfg => cfg.UsingWordBrushProvider(value, cli)),
+                "penProvider" => config.Then(cfg => cfg.UsingRectanglePenProvider(value, cli)),
+                "wordVisualizer" => config.Then(cfg => cfg.UsingWordVisualizer(value, cli)),
+                _ => config
+            };
+
+            return config;
+        }
+
+        private static FluentCommandLineParser SetupParser(Cli cli)
+        {
+            var parser = new FluentCommandLineParser();
+            parser.Setup<string>('f').Required();
+            parser.Setup<string>('o').Required();
+
+            parser.Setup<string>('p').Callback(useParameters =>
+            {
+                if (useParameters is null || useParameters.ToLower().Equals("true"))
+                    cli.CollectCliElements();
+            });
+            parser.Setup<string>("source-type");
+            parser.Setup<string>("format");
+            parser.Setup<string>("size");
+            parser.Setup<string>("wordProcessor");
+            parser.Setup<string>("layout");
+            parser.Setup<string>("wordLayouter");
+            parser.Setup<string>("sizeProvider");
+            parser.Setup<string>("brush");
+            parser.Setup<string>("pen");
+            parser.Setup<string>("wordVisualizer");
+
+            return parser;
         }
     }
 }

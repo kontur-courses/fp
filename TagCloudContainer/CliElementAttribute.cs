@@ -5,12 +5,10 @@ namespace TagCloudContainer
     public class CliElementAttribute : Attribute
     {
         public string CliName;
-        public Type TargetType;
 
-        public CliElementAttribute(string cliName, Type type)
+        public CliElementAttribute(string cliName)
         {
             CliName = cliName;
-            TargetType = type;
         }
     }
 }

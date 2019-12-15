@@ -5,7 +5,7 @@ using TagCloudContainer.Api;
 
 namespace TagCloudContainer.Implementations
 {
-    [CliElement("wordvisualizer", typeof(TagCloudVisualizer))]
+    [CliElement("wordvisualizer")]
     public class TagCloudVisualizer : IWordVisualizer
     {
         private readonly IWordCloudLayouter layouter;

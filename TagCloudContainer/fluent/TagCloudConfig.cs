@@ -6,26 +6,25 @@ using System.Linq;
 using Autofac;
 using TagCloudContainer.Api;
 using TagCloudContainer.Implementations;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.fluent
 {
     public class TagCloudConfig
     {
-        public readonly string InputFile;
-        public Type BrushProvider;
-        public Type CloudLayouter;
+        public Result<Func<string, IWordProvider>> WordProvider;
         public ImageFormat ImageFormat;
         public DrawingOptions Options;
+        public Type BrushProvider;
+        public Type CloudLayouter;
         public Type PenProvider;
         public Type SizeProvider;
         public Type WordCloudLayouter;
         public Type WordProcessor;
-        public IWordProvider WordProvider;
         public Type WordVisualizer;
 
         private TagCloudConfig(TagCloudConfig parent)
         {
-            InputFile = parent.InputFile;
             WordProvider = parent.WordProvider;
             WordProcessor = parent.WordProcessor;
             WordVisualizer = parent.WordVisualizer;
@@ -37,12 +36,11 @@ namespace TagCloudContainer.fluent
             Options = parent.Options;
         }
 
-        public TagCloudConfig(string inputFile)
+        public TagCloudConfig(Cli cli)
         {
-            InputFile = inputFile;
             ImageFormat = ImageFormat.Png;
             Options = new DrawingOptions();
-            WordProvider = new TxtFileReader(inputFile);
+            WordProvider = cli.GetWordProviderByName("txt");
             WordProcessor = typeof(LowercaseWordProcessor);
             CloudLayouter = typeof(CircularCloudLayouter);
             SizeProvider = typeof(StringSizeProvider);
@@ -52,29 +50,170 @@ namespace TagCloudContainer.fluent
             WordVisualizer = typeof(TagCloudVisualizer);
         }
 
-        public void SetSize(string size)
+        public Result<TagCloudConfig> UsingWordProvider(string wordProvider, Cli cli)
         {
-            var sizes = size.Split('x').Select(int.Parse).ToList();
-            Options.ImageSize = new Size(sizes[0], sizes[1]);
+            WordProvider = cli.GetWordProviderByName(wordProvider);
+            return this;
         }
 
-        public void SaveToFile(string file)
+        public Result<TagCloudConfig> UsingWordProcessor(string wordProcessor, Cli cli)
         {
-            var container = PrepareContainer();
-            var bitmap = container.Resolve<Image>();
-            bitmap.Save(file, ImageFormat);
+            var wordProcessorResult = cli.GetTypeByCliElementName<IWordVisualizer>(wordProcessor);
+
+            return wordProcessorResult.Then(r =>
+            {
+                WordProcessor = r;
+                return this;
+            });
         }
 
-        private IContainer PrepareContainer()
+        public Result<TagCloudConfig> UsingWordVisualizer(string wordVisualizer, Cli cli)
+        {
+            var wordVisualizerResult = cli.GetTypeByCliElementName<IWordVisualizer>(wordVisualizer);
+
+            return wordVisualizerResult.Then(r =>
+            {
+                WordVisualizer = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingCloudLayouter(string cloudLayouter, Cli cli)
+        {
+            var cloudLayouterResult = cli.GetTypeByCliElementName<ICloudLayouter>(cloudLayouter);
+
+            return cloudLayouterResult.Then(r =>
+            {
+                CloudLayouter = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingWordCloudLayouter(string wordCloudLayouter, Cli cli)
+        {
+            var wordCloudLayouterResult = cli.GetTypeByCliElementName<IWordCloudLayouter>(wordCloudLayouter);
+
+            return wordCloudLayouterResult.Then(r =>
+            {
+                WordCloudLayouter = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingStringSizeProvider(string sizeProvider, Cli cli)
+        {
+            var sizeProviderResult = cli.GetTypeByCliElementName<IStringSizeProvider>(sizeProvider);
+
+            return sizeProviderResult.Then(r =>
+            {
+                SizeProvider = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingWordBrushProvider(string brushProvider, Cli cli)
+        {
+            var brushProviderResult = cli.GetTypeByCliElementName<IWordBrushProvider>(brushProvider);
+
+            return brushProviderResult.Then(r =>
+            {
+                BrushProvider = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingRectanglePenProvider(string penProvider, Cli cli)
+        {
+            var penProviderResult = cli.GetTypeByCliElementName<IRectanglePenProvider>(penProvider);
+
+            return penProviderResult.Then(r =>
+            {
+                PenProvider = r;
+                return this;
+            });
+        }
+
+        public Result<TagCloudConfig> UsingBackgroundBrush(Brush brush)
+        {
+            Options = Options.WithBackgroundBrush(brush);
+            return this;
+        }
+
+        public Result<TagCloudConfig> UsingFont(Font font)
+        {
+            Options = Options.WithFont(font);
+            return this;
+        }
+
+        public Result<TagCloudConfig> UsingWordBrush(Brush brush)
+        {
+            Options = Options.WithWordBrush(brush);
+            return this;
+        }
+
+        public Result<TagCloudConfig> UsingPen(Pen pen)
+        {
+            Options = Options.WithPen(pen);
+            return this;
+        }
+
+        public Result<TagCloudConfig> SetSize(string size)
+        {
+            if (size is null)
+                return Result.Fail<TagCloudConfig>("Size can't be null");
+            if (!size.Contains('x'))
+                return Result.Fail<TagCloudConfig>($"Size {size} has invalid size format. " +
+                                                   $"It must be WxH, where W and H is Width and Height");
+            try
+            {
+                var sizes = size.Split('x').Select(int.Parse).ToList();
+                Options.ImageSize = new Size(sizes[0], sizes[1]);
+            }
+            catch (FormatException e)
+            {
+                return Result.Fail<TagCloudConfig>($"Size {size} has invalid size format. " +
+                                                   $"Width and Height have to be positive integers");
+            }
+
+            return this;
+        }
+
+        public Result<TagCloudConfig> SetImageFormat(ImageFormat imageFormat)
+        {
+            if (imageFormat is null)
+                return Result.Fail<TagCloudConfig>("ImageFormat can't be null");
+            ImageFormat = imageFormat;
+            return this;
+        }
+
+        public Result<None> CreateCloud(string inputFile, string outputFile)
+        {
+            var bitmap = PrepareContainer(inputFile).Then(c => c.Resolve<Image>());
+
+            if (!bitmap.IsSuccess)
+                return Result.Fail<None>(bitmap.Error);
+            return bitmap.Then(bmp => bmp.Save(outputFile, ImageFormat));
+        }
+
+        private Result<IContainer> PrepareContainer(string inputFile)
         {
             var builder = new ContainerBuilder();
-            builder.Register(c => WordProvider).As<IWordProvider>().SingleInstance();
+            var textReaderAttempt = WordProvider.Then(func => func(inputFile));
+
+            if (!textReaderAttempt.IsSuccess)
+                return Result.Fail<IContainer>(textReaderAttempt.Error);
+            var textReader = textReaderAttempt.DefaultIfError(new TxtFileReader(inputFile));
+
+            builder.Register(c => textReader).As<IWordProvider>().SingleInstance();
             builder.RegisterType(WordProcessor).As<IWordProcessor>().SingleInstance();
 
             builder.Register(c =>
             {
                 var words = c.Resolve<IWordProvider>().GetWords();
-                return c.Resolve<IWordProcessor>().Process(words);
+                words = words.Then(w => c.Resolve<IWordProcessor>().Process(w));
+                if (!words.IsSuccess)
+                    Console.WriteLine(words.Error);
+                return words.DefaultIfError(new List<string>());
             }).As<IEnumerable<string>>();
 
             builder.RegisterType(CloudLayouter).As<ICloudLayouter>().SingleInstance();
@@ -90,7 +229,7 @@ namespace TagCloudContainer.fluent
 
             builder.Register(c => c.Resolve<IWordVisualizer>().CreateImageWithWords(
                 c.Resolve<IEnumerable<string>>())).As<Image>();
-            return builder.Build();
+            return Result.Of(() => builder.Build());
         }
     }
 }
