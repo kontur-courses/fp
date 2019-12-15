@@ -27,13 +27,12 @@ namespace TagsCloudContainer.TagsCloudGenerators
             this.wordPreprocessor = wordPreprocessor;
         }
 
-        public Bitmap CreateTagCloud()
+        public Result<Bitmap> CreateTagCloud()
         {
-            var text = reader.ReadAllLines();
-            var preprocessedWords = wordPreprocessor.WordPreprocessing(text);
-            var wordTokens = wordCounter.CountWords(preprocessedWords);
-            var bitmap = visualizer.VisualizeCloud(wordTokens);
-            return bitmap;
+            return Result.Of(() => reader.ReadAllLines())
+                .Then(text => wordPreprocessor.WordPreprocessing(text))
+                .Then(preprocessedWords => wordCounter.CountWords(preprocessedWords))
+                .Then(wordTokens => visualizer.VisualizeCloud(wordTokens));
         }
     }
 }

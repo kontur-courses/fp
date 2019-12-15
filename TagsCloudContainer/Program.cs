@@ -64,8 +64,11 @@ namespace TagsCloudContainer
                        var container = containerBuilder.Build();
                        var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
 
-                       var bitmap = tagsCloudGenerator.CreateTagCloud();
-                       bitmap.Save(o.Image);
+                       var result = tagsCloudGenerator.CreateTagCloud();
+                       if (result.IsSuccess)
+                           result.Value.Save(o.Image);
+                       else
+                           Console.WriteLine(result.Error);
                    });
         }
     }
