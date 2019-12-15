@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 using Autofac;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.ResultProcessing;
@@ -36,8 +35,6 @@ namespace TagsCloudContainer
                 .As<IUserInterface>();
             builder.RegisterType<ApplicationForm>()
                 .As<IResultDisplay>();
-            builder.RegisterType<ApplicationForm>()
-                .As<Form>();
 
             var pathToMyStemDirectory =
                 Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent?.FullName, "MyStem");

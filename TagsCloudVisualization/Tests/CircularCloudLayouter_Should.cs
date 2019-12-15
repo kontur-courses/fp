@@ -87,7 +87,7 @@ namespace TagsCloudVisualization.Tests
 
             foreach (var rectangle in rectangles)
             {
-                rectangles.Count(r => r == rectangle).Should().Be(1, $"rectangles should be unique");
+                rectangles.Count(r => r == rectangle).Should().Be(1, "rectangles should be unique");
                 rectangles.Where(r => r != rectangle).Any(r => r.IntersectsWith(rectangle)).Should()
                     .BeFalse("rectangles should not intersect");
             }
@@ -108,7 +108,7 @@ namespace TagsCloudVisualization.Tests
                 yield return new TestCaseData(new[] {new Size(2000, 2000)}).SetName("one big rectangle");
 
                 yield return new TestCaseData(new[]
-                        {new Size(500, 500), new Size(600, 600), new Size(500, 500), new Size(500, 500),})
+                        {new Size(500, 500), new Size(600, 600), new Size(500, 500), new Size(500, 500)})
                     .SetName("some big rectangles");
 
                 yield return new TestCaseData(Enumerable.Repeat(new Size(50, 50), 600).ToArray()).SetName(
@@ -165,7 +165,7 @@ namespace TagsCloudVisualization.Tests
                 yield return new TestCaseData(new[]
                     {
                         new Size(2, 2), new Size(3, 2), new Size(2, 4),
-                        new Size(2, 2), new Size(2, 4), new Size(4, 2),
+                        new Size(2, 2), new Size(2, 4), new Size(4, 2)
                     })
                     .SetName("when some different little rectangles");
 

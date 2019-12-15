@@ -97,9 +97,9 @@
     <Compile Include="ResultProcessing\ResultProcessor.cs" />
     <Compile Include="UserInterface\ArgumentsParsing\ArgumentsParser.cs" />
     <Compile Include="UserInterface\ConsoleInterface\ConsoleUserInterface.cs" />
+    <Compile Include="UserInterface\IResultDisplay.cs" />
     <Compile Include="UserInterface\UserInterfaceArguments.cs" />
     <Compile Include="UserInterface\ArgumentsParsing\IArgumentsParser.cs" />
-    <Compile Include="UserInterface\IResultDisplay.cs" />
     <Compile Include="UserInterface\IUserInterface.cs" />
     <Compile Include="UserInterface\Window\ApplicationForm.cs">
       <SubType>Form</SubType>
