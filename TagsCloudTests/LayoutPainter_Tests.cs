@@ -22,7 +22,7 @@ namespace TagsCloudTests
 			var imageSize = new Size(imageWidth, imageHeight);
 			var expectedLocation = new Point(expectedX, expectedY);
 
-			rectangle = LayoutPainter.ToComputerCoordinates(rectangle, imageSize);
+			rectangle = LayoutPainter.ToComputerCoords(rectangle, imageSize);
 			rectangle.Location.Should().Be(expectedLocation);
 		}
 	}

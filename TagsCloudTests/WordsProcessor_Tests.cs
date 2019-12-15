@@ -28,7 +28,7 @@ namespace TagsCloudTests
 		{
 			textReader.Read().Returns(new[] {"a", "a", "a", "a"});
 
-			var actualCollection = wordsProcessor.GetWordsWithFrequencies();
+			var actualCollection = wordsProcessor.GetWordsWithFrequencies().Value;
 			actualCollection.Should().HaveCount(1);
 		}
 		
@@ -37,7 +37,7 @@ namespace TagsCloudTests
 		{
 			textReader.Read().Returns(new[] {"a", "a", "b", "b", "b", "c"});
 			
-			var actualCollection = wordsProcessor.GetWordsWithFrequencies();
+			var actualCollection = wordsProcessor.GetWordsWithFrequencies().Value;
 			actualCollection.Should().BeInDescendingOrder(w => w.Frequency);
 		}
 
@@ -47,7 +47,7 @@ namespace TagsCloudTests
 			textReader.Read().Returns(new string[0]);
 			var expectedCollection = Enumerable.Empty<Word>();
 
-			var actualCollection = wordsProcessor.GetWordsWithFrequencies();
+			var actualCollection = wordsProcessor.GetWordsWithFrequencies().Value;
 			actualCollection.Should().BeEquivalentTo(expectedCollection);
 		}
 
@@ -61,7 +61,7 @@ namespace TagsCloudTests
 			wordFilters.Add(someFilter);
 			var expectedWords = new[] {"home"};
 
-			var actualWords = wordsProcessor.GetWordsWithFrequencies().Select(w => w.Text);
+			var actualWords = wordsProcessor.GetWordsWithFrequencies().Value.Select(w => w.Text);
 			actualWords.Should().BeEquivalentTo(expectedWords);
 		}
 		
@@ -71,7 +71,7 @@ namespace TagsCloudTests
 			textReader.Read().Returns(new[] {"HELLO", "MINE"});
 			var expectedWords = new[] {"hello", "mine"};
 
-			var actualWords = wordsProcessor.GetWordsWithFrequencies().Select(w => w.Text);
+			var actualWords = wordsProcessor.GetWordsWithFrequencies().Value.Select(w => w.Text);
 			actualWords.Should().BeEquivalentTo(expectedWords);
 		}
 
@@ -81,7 +81,7 @@ namespace TagsCloudTests
 			var sourceWords = new[] {"a", "b", "c", "B", "C", "A"};
 			textReader.Read().Returns(sourceWords);
 
-			var actualFrequencies = wordsProcessor.GetWordsWithFrequencies().Select(w => w.Frequency);
+			var actualFrequencies = wordsProcessor.GetWordsWithFrequencies().Value.Select(w => w.Frequency);
 			actualFrequencies.Should().AllBeEquivalentTo(2);
 		}
 	}

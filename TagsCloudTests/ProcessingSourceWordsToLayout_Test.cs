@@ -49,7 +49,7 @@ namespace TagsCloudTests
 				new Tag("bbbb", 10, new Rectangle(35, 15, 38, 13)), 
 			};
 
-			var actualLayoutTags = layoutConstructor.GetLayout().Tags;
+			var actualLayoutTags = layoutConstructor.GetLayout().Value.Tags;
 			actualLayoutTags.Should().BeEquivalentTo(expectedLayoutTags);
 		}
 	}

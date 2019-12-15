@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
@@ -27,9 +28,10 @@ namespace TagsCloudTests
 		{
 			layouter.PlaceNextRectangle(Size.Empty).Returns(Rectangle.Empty);
 
-			var firstLayout = layoutConstructor.GetLayout();
-			tagsProcessor.GetTags().Returns(new Tag[5]);
-			var secondLayout = layoutConstructor.GetLayout();
+			tagsProcessor.GetTags().Returns(Result.Ok<IEnumerable<Tag>>(new Tag[10]));
+			var firstLayout = layoutConstructor.GetLayout().Value;
+			tagsProcessor.GetTags().Returns(Result.Ok<IEnumerable<Tag>>(new Tag[5]));
+			var secondLayout = layoutConstructor.GetLayout().Value;
 
 			secondLayout.Tags.Should().HaveCount(5);
 			firstLayout.Should().NotBe(secondLayout);
