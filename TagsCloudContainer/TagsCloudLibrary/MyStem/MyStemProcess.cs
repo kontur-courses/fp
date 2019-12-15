@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.MyStem
 {
@@ -53,8 +54,9 @@ namespace TagsCloudLibrary.MyStem
                 string line;
                 while ((line = streamReader.ReadLine()) != null)
                 {
-                    var word = new Word(line);
-                    words.Add(word);
+                    var (isSuccess, _, value) = Word.FromMyStemConclusion(line);
+                    if (isSuccess)
+                        words.Add(value);
                 }
             }
             

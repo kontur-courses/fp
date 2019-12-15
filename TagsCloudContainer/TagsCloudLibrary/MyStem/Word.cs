@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.MyStem
 {
@@ -29,71 +30,97 @@ namespace TagsCloudLibrary.MyStem
             public string InitialForm;
         }
 
-        private readonly Regex WordAndLemmaRegex = new Regex(@"^([А-Яа-я\w-]+)\{([А-Яа-я\w=,\|\-\d?]+)\}$");
+        private static readonly Regex WordAndLemmaRegex = new Regex(@"^([А-Яа-я\w-]+)\{([А-Яа-я\w=,\|\-\d?]+)\}$");
 
         public string InitialString { get; }
         public WordGrammar Grammar { get; }
 
-        public Word(string myStemConclusion)
+        public static Result<Word> FromMyStemConclusion(string myStemConclusion)
         {
-            try
-            {
-                var match = WordAndLemmaRegex.Match(myStemConclusion);
-                var lemma = match.Groups[2].Value;
-                var possibilities = lemma.Split('|');
-                var possibility = possibilities[0].Split('=');
-                var initialForm = possibility[0];
-                var grammarInfo = possibility[1];
-                var partOfSpeechInfo = grammarInfo.Split(',')[0];
+            const string errorMessage = "Given string is not a mystem conclusion";
+            string initialString = "", initialForm = "";
 
-                InitialString = match.Groups[1].Value;
-                Grammar = new WordGrammar
+            return 
+                Result.Ok()
+                .Map(() => WordAndLemmaRegex.Match(myStemConclusion))
+                .Ensure(match => match.Success, errorMessage)
+                .Tap(match => initialString = match.Groups[1].Value)
+                .Map(match => match.Groups[2].Value)
+                .Ensure(lemma => lemma.Contains("|"), errorMessage)
+                .Map(lemma => lemma.Split('|'))
+                .Ensure(possibilities => possibilities[0].Contains("="), errorMessage)
+                .Map(possibilities => possibilities[0].Split('='))
+                .Ensure(possibility => possibility[0].Contains("="), errorMessage)
+                .Tap(possibility => initialForm = possibility[0])
+                .Map(possibility => possibility[1])
+                .Ensure(grammarInfo => grammarInfo.Contains(","), errorMessage)
+                .Map(grammarInfo => grammarInfo.Split(',')[0])
+                .Bind(PartOfSpeechFromMystem)
+                .Map(pos => new Word(initialString, new WordGrammar
                 {
                     InitialForm = initialForm,
-                    PartOfSpeech = PartOfSpeechFromMystem(partOfSpeechInfo)
-                };
-            }
-            catch (Exception e)
-            {
-                throw new FormatException("Wrong mystem conclusion was given", e);
-            }
+                    PartOfSpeech = pos
+                }));
         }
 
-        public PartOfSpeech PartOfSpeechFromMystem(string partOfSpeechInfo)
+        public Word(string initialString, WordGrammar grammar)
         {
+            InitialString = initialString;
+            Grammar = grammar;
+        }
+
+        private static Result<PartOfSpeech> PartOfSpeechFromMystem(string partOfSpeechInfo)
+        {
+            PartOfSpeech pos;
             switch (partOfSpeechInfo)
             {
                 case "A":
-                    return PartOfSpeech.Adjective;
+                    pos = PartOfSpeech.Adjective;
+                    break;
                 case "ADV":
-                    return PartOfSpeech.Adverb;
+                    pos = PartOfSpeech.Adverb;
+                    break;
                 case "ADVPRO":
-                    return PartOfSpeech.AdverbPronoun;
+                    pos = PartOfSpeech.AdverbPronoun;
+                    break;
                 case "ANUM":
-                    return PartOfSpeech.AdjectiveNumeral;
+                    pos = PartOfSpeech.AdjectiveNumeral;
+                    break;
                 case "APRO":
-                    return PartOfSpeech.AdjectivePronoun;
+                    pos = PartOfSpeech.AdjectivePronoun;
+                    break;
                 case "COM":
-                    return PartOfSpeech.Composite;
+                    pos = PartOfSpeech.Composite;
+                    break;
                 case "CONJ":
-                    return PartOfSpeech.Conjunction;
+                    pos = PartOfSpeech.Conjunction;
+                    break;
                 case "INTJ":
-                    return PartOfSpeech.Interjection;
+                    pos = PartOfSpeech.Interjection;
+                    break;
                 case "NUM":
-                    return PartOfSpeech.Numeral;
+                    pos = PartOfSpeech.Numeral;
+                    break;
                 case "PART":
-                    return PartOfSpeech.Particle;
+                    pos = PartOfSpeech.Particle;
+                    break;
                 case "PR":
-                    return PartOfSpeech.Preposition;
+                    pos = PartOfSpeech.Preposition;
+                    break;
                 case "S":
-                    return PartOfSpeech.Noun;
+                    pos = PartOfSpeech.Noun;
+                    break;
                 case "SPRO":
-                    return PartOfSpeech.NounPronoun;
+                    pos = PartOfSpeech.NounPronoun;
+                    break;
                 case "V":
-                    return PartOfSpeech.Verb;
+                    pos = PartOfSpeech.Verb;
+                    break;
                 default:
-                    throw new FormatException("Wrong part of speech info");
+                    return Result.Failure<PartOfSpeech>("Wrong part of speech was given");
             }
+
+            return Result.Ok(pos);
         }
     }
 }
