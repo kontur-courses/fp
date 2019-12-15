@@ -79,9 +79,10 @@ namespace ResultOf
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
+            Func<TInput, TOutput> continuation,
+            string error = null)
         {
-            return input.Then(inp => Of(() => continuation(inp)));
+            return input.Then(inp => Of(() => continuation(inp), error));
         }
 
         public static Result<None> Then<TInput>(

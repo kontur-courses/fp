@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Fclp;
+using ResultOf;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.UserInterface.ArgumentsParsing;
 
@@ -18,10 +19,9 @@ namespace TagsCloudContainer.UserInterface.ConsoleInterface
 
         public void Run(string[] programArgs, Action<Parameters> runProgram)
         {
-            if (TryGetParameters(programArgs, out var parameters))
-            {
-                runProgram(parameters);
-            }
+            ParseParameters(programArgs)
+                .OnFail(ShowError)
+                .Then(runProgram);
         }
 
         public void ShowResult(Bitmap bitmap)
@@ -34,20 +34,17 @@ namespace TagsCloudContainer.UserInterface.ConsoleInterface
             Console.WriteLine($@"An error has occurred: {errorMessage}");
         }
 
-        private bool TryGetParameters(string[] programArgs, out Parameters parameters)
+        private Result<Parameters> ParseParameters(string[] programArgs)
         {
             var parser = SetupParser();
 
             var parseResult = parser.Parse(programArgs);
             if (!parseResult.HasErrors && !parseResult.HelpCalled)
             {
-                parameters = argumentsParser.ParseArgumentsToParameters(parser.Object);
-                return true;
+                return argumentsParser.ParseArgumentsToParameters(parser.Object);
             }
 
-            Console.WriteLine(parseResult.ErrorText);
-            parameters = null;
-            return false;
+            return Result.Fail<Parameters>(parseResult.ErrorText);
         }
 
         private FluentCommandLineParser<UserInterfaceArguments> SetupParser()

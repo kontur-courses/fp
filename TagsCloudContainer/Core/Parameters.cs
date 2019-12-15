@@ -12,7 +12,7 @@ namespace TagsCloudContainer.Core
 
         public List<Color> Colors { get; }
 
-        public Font Font { get; }
+        public Font Font { get;}
 
         public Size ImageSize { get; }
         public ImageFormat ImageFormat { get; }
@@ -26,6 +26,38 @@ namespace TagsCloudContainer.Core
             Font = font;
             ImageSize = imageSize;
             ImageFormat = imageFormat;
+        }
+
+        public Parameters() { }
+
+        public Parameters WithInputFilePath(string inputFilePath)
+        {
+            return new Parameters(inputFilePath, OutputFilePath, Colors, Font, ImageSize, ImageFormat);
+        }
+
+        public Parameters WithOutputFilePath(string outputFilePath)
+        {
+            return new Parameters(InputFilePath, outputFilePath, Colors, Font, ImageSize, ImageFormat);
+        }
+
+        public Parameters WithColors(List<Color> colors)
+        {
+            return new Parameters(InputFilePath, OutputFilePath, colors, Font, ImageSize, ImageFormat);
+        }
+
+        public Parameters WithFont(Font font)
+        {
+            return new Parameters(InputFilePath, OutputFilePath, Colors, font, ImageSize, ImageFormat);
+        }
+
+        public Parameters WithImageSize(Size imageSize)
+        {
+            return new Parameters(InputFilePath, OutputFilePath, Colors, Font, imageSize, ImageFormat);
+        }
+
+        public Parameters WithImageFormat(ImageFormat imageFormat)
+        {
+            return new Parameters(InputFilePath, OutputFilePath, Colors, Font, ImageSize, imageFormat);
         }
     }
 }

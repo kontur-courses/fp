@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MetroFramework.Controls;
 using MetroFramework.Forms;
+using ResultOf;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.UserInterface.ArgumentsParsing;
@@ -107,8 +108,9 @@ namespace TagsCloudContainer.UserInterface.Window
                 var arguments = new UserInterfaceArguments(inputFilePathTextBox.Text,
                     outputFileTextBox.Text, (int) widthSetter.Value, (int) heightSetter.Value,
                     fontSelector.Text, colors, formatSelector.Text);
-                var parameters = argumentsParser.ParseArgumentsToParameters(arguments);
-                runProgramAction(parameters);
+                argumentsParser.ParseArgumentsToParameters(arguments)
+                    .OnFail(ShowError)
+                    .Then(runProgramAction);
             };
             return performButton;
         }
