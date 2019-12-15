@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using CSharpFunctionalExtensions;
 using TagsCloudLibrary.Colorers;
 using TagsCloudLibrary.Layouters;
 using TagsCloudLibrary.Preprocessors;
@@ -54,7 +55,10 @@ namespace TagsCloudLibrary
             using (var fs = File.OpenRead(inputFile))
             {
                 var text = reader.Read(fs);
-                var words = extractor.ExtractWords(text);
+                var (_, isFailure, value) = extractor.ExtractWords(text);
+                if (isFailure)
+                    return;
+                var words = value;
 
                 foreach (var preprocessor in preprocessors)
                 {

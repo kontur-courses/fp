@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.WordsExtractor
 {
     public interface IWordsExtractor
     {
-        IEnumerable<string> ExtractWords(Stream stream);
+        Result<IEnumerable<string>> ExtractWords(Stream stream);
     }
 }

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CSharpFunctionalExtensions;
 using TagsCloudLibrary.MyStem;
 
 namespace TagsCloudLibrary.WordsExtractor
 {
     public class LiteratureExtractor : IWordsExtractor
     {
-        public IEnumerable<string> ExtractWords(Stream stream)
+        public Result<IEnumerable<string>> ExtractWords(Stream stream)
         {
-            var myStem = new MyStemProcess();
-            return myStem.StreamToWords(stream).Value;
+            return new MyStemProcess().StreamToWords(stream);
         }
     }
 }
