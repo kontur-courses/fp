@@ -20,8 +20,8 @@ namespace TagsCloudLibrary
         private readonly List<IPreprocessor> preprocessors;
         private readonly ILayouter layouter;
         private readonly IColorer colorer;
-        private readonly FontFamily wordsFontFamily;
         private readonly IImageWriter imageWriter;
+        private readonly TagsCloudGeneratorConfig tagsCloudGeneratorConfig;
 
         public TagsCloudGenerator(
             IReader reader,
@@ -29,8 +29,8 @@ namespace TagsCloudLibrary
             IEnumerable<IPreprocessor> preprocessors,
             ILayouter layouter,
             IColorer colorer,
-            FontFamily wordsFontFamily,
-            IImageWriter imageWriter)
+            IImageWriter imageWriter,
+            TagsCloudGeneratorConfig tagsCloudGeneratorConfig)
         {
             this.reader = reader;
             this.extractor = extractor;
@@ -40,8 +40,8 @@ namespace TagsCloudLibrary
 
             this.layouter = layouter;
             this.colorer = colorer;
-            this.wordsFontFamily = wordsFontFamily;
             this.imageWriter = imageWriter;
+            this.tagsCloudGeneratorConfig = tagsCloudGeneratorConfig;
         }
 
         private Result<Stream> OpenFile(string fileName)
@@ -75,37 +75,69 @@ namespace TagsCloudLibrary
             return preprocessors.Aggregate(words, (wordsAccumulator, preprocessor) => preprocessor.Act(wordsAccumulator));
         }
 
-        private Bitmap DrawCountedWords(int width, int height, List<Tuple<string, int>> wordsWithCounts)
+        private Result<Bitmap> CreateImage(int width, int height)
         {
-            Bitmap image = new Bitmap(width, height);
-            Graphics graphics = Graphics.FromImage(image);
+            try
+            {
+                return Result.Ok(new Bitmap(width, height));
+            }
+            catch (Exception e)
+            {
+                return Result.Failure<Bitmap>("Failed to create image. " + e.Message);
+            }
+        }
+
+        private Result<FontFamily> GetFontFamilyByName(string name)
+        {
+            try
+            {
+                return Result.Ok(new FontFamily(tagsCloudGeneratorConfig.FontFamilyName));
+            }
+            catch (Exception e)
+            {
+                return Result.Failure<FontFamily>(e.Message);
+            }
+        }
+
+        private Result<Bitmap> DrawCountedWords(int width, int height, List<Tuple<string, int>> wordsWithCounts)
+        {
+            FontFamily fontFamily = null;
             var totalWords = wordsWithCounts.Aggregate(0, (i, tuple) => i + tuple.Item2);
 
-            foreach (var wordWithCount in wordsWithCounts)
-            {
-                var (word, count) = wordWithCount;
-                var font = new Font(wordsFontFamily, (float)count * height / totalWords * 2);
-                var color = colorer.ColorForWord(word, (double)count / totalWords);
+            return
+                Result.Ok()
+                .Bind(() => GetFontFamilyByName(tagsCloudGeneratorConfig.FontFamilyName))
+                .Tap(ff => fontFamily = ff)
+                .Bind(ff => CreateImage(width, height))
+                .Tap(bitmap =>
+                {
+                    var graphics = Graphics.FromImage(bitmap);
+                    wordsWithCounts.ForEach(tuple =>
+                    {
+                        var (word, count) = tuple;
+                        var font = new Font(fontFamily, (float)count * height / totalWords * 2);
+                        
+                        layouter
+                            .PutNextRectangle(graphics.MeasureString(word, font).ToSize())
+                            .Tap(rectangle => 
+                                graphics.DrawString(
+                                word,
+                                font,
+                                new SolidBrush(colorer.ColorForWord(word, (double)count / totalWords)),
+                                rectangle.X + width / 2,
+                                rectangle.Y + height / 2));
 
-                var textSize = graphics.MeasureString(word, font).ToSize();
-
-                var (_, isFailure, rectangle) = layouter.PutNextRectangle(textSize);
-                if (isFailure) continue;
-                graphics.DrawString(
-                    word,
-                    font,
-                    new SolidBrush(color),
-                    rectangle.X + width / 2,
-                    rectangle.Y + height / 2);
-            }
-
-            return image;
+                    });
+                });
         }
 
         public Result GenerateFromFile(string inputFile, string outputFile, int imageWidth, int imageHeight)
         {
 
-            return OpenFile(inputFile)
+            return
+                Result.Ok()
+                .Ensure(() => imageWidth > 0 && imageHeight > 0, "Image size is incorrect")
+                .Bind(() => OpenFile(inputFile))
                 .Bind(reader.Read)
                 .Bind(extractor.ExtractWords)
                 .Map(ApplyPreprocessors)
@@ -115,7 +147,7 @@ namespace TagsCloudLibrary
                     .OrderByDescending(tuple => tuple.Item2)
                     .ThenBy(tuple => tuple.Item1)
                     .ToList())
-                .Map(wws => DrawCountedWords(imageWidth, imageHeight, wws))
+                .Bind(wws => DrawCountedWords(imageWidth, imageHeight, wws))
                 .Bind(image => imageWriter.WriteBitmapToFile(image, outputFile));
         }
     }

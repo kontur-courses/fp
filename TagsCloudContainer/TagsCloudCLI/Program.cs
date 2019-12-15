@@ -94,16 +94,12 @@ namespace TagsCloudCLI
 
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
 
-            FontFamily fontFamily;
-            try
+            TagsCloudGeneratorConfig tcgc = new TagsCloudGeneratorConfig
             {
-                fontFamily = new FontFamily(options.Font);
-            }
-            catch
-            {
-                fontFamily = FontFamily.GenericSansSerif;
-            }
-            builder.RegisterInstance(fontFamily).As<FontFamily>();
+                FontFamilyName = options.Font
+            };
+
+            builder.RegisterInstance(tcgc).As<TagsCloudGeneratorConfig>();
 
             switch (options.Color)
             {

@@ -34,9 +34,12 @@ namespace TagsCloudLibraryTests
                         )
                 },
                 new CircularCloudLayouter(),
-                new ConstantColorer(Color.Black),
-                new FontFamily("Arial"), 
-                new PngWriter()
+                new ConstantColorer(Color.Black), 
+                new PngWriter(),
+                new TagsCloudGeneratorConfig
+                {
+                    FontFamilyName = "Arial"
+                }
             );
         }
 
