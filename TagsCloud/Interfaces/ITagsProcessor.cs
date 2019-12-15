@@ -4,6 +4,6 @@ namespace TagsCloud.Interfaces
 {
 	public interface ITagsProcessor
 	{
-		IEnumerable<Tag> GetTags();
+		Result<IEnumerable<Tag>> GetTags();
 	}
 }

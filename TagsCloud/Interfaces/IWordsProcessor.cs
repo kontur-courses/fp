@@ -4,6 +4,6 @@ namespace TagsCloud.Interfaces
 {
 	public interface IWordsProcessor
 	{
-		IEnumerable<Word> GetWordsWithFrequencies();
+		Result<IEnumerable<Word>> GetWordsWithFrequencies();
 	}
 }

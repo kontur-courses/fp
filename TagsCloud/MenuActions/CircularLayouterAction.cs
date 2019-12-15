@@ -26,20 +26,20 @@ namespace TagsCloud.MenuActions
 		public void Perform()
 		{
 			SettingsForm.For(parameters).ShowDialog();
-			if (!ValidateParameters())
-				return;
-			var newLayout = layoutConstructor.GetLayout();
-			painter.PaintTags(newLayout);
+
+			ValidateParameters()
+				.Then(_ => layoutConstructor.GetLayout())
+				.Then(layout => painter.PaintTags(layout))
+				.OnFail(exceptionHandler.Handle);
 		}
 		
-		private bool ValidateParameters()
+		private Result<None> ValidateParameters()
 		{
 			if (!(Math.Abs(parameters.Density) < double.Epsilon) &&
 			    !(Math.Abs(parameters.AngleStepDegrees) < double.Epsilon))
-				return true;
+				return Result.Ok();
 
-			exceptionHandler.Handle(new ArgumentException("Spiral parameters can't be zero"));
-			return false;
+			return Result.Fail<None>(new ArgumentException("Spiral parameters can't be zero"));
 		}
 	}
 }

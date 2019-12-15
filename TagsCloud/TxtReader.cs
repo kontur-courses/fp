@@ -15,19 +15,16 @@ namespace TagsCloud
 			this.exceptionHandler = exceptionHandler;
 		}
 
-		public string[] Read()
+		public Result<string[]> Read()
 		{
 			try
 			{
 				var lines = File.ReadAllLines(fileName);
-				if (lines.Length == 0)
-					throw new Exception("File is empty");
 				return lines;
 			}
 			catch (Exception e)
 			{
-				exceptionHandler.Handle(e);
-				return new string[0];
+				return Result.Fail<string[]>(e);
 			}
 		}
 	}

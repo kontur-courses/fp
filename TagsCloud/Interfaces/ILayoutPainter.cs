@@ -2,6 +2,6 @@
 {
 	public interface ILayoutPainter
 	{
-		void PaintTags(Layout layout);
+		Result<None> PaintTags(Layout layout);
 	}
 }

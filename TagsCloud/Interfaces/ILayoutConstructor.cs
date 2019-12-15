@@ -2,6 +2,6 @@
 {
 	public interface ILayoutConstructor
 	{
-		Layout GetLayout();
+		Result<Layout> GetLayout();
 	}
 }

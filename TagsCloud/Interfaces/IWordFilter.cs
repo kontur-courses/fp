@@ -4,6 +4,6 @@ namespace TagsCloud.Interfaces
 {
 	public interface IWordFilter
 	{
-		bool CheckWord(string word);
+		Result<bool> CheckWord(string word);
 	}
 }

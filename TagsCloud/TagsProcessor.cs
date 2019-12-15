@@ -22,11 +22,17 @@ namespace TagsCloud
 			this.imageHolder = imageHolder;
 		}
 
-		public IEnumerable<Tag> GetTags() =>
-			from word in wordsProcessor.GetWordsWithFrequencies()
-			let fontSize = CalculateFontSize(word)
-			let wordSize = GetWordSize(word.Text, fontSize) 
-			select new Tag(word.Text, fontSize, new Rectangle(Point.Empty, wordSize));
+		public Result<IEnumerable<Tag>> GetTags()
+		{
+			return wordsProcessor.GetWordsWithFrequencies()
+				.Then(words => words
+					.Select(word =>
+					{
+						var fontSize = CalculateFontSize(word);
+						var wordSize = GetWordSize(word.Text, fontSize);
+						return new Tag(word.Text, fontSize, new Rectangle(Point.Empty, wordSize));
+					}));
+		}
 
 		private Size GetWordSize(string word, int fontSize)
 		{

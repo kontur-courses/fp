@@ -8,9 +8,7 @@ namespace TagsCloud
 	{
 		public void Handle(Exception exception)
 		{
-			var caption = "Something went wrong";
-			if (exception is ArgumentException)
-				caption = "Wrong input";
+			var caption = exception.TargetSite?.Name;
 			MessageBox.Show(exception.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}

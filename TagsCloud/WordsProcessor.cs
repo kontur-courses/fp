@@ -15,10 +15,13 @@ namespace TagsCloud
 			this.wordFilters = wordFilters;
 		}
 
-		public IEnumerable<Word> GetWordsWithFrequencies()
+		public Result<IEnumerable<Word>> GetWordsWithFrequencies()
 		{
 			var frequencies = new Dictionary<string, int>();
-			foreach (var word in FilterWords())
+			var filteredWords = FilterWords();
+			if (!filteredWords.IsSuccess)
+				return Result.Fail<IEnumerable<Word>>(filteredWords.Error);
+			foreach (var word in filteredWords.Value)
 			{
 				if (frequencies.ContainsKey(word))
 					frequencies[word]++;
@@ -26,12 +29,35 @@ namespace TagsCloud
 					frequencies[word] = 1;
 			}
 
-			return frequencies
+			var resultWords = frequencies
 				.OrderByDescending(pair => pair.Value)
 				.Select(pair => new Word(pair.Key, pair.Value));
+			return Result.Ok(resultWords);
 		}
 
-		private IEnumerable<string> FilterWords() => 
-			textReader.Read().Select(w => w.ToLower()).Where(word => wordFilters.All(f => f.CheckWord(word)));
+		private Result<IEnumerable<string>> FilterWords()
+		{
+			var words = textReader.Read();
+			if (!words.IsSuccess)
+				return Result.Fail<IEnumerable<string>>(words.Error);
+			var resultWords = new List<string>();
+			
+			foreach (var word in words.Value.Select(w => w.ToLower()))
+			{
+				var results = wordFilters.Select(filter => filter.CheckWord(word));
+				var wordIsCorrect = true;
+				foreach (var result in results)
+				{
+					if (!result.IsSuccess)
+						return Result.Fail<IEnumerable<string>>(result.Error);
+					if (result.Value) continue;
+					wordIsCorrect = false;
+					break;
+				}
+				if (wordIsCorrect)
+					resultWords.Add(word);
+			}
+			return resultWords;
+		}
 	}
 }
