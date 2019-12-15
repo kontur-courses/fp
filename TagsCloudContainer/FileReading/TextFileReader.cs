@@ -9,16 +9,18 @@ namespace TagsCloudContainer.FileReading
     {
         public IEnumerable<string> ReadWords(string textFileName)
         {
+            if (!File.Exists(textFileName))
+                throw new FileNotFoundException($"File {textFileName} was not found");
+
             var notAllowedSymbolsRegex = new Regex(@"[^\w+ ]");
 
-            foreach (var line in File.ReadLines(textFileName))
-            {
-                var allowedLine = notAllowedSymbolsRegex.Replace(line, " ");
-                foreach (var word in allowedLine.Split(' ').Where(w => w.Length > 0))
-                {
-                    yield return word;
-                }
-            }
+            return File
+                .ReadLines(textFileName)
+                .SelectMany(line => notAllowedSymbolsRegex
+                    .Replace(line, " ")
+                    .Split(' ')
+                    .Where(w => w.Length > 0)
+                );
         }
     }
 }

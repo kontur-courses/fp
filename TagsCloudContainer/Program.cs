@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
 using TagsCloudContainer.Core;
+using TagsCloudContainer.FileReading;
 using TagsCloudContainer.ResultProcessing;
 using TagsCloudContainer.UserInterface;
+using TagsCloudContainer.UserInterface.ConsoleInterface;
 using TagsCloudContainer.UserInterface.Window;
 using TagsCloudContainer.WordProcessing.Converting;
 
@@ -32,9 +34,9 @@ namespace TagsCloudContainer
                 .SingleInstance();
             builder.RegisterType<ToInitialFormWordConverter>()
                 .As<IWordConverter>();
-            builder.RegisterType<ApplicationForm>()
+            builder.RegisterType<ConsoleUserInterface>()
                 .As<IUserInterface>();
-            builder.RegisterType<ApplicationForm>()
+            builder.RegisterType<ConsoleUserInterface>()
                 .As<IResultDisplay>();
             builder.RegisterType<ApplicationForm>()
                 .As<Form>();

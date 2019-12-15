@@ -26,14 +26,11 @@ namespace TagsCloudContainer.Core
         public Result<Bitmap> GetTagCloudBitmap(Parameters parameters)
         {
             return Result.Of(() => fileReader.ReadWords(parameters.InputFilePath))
+                .RefineError("Failed to read input file")
                 .Then(words => wordProcessor.ProcessWords(words))
                 .Then(processedWords => layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize))
                 .Then(layout =>
                     visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors));
-            //var words = fileReader.ReadWords(parameters.InputFilePath);
-            //var processedWords = wordProcessor.ProcessWords(words);
-            //var layout = layoutAlgorithm.GetLayout(processedWords, parameters.ImageSize);
-            //return visualizer.GetLayoutBitmap(layout, parameters.Font, parameters.ImageSize, parameters.Colors);
         }
     }
 }

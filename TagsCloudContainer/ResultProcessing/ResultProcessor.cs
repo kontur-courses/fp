@@ -22,8 +22,10 @@ namespace TagsCloudContainer.ResultProcessing
             if (resultOfBitmap.IsSuccess)
             {
                 var bitmap = resultOfBitmap.GetValueOrThrow();
-                imageSaver.SaveBitmap(bitmap, filePath, imageFormat);
-                resultDisplay.ShowResult(bitmap);
+                Result.OfAction(() => imageSaver.SaveBitmap(bitmap, filePath, imageFormat))
+                    .RefineError("Failed to save result")
+                    .Then(none => resultDisplay.ShowResult(bitmap))
+                    .OnFail(error => resultDisplay.ShowError(error));
             }
             else
             {
