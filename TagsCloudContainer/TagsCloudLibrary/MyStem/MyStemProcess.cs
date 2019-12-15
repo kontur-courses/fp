@@ -73,10 +73,11 @@ namespace TagsCloudLibrary.MyStem
         private static Stream StreamFromString(string s)
         {
             var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(s);
-            writer.Flush();
-            stream.Position = 0;
+            using (var writer = new StreamWriter(stream)) { 
+                writer.Write(s);
+                writer.Flush();
+                stream.Position = 0;
+            }
             return stream;
         }
         
