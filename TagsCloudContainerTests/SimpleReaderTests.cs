@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using TagsCloudContainer.Readers;
 
 namespace TagsCloudContainerTests
@@ -9,7 +10,7 @@ namespace TagsCloudContainerTests
         [Test]
         public void ReadAllLines_Docx()
         {
-            var simpleReader = new SimpleReader(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"TagsCloudContainerTests\Words.docx"));
+            var simpleReader = new SimpleReader(System.IO.Path.Combine(TestContext.CurrentContext.TestDirectory, "Words.docx"));
 
             var result = simpleReader.ReadAllLines();
 
@@ -22,7 +23,7 @@ namespace TagsCloudContainerTests
         [Test]
         public void ReadAllLines_Doc()
         {
-            var simpleReader = new SimpleReader(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"TagsCloudContainerTests\Words.doc"));
+            var simpleReader = new SimpleReader(System.IO.Path.Combine(TestContext.CurrentContext.TestDirectory, "Words.doc"));
 
             var result = simpleReader.ReadAllLines();
 
@@ -35,7 +36,7 @@ namespace TagsCloudContainerTests
         [Test]
         public void ReadAllLines_txt()
         {
-            var simpleReader = new SimpleReader(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"TagsCloudContainerTests\Words.txt"));
+            var simpleReader = new SimpleReader(System.IO.Path.Combine(TestContext.CurrentContext.TestDirectory, "Words.txt"));
 
             var result = simpleReader.ReadAllLines();
 

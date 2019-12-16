@@ -51,7 +51,7 @@ namespace TagsCloudContainerTests
         {
             var container = containerBuilder.Build();
             var simpleWordPreprocessor = container.Resolve<IWordPreprocessor>();
-            var simpleReader = new SimpleReader(@"TagsCloudContainer\WordsRus.txt");
+            var simpleReader = new SimpleReader(System.IO.Path.Combine(TestContext.CurrentContext.TestDirectory, "WordsRus.txt"));
 
             var result = simpleWordPreprocessor.WordPreprocessing(simpleReader.ReadAllLines().GetValueOrThrow());
 

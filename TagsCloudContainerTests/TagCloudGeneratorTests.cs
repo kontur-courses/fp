@@ -39,7 +39,7 @@ namespace TagsCloudContainerTests
                     new NamedParameter("painterWords", new SimplePainterWords(Brushes.Red))
                 });
             containerBuilder.RegisterType<SimpleVisualizer>().As<IVisualizer>().WithParameter("imageSettings", new ImageSettings(40, 640)); ;
-            containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", Path.Combine(Environment.CurrentDirectory, @"TagsCloudContainer\WordsRus.txt"));
+            containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", Path.Combine(TestContext.CurrentContext.TestDirectory, "WordsRus.txt"));
             containerBuilder.RegisterType<TagsCloudGenerator>().As<TagsCloudGenerator>();
         }
 
