@@ -10,9 +10,16 @@ namespace TagsCloudLibrary.Readers
     {
         public string Name { get; } = "txt";
 
-        public Result<Stream> Read(Stream stream)
+        public Result<Stream> Read(string fileName)
         {
-            return Result.Ok(stream);
+            try
+            {
+                return Result.Ok<Stream>(File.OpenRead(fileName));
+            }
+            catch (Exception e)
+            {
+                return Result.Failure<Stream>(e.Message);
+            }
         }
     }
 }

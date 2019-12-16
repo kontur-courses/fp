@@ -7,6 +7,6 @@ namespace TagsCloudLibrary.Readers
     public interface IReader
     {
         string Name { get; }
-        Result<Stream> Read(Stream stream);
+        Result<Stream> Read(string fileName);
     }
 }
