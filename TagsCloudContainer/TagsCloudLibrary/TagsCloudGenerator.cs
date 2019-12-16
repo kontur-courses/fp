@@ -70,7 +70,7 @@ namespace TagsCloudLibrary
             return words.Aggregate(new Dictionary<string, int>(), (stats, word) =>
             {
                 if (stats.ContainsKey(word))
-                    ++stats[word];
+                    stats[word]++;
                 else
                     stats[word] = 1;
                 return stats;
