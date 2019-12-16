@@ -10,17 +10,17 @@ namespace TagsCloudLibrary.Layouters
     {
         public string Name { get; } = "Circular";
 
-        private Point _center;
-        private readonly List<Rectangle> _placedRectangles = new List<Rectangle>();
+        private Point center;
+        private readonly List<Rectangle> placedRectangles = new List<Rectangle>();
 
         public CircularCloudLayouter()
         {
-            _center = Point.Empty;
+            center = Point.Empty;
         }
 
         public CircularCloudLayouter(Point center)
         {
-            _center = center;
+            this.center = center;
         }
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
@@ -30,10 +30,10 @@ namespace TagsCloudLibrary.Layouters
 
             var (x, y) = GetNextUpperLeftCornerPosition(rectangleSize);
             var newRectangle = new Rectangle(x, y, rectangleSize.Width, rectangleSize.Height);
-            while (_placedRectangles.Any(pr => pr.IntersectsWith(newRectangle)))
+            while (placedRectangles.Any(pr => pr.IntersectsWith(newRectangle)))
                 (newRectangle.X, newRectangle.Y) = GetNextUpperLeftCornerPosition(newRectangle.Size);
 
-            _placedRectangles.Add(newRectangle);
+            placedRectangles.Add(newRectangle);
             return Result.Ok(newRectangle);
         }
 
@@ -43,8 +43,8 @@ namespace TagsCloudLibrary.Layouters
 
         private (int x, int y) GetNextUpperLeftCornerPosition(Size size)
         {
-            var x = (int)(_center.X + SpiralFactor * _spiralPosition * Math.Cos(_spiralPosition) - size.Width / 2d);
-            var y = (int)(_center.Y + SpiralFactor * _spiralPosition * Math.Sin(_spiralPosition) - size.Height / 2d);
+            var x = (int)(center.X + SpiralFactor * _spiralPosition * Math.Cos(_spiralPosition) - size.Width / 2d);
+            var y = (int)(center.Y + SpiralFactor * _spiralPosition * Math.Sin(_spiralPosition) - size.Height / 2d);
             _spiralPosition += Step;
             return (x, y);
         }
