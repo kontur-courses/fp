@@ -82,9 +82,7 @@ namespace TagsCloudCLI
             builder.RegisterType<ExcludeBoringWords>().As<IPreprocessor>();
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
 
-            builder.RegisterInstance(new TagsCloudGeneratorConfig {
-                FontFamilyName = options.Font
-            }).As<TagsCloudGeneratorConfig>();
+            CheckAndRegisterTagsCloudGeneratorConfig(builder, options);
 
             RegisterColorer(builder, options);
 
@@ -95,6 +93,20 @@ namespace TagsCloudCLI
             var container = builder.Build();
 
             return container.Resolve<TagsCloudGenerator>();
+        }
+
+        private static void CheckAndRegisterTagsCloudGeneratorConfig(ContainerBuilder builder, Options options)
+        {
+            if (!FontFamilyExists(options.Font))
+            {
+                Console.WriteLine($"Cannot find font {options.Font} reverting to {FontFamily.GenericSansSerif.Name}");
+                options.Font = FontFamily.GenericSansSerif.Name;
+            }
+
+            builder.RegisterInstance(new TagsCloudGeneratorConfig
+            {
+                FontFamilyName = options.Font
+            }).As<TagsCloudGeneratorConfig>();
         }
 
         private static void RegisterBoringWordsConfig(ContainerBuilder builder, Options options)
@@ -123,7 +135,7 @@ namespace TagsCloudCLI
         {
             switch (options.Color)
             {
-                case "word":
+                case "word-hashcode":
                     builder.RegisterType<WordHashcodeColorer>().As<IColorer>();
                     break;
                 default:
@@ -163,9 +175,30 @@ namespace TagsCloudCLI
                 {
                     posWhitelist.Add(partOfSpeech);
                 }
+                else
+                {
+                    Console.WriteLine($"{pos} is not a correct part of speech. Ignored.");
+                }
             }
 
             return posWhitelist;
+        }
+
+        private static bool FontFamilyExists(string fontFamilyName, FontStyle fontStyle = FontStyle.Regular)
+        {
+            bool result;
+
+            try
+            {
+                using (var family = new FontFamily(fontFamilyName))
+                    result = family.IsStyleAvailable(fontStyle);
+            }
+            catch (ArgumentException)
+            {
+                result = false;
+            }
+
+            return result;
         }
     }
 }
