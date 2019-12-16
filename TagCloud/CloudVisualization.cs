@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -17,15 +19,16 @@ namespace TagCloud
 
         public Dictionary<string, Palette> PaletteDictionary { get; }
 
-        public Bitmap GetAndDrawRectangles(ImageSettings imageSettings, string path = "test.txt")
+        public Result<Bitmap> GetAndDrawRectangles(ImageSettings imageSettings, string path = "test.txt")
         {
             var palette = PaletteDictionary[imageSettings.PaletteName];
             var image = new Bitmap(imageSettings.Width, imageSettings.Height);
             using (var graphics = Graphics.FromImage(image))
             {
-                var rectangles =
-                    RectanglesCustomizer.GetRectanglesWithPalette(palette,
-                        cloud.GetRectangles(graphics, imageSettings, path));
+                var tagRectanglesResult = cloud.GetRectangles(graphics, imageSettings, path);
+                if (!tagRectanglesResult.IsSuccess)
+                    return Result.Fail<Bitmap>(tagRectanglesResult.Error);
+                var rectangles = RectanglesCustomizer.GetRectanglesWithPalette(palette, tagRectanglesResult.Value);
                 foreach (var rectangle in rectangles)
                     graphics.DrawString(rectangle.Tag.Text, rectangle.Tag.Font, new SolidBrush(rectangle.Color),
                         rectangle.Area.Location);

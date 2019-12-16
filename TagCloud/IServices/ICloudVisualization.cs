@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagCloud.Models;
 
 namespace TagCloud
@@ -7,6 +8,6 @@ namespace TagCloud
     public interface ICloudVisualization
     {
         Dictionary<string, Palette> PaletteDictionary { get; }
-        Bitmap GetAndDrawRectangles(ImageSettings imageSettings, string path);
+        Result<Bitmap> GetAndDrawRectangles(ImageSettings imageSettings, string path);
     }
 }

@@ -21,11 +21,6 @@ namespace TagCloud
 
         public Result<List<Tag>> Create(ImageSettings imageSettings, string path)
         {
-            //var primaryCollection = wordsHandler.GetWordsAndCount(path);
-            //var collectionAfterConversion = wordsHandler.Conversion(primaryCollection);
-            //return parser.GetTagsRectangles(collectionAfterConversion, imageSettings)
-            //    .OrderByDescending(t => t.Count)
-            //    .ToList();
             return wordsHandler.GetWordsAndCount(path)
                 .Then(wordsAndCount => wordsHandler.Conversion(wordsAndCount))
                 .Then(wordsAfterConversion => parser.GetTagsRectangles(wordsAfterConversion,imageSettings)

@@ -19,11 +19,6 @@ namespace TagCloud
                     .Select(p => new KeyValuePair<string, int>(p.Key.ToLower(), p.Value))
                     .Where(p => !bw.Contains(p.Key))
                     .ToDictionary(p => p.Key, p => p.Value));
-
-            //return wordsAndCount
-            //    .Select(p => new KeyValuePair<string, int>(p.Key.ToLower(), p.Value))
-            //    .Where(p => !boringWords.Contains(p.Key))
-            //    .ToDictionary(p => p.Key, p => p.Value);
         }
 
         public Result<Dictionary<string, int>> GetWordsAndCount(string path)

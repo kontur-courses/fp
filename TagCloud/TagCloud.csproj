@@ -88,7 +88,7 @@
     <Compile Include="WordsHandler.cs" />
     <Compile Include="ArchemedianSpiral.cs" />
     <Compile Include="CircularCloudLayouter.cs" />
-    <Compile Include="Cloud.cs" />
+    <Compile Include="IServices\Cloud.cs" />
     <Compile Include="CloudVisualization.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="IServices\IAlgorithm.cs" />

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -18,22 +21,32 @@ namespace TagCloud
             this.layouter = layouter;
         }
 
-        public List<TagRectangle> GetRectangles(Graphics graphics, ImageSettings imageSettings, string path = null)
+        public Result<List<TagRectangle>> GetRectangles(Graphics graphics, ImageSettings imageSettings, string path = null)
         {
             layouter.Clear();
             var tagCollection = tagCollectionFactory.Create(imageSettings, path);
             if(!tagCollection.IsSuccess)
-                throw new FileNotFoundException(tagCollection.Error);
+                return Result.Fail<List<TagRectangle>>(tagCollection.Error);
             var center = new Point(imageSettings.Width / 2, imageSettings.Height / 2);
-            var rectangles = tagCollection.Value
+            var rectangles = Result.Of(()=>tagCollection.Value
                 .Select(t => new TagRectangle(
                     t,
                     layouter.PutNextRectangle(GetWordSize(t, graphics), center)))
-                .ToList();
+                .ToList())
+                .Then(list =>
+                {
+                    if (!list.Any(r => IsRectangleInPolygon(r.Area, imageSettings.Width, imageSettings.Height)))
+                        throw new ArgumentException("Облако не помещается в изображение");
+                    return list;
+                });
             return rectangles;
         }
 
-        private SizeF GetWordSize(Tag tag, Graphics graphics)
+        private static bool IsRectangleInPolygon(RectangleF rectangle, int width, int height)
+        {
+            return rectangle.Bottom < height && rectangle.Top > 0 && rectangle.Left < width && rectangle.Right > 0;
+        }
+        private static SizeF GetWordSize(Tag tag, Graphics graphics)
         {
             return graphics.MeasureString(tag.Text, tag.Font);
         }

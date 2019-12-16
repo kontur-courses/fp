@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -40,9 +42,19 @@ namespace TagCloud
                 config.ToCreateNewImage = false;
                 while (!config.ToExit && !config.ToCreateNewImage)
                 {
+                    var createImageResult = new Result<Bitmap>();
                     if (userSettings.IsCompleted)
-                        config.ImageToSave =
+                    {
+                        createImageResult =
                             visualization.GetAndDrawRectangles(userSettings.ImageSettings, userSettings.PathToRead);
+                        if (!createImageResult.IsSuccess)
+                        {
+                            Console.WriteLine(createImageResult.Error);
+                            actionsDictionary["-newimage"].Perform(config,userSettings);
+                            continue;
+                        }
+                    }
+
                     Console.WriteLine("Введите команду");
                     Console.Write(">>>");
                     var command = Console.ReadLine().ToLower();
