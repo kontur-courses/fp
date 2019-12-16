@@ -54,10 +54,7 @@ namespace TagsCloudResult
 
         public Result<None> SaveVisualized()
         {
-            if (VisualizedBitmap is null)
-                return VisualizeCloud();
-            imageSaver.Save(VisualizedBitmap);
-            return Result.Ok();
+            return VisualizedBitmap is null ? VisualizeCloud() : imageSaver.Save(VisualizedBitmap);
         }
     }
 }
