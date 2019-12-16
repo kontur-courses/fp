@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -17,7 +18,7 @@ namespace FileSenderRailway
     public interface ISender
     {
         /// <exception cref="InvalidOperationException">Can't send</exception>
-        void Send(Document document);
+        Result<Document> Send(Document document);
     }
 
     public class Document
@@ -30,10 +31,15 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public string Name { get; private  set; }
+        public DateTime Created { get; private  set; }
+        public string Format { get; private  set; }
+        public byte[] Content { get; private  set; }
+
+        public Document ChangeContent(byte[] content)
+        {
+            return new Document(Name, content, Created, Format);
+        }
     }
 
     public class FileContent

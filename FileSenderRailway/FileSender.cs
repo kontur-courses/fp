@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -23,30 +24,33 @@ namespace FileSenderRailway
             this.now = now;
         }
 
+        Result<Document> PrepareFileToSend(FileContent file, X509Certificate certificate)
+        {
+            Document doc = recognizer.Recognize(file);
+            if (!IsValidFormatVersion(doc))
+                return Result.Fail<Document>("Invalid format version");
+            if (!IsValidTimestamp(doc))
+                return Result.Fail<Document>("Too old document");
+            return Result.Ok(doc.ChangeContent(cryptographer.Sign(doc.Content, certificate)));
+        }
+
         public IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate)
         {
             foreach (var file in files)
             {
                 string errorMessage = null;
-                try
+
+                var result = PrepareFileToSend(file, certificate);
+
+                if (result.IsSuccess)
                 {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
-                    sender.Send(doc);
+                    var res = sender.Send(result.Value);
+                    if(!res.IsSuccess)
+                        errorMessage = "Can't send";
                 }
-                catch (FormatException e)
-                {
-                    errorMessage = "Can't prepare file to send. " + e.Message;
-                }
-                catch (InvalidOperationException e)
-                {
-                    errorMessage = "Can't send. " + e.Message;
-                }
-                yield return new FileSendResult(file, errorMessage);
+
+                errorMessage = errorMessage ?? "Can't prepare file to send";
+                yield return new FileSendResult(file, result.RefineError(errorMessage).Error);
             }
         }
 

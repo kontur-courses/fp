@@ -46,7 +46,6 @@ namespace FileSenderRailway
                 .MustHaveHappened();
         }
 
-
         [Test]
         public void Fail_WhenNotRecognized()
         {

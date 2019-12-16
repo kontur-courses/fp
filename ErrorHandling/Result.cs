@@ -58,21 +58,56 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
-        }
+            if (!input.IsSuccess) return Fail<TOutput>(input.Error);
+            try
+            {
+                return Ok(continuation(input.Value));
+            }
+            catch (Exception e)
+            {
+                return Fail<TOutput>(e.Message);
+            }
 
+            /* return iinput.Then(i => Of(() => continuation(i)));
+             * 
+             * 
+             */
+            
+            // return input.IsSuccess ? Of(()=> continuation(input.Value))
+            //:
+            //Fail<Out>(input.Error);
+        }
+        
+        public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input, Func<TInput, string> func)
+        {
+            if (!input.IsSuccess)
+                return Fail<TInput>(func(input.Value));
+            return input;
+        }
+        
+        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string additionalString)
+        {
+            if (!input.IsSuccess)
+                return Fail<TInput>(additionalString+". "+input.Error);
+            return input;
+        }
+        
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            if(input.IsSuccess)
+                return continuation(input.Value);
+            return Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+                handleError(input.Error);
+            return input;
         }
     }
 }
