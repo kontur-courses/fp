@@ -6,25 +6,8 @@ using CSharpFunctionalExtensions;
 
 namespace TagsCloudLibrary.Writers
 {
-    public class PngWriter : IImageWriter
+    public class PngWriter : BuiltinFormatWriter
     {
-        public Result WriteBitmapToFile(Bitmap bitmap, string fileName)
-        {
-            try
-            {
-                var extension = Path.GetExtension(fileName);
-                if (extension == "")
-                {
-                    fileName = fileName + ".png";
-                }
-                bitmap.Save(fileName, ImageFormat.Png);
-            }
-            catch (Exception e)
-            {
-                return Result.Failure(e.Message);
-            }
-
-            return Result.Ok();
-        }
+        public PngWriter() : base(ImageFormat.Png, "png") { }
     }
 }
