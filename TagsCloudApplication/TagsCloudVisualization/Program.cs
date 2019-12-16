@@ -7,6 +7,7 @@ using TagsCloudLayout.PointLayouters;
 using TextConfiguration.WordFilters;
 using TextConfiguration.WordProcessors;
 using CommandLine;
+using System.Collections.Generic;
 
 namespace TagsCloudVisualization
 {
@@ -76,8 +77,8 @@ namespace TagsCloudVisualization
 
         private static void RunWithParsedOptions(Options opts)
         {
-            var container = ConfigureContainer(opts);
-            container.Resolve<ConsoleTagCloudBuilder>().Run()
+            Result.Of(() => ConfigureContainer(opts))
+                .Then(container => container.Resolve<ConsoleTagCloudBuilder>().Run())
                 .OnFail(err => System.Console.WriteLine(err));
         }
 

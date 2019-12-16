@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using System.Collections.Generic;
 
 namespace TagsCloudVisualization
 {
@@ -26,19 +27,19 @@ namespace TagsCloudVisualization
         public string FontColorName { get; set; }
 
         [Option(
-            'i',
+            'r',
             Default = new[] { 800, 600 },
             Min = 2, Max = 2,
             Separator = 'x',
-            HelpText = "Set image size")]
-        public int[] ImageSize { get; set; }
+            HelpText = "Set image size. Example: 800x600")]
+        public IEnumerable<int> ImageSize { get; set; }
 
         [Option(
             'p',
             Default = new[] { 400, 300 },
             Min = 2, Max = 2,
             Separator = ';',
-            HelpText = "Set cloud center point")]
-        public int[] CentralPoint { get; set; }
+            HelpText = "Set cloud center point. Example: 400;300")]
+        public IEnumerable<int> CentralPoint { get; set; }
     }
 }

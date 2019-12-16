@@ -26,7 +26,7 @@ namespace TextConfiguration
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            throw new InvalidOperationException($"{Error}");
         }
         public bool IsSuccess => Error == null;
     }

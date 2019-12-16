@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using TextConfiguration;
 
 namespace TagsCloudVisualization
@@ -19,7 +20,8 @@ namespace TagsCloudVisualization
 
         public VisualizatorProperties GetVisualizatorProperties()
         {
-            return new VisualizatorProperties(new Size(options.ImageSize[0], options.ImageSize[1]));
+            var imageSize = options.ImageSize.ToList();
+            return new VisualizatorProperties(new Size(imageSize[0], imageSize[1]));
         }
 
         public ConstantTextColorProvider GetConstantTextColorProvider()
@@ -34,7 +36,8 @@ namespace TagsCloudVisualization
 
         public Point GetCentralPoint()
         {
-            return new Point(options.CentralPoint[0], options.CentralPoint[1]);
+            var pointCoords = options.CentralPoint.ToList();
+            return new Point(pointCoords[0], pointCoords[1]);
         }
     }
 }
