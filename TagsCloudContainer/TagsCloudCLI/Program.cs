@@ -55,20 +55,50 @@ namespace TagsCloudCLI
                 .WithParsed<Options>(o => { options = o; });
 
             if (options == null) return;
-            
-            var imageWidth = options.ImageWidth;
-            var imageHeight = options.ImageHeight;
 
+            var tagsCloudGenerator = BuildTagsCloudGenerator(options);
+
+            var (isSuccess, _, error) = tagsCloudGenerator.GenerateFromFile(options.InputFile, options.OutputFile, options.ImageWidth, options.ImageHeight);
+
+            Console.WriteLine(isSuccess
+                ? $"Tags cloud successfully generated from {options.InputFile} and saved to {options.OutputFile}"
+                : $"Failed to generate tags cloud: {error}");
+        }
+
+        private static TagsCloudGenerator BuildTagsCloudGenerator(Options options)
+        {
             var builder = new ContainerBuilder();
 
             builder.RegisterType<TxtReader>().As<IReader>();
 
-            
             if (options.IsText)
                 builder.RegisterType<LiteratureExtractor>().As<IWordsExtractor>();
             else
                 builder.RegisterType<LineByLineExtractor>().As<IWordsExtractor>();
 
+            RegisterBoringWordsConfig(builder, options);
+
+            builder.RegisterType<ToLowercase>().As<IPreprocessor>();
+            builder.RegisterType<ExcludeBoringWords>().As<IPreprocessor>();
+            builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
+
+            builder.RegisterInstance(new TagsCloudGeneratorConfig {
+                FontFamilyName = options.Font
+            }).As<TagsCloudGeneratorConfig>();
+
+            RegisterColorer(builder, options);
+
+            RegisterImageWriter(builder, options);
+
+            builder.RegisterType<TagsCloudGenerator>().AsSelf();
+
+            var container = builder.Build();
+
+            return container.Resolve<TagsCloudGenerator>();
+        }
+
+        private static void RegisterBoringWordsConfig(ContainerBuilder builder, Options options)
+        {
             if (!options.PartsOfSpeechWhiteList.Any())
             {
                 builder.RegisterInstance(new BoringWordsConfig(new List<Word.PartOfSpeech>
@@ -84,23 +114,13 @@ namespace TagsCloudCLI
                 builder.RegisterInstance(
                         new BoringWordsConfig(
                             PartsOfSpeechListFromStrings(options.PartsOfSpeechWhiteList)
-                            ))
+                        ))
                     .As<BoringWordsConfig>();
             }
-            
+        }
 
-            builder.RegisterType<ToLowercase>().As<IPreprocessor>();
-            builder.RegisterType<ExcludeBoringWords>().As<IPreprocessor>();
-
-            builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
-
-            TagsCloudGeneratorConfig tcgc = new TagsCloudGeneratorConfig
-            {
-                FontFamilyName = options.Font
-            };
-
-            builder.RegisterInstance(tcgc).As<TagsCloudGeneratorConfig>();
-
+        private static void RegisterColorer(ContainerBuilder builder, Options options)
+        {
             switch (options.Color)
             {
                 case "word":
@@ -111,7 +131,10 @@ namespace TagsCloudCLI
                     builder.RegisterInstance(new ConstantColorer(color)).As<IColorer>();
                     break;
             }
+        }
 
+        private static void RegisterImageWriter(ContainerBuilder builder, Options options)
+        {
             switch (options.OutputFormat)
             {
                 case "jpeg":
@@ -129,19 +152,6 @@ namespace TagsCloudCLI
                     builder.RegisterType<PngWriter>().As<IImageWriter>();
                     break;
             }
-
-            builder.RegisterType<TagsCloudGenerator>().AsSelf();
-            
-            var container = builder.Build();
-
-            var tagsCloud = container.Resolve<TagsCloudGenerator>();
-
-            var (isSuccess, _, error) = tagsCloud.GenerateFromFile(options.InputFile, options.OutputFile, imageWidth, imageHeight);
-
-            if (isSuccess)
-                Console.WriteLine($"Tags cloud successfully generated from {options.InputFile} and saved to {options.OutputFile}");
-            else
-                Console.WriteLine("Failed to generate tags cloud: " + error);
         }
 
         private static List<Word.PartOfSpeech> PartsOfSpeechListFromStrings(IEnumerable<string> partsOfSpeechWhitelist)
