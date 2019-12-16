@@ -104,7 +104,7 @@ namespace TagsCloudCLI
             switch (options.Color)
             {
                 case "word":
-                    builder.RegisterType<WordColorer>().As<IColorer>();
+                    builder.RegisterType<WordHashcodeColorer>().As<IColorer>();
                     break;
                 default:
                     var color = Color.FromName(options.Color);

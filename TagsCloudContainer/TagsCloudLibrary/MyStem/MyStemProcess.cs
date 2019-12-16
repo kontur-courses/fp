@@ -16,8 +16,8 @@ namespace TagsCloudLibrary.MyStem
 
         public MyStemProcess()
         {
-            inputFileName = Guid.NewGuid() + ".txt";
-            outputFileName = Guid.NewGuid() + ".txt";
+            inputFileName = Path.GetTempFileName();
+            outputFileName = Path.GetTempFileName();
 
             myStemProcess = new Process
             {
@@ -36,7 +36,7 @@ namespace TagsCloudLibrary.MyStem
         {
             try
             {
-                using (var fs = File.Create(inputFileName))
+                using (var fs = File.OpenWrite(inputFileName))
                 {
                     stream.CopyTo(fs);
                 }
@@ -44,8 +44,6 @@ namespace TagsCloudLibrary.MyStem
                 myStemProcess.Start();
                 myStemProcess.WaitForExit();
                 myStemProcess.Close();
-
-                File.Delete(inputFileName);
 
                 var words = new List<Word>();
 
@@ -60,13 +58,18 @@ namespace TagsCloudLibrary.MyStem
                     }
                 }
 
-                File.Delete(outputFileName);
-
                 return Result.Ok<IEnumerable<Word>>(words);
             }
             catch (Exception e)
             {
                 return Result.Failure<IEnumerable<Word>>("Mystem process failed: " + e.Message);
+            }
+            finally
+            {
+                if (File.Exists(inputFileName))
+                    File.Delete(inputFileName);
+                if (File.Exists(outputFileName))
+                    File.Delete(outputFileName);
             }
         }
 
@@ -91,5 +94,6 @@ namespace TagsCloudLibrary.MyStem
         {
             return RunMystemOn(StreamFromString(words.Aggregate("\n", (s1, s2) => s1 + "\n" + s2)));
         }
+
     }
 }
