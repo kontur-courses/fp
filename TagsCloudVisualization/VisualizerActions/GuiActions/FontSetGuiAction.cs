@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using TagsCloudVisualization.GUI;
 using TagsCloudVisualization.Settings;
 
@@ -21,9 +22,13 @@ namespace TagsCloudVisualization.VisualizerActions.GuiActions
 
         protected override Font GetFont()
         {
-            var font = appSettings.Font;
-            SettingsForm.For(font).ShowDialog();
-            return font;
+            var fontDialog = new FontDialog {Font = appSettings.Font,
+                MinSize = 1,
+                MaxSize = 1};
+            var dialogResult = fontDialog.ShowDialog();
+            return dialogResult == DialogResult.OK 
+                ? fontDialog.Font 
+                : appSettings.Font;
         }
 
         public MenuCategory GetMenuCategory()

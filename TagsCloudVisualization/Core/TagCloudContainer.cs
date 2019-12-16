@@ -46,11 +46,11 @@ namespace TagsCloudVisualization.Core
 
         private ITextReader FindTextReader(string filepath)
         {
-            var format = filepath.Split('.').LastOrDefault();
-
-            if (format == null)
-                throw new NullReferenceException("Text file was not specified.");
-            format = format.ToLower();
+            if(filepath == null)
+                throw new NullReferenceException("Text file was not specified");
+            if(!filepath.Contains('.'))
+                throw new FormatException("File doesn't contain format information!");
+            var format = filepath.Split('.').Last().ToLower();
             var reader = textReaders.FirstOrDefault(x => x.Formats.Contains(format));
             if (reader == null)
                 throw new FormatException($"{format.ToUpper()} format is not supported");

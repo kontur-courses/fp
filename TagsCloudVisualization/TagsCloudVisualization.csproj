@@ -188,10 +188,9 @@
     <Compile Include="Tests\Preprocessing\RemoveNotNounsTests.cs" />
     <Compile Include="Tests\Preprocessing\RemoveNotWordsTests.cs" />
     <Compile Include="Tests\TagCloudVisualizerTests.cs" />
-    <Compile Include="Text\IPosTagger.cs" />
-    <Compile Include="Text\PosTagger.cs" />
     <Compile Include="Text\TextReaders\DocxFileReader.cs" />
     <Compile Include="UI\IVisualizer.cs" />
+    <Compile Include="Utils\RectanglesExtensions.cs" />
     <Compile Include="Utils\Result.cs" />
     <Compile Include="VisualizerActions\FontSetAction.cs" />
     <Compile Include="VisualizerActions\GuiActions\FontSetGuiAction.cs" />

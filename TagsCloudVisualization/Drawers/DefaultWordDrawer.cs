@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Linq;
 using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Settings;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Drawers
 {
@@ -22,18 +25,27 @@ namespace TagsCloudVisualization.Drawers
                 appSettings.ImageSettings.Height);
             foreach (var paintedWord in paintedWords)
             {
+                if(paintedWord.Position.GetCornerPoints().Any(IsPointOutOfScreen))
+                    throw new Exception("Current tag cloud is too big for this screen size");
                 var font = GetScaledFontFor(graphics, paintedWord);
                 graphics.DrawString(paintedWord.Value, font, fontBrush, paintedWord.Position, stringFormat);
             }
-
             return bitmap;
+        }
+
+        private bool IsPointOutOfScreen(Point point)
+        {
+            return point.X < 0
+                   || point.Y < 0
+                   || point.X > appSettings.ImageSettings.Width
+                   || point.Y > appSettings.ImageSettings.Height;
         }
 
         private Font GetScaledFontFor(Graphics graphics, PaintedWord layoutedWord)
         {
             var fontSize = graphics.MeasureString(layoutedWord.Value, appSettings.Font);
             var scaleUnit = layoutedWord.Position.Size.Height / fontSize.Height;
-            return new Font(appSettings.Font.FontFamily, scaleUnit, appSettings.Font.Style);
+            return new Font(appSettings.Font.FontFamily, layoutedWord.Position.Size.Height, appSettings.Font.Style);
         }
     }
 }
