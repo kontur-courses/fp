@@ -48,7 +48,9 @@ namespace TagsCloudResult
         {
             if (visualizationWords is null)
                 return GenerateTagCloud();
-            VisualizedBitmap = cloudVisualizer.GetBitmap(visualizationWords);
+            var bitmapResult = cloudVisualizer.GetBitmap(visualizationWords);
+            if (!bitmapResult.IsSuccess) return Result.Fail<None>(bitmapResult.Error);
+            VisualizedBitmap = bitmapResult.Value;
             return Result.Ok();
         }
 
