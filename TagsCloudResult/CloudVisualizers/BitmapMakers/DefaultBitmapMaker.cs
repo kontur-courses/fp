@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloudResult.Properties;
 
 namespace TagsCloudResult.CloudVisualizers.BitmapMakers
 {
@@ -23,7 +24,8 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             var rectangles = wordsList.Select(w => w.Rectangle).ToList();
             var minX = rectangles.OrderBy(rect => rect.X).First().X;
             var minY = rectangles.OrderBy(rect => rect.Y).First().Y;
-            var (xRatio, yRatio) = GetSizeRatio(settings, rectangles, minX, minY);
+            var xRatio = GetXRatio(settings, rectangles);
+            var yRatio = GetYRatio(settings, rectangles);
 
             using (var g = Graphics.FromImage(bitmap))
             {
@@ -105,22 +107,22 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             g.Restore(state);
         }
 
-        private static (float xRatio, float yRatio) GetSizeRatio(
-            CloudVisualizerSettings settings,
-            IEnumerable<Rectangle> rectangles,
-            int minX,
-            int minY)
+        private static float GetXRatio(CloudVisualizerSettings settings, IEnumerable<Rectangle> rectangles)
         {
-            var maxX = rectangles.OrderBy(rect => rect.Right).Last().Right;
-            var maxY = rectangles.OrderBy(rect => rect.Bottom).Last().Bottom;
+            var rectanglesEnum = rectangles as Rectangle[] ?? rectangles.ToArray();
+            var maxX = rectanglesEnum.OrderBy(rect => rect.Right).Last().Right;
+            var minX = rectanglesEnum.OrderBy(rect => rect.X).First().X;
             var xDifference = Math.Abs(maxX - minX);
+            return (float) settings.Width / xDifference;
+        }
+        
+        private static float GetYRatio(CloudVisualizerSettings settings, IEnumerable<Rectangle> rectangles)
+        {
+            var rectanglesEnum = rectangles as Rectangle[] ?? rectangles.ToArray();
+            var maxY = rectanglesEnum.OrderBy(rect => rect.Bottom).Last().Bottom;
+            var minY = rectanglesEnum.OrderBy(rect => rect.Y).First().Y;
             var yDifference = Math.Abs(maxY - minY);
-            float xRatio;
-            float yRatio;
-
-            (xRatio, yRatio) = ((float) settings.Width / xDifference, (float) settings.Height / yDifference);
-
-            return (xRatio, yRatio);
+            return (float) settings.Height / yDifference;
         }
     }
 }
