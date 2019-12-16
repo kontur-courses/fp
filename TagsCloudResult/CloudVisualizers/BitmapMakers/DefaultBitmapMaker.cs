@@ -61,7 +61,7 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             var gradientColors = GenerateGradientColors(
                 settings.Palette.PrimaryColor,
                 settings.Palette.SecondaryColor,
-                words.Count());
+                words.Count()).ToArray();
             var colorCounter = 0;
             foreach (var word in words)
             {
@@ -73,7 +73,7 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             }
         }
 
-        private static List<Color> GenerateGradientColors(Color first, Color second, int count)
+        private static IEnumerable<Color> GenerateGradientColors(Color first, Color second, int count)
         {
             int rMax = first.R;
             int rMin = second.R;
@@ -81,17 +81,14 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             int gMin = second.G;
             int bMax = first.B;
             int bMin = second.B;
-
-            var colorList = new List<Color>();
+            
             for (var i = 0; i < count; i++)
             {
                 var rAverage = rMin + (rMax - rMin) * i / count;
                 var gAverage = gMin + (gMax - gMin) * i / count;
                 var bAverage = bMin + (bMax - bMin) * i / count;
-                colorList.Add(Color.FromArgb(rAverage, gAverage, bAverage));
+                yield return Color.FromArgb(rAverage, gAverage, bAverage);
             }
-
-            return colorList;
         }
 
         private static void WriteWordToRectangle(
