@@ -33,13 +33,12 @@ namespace TagsCloud
 
         public Result<None> GenerateTagCloud()
         {
-           return wordStream.GetWords(tagCloudSettings.pathToInput)
-                .Then(words => wordCounter.GetWordsStatistics(words))
-                .Then(wordsStatistics => tagGenerator.GenerateTag(wordsStatistics))
-                .Then(tags => tagCloudGenerator.GenerateTagCloud(tags))
-                .Then(tagCloud => cloudDrawer.Paint(tagCloud, new Size(tagCloudSettings.widthOutputImage, tagCloudSettings.heightOutputImage), tagCloudSettings.backgroundColor, 15))
-                .Then(image => imageSaver.SaveImage(image, tagCloudSettings.pathToOutput, tagCloudSettings.imageFormat))
-                .OnFail(error => Result.Fail<None>(error));
+            return wordStream.GetWords(tagCloudSettings.pathToInput)
+                 .Then(words => wordCounter.GetWordsStatistics(words))
+                 .Then(wordsStatistics => tagGenerator.GenerateTag(wordsStatistics))
+                 .Then(tags => tagCloudGenerator.GenerateTagCloud(tags))
+                 .Then(tagCloud => cloudDrawer.Paint(tagCloud, new Size(tagCloudSettings.widthOutputImage, tagCloudSettings.heightOutputImage), tagCloudSettings.backgroundColor, 15))
+                 .Then(image => imageSaver.SaveImage(image, tagCloudSettings.pathToOutput, tagCloudSettings.imageFormat));
         }
     }
 }

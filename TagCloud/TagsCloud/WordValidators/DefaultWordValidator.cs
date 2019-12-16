@@ -34,16 +34,17 @@ namespace TagsCloud.WordValidators
         {
             if (viewedWords.TryGetValue(word, out var previousResultValidation))
                 return previousResultValidation.AsResult();
-            var partOfSpechWord = parsePartOfSpeechRegex.Match(myStem.Analysis(word)).Groups[1].Value;
-            var isValidWord = boringWords
+            return boringWords
                 .Then(boringWord => boringWord.FirstOrDefault(ignoredWord => ignoredWord.Equals(word, StringComparison.InvariantCultureIgnoreCase)) == null)
-                .Then(thisWordIsBoring => word.Length != 0
-                && !ignoringPartsOfSpeech.Contains(partOfSpechWord)
-                && !int.TryParse(word, out var res) && thisWordIsBoring)
+                .Then(wordIsBoring => word.Length != 0
+                && !ignoringPartsOfSpeech.Contains(parsePartOfSpeechRegex.Match(myStem.Analysis(word)).Groups[1].Value)
+                && !int.TryParse(word, out var res) && wordIsBoring)
+                .Then(wordIsBoring => 
+                {
+                    viewedWords.Add(word, wordIsBoring);
+                    return wordIsBoring;
+                })
                 .OnFail(error => Result.Fail<bool>(error));
-            if (isValidWord.IsSuccess)
-                viewedWords.Add(word, isValidWord.Value);
-            return isValidWord;
         }
     }
 }

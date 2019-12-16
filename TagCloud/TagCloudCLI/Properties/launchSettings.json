@@ -1,7 +1,8 @@
 {
   "profiles": {
     "TagCloudCLI": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "Resources\\ВойнаИМир.txt result.png"
     }
   }
 }

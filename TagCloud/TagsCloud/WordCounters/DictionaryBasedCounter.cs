@@ -2,7 +2,7 @@
 using TagsCloud.Interfaces;
 using System.Linq;
 using TagsCloud.ErrorHandling;
-
+    
 namespace TagsCloud.WordCounters
 {
     public class DictionaryBasedCounter: IWordCounter

@@ -11,32 +11,34 @@ namespace TagsCloud.CloudDrawers
     {
         public Result<Image> Paint(IEnumerable<(Tag tag, Rectangle position)> resultTagCloud, Size imageSize, Color backgroundColor, int widthOfBorder = 0)
         {
-            var borderOfRectangles = GetBorderOfRectangles(resultTagCloud);
-            if (!borderOfRectangles.IsSuccess)
-            {
-                return Result.Fail<Image>(borderOfRectangles.Error);
-            }
-            var image = new Bitmap(borderOfRectangles.Value.Width + widthOfBorder * 2, borderOfRectangles.Value.Height + widthOfBorder * 2);
-            using (var graph = Graphics.FromImage(image))
-            {
-                graph.Clear(backgroundColor);
-                foreach (var tagSettings in resultTagCloud)
+            return GetBorderOfRectangles(resultTagCloud)
+                .Then(borderOfRectangles => (border:borderOfRectangles, 
+                    image: new Bitmap(borderOfRectangles.Width + widthOfBorder * 2, borderOfRectangles.Height + widthOfBorder * 2)))
+                .Then(drawSettings =>
                 {
-                    using (var brush = new SolidBrush(tagSettings.tag.colorTag))
-                    using (var font = new Font(tagSettings.tag.font.fontName, tagSettings.tag.font.fontSize))
-                        graph.DrawString(tagSettings.tag.word,
-                            font, brush, 
-                            tagSettings.position.Left - borderOfRectangles.Value.X + widthOfBorder,
-                            tagSettings.position.Top - borderOfRectangles.Value.Y + widthOfBorder);
-                }
-                image = new Bitmap(image, imageSize);
-            }
-            return ((Image)image).AsResult();
+                    var image = drawSettings.image;
+                    var borderOfRectangles = drawSettings.border;
+                    using (var graph = Graphics.FromImage(image))
+                    {
+                        graph.Clear(backgroundColor);
+                        foreach (var tagSettings in resultTagCloud)
+                        {
+                            using (var brush = new SolidBrush(tagSettings.tag.colorTag))
+                            using (var font = new Font(tagSettings.tag.font.fontName, tagSettings.tag.font.fontSize))
+                                graph.DrawString(tagSettings.tag.word,
+                                    font, brush,
+                                    tagSettings.position.Left - borderOfRectangles.X + widthOfBorder,
+                                    tagSettings.position.Top - borderOfRectangles.Y + widthOfBorder);
+                        }
+                        return new Bitmap(image, imageSize);
+                    }
+                })
+                .Then(bitmapImage => (Image)bitmapImage);
         }
 
         private static Result<Rectangle> GetBorderOfRectangles(IEnumerable<(Tag tag, Rectangle position)> rectangles)
         {
-            if (rectangles.Count() == 0)
+            if (!rectangles.Any())
                 return Result.Fail<Rectangle>("Cannot draw an empty collection.");
             var maxX = rectangles.Max(rectangle => rectangle.position.Right);
             var maxY = rectangles.Max(rectangle => rectangle.position.Bottom);
