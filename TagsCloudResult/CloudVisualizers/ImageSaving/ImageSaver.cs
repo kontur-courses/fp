@@ -28,7 +28,11 @@ namespace TagsCloudResult.CloudVisualizers.ImageSaving
             }
             catch (ExternalException)
             {
-                return Result.Fail<None>("Image is saved in wrong format.");
+                return Result.Fail<None>($"Image is saved in wrong format '{settings.Format}'.");
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<None>(e.Message);
             }
             return Result.Ok();
         }
