@@ -40,10 +40,10 @@ namespace TagsCloudResult.CloudLayouters
 
         private double GetSizeMultiplier(IOrderedEnumerable<CloudWord> ordered, CloudLayouterSettings settings)
         {
-            var maxCount = (double) ordered.First().Count;
-            var minCount = (double) ordered.Last().Count;
+            var maxCount = ordered.First().Count;
+            var minCount = ordered.Last().Count;
             var countDifference = maxCount - minCount == 0 ? 1 : maxCount - minCount;
-            return settings.RectangleSquareMultiplier / countDifference;
+            return settings.RectangleSquareMultiplier / (double) countDifference;
         }
     }
 }
