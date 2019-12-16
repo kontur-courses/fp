@@ -37,6 +37,7 @@ namespace TagsCloud.TagGenerators
                     return Result.Fail<IEnumerable<Tag>>(color.Error);
                 }
                 result.Add(new Tag(fontSettings.Value, color.Value, wordStatistic.word));
+                currentPosition++;
             }
             return (result.AsEnumerable()).AsResult();
         }
