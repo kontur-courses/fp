@@ -19,8 +19,7 @@ namespace TagsCloudVisualization.Preprocessing
             return words.Where(word => IsNoun(tagger.tagString(word)));
         }
 
-        private static bool
-            IsNoun(string taggedString) //https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+        private static bool IsNoun(string taggedString) //https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
         {
             var tag = taggedString.Split('_').Last();
             return tag.Contains("NN");
