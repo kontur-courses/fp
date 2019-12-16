@@ -92,7 +92,6 @@ namespace TagsCloudResult.ApplicationRunning.Commands
         {
             var errorMessage = $"Wrong height value '{args[2]}'";
             var checkRes = Check.Argument(args[2], errorMessage, int.TryParse(args[2], out height), height > 1);
-            ;
             return checkRes.IsSuccess ? Result.Ok(args) : Result.Fail<string[]>(checkRes.Error);
         }
     }
