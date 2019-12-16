@@ -53,15 +53,15 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             return bitmap;
         }
 
-        private void DrawGradient(
-            IEnumerable<CloudVisualizationWord> words,
+        private static void DrawGradient(
+            IReadOnlyCollection<CloudVisualizationWord> words,
             CloudVisualizerSettings settings,
             Graphics g)
         {
             var gradientColors = GenerateGradientColors(
                 settings.Palette.PrimaryColor,
                 settings.Palette.SecondaryColor,
-                words.Count()).ToArray();
+                words.Count).ToArray();
             var colorCounter = 0;
             foreach (var word in words)
             {
