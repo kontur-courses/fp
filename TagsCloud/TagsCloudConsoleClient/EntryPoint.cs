@@ -65,8 +65,8 @@ namespace TagsCloudConsoleClient
 
                 settings.Font = o.FontName ?? settings.Font;
                 settings.ImageSize =
-                    o.WidthAndHeight.Count() == 2 ?
-                    new Size(o.WidthAndHeight.ElementAt(0), o.WidthAndHeight.ElementAt(1)) :
+                    o.WidthAndHeight.Count == 2 ?
+                    new Size(o.WidthAndHeight[0], o.WidthAndHeight[1]) :
                     settings.ImageSize;
 
                 settings.PainterSettings.BackgroundColor =

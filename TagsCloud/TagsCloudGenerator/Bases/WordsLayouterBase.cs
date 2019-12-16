@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloudGenerator.DTO;
 using TagsCloudGenerator.Interfaces;
 
 namespace TagsCloudGenerator.Bases
@@ -26,7 +27,7 @@ namespace TagsCloudGenerator.Bases
             this.getMaxSymbolSize = getMaxSymbolSize;
         }
 
-        public Result<(string word, float maxFontSymbolWidth, string fontName, RectangleF wordRectangle)[]> ArrangeWords(
+        public Result<WordDrawingDTO[]> ArrangeWords(
             string[] words)
         {
             if (words == null)
@@ -38,14 +39,9 @@ namespace TagsCloudGenerator.Bases
                 .RefineError($"{GetType().Name} failure");
         }
 
-        private Result<(string word, float maxFontSymbolWidth, string fontName, RectangleF wordRectangle)[]> ArrangeWords(
-            string[] words, string fontName)
+        private Result<WordDrawingDTO[]> ArrangeWords(string[] words, string fontName)
         {
-            var result = new List<(
-                string word,
-                float maxFontSymbolWidth,
-                string fontName,
-                RectangleF wordRectangle)>();
+            var result = new List<WordDrawingDTO>();
             if (words.Length == 0)
                 return Result.Ok(result.ToArray());
             var wordsFreq = CalculateWordsFrequency(words);
@@ -61,7 +57,13 @@ namespace TagsCloudGenerator.Bases
                         wordFont.Height));
                     if (!rectangleResult.IsSuccess)
                         break;
-                    result.Add((word, maxSymbolSize, fontName, rectangleResult.Value));
+                    result.Add(new WordDrawingDTO
+                    {
+                        Word = word,
+                        FontName = fontName,
+                        MaxFontSymbolWidth = maxSymbolSize,
+                        WordRectangle = rectangleResult.Value
+                    });
                 }
             }
             return

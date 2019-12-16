@@ -18,12 +18,10 @@ namespace TagsCloudGenerator.Executors
                     .Priority)
                 .ToArray();
 
-        public Result<T> Execute(T input)
-        {
-            var result = Result.Ok(input);
-            foreach (var executable in executables)
-                result = result.Then(z => executable.Execute(z));
-            return result;
-        }
+        public Result<T> Execute(T input) =>
+            executables
+                .Aggregate(
+                    Result.Ok(input),
+                    (result, executable) => result.Then(executable.Execute));
     }
 }

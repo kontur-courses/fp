@@ -56,6 +56,17 @@ namespace FailuresProcessing
                     continuation(input.Value) :
                     Fail<TOutput>(input.Error);
 
+        public static Result<TOutput> ThenWithDisposableObject<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<TInput, Result<TOutput>> continuation)
+            where TInput : IDisposable
+        {
+            if (input.IsSuccess)
+                using (input.Value)
+                    return continuation(input.Value);
+            return Fail<TOutput>(input.Error);
+        }
+
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)

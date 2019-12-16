@@ -39,7 +39,7 @@ namespace TagsCloudConsoleClient
         public string BackgroundColor { get; set; }
 
         [Option('m', "Sizes", Required = false)]
-        public IEnumerable<int> WidthAndHeight { get; set; }
+        public IReadOnlyList<int> WidthAndHeight { get; set; }
 
         [Option('t', "Font", Required = false)]
         public string FontName { get; set; }

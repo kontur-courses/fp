@@ -10,7 +10,7 @@ namespace TagsCloudGenerator_Tests
 
         public SingletonScopeInstancesContainer() => container = CreateContainer();
 
-        public Type Get<Type>() => container.Resolve<Type>();
+        public TInstance Get<TInstance>() => container.Resolve<TInstance>();
 
         private IContainer CreateContainer()
         {
