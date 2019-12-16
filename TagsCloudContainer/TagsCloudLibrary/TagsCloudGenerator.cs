@@ -90,7 +90,7 @@ namespace TagsCloudLibrary
             }
             catch (Exception e)
             {
-                return Result.Failure<Bitmap>("Failed to create image. " + e.Message);
+                return Result.Failure<Bitmap>("Failed to create image. Make sure that width and height are not too big. " + e.Message);
             }
         }
 
@@ -102,7 +102,7 @@ namespace TagsCloudLibrary
             }
             catch (Exception e)
             {
-                return Result.Failure<FontFamily>(e.Message);
+                return Result.Failure<FontFamily>($"Cannot find font family {name}. Check if the font is installed and it's name is spelled correctly" + e.Message);
             }
         }
 
@@ -136,18 +136,6 @@ namespace TagsCloudLibrary
 
                     });
                 });
-        }
-
-        private Result<Stream> OpenFile(string fileName)
-        {
-            try
-            {
-                return Result.Ok<Stream>(File.OpenRead(fileName));
-            }
-            catch (Exception e)
-            {
-                return Result.Failure<Stream>(e.Message);
-            }
         }
     }
 }

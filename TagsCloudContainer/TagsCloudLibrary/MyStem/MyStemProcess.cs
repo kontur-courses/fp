@@ -62,7 +62,7 @@ namespace TagsCloudLibrary.MyStem
             }
             catch (Exception e)
             {
-                return Result.Failure<IEnumerable<Word>>("Mystem process failed: " + e.Message);
+                return Result.Failure<IEnumerable<Word>>("Mystem process failed. You probably don't have mystem executable in exe folder or wrong access rights on it: " + e.Message);
             }
             finally
             {

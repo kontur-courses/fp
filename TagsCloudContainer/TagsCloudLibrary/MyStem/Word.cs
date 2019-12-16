@@ -114,7 +114,7 @@ namespace TagsCloudLibrary.MyStem
                     pos = PartOfSpeech.Verb;
                     break;
                 default:
-                    return Result.Failure<PartOfSpeech>("Wrong part of speech was given");
+                    return Result.Failure<PartOfSpeech>("Wrong part of speech was given. This is probably because of wrong version of mystem you are using.");
             }
 
             return Result.Ok(pos);

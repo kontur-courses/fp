@@ -20,7 +20,7 @@ namespace TagsCloudLibrary.WordsExtractor
             }
             catch (Exception e)
             {
-                return Result.Failure<IEnumerable<string>>("Cannot extract words from stream. " + e.Message);
+                return Result.Failure<IEnumerable<string>>("Cannot extract words from stream. Maybe you want to use another extractor? " + e.Message);
             }
         }
     }

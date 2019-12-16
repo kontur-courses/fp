@@ -18,7 +18,7 @@ namespace TagsCloudLibrary.Readers
             }
             catch (Exception e)
             {
-                return Result.Failure<Stream>(e.Message);
+                return Result.Failure<Stream>($"Cannot read file {fileName}. Check if file exists and have correct access rights. " + e.Message);
             }
         }
     }
