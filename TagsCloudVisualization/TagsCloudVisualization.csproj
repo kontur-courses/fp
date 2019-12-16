@@ -192,6 +192,7 @@
     <Compile Include="Text\PosTagger.cs" />
     <Compile Include="Text\TextReaders\DocxFileReader.cs" />
     <Compile Include="UI\IVisualizer.cs" />
+    <Compile Include="Utils\Result.cs" />
     <Compile Include="VisualizerActions\FontSetAction.cs" />
     <Compile Include="VisualizerActions\GuiActions\FontSetGuiAction.cs" />
     <Compile Include="VisualizerActions\GuiActions\IGuiAction.cs" />

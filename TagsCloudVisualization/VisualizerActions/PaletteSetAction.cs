@@ -24,8 +24,8 @@ namespace TagsCloudVisualization.VisualizerActions
             appSettings.Palette = newPalette;
             if (appSettings.CurrentFile != null)
             {
-                var newImage = appSettings.CurrentInterface.GetTagCloud();
-                appSettings.ImageHolder.SetImage(newImage);
+                if (appSettings.CurrentInterface.TryGetTagCloud(out var newImage))
+                    appSettings.ImageHolder.SetImage(newImage);
             }
         }
     }

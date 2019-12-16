@@ -6,6 +6,7 @@ using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Drawers;
+using TagsCloudVisualization.GUI;
 using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.Layouters.CloudLayouters;
 using TagsCloudVisualization.Painters;

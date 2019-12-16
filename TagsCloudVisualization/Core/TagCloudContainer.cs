@@ -6,6 +6,7 @@ using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.Painters;
 using TagsCloudVisualization.Preprocessing;
 using TagsCloudVisualization.Text;
+using TagsCloudVisualization.Utils;
 using TagsCloudVisualization.WordStatistics;
 
 namespace TagsCloudVisualization.Core
@@ -31,15 +32,16 @@ namespace TagsCloudVisualization.Core
             this.drawer = drawer;
         }
 
-        public Bitmap GetTagCloud(string filepath)
+        public Result<Bitmap> GetTagCloud(string filepath)
         {
-            var textReader = FindTextReader(filepath);
-            var words = textReader.GetAllWords(filepath);
-            var preprocessedWords = preprocessor.PreprocessWords(words);
-            var analyzedText = statCounter.GetAnalyzedText(preprocessedWords);
-            var analyzedLayoutedText = layouter.GetLayoutedText(analyzedText);
-            var paintedWords = painter.GetPaintedWords(analyzedLayoutedText);
-            return drawer.GetDrawnLayoutedWords(paintedWords);
+            return filepath.AsResult()
+                .Then(FindTextReader)
+                .Then(textReader => textReader.GetAllWords(filepath))
+                .Then(words => preprocessor.PreprocessWords(words))
+                .Then(preprocessedWords => statCounter.GetAnalyzedText(preprocessedWords))
+                .Then(analyzedText => layouter.GetLayoutedText(analyzedText))
+                .Then(analyzedLayoutedText => painter.GetPaintedWords(analyzedLayoutedText))
+                .Then(paintedWords => drawer.GetDrawnLayoutedWords(paintedWords));
         }
 
         private ITextReader FindTextReader(string filepath)
@@ -51,7 +53,7 @@ namespace TagsCloudVisualization.Core
             format = format.ToLower();
             var reader = textReaders.FirstOrDefault(x => x.Formats.Contains(format));
             if (reader == null)
-                throw new FormatException($"Format {format} is not supported");
+                throw new FormatException($"{format.ToUpper()} format is not supported");
             return reader;
         }
     }

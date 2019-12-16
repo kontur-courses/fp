@@ -2,12 +2,12 @@
 using System.Drawing;
 using System.Windows.Forms;
 using TagsCloudVisualization.Core;
-using TagsCloudVisualization.GUI;
 using TagsCloudVisualization.Settings;
 using TagsCloudVisualization.UI;
+using TagsCloudVisualization.Utils;
 using TagsCloudVisualization.VisualizerActions.GuiActions;
 
-namespace TagsCloudVisualization
+namespace TagsCloudVisualization.GUI
 {
     public class GraphicalVisualizer : Form, IVisualizer
     {
@@ -35,9 +35,23 @@ namespace TagsCloudVisualization
             Application.Run(this);
         }
 
-        public Bitmap GetTagCloud()
+        public bool TryGetTagCloud(out Bitmap tagCloud)
         {
-            return container.GetTagCloud(appSettings.CurrentFile);
+            var tagCloudResult = container.GetTagCloud(appSettings.CurrentFile)
+                .OnFail(InformUser);
+            if (tagCloudResult.IsSuccess)
+            {
+                tagCloud = tagCloudResult.Value;
+                return true;
+            }
+            tagCloud = null;
+            return false;
+        }
+
+        public void InformUser(string error)
+        {
+            MessageBox.Show(error, "Generating error!",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         protected override void OnShown(EventArgs e)
