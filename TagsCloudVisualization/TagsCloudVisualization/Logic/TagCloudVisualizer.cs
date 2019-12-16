@@ -33,24 +33,15 @@ namespace TagsCloudVisualization.Logic
 
         public Result<Bitmap> VisualizeTextFromFile(string fileName)
         {
-            var imageCenter = new Point(
-                imageSettingsProvider.ImageSettings.ImageSize.Width / 2,
-                imageSettingsProvider.ImageSettings.ImageSize.Height / 2
-            );
+            var imageCenter = imageSettingsProvider.ImageSettings.ImageSize.GetCenter();
             var result = TextRetriever
                 .RetrieveTextFromFile(fileName)
-                .Then(text => textParser.ParseToTokens(text))
+                .Then(textParser.ParseToTokens)
                 .Then(tokens => CreateTagsFromTokens(tokens, imageCenter))
-                .Then(tags => imageGenerator.CreateImage(tags));
+                .Then(imageGenerator.CreateImage);
 
             layouter.Reset();
             return result.RefineError("while trying to visualize image");
-        }
-
-        private Size CalculateWordSize(WordToken wordToken, Font font)
-        {
-            var size = measureGraphics.MeasureString(wordToken.Word, font);
-            return size.ToSize();
         }
 
         private Result<IEnumerable<Tag>> CreateTagsFromTokens(IEnumerable<WordToken> wordTokens, Point imageCenter)
@@ -91,6 +82,12 @@ namespace TagsCloudVisualization.Logic
         private float CalculateFontSize(WordToken word, ImageSettings imageSettings)
         {
             return imageSettings.Font.Size + word.TextCount * 3;
+        }
+        
+        private Size CalculateWordSize(WordToken wordToken, Font font)
+        {
+            var size = measureGraphics.MeasureString(wordToken.Word, font);
+            return size.ToSize();
         }
     }
 }

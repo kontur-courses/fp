@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Autofac;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -19,7 +20,8 @@ namespace TagsCloudVisualization.Tests
         [OneTimeSetUp]
         public void InitializeTextsDirectory()
         {
-            testTextDirectory = TestContext.CurrentContext.TestDirectory + "\\Tests\\TestTexts\\";
+            testTextDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Tests", "TestTexts") 
+                                + Path.DirectorySeparatorChar;
         }
 
         [SetUp]
@@ -33,7 +35,6 @@ namespace TagsCloudVisualization.Tests
         {
             var settingsProvider = container.Resolve<IImageSettingsProvider>();
             var newSettings = settingsProvider.ImageSettings;
-
             newSettings.ImageSize =
                 new Size(
                     newSettings.ImageSize.Width * 2,
@@ -41,8 +42,10 @@ namespace TagsCloudVisualization.Tests
                 );
             settingsProvider.SetImageSettings(newSettings);
             var visualizer = container.Resolve<IVisualizer>();
-            var resultImage = visualizer.VisualizeTextFromFile(testTextDirectory + "animals.txt").GetValueOrThrow();
-
+            var resultImage = visualizer
+                .VisualizeTextFromFile(Path.Combine(testTextDirectory,"animals.txt"))
+                .GetValueOrThrow();
+            
             resultImage.Size.Should().Be(settingsProvider.ImageSettings.ImageSize);
         }
 
@@ -64,14 +67,15 @@ namespace TagsCloudVisualization.Tests
         {
             var visualizer = container.Resolve<IVisualizer>();
             var millisecondsForEachWord = 5;
-            var expectedTime = TextRetriever
-                                   .RetrieveTextFromFile(testTextDirectory + fileName)
-                                   .GetValueOrThrow()
-                                   .Split('\n')
-                                   .Length
-                               * millisecondsForEachWord;
+            var wordsCount = TextRetriever
+                .RetrieveTextFromFile(testTextDirectory + fileName)
+                .GetValueOrThrow()
+                .Split('\n')
+                .Length;
+            var expectedTime = wordsCount * millisecondsForEachWord;
 
-            Action action = () => visualizer.VisualizeTextFromFile(testTextDirectory + fileName);
+            Action action = () => visualizer
+                .VisualizeTextFromFile(Path.Combine(testTextDirectory, fileName));
 
             action.ExecutionTime().Should().BeLessThan(expectedTime.Milliseconds());
         }

@@ -7,8 +7,8 @@ namespace TagsCloudVisualization.Logic
         public static readonly Color DefaultColor =  Color.Black;
         public WordToken WordToken { get; }
         public Rectangle TagBox { get; }
-        public float FontSize { get; set; }
-        public Color Color { get; set; }
+        public float FontSize { get; }
+        public Color Color { get; }
 
         public Tag(WordToken wordToken, Rectangle tagBox, float fontSize)
         {

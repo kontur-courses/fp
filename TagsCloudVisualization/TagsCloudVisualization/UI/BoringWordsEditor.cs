@@ -67,12 +67,10 @@ namespace TagsCloudVisualization
 
         private IEnumerable<string> ConvertDataGridToEnumerable()
         {
-            foreach (DataGridViewRow objRow in dataGridView.Rows)
-            {
-                var boringWord = objRow.Cells[0].Value as string;
-                if (boringWord != string.Empty)
-                    yield return boringWord;
-            }
+            return dataGridView.Rows
+                .Cast<DataGridViewRow>()
+                .Select(objRow => objRow.Cells[0].Value as string)
+                .Where(boringWord => boringWord != string.Empty);
         }
     }
 }

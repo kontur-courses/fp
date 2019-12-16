@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using ErrorHandler;
+using TagsCloudVisualization.Logic.Painter;
 using TagsCloudVisualization.Services;
 
 namespace TagsCloudVisualization.Logic
@@ -16,10 +17,7 @@ namespace TagsCloudVisualization.Logic
 
         public Result<Bitmap> CreateImage(IEnumerable<Tag> tags)
         {
-            var imageCenter = new Point(
-                settingsProvider.ImageSettings.ImageSize.Width / 2,
-                settingsProvider.ImageSettings.ImageSize.Height / 2
-            );
+            var imageCenter = settingsProvider.ImageSettings.ImageSize.GetCenter();
             return CalculateCloudScale(tags, imageCenter)
                 .Then(cloudScale => DrawTagsAndBackgroundToBitmap(tags, cloudScale, imageCenter));
         }
@@ -31,12 +29,10 @@ namespace TagsCloudVisualization.Logic
                 settingsProvider.ImageSettings.ImageSize.Height
             );
             var graphics = Graphics.FromImage(bmp);
-            graphics.FillRectangle(
-                new SolidBrush(settingsProvider.ImageSettings.BackgroundColor),
-                new Rectangle(Point.Empty, settingsProvider.ImageSettings.ImageSize)
-            );
+            graphics.Clear(settingsProvider.ImageSettings.BackgroundColor);
             foreach (var tag in tags)
                 DrawTag(graphics, tag, cloudScale, imageCenter);
+            graphics.Dispose();
             return bmp;
         }
 
@@ -64,9 +60,9 @@ namespace TagsCloudVisualization.Logic
                         new Rectangle(Point.Empty, cloudBorderSize),
                         furthestRectanglePoint
                     )
-                    .Then(distanceToImageBorder => distanceToImageBorder == 0 ? 
-                        1
-                        : (float)(distanceToImageBorder / furthestRectanglePoint.GetLength()))
+                    .Then(distanceToImageBorder => distanceToImageBorder == 0
+                        ? 1
+                        : (float) (distanceToImageBorder / furthestRectanglePoint.GetLength()))
                 );
         }
 
@@ -86,8 +82,8 @@ namespace TagsCloudVisualization.Logic
                             return posMinusFrom;
                         var borderScale = (distanceToBorder + posMinusFromLength) / posMinusFromLength;
                         var posMinusCenterWithTagBorder = new Point(
-                            (int)(posMinusFrom.X * borderScale),
-                            (int)(posMinusFrom.Y * borderScale)
+                            (int) (posMinusFrom.X * borderScale),
+                            (int) (posMinusFrom.Y * borderScale)
                         );
                         return posMinusCenterWithTagBorder;
                     }
@@ -96,21 +92,31 @@ namespace TagsCloudVisualization.Logic
 
         private void DrawTag(Graphics graphics, Tag tag, float cloudScale, Point imageCenter)
         {
+            var scaledFont = CreateScaledFont(tag, cloudScale);
+            var scaledPosition = GetScaledTagPosition(tag, imageCenter, cloudScale);
+            graphics.DrawString(tag.WordToken.Word, scaledFont, new SolidBrush(tag.Color), scaledPosition);
+        }
+
+        private Font CreateScaledFont(Tag tag, float cloudScale)
+        {
             var scaledFontSize = tag.FontSize * cloudScale;
-            var scaledFont = new Font(
+            return new Font(
                 settingsProvider.ImageSettings.Font.FontFamily,
                 scaledFontSize,
                 settingsProvider.ImageSettings.Font.Style
             );
+        }
+
+        private Point GetScaledTagPosition(Tag tag, Point imageCenter, double cloudScale)
+        {
             var positionMinusCenter = new Point(
                 tag.TagBox.Location.X - imageCenter.X,
                 tag.TagBox.Location.Y - imageCenter.Y
             );
-            var newPointLocation = new Point(
+            return new Point(
                 imageCenter.X + (int) (positionMinusCenter.X * cloudScale),
                 imageCenter.Y + (int) (positionMinusCenter.Y * cloudScale)
             );
-            graphics.DrawString(tag.WordToken.Word, scaledFont, new SolidBrush(tag.Color), newPointLocation);
         }
     }
 }

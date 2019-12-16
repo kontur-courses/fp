@@ -13,14 +13,14 @@ namespace TagsCloudVisualization.Logic
 
         public static Result<double> GetLengthFromRectangleCenterToBorderOnVector(Rectangle rect, Point vector)
         {
-            if (rect.Width < 0 || rect.Height < 0) 
+            if (rect.Width < 0 || rect.Height < 0)
                 return Result.Fail<double>("Rectangle can't have negative sizes");
 
             double dx = Math.Abs(rect.X - vector.X);
             double dy = Math.Abs(rect.Y - vector.Y);
             var xOffset = rect.Width / 2;
             var yOffset = rect.Height / 2;
-            if (dx <= xOffset && dy <= yOffset) 
+            if (dx <= xOffset && dy <= yOffset)
                 return 0;
             if (dx > xOffset && dy > yOffset)
             {
@@ -28,6 +28,7 @@ namespace TagsCloudVisualization.Logic
                 dx = k * dx;
                 dy = k * dy;
             }
+
             var hypotenuse = Math.Sqrt(dx * dx + dy * dy);
             var epsilon = 0.00001;
             if (dx - epsilon > xOffset)
@@ -39,9 +40,9 @@ namespace TagsCloudVisualization.Logic
 
         public static Result<Point> ShiftPointBySizeOffsets(Point point, Size size)
         {
-            return size.Width < 0 || size.Height < 0? 
-                Result.Fail<Point>("Offsets can't be negative"): 
-                new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
+            return size.Width < 0 || size.Height < 0
+                ? Result.Fail<Point>("Offsets can't be negative")
+                : new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ErrorHandler;
 using TagsCloudVisualization.Services;
 
@@ -18,29 +19,19 @@ namespace TagsCloudVisualization.Logic
 
         public Result<IEnumerable<WordToken>> ParseToTokens(string text)
         {
-            if (text == null)
-                return Result.Fail<IEnumerable<WordToken>>("Text is null");
-            var wordCountDictionary = new Dictionary<string, int>();
-            var splittedText = text
+            return text
                 .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
-                .Select(word => word.ToLower());
-            foreach (var lineWord in splittedText)
-            {
-                if (IsWordInvalid(lineWord))
-                    continue;
-                if (!wordCountDictionary.ContainsKey(lineWord))
-                    wordCountDictionary.Add(lineWord, 1);
-                else
-                    wordCountDictionary[lineWord] += 1;
-            }
-            return wordCountDictionary.Select(kvp => new WordToken(kvp.Key, kvp.Value)).ToArray();
+                .Select(word => word.ToLower())
+                .Where(IsWordValid)
+                .GroupBy(i => i, (word, words) => new {Word = word, Count = words.Count()})
+                .Select(wordPair => new WordToken(wordPair.Word, wordPair.Count))
+                .ToArray();
         }
 
-        private bool IsWordInvalid(string word)
+        private bool IsWordValid(string word)
         {
-            return boringWordsProvider.BoringWords != null
-                   && boringWordsProvider.BoringWords.Contains(word)
-                   || string.IsNullOrEmpty(word);
+            var pattern = new Regex(@".*[\w\d]+.*");
+            return pattern.IsMatch(word) && !boringWordsProvider.BoringWords.Contains(word);
         }
     }
 }

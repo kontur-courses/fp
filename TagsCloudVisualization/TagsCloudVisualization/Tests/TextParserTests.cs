@@ -21,13 +21,6 @@ namespace TagsCloudVisualization.Tests
         }
 
         [Test]
-        public void TextParser_ThrowsArgumentNullException_WhenTextIsNull()
-        {
-            var result = textParser.ParseToTokens(null);
-            result.IsSuccess.Should().BeFalse();
-        }
-
-        [Test]
         public void TextParser_ReturnsEmptyCollection_WhenTextIsEmpty()
         {
             var text = "";

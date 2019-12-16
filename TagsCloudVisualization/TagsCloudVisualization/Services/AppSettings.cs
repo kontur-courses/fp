@@ -15,7 +15,7 @@ namespace TagsCloudVisualization.Services
 
         public AppSettings()
         {
-            BoringWords = ExecuteBoringWords();
+            BoringWords = ExtractBoringWordsFromFile();
             ImageSettings = ImageSettings.InitializeDefaultSettings();
         }
 
@@ -29,7 +29,9 @@ namespace TagsCloudVisualization.Services
 
         public Result<string> GetPath()
         {
-            return File.Exists(textDocumentPath) ? textDocumentPath : Result.Fail<string>("Couldn't get text document path");
+            return File.Exists(textDocumentPath)
+                ? textDocumentPath
+                : Result.Fail<string>("Couldn't get text document path");
         }
 
         public void SetPath(string path)
@@ -37,12 +39,10 @@ namespace TagsCloudVisualization.Services
             textDocumentPath = path;
         }
 
-        private HashSet<string> ExecuteBoringWords()
+        private HashSet<string> ExtractBoringWordsFromFile()
         {
-            var boringWordsText = TextRetriever
-                .RetrieveTextFromFile(
-                    Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BoringWords.txt"))
-                );
+            var boringWordsPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BoringWords.txt"));
+            var boringWordsText = TextRetriever.RetrieveTextFromFile(boringWordsPath);
             return boringWordsText.IsSuccess ? 
                 boringWordsText
                     .GetValueOrThrow()

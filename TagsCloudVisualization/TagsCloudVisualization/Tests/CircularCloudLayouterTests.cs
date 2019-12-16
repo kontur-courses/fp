@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Autofac;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -67,17 +68,15 @@ namespace TagsCloudVisualization.Tests
         [TestCase(100, TestName = "100 rectangles created")]
         public void PutNextRectangles_ShouldNotReturnCrossingRectangles(int rectanglesAmount)
         {
-            var rectangles = new List<Rectangle>();
-
-            for (var i = 1; i < rectanglesAmount; i++)
-            {
-                var rectangle = layouter.PutNextRectangle(new Size(i, i)).GetValueOrThrow();
-                rectangles.Add(rectangle);
-            }
-
-            for (var i = 0; i < rectangles.Count; i++)
-            for (var j = 0; j < i; j++)
-                rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
+            var rectangles = Enumerable
+                .Range(1, rectanglesAmount)
+                .Select(sideSize => new Size(sideSize, sideSize))
+                .Select(size => layouter.PutNextRectangle(size).GetValueOrThrow())
+                .ToArray();
+            
+            for (var i = 0; i < rectangles.Length; i++)
+                for (var j = 0; j < i; j++)
+                    rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
         }
 
         [Test]
@@ -100,8 +99,10 @@ namespace TagsCloudVisualization.Tests
             var rnd = new Random();
             Action action = () =>
             {
-                for (var i = 0; i < rectanglesAmount; i++)
-                    layouter.PutNextRectangle(new Size(5 + rnd.Next(40), 5 + rnd.Next(40)));
+                Enumerable
+                    .Range(0, rectanglesAmount)
+                    .Select(i => new Size(5 + rnd.Next(40), 5 + rnd.Next(40)))
+                    .ForEach(size => layouter.PutNextRectangle(size));
             };
 
             action.ExecutionTime().Should().BeLessThan(milliseconds.Milliseconds());
