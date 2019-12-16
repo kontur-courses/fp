@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace TagsCloudResult.CloudVisualizers.ImageSaving
 {
@@ -12,10 +13,24 @@ namespace TagsCloudResult.CloudVisualizers.ImageSaving
             this.settingsFactory = settingsFactory;
         }
 
-        public void Save(Bitmap bitmap)
+        public Result<None> Save(Bitmap bitmap)
         {
             var settings = settingsFactory();
-            bitmap.Save(settings.Path, settings.Format);
+            try
+            {
+                bitmap.Save(settings.Path, settings.Format);
+            }
+            catch (ArgumentNullException)
+            {
+                return Result.Fail<None>(settings.Path is null
+                    ? "Saving image path is null."
+                    : "Saving image format is null.");
+            }
+            catch (ExternalException)
+            {
+                return Result.Fail<None>("Image is saved in wrong format.");
+            }
+            return Result.Ok();
         }
     }
 }
