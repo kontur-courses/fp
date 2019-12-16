@@ -20,34 +20,34 @@ namespace TagsCloudTests
         }
 
         [Test]
-        public void ReadFile_Should_ThrowArgumentException_When_FileNotExists()
+        public void ReadFile_Should_ReturnResultFail_When_FileNotExists()
         {
-            var currentFilePath = GenerateNotExistPath();
-            Action action = () => txtReader.ReadFile(currentFilePath);
-            action.Should().Throw<ArgumentException>();
+            var currentFilePath = Path.GetRandomFileName();
+            var result = txtReader.ReadFile(currentFilePath);
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void ReadFile_Should_ReturnFileContent()
         {
-            var currentFilePath = GenerateNotExistPath();
+            var currentFilePath = Path.GetRandomFileName() + ".txt";
             var words = new List<string>() { "съешь", "ещё", "этих", "мягких", "французских", "булок", "да", "выпей", "чаю" };
             var inputString = string.Join(Environment.NewLine, words);
             File.WriteAllText(currentFilePath, inputString);
-            txtReader.ReadFile(currentFilePath).Should().BeEquivalentTo(inputString);
+            var result = txtReader.ReadFile(currentFilePath);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEquivalentTo(inputString);
             File.Delete(currentFilePath);
         }
 
-        private string GenerateNotExistPath()
+        [Test]
+        public void ReadFile_Should_ReturnResultFail_When_ExtensionNotSupported()
         {
-            var rnd = new Random();
-            var currentDir = Directory.GetCurrentDirectory();
-            var currentFilePath = Path.Combine(currentDir, rnd.Next(100000).ToString() + ".txt");
-            while (File.Exists(currentFilePath))
-            {
-                currentFilePath = Path.Combine(currentDir, rnd.Next(100000).ToString() + ".txt");
-            }
-            return currentFilePath;
+            var currentFilePath = Path.GetRandomFileName() + ".doc";
+            File.Create(currentFilePath).Close();
+            var result = txtReader.ReadFile(currentFilePath);
+            result.IsSuccess.Should().BeFalse();
+            File.Delete(currentFilePath);
         }
     }
 }

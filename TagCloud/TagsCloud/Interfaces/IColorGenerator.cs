@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.Interfaces
 {
     public interface IColorScheme
     {
-        Color GetColorForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords);
+        Result<Color> GetColorForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords);
     }
 }

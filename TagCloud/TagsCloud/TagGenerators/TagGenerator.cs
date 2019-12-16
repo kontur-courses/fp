@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TagsCloud.Interfaces;
 using System.Linq;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.TagGenerators
 {
@@ -15,19 +16,29 @@ namespace TagsCloud.TagGenerators
             this.colorGenerator = colorGenerator;
         }
 
-        public IEnumerable<Tag> GenerateTag(IEnumerable<(string word, int frequency)> wordStatistics)
+        public Result<IEnumerable<Tag>> GenerateTag(IEnumerable<(string word, int frequency)> wordStatistics)
         {
             var currentPosition = 0;
             var countWord = wordStatistics.Count();
+            wordStatistics = wordStatistics.OrderBy(wordsStatistic => wordsStatistic.frequency);
             var result = new List<Tag>();
-            foreach (var wordStatistic in wordStatistics.OrderByDescending(pair => pair.frequency))
+            foreach(var wordStatistic in wordStatistics)
             {
                 var fontSettings = fontGenerator.GetFontSizeForCurrentWord(wordStatistic, currentPosition, countWord);
                 var color = colorGenerator.GetColorForCurrentWord(wordStatistic, currentPosition, countWord);
-                currentPosition++;
-                result.Add(new Tag(fontSettings, color, wordStatistic.word));
+                if (!fontSettings.IsSuccess)
+                {
+                    fontSettings.RefineError("Font settings cannot be obtained");
+                    return Result.Fail<IEnumerable<Tag>>(fontSettings.Error);
+                }
+                if (!color.IsSuccess)
+                {
+                    color.RefineError("Collor cannot be obtained");
+                    return Result.Fail<IEnumerable<Tag>>(color.Error);
+                }
+                result.Add(new Tag(fontSettings.Value, color.Value, wordStatistic.word));
             }
-            return result;
+            return (result.AsEnumerable()).AsResult();
         }
     }
 }

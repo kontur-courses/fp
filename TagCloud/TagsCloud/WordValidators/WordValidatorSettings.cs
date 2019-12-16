@@ -7,7 +7,7 @@
 
         public WordValidatorSettings(TagCloudSettings tagCloudSettings)
         {
-            pathToBoringWords = tagCloudSettings.PathToBoringWords;
+            pathToBoringWords = tagCloudSettings.pathToBoringWords;
             ignoringPartsOfSpeech = tagCloudSettings.ignoredPartOfSpeech;
         }
     }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.Interfaces
 {
     public interface ITextSpliter
     {
-        IEnumerable<string> SplitText(string text);
+        Result<IEnumerable<string>> SplitText(string text);
     }
 }

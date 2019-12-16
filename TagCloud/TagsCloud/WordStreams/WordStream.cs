@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TagsCloud.Interfaces;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.WordStreams
 {
@@ -19,10 +20,25 @@ namespace TagsCloud.WordStreams
             this.wordValidator = wordValidator;
         }
 
-        public IEnumerable<string> GetWords(string path)
+        public Result<IEnumerable<string>> GetWords(string path)
         {
-            var text = fileReader.ReadFile(path);
-            return textSpliter.SplitText(text).Select(word => wordHandler.ProseccWord(word)).Where(newWord => wordValidator.IsValidWord(newWord));
+            return fileReader.ReadFile(path)
+            .Then(text => textSpliter.SplitText(text))
+            .Then(words => words.Select(word => wordHandler.ProseccWord(word)))
+            .Then(words =>
+            {
+                var result = new List<string>();
+                foreach (var word in words)
+                {
+                    var isValid = wordValidator.IsValidWord(word);
+                    if (!isValid.IsSuccess)
+                        return Result.Fail<IEnumerable<string>>(isValid.Error);
+                    if (isValid.Value)
+                        result.Add(word);
+                }
+                return Result.Ok(result.AsEnumerable());
+            })
+            .OnFail(errorMsg => Result.Fail<IEnumerable<string>>(errorMsg));
         }
     }
 }

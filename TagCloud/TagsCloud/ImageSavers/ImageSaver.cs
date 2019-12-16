@@ -1,14 +1,16 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloud.Interfaces;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.ImageSavers
 {
     public class ImageSaver : IImageSaver
     {
-        public void SaveImage(Image image, string path, ImageFormat formatResult)
+        public Result<None> SaveImage(Image image, string path, ImageFormat formatResult)
         {
-            image.Save(path, formatResult);
+            return Result.OfAction(() => image.Save(path, formatResult),
+                $"Failed to save iamge to {path}");
         }
     }
 }

@@ -21,7 +21,9 @@ namespace TagsCloudTests
         {
             var words = new List<string>() { "съешь", "ещё", "этих", "мягких", "французских", "булок", "да", "выпей", "чаю" };
             var inputString = "съешь:ещё!этих,мягких.французских!булок?да.выпей:чаю";
-            spliterByWhiteSpace.SplitText(inputString).Should().BeEquivalentTo(words);
+            var result = spliterByWhiteSpace.SplitText(inputString);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEquivalentTo(words);
         }
 
         [Test]
@@ -35,7 +37,16 @@ namespace TagsCloudTests
                 "выпей" + Environment.NewLine +
                 ":" + Environment.NewLine +
                 "чаю";
-            spliterByWhiteSpace.SplitText(inputString).Should().BeEquivalentTo(wordsWithoutEmptyLines);
+            var result = spliterByWhiteSpace.SplitText(inputString);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEquivalentTo(wordsWithoutEmptyLines);
+        }
+
+        [Test]
+        public void SplitText_Should_ReturnResultFail_When_InputTextEqualNull()
+        {
+            var result = spliterByWhiteSpace.SplitText(null);
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

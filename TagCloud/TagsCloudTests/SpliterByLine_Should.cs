@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System.Collections.Generic;
 using TagsCloud.Spliters;
+using TagsCloud;
 
 namespace TagsCloudTests
 {
@@ -21,7 +22,9 @@ namespace TagsCloudTests
         {
             var words = new List<string>() { "съешь", "ещё", "этих", "мягких", "французских", "булок", "да", "выпей", "чаю"};
             var inputString = string.Join(Environment.NewLine, words);
-            spliterByLine.SplitText(inputString).Should().BeEquivalentTo(words);
+            var result = spliterByLine.SplitText(inputString);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEquivalentTo(words);
         }
 
         [Test]
@@ -30,7 +33,16 @@ namespace TagsCloudTests
             var words = new List<string>() { "съешь", "", "ещё", " ", "этих", "  ", "мягких", "\n", "французских", "булок", "да", "выпей", "чаю" };
             var wordsWithoutEmptyLines = new List<string>() { "съешь", "ещё", "этих", "мягких", "французских", "булок", "да", "выпей", "чаю" };
             var inputString = string.Join(Environment.NewLine, words);
-            spliterByLine.SplitText(inputString).Should().BeEquivalentTo(wordsWithoutEmptyLines);
+            var result = spliterByLine.SplitText(inputString);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEquivalentTo(wordsWithoutEmptyLines);
+        }
+
+        [Test]
+        public void SplitText_Should_ReturnResultFail_When_InputTextEqualNull()
+        {
+            var result = spliterByLine.SplitText(null);
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.Interfaces
 {
     public interface IImageSaver
     {
-        void SaveImage(Image image, string path, ImageFormat formatResult);
+        Result<None> SaveImage(Image image, string path, ImageFormat formatResult);
     }
 }

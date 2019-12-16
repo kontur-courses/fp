@@ -1,9 +1,10 @@
 ﻿using TagsCloud.FontGenerators;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.Interfaces
 {
     public interface IFontSettingsGenerator
     {
-        FontSettings GetFontSizeForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords);
+        Result<FontSettings> GetFontSizeForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords);
     }
 }

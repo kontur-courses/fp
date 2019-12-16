@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TagsCloud.Interfaces;
 using System.Linq;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.Spliters
 {
@@ -9,11 +10,13 @@ namespace TagsCloud.Spliters
     {
         private readonly char[] splitChar = { ',', '.', '!', '?', ';', ':', ' '};
 
-        public IEnumerable<string> SplitText(string text)
+        public Result<IEnumerable<string>> SplitText(string text)
         {
             if (text == null)
-                throw new ArgumentNullException();
-            return text.Split(Environment.NewLine).SelectMany(line => line.Split(splitChar)).Where(word => !string.IsNullOrEmpty(word));
+                return Result.Fail<IEnumerable<string>>("Text is null");
+            return Result.Of(() => text.Split(Environment.NewLine))
+                .Then(lines => lines.SelectMany(line => line.Split(splitChar)))
+                .Then(words => words.Where(word => !string.IsNullOrEmpty(word)));
         }
     }
 }

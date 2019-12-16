@@ -1,15 +1,10 @@
 ﻿using System.IO;
-using System;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.PathValidators
 {
     public class PathValidator
     {
-        public bool IsValidPath(string path)
-        {
-            if (path == null)
-                throw new ArgumentNullException();
-            return File.Exists(path);
-        }
+        public Result<bool> IsValidPath(string path) => path == null ? Result.Fail<bool>("The path must not be null.") : File.Exists(path).AsResult();
     }
 }

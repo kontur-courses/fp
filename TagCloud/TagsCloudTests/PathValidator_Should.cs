@@ -19,23 +19,23 @@ namespace TagsCloudTests
         [Test]
         public void PathValidator_Should_ThrowArgumentException_WhenPathIsNull()
         {
-            Action action = () => pathValidator.IsValidPath(null);
-            action.Should().Throw<ArgumentException>();
+            pathValidator.IsValidPath(null).IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void PathValidator_Should_ReturnFalse_When_FileNotExists()
         {
-            var currentFilePath = GenerateNotExistPath();
-            pathValidator.IsValidPath(currentFilePath).Should().BeFalse();
+            var currentFilePath = Path.GetRandomFileName();
+            var result = pathValidator.IsValidPath(currentFilePath);
+            result.IsSuccess.Should().BeTrue();
+            pathValidator.IsValidPath(currentFilePath).GetValueOrThrow().Should().BeFalse();
         }
 
         [Test]
         public void PathValidator_Should_ReturnTrue_When_FileExists()
         {
-            var currentFilePath = GenerateNotExistPath();
-            using (var file = File.Create(currentFilePath)) { }
-            pathValidator.IsValidPath(currentFilePath).Should().BeTrue();
+            var currentFilePath = Path.GetTempFileName();
+            pathValidator.IsValidPath(currentFilePath).GetValueOrThrow().Should().BeTrue();
             File.Delete(currentFilePath);
         }
 

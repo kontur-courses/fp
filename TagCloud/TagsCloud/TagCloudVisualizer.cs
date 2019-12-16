@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using TagsCloud.Interfaces;
-using System.Collections.Generic;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud
 {
@@ -31,14 +31,15 @@ namespace TagsCloud
             this.tagCloudSettings = tagCloudSettings;
         }
 
-        public void GenerateTagCloud()
+        public Result<None> GenerateTagCloud()
         {
-            var words = wordStream.GetWords(tagCloudSettings.PathToInput);
-            var wordStatistics = wordCounter.GetWordsStatistics(words);
-            var tags = tagGenerator.GenerateTag(wordStatistics);
-            var tagCloud = tagCloudGenerator.GenerateTagCloud(tags);
-            using (var image = cloudDrawer.Paint(tagCloud, new Size(tagCloudSettings.WidthOutputImage, tagCloudSettings.HeightOutputImage), tagCloudSettings.BackgroundColor, 15))
-                imageSaver.SaveImage(image, tagCloudSettings.PathToOutput, tagCloudSettings.imageFormat);
+           return wordStream.GetWords(tagCloudSettings.pathToInput)
+                .Then(words => wordCounter.GetWordsStatistics(words))
+                .Then(wordsStatistics => tagGenerator.GenerateTag(wordsStatistics))
+                .Then(tags => tagCloudGenerator.GenerateTagCloud(tags))
+                .Then(tagCloud => cloudDrawer.Paint(tagCloud, new Size(tagCloudSettings.widthOutputImage, tagCloudSettings.heightOutputImage), tagCloudSettings.backgroundColor, 15))
+                .Then(image => imageSaver.SaveImage(image, tagCloudSettings.pathToOutput, tagCloudSettings.imageFormat))
+                .OnFail(error => Result.Fail<None>(error));
         }
     }
 }

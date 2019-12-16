@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.Interfaces
+﻿using TagsCloud.ErrorHandling;
+
+namespace TagsCloud.Interfaces
 {
     public interface IWordValidator
     {
-        bool IsValidWord(string word);
+        Result<bool> IsValidWord(string word);
     }
 }

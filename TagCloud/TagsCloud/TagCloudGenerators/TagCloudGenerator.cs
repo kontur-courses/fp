@@ -2,6 +2,7 @@
 using System.Drawing;
 using TagsCloud.Interfaces;
 using TagsCloud.TagGenerators;
+using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.TagCloudGenerators
 {
@@ -14,7 +15,7 @@ namespace TagsCloud.TagCloudGenerators
             this.tagCloud = tagCloud;
         }
 
-        public IEnumerable<(Tag tag, Rectangle position)> GenerateTagCloud(IEnumerable<Tag> allTags)
+        public Result<IEnumerable<(Tag tag, Rectangle position)>> GenerateTagCloud(IEnumerable<Tag> allTags)
         {
             var result = new List<(Tag tag, Rectangle position)>();
             using (var image = new Bitmap(1, 1))
@@ -29,7 +30,7 @@ namespace TagsCloud.TagCloudGenerators
                     }
                 }
             }
-            return result;
+            return ((IEnumerable<(Tag tag, Rectangle position)>)result).AsResult();
         }
     }
 }
