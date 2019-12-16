@@ -105,6 +105,9 @@
     <None Include="Words.docx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="mystem.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="WordsRus.txt" />
     <Content Include="WaPv1p1.txt" />
     <Content Include="Words.txt" />
