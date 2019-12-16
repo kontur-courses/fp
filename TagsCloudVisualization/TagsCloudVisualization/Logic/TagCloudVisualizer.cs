@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using ErrorHandler;
 using TagsCloudVisualization.Logic.Painter;
 using TagsCloudVisualization.Services;
@@ -39,7 +38,6 @@ namespace TagsCloudVisualization.Logic
                 .Then(textParser.ParseToTokens)
                 .Then(tokens => CreateTagsFromTokens(tokens, imageCenter))
                 .Then(imageGenerator.CreateImage);
-
             layouter.Reset();
             return result.RefineError("while trying to visualize image");
         }
@@ -83,7 +81,7 @@ namespace TagsCloudVisualization.Logic
         {
             return imageSettings.Font.Size + word.TextCount * 3;
         }
-        
+
         private Size CalculateWordSize(WordToken wordToken, Font font)
         {
             var size = measureGraphics.MeasureString(wordToken.Word, font);

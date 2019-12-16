@@ -97,6 +97,7 @@ namespace TagsCloudVisualization.Tests
         public void PutNextRectangle_IsTimePermissible(int rectanglesAmount, int milliseconds)
         {
             var rnd = new Random();
+            
             Action action = () =>
             {
                 Enumerable

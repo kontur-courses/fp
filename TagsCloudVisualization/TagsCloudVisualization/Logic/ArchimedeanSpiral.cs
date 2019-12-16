@@ -5,14 +5,14 @@ namespace TagsCloudVisualization.Logic
 {
     public class ArchimedeanSpiral : ICirclePointLocator
     {
-        private const double spiralRatio = 0.1;
+        private const double SpiralRatio = 0.1;
         public double DistanceFromCenter { get; set; }
         public double Angle { get; set; }
 
         public Point GetNextPoint()
         {
-            Angle += spiralRatio;
-            DistanceFromCenter += spiralRatio;
+            Angle += SpiralRatio;
+            DistanceFromCenter += SpiralRatio;
             return Geometry.PolarToCartesianCoordinates(DistanceFromCenter, Angle);
         }
     }

@@ -13,7 +13,6 @@ namespace TagsCloudVisualization.Services
         {
             BackgroundColor = backgroundColor;
             Font = font ?? DefaultSettings.Font;
-
             ImageSize = imageSize;
         }
 

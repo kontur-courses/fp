@@ -49,6 +49,7 @@ namespace TagsCloudVisualization.Logic
                         rectangle.X = shiftedCenter.X + locatedPoint.X;
                         rectangle.Y = shiftedCenter.Y + locatedPoint.Y;
                     }
+
                     return rectangle;
                 })
                 .Then(AlignLocatorDirection);

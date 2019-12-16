@@ -7,7 +7,7 @@ namespace TagsCloudVisualization.Logic
     {
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
-            foreach(T item in source)
+            foreach(var item in source)
                 action(item);
         }
     }
