@@ -12,7 +12,7 @@ namespace TagsCloudVisualization
         {
             InputFilename = options.InputFilename;
             OutputFilename = options.OutputFilename;
-            OutputFormat = ImageUtilities.GetFormatFromString(options.OutputImageFormatName);
+            OutputFormat = ImageUtilities.GetFormatFromString(options.OutputImageFormatName).GetValueOrThrow();
         }
     }
 }

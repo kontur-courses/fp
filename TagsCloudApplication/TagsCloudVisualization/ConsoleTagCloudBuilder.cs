@@ -1,4 +1,6 @@
-﻿namespace TagsCloudVisualization
+﻿using TextConfiguration;
+
+namespace TagsCloudVisualization
 {
     public class ConsoleTagCloudBuilder
     {
@@ -16,11 +18,12 @@
             this.properties = properties;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            var cloudTags = tagProvider.ReadCloudTags(properties.InputFilename);
-            var image = visualizator.VisualizeCloudTags(cloudTags);
-            ImageUtilities.SaveImage(image, properties.OutputFormat, properties.OutputFilename);
+            return 
+                tagProvider.ReadCloudTags(properties.InputFilename)
+                .Then(cloudTags => visualizator.VisualizeCloudTags(cloudTags))
+                .Then(image => ImageUtilities.SaveImage(image, properties.OutputFormat, properties.OutputFilename));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace TagsCloudApplicationTests
                 this.words = words.ToList();
             }
 
-            public List<string> ReadWordsFromFile(string filePath)
+            public Result<List<string>> ReadWordsFromFile(string filePath)
             {
                 return words;
             }
@@ -44,7 +44,7 @@ namespace TagsCloudApplicationTests
         {
             var cloudTagProvider = GetDefaultConstantCloudTagProvider(new string[] { });
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.Should().BeEquivalentTo(new CloudTag[] { });
         }
@@ -55,7 +55,7 @@ namespace TagsCloudApplicationTests
         {
             var cloudTagProvider = GetDefaultConstantCloudTagProvider(words);
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.Select(tag => tag.Word).Should().BeSubsetOf(words);
         }
@@ -66,7 +66,7 @@ namespace TagsCloudApplicationTests
         {
             var cloudTagProvider = GetDefaultConstantCloudTagProvider(words);
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.Select(tag => tag.Word).Should().OnlyHaveUniqueItems();
         }
@@ -80,7 +80,7 @@ namespace TagsCloudApplicationTests
             var properties = new CloudTagProperties(fontFamily, 1);
             var cloudTagProvider = GetConstantCloudTagProvider(properties, words);
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.Select(tag => tag.Font.FontFamily).Distinct().Should().BeEquivalentTo(fontFamily);
         }
@@ -93,7 +93,7 @@ namespace TagsCloudApplicationTests
             var properties = new CloudTagProperties(new FontFamily(GenericFontFamilies.SansSerif), minFontSize);
             var cloudTagProvider = GetConstantCloudTagProvider(properties, words);
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.Select(tag => tag.Font.Size).Min().Should().BeGreaterOrEqualTo(minFontSize);
         }
@@ -105,7 +105,7 @@ namespace TagsCloudApplicationTests
             var cloudTagProvider = GetDefaultConstantCloudTagProvider(words);
             var expectedWordOrder = new string[] { "one", "two", "three" };
 
-            var tags = cloudTagProvider.ReadCloudTags(null);
+            var tags = cloudTagProvider.ReadCloudTags(null).GetValueOrThrow();
 
             tags.OrderBy(tag => tag.Font.Size).Select(tag => tag.Word).Should().BeEquivalentTo(expectedWordOrder);
         }

@@ -10,6 +10,7 @@ using System.IO;
 using TagsCloudLayout;
 using TagsCloudLayout.CloudLayouters;
 using TagsCloudLayout.PointLayouters;
+using TextConfiguration;
 
 namespace TagsCloudApplicationTests
 {
@@ -40,7 +41,7 @@ namespace TagsCloudApplicationTests
         public void PutNextRectangle_WithoutChangingSize(int width, int height)
         {
             var size = new Size(width, height);
-            var rectangle = layouter.PutNextRectangle(size);
+            var rectangle = layouter.PutNextRectangle(size).GetValueOrThrow();
             rectangles.Add(rectangle);
             rectangle.Size.Should().BeEquivalentTo(size);
         }
@@ -50,8 +51,8 @@ namespace TagsCloudApplicationTests
         [TestCase(-10, 0)]
         public void ThrowArgumentException_OnNonPositiveSize(int width, int height)
         {
-            Action act = () => layouter.PutNextRectangle(new Size(width, height));
-            act.Should().Throw<ArgumentException>();
+            Action act = () => layouter.PutNextRectangle(new Size(width, height)).GetValueOrThrow();
+            act.Should().Throw<Exception>();
         }
 
         [TestCase(0, 0)]
@@ -61,7 +62,7 @@ namespace TagsCloudApplicationTests
         {
             center = new Point(x, y);
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(center));
-            var rectangle = layouter.PutNextRectangle(size);
+            var rectangle = layouter.PutNextRectangle(size).GetValueOrThrow();
             rectangles.Add(rectangle);
 
             rectangle.GetCenter().X.Should().BeApproximately(x, (float)size.Width / 2);
@@ -72,7 +73,8 @@ namespace TagsCloudApplicationTests
         public void PutRectanglesOnLayout_WithoutIntersection()
         {
             rectangles = CloudLayouterUtilities.GenerateRandomLayout(
-                    center, rnd.Next(2, 25), minWidth, maxWidth, minHeight, maxHeight);
+                    center, rnd.Next(2, 25), minWidth, maxWidth, minHeight, maxHeight)
+                    .GetValueOrThrow();
             foreach(var rectangle in rectangles)
                 rectangles
                     .Any(rect => rect.IntersectsWith(rectangle) && rect != rectangle)
@@ -88,7 +90,8 @@ namespace TagsCloudApplicationTests
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(center));
 
             rectangles = CloudLayouterUtilities.GenerateRandomLayout(
-                    center, rnd.Next(25, 50), minWidth, maxWidth, minHeight, maxHeight);
+                    center, rnd.Next(25, 50), minWidth, maxWidth, minHeight, maxHeight)
+                    .GetValueOrThrow();
             var totalMass = rectangles.Select(rect => rect.Width * rect.Height).Sum();
 
             var maxSquaredDistance = center.GetMaxSquaredDistanceTo(rectangles);

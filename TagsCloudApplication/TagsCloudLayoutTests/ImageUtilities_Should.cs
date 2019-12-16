@@ -30,7 +30,7 @@ namespace TagsCloudApplicationTests
         [TestCase("gif")]
         public void ParseFormatNameString_Properly(string formatNameString)
         {
-            ImageUtilities.GetFormatFromString(formatNameString).Should().BeEquivalentTo(
+            ImageUtilities.GetFormatFromString(formatNameString).GetValueOrThrow().Should().BeEquivalentTo(
                 formatNameToFormat[formatNameString]);
         }
 
@@ -38,16 +38,16 @@ namespace TagsCloudApplicationTests
         [TestCase("PnG")]
         public void ParseFormatNameString_IndifferentToCase(string formatNameString)
         {
-            ImageUtilities.GetFormatFromString(formatNameString).Should().BeEquivalentTo(
+            ImageUtilities.GetFormatFromString(formatNameString).GetValueOrThrow().Should().BeEquivalentTo(
                 formatNameToFormat[formatNameString.ToLower()]);
         }
 
         [Test]
         public void ThrowArgumentException_OnUnknownFormatName()
         {
-            Action act = () => ImageUtilities.GetFormatFromString("???");
+            Action act = () => ImageUtilities.GetFormatFromString("???").GetValueOrThrow();
 
-            act.Should().Throw<ArgumentException>();
+            act.Should().Throw<Exception>();
         }
     }
 }

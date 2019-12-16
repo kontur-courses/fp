@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TextConfiguration;
 
 namespace TagsCloudLayout.CloudLayouters
 {
     public interface ICloudLayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

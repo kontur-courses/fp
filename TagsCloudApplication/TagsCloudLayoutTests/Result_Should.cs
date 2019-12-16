@@ -2,7 +2,7 @@
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudVisualization;
+using TextConfiguration;
 
 namespace TagsCloudApplicationTests
 {

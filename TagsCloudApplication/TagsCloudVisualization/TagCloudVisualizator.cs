@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using TagsCloudLayout.CloudLayouters;
 using System.Collections.Generic;
+using TextConfiguration;
 
 namespace TagsCloudVisualization
 {
@@ -20,23 +21,26 @@ namespace TagsCloudVisualization
             this.layouter = layouter;
         }
 
-        public Bitmap VisualizeCloudTags(IReadOnlyCollection<CloudTag> cloudTags)
+        public Result<Bitmap> VisualizeCloudTags(IReadOnlyCollection<CloudTag> cloudTags)
         {
             var bitmap = new Bitmap(properties.ImageSize.Width, properties.ImageSize.Height);
             var graphics = Graphics.FromImage(bitmap);
 
-            foreach(var cloudTag in cloudTags)
-            {
-                var boundingBoxSize = graphics.MeasureString(cloudTag.Word, cloudTag.Font).ToSize();
+            return Result.Ok()
+                .Then((_) =>
+                {
+                    foreach (var cloudTag in cloudTags)
+                    {
+                        var boundingBoxSize = graphics.MeasureString(cloudTag.Word, cloudTag.Font).ToSize();
 
-                var rectangle = layouter.PutNextRectangle(boundingBoxSize);
-                graphics.DrawString(cloudTag.Word,
-                    cloudTag.Font, 
-                    new SolidBrush(colorGenerator.GetTextColor(cloudTag.Word, rectangle)), 
-                    rectangle.Location);
-            }
-
-            return bitmap;
+                        var rectangle = layouter.PutNextRectangle(boundingBoxSize).GetValueOrThrow();
+                        graphics.DrawString(cloudTag.Word,
+                            cloudTag.Font,
+                            new SolidBrush(colorGenerator.GetTextColor(cloudTag.Word, rectangle)),
+                            rectangle.Location);
+                    }
+                })
+            .Then((_) => bitmap);
         }
     }
 }

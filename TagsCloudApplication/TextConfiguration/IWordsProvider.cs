@@ -4,6 +4,6 @@ namespace TextConfiguration
 {
     public interface IWordsProvider
     {
-        List<string> ReadWordsFromFile(string filePath);
+        Result<List<string>> ReadWordsFromFile(string filePath);
     }
 }

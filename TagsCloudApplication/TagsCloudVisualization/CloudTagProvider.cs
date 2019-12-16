@@ -17,20 +17,17 @@ namespace TagsCloudVisualization
             this.provider = provider;
         }
 
-        public List<CloudTag> ReadCloudTags(string filePath)
+        public Result<List<CloudTag>> ReadCloudTags(string filePath)
         {
-            var processedWords = provider.ReadWordsFromFile(filePath);
-            if (processedWords.Count == 0)
-                return new List<CloudTag>();
-
-            return processedWords
-                .CountWords()
-                .NormalizeByMin()
-                .Select(pair => 
+            return provider.ReadWordsFromFile(filePath)
+                .Then(words => words.Count == 0 ? new List<string>() : words)
+                .Then(words => words.CountWords())
+                .Then(words => words.NormalizeByMin())
+                .Then(words => words.Select(pair => 
                     new CloudTag(pair.Key, new Font(
                                             properties.TextFontFamily, 
-                                            (float)(properties.MinSize + 2 * pair.Value))))
-                .ToList();
+                                            (float)(properties.MinSize + 2 * pair.Value)))))
+                .Then(words => words.ToList());
         }
     }
 }

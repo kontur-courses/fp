@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace TextConfiguration.TextReaders
 {
     public class RawTextReader : ITextReader
     {
-        public string ReadText(string filePath)
+        public Result<string> ReadText(string filePath)
         {
             if (filePath is null || !File.Exists(filePath))
-                throw new ArgumentException($"Incorrect file path: {filePath}");
+                return Result.Fail<string>($"Couldn't read file. Incorrect file path: {filePath}");
 
             return File.ReadAllText(filePath);
         }

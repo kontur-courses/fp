@@ -2,6 +2,6 @@
 {
     public interface IWordFilter
     {
-        bool ShouldExclude(string word);
+        Result<bool> ShouldExclude(string word);
     }
 }

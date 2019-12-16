@@ -91,7 +91,7 @@ namespace TagsCloudApplicationTests
             var testFilePath = GetFilePath("CustomBoringWordsFile.txt");
             var expectedWords = new List<string>() { "it's", "wrong" };
 
-            var resultWords = wordProvider.ReadWordsFromFile(testFilePath);
+            var resultWords = wordProvider.ReadWordsFromFile(testFilePath).GetValueOrThrow();
 
             resultWords.Should().BeEquivalentTo(expectedWords);
         }
@@ -101,7 +101,7 @@ namespace TagsCloudApplicationTests
             var wordProvider = GetSimpleWordProvider();
             var testFilePath = GetFilePath(filename);
 
-            var resultWords = wordProvider.ReadWordsFromFile(testFilePath);
+            var resultWords = wordProvider.ReadWordsFromFile(testFilePath).GetValueOrThrow();
 
             resultWords.Should().BeEquivalentTo(expectedWords);
         }

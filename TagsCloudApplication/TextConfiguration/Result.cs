@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TagsCloudVisualization
+namespace TextConfiguration
 {
     public class None
     {

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TextConfiguration;
 
 namespace TagsCloudVisualization
 {
     public interface ITagProvider
     {
-        List<CloudTag> ReadCloudTags(string filePath);
+        Result<List<CloudTag>> ReadCloudTags(string filePath);
     }
 }

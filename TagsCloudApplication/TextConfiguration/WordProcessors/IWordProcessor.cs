@@ -2,6 +2,6 @@
 {
     public interface IWordProcessor
     {
-        string ProcessWord(string word);
+        Result<string> ProcessWord(string word);
     }
 }

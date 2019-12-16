@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TextConfiguration;
 
 namespace TagsCloudVisualization
 {
     public interface ITagCloudVisualizator
     {
-        Bitmap VisualizeCloudTags(IReadOnlyCollection<CloudTag> cloudTags);
+        Result<Bitmap> VisualizeCloudTags(IReadOnlyCollection<CloudTag> cloudTags);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudLayout.PointLayouters;
+using TextConfiguration;
 
 namespace TagsCloudLayout.CloudLayouters
 {
@@ -19,7 +20,12 @@ namespace TagsCloudLayout.CloudLayouters
             rectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
+        {
+            return Result.Of(() => PutRectangle(rectangleSize));
+        }
+
+        private Rectangle PutRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
                 throw new ArgumentException(

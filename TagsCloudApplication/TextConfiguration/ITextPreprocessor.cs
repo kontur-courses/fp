@@ -4,6 +4,6 @@ namespace TextConfiguration
 {
     public interface ITextPreprocessor
     {
-        List<string> PreprocessText(string text);
+        Result<List<string>> PreprocessText(string text);
     }
 }

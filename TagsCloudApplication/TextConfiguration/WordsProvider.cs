@@ -14,11 +14,10 @@ namespace TextConfiguration
             this.preprocessor = preprocessor;
         }
 
-        public List<string> ReadWordsFromFile(string filePath)
+        public Result<List<string>> ReadWordsFromFile(string filePath)
         {
-            var text = reader.ReadText(filePath);
-
-            return preprocessor.PreprocessText(text);
+            return reader.ReadText(filePath)
+                .Then(text => preprocessor.PreprocessText(text));
         }
     }
 }

@@ -77,7 +77,8 @@ namespace TagsCloudVisualization
         private static void RunWithParsedOptions(Options opts)
         {
             var container = ConfigureContainer(opts);
-            container.Resolve<ConsoleTagCloudBuilder>().Run();
+            container.Resolve<ConsoleTagCloudBuilder>().Run()
+                .OnFail(err => System.Console.WriteLine(err));
         }
 
         public static void Main(string[] args)

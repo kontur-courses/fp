@@ -14,6 +14,8 @@ namespace TextConfiguration
 
         public static Dictionary<string, double> NormalizeByMin(this Dictionary<string, int> countedWords)
         {
+            if (countedWords.Count == 0)
+                return new Dictionary<string, double>();
             var min = countedWords.Select(pair => pair.Value).Min() * 1.0;
             return countedWords
                 .ToDictionary(pair => pair.Key, pair => pair.Value / min);

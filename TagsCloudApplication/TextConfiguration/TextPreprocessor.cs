@@ -16,13 +16,14 @@ namespace TextConfiguration
             this.wordProcessor = wordProcessor;
         }
 
-        public List<string> PreprocessText(string text)
+        public Result<List<string>> PreprocessText(string text)
         {
-            return text
+            return Result.Of(() =>
+                text
                 .Split()
-                .Where(wrd => !filters.Any(fltr => fltr.ShouldExclude(wrd)))
-                .Select(wrd => wordProcessor.ProcessWord(wrd))
-                .ToList();
+                .Where(wrd => !filters.Any(fltr => fltr.ShouldExclude(wrd).GetValueOrThrow()))
+                .Select(wrd => wordProcessor.ProcessWord(wrd).GetValueOrThrow())
+                .ToList());
         }
     }
 }
