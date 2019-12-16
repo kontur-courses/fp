@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace TagsCloudLibrary.Colorers
 {
-    public class WordColorer : IColorer
+    public class WordHashcodeColorer : IColorer
     {
         public string Name { get; } = "Word";
         public Color ColorForWord(string word, double factor)
