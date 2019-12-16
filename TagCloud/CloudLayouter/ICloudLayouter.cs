@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ErrorHandling;
 using TagCloud.Visualization;
 
 namespace TagCloud.CloudLayouter
@@ -9,6 +10,6 @@ namespace TagCloud.CloudLayouter
         ImageSettings LayouterSettings { get; }
         HashSet<Rectangle> Rectangles { get; set; }
         void ResetLayouter();
-        bool TryPutNextRectangle(Size rectangleSize, out Rectangle outRectangle);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

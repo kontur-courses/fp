@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ErrorHandling;
 using TagCloud.Visualization;
 
 namespace TagCloud.CloudLayouter.CircularLayouter
@@ -17,7 +18,8 @@ namespace TagCloud.CloudLayouter.CircularLayouter
         {
             LayouterSettings = layouterSettings;
             this.spiral = spiral;
-            CheckCorrectSize(layouterSettings);
+            if (!IsCorrectSize(layouterSettings.ImageSize)) 
+                throw new ArgumentException("Incorrect size of layouter");
             Rectangles = new HashSet<Rectangle>();
         }
 
@@ -27,34 +29,31 @@ namespace TagCloud.CloudLayouter.CircularLayouter
             Rectangles = new HashSet<Rectangle>();
         }
 
-        public bool TryPutNextRectangle(Size rectangleSize, out Rectangle outRectangle)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            CheckCorrectSize(rectangleSize);
+            if (!IsCorrectSize(rectangleSize))
+                return Result.Fail<Rectangle>(
+                    $"Incorrect size of rectangle. Width: {rectangleSize.Width}, Height: {rectangleSize.Height}");
+
             foreach (var point in spiral.GetNewPointLazy())
             {
-                outRectangle = new Rectangle(point, rectangleSize);
-                if (!IsCorrectRectanglePosition(outRectangle)) return false;
-                if (!RectangleDoesNotIntersect(outRectangle)) continue;
-                Rectangles.Add(outRectangle);
-                return true;
+                var rect = new Rectangle(point, rectangleSize);
+                if (!IsCorrectRectanglePosition(rect))
+                    return Result.Fail<Rectangle>("Incorrect rectangle position");
+                if (!RectangleDoesNotIntersect(rect)) continue;
+                Rectangles.Add(rect);
+                return Result.Ok(rect);
             }
 
-            throw new InvalidOperationException("Rectangle should be added after foreach block");
+            return Result.Fail<Rectangle>("Rectangle should be added after foreach block");
         }
 
-        private void CheckCorrectSize(ImageSettings settings)
+        private bool IsCorrectSize(Size rectangleSize)
         {
-            CheckCorrectSize(settings.ImageSize);
-        }
-
-        private void CheckCorrectSize(Size rectangleSize)
-        {
-            if (rectangleSize.Width <= 0
-                || rectangleSize.Width > LayouterSettings.ImageSize.Width
-                || rectangleSize.Height <= 0
-                || rectangleSize.Height > LayouterSettings.ImageSize.Height)
-                throw new ArgumentException(
-                    $"Incorrect size of rectangle. Width: {rectangleSize.Width}, Height: {rectangleSize.Height}");
+            return !(rectangleSize.Width <= 0
+                     || rectangleSize.Width > LayouterSettings.ImageSize.Width
+                     || rectangleSize.Height <= 0
+                     || rectangleSize.Height > LayouterSettings.ImageSize.Height);
         }
 
         private bool IsCorrectRectanglePosition(Rectangle rect)
