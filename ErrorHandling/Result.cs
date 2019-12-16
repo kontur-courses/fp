@@ -16,16 +16,18 @@ namespace ErrorHandling
             Error = error;
             Value = value;
         }
+        public static implicit operator Result<T>(T v)
+        {
+            return Result.Ok(v);
+        }
 
-        public string Error { get; set; }
+        public string Error { get; }
         internal T Value { get; }
-
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
-
         public bool IsSuccess => Error == null;
     }
 
@@ -39,6 +41,10 @@ namespace ErrorHandling
         public static Result<T> Ok<T>(T value)
         {
             return new Result<T>(null, value);
+        }
+        public static Result<None> Ok()
+        {
+            return Ok<None>(null);
         }
 
         public static Result<T> Fail<T>(string e)
@@ -58,18 +64,40 @@ namespace ErrorHandling
             }
         }
 
+        public static Result<None> OfAction(Action f, string error = null)
+        {
+            try
+            {
+                f();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Fail<None>(error ?? e.Message);
+            }
+        }
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            return input.Then(x => Of(() => continuation(x)));
+            return input.Then(inp => Of(() => continuation(inp)));
+        }
+
+        public static Result<None> Then<TInput>(
+            this Result<TInput> input,
+            Action<TInput> continuation)
+        {
+            return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            return input.IsSuccess ? continuation(input.Value) : Fail<TOutput>(input.Error);
+            return input.IsSuccess
+                ? continuation(input.Value)
+                : Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
@@ -80,15 +108,19 @@ namespace ErrorHandling
             return input;
         }
 
-        public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input,
-            Func<string, string> handleError)
+        public static Result<TInput> ReplaceError<TInput>(
+            this Result<TInput> input,
+            Func<string, string> replaceError)
         {
-            return input.IsSuccess ? input : Fail<TInput>(handleError(input.Error));
+            if (input.IsSuccess) return input;
+            return Fail<TInput>(replaceError(input.Error));
         }
 
-        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string errorMessage)
+        public static Result<TInput> RefineError<TInput>(
+            this Result<TInput> input,
+            string errorMessage)
         {
-            return input.ReplaceError(e => errorMessage + ". " + e);
+            return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

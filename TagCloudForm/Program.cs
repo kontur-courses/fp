@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
+using Autofac.Core;
 using TagCloud;
 using TagCloud.CloudLayouter;
 using TagCloud.CloudLayouter.CircularLayouter;
@@ -29,6 +30,12 @@ namespace TagCloudForm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            var container = MakeContainer();
+            Application.Run(container.Resolve<TagCloudForm>());
+        }
+
+        private static IContainer MakeContainer()
+        {
             var builder = new ContainerBuilder();
             builder.RegisterType<CloudPainter>().AsSelf().SingleInstance();
             builder.RegisterType<TagCloudForm>().AsSelf().SingleInstance();
@@ -61,9 +68,7 @@ namespace TagCloudForm
             builder.RegisterType<FrequencyDictionaryMaker>().AsSelf().SingleInstance();
             builder.RegisterType<RandomTextColoration>().As<ITextColoration>();
             builder.RegisterType<ToLowerCaseConversion>().As<ITextConversion>();
-
-            var container = builder.Build();
-            Application.Run(container.Resolve<TagCloudForm>());
+            return builder.Build();
         }
     }
 }
