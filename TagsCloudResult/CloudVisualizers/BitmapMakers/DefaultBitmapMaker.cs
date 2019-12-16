@@ -22,8 +22,8 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
             
             var wordsList = words.ToArray();
             var rectangles = wordsList.Select(w => w.Rectangle).ToList();
-            var minX = rectangles.OrderBy(rect => rect.X).First().X;
-            var minY = rectangles.OrderBy(rect => rect.Y).First().Y;
+            var minX = rectangles.Min(rect => rect.X);
+            var minY = rectangles.Min(rect => rect.Y);
             var xRatio = GetXRatio(settings, rectangles);
             var yRatio = GetYRatio(settings, rectangles);
 
@@ -109,8 +109,8 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
         private static float GetXRatio(CloudVisualizerSettings settings, IEnumerable<Rectangle> rectangles)
         {
             var rectanglesEnum = rectangles as Rectangle[] ?? rectangles.ToArray();
-            var maxX = rectanglesEnum.OrderBy(rect => rect.Right).Last().Right;
-            var minX = rectanglesEnum.OrderBy(rect => rect.X).First().X;
+            var maxX = rectanglesEnum.Max(rect => rect.Right);
+            var minX = rectanglesEnum.Min(rect => rect.X);
             var xDifference = Math.Abs(maxX - minX);
             return (float) settings.Width / xDifference;
         }
@@ -118,8 +118,8 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
         private static float GetYRatio(CloudVisualizerSettings settings, IEnumerable<Rectangle> rectangles)
         {
             var rectanglesEnum = rectangles as Rectangle[] ?? rectangles.ToArray();
-            var maxY = rectanglesEnum.OrderBy(rect => rect.Bottom).Last().Bottom;
-            var minY = rectanglesEnum.OrderBy(rect => rect.Y).First().Y;
+            var maxY = rectanglesEnum.Max(rect => rect.Bottom);
+            var minY = rectanglesEnum.Min(rect => rect.Y);
             var yDifference = Math.Abs(maxY - minY);
             return (float) settings.Height / yDifference;
         }
