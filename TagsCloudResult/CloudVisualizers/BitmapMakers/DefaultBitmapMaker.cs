@@ -40,12 +40,14 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
                 if (settings.Palette.IsGradient)
                     DrawGradient(wordsList, settings, g);
                 else
+                {
+                    var brush = new SolidBrush(settings.Palette.PrimaryColor);
                     foreach (var word in wordsList)
                     {
                         var textSize = g.MeasureString(word.Word, settings.Font);
-                        var brush = new SolidBrush(settings.Palette.PrimaryColor);
                         WriteWordToRectangle(g, word, textSize, settings.Font, brush);
                     }
+                }
             }
 
             return bitmap;
