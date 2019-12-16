@@ -13,7 +13,7 @@ namespace TagsCloudResult.CloudVisualizers
             this.settingsFactory = settingsFactory;
         }
 
-        public Bitmap GetBitmap(IEnumerable<CloudVisualizationWord> words)
+        public Result<Bitmap> GetBitmap(IEnumerable<CloudVisualizationWord> words)
         {
             var settings = settingsFactory();
             return settings.BitmapMaker.MakeBitmap(words, settings);
