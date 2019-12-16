@@ -43,20 +43,28 @@ namespace TagsCloudLibrary
             this.imageWriter = imageWriter;
             this.tagsCloudGeneratorConfig = tagsCloudGeneratorConfig;
         }
-
-        private Result<Stream> OpenFile(string fileName)
+        public Result GenerateFromFile(string inputFile, string outputFile, int imageWidth, int imageHeight)
         {
-            if (!File.Exists(fileName))
-                return Result.Failure<Stream>($"File {fileName} not found");
-            try
-            {
-                return Result.Ok<Stream>(File.OpenRead(fileName));
-            }
-            catch (Exception e)
-            {
-                return Result.Failure<Stream>(e.Message);
-            }
+
+            return Result.Ok()
+                .Ensure(() => imageWidth > 0 && imageHeight > 0, "Image size is incorrect")
+                .Ensure(() => File.Exists(inputFile), $"File {inputFile} not found")
+                .Bind(() => OpenFile(inputFile))
+                .Bind(reader.Read)
+                .Bind(extractor.ExtractWords)
+                .Map(ApplyPreprocessors)
+                .Map(CountWords)
+                .Map(StatisticsDictionaryToList)
+                .Bind(wws => DrawCountedWords(imageWidth, imageHeight, wws))
+                .Bind(image => imageWriter.WriteBitmapToFile(image, outputFile));
         }
+
+        private List<Tuple<string, int>> StatisticsDictionaryToList(Dictionary<string, int> statisticsDictionary) =>
+            statisticsDictionary
+                .Select(pair => new Tuple<string, int>(pair.Key, pair.Value))
+                .OrderByDescending(tuple => tuple.Item2)
+                .ThenBy(tuple => tuple.Item1)
+                .ToList();
 
         private static Dictionary<string, int> CountWords(IEnumerable<string> words)
         {
@@ -116,10 +124,10 @@ namespace TagsCloudLibrary
                     {
                         var (word, count) = tuple;
                         var font = new Font(fontFamily, (float)count * height / totalWords * 2);
-                        
+
                         layouter
                             .PutNextRectangle(graphics.MeasureString(word, font).ToSize())
-                            .Tap(rectangle => 
+                            .Tap(rectangle =>
                                 graphics.DrawString(
                                 word,
                                 font,
@@ -131,24 +139,16 @@ namespace TagsCloudLibrary
                 });
         }
 
-        public Result GenerateFromFile(string inputFile, string outputFile, int imageWidth, int imageHeight)
+        private Result<Stream> OpenFile(string fileName)
         {
-
-            return
-                Result.Ok()
-                .Ensure(() => imageWidth > 0 && imageHeight > 0, "Image size is incorrect")
-                .Bind(() => OpenFile(inputFile))
-                .Bind(reader.Read)
-                .Bind(extractor.ExtractWords)
-                .Map(ApplyPreprocessors)
-                .Map(CountWords)
-                .Map(statistics => statistics
-                    .Select(pair => new Tuple<string, int>(pair.Key, pair.Value))
-                    .OrderByDescending(tuple => tuple.Item2)
-                    .ThenBy(tuple => tuple.Item1)
-                    .ToList())
-                .Bind(wws => DrawCountedWords(imageWidth, imageHeight, wws))
-                .Bind(image => imageWriter.WriteBitmapToFile(image, outputFile));
+            try
+            {
+                return Result.Ok<Stream>(File.OpenRead(fileName));
+            }
+            catch (Exception e)
+            {
+                return Result.Failure<Stream>(e.Message);
+            }
         }
     }
 }
