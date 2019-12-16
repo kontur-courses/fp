@@ -7,9 +7,18 @@ namespace TagsCloudResult.CloudVisualizers.BitmapMakers
 {
     public class DefaultBitmapMaker : IBitmapMaker
     {
-        public Bitmap MakeBitmap(IEnumerable<CloudVisualizationWord> words, CloudVisualizerSettings settings)
+        public Result<Bitmap> MakeBitmap(IEnumerable<CloudVisualizationWord> words, CloudVisualizerSettings settings)
         {
-            var bitmap = new Bitmap(settings.Width, settings.Height);
+            Bitmap bitmap;
+            try
+            {
+                bitmap = new Bitmap(settings.Width, settings.Height);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<Bitmap>(e.Message);
+            }
+            
             var wordsList = words.ToArray();
             var rectangles = wordsList.Select(w => w.Rectangle).ToList();
             var minX = rectangles.OrderBy(rect => rect.X).First().X;
