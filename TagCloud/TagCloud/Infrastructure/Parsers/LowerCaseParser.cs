@@ -15,8 +15,13 @@ namespace TagCloud
             Name = "LowerCase parser";
         }
 
-        public Result<string[]> ParseWords(string[] words) => words
-            .Select(word => word.ToLower())
-            .ToArray();
+        public Result<string[]> ParseWords(string[] words)
+        {
+            if (words == null)
+                return Result.Fail<string[]>("Words cannot be null");
+            return words
+                .Select(word => word.ToLower())
+                .ToArray();
+        }
     }
 }

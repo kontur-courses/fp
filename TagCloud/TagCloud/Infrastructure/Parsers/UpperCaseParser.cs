@@ -15,8 +15,13 @@ namespace TagCloud
             Name = "UpperCase parser";
         }
 
-        public Result<string[]> ParseWords(string[] words) => words
-            .Select(word => word.ToUpper())
-            .ToArray();
+        public Result<string[]> ParseWords(string[] words)
+        {
+            if (words == null)
+                return Result.Fail<string[]>("Words cannot be null");
+            return words
+                .Select(word => word.ToUpper())
+                .ToArray();
+        }
     }
 }

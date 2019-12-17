@@ -21,6 +21,8 @@ namespace TagCloud
 
         public Result<string[]> FilterWords(string[] wordsResult)
         {
+            if (wordsResult == null)
+                return Result.Fail<string[]>("Words cannot be null");
             var words = wordsResult;
             var boringWords = GetBoringWords();
             var boringWordsHashet = new HashSet<string>(boringWords);
