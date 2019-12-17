@@ -17,28 +17,23 @@ namespace TagsCloudGenerator.Core.Translators
 
         public static Result<TextToTagsTranslator> Create(float alpha, float stepPhi)
         {
-            if (!File.Exists(AffFilename))
-            {
-                return Result.Fail<TextToTagsTranslator>($"Cannot find file {AffFilename}");
-            }
-            if (!File.Exists(DicFilename))
-            {
-                return Result.Fail<TextToTagsTranslator>($"Cannot find file {DicFilename}");
-            }
-            if (!File.Exists(PathToMyStem32))
-            {
-                return Result.Fail<TextToTagsTranslator>($"Cannot find file {PathToMyStem32}");
-            }
-            if (!File.Exists(PathToMyStem64))
-            {
-                return Result.Fail<TextToTagsTranslator>($"Cannot find file {PathToMyStem64}");
-            }
-            return Result.Ok(new TextToTagsTranslator(
-                new WordsNormalizer(), 
-                new Hunspell(AffFilename, DicFilename),
-                new WordsFilter(PathToMyStem32, PathToMyStem64),
-                new SpiralRectangleCloudLayouter(new ArchimedeanSpiral(alpha, stepPhi))
-            ));                
+            return CheckFileExists(AffFilename)
+                .Then((none) => CheckFileExists(DicFilename))
+                .Then((none) => CheckFileExists(PathToMyStem32))
+                .Then((none) => CheckFileExists(PathToMyStem64))
+                .Then((none) => new TextToTagsTranslator(
+                    new WordsNormalizer(),
+                    new Hunspell(AffFilename, DicFilename),
+                    new WordsFilter(PathToMyStem32, PathToMyStem64),
+                    new SpiralRectangleCloudLayouter(new ArchimedeanSpiral(alpha, stepPhi)))
+                );
+        }
+
+        private static Result<None> CheckFileExists(string filename)
+        {
+            return File.Exists(filename)
+                ? Result.Ok()
+                : Result.Fail<None>($"Cannot find file {filename}");
         }
     }
 }

@@ -51,7 +51,7 @@ namespace TagsCloudConsoleVersion
             return ValidateOption(
                 options,
                 inputFilename,
-                f => !File.Exists(f),
+                File.Exists,
                 $"Input file {inputFilename} does not exists");
         }
 
