@@ -23,6 +23,8 @@ namespace TagsCloudVisualization.Services
         {
             if (imageSettings.ImageSize.Width <= 0 || imageSettings.ImageSize.Height <= 0)
                 return Result.Fail<None>("Image sizes can't be non-positive");
+            if (imageSettings.MaximumTagsToDraw <= 0)
+                return Result.Fail<None>("Maximum amount of tags to draw can't be non-positive number'");
             ImageSettings = imageSettings;
             return Result.Ok();
         }

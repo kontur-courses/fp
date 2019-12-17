@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using ErrorHandler;
 using TagsCloudVisualization.Logic.Painter;
 using TagsCloudVisualization.Services;
@@ -44,8 +45,12 @@ namespace TagsCloudVisualization.Logic
 
         private Result<IEnumerable<Tag>> CreateTagsFromTokens(IEnumerable<WordToken> wordTokens, Point imageCenter)
         {
+            var tokensToConvert = wordTokens
+                .OrderByDescending(token => token.TextCount)
+                .Take(imageSettingsProvider.ImageSettings.MaximumTagsToDraw)
+                .Shuffle();
             var tags = new List<Tag>();
-            foreach (var token in wordTokens)
+            foreach (var token in tokensToConvert)
             {
                 var tagCreationResult = CreateTag(token, imageCenter);
                 if (!tagCreationResult.IsSuccess)

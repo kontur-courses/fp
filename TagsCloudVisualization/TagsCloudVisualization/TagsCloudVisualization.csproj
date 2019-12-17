@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\IEnumerableExtensions.cs" />
     <Compile Include="Logic\ImageGenerator.cs" />
     <Compile Include="Logic\LinqExtensions.cs" />
     <Compile Include="Logic\Painter\SizeExtensions.cs" />
