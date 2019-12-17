@@ -26,7 +26,8 @@ namespace TagsCloudGenerator.Core.Translators
                     new Hunspell(AffFilename, DicFilename),
                     new WordsFilter(PathToMyStem32, PathToMyStem64),
                     new SpiralRectangleCloudLayouter(new ArchimedeanSpiral(alpha, stepPhi)))
-                );
+                )
+                .RefineError("There are problems with external libraries");
         }
 
         private static Result<None> CheckFileExists(string filename)
