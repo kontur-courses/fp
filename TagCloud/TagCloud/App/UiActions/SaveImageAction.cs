@@ -20,7 +20,7 @@ namespace TagCloud
             var dialog = new SaveFileDialog
             {
                 CheckFileExists = false,
-                InitialDirectory = HelperMethods.GetProjectDirectory(),
+                InitialDirectory = HelperMethods.GetProjectDirectory().GetValueOrThrow(),
                 DefaultExt = "Png",
                 FileName = "TagCloud.Png"
             };

@@ -29,7 +29,7 @@ namespace TagCloud
 
         private static void RegisterBoringWords(ContainerBuilder builder)
         {
-            var boringWords = File.ReadAllLines($"{HelperMethods.GetProjectDirectory()}\\BoringWords.txt");
+            var boringWords = File.ReadAllLines($"{HelperMethods.GetProjectDirectory().GetValueOrThrow()}\\BoringWords.txt");
             foreach (var word in boringWords)
                 builder.RegisterInstance(new BoringWord(word)).As<BoringWord>();
         }

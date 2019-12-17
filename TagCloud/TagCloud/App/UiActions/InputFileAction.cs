@@ -20,7 +20,7 @@ namespace TagCloud
             var dialog = new OpenFileDialog
             {
                 CheckFileExists = false,
-                InitialDirectory = HelperMethods.GetProjectDirectory()
+                InitialDirectory = HelperMethods.GetProjectDirectory().GetValueOrThrow()
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
