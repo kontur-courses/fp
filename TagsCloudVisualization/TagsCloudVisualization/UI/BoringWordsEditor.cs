@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using TagsCloudVisualization.Services;
 
-namespace TagsCloudVisualization
+namespace TagsCloudVisualization.UI
 {
     public class BoringWordsEditor : Form
     {
@@ -70,7 +70,7 @@ namespace TagsCloudVisualization
             return dataGridView.Rows
                 .Cast<DataGridViewRow>()
                 .Select(objRow => objRow.Cells[0].Value as string)
-                .Where(boringWord => boringWord != string.Empty);
+                .Where(boringWord => !string.IsNullOrEmpty(boringWord));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using FluentAssertions;
 using NUnit.Framework;
@@ -27,7 +26,7 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void TextRetriever_ReturnsCorrectText_WhenFileIsTxt()
         {
-            var textPath = TestContext.CurrentContext.TestDirectory + "\\Tests\\TestTexts\\animals.txt";
+            var textPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "Tests", "TestTexts", "animals.txt");
             var expectedText = File.ReadAllText(textPath, Encoding.UTF8);
             TextRetriever.RetrieveTextFromFile(textPath).GetValueOrThrow().Should().BeEquivalentTo(expectedText);
         }

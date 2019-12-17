@@ -61,7 +61,7 @@ namespace TagsCloudVisualization.Logic
                 .Then(distanceToBorder =>
                 {
                     pointLocator.DistanceFromCenter -=
-                        Math.Max(pointLocator.DistanceFromCenter / 2, distanceToBorder);
+                        Math.Max(pointLocator.DistanceFromCenter / 10, distanceToBorder);
                     return rectangle;
                 });
         }

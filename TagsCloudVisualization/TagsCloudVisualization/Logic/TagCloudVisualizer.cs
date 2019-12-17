@@ -47,10 +47,10 @@ namespace TagsCloudVisualization.Logic
             var tags = new List<Tag>();
             foreach (var token in wordTokens)
             {
-                var tag = CreateTag(token, imageCenter);
-                if (!tag.IsSuccess)
-                    return Result.Fail<IEnumerable<Tag>>(tag.Error);
-                tags.Add(tag.GetValueOrThrow());
+                var tagCreationResult = CreateTag(token, imageCenter);
+                if (!tagCreationResult.IsSuccess)
+                    return Result.Fail<IEnumerable<Tag>>(tagCreationResult.Error);
+                tags.Add(tagCreationResult.GetValueOrThrow());
             }
             return tags;
         }

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Autofac;
 using FluentAssertions;
-using FluentAssertions.Extensions;
 using NUnit.Framework;
 using TagsCloudVisualization.Logic;
 using TagsCloudVisualization.Services;
@@ -43,8 +42,7 @@ namespace TagsCloudVisualization.Tests
         public void PutNextRectangle_ReturnsRectangleWithPositionShiftedByOffsets()
         {
             var recSize = new Size(10, 10);
-            var expectedShiftedCenter =
-                new Point(-recSize.Width / 2, -recSize.Height / 2);
+            var expectedShiftedCenter = new Point(-recSize.Width / 2, -recSize.Height / 2);
             var rectangle = layouter.PutNextRectangle(recSize).GetValueOrThrow();
 
             new Point(rectangle.X, rectangle.Y).Should().Be(expectedShiftedCenter);
@@ -73,7 +71,7 @@ namespace TagsCloudVisualization.Tests
                 .Select(sideSize => new Size(sideSize, sideSize))
                 .Select(size => layouter.PutNextRectangle(size).GetValueOrThrow())
                 .ToArray();
-            
+
             for (var i = 0; i < rectangles.Length; i++)
                 for (var j = 0; j < i; j++)
                     rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
@@ -97,16 +95,23 @@ namespace TagsCloudVisualization.Tests
         public void PutNextRectangle_IsTimePermissible(int rectanglesAmount, int milliseconds)
         {
             var rnd = new Random();
-            
-            Action action = () =>
+            var timesToRepeatTest = 3;
+            Action<int> action = testNumber =>
             {
                 Enumerable
                     .Range(0, rectanglesAmount)
                     .Select(i => new Size(5 + rnd.Next(40), 5 + rnd.Next(40)))
                     .ForEach(size => layouter.PutNextRectangle(size));
+                layouter.Reset();
             };
 
-            action.ExecutionTime().Should().BeLessThan(milliseconds.Milliseconds());
+            var watch = new Stopwatch();
+            watch.Start();
+            Enumerable.Range(0, timesToRepeatTest).ForEach(action);
+            watch.Stop();
+            var averageTestTime = watch.ElapsedMilliseconds / timesToRepeatTest;
+
+            averageTestTime.Should().BeLessThan(milliseconds);
         }
     }
 }

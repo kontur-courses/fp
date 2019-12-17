@@ -136,7 +136,7 @@ call
 me
 from
 a
-séance
+seance
 You
 are
 from

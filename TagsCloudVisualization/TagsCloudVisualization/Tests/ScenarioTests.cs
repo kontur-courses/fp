@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Autofac;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -20,8 +20,7 @@ namespace TagsCloudVisualization.Tests
         [OneTimeSetUp]
         public void InitializeTextsDirectory()
         {
-            testTextDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Tests", "TestTexts") 
-                                + Path.DirectorySeparatorChar;
+            testTextDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Tests", "TestTexts");
         }
 
         [SetUp]
@@ -43,9 +42,9 @@ namespace TagsCloudVisualization.Tests
             settingsProvider.SetImageSettings(newSettings);
             var visualizer = container.Resolve<IVisualizer>();
             var resultImage = visualizer
-                .VisualizeTextFromFile(Path.Combine(testTextDirectory,"animals.txt"))
+                .VisualizeTextFromFile(Path.Combine(testTextDirectory, "animals.txt"))
                 .GetValueOrThrow();
-            
+
             resultImage.Size.Should().Be(settingsProvider.ImageSettings.ImageSize);
         }
 
@@ -56,7 +55,7 @@ namespace TagsCloudVisualization.Tests
             var boringWordsProvider = container.Resolve<IBoringWordsProvider>();
             var textParser = container.Resolve<IParser>();
 
-            boringWordsProvider.BoringWords = new HashSet<string>(boringText.Split('\n'));
+            boringWordsProvider.BoringWords = boringText.Split('\n').ToHashSet();
 
             textParser.ParseToTokens(boringText).GetValueOrThrow().Should().BeEmpty();
         }
@@ -65,17 +64,18 @@ namespace TagsCloudVisualization.Tests
         [TestCase("1000tags.txt")]
         public void ImageCreation_IsTimePermissible_OnBigAmountOfTags(string fileName)
         {
+            var pathToFile = Path.Combine(testTextDirectory, fileName);
             var visualizer = container.Resolve<IVisualizer>();
             var millisecondsForEachWord = 5;
             var wordsCount = TextRetriever
-                .RetrieveTextFromFile(testTextDirectory + fileName)
+                .RetrieveTextFromFile(pathToFile)
                 .GetValueOrThrow()
                 .Split('\n')
                 .Length;
             var expectedTime = wordsCount * millisecondsForEachWord;
 
             Action action = () => visualizer
-                .VisualizeTextFromFile(Path.Combine(testTextDirectory, fileName));
+                .VisualizeTextFromFile(pathToFile);
 
             action.ExecutionTime().Should().BeLessThan(expectedTime.Milliseconds());
         }

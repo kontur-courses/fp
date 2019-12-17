@@ -28,11 +28,12 @@ namespace TagsCloudVisualization.Logic
                 settingsProvider.ImageSettings.ImageSize.Width,
                 settingsProvider.ImageSettings.ImageSize.Height
             );
-            var graphics = Graphics.FromImage(bmp);
-            graphics.Clear(settingsProvider.ImageSettings.BackgroundColor);
-            foreach (var tag in tags)
-                DrawTag(graphics, tag, cloudScale, imageCenter);
-            graphics.Dispose();
+            using (var graphics = Graphics.FromImage(bmp))
+            {
+                graphics.Clear(settingsProvider.ImageSettings.BackgroundColor);
+                foreach (var tag in tags)
+                    DrawTag(graphics, tag, cloudScale, imageCenter);
+            }
             return bmp;
         }
 
@@ -48,6 +49,7 @@ namespace TagsCloudVisualization.Logic
                 if (currentCloudScale < cloudScale)
                     cloudScale = currentCloudScale;
             }
+
             return cloudScale;
         }
 
