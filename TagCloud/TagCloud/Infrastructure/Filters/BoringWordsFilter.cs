@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+﻿using ResultOF;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,16 +19,26 @@ namespace TagCloud
             Name = "Boring words filter";
         }
 
-        public string[] FilterWords(string[] words)
+        public Result<string[]> FilterWords(string[] wordsResult)
         {
-            var boring = boringWords
+            var words = wordsResult;
+            var boringWords = GetBoringWords();
+            var boringWordsHashet = new HashSet<string>(boringWords);
+            return GetFilteredWords(words, boringWordsHashet);
+        }
+
+        private IEnumerable<string> GetBoringWords()
+        {
+            return boringWords
                 .Where(word => word.IsChecked)
                 .Select(word => word.Name);
-            var boringWordsHashSet = new HashSet<string>(boring);
-            var filteredWords = words
-                .Where(word => !boringWordsHashSet.Contains(word))
+        }
+
+        private Result<string[]> GetFilteredWords(string[] words, HashSet<string> boringWords)
+        {
+            return words
+                .Where(word => !boringWords.Contains(word))
                 .ToArray();
-            return filteredWords;
         }
     }
 }

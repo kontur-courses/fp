@@ -1,7 +1,9 @@
-﻿namespace TagCloud
+﻿using ResultOF;
+
+namespace TagCloud
 {
     public interface IExtractor
     {
-        string[] ExtractWords(string text);
+        Result<string[]> ExtractWords(string text);
     }
 }

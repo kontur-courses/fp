@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ResultOF;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TagCloud
 {
@@ -10,7 +7,7 @@ namespace TagCloud
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public UpperCaseParser()
         {
@@ -18,7 +15,7 @@ namespace TagCloud
             Name = "UpperCase parser";
         }
 
-        public string[] ParseWords(string[] words) => words
+        public Result<string[]> ParseWords(string[] words) => words
             .Select(word => word.ToUpper())
             .ToArray();
     }

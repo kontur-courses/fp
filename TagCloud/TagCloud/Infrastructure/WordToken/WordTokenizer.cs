@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿using ResultOF;
+using System.Linq;
 
 namespace TagCloud
 {
     public static class WordTokenizer
     {
-        public static WordToken[] TokenizeWithNoSpeechPart(string[] words)
+        public static Result<WordToken[]> TokenizeWithNoSpeechPart(string[] words)
         {
             var frequencyDictionary = words
                 .GroupBy(word => word)

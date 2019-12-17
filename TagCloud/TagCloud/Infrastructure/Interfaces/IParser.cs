@@ -1,7 +1,9 @@
-﻿namespace TagCloud
+﻿using ResultOF;
+
+namespace TagCloud
 {
     public interface IParser : ICheckable
     {
-        string[] ParseWords(string[] words);
+        Result<string[]> ParseWords(string[] words);
     }
 }

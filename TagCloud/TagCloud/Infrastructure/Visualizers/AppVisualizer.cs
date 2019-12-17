@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultOF;
+using System.Drawing;
 using System.Linq;
 
 namespace TagCloud
@@ -32,26 +33,40 @@ namespace TagCloud
 
         public void Visualize()
         {
-            var wordTokens = GetWordTokens();
+            var wordTokens = GetWordTokens().GetValueOrThrow();
             DrawWordTokens(wordTokens);
             imageHolder.UpdateUi();
             layouter.Reset();
         }
 
-        private WordToken[] GetWordTokens()
+        private Result<WordToken[]> GetWordTokens()
         {
-            var text = reader.ReadTextFromFile();
-            var words = extracter.ExtractWords(text);
+            var text = reader.ReadTextFromFile().GetValueOrThrow();
+
+            return extracter.ExtractWords(text)
+                .Then(FilterWords)
+                .Then(ParseWords)
+                .Then(WordTokenizer.TokenizeWithNoSpeechPart);
+        }
+
+        private Result<string[]> FilterWords(string[] words)
+        {
             var filteredWords = words;
             foreach (var filter in filters)
                 if (filter.IsChecked)
-                    filteredWords = filter.FilterWords(filteredWords);
-            var parsedWords = filteredWords;
+                    filteredWords = filter.FilterWords(filteredWords).GetValueOrThrow();
+            return filteredWords;
+        }
+
+        private Result<string[]> ParseWords(string[] words)
+        {
+            var parsedWords = words;
             foreach (var parser in parsers)
                 if (parser.IsChecked)
-                    parsedWords = parser.ParseWords(parsedWords);
-            return WordTokenizer.TokenizeWithNoSpeechPart(parsedWords);
+                    parsedWords = parser.ParseWords(parsedWords).GetValueOrThrow();
+            return parsedWords;
         }
+
 
         private void DrawWordTokens(WordToken[] wordTokens)
         {
@@ -66,13 +81,15 @@ namespace TagCloud
 
         private void DrawWord(WordToken wordToken, Graphics graphics, ITheme theme)
         {
-            var font = new Font(fontSettings.FontFamily, GetFontSize(wordToken), fontSettings.Style);
+            var font = fontSettings.ValidateFont().GetValueOrThrow();
             var wordRectangle = layouter.PutNextRectangle(GetWordSize(wordToken, graphics, font));
-            graphics.DrawString(wordToken.Value, font, new SolidBrush(theme.GetWordFontColor(wordToken)), wordRectangle);
+            graphics.DrawString(wordToken.Value, font, new SolidBrush(theme.GetWordFontColor(wordToken)),
+                wordRectangle.GetValueOrThrow());
         }
 
         private float GetFontSize(WordToken wordToken) =>
              fontSettings.DefaultSize + wordToken.Count * fontSettings.CountMultiplier;
+
         private SizeF GetWordSize(WordToken wordToken, Graphics graphics, Font font) =>
             graphics.MeasureString(wordToken.Value, font);
     }

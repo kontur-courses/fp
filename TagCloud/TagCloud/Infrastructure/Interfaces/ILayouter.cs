@@ -1,10 +1,11 @@
-﻿using System.Drawing;
+﻿using ResultOF;
+using System.Drawing;
 
 namespace TagCloud
 {
     public interface ILayouter
     {
-        RectangleF PutNextRectangle(SizeF rectangleSize);
+        Result<RectangleF> PutNextRectangle(SizeF rectangleSize);
         void Reset();
     }
 }

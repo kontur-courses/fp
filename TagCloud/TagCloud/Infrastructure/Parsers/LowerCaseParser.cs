@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ResultOF;
+using System.Linq;
 
 namespace TagCloud
 {
@@ -6,7 +7,7 @@ namespace TagCloud
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public LowerCaseParser()
         {
@@ -14,7 +15,7 @@ namespace TagCloud
             Name = "LowerCase parser";
         }
 
-        public string[] ParseWords(string[] words) => words
+        public Result<string[]> ParseWords(string[] words) => words
             .Select(word => word.ToLower())
             .ToArray();
     }

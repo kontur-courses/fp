@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ResultOF;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,10 +27,10 @@ namespace TagCloud
             angle = 0;
         }
 
-        public RectangleF PutNextRectangle(SizeF rectangleSize)
+        public Result<RectangleF> PutNextRectangle(SizeF rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("Invalid size");
+                return Result.Fail<RectangleF>("Invalid word size");
             var center = imageSettings.CloudCenter;
             var corner = GetRectangleCorner(center, rectangleSize);
             var nextRectangle = new RectangleF(corner, rectangleSize);

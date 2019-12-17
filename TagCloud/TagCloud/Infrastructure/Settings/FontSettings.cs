@@ -20,5 +20,13 @@ namespace TagCloud
 
         public static FontSettings GetDefaultSettings() =>
             new FontSettings("Arial", FontStyle.Bold, 12, 1.5f);
+
+        public Result<Font> ValidateFont()
+        {
+            using (var font = new Font(FontName, 12, FontStyle.Regular))
+            {
+                return FontName == font.Name ? Result.Ok(font) : Result.Fail<Font>("No such font name");
+            }
+        }
     }
 }

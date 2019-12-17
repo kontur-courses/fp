@@ -1,7 +1,9 @@
-﻿namespace TagCloud
+﻿using ResultOF;
+
+namespace TagCloud
 {
     public interface IFilter : ICheckable
     {
-        string[] FilterWords(string[] words);
+        Result<string[]> FilterWords(string[] words);
     }
 }

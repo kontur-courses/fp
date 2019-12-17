@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using ResultOF;
+using System.IO;
 
 namespace TagCloud
 {
     public class TxtReader : IReader
     {
-        public string ReadAllText(string pathToFile)
+        public Result<string> ReadAllText(string pathToFile)
         {
             return File.ReadAllText(pathToFile);
         }

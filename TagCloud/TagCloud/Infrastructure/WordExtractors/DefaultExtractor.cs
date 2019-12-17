@@ -1,14 +1,15 @@
-﻿using System;
+﻿using ResultOF;
+using System;
 using System.Linq;
 
 namespace TagCloud
 {
     public class DefaultExtractor : IExtractor
     {
-        public string[] ExtractWords(string text)
+        public Result<string[]> ExtractWords(string textResult)
         {
-            if (text == null)
-                throw new ArgumentNullException();
+            var text = textResult;
+            if (text == null) return Result.Fail<string[]>("No text!");
             var words = text.Split('\r', '\n');
             return words.Where(word => word != "").ToArray();
         }
