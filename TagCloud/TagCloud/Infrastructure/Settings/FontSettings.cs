@@ -23,10 +23,10 @@ namespace TagCloud
 
         public Result<None> ValidateFontSettings()
         {
-            using (var font = new Font(FontName, DefaultSize, FontStyle.Regular))
+            using (var font = new Font(FontName, 12, FontStyle.Regular))
             {
                 return FontName == font.Name && DefaultSize > 0 && CountMultiplier > 0 ?
-                    Result.Ok() : Result.Fail<None>("Font settings are not valid");
+                    Result.Ok() : Result.Fail<None>("Invalid font settings");
             }
         }
     }

@@ -1,18 +1,15 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagCloud;
 
 namespace TagCloudTests
 {
+    [TestFixture]
     public class BoringWordsFilterTests
     {
         private BoringWordsFilter boringWordsFilter;
-        private BoringWord[] boringWords = 
+        private readonly BoringWord[] boringWords = 
         {
             new BoringWord("a"),
             new BoringWord("on"),
@@ -38,22 +35,30 @@ namespace TagCloudTests
         }
 
         [Test]
-        public void BoringWordsFilterShould_ReturnAllWords_OnEmptyBoringWords()
+        public void BoringWordsFilterShould_ThrowException_OnNullWords()
         {
-            boringWordsFilter = new BoringWordsFilter(new BoringWord[] { });
-            boringWordsFilter.FilterWords(allWords).Length.Should().Be(allWords.Length);
+            Action action = () => boringWordsFilter.FilterWords(null).GetValueOrThrow();
+            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Words cannot be null");
         }
 
         [Test]
-        public void BoringWordsFilterShould_NoWords_OnEmptyWords()
+        public void BoringWordsFilterShould_ReturnAllWords_OnEmptyBoringWords()
         {
-            boringWordsFilter.FilterWords(new string[] { }).Length.Should().Be(0);
+            boringWordsFilter = new BoringWordsFilter(new BoringWord[] { });
+            boringWordsFilter.FilterWords(allWords).GetValueOrThrow().Length
+                .Should().Be(allWords.Length);
+        }
+
+        [Test]
+        public void BoringWordsFilterShould_ReturnNoWords_OnEmptyWords()
+        {
+            boringWordsFilter.FilterWords(new string[] { }).GetValueOrThrow().Length.Should().Be(0);
         }
 
         [Test]
         public void BoringWordsFilterShould_FilterdWords()
         {
-            boringWordsFilter.FilterWords(allWords).Length.Should().Be(4);
+            boringWordsFilter.FilterWords(allWords).GetValueOrThrow().Length.Should().Be(4);
         }
     }
 }

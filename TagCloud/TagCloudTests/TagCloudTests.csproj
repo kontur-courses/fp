@@ -67,14 +67,19 @@
     <Compile Include="BoringWordsFilterTests.cs" />
     <Compile Include="DefaultExtractorTests.cs" />
     <Compile Include="ArchimedeanSpiralLayouterTests.cs" />
-    <Compile Include="LowerCaseParserTests.cs" />
+    <Compile Include="ParsersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultOF\ResultOF.csproj">
+      <Project>{BE4DDD42-39C2-4416-9E24-07DDE9E420F3}</Project>
+      <Name>ResultOF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagCloud\TagCloud.csproj">
       <Project>{646c485c-b384-474d-96b4-84c99eb08b39}</Project>
       <Name>TagCloud</Name>

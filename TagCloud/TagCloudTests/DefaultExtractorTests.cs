@@ -24,8 +24,8 @@ namespace TagCloudTests
         [Test]
         public void ExtractWordTokenShould_ThrowArgumentNullException_OnNullText()
         {
-            Action action = () => defaultExtractor.ExtractWords(null);
-            action.Should().Throw<ArgumentNullException>();
+            Action action = () => defaultExtractor.ExtractWords(null).GetValueOrThrow();
+            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Text cannot be null");
         }
 
         [TestCase("", ExpectedResult = 0)]
@@ -36,7 +36,7 @@ namespace TagCloudTests
         [TestCase("Foo\r\nFoo", ExpectedResult = 2)]
         public int ExtractWordTokenShould_ReturnCorrectNumberOfWords(string text)
         {
-            return defaultExtractor.ExtractWords(text).Length;
+            return defaultExtractor.ExtractWords(text).GetValueOrThrow().Length;
         }
     }
 }

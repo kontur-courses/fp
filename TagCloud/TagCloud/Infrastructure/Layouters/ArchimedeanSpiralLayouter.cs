@@ -30,7 +30,7 @@ namespace TagCloud
         public Result<RectangleF> PutNextRectangle(SizeF rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                return Result.Fail<RectangleF>("Invalid word size");
+                return Result.Fail<RectangleF>("Invalid size");
             var center = imageSettings.CloudCenter;
             var corner = GetRectangleCorner(center, rectangleSize);
             var nextRectangle = new RectangleF(corner, rectangleSize);

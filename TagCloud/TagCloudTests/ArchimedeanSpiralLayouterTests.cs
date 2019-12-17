@@ -51,14 +51,14 @@ namespace TagsCloudTests
             public void ThrowArgumentException_OnNegativeOrZeroRectangleSize(int height, int width)
             {
                 var size = new SizeF(height, width);
-                Action getRectangle = () => defaultLayouter.PutNextRectangle(size);
-                getRectangle.Should().Throw<ArgumentException>().WithMessage("Invalid size");
+                Action getRectangle = () => defaultLayouter.PutNextRectangle(size).GetValueOrThrow();
+                getRectangle.Should().Throw<InvalidOperationException>().WithMessage("No value. Only error: Invalid size");
             }
 
             [Test]
             public void PutFirstRectangleInCenter()
             {
-                var rectangle = defaultLayouter.PutNextRectangle(defaultSize);
+                var rectangle = defaultLayouter.PutNextRectangle(defaultSize).GetValueOrThrow();
                 rectangle.X.Should().Be(defaultCenter.X - defaultSize.Width / 2);
                 rectangle.Y.Should().Be(defaultCenter.Y - defaultSize.Height / 2);
             }
@@ -72,7 +72,7 @@ namespace TagsCloudTests
                 var rectangles = new List<RectangleF>();
                 for (int i = 0; i < 10; ++i)
                 {
-                    rectangles.Add(defaultLayouter.PutNextRectangle(size));
+                    rectangles.Add(defaultLayouter.PutNextRectangle(size).GetValueOrThrow());
                 }
                 AreIntersecting(rectangles).Should().BeFalse();
             }
@@ -84,7 +84,7 @@ namespace TagsCloudTests
                 var size = new SizeF(2, 1);
                 for (int i = 0; i < 10; ++i)
                 {
-                    rectangles.Add(defaultLayouter.PutNextRectangle(size));
+                    rectangles.Add(defaultLayouter.PutNextRectangle(size).GetValueOrThrow());
                     size.Height++;
                     size.Width++;
                 }
@@ -98,7 +98,7 @@ namespace TagsCloudTests
                 var size = new SizeF(1000, 1000);
                 for (int i = 0; i < 10; ++i)
                 {
-                    rectangles.Add(defaultLayouter.PutNextRectangle(size));
+                    rectangles.Add(defaultLayouter.PutNextRectangle(size).GetValueOrThrow());
                 }
                 rectangles.Any(rectangle => rectangle.X < 0 || rectangle.Y < 0).Should().BeFalse();
             }
@@ -124,7 +124,7 @@ namespace TagsCloudTests
                 var size = new Size(width, height);
                 var rectangles = new List<RectangleF>();
                 for (int i = 0; i < 500; ++i)
-                    rectangles.Add(defaultLayouter.PutNextRectangle(size));
+                    rectangles.Add(defaultLayouter.PutNextRectangle(size).GetValueOrThrow());
                 var maxRadius = rectangles
                     .Max(rectangle => GetDistanceToCenter(rectangle));
                 var cloudMaxArea = maxRadius * maxRadius * Math.PI;
