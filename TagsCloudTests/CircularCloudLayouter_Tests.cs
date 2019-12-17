@@ -28,7 +28,7 @@ namespace TagsCloudTests
 			for (var i = 0; i < expectedRectanglesCount; i++)
 				circularCloudLayouter.PlaceNextRectangle(new Size());
 			
-			var actualRectangles = circularCloudLayouter.rectangles;
+			var actualRectangles = circularCloudLayouter.Rectangles;
 			actualRectangles.Count.Should().Be(expectedRectanglesCount);
 		}
 
@@ -68,7 +68,7 @@ namespace TagsCloudTests
 
 		private void CheckIntersection()
 		{
-			var rectangles = circularCloudLayouter.rectangles;
+			var rectangles = circularCloudLayouter.Rectangles;
 			for (var i = 0; i < rectangles.Count; i++)
 			for (var j = i + 1; j < rectangles.Count; j++)
 			{
@@ -84,7 +84,7 @@ namespace TagsCloudTests
 			var rectangleSize = new Size(20, 20);
 			for (var i = 0; i < 100; i++)
 				circularCloudLayouter.PlaceNextRectangle(rectangleSize);
-			var rectangles = circularCloudLayouter.rectangles;
+			var rectangles = circularCloudLayouter.Rectangles;
 			var maxDistance = rectangles.Select(CalculateDistanceFromCenter).Max();
 			var maxArea = Math.PI * maxDistance * maxDistance;
 			

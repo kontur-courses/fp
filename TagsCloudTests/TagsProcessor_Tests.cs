@@ -25,20 +25,6 @@ namespace TagsCloudTests
 			tagsProcessor = new TagsProcessor(wordsProcessor, settings, imageHolder);
 		}
 
-		[TestCase(1, 5, 15, TestName = "Min size grater than max size")]
-		[TestCase(0, 5, 15, TestName = "Word frequency less than 1")]
-		[TestCase(1, -1, 15, TestName = "Max size less than 1")]
-		[TestCase(1, 1, -15, TestName = "Min size less than 1")]
-		public void CalculateFontSize_ThrowsException_When(int wordFrequency, int maxSize, int minSize)
-		{
-			settings.MaxFontSize = maxSize;
-			settings.MinFontSize = minSize;
-			var word = new Word("a", wordFrequency);
-			
-			Action action = () => tagsProcessor.CalculateFontSize(word);
-			action.Should().Throw<ArgumentException>();
-		}
-
 		[Test]
 		public void CalculateFontSize_ReturnsSameSizes_WhenMaxAndMinSizesAreEqual()
 		{
@@ -50,7 +36,7 @@ namespace TagsCloudTests
 				.Select(_ => randomizer.Next(5, 30))
 				.Select(s => new Word("a", s));
 
-			var actualSizes = words.Select(w => tagsProcessor.CalculateFontSize(w));
+			var actualSizes = words.Select(w => tagsProcessor.CalculateFontSize(w).Value);
 			actualSizes.Should().AllBeEquivalentTo(expectedSize);
 		}
 
@@ -67,7 +53,7 @@ namespace TagsCloudTests
 			settings.MinFontSize = minFontSize;
 			var word = new Word("a", wordFrequency);
 
-			var actualFontSize = tagsProcessor.CalculateFontSize(word);
+			var actualFontSize = tagsProcessor.CalculateFontSize(word).Value;
 			actualFontSize.Should().Be(expectedFontSize);
 		}
 	}

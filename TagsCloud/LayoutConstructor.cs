@@ -19,15 +19,11 @@ namespace TagsCloud
 		public Result<Layout> GetLayout()
 		{
 			layouter.ResetState();
-			var tags = tagsProcessor.GetTags();
-			if (!tags.IsSuccess)
-				return Result.Fail<Layout>(tags.Error);
-			var layoutTags = tags.Value.Select(tag =>
-			{
-				var tagArea = layouter.PlaceNextRectangle(tag.Area.Size);
-				return new Tag(tag.Text, tag.TextSize, tagArea);
-			});
-			return new Layout(layoutTags);
+			return tagsProcessor.GetTags()
+				.Then(tags => tags.Select(tag => layouter.PlaceNextRectangle(tag.Area.Size)
+					.Then(tagArea => new Tag(tag.Text, tag.TextSize, tagArea))
+					.GetValueOrThrow()))
+				.Then(layoutTags => new Layout(layoutTags));
 		}
 	}
 }

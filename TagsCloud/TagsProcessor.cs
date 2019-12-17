@@ -28,7 +28,7 @@ namespace TagsCloud
 				.Then(words => words
 					.Select(word =>
 					{
-						var fontSize = CalculateFontSize(word);
+						var fontSize = CalculateFontSize(word).GetValueOrThrow();
 						var wordSize = GetWordSize(word.Text, fontSize);
 						return new Tag(word.Text, fontSize, new Rectangle(Point.Empty, wordSize));
 					}));
@@ -43,14 +43,14 @@ namespace TagsCloud
 			return wordSize.ToSize();
 		}
 
-		internal int CalculateFontSize(Word word)
+		internal Result<int> CalculateFontSize(Word word)
 		{
 			if (word.Frequency < 1)
-				throw new ArgumentException("Word frequency must be grater or equal 1");
+				return Result.Fail<int>(new ArgumentException("Word frequency must be grater or equal 1"));
 			if (settings.MaxFontSize < 1 || settings.MaxFontSize < settings.MinFontSize)
-				throw new ArgumentException("MaxFontSize must be grater than 1 and grater or equal minFontSize");
+				return Result.Fail<int>(new ArgumentException("MaxFontSize must be grater than 1 and grater or equal minFontSize"));
 			if (settings.MinFontSize < 1)
-				throw new ArgumentException("MinFontSize must be grater than 1");
+				return Result.Fail<int>(new ArgumentException("MinFontSize must be grater than 1"));
 			
 			var size = Math.Log(word.Frequency, FontSizeScale);
 			size = size > settings.MaxFontSize ? settings.MaxFontSize : size;
