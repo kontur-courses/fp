@@ -17,7 +17,8 @@ namespace TagCloud
 
         public Result<string> ReadTextFromFile()
         {
-            if (PathToFile == null) return Result.Fail<string>("Get words to read first!");
+            if (PathToFile == null)
+                return Result.Fail<string>("Get words to read first!");
             if (Regex.IsMatch(PathToFile, @"\w*.doc$"))
                 return docReader.ReadAllText(PathToFile);
             else if (Regex.IsMatch(PathToFile, @"\w*.txt$"))
