@@ -55,6 +55,7 @@
     <Compile Include="Core\Readers\TxtReader.cs" />
     <Compile Include="Core\Readers\IReader.cs" />
     <Compile Include="Core\ImageBuilder\TagCloudImageBuilder.cs" />
+    <Compile Include="Core\Result.cs" />
     <Compile Include="Core\Tag.cs" />
     <Compile Include="Core\TextHandler\WordFilters\BoringWordsFilter.cs" />
     <Compile Include="Core\TextHandler\WordConverters\PunctuationRemover.cs" />
