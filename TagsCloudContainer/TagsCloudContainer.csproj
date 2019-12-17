@@ -83,6 +83,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CMDOptions.cs" />
+        <Compile Include="Config.cs" />
         <Compile Include="ImageSaver.cs" />
         <Compile Include="Interfaces\IFileSaver.cs" />
         <Compile Include="Interfaces\ITextReader.cs" />
@@ -119,6 +120,12 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="bin\Debug" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\FileSenderRailway\FileSenderRailway.csproj">
+        <Project>{be6a64ef-33bc-4a58-b486-0fdee87bb07a}</Project>
+        <Name>FileSenderRailway</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

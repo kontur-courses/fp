@@ -6,6 +6,7 @@ using Castle.Windsor;
 using Castle.MicroKernel.Registration;
 using CommandLine;
 using CommandLine.Text;
+using ResultOf;
 using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Layouter;
 using Component = Castle.MicroKernel.Registration.Component;
@@ -96,8 +97,16 @@ namespace TagsCloudContainer
             var parser = new Parser(with => with.HelpWriter = null);
             var parserResult = parser.ParseArguments<CMDOptions>(args);
             parserResult.WithNotParsed(errs => DisplayHelp(parserResult, errs));
+            Result<Config> cfg;
             parserResult.WithParsed<CMDOptions>(O =>
             {
+                cfg = Config.FromArguments(O);
+                if (!cfg.IsSuccess)
+                {
+                    Console.WriteLine(cfg.Error);
+                    return;
+                }
+
                 var path = O.InputFile;
                 var size = new Size(O.Width, O.Height);
                 var output = O.OutputFile;
