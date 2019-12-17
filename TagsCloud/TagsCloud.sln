@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudTextProcessing", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudConsole", "TagsCloudСonsole\TagsCloudConsole.csproj", "{FC3AF8FC-6778-41C6-B2BC-772202A56487}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudResult", "TagCloudResult\TagCloudResult.csproj", "{921FB008-7976-4680-B922-EBDFA43684BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FC3AF8FC-6778-41C6-B2BC-772202A56487}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC3AF8FC-6778-41C6-B2BC-772202A56487}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC3AF8FC-6778-41C6-B2BC-772202A56487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921FB008-7976-4680-B922-EBDFA43684BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921FB008-7976-4680-B922-EBDFA43684BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921FB008-7976-4680-B922-EBDFA43684BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921FB008-7976-4680-B922-EBDFA43684BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -11,6 +11,10 @@ namespace TagsCloudTextProcessing.Readers
             this.path = path;
         }
 
-        public string ReadText() => File.ReadAllText(path);
+        public string ReadText()
+        {
+         //   if(!File.Exists())
+            return File.ReadAllText(path);
+        }
     }
 }

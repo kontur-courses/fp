@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using DocoptNet;
 
 namespace TagsCloudConsole
@@ -43,8 +44,11 @@ namespace TagsCloudConsole
         public static void Main(string[] args)
         {
             var parameters = new Docopt().Apply(Usage, args, version: Version, exit: true);
-            var container = ContainerConfigurator.Configure(parameters);
-            container.Resolve<Application>().Run();
+            var containerResult = ContainerConfigurator.Configure(parameters);
+            if(containerResult.IsSuccess)
+                containerResult.GetValueOrThrow().Resolve<Application>().Run();
+            else
+                Console.WriteLine(containerResult.Error);
         }
     }
 }
