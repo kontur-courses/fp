@@ -1,0 +1,10 @@
+{
+	"Font": "Arial",
+	"FontSize" : 50,
+	"BackgroundBrush": "White",
+	"TextBrush" : "Black",
+	"IsDebugMode" : false,
+	"DebugMarkingColor" : "Gray",
+	"DebugItemBoundsColor" : "Gray",
+	"ImageFormat" : "Png"
+}
