@@ -2,8 +2,8 @@
 using TagsCloudGenerator.Attributes;
 using TagsCloudGenerator.Interfaces;
 using FailuresProcessing;
-using System;
 using TagsCloudGenerator.DTO;
+using System.Linq;
 
 namespace TagsCloudGenerator.Painters
 {
@@ -17,19 +17,21 @@ namespace TagsCloudGenerator.Painters
 
         public Result<None> DrawWords(WordDrawingDTO[] layoutedWords, Graphics graphics)
         {
-            GetNextColor(reset: true);
-            return 
-                CheckUserColors()
-                .Then(none =>
+            return
+                GetUserColors()
+                .Then(CheckOnKnownColors)
+                .Then(CheckOnColorsCount)
+                .Then(userColors =>
                 {
-                    graphics.Clear(painterSettings.BackgroundColor);
+                    ResetCounter();
+                    graphics.Clear(userColors.backgroundColor);
                     using (var solidBrush = new SolidBrush(Color.Black))
                         foreach (var wordDrawing in layoutedWords)
                         {
-                            solidBrush.Color = GetNextColor();
+                            solidBrush.Color = userColors.colors[GetNextNotNegativeNumber(userColors.colors.Length)];
                             var drawingResult =
-                                Result.Ok(new Font(wordDrawing.FontName, wordDrawing.MaxFontSymbolWidth))
-                                .Then(font => CheckFont(font, wordDrawing.FontName))
+                                CheckFont(wordDrawing.FontName)
+                                .Then(n => Result.Ok(new Font(wordDrawing.FontName, wordDrawing.MaxFontSymbolWidth)))
                                 .ThenWithDisposableObject(font =>
                                 {
                                     graphics.DrawString(wordDrawing.Word, font, solidBrush, wordDrawing.WordRectangle);
@@ -43,20 +45,44 @@ namespace TagsCloudGenerator.Painters
                 .RefineError($"{nameof(PainterWithUserColors)} failure");
         }
 
-        private Color GetNextColor(bool reset = false) => 
-            painterSettings.Colors[Math.Abs(GetNextIndex(reset)) % painterSettings.Colors.Length];
+        private Result<(Color backgroundColor, Color[] colors)> GetUserColors() =>
+            Result.Ok(
+                (Color.FromName(painterSettings.BackgroundColorName),
+                painterSettings.ColorsNames
+                    .Select(colorName => Color.FromName(colorName))
+                    .ToArray()));
+
+        private Result<(Color backgroundColor, Color[] colors)> CheckOnKnownColors(
+            (Color backgroundColor, Color[] colors) userColors)
+        {
+            var unknownColorsNames = userColors.colors
+                .Append(userColors.backgroundColor)
+                .Where(color => !color.IsKnownColor)
+                .Aggregate(
+                    string.Empty,
+                    (str, color) => $"{str} {$"\'{color.Name}\'"}");
+            return
+                unknownColorsNames.Length == 0 ?
+                Result.Ok(userColors) :
+                Result.Fail<(Color backgroundColor, Color[] colors)>($"Unknown colors:{unknownColorsNames}");
+        }
+
+        private Result<(Color backgroundColor, Color[] colors)> CheckOnColorsCount(
+            (Color backgroundColor, Color[] colors) userColors) =>
+            userColors.colors.Length > 0 ?
+            Result.Ok(userColors) :
+            Result.Fail<(Color backgroundColor, Color[] colors)>("Number of colors must be greater than 0");
+
+        private Result<None> CheckFont(string userFontName) =>
+            Result.Ok(new Font(userFontName, 10))
+            .ThenWithDisposableObject(font =>
+                font.Name.ToLower() == userFontName.ToLower() ?
+                Result.Ok() :
+                Result.Fail<None>($"Font with name \'{userFontName}\' not found in system"));
+
 
         private int colorsCounter = 0;
-        private int GetNextIndex(bool reset = false) => reset ? colorsCounter = 0 : unchecked(++colorsCounter);
-
-        private Result<Font> CheckFont(Font font, string userFontName) =>
-            font.Name.ToLower() == userFontName.ToLower() ?
-            Result.Ok(font) :
-            Result.Fail<Font>($"Font with name \'{userFontName}\' not found in system");
-
-        private Result<None> CheckUserColors() =>
-            painterSettings.Colors.Length > 0 ?
-            Result.Ok() :
-            Result.Fail<None>("Number of colors must be greater than 0");
+        private int GetNextNotNegativeNumber(int maxValue) => colorsCounter = ++colorsCounter % maxValue;
+        private void ResetCounter() => colorsCounter = 0;
     }
 }

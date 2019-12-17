@@ -8,13 +8,13 @@ namespace TagsCloudGenerator.Settings
     {
         public PainterSettings() => Reset();
 
-        public Color[] Colors { get; set; }
-        public Color BackgroundColor { get; set; }
+        public string[] ColorsNames { get; set; }
+        public string BackgroundColorName { get; set; }
 
         public virtual Result<None> Reset()
         {
-            Colors = new[] { Color.Red, Color.Yellow, Color.Cyan };
-            BackgroundColor = Color.Black;
+            ColorsNames = new[] { Color.Red.Name, Color.Yellow.Name, Color.Cyan.Name };
+            BackgroundColorName = Color.Black.Name;
             return Result.Ok();
         }
     }

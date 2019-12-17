@@ -4,7 +4,7 @@ namespace TagsCloudGenerator.Interfaces
 {
     public interface IPainterSettings : IResettable
     {
-        Color[] Colors { get; set; }
-        Color BackgroundColor { get; set; }
+        string[] ColorsNames { get; set; }
+        string BackgroundColorName { get; set; }
     }
 }

@@ -34,8 +34,8 @@ namespace TagsCloudGenerator_Tests
             settings.Font = "Arial";
             settings.ImageSize = null;
 
-            settings.PainterSettings.BackgroundColor = Color.Black;
-            settings.PainterSettings.Colors = new[] { Color.White, Color.Red, Color.Yellow };
+            settings.PainterSettings.BackgroundColorName = Color.Black.Name;
+            settings.PainterSettings.ColorsNames = new[] { Color.White.Name, Color.Red.Name, Color.Yellow.Name };
         }
 
         [TearDown]

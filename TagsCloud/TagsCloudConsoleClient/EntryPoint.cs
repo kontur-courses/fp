@@ -69,14 +69,12 @@ namespace TagsCloudConsoleClient
                     new Size(o.WidthAndHeight[0], o.WidthAndHeight[1]) :
                     settings.ImageSize;
 
-                settings.PainterSettings.BackgroundColor =
-                    o.BackgroundColor != null ?
-                    Color.FromName(o.BackgroundColor) :
-                    settings.PainterSettings.BackgroundColor;
-                settings.PainterSettings.Colors =
+                settings.PainterSettings.BackgroundColorName =
+                    o.BackgroundColor ?? settings.PainterSettings.BackgroundColorName;
+                settings.PainterSettings.ColorsNames =
                     o.Colors.FirstOrDefault() != default ?
-                    o.Colors.Select(s => Color.FromName(s)).ToArray() :
-                    settings.PainterSettings.Colors;
+                    o.Colors.ToArray() :
+                    settings.PainterSettings.ColorsNames;
 
                 settings.TakenPartsOfSpeech = o.TakenPartsOfSpeech.ToArray();
             });
