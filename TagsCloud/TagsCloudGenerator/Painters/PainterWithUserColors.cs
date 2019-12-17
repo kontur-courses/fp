@@ -4,6 +4,7 @@ using TagsCloudGenerator.Interfaces;
 using FailuresProcessing;
 using TagsCloudGenerator.DTO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TagsCloudGenerator.Painters
 {
@@ -23,12 +24,17 @@ namespace TagsCloudGenerator.Painters
                 .Then(CheckOnColorsCount)
                 .Then(userColors =>
                 {
-                    ResetCounter();
+                    var colorsEnumerator = userColors.colors
+                        .Skip(1)
+                        .Append(userColors.colors[0])
+                        .ToArray()
+                        .AsEnumerable()
+                        .GetEnumerator();
                     graphics.Clear(userColors.backgroundColor);
                     using (var solidBrush = new SolidBrush(Color.Black))
                         foreach (var wordDrawing in layoutedWords)
                         {
-                            solidBrush.Color = userColors.colors[GetNextNotNegativeNumber(userColors.colors.Length)];
+                            solidBrush.Color = colorsEnumerator.CircularGetNext();
                             var drawingResult =
                                 CheckFont(wordDrawing.FontName)
                                 .Then(n => Result.Ok(new Font(wordDrawing.FontName, wordDrawing.MaxFontSymbolWidth)))
@@ -79,10 +85,18 @@ namespace TagsCloudGenerator.Painters
                 font.Name.ToLower() == userFontName.ToLower() ?
                 Result.Ok() :
                 Result.Fail<None>($"Font with name \'{userFontName}\' not found in system"));
+    }
 
-
-        private int colorsCounter = 0;
-        private int GetNextNotNegativeNumber(int maxValue) => colorsCounter = ++colorsCounter % maxValue;
-        private void ResetCounter() => colorsCounter = 0;
+    internal static class EnumeratorExtensions
+    {
+        public static T CircularGetNext<T>(this IEnumerator<T> enumerator)
+        {
+            if (!enumerator.MoveNext())
+            {
+                enumerator.Reset();
+                enumerator.MoveNext();
+            }
+            return enumerator.Current;
+        }
     }
 }
