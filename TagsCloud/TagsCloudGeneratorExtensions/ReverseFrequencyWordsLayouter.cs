@@ -17,7 +17,7 @@ namespace TagsCloudGeneratorExtensions
                 rectanglesLayouter,
                 settings,
                 e => e.OrderByDescending(p => p.freq),
-                s => Math.Min((int)(MinSize * (double)s.maxFreq / s.freq), MaxSize))
+                (freq, maxFreq) => Math.Min((int)(MinSize * (double)maxFreq / freq), MaxSize))
         {}
     }
 }

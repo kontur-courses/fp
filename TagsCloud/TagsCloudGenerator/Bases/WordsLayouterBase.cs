@@ -10,16 +10,18 @@ namespace TagsCloudGenerator.Bases
 {
     public abstract class WordsLayouterBase : IWordsLayouter
     {
+        public delegate int GetMaxSymbolSizeDelegate(int currentFrequency, int maxFrequency);
+
         private readonly IRectanglesLayouter rectanglesLayouter;
         private readonly ISettings settings;
         private readonly Func<IEnumerable<(string word, int freq)>, IEnumerable<(string word, int freq)>> getEnumerableOrder;
-        private readonly Func<(int freq, int maxFreq), int> getMaxSymbolSize;
+        private readonly GetMaxSymbolSizeDelegate getMaxSymbolSize;
 
         public WordsLayouterBase(
             IRectanglesLayouter rectanglesLayouter,
             ISettings settings,
             Func<IEnumerable<(string word, int freq)>, IEnumerable<(string word, int freq)>> getEnumerableOrder,
-            Func<(int freq, int maxFreq), int> getMaxSymbolSize)
+            GetMaxSymbolSizeDelegate getMaxSymbolSize)
         {
             this.rectanglesLayouter = rectanglesLayouter;
             this.settings = settings;
@@ -49,7 +51,7 @@ namespace TagsCloudGenerator.Bases
             var rectangleResult = Result.Ok<RectangleF>(default);
             foreach (var (word, freq) in getEnumerableOrder(wordsFreq))
             {
-                var maxSymbolSize = getMaxSymbolSize((freq, maxFreqCount));
+                var maxSymbolSize = getMaxSymbolSize(freq, maxFreqCount);
                 using (var wordFont = new Font(fontName, maxSymbolSize))
                 {
                     rectangleResult = rectanglesLayouter.PutNextRectangle(
