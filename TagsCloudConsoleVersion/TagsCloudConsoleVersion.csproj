@@ -44,10 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Options.cs" />
+    <Compile Include="OptionsValidator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{c83b0a70-dba6-45bf-a792-fd2b14528ebb}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagsCloudGenerator\TagsCloudGenerator.csproj">
       <Project>{9e42e0b5-2be6-45c5-930f-0f21799e25d1}</Project>
       <Name>TagsCloudGenerator</Name>

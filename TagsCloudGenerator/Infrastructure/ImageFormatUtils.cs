@@ -5,7 +5,7 @@ namespace TagsCloudGenerator.Infrastructure
 {
     public static class ImageFormatUtils
     {
-        private static readonly Dictionary<string, ImageFormat> ImageFormats = new Dictionary<string, ImageFormat>()
+        public static readonly Dictionary<string, ImageFormat> ImageFormats = new Dictionary<string, ImageFormat>()
         {
             ["png"] = ImageFormat.Png,
             ["bmp"] = ImageFormat.Bmp,

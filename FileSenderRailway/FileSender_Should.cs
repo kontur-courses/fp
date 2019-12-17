@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using ApprovalTests;
 using ApprovalTests.Namers;
@@ -7,6 +7,7 @@ using ApprovalTests.Reporters;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -16,42 +17,40 @@ namespace FileSenderRailway
     {
         private FileSender fileSender;
         private ICryptographer cryptographer;
-        private ISender sender;
         private IRecognizer recognizer;
+
+        [SetUp]
+        public void SetUp()
+        {
+            Directory.SetCurrentDirectory(TestContext.CurrentContext.TestDirectory);
+            cryptographer = A.Fake<ICryptographer>();
+            recognizer = A.Fake<IRecognizer>();
+            fileSender = new FileSender(cryptographer, A.Fake<ISender>(), recognizer, () => now);
+        }
 
         private readonly FileContent file = new FileContent(Guid.NewGuid().ToString("N"), Guid.NewGuid().ToByteArray());
         private readonly DateTime now = new DateTime(2000, 01, 01);
         private readonly X509Certificate certificate = new X509Certificate();
 
-        [SetUp]
-        public void SetUp()
-        {
-            cryptographer = A.Fake<ICryptographer>();
-            sender = A.Fake<ISender>();
-            recognizer = A.Fake<IRecognizer>();
-            fileSender = new FileSender(cryptographer, sender, recognizer, () => now);
-        }
-
         [Test]
         public void BeOk_WhenGoodFormat(
-            [Values("4.0", "3.1")] string format,
-            [Values(0, 30)] int daysBeforeNow)
+            [Values("4.0", "3.1")]string format,
+            [Values(0, 30)]int daysBeforeNow)
         {
-            var signed = SomeByteArray();
-            PrepareDocument(file, signed, now.AddDays(-daysBeforeNow), format);
+            var signedContent = SomeByteArray();
+            var document = PrepareDocument(file, signedContent, now.AddDays(-daysBeforeNow), format);
 
-            fileSender.SendFiles(new[] { file }, certificate)
-                .ShouldBeEquivalentTo(new[] { new FileSendResult(file) });
-            A.CallTo(() => sender.Send(A<Document>.That.Matches(d => d.Content == signed)))
-                .MustHaveHappened();
+            var result = fileSender.PrepareFileToSend(file, certificate);
+
+            result.ShouldBeEquivalentTo(
+                Result.Ok(document.WithContent(signedContent)));
         }
-
 
         [Test]
         public void Fail_WhenNotRecognized()
         {
             A.CallTo(() => recognizer.Recognize(file))
-                .Throws(new FormatException("Can't recognize"));
+                .Returns(Result.Fail<Document>("Can't recognize"));
 
             VerifyErrorOnPrepareFile(file, certificate);
         }
@@ -68,18 +67,17 @@ namespace FileSenderRailway
                 VerifyErrorOnPrepareFile(file, certificate);
         }
 
-        private void PrepareDocument(FileContent content, byte[] signedContent, DateTime created, string format)
+        private Document PrepareDocument(FileContent fileToPrepare, byte[] signed, DateTime created, string format)
         {
-            var document = new Document(content.Name, content.Content, created, format);
-            A.CallTo(() => recognizer.Recognize(content)).Returns(document);
-            A.CallTo(() => cryptographer.Sign(content.Content, certificate)).Returns(signedContent);
+            var document = new Document(fileToPrepare.Name, fileToPrepare.Content, created, format);
+            A.CallTo(() => recognizer.Recognize(fileToPrepare)).Returns(Result.Ok(document));
+            A.CallTo(() => cryptographer.Sign(fileToPrepare.Content, certificate)).Returns(signed);
+            return document;
         }
 
         private void VerifyErrorOnPrepareFile(FileContent fileContent, X509Certificate x509Certificate)
         {
-            var res = fileSender
-                .SendFiles(new[] { fileContent }, x509Certificate)
-                .Single();
+            var res = fileSender.PrepareFileToSend(fileContent, x509Certificate);
             res.IsSuccess.Should().BeFalse();
             Approvals.Verify(res.Error);
         }

@@ -10,6 +10,14 @@ namespace TagsCloudGenerator.Core.Filters
     public class WordsFilter : IWordsFilter
     {
         private readonly string[] unusedPartsOfSpeech = {"PR", "ADV", "CONJ", "PART", "SPRO"};
+        private readonly string pathToMyStem32;
+        private readonly string pathToMyStem64;
+
+        public WordsFilter(string pathToMyStem32, string pathToMyStem64)
+        {
+            this.pathToMyStem32 = pathToMyStem32;
+            this.pathToMyStem64 = pathToMyStem64;
+        }
 
         public IEnumerable<string> GetFilteredWords(IEnumerable<string> words)
         {
@@ -33,8 +41,8 @@ namespace TagsCloudGenerator.Core.Filters
             {
                 myStemProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
                 myStemProcess.StartInfo.FileName = Environment.Is64BitProcess
-                    ? "mystem64.exe"
-                    : "mystem32.exe";
+                    ? pathToMyStem64
+                    : pathToMyStem32;
                 myStemProcess.StartInfo.Arguments = "-ni temp.txt";
                 myStemProcess.StartInfo.CreateNoWindow = true;
                 myStemProcess.StartInfo.UseShellExecute = false;

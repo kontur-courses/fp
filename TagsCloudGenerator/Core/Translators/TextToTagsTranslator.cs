@@ -38,8 +38,8 @@ namespace TagsCloudGenerator.Core.Translators
 
             var filteredWords = wordsFilter.GetFilteredWords(normalizedWords);
 
-            var frequencies = GetWordsFrequencies(filteredWords).Take(100);
-            var minFrequency = frequencies.Min(pair => pair.Value);
+            var frequencies = GetWordsFrequencies(filteredWords);
+            var minFrequency = frequencies.Any() ? frequencies.Min(pair => pair.Value) : 0;
 
             foreach (var pair in frequencies)
             {
