@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
+using ResultOf;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
@@ -10,10 +12,18 @@ namespace TagCloud.Actions
 
         public string Description { get; } = "display image";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!settings.CheckToComplete())
-                return;
+            if (config.ImageToSave is null)
+            {
+                var createImageResult =
+                    config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
+                if (!createImageResult.IsSuccess)
+                    return Result.Fail<None>(createImageResult.Error);
+                config.ImageToSave = createImageResult.GetValueOrThrow();
+            }
+
+            Application.Exit();
             var thread = new Thread(() =>
             {
                 Application.EnableVisualStyles();
@@ -22,6 +32,8 @@ namespace TagCloud.Actions
                 Application.Run(showImageForm);
             });
             thread.Start();
+
+            return Result.Ok();
         }
     }
 }

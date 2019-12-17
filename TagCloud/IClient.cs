@@ -2,6 +2,6 @@
 {
     public interface IClient
     {
-        void Start(ICloudVisualization visualization);
+        void Start();
     }
 }

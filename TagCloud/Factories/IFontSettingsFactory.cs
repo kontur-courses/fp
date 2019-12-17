@@ -4,6 +4,6 @@ namespace TagCloud.IServices
 {
     public interface IFontSettingsFactory
     {
-        FontSettings CreateFontSettings(string fontName);
+        FontSettings CreateFontSettingsOrThrow(string fontName);
     }
 }

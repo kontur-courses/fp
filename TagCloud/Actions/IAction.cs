@@ -1,4 +1,5 @@
-﻿using TagCloud.Models;
+﻿using ResultOf;
+using TagCloud.Models;
 
 namespace TagCloud
 {
@@ -6,6 +7,6 @@ namespace TagCloud
     {
         string CommandName { get; }
         string Description { get; }
-        void Perform(ClientConfig config, UserSettings settings);
+        Result<None> Perform(ClientConfig config, UserSettings settings);
     }
 }

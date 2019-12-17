@@ -1,4 +1,5 @@
-﻿using TagCloud.Models;
+﻿using ResultOf;
+using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
@@ -8,9 +9,10 @@ namespace TagCloud.Actions
 
         public string Description { get; } = "exit the program";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             config.ToExit = true;
+            return Result.Ok();
         }
     }
 }

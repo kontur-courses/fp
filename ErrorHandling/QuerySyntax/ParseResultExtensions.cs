@@ -1,6 +1,6 @@
 using System;
 
-namespace ResultOfTask
+namespace TagCloudTests
 {
     public static class ParseResultExtensions
     {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -15,7 +16,7 @@ namespace TagCloud.Actions
 
         public string Description { get; } = "Задать путь к файлу с тегами";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             var defaultPath = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.FullName}\\test.txt";
             Console.WriteLine("Укажите путь к файлу с тегами");
@@ -25,7 +26,8 @@ namespace TagCloud.Actions
             pathToRead = pathToRead == string.Empty
                 ? defaultPath
                 : pathToRead;
-            settings.ReadPath(pathToRead);
+            settings.PathToRead =pathToRead;
+            return Result.Ok();
         }
     }
 }

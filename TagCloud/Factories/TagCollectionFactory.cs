@@ -23,9 +23,7 @@ namespace TagCloud
         {
             return wordsHandler.GetWordsAndCount(path)
                 .Then(wordsAndCount => wordsHandler.Conversion(wordsAndCount))
-                .Then(wordsAfterConversion => parser.GetTagsRectangles(wordsAfterConversion,imageSettings)
-                    .OrderByDescending(t => t.Count)
-                    .ToList());
+                .Then(wordsAfterConversion => parser.GetTags(wordsAfterConversion,imageSettings));
         }
     }
 }

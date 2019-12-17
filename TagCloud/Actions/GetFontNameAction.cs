@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -11,10 +12,12 @@ namespace TagCloud.Actions
 
         public string Description { get; } = "Задать шрифт";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if(TryReadFontName(config.AvailableFontNames, out var fontName))
-                settings.ImageSettings.ReadFontName(fontName);
+            if (!TryReadFontName(config.AvailableFontNames, out var fontName))
+                return Result.Fail<None>("Введенный шрифт не поддерживается");
+            settings.ImageSettings.ReadFontName(fontName);
+            return Result.Ok();
         }
 
 
@@ -32,7 +35,6 @@ namespace TagCloud.Actions
                 ? defaultFontName
                 : fontName;
             if (availableFontNames.Contains(fontName)) return true;
-            Console.WriteLine("Введенный шрифт не поддерживается");
             return false;
         }
     }

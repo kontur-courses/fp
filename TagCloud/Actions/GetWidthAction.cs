@@ -1,4 +1,5 @@
 ﻿using System;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -8,18 +9,19 @@ namespace TagCloud.Actions
     {
         public string CommandName { get; } = "-readwidth";
         public string Description { get; } = "Задать ширину картинки";
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (TryReadWidth(out var width))
-                settings.ImageSettings.ReadWidth(width);
+            if (!TryReadWidth(out var width))
+                return Result.Fail<None>("Введенная ширина не является числом");
+            settings.ImageSettings.ReadWidth(width);
+            return Result.Ok();
         }
 
         private static bool TryReadWidth(out int width)
         {
             Console.WriteLine("Введите ширину изображения");
             Console.Write(">>>");
-            if (int.TryParse(Console.ReadLine() ?? throw new ArgumentException(), out width)) return true;
-            Console.WriteLine("Введенная ширина не является числом");
+            if (int.TryParse(Console.ReadLine(), out width)) return true;
             return false;
         }
 

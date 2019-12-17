@@ -21,13 +21,22 @@ namespace TagCloud
 
         public Result<Bitmap> GetAndDrawRectangles(ImageSettings imageSettings, string path = "test.txt")
         {
-            var palette = PaletteDictionary[imageSettings.PaletteName];
+            return Result.Of(() => GetPaletteOrThrow(imageSettings.PaletteName))
+                .Then(palette => GetImageOrThrow(imageSettings,path,palette));
+        }
+
+        private Bitmap GetImageOrThrow(ImageSettings imageSettings, string path, Palette palette)
+        {
+            if(imageSettings.Width<=0)
+                throw new ArgumentException("Параметр width не определен");
+            if(imageSettings.Height <= 0)
+                throw new ArgumentException("Параметр heigth не определен");
             var image = new Bitmap(imageSettings.Width, imageSettings.Height);
             using (var graphics = Graphics.FromImage(image))
             {
                 var tagRectanglesResult = cloud.GetRectangles(graphics, imageSettings, path);
                 if (!tagRectanglesResult.IsSuccess)
-                    return Result.Fail<Bitmap>(tagRectanglesResult.Error);
+                    throw  new Exception(tagRectanglesResult.Error);
                 var rectangles = RectanglesCustomizer.GetRectanglesWithPalette(palette, tagRectanglesResult.Value);
                 foreach (var rectangle in rectangles)
                     graphics.DrawString(rectangle.Tag.Text, rectangle.Tag.Font, new SolidBrush(rectangle.Color),
@@ -35,6 +44,13 @@ namespace TagCloud
             }
 
             return image;
+        }
+
+        private Palette GetPaletteOrThrow(string paletteName)
+        {
+            if (!(paletteName is null) && PaletteDictionary.ContainsKey(paletteName))
+                return PaletteDictionary[paletteName];
+            throw new ArgumentException("Параметр PaletteName не определен");
         }
     }
 }

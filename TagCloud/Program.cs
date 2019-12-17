@@ -12,9 +12,8 @@ namespace TagCloud
         public static void Main()
         {
             var container = GetContainer();
-            var visualization = container.Resolve<ICloudVisualization>();
             var client = container.Resolve<IClient>();
-            client.Start(visualization);
+            client.Start();
         }
 
         public static WindsorContainer GetContainer()
@@ -42,7 +41,7 @@ namespace TagCloud
             container.Register(Component.For<IAction>().ImplementedBy<ExitAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetFontNameAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetHeightAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetPalleteNameAction>().LifestyleSingleton());
+            container.Register(Component.For<IAction>().ImplementedBy<GetPaletteNameAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetWidthAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetPathAction>().LifestyleSingleton());
             container.Register(Component.For<IClient>().ImplementedBy<Client>());

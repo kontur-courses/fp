@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using ResultOf;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
@@ -8,15 +9,11 @@ namespace TagCloud.Actions
         public string CommandName { get; } = "-newimage";
         public string Description { get; } = "set parameters for a new image";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (config.IsRunning)
-            {
-                Application.Exit();
-                config.IsRunning = false;
-            }
-
-            config.ToCreateNewImage = true;
+            Application.Exit();
+            settings = new UserSettings();
+            return Result.Ok();
         }
     }
 }

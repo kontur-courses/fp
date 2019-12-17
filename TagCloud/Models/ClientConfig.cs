@@ -5,8 +5,10 @@ namespace TagCloud
 {
     public class ClientConfig
     {
-        public ClientConfig(HashSet<string> availableFontNames,HashSet<string> availablePaletteNames)
+        public ClientConfig(HashSet<string> availableFontNames,HashSet<string> availablePaletteNames
+            ,ICloudVisualization visualization)
         {
+            Visualization = visualization;
             ToCreateNewImage = false;
             ToExit = false;
             ImageToSave = null;
@@ -15,6 +17,7 @@ namespace TagCloud
             AvailablePaletteNames = availablePaletteNames;
         }
 
+        public ICloudVisualization Visualization { get; }
         public bool IsRunning { get; set; }
         public bool ToExit { get; set; }
         public bool ToCreateNewImage { get; set; }

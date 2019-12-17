@@ -2,10 +2,10 @@ using System;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 
-namespace TagCloudTests
-{
-    [TestFixture]
+namespace TagCloudTests {
+[TestFixture]
     public class Result_Should
     {
         [Test]
@@ -30,7 +30,7 @@ namespace TagCloudTests
         {
             var res = Result.Of<int>(() => { throw new Exception("123"); });
 
-            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
+            res.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace TagCloudTests
         {
             var res = Result.Of<int>(() => { throw new Exception("123"); }, "42");
 
-            res.ShouldBeEquivalentTo(Result.Fail<int>("42"));
+            res.Should().BeEquivalentTo(Result.Fail<int>("42"));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace TagCloudTests
         {
             var res = Result.Of(() => 42);
 
-            res.ShouldBeEquivalentTo(Result.Ok(42));
+            res.Should().BeEquivalentTo(Result.Ok(42));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace TagCloudTests
         {
             var res = Result.Ok(42)
                 .Then(n => n + 10);
-            res.ShouldBeEquivalentTo(Result.Ok(52));
+            res.Should().BeEquivalentTo(Result.Ok(52));
         }
         
         [Test]
@@ -62,7 +62,7 @@ namespace TagCloudTests
         {
             var res = Result.Ok(42)
                 .Then(n => Result.Ok(n + 10));
-            res.ShouldBeEquivalentTo(Result.Ok(52));
+            res.Should().BeEquivalentTo(Result.Ok(52));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace TagCloudTests
             };
             var res = Result.Ok(42)
                 .Then(continuation);
-            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
+            res.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
         
         [Test]
@@ -96,7 +96,7 @@ namespace TagCloudTests
             Func<int, Result<int>> continuation = n => Result.Fail<int>("123");
             var res = Result.Ok(42)
                 .Then(continuation);
-            res.ShouldBeEquivalentTo(Result.Fail<int>("123"));
+            res.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace TagCloudTests
             var res = fail.OnFail(errorHandler);
 
             A.CallTo(() => errorHandler(null)).WithAnyArguments().MustHaveHappened();
-            res.ShouldBeEquivalentTo(fail);
+            res.Should().BeEquivalentTo(fail);
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace TagCloudTests
 
             var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
 
-            res.ShouldBeEquivalentTo(ok);
+            res.Should().BeEquivalentTo(ok);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace TagCloudTests
                     .Then(int.Parse)
                     .Then(i => Convert.ToString(i, 16))
                     .Then(hex => Guid.Parse(hex + hex + hex + hex));
-            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace TagCloudTests
             var res = parsed
                 .Then(i => Convert.ToString(i, 16))
                 .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
-            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+            res.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
 
         [Test]
@@ -147,7 +147,8 @@ namespace TagCloudTests
         {
             Result.Fail<None>("error")
                 .ReplaceError(e => "replaced")
-                .ShouldBeEquivalentTo(Result.Fail<None>("replaced"));
+                .Should()
+                .BeEquivalentTo(Result.Fail<None>("replaced"));
         }
 
         [Test]
@@ -155,7 +156,8 @@ namespace TagCloudTests
         {
             Result.Ok(42)
                 .ReplaceError(e => "replaced")
-                .ShouldBeEquivalentTo(Result.Ok(42));
+                .Should()
+                .BeEquivalentTo(Result.Ok(42));
         }
 
         [Test]
@@ -164,7 +166,8 @@ namespace TagCloudTests
             Result.Ok(42)
                 .ReplaceError(e => "replaced")
                 .Then(n => Result.Fail<int>("error"))
-                .ShouldBeEquivalentTo(Result.Fail<int>("error"));
+                .Should()
+                .BeEquivalentTo(Result.Fail<int>("error"));
         }
 
         [Test]
@@ -173,7 +176,8 @@ namespace TagCloudTests
             var calculation = Result.Fail<None>("No connection");
             calculation
                 .RefineError("Posting results to db")
-                .ShouldBeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
+                .Should()
+                .BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
     }
 }

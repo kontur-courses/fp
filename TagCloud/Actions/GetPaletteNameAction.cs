@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetPalleteNameAction : IAction
+    public class GetPaletteNameAction : IAction
     {
         public string CommandName { get; } = "-readpalettename";
 
         public string Description { get; } = "Задать палитру";
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if(TryReadPaletteName(config.AvailablePaletteNames, out  var paletteName))
-                settings.ImageSettings.ReadPaletteName(paletteName);
+            if (!TryReadPaletteName(config.AvailablePaletteNames, out var paletteName))
+                Result.Fail<None>("Введенная палитра не поддерживается");
+            settings.ImageSettings.ReadPaletteName(paletteName);
+            return Result.Ok();
         }
 
-        private bool TryReadPaletteName(HashSet<string> availablePaletteNames, out string paletteName)
+        private static bool TryReadPaletteName(HashSet<string> availablePaletteNames, out string paletteName)
         {
             var defaultPaletteName = "ShadesOfBlue";
             Console.WriteLine("Введите название палитры");
@@ -33,7 +36,6 @@ namespace TagCloud.Actions
                 ? defaultPaletteName
                 : paletteName;
             if (availablePaletteNames.Contains(paletteName)) return true;
-            Console.WriteLine("Введенная палитра не поддерживается");
             return false;
         }
     }

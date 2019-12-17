@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using ResultOf;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
@@ -13,46 +14,54 @@ namespace TagCloud.Actions
 
         public SaveImageAction()
         {
-            namesFormatsToSave = new Dictionary<string, ImageFormat>();
-            namesFormatsToSave["jpg"] = ImageFormat.Jpeg;
-            namesFormatsToSave["png"] = ImageFormat.Png;
-            namesFormatsToSave["bmp"] = ImageFormat.Bmp;
+            namesFormatsToSave = ImageFormatCollectionFactory.GetFormats();
         }
 
         public string CommandName { get; } = "-saveimage";
 
         public string Description { get; } = "save image";
 
-        public void Perform(ClientConfig config, UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if(!settings.CheckToComplete())
-                return;
+            if (config.ImageToSave is null)
+            {
+                var createImageResult =
+                    config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
+                if (!createImageResult.IsSuccess)
+                    return Result.Fail<None>(createImageResult.Error);
+                config.ImageToSave = createImageResult.GetValueOrThrow();
+            }
+
             Console.WriteLine("Введите путь для сохранения картинки");
             Console.WriteLine("Оставьте строку пустой, чтоб сохранить в: " + Path.GetTempPath());
             Console.Write(">>>");
             var path = Console.ReadLine();
-            var imageFormat = tryReadFormat();
-            if (imageFormat is null) return;
+            var imageFormat = TryReadFormat();
+            if (!imageFormat.IsSuccess)
+                return Result.Fail<None>(imageFormat.Error);
             path = path == string.Empty ? Path.GetTempPath() + "\\image." + imageFormat : path;
-            config.ImageToSave.Save(path, imageFormat);
+            config.ImageToSave.Save(path, imageFormat.GetValueOrThrow());
             Console.WriteLine($"Файл сохранен в {path}");
+            return Result.Ok();
         }
 
-        private ImageFormat tryReadFormat()
+        private Result<ImageFormat> TryReadFormat()
         {
-            var defaultFormaName = "png";
+            var defaultFormatName = "png";
             Console.WriteLine("Введите формат в котором хотите сохранить");
             Console.WriteLine("Список доступных форматов :");
             foreach (var formatName in namesFormatsToSave) Console.WriteLine(formatName);
-            Console.WriteLine("Оставьте строку пустой, чтоб использовать формат : " + defaultFormaName);
+            Console.WriteLine("Оставьте строку пустой, чтоб использовать формат : " + defaultFormatName);
             Console.Write(">>>");
             var name = Console.ReadLine();
             name = name == string.Empty
-                ? defaultFormaName
+                ? defaultFormatName
                 : name;
-            if (namesFormatsToSave.ContainsKey(name)) return namesFormatsToSave[name];
-            Console.WriteLine("Введенный формат не поддерживается");
-            return null;
+            return Result.Of(() =>
+            {
+                if (namesFormatsToSave.ContainsKey(name)) return namesFormatsToSave[name];
+                throw new ArgumentException("Введенный формат не поддреживается");
+            });
         }
     }
 }
