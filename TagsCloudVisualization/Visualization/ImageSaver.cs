@@ -14,7 +14,7 @@ namespace TagsCloudVisualization.Visualization
             
             return saveResult.IsSuccess
                 ? PathFinder.GetImagesPath(name, format).AsResult()
-                : Result.Fail<string>("Не удалось сохранить файл");
+                : Result.Fail<string>("Failed to save file");
         }
 
         public static Result<string> SaveImage(string path, Bitmap image, ImageFormat format)
@@ -23,7 +23,7 @@ namespace TagsCloudVisualization.Visualization
             
             return saveResult.IsSuccess
                 ? path.AsResult()
-                : Result.Fail<string>("Не удалось сохранить файл");
+                : Result.Fail<string>("Failed to save file");
         }
     }
 }
