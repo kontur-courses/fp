@@ -8,6 +8,7 @@ namespace ResultOfTask
         {
         }
     }
+
     public struct Result<T>
     {
         public Result(string error, T value = default(T))
@@ -15,13 +16,16 @@ namespace ResultOfTask
             Error = error;
             Value = value;
         }
+
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -58,21 +62,34 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(i => Of(() => continuation(i)));
         }
+
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return input.IsSuccess ? continuation(input.Value) : Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+                handleError(input.Error);
+            return input;
+        }
+
+        public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input, Func<string, string> replacer)
+        {
+            return !input.IsSuccess ? Fail<TInput>(replacer(input.Error)) : input;
+        }
+
+        public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string postingResultsToDb)
+        {
+            return input.ReplaceError(er => $"{postingResultsToDb}. {er}");
         }
     }
 }
