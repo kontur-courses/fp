@@ -33,7 +33,6 @@ namespace TagCloud
 
         public void Visualize()
         {
-            ValidateSettings();
             GetWordTokens()
                 .Then(DrawWordTokens);
             imageHolder.UpdateUi();
@@ -94,11 +93,5 @@ namespace TagCloud
 
         private SizeF GetWordSize(WordToken wordToken, Graphics graphics, Font font) =>
             graphics.MeasureString(wordToken.Value, font);
-
-        private void ValidateSettings()
-        {
-            fontSettings.ValidateFont().GetValueOrThrow();
-            imageSettings.ValidateImageSettings().GetValueOrThrow();
-        }
     }
 }

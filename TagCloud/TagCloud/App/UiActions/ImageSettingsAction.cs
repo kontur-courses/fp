@@ -19,6 +19,7 @@
         public void Perform()
         {
             SettingsForm.For(imageSettings).ShowDialog();
+            imageSettings.ValidateImageSettings().GetValueOrThrow();
             imageHolder.RecreateImage(imageSettings);
         }
     }

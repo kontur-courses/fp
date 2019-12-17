@@ -16,6 +16,7 @@
         public void Perform()
         {
             SettingsForm.For(fontSettings).ShowDialog();
+            fontSettings.ValidateFontSettings().GetValueOrThrow();
         }
     }
 }
