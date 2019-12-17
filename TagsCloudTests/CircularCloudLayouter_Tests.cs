@@ -32,16 +32,6 @@ namespace TagsCloudTests
 			actualRectangles.Count.Should().Be(expectedRectanglesCount);
 		}
 
-		[TestCase(-1, 0, TestName = "Negative rectangle width")]
-		[TestCase(0, -1, TestName = "Negative rectangle height")]
-		[TestCase(-1, -1, TestName = "Negative rectangle width and height")]
-		public void PutNextRectangle_ThrowsExceptionOnNegativeSizeValues(int width, int height)
-		{
-			var firstRectangleSize = new Size(width, height);
-			Action action = () => circularCloudLayouter.PlaceNextRectangle(firstRectangleSize);
-			action.Should().Throw<ArgumentException>();
-		}
-
 		[TestCase(20, 20, TestName = "Squares")]
 		[TestCase(50, 30, TestName = "Horizontal rectangles")]
 		[TestCase(30, 50, TestName = "Vertical rectangles")]

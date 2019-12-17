@@ -16,7 +16,7 @@ namespace TagsCloud
 		public Result<Rectangle> PlaceNextRectangle(Size rectangleSize)
 		{
 			if (rectangleSize.Width < 0 || rectangleSize.Height < 0)
-				throw new ArgumentException("Size values must be non-negative");
+				return Result.Fail<Rectangle>(new ArgumentException("Size values must be non-negative"));
 
 			var newRectangle = new Rectangle(spiral.GetNextPoint(), rectangleSize);
 			while (Rectangles.Any(rect => newRectangle.Intersects(rect)))
