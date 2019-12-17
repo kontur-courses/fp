@@ -33,8 +33,9 @@ namespace TagCloud
 
         public void Visualize()
         {
-            var wordTokens = GetWordTokens().GetValueOrThrow();
-            DrawWordTokens(wordTokens);
+            ValidateSettings();
+            GetWordTokens()
+                .Then(DrawWordTokens);
             imageHolder.UpdateUi();
             layouter.Reset();
         }
@@ -68,7 +69,7 @@ namespace TagCloud
         }
 
 
-        private void DrawWordTokens(WordToken[] wordTokens)
+        private Result<None> DrawWordTokens(WordToken[] wordTokens)
         {
             var theme = themes.First(t => t.IsChecked);
             using (var graphics = imageHolder.StartDrawing())
@@ -77,11 +78,12 @@ namespace TagCloud
                 foreach (var wordToken in wordTokens)
                     DrawWord(wordToken, graphics, theme);
             }
+            return Result.Ok();
         }
 
         private void DrawWord(WordToken wordToken, Graphics graphics, ITheme theme)
         {
-            var font = fontSettings.ValidateFont().GetValueOrThrow();
+            var font = new Font(fontSettings.FontName, fontSettings.DefaultSize, fontSettings.Style);
             var wordRectangle = layouter.PutNextRectangle(GetWordSize(wordToken, graphics, font));
             graphics.DrawString(wordToken.Value, font, new SolidBrush(theme.GetWordFontColor(wordToken)),
                 wordRectangle.GetValueOrThrow());
@@ -92,5 +94,11 @@ namespace TagCloud
 
         private SizeF GetWordSize(WordToken wordToken, Graphics graphics, Font font) =>
             graphics.MeasureString(wordToken.Value, font);
+
+        private void ValidateSettings()
+        {
+            fontSettings.ValidateFont().GetValueOrThrow();
+            imageSettings.ValidateImageSettings().GetValueOrThrow();
+        }
     }
 }

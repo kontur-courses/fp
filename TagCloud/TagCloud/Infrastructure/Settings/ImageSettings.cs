@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ResultOF;
+using System;
 using System.Drawing;
 
 namespace TagCloud
@@ -7,18 +8,25 @@ namespace TagCloud
     {
         public int Height { get; set; }
         public int Width { get; set; }
-        public PointF CloudCenter { get; set; }
+        public float CenterX { get; set; }
+        public float CenterY { get; set; }
+        public PointF CloudCenter => new PointF(CenterX, CenterY);
 
-        public ImageSettings(int height, int width, PointF cloudCenter)
+        public ImageSettings(int height, int width, float centerX, float centerY)
         {
-            if (cloudCenter.X < 0 || cloudCenter.Y < 0)
-                throw new ArgumentException("Invalid center");
+            CenterX = centerX;
+            CenterY = centerY;
             Height = height;
             Width = width;
-            CloudCenter = cloudCenter;
         }
 
         public static ImageSettings GetDefaultSettings() =>
-            new ImageSettings(1000, 1000, new PointF(500, 500));
+            new ImageSettings(1000, 1000, 500, 500);
+
+        public Result<None> ValidateImageSettings()
+        {
+            return Height > 0 && Width > 0 && CenterX > 0 && CenterY > 0 ?
+                Result.Ok() : Result.Fail<None>("Invalid image settings");
+        }
     }
 }
