@@ -45,6 +45,10 @@ namespace TagsCloudVisualization.ApplicationOptions
                 return Result.Fail<VisualisingOptions>("Font not installed");
             if (MinFontSize < 0)
                 return Result.Fail<VisualisingOptions>("Font size must be positive");
+            if(!Color.FromName(BackGroundColorName).IsKnownColor)
+                return Result.Fail<VisualisingOptions>("Unknown background color name");
+            if(!Color.FromName(TextColorName).IsKnownColor)
+                return Result.Fail<VisualisingOptions>("Unknown text color name");
 
             return Result.Of(() => new VisualisingOptions(new Font(FontFamily, MinFontSize),
                 new Size(ImageWidth, ImageHeight), Color.FromName(BackGroundColorName), Color.FromName(TextColorName)));

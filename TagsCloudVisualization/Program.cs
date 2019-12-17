@@ -15,7 +15,7 @@ namespace TagsCloudVisualization
             var applicationOptions = new ApplicationOptions.ApplicationOptions();
             var result = Result
                 .Of(() => Parser.Default.ParseArguments<ApplicationOptions.ApplicationOptions>(args))
-                .Then(parsedArguments =>new ApplicationOptionsExtractor().GetOptions(parsedArguments))
+                .Then(parsedArguments => new ApplicationOptionsExtractor().GetOptions(parsedArguments))
                 .Then(options => applicationOptions = options)
                 .Then(applicationOptions => new ContainerCreator().GetContainer(applicationOptions))
                 .Then(container => container.Resolve<CloudCreator>())

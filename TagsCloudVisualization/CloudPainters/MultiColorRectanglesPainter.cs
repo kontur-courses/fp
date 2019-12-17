@@ -16,8 +16,8 @@ namespace TagsCloudVisualization.CloudPainters
                 foreach (var rectangle in drawnComponents)
                 {
                     var brush = new SolidBrush(ColorGenerator.Generate());
-                    if (rectangle.Location.X > visualisingOptions.ImageSize.Width ||
-                        rectangle.Location.Y > visualisingOptions.ImageSize.Height)
+                    if (rectangle.Location.X + rectangle.Width > visualisingOptions.ImageSize.Width ||
+                        rectangle.Location.Y + rectangle.Height > visualisingOptions.ImageSize.Height)
                         return Result.Fail<Bitmap>("Cloud didn't fit on image");
                     graphics.FillRectangle(brush, rectangle);
                 }
