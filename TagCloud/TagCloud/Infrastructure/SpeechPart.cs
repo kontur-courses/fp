@@ -4,9 +4,9 @@
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public SpeechPartEnum Value { get; private set; }
+        public SpeechPartEnum Value { get; }
 
         public SpeechPart(string name, SpeechPartEnum value)
         {

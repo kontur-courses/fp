@@ -9,7 +9,7 @@ namespace TagCloud
 
         public bool IsChecked { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public RandomTheme()
         {

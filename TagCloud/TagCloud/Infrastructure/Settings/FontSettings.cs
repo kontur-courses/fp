@@ -1,17 +1,18 @@
-﻿using System.Drawing;
+﻿using ResultOF;
+using System.Drawing;
 
 namespace TagCloud
 {
     public class FontSettings
     {
-        public FontFamily FontFamily { get; set; }
+        public string FontName { get; set; }
         public FontStyle Style { get; set; }
         public float DefaultSize { get; set; }
         public float CountMultiplier { get; set; }
 
-        public FontSettings(string fontFamilyName, FontStyle style, float size, float multiplier)
+        public FontSettings(string fontName, FontStyle style, float size, float multiplier)
         {
-            FontFamily = new FontFamily(fontFamilyName);
+            FontName = fontName;
             Style = style;
             DefaultSize = size;
             CountMultiplier = multiplier;
