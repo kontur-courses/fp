@@ -12,40 +12,40 @@ namespace TagsCloud
         public readonly int widthOutputImage;
         public readonly int heightOutputImage;
         public readonly Color backgroundColor;
-        public readonly string fontName;
+        public readonly FontFamily fontFamily;
         public readonly ImageFormat imageFormat;
         public readonly string[] ignoredPartOfSpeech;
-        public readonly GenerationsAlghoritm generationAlgoritmName;
-        public readonly TextSpliter spliterName;
+        public readonly GenerationsAlgorithm generationAlgorithmName;
+        public readonly TextSplitter splitterName;
         public readonly SupportedTypes.ColorSchemes colorSchemeName;
         public readonly string pathToMystem;
 
-        public TagCloudSettings(string PathToInput,
-            string PathToOutput,
-            string boringWords,
-            int WidthOutputImage,
-            int HeightOutputImage,
-            Color BackgroundColor,
-            string FontName,
+        public TagCloudSettings(string pathToInput,
+            string pathToOutput,
+            string pathToBoringWords,
+            int widthOutputImage,
+            int heightOutputImage,
+            Color backgroundColor,
+            FontFamily fontFamily,
             string[] ignoredPartOfSpeech,
-            GenerationsAlghoritm generationAlgoritm,
-            TextSpliter splitType,
-            SupportedTypes.ColorSchemes colorScheme,
+            GenerationsAlgorithm generationAlgorithmName,
+            TextSplitter splitterName,
+            SupportedTypes.ColorSchemes colorSchemeName,
             string pathToMystem,
             ImageFormat imageFormat)
         {
-            this.pathToInput = PathToInput;
-            this.pathToOutput = PathToOutput;
-            this.pathToBoringWords = boringWords;
-            this.widthOutputImage = WidthOutputImage;
-            this.heightOutputImage = HeightOutputImage;
-            this.backgroundColor = BackgroundColor;
-            this.fontName = FontName;
+            this.pathToInput = pathToInput;
+            this.pathToOutput = pathToOutput;
+            this.pathToBoringWords = pathToBoringWords;
+            this.widthOutputImage = widthOutputImage;
+            this.heightOutputImage = heightOutputImage;
+            this.backgroundColor = backgroundColor;
+            this.fontFamily = fontFamily;
             this.imageFormat = imageFormat;
             this.ignoredPartOfSpeech = ignoredPartOfSpeech;
-            this.generationAlgoritmName = generationAlgoritm;
-            this.spliterName = splitType;
-            this.colorSchemeName = colorScheme;
+            this.generationAlgorithmName = generationAlgorithmName;
+            this.splitterName = splitterName;
+            this.colorSchemeName = colorSchemeName;
             this.pathToMystem = pathToMystem;
         }
     }

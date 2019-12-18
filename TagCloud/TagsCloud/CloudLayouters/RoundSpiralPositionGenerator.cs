@@ -20,9 +20,9 @@ namespace TagsCloud.CloudLayouters
         {
             angle += DeltaAngle;
             var dist = DeltaRadiusBetweenTurns * angle / 2 / Math.PI;
-            var X = (int)(center.X + (dist * Math.Cos(angle)));
-            var Y = (int)(center.Y + (dist * Math.Sin(angle)));
-            return new Point(X, Y);
+            var x = (int)(center.X + (dist * Math.Cos(angle)));
+            var y = (int)(center.Y + (dist * Math.Sin(angle)));
+            return new Point(x, y);
         }
     }
 }

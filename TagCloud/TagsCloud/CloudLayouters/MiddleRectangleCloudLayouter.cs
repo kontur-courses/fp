@@ -1,60 +1,57 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using TagsCloud.ErrorHandling;
 using TagsCloud.Extensions;
 using TagsCloud.Interfaces;
-using System.Linq;
-using System;
 
 namespace TagsCloud.CloudLayouters
 {
     public class MiddleRectangleCloudLayouter : ITagCloudLayouter
     {
-        private readonly List<Rectangle> previousRectangles;
-        private readonly SortedList<double, List<(Point point, int countNear)>> pointForAdd;
         private readonly Point center;
+        private readonly SortedList<double, List<(Point point, int countNear)>> pointForAdd;
+        private readonly List<Rectangle> previousRectangles;
 
         public MiddleRectangleCloudLayouter()
         {
             center = new Point(0, 0);
             previousRectangles = new List<Rectangle>();
-            pointForAdd = new SortedList<double, List<(Point point, int countNear)>>();
-            pointForAdd.Add(0, new List<(Point point, int countNear)>() { (new Point(0, 0), 0) });
+            pointForAdd = new SortedList<double, List<(Point point, int countNear)>>
+            {
+                {0, new List<(Point point, int countNear)> {(new Point(0, 0), 0)}}
+            };
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width < 0 || rectangleSize.Height < 0)
-            {
-                throw new ArgumentException("The rectangle cannot have a negative length side");
-            }
+                return Result.Fail<Rectangle>("The rectangle cannot have a negative length side");
             var rect = new Rectangle(0, 0, rectangleSize.Width, rectangleSize.Height);
+            var deltaRectangleCorner = GetCornerPositions(rect).ToList();
             var keys = pointForAdd.Keys;
-            for (var j=0; j< keys.Count; j++)
+            for (var j = 0; j < keys.Count; j++)
             {
                 var distanceToCenter = keys[j];
-                for(var i=0; i< pointForAdd[distanceToCenter].Count; i++)
+                for (var i = 0; i < pointForAdd[distanceToCenter].Count; i++)
                 {
-                    var pointForPutRectangle = pointForAdd[distanceToCenter][i];
-                    foreach (var corner in GetCornerPositions(rect))
+                    var (point, countNear) = pointForAdd[distanceToCenter][i];
+                    foreach (var corner in deltaRectangleCorner)
                     {
-                        var needRectanlgePosition = new Point(pointForPutRectangle.point.X - corner.X, pointForPutRectangle.point.Y - corner.Y);
-                        rect.MoveToPosition(needRectanlgePosition);
-                        if (!IntersectsWithPrevious(rect))
-                        {
-                            AddRectangle(rect);
-                            pointForPutRectangle.countNear += 1;
-                            if (pointForPutRectangle.countNear == 2)
-                            {
-                                pointForAdd[distanceToCenter].RemoveAt(i);
-                                if (pointForAdd[distanceToCenter].Count == 0)
-                                    pointForAdd.RemoveAt(j);
-                            }
-                            return rect;
-                        }
+                        rect.MoveToPosition(new Point(point.X - corner.X,
+                            point.Y - corner.Y));
+                        if (IntersectsWithPrevious(rect)) continue;
+                        AddRectangle(rect);
+                        countNear += 1;
+                        if (countNear != 2) return rect;
+                        pointForAdd[distanceToCenter].RemoveAt(i);
+                        if (pointForAdd[distanceToCenter].Count == 0)
+                            pointForAdd.RemoveAt(j);
+                        return rect;
                     }
                 }
             }
-            return rect;
+            return rect.AsResult();
         }
 
         private void AddRectangle(Rectangle rect)
@@ -70,7 +67,7 @@ namespace TagsCloud.CloudLayouters
             previousRectangles.Add(rect);
         }
 
-        private IEnumerable<Point> GetCornerPositions(Rectangle rectangle)
+        private static IEnumerable<Point> GetCornerPositions(Rectangle rectangle)
         {
             yield return new Point(0, 0);
             yield return new Point(rectangle.Width, 0);
@@ -78,7 +75,7 @@ namespace TagsCloud.CloudLayouters
             yield return new Point(0, rectangle.Height);
         }
 
-        private IEnumerable<Point> GetMiddlesSidesRectangle(Rectangle rectangle)
+        private static IEnumerable<Point> GetMiddlesSidesRectangle(Rectangle rectangle)
         {
             yield return new Point(rectangle.Width / 2, 0);
             yield return new Point(rectangle.Width, rectangle.Height / 2);

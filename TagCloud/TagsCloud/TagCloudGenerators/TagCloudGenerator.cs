@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using TagsCloud.ErrorHandling;
 using TagsCloud.Interfaces;
 using TagsCloud.TagGenerators;
-using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.TagCloudGenerators
 {
@@ -18,19 +19,24 @@ namespace TagsCloud.TagCloudGenerators
         public Result<IEnumerable<(Tag tag, Rectangle position)>> GenerateTagCloud(IEnumerable<Tag> allTags)
         {
             var result = new List<(Tag tag, Rectangle position)>();
+            var errors = new List<string>();
             using (var image = new Bitmap(1, 1))
-            using (var graph = Graphics.FromImage(image))
             {
+                using var graph = Graphics.FromImage(image);
                 foreach (var tag in allTags)
                 {
-                    using (var font = new Font(tag.font.fontName, tag.font.fontSize))
-                    {
-                        var size = graph.MeasureString(tag.word, font).ToSize();
-                        result.Add((tag, tagCloud.PutNextRectangle(size)));
-                    }
+                    using var font = new Font(tag.fontSettings.fontFamily, tag.fontSettings.fontSize);
+                    var size = graph.MeasureString(tag.word, font).ToSize();
+                    var positionForNextRectangle = tagCloud.PutNextRectangle(size)
+                        .OnFail(errors.Add);
+                    if (positionForNextRectangle.IsSuccess)
+                        positionForNextRectangle.Then(position => result.Add((tag, position)));
                 }
             }
-            return ((IEnumerable<(Tag tag, Rectangle position)>)result).AsResult();
+
+            return errors.Count != 0
+                ? Result.Fail<IEnumerable<(Tag tag, Rectangle position)>>(string.Join(Environment.NewLine, errors))
+                : ((IEnumerable<(Tag tag, Rectangle position)>) result).AsResult();
         }
     }
 }

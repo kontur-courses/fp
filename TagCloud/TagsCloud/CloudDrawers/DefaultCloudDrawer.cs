@@ -16,22 +16,19 @@ namespace TagsCloud.CloudDrawers
                     image: new Bitmap(borderOfRectangles.Width + widthOfBorder * 2, borderOfRectangles.Height + widthOfBorder * 2)))
                 .Then(drawSettings =>
                 {
-                    var image = drawSettings.image;
-                    var borderOfRectangles = drawSettings.border;
-                    using (var graph = Graphics.FromImage(image))
+                    var (borderOfRectangles, image) = drawSettings;
+                    using var graph = Graphics.FromImage(image);
+                    graph.Clear(backgroundColor);
+                    foreach (var tagSettings in resultTagCloud)
                     {
-                        graph.Clear(backgroundColor);
-                        foreach (var tagSettings in resultTagCloud)
-                        {
-                            using (var brush = new SolidBrush(tagSettings.tag.colorTag))
-                            using (var font = new Font(tagSettings.tag.font.fontName, tagSettings.tag.font.fontSize))
-                                graph.DrawString(tagSettings.tag.word,
-                                    font, brush,
-                                    tagSettings.position.Left - borderOfRectangles.X + widthOfBorder,
-                                    tagSettings.position.Top - borderOfRectangles.Y + widthOfBorder);
-                        }
-                        return new Bitmap(image, imageSize);
+                        using var brush = new SolidBrush(tagSettings.tag.colorTag);
+                        using var font = new Font(tagSettings.tag.fontSettings.fontFamily, tagSettings.tag.fontSettings.fontSize);
+                        graph.DrawString(tagSettings.tag.word,
+                            font, brush,
+                            tagSettings.position.Left - borderOfRectangles.X + widthOfBorder,
+                            tagSettings.position.Top - borderOfRectangles.Y + widthOfBorder);
                     }
+                    return new Bitmap(image, imageSize);
                 })
                 .Then(bitmapImage => (Image)bitmapImage);
         }

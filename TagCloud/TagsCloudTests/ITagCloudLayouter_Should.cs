@@ -25,11 +25,10 @@ namespace TagsCloudTests
         }
 
         [Test]
-        public void ThrowException_WhenSizeHaveNegativeNumber()
+        public void ResultNotSuccess_WhenSizeHaveNegativeNumber()
         {
             var rectangleSize = new Size(-1, 100);
-            Action act = () => CloudLayouter.PutNextRectangle(rectangleSize);
-            act.Should().Throw<ArgumentException>();
+            CloudLayouter.PutNextRectangle(rectangleSize).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -37,9 +36,10 @@ namespace TagsCloudTests
         {
             var rectangleSize = new Size(100, 100);
             var rectangle = CloudLayouter.PutNextRectangle(rectangleSize);
-            rectangles.Add(rectangle);
-            var deltaX = Math.Abs(rectangle.X - center.X);
-            var deltaY = Math.Abs(rectangle.Y - center.Y);
+            rectangle.IsSuccess.Should().BeTrue();
+            var deltaX = Math.Abs(rectangle.GetValueOrThrow().X - center.X);
+            var deltaY = Math.Abs(rectangle.GetValueOrThrow().Y - center.Y);
+            rectangles.Add(rectangle.GetValueOrThrow());
             deltaX.Should().BeLessThan(100);
             deltaY.Should().BeLessThan(100);
         }
@@ -53,8 +53,9 @@ namespace TagsCloudTests
             for (var i = 0; i < countRectangles; i++)
             {
                 var rect = CloudLayouter.PutNextRectangle(rectangleSize);
-                rectangles.Any(previousRectangle => rect.IntersectsWith(previousRectangle)).Should().Be(false);
-                rectangles.Add(rect);
+                rect.IsSuccess.Should().BeTrue();
+                rectangles.Any(previousRectangle => rect.GetValueOrThrow().IntersectsWith(previousRectangle)).Should().Be(false);
+                rectangles.Add(rect.GetValueOrThrow());
             }
         }
 
@@ -64,7 +65,9 @@ namespace TagsCloudTests
             var rectangleSize = new Size(123, 112);
             for (var i = 0; i < 100; i++)
             {
-                rectangles.Add(CloudLayouter.PutNextRectangle(rectangleSize));
+                var rect = CloudLayouter.PutNextRectangle(rectangleSize);
+                rect.IsSuccess.Should().BeTrue();
+                rectangles.Add(rect.GetValueOrThrow());
             }
             var maxY = rectangles.Max(rect => rect.Bottom);
             var minY = rectangles.Min(rect => rect.Top);

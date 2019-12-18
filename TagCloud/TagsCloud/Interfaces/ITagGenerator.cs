@@ -6,6 +6,6 @@ namespace TagsCloud.Interfaces
 {
     public interface ITagGenerator
     {
-        Result<IEnumerable<Tag>> GenerateTag(IEnumerable<(string word, int frequency)> wordStatistics);
+        Result<IEnumerable<Tag>> GenerateTags(IEnumerable<(string word, int frequency)> wordsStatistics);
     }
 }

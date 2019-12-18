@@ -1,44 +1,53 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using TagsCloud.Interfaces;
 using TagsCloud.ErrorHandling;
+using TagsCloud.WordValidators;
 
 namespace TagsCloud.WordStreams
 {
-    public class WordStream : IWordStream
+    public class WordStream
     {
         private readonly IWordHandler wordHandler;
-        private readonly ITextSpliter textSpliter;
+        private readonly ITextSplitter textSplitter;
         private readonly ITextReader fileReader;
-        private readonly IWordValidator wordValidator;
+        private readonly List<IWordValidator> wordValidators;
 
-        public WordStream(IWordHandler wordHandler, ITextSpliter textSpliter, ITextReader fileReader, IWordValidator wordValidator)
+        public WordStream(IWordHandler wordHandler, ITextSplitter textSplitter, ITextReader fileReader, IEnumerable<IWordValidator> wordValidators)
         {
-            this.textSpliter = textSpliter;
+            this.textSplitter = textSplitter;
             this.wordHandler = wordHandler;
             this.fileReader = fileReader;
-            this.wordValidator = wordValidator;
+            this.wordValidators = wordValidators.ToList();
+        }
+
+        public Result<None> AddNewValidator(IWordValidator wordValidator)
+        {
+            return Result.OfAction(() => wordValidators.Add(wordValidator));
         }
 
         public Result<IEnumerable<string>> GetWords(string path)
         {
             return fileReader.ReadFile(path)
-            .Then(text => textSpliter.SplitText(text))
-            .Then(words => words.Select(word => wordHandler.ProseccWord(word)))
-            .Then(words =>
-            {
-                var result = new List<string>();
-                foreach (var word in words)
+            .Then(text => textSplitter.SplitText(text))
+            .Then(words => words.Select(wordHandler.ProcessWord))
+            .Then(GetValidWords);
+        }
+
+        private Result<IEnumerable<string>> GetValidWords(IEnumerable<string> words)
+        {
+            var result = new List<string>(words);
+            var errors = new List<string>();
+            var validWords = wordValidators.Aggregate(result, (current, wordValidator) => current.Where(word =>
                 {
-                    var isValid = wordValidator.IsValidWord(word);
-                    if (!isValid.IsSuccess)
-                        return Result.Fail<IEnumerable<string>>(isValid.Error);
-                    if (isValid.Value)
-                        result.Add(word);
-                }
-                return Result.Ok(result.AsEnumerable());
-            })
-            .OnFail(errorMsg => Result.Fail<IEnumerable<string>>(errorMsg));
+                    var isValid = wordValidator.IsValidWord(word).OnFail(errorMsg => errors.Add(word + ": " + errorMsg));
+                    return isValid.IsSuccess && isValid.Value;
+                })
+                .ToList());
+            return errors.Count != 0 
+                ? Result.Fail<IEnumerable<string>>(string.Join(Environment.NewLine, errors)) 
+                : Result.Ok(validWords.AsEnumerable());
         }
     }
 }

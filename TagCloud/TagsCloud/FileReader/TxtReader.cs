@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using TagsCloud.ErrorHandling;
 using TagsCloud.Interfaces;
 using TagsCloud.PathValidators;
-using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.FileReader
 {
@@ -20,7 +19,10 @@ namespace TagsCloud.FileReader
             if (Path.GetExtension(path) != ".txt")
                 return Result.Fail<string>($"Unsupported extension {Path.GetExtension(path)}");
             return pathValidator.IsValidPath(path)
-                .Then(fileExists => fileExists ? Result.Of(() => File.ReadAllText(path)) : Result.Fail<string>($"File {path} not exist"));
+                .Then(fileExists =>
+                    fileExists
+                        ? Result.Of(() => File.ReadAllText(path))
+                        : Result.Fail<string>($"File {path} not exist"));
         }
     }
 }

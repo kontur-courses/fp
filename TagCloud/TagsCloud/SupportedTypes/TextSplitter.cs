@@ -1,6 +1,6 @@
 ﻿namespace TagsCloud.SupportedTypes
 {
-    public enum TextSpliter
+    public enum TextSplitter
     {
         Line,
         WhiteSpace

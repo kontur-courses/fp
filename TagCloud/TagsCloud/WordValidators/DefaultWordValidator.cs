@@ -1,31 +1,23 @@
-﻿using TagsCloud.Interfaces;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Generic;
-using MyStemWrapper;
 using System.Text.RegularExpressions;
-using System;
-using TagsCloud.Spliters;
+using MyStemWrapper;
 using TagsCloud.ErrorHandling;
+using TagsCloud.Interfaces;
 
 namespace TagsCloud.WordValidators
 {
     public class DefaultWordValidator : IWordValidator
     {
-        private readonly Result<HashSet<string>> boringWords;
+        private readonly string[] ignoringPartsOfSpeech;
         private readonly MyStem myStem;
         private readonly Regex parsePartOfSpeechRegex;
-        private readonly string[] ignoringPartsOfSpeech;
         private readonly Dictionary<string, bool> viewedWords;
 
-        public DefaultWordValidator(SpliterByLine textSpliter, ITextReader fileReader, WordValidatorSettings wordValidatorSettings, MyStem myStem)
+        public DefaultWordValidator(WordValidatorSettings wordValidatorSettings, MyStem myStem)
         {
             this.myStem = myStem;
-            boringWords = wordValidatorSettings.pathToBoringWords == "" ? new HashSet<string>().AsResult() :
-                fileReader.ReadFile(wordValidatorSettings.pathToBoringWords)
-                .Then(text => textSpliter.SplitText(text))
-                .Then(words => words.ToHashSet())
-                .RefineError("File with boring words could not be read");
-            parsePartOfSpeechRegex = new Regex(@"\w*?=(\w+)");
+            parsePartOfSpeechRegex = new Regex(@"\w*?=(\w+)", RegexOptions.Compiled);
             ignoringPartsOfSpeech = wordValidatorSettings.ignoringPartsOfSpeech;
             viewedWords = new Dictionary<string, bool>();
         }
@@ -34,17 +26,11 @@ namespace TagsCloud.WordValidators
         {
             if (viewedWords.TryGetValue(word, out var previousResultValidation))
                 return previousResultValidation.AsResult();
-            return boringWords
-                .Then(boringWord => boringWord.FirstOrDefault(ignoredWord => ignoredWord.Equals(word, StringComparison.InvariantCultureIgnoreCase)) == null)
-                .Then(wordIsBoring => word.Length != 0
-                && !ignoringPartsOfSpeech.Contains(parsePartOfSpeechRegex.Match(myStem.Analysis(word)).Groups[1].Value)
-                && !int.TryParse(word, out var res) && wordIsBoring)
-                .Then(wordIsBoring => 
-                {
-                    viewedWords.Add(word, wordIsBoring);
-                    return wordIsBoring;
-                })
-                .OnFail(error => Result.Fail<bool>(error));
+            var speechPartOfCurrentWord = parsePartOfSpeechRegex.Match(myStem.Analysis(word)).Groups[1].Value;
+            var wordIsValid = word.Length != 0 && !ignoringPartsOfSpeech.Contains(speechPartOfCurrentWord)
+                                           && !int.TryParse(word, out _);
+            viewedWords.Add(word, wordIsValid);
+            return wordIsValid.AsResult();
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿namespace TagsCloud.FontGenerators
+﻿using System.Drawing;
+
+namespace TagsCloud.FontGenerators
 {
     public class FontSettings
     {
-        public readonly string fontName;
+        public readonly FontFamily fontFamily;
         public readonly float fontSize;
 
-        public FontSettings(string fontName, float fontSize)
+        public FontSettings(FontFamily fontFamily, float fontSize)
         {
-            this.fontName = fontName;
+            this.fontFamily = fontFamily;
             this.fontSize = fontSize;
         }
     }

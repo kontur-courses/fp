@@ -2,6 +2,6 @@
 {
     public interface IWordHandler
     {
-        string ProseccWord(string word);
+        string ProcessWord(string word);
     }
 }

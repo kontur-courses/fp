@@ -11,7 +11,7 @@
 
   -s, --spliter                 (Default: WhiteSpace) Split by line or white space. (Line || WhiteSpace)
 
-  -b, --boringWords             (Default: ) Path to file with boring words. Words must be separated by line.
+  -a, --boringWords             (Default: ) Path to file with boring words. Words must be separated by line.
 
   -i, --ignoredPartsOfSpeech    (Default: ADVPRO,APRO,CONJ,INTJ,PR,PART,SPRO) Parts of speech to be excluded. Possible
                                 parts: A, ADV, ADVPRO, ANUM, APRO, COM, CONJ, INTJ, NUM, PART, PR, S, SPRO, V.

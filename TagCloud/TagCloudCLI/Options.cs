@@ -3,42 +3,46 @@ using TagsCloud.SupportedTypes;
 
 namespace TagCloudCLI
 {
-    class Options
+    internal class Options
     {
         [Value(0, Required = true, HelpText = "Input files with words.")]
         public string InputFiles { get; set; }
 
         [Value(1, Required = true, HelpText = "Result file.")]
-        public string savePath { get; set; }
+        public string SavePath { get; set; }
 
         [Option('w', "width", Default = 1920, HelpText = "Width result image.")]
-        public int width { get; set; }
+        public int Width { get; set; }
 
         [Option('h', "height", Default = 1080, HelpText = "Height result image.")]
-        public int height { get; set; }
+        public int Height { get; set; }
 
         [Option('b', "backgroundColor", Default = "White", HelpText = "Background color.")]
-        public string backgroundColor { get; set; }
+        public string BackgroundColor { get; set; }
 
-        [Option('f', "font", Default = "Comic Sans MS", HelpText = "Font name.")]
-        public string fontName { get; set; }
+        [Option('f', "fontSettings", Default = "Comic Sans MS", HelpText = "Font name.")]
+        public string FontName { get; set; }
 
-        [Option('s', "spliter", Default = TextSpliter.WhiteSpace, HelpText = "Split by line or white space. (Line || WhiteSpace)")]
-        public TextSpliter splitType { get; set; }
+        [Option('s', "splitter", Default = TextSplitter.WhiteSpace,
+            HelpText = "Split by line or white space. (Line || WhiteSpace)")]
+        public TextSplitter SplitType { get; set; }
 
-        [Option('a', "boringWords", Default = "", HelpText = "Path to file with boring words. Words must be separated by line.")]
-        public string boringWordsPath { get; set; }
+        [Option('a', "boringWords", Default = "",
+            HelpText = "Path to file with boring words. Words must be separated by line.")]
+        public string BoringWordsPath { get; set; }
 
-        [Option('i', "ignoredPartsOfSpeech", Default = "ADVPRO,APRO,CONJ,INTJ,PR,PART,SPRO", HelpText = "Parts of speech to be excluded. " +
+        [Option('i', "ignoredPartsOfSpeech", Default = "ADVPRO,APRO,CONJ,INTJ,PR,PART,SPRO", HelpText =
+            "Parts of speech to be excluded. " +
             "Possible parts: A, ADV, ADVPRO, ANUM, APRO, COM, CONJ, INTJ, NUM, PART, PR, S, SPRO, V.")]
-        public string ignoredPartsOfSpeech { get; set; }
+        public string IgnoredPartsOfSpeech { get; set; }
 
-        [Option('g', "GenerationAlgorithm", Default = GenerationsAlghoritm.CircularCloud, HelpText = "Which alghorithm will be used to generate the cloud. " +
+        [Option('g', "GenerationAlgorithm", Default = GenerationsAlgorithm.CircularCloud, HelpText =
+            "Which algorithm will be used to generate the cloud. " +
             "(CircularCloud || MiddleCloud)")]
-        public GenerationsAlghoritm GenerationAlghoritm { get; set; }
+        public GenerationsAlgorithm GenerationAlgorithm { get; set; }
 
         [Option('c', "ColorScheme", Default = ColorSchemes.RandomColor, HelpText = "Color scheme of result cloud." +
-            "(RandomColor || RedGreenBlueScheme)")]
+                                                                                   "(RandomColor || RedGreenBlueScheme)")]
         public ColorSchemes ColorScheme { get; set; }
     }
 }

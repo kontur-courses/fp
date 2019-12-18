@@ -1,27 +1,29 @@
-﻿using TagsCloud.Interfaces;
+﻿using System;
+using System.Drawing;
 using TagsCloud.ErrorHandling;
-using System;
+using TagsCloud.Interfaces;
 
 namespace TagsCloud.FontGenerators
 {
     public class SimpleFontGenerator : IFontSettingsGenerator
     {
+        private readonly FontFamily fontFamily;
         private readonly int maxFontSize;
         private readonly int minFontSize;
-        private readonly string fontName;
 
-        public SimpleFontGenerator(TagCloudSettings fontName, int maxFontSize=128, int minFontSize=40)
+        public SimpleFontGenerator(TagCloudSettings settings, int maxFontSize = 128, int minFontSize = 40)
         {
-            this.fontName = fontName.fontName;
+            fontFamily = settings.fontFamily;
             this.maxFontSize = maxFontSize;
             this.minFontSize = minFontSize;
         }
 
-        public Result<FontSettings> GetFontSizeForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords)
+        public Result<FontSettings> GetFontSizeForCurrentWord((string word, int frequency) wordFrequency,
+            int positionByFrequency, int countWords)
         {
-            float fontSize =  maxFontSize * ((float)(countWords - positionByFrequency + 1) / countWords);
+            var fontSize = maxFontSize * ((float) (countWords - positionByFrequency + 1) / countWords);
             fontSize = Math.Max(fontSize, minFontSize);
-            return Result.Of(() => new FontSettings(fontName, fontSize));
+            return Result.Of(() => new FontSettings(fontFamily, fontSize));
         }
     }
 }

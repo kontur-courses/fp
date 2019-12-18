@@ -11,7 +11,7 @@ namespace TagsCloud.ColorSchemes
         {
             var rnd = new Random();
             var alpha = (int)(255 * ((float)(countWords - positionByFrequency + 1) / countWords));
-            alpha = 255 < alpha ? 255 : alpha;
+            alpha = Math.Min(alpha, 255);
             return Color.FromArgb(alpha, rnd.Next(50, 255), rnd.Next(50, 255), rnd.Next(50, 255)).AsResult();
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace TagsCloud.SupportedTypes
 {
-    public enum GenerationsAlghoritm
+    public enum GenerationsAlgorithm
     {
         CircularCloud,
         MiddleCloud

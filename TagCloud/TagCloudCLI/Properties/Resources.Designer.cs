@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TagsCloud.Properties {
+namespace TagCloudCLI.Properties {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace TagsCloud.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace TagsCloud.Properties {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TagsCloud.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TagCloudCLI.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace TagsCloud.Properties {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,12 +61,12 @@ namespace TagsCloud.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
+        ///   Ищет локализованную строку, похожую на Графиня так устала от визитов, что не велела принимать больше никого, и швейцару приказано было только звать непременно кушать всех, кто будет еще приезжать с поздравлениями. Графине хотелось с глазу на глаз поговорить с другом своего детства, княгиней Анной Михайловной, которую она не видала хорошенько с ее приезда из Петербурга. Анна Михайловна, с своим исплаканным и приятным лицом, подвинулась ближе к креслу графини.
+        ///— С тобой я буду совершенно откровенна, — сказала Анна Михайловна. — Уж мало нас остало [остаток строки не уместился]&quot;;.
         /// </summary>
-        public static byte[] mystem {
+        internal static string ВойнаИМир {
             get {
-                object obj = ResourceManager.GetObject("mystem", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("ВойнаИМир", resourceCulture);
             }
         }
     }

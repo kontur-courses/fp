@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TagsCloud.Interfaces;
 using System.Linq;
 using TagsCloud.ErrorHandling;
@@ -16,30 +17,33 @@ namespace TagsCloud.TagGenerators
             this.colorGenerator = colorGenerator;
         }
 
-        public Result<IEnumerable<Tag>> GenerateTag(IEnumerable<(string word, int frequency)> wordStatistics)
+        public Result<IEnumerable<Tag>> GenerateTags(IEnumerable<(string word, int frequency)> wordsStatistics)
         {
+            if (wordsStatistics == null)
+                return Result.Fail<IEnumerable<Tag>>($"{nameof(wordsStatistics)} cannot be null");
             var currentPosition = 0;
-            var countWord = wordStatistics.Count();
-            wordStatistics = wordStatistics.OrderBy(wordsStatistic => wordsStatistic.frequency);
+            var orderedStatistics = wordsStatistics.OrderBy(wordsStatistic => wordsStatistic.frequency).ToList();
+            var countWord = orderedStatistics.Count;
             var result = new List<Tag>();
-            foreach(var wordStatistic in wordStatistics)
+            var errors = new List<string>();
+            foreach(var wordStatistics in orderedStatistics)
             {
-                var fontSettings = fontGenerator.GetFontSizeForCurrentWord(wordStatistic, currentPosition, countWord);
-                var color = colorGenerator.GetColorForCurrentWord(wordStatistic, currentPosition, countWord);
-                if (!fontSettings.IsSuccess)
+                var fontSettings = fontGenerator.GetFontSizeForCurrentWord(wordStatistics, currentPosition, countWord)
+                    .RefineError("Font settings cannot be obtained")
+                    .OnFail((error) => errors.Add(error));
+                var color = colorGenerator.GetColorForCurrentWord(wordStatistics, currentPosition, countWord)
+                    .RefineError("Color cannot be obtained")
+                    .OnFail((error) => errors.Add(error));
+                if (!fontSettings.IsSuccess || !color.IsSuccess)
                 {
-                    fontSettings.RefineError("Font settings cannot be obtained");
-                    return Result.Fail<IEnumerable<Tag>>(fontSettings.Error);
+                    continue;
                 }
-                if (!color.IsSuccess)
-                {
-                    color.RefineError("Collor cannot be obtained");
-                    return Result.Fail<IEnumerable<Tag>>(color.Error);
-                }
-                result.Add(new Tag(fontSettings.Value, color.Value, wordStatistic.word));
+                result.Add(new Tag(fontSettings.Value, color.Value, wordStatistics.word));
                 currentPosition++;
             }
-            return (result.AsEnumerable()).AsResult();
+            return errors.Count != 0 
+                ? Result.Fail<IEnumerable<Tag>>(string.Join(Environment.NewLine, errors)) 
+                : result.AsEnumerable().AsResult();
         }
     }
 }
