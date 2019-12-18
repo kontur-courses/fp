@@ -84,7 +84,6 @@ namespace TagsCloudConsole
                 .Then(tags => cloudVisualizer.Visualize(style, tags, width, height));
             if (!bitmapResult.IsSuccess)
                 return Result.Fail<None>(bitmapResult.Error);
-            
             using (var bitmap = bitmapResult.GetValueOrThrow())
                 bitmapSaver.Save(bitmap, imageOutputPath);
             return Result.Ok();
