@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CommandLine;
+using ResultOf;
 using TagsCloudContainer.Core.Extensions;
 using TagsCloudContainer.Core.ImageBuilder;
 using TagsCloudContainer.Core.ImageSavers;
@@ -16,75 +17,91 @@ namespace TagsCloudContainer.Core.UserInterfaces.ConsoleUI
 {
     class ConsoleUi : IUi
     {
-        private readonly IReader[] readers;
-        private readonly IImageBuilder tagCloudImageCreator;
+        private readonly ReaderFinder readerFinder;
+        private readonly IImageBuilder tagCloudImageBuilder;
         private readonly ILayoutAlgorithm layoutAlgorithm;
         private readonly IImageSaver imageSaver;
         private readonly Filter filter;
         private readonly WordConverter wordConverter;
 
-        public ConsoleUi(IReader[] readers,
-            IImageBuilder tagCloudImageCreator, ILayoutAlgorithm layoutAlgorithm,
+        public ConsoleUi(ReaderFinder readerFinder,
+            IImageBuilder tagCloudImageBuilder, ILayoutAlgorithm layoutAlgorithm,
             IImageSaver imageSaver,
             Filter filter, WordConverter wordConverter)
         {
             this.filter = filter;
             this.wordConverter = wordConverter;
-            this.readers = readers;
-            this.tagCloudImageCreator = tagCloudImageCreator;
+            this.readerFinder = readerFinder;
+            this.tagCloudImageBuilder = tagCloudImageBuilder;
             this.imageSaver = imageSaver;
             this.layoutAlgorithm = layoutAlgorithm;
         }
 
         public void Run(IEnumerable<string> userInput)
         {
-            var options = Parser.Default
+            Parser.Default
                 .ParseArguments<Options>(userInput)
                 .WithParsed(Run);
         }
 
-        private IReader SelectReader(string path) => readers.FirstOrDefault(r => r.CanRead(path));
+        private void HandleError(string errorMessage)
+        {
+            Console.WriteLine(errorMessage);
+            Environment.Exit(1);
+        }
 
         private void Run(Options options)
         {
-            var boringWords = FormBoringWords(options.FileWithBoringWords);
-            filter.UserExcludedWords = boringWords;
-            var words = FormWordsFromFile(options.InputFile)
-                .MostCommon(30)
-                .Select(kvp => kvp.Item1)
-                .ToArray();
-
-            var tags = FormTags(words, options.FontName);
-            var bitmap = tagCloudImageCreator.Build(options.FontName, tags, layoutAlgorithm.GetLayoutSize());
-            imageSaver.Save(options.OutputFile, bitmap, options.ImageFormat);
+            FormBoringWords(options.FileWithBoringWords)
+                .Then(words => filter.UserExcludedWords = words)
+                .OnFail(HandleError);
+            var rightWords = FormWordsFromFile(options.InputFile)
+                .Then(words => words.MostCommon(30)
+                    .Select(kvp => kvp.Item1)
+                    .ToArray())
+                .OnFail(HandleError);
+            GetBaseFont(options.FontName)
+                .Then(font => FormTags(rightWords.Value, font))
+                .Then(tags => tagCloudImageBuilder.Build(tags, layoutAlgorithm.GetLayoutSize()))
+                .Then(bitmap => imageSaver.Save(options.OutputFile, bitmap, options.ImageFormat))
+                .OnFail(HandleError);
         }
 
-        private IEnumerable<string> FormWordsFromFile(string path)
+        private Result<HashSet<string>> FormWordsFromFile(string path)
         {
-            var reader = SelectReader(path);
+            var reader = readerFinder.Find(path);
             if (reader == null)
-                throw new ArgumentException("Формат входного файла не поддерживается");
+                return Result.Fail<HashSet<string>>("Формат входного файла не поддерживается");
             return reader.ReadWords(path)
-                .Where(filter.FilterWord)
-                .Select(wordConverter.ConvertWord);
+                .Then(filter.FilterWords)
+                .Then(wordConverter.ConvertWords)
+                .Then(words => words.ToHashSet());
         }
 
+        private Result<Font> GetBaseFont(string fontName)
+        {
+            var font = new Font(fontName, 1);
+            return font.Name == fontName
+                ? Result.Ok(font)
+                : Result.Fail<Font>($"Шрифт {fontName} не найден");
+        }
 
-        private HashSet<string> FormBoringWords(string path)
+        private Result<HashSet<string>> FormBoringWords(string path)
         {
             return path == null
-                ? new HashSet<string>()
-                : FormWordsFromFile(path).ToHashSet();
+                ? Result.Ok(new HashSet<string>())
+                : FormWordsFromFile(path);
         }
 
-        private IEnumerable<Tag> FormTags(IReadOnlyList<string> words, string font)
+        private IEnumerable<Tag> FormTags(IReadOnlyList<string> words, Font baseFont)
         {
             var tags = new List<Tag>();
             for (var i = 0; i < words.Count; i++)
             {
                 var word = words[i];
-                var size = TextRenderer.MeasureText(word, new Font(font, 40 - i));
-                tags.Add(new Tag(word, layoutAlgorithm.PutNextRectangle(size), 40 - i));
+                var font = new Font(baseFont.Name, 40 - i);
+                var size = TextRenderer.MeasureText(word, font);
+                tags.Add(new Tag(word, layoutAlgorithm.PutNextRectangle(size), font));
             }
 
             return tags;
