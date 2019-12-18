@@ -4,22 +4,28 @@ namespace TagCloudGenerator.ResultPattern
 {
     public struct Result<T>
     {
+        private readonly T value;
+
         public Result(string error, T value = default)
         {
             Error = error;
-            Value = value;
+            this.value = value;
         }
 
         public string Error { get; }
-        public bool IsSuccess => Error == null;
-        internal T Value { get; }
+        public bool IsSuccess => Error is null;
 
-        public static implicit operator Result<T>(T v) => Result.Ok(v);
-
-        public T GetValueOrThrow()
+        public T Value
         {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            get
+            {
+                if (IsSuccess)
+                    return value;
+
+                throw new InvalidOperationException($"No value. Only Error {Error}");
+            }
         }
+
+        public static implicit operator Result<T>(T value) => Result.Ok(value);
     }
 }
