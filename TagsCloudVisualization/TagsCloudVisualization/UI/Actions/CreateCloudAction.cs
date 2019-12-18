@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Windows.Forms;
 using ErrorHandler;
 using TagsCloudVisualization.Services;
 
@@ -27,12 +29,15 @@ namespace TagsCloudVisualization.UI.Actions
 
         public void Perform(object sender, EventArgs e)
         {
+            var button = sender as Button;
+            button.Hide();
             pathProvider
                 .GetPath()
                 .Then(path => visualizer.VisualizeTextFromFile(path))
                 .Then(image => imageHolder.SetImage(image))
                 .RefineError("Couldn't create tag cloud")
                 .OnFail(errorHandler.PostError);
+            button.Show();
         }
     }
 }
