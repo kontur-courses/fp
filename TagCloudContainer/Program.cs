@@ -39,7 +39,7 @@ namespace TagCloudContainer
             config = parameters.Aggregate(config, (current, o) => ProcessOption(o, current, cli));
 
             var result = config.Then(cfg => cfg.CreateCloud(inputFile, outputFile));
-            result.GetValueOrThrow();
+            result.OnFail(Console.WriteLine);
         }
 
         private static Result<TagCloudConfig> ProcessOption(ParsedOption o, Result<TagCloudConfig> config, Cli cli)

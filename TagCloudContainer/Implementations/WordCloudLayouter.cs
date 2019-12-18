@@ -34,7 +34,8 @@ namespace TagCloudContainer.Implementations
         {
             return sizeProvider.GetStringSize(word, occurrenceCount)
                 .Then(s => s * occurrenceCount)
-                .Then(s => rectangleLayouter.PutNextRectangle(s, container)).Then(r => (word, r));
+                .Then(s => rectangleLayouter.PutNextRectangle(s, container))
+                .Then(r => (word, r));
         }
     }
 }
