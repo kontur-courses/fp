@@ -1,4 +1,4 @@
-namespace TagsCloudContainer.Infrastructure.Common
+namespace TagsCloudResult.Infrastructure.Common
 {
     public class AlgorithmsSettings
     {

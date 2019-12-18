@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Drawing;
-using TagsCloudContainer.Infrastructure.Common;
+using TagsCloudResult.Infrastructure.Common;
 
-namespace TagsCloudContainer
+namespace TagsCloudResult
 {
-    public class CloudDrawer : IDrawer
+    public static class CloudDrawer
     {
-        public Bitmap Draw(ImageSetting setting, IEnumerable<(Rectangle, LayoutWord)> words)
+        public static Result<Bitmap> Draw(IEnumerable<(Rectangle, LayoutWord)> words, ImageSetting setting)
         {
             var bitmap = new Bitmap(setting.Width, setting.Height);
             var graphic = Graphics.FromImage(bitmap);

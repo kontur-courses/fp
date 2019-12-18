@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace TagsCloudContainer.Layouter
+namespace TagsCloudResult.Layouter
 {
     public class PointRadiusComparer : IComparer<Point>
     {

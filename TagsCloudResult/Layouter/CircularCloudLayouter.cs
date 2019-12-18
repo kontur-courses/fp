@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloudContainer.Infrastructure.Common;
+using TagsCloudResult.Infrastructure.Common;
 
-namespace TagsCloudContainer.Layouter
+namespace TagsCloudResult.Layouter
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
@@ -17,10 +17,6 @@ namespace TagsCloudContainer.Layouter
             this.center = center;
             cornerPoints = new SortedSet<Point>(new PointRadiusComparer()) {new Point(0, 0)};
             rectangles = new HashSet<Rectangle>();
-        }
-
-        public CircularCloudLayouter() : this(Point.Empty)
-        {
         }
 
         public HashSet<Rectangle> Centering()

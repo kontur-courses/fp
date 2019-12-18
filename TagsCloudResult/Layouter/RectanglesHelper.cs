@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace TagsCloudContainer.Layouter
+namespace TagsCloudResult.Layouter
 {
     public static class RectanglesHelper
     {

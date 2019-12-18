@@ -1,10 +1,9 @@
-using System;
 using CommandLine;
-using TagsCloudContainer.Infrastructure.Common;
+using TagsCloudResult.Infrastructure.Common;
 
-namespace TagsCloudContainer
+namespace TagsCloudResult
 {
-    public class ConsoleArgumentParser : IArgumentParser
+    public class ConsoleArgumentParser
     {
         class Options
         {

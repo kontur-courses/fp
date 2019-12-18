@@ -1,6 +1,4 @@
-using System.Drawing;
-
-namespace TagsCloudContainer.Infrastructure.Common
+namespace TagsCloudResult.Infrastructure.Common
 {
     public class WordSetting
     {
