@@ -10,7 +10,6 @@ namespace TagsCloudResult
     {
         static void Main(string[] args)
         {
-            args = new[] {"-f", "exmp.txt", "-n", "Lol", "-c", "Red", "-b", "Black", "-a", "True"};
             var consoleParser = new ConsoleArgumentParser();
             var settings = consoleParser.GetSettings(args);
             if (settings is null)
