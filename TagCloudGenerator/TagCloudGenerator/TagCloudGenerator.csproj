@@ -78,6 +78,10 @@
     <Compile Include="GeneratorCore\Tags\TagType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultPattern\None.cs" />
+    <Compile Include="ResultPattern\ParseResultExtensions.cs" />
+    <Compile Include="ResultPattern\Result.cs" />
+    <Compile Include="ResultPattern\ResultGeneric.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\CommonWordsTagCloud.png" />
