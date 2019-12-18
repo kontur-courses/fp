@@ -16,8 +16,11 @@ namespace TagsCloudTextProcessing.Readers
             if(!File.Exists(path))
                 return Result.Fail<string>($"FILE {path} doesn't exist");
             
-            using (var document = DocX.Load(path))
-                return Result.Ok(document.Text);
+            return Result.Of(() =>
+            {
+                using (var document = DocX.Load(path))
+                    return document.Text;
+            });
         }
     }
 }

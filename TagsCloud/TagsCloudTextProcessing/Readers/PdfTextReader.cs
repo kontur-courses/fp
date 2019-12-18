@@ -15,11 +15,14 @@ namespace TagsCloudTextProcessing.Readers
 
         public Result<string> ReadText()
         {
-            if(!File.Exists(path))
+            if (!File.Exists(path))
                 return Result.Fail<string>($"FILE {path} doesn't exist");
-            
-            using (var pdfDocument = new PdfDocument(path))
-                return Result.Ok(pdfDocument.GetText());
+
+            return Result.Of(() =>
+            {
+                using (var pdfDocument = new PdfDocument(path))
+                    return pdfDocument.GetText();
+            });
         }
     }
 }
