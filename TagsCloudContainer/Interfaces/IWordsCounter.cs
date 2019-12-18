@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.Interfaces
 {
     public interface IWordsCounter
     {
-        Dictionary<string, int> CountWords(IEnumerable<string> arr);
+        Result<Dictionary<string, int>> CountWords(IEnumerable<string> arr);
     }
 }

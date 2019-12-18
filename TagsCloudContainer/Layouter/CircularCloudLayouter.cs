@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
+using ResultOf;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -12,26 +11,29 @@ namespace TagsCloudContainer.Layouter
     public class CircularCloudLayouter : MustInitialize<Point>, ICloudLayouter
     {
         public Point Center { get; set; }
+
         public List<Rectangle> RectanglesList
         {
             get { return layout; }
         }
-        public IPointsGenerator PointsGenerator { get; }  
+
+        public IPointsGenerator PointsGenerator { get; }
         private bool compressionFlag;
         private List<Rectangle> layout = new List<Rectangle>();
-        
+
         public CircularCloudLayouter(Point center, bool compression, IPointsGenerator pointGen) : base(center)
         {
-            this.Center = center;
-            this.PointsGenerator = pointGen;
+            Center = center;
+            PointsGenerator = pointGen;
             compressionFlag = compression;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
             {
-                throw new ArgumentException("Width and Height should be positive numbers");
+                return Result.Fail<Rectangle>(
+                    "Layouter can't put word's rectangle, width and Height should be positive numbers");
             }
 
             while (true)
@@ -44,7 +46,7 @@ namespace TagsCloudContainer.Layouter
 
                 if (CheckIntersection(rect))
                     continue;
-                if(compressionFlag)
+                if (compressionFlag)
                     rect = MoveToCenter(rect);
                 layout.Add(rect);
                 return rect;
@@ -68,7 +70,8 @@ namespace TagsCloudContainer.Layouter
                 {
                     possibleXafterMove += rectRadiusVector.X;
                     possibleYafterMove += rectRadiusVector.Y;
-                    tmpRect = new Rectangle((int) possibleXafterMove, (int) possibleYafterMove, rect.Width, rect.Height);
+                    tmpRect = new Rectangle((int) possibleXafterMove, (int) possibleYafterMove, rect.Width,
+                        rect.Height);
                     if (CheckIntersection(tmpRect))
                     {
                         possibleXafterMove -= rectRadiusVector.X;
@@ -77,7 +80,7 @@ namespace TagsCloudContainer.Layouter
                     }
                 }
             }
-            
+
             return new Rectangle((int) possibleXafterMove, (int) possibleYafterMove, rect.Width, rect.Height);
         }
 

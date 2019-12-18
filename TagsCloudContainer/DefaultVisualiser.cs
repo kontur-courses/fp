@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using ResultOf;
 using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Layouter;
 
@@ -19,30 +20,37 @@ namespace TagsCloudContainer
             this.font = new Font(font, 50);
         }
 
-        public Bitmap DrawRectangles(ICloudLayouter ccl, (string, Size)[] arr)
+        public Result<Bitmap> DrawRectangles(ICloudLayouter ccl, (string, Size)[] arr)
         {
-            var bitmapWidth = sizeOfBitmap.Width;
-            var bitmapHeight = sizeOfBitmap.Height;
-
-            var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
-            Graphics g = Graphics.FromImage(bitmap);
-
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            var brush = new SolidBrush(fontColor);
-            var pen = new Pen(fontColor, 4);
-            g.Clear(Color.White);
-            for (var i = 0; i < ccl.RectanglesList.Count; i++)
+            try
             {
-                var rect = ccl.RectanglesList[i];
-                var font = GetAdjustedFont(g, arr[i].Item1, this.font, arr[i].Item2.Width, 
-                    300, 1, true);
-                g.DrawString(arr[i].Item1, font, brush, rect);
-                g.DrawRectangle(pen, rect);
-            }
+                var bitmapWidth = sizeOfBitmap.Width;
+                var bitmapHeight = sizeOfBitmap.Height;
 
-            return bitmap;
+                var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
+                Graphics g = Graphics.FromImage(bitmap);
+
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                var brush = new SolidBrush(fontColor);
+                var pen = new Pen(fontColor, 4);
+                g.Clear(Color.White);
+                for (var i = 0; i < ccl.RectanglesList.Count; i++)
+                {
+                    var rect = ccl.RectanglesList[i];
+                    var font = GetAdjustedFont(g, arr[i].Item1, this.font, arr[i].Item2.Width,
+                        300, 1, true);
+                    g.DrawString(arr[i].Item1, font, brush, rect);
+                    g.DrawRectangle(pen, rect);
+                }
+
+                return bitmap;
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<Bitmap>(e.Message);
+            }
         }
 
         public static Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth,

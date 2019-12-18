@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using ResultOf;
 using TagsCloudContainer.Interfaces;
 using YandexMystem.Wrapper;
 using YandexMystem.Wrapper.Models;
@@ -26,12 +22,16 @@ namespace TagsCloudContainer
         }
 
 
-        public IEnumerable<string> FilterWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            return FilterWords(GetInfoAboutWords(words.ToArray()));
+            var wordsInfo = GetInfoAboutWords(words.ToArray());
+            if (!wordsInfo.IsSuccess)
+                return Result.Fail<IEnumerable<string>>(wordsInfo.Error).RefineError("Something wrong with mystem.exe");
+
+            return FilterWords(wordsInfo.GetValueOrThrow());
         }
 
-        private List<string> FilterWords(List<WordModel> wordsInfos)
+        private Result<IEnumerable<string>> FilterWords(List<WordModel> wordsInfos)
         {
             var res = new List<string>();
             foreach (var wordInfo in wordsInfos)
@@ -48,7 +48,7 @@ namespace TagsCloudContainer
                 res.Add(wordInfo.SourceWord.Text);
             }
 
-            return res;
+            return Result.Ok(res.AsEnumerable());
         }
 
         private string WordsToString(string[] words)
@@ -62,13 +62,18 @@ namespace TagsCloudContainer
             return res;
         }
 
-        private List<WordModel> GetInfoAboutWords(string[] words)
+        private Result<List<WordModel>> GetInfoAboutWords(string[] words)
         {
-            var outputBuilder = new StringBuilder();
-            var mst = new Mysteam();
-            var res = mst.GetWords(WordsToString(words));
-
-            return res;
+            try
+            {
+                var mst = new Mysteam();
+                var res = mst.GetWords(WordsToString(words));
+                return Result.Ok(res);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<List<WordModel>>(e.Message);
+            }
         }
     }
 }

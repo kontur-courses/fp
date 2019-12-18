@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudContainer.Layouter
 {
@@ -12,7 +13,7 @@ namespace TagsCloudContainer.Layouter
 
     public interface ICloudLayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
         List<Rectangle> RectanglesList { get; }
         Point Center { get; set; }
         IPointsGenerator PointsGenerator { get; }

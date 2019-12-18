@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.Layouter;
 
 namespace TagsCloudContainer.Interfaces
 {
     public interface IVisualiser
     {
-        Bitmap DrawRectangles(ICloudLayouter ccl, (string, Size)[] arr);
+        Result<Bitmap> DrawRectangles(ICloudLayouter ccl, (string, Size)[] arr);
     }
 }
