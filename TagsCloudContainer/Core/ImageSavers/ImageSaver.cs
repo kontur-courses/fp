@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using ResultOf;
 
 namespace TagsCloudContainer.Core.ImageSavers
 {
@@ -22,13 +23,16 @@ namespace TagsCloudContainer.Core.ImageSavers
             };
         }
 
-        public void Save(string pathImage, Bitmap bitmap, string format)
+        public Result<None> Save(string pathImage, Bitmap bitmap, string format)
         {
-            if (!formats.ContainsKey(format))
-                throw new ArgumentException(
+            return formats.ContainsKey(format)
+                ? Result.OfAction(() =>
+                {
+                    bitmap.Save(pathImage, formats[format]);
+                    Console.WriteLine($"Tag cloud visualization saved to file {pathImage}");
+                }, "Не удалось сохранить файл")
+                : Result.Fail<None>(
                     $"Неподдерживаемый формат\nПоддерживаются {string.Join(", ", formats.Keys)}");
-            bitmap.Save(pathImage, formats[format]);
-            Console.WriteLine($"Tag cloud visualization saved to file {pathImage}");
         }
     }
 }
