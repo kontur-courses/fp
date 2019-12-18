@@ -24,6 +24,7 @@ namespace TagsCloudContainerTests
         public void ReadAllLines_Doc()
         {
             var simpleReader = new SimpleReader(System.IO.Path.Combine(TestContext.CurrentContext.TestDirectory, "Words.doc"));
+            Console.WriteLine(TestContext.CurrentContext.TestDirectory);
 
             var result = simpleReader.ReadAllLines();
 

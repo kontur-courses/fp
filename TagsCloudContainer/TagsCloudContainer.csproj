@@ -67,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CloudLayouters\CircularCloudLayouter.cs" />
-    <Compile Include="CloudLayouters\MyConverter.cs" />
     <Compile Include="CloudLayouters\ICloudLayouter.cs" />
     <Compile Include="PaintersWords\EvenPainterWords.cs" />
     <Compile Include="PaintersWords\IPainterWords.cs" />

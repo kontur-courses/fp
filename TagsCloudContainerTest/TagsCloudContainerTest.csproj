@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props')" />
   <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{42CCDFE4-1112-4D96-A089-B09B1E4C62FC}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>TagsCloudContainerTests</RootNamespace>
-    <AssemblyName>TagsCloudContainerTests</AssemblyName>
+    <ProjectGuid>{02138D46-D2A5-4AFE-8FA3-F4CC02E89B3D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagsCloudContainerTest</RootNamespace>
+    <AssemblyName>TagsCloudContainerTest</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -27,7 +27,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -59,13 +58,9 @@
   <ItemGroup>
     <Compile Include="CircularCloudLayouterTests.cs" />
     <Compile Include="EvenPainterWordsTests.cs" />
+    <Compile Include="MyConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="SimplePainterWordsTests.cs" />
     <Compile Include="SimpleReaderTests.cs" />
     <Compile Include="SimpleVisualizerTests.cs" />
@@ -75,25 +70,9 @@
     <Compile Include="TagCloudGeneratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
     <Content Include="mystem.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Words.doc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Words.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
-      <Project>{8e42c24f-d357-434c-918a-4cfbd8289407}</Project>
-      <Name>TagsCloudContainer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Words.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -102,10 +81,19 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Words.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Words.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
+      <Project>{8e42c24f-d357-434c-918a-4cfbd8289407}</Project>
+      <Name>TagsCloudContainer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -113,5 +101,6 @@
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.12.0\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props'))" />
   </Target>
 </Project>
