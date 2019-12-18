@@ -1,46 +1,45 @@
-﻿ using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ResultOf;
 
 namespace TagsCloudContainer.MyStem
 {
     public class MyStemResultParser
     {
-        public IEnumerable<(string, string)> GetPartsOfSpeechByResultOfNiCommand(string myStemResult,
+        public Result<IEnumerable<(string, string)>> GetPartsOfSpeechByResultOfNiCommand(string myStemResult,
             IEnumerable<string> words)
         {
-            return words.Select(w => (w, GetPartOfSpeechForWord(myStemResult, w)));
+            return Result.OfCollection(words.Select(w => GetPartOfSpeechForWord(myStemResult, w).AddToPairFromLeft(w))
+                .ToList());
         }
 
-        public IEnumerable<(string, string)> GetInitialFormsByResultOfNiCommand(string myStemResult,
+        public Result<IEnumerable<(string, string)>> GetInitialFormsByResultOfNiCommand(string myStemResult,
             IEnumerable<string> words)
         {
-            return words.Select(w => (w, GetInitialFormForWord(myStemResult, w)));
+            return Result.OfCollection(words.Select(w => GetInitialFormForWord(myStemResult, w).AddToPairFromLeft(w))
+                .ToList());
         }
 
-        private string GetPartOfSpeechForWord(string myStemResult, string word)
+        private Result<string> GetPartOfSpeechForWord(string myStemResult, string word)
         {
             var partOfSpeechRegex = new Regex($@"(?:^|\s){word}{{.+?=(\w+)[,|=]");
             return GetInformationForWord(myStemResult, word, partOfSpeechRegex);
         }
 
-        private string GetInitialFormForWord(string myStemResult, string word)
+        private Result<string> GetInitialFormForWord(string myStemResult, string word)
         {
             var initialFormRegex = new Regex($@"(?:^|\s){word}{{(\w+)");
             return GetInformationForWord(myStemResult, word, initialFormRegex);
         }
 
-        private string GetInformationForWord(string myStemResult, string word, Regex informationRegex)
+        private Result<string> GetInformationForWord(string myStemResult, string word, Regex informationRegex)
         {
             var match = informationRegex.Match(myStemResult);
             var matchGroups = match.Groups;
-            if (matchGroups.Count < 2)
-            {
-                throw new InvalidOperationException($"{nameof(myStemResult)} does not contain result for {word}");
-            }
-
-            return matchGroups[1].Value;
+            return matchGroups.Count < 2
+                ? Result.Fail<string>($"{nameof(myStemResult)} does not contain result for {word}")
+                : matchGroups[1].Value;
         }
     }
 }

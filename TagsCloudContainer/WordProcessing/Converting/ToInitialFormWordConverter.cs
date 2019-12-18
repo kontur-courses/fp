@@ -20,9 +20,9 @@ namespace TagsCloudContainer.WordProcessing.Converting
         {
             return Result.Of(() => myStemExecutor.GetMyStemResultForWords(words, "-ni"))
                 .RefineError("Failed to execute MyStem")
-                .Then(myStemResult => myStemResultParser.GetInitialFormsByResultOfNiCommand(myStemResult, words)
-                    .Select(p => p.Item2))
-                .RefineError("Failed to parse MyStem output");
+                .Then(myStemResult => myStemResultParser.GetInitialFormsByResultOfNiCommand(myStemResult, words))
+                .RefineError("Failed to parse MyStem output")
+                .Then(wordsWithConverted => wordsWithConverted.Select(p => p.Item2));
         }
     }
 }
