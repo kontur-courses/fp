@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultPattern;
 
 namespace SyntaxTextParser.Architecture
 {
@@ -19,23 +20,28 @@ namespace SyntaxTextParser.Architecture
                 .TrueForAll(x => x.IsValidElement(element));
         }
 
-        public override List<TextElement> ParseElementsFromText(string text)
+        public override Result<List<TextElement>> ParseElementsFromText(string text)
         {
-            var elements = new Dictionary<TypedTextElement, int>();
+            var textElements = new Dictionary<TypedTextElement, int>();
+            var elements = Result.Of(() => ParseText(text));
 
-            foreach (var element in ParseText(text))
+            if (!elements.IsSuccess)
+                return Result.Fail<List<TextElement>>(elements.Error);
+
+            foreach (var element in elements.GetValueOrThrow())
             {
                 if(!IsCorrectElement(element)) continue;
 
-                if (elements.ContainsKey(element))
-                    elements[element]++;
+                if (textElements.ContainsKey(element))
+                    textElements[element]++;
                 else
-                    elements.Add(element, 1);
+                    textElements.Add(element, 1);
             }
 
-            return elements
+            return textElements
                 .Select(x => x.Key.ConvertToTextElement(x.Value))
-                .ToList();
+                .ToList()
+                .AsResult();
         }
 
         protected abstract IEnumerable<TypedTextElement> ParseText(string text);

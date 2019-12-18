@@ -1,5 +1,6 @@
 ﻿using SyntaxTextParser;
 using System.Drawing;
+using ResultPattern;
 using TagsCloudGenerator.CloudPrepossessing;
 
 namespace TagsCloudGenerator
@@ -10,9 +11,11 @@ namespace TagsCloudGenerator
             : base(parser, tagPlacer)
         { }
 
-        public override Bitmap CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudFormat format)
+        public override Result<Bitmap> CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudFormat format)
         {
             var tags = TagGenerator.CreateCloudTags(fullPath, Parser, TagPlacer, format);
+            if (!tags.IsSuccess)
+                return Result.Fail<Bitmap>(tags.Error);
 
             var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
             var graphics = Graphics.FromImage(bitmap);
@@ -21,7 +24,7 @@ namespace TagsCloudGenerator
             var textPen = new Pen(Color.Black);
             var rectPen = new Pen(Color.Black);
 
-            foreach (var tag in tags)
+            foreach (var tag in tags.GetValueOrThrow())
             {
                 rectPen.Color = format.ColorPainter.GetTagShapeColor();
                 graphics.DrawRectangle(rectPen, tag.Shape);
@@ -33,7 +36,7 @@ namespace TagsCloudGenerator
                     tag.Shape.ConvertToRectangleF(), tag.Format);
             }
 
-            return bitmap;
+            return bitmap.AsResult();
         }
     }
 }

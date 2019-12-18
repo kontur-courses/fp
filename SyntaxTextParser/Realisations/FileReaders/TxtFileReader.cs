@@ -1,14 +1,14 @@
 ﻿using System.IO;
+using ResultPattern;
 using SyntaxTextParser.Architecture;
 
 namespace SyntaxTextParser
 {
     public class TxtFileReader : IFileReader
     {
-        public bool TryReadText(string filePath, out string text)
+        public Result<string> ReadTextFromFile(string filePath)
         {
-            text = File.ReadAllText(filePath);
-            return true;
+            return File.ReadAllText(filePath).AsResult();
         }
 
         public bool CanReadThatType(string type)

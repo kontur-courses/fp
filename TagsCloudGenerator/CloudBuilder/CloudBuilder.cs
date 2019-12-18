@@ -1,5 +1,6 @@
 ﻿using SyntaxTextParser;
 using System.Drawing;
+using ResultPattern;
 using TagsCloudGenerator.CloudPrepossessing;
 
 namespace TagsCloudGenerator
@@ -16,6 +17,6 @@ namespace TagsCloudGenerator
             TagPlacer = tagPlacer;
         }
 
-        public abstract T CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudFormat format);
+        public abstract Result<T> CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudFormat format);
     }
 }

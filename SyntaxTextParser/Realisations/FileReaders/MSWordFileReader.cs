@@ -2,42 +2,41 @@
 using SyntaxTextParser.Architecture;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using ResultPattern;
 
 namespace SyntaxTextParser
 {
     public class MsWordFileReader : IFileReader
     {
-        public bool TryReadText(string filePath, out string text)
+        public Result<string> ReadTextFromFile(string filePath)
         {
-            object refFullFilePath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+            var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+
+            return Result.Of(() => ReadDocxText(fullFilePath));
+        }
+
+        private string ReadDocxText(object fullFilePath)
+        {
             var none = Type.Missing;
             var app = new Application();
-            try
-            {
-                #region application.Documents.Open(refFilePath)
-                app.Documents.Open(ref refFullFilePath,
-                    ref none, ref none, ref none, ref none,
-                    ref none, ref none, ref none, ref none,
-                    ref none, ref none, ref none, ref none, ref none,
-                    ref none, ref none);
-                #endregion
 
-                var document = app.Documents.Application.ActiveDocument;
-                object startIndex = 0;
-                object endIndex = document.Characters.Count;
-                var docRange = document.Range(ref startIndex, ref endIndex);
-                
-                text = docRange.Text;
-                app.Quit(ref none, ref none, ref none);
+            #region application.Documents.Open(refFilePath)
+            app.Documents.Open(ref fullFilePath,
+                ref none, ref none, ref none, ref none,
+                ref none, ref none, ref none, ref none,
+                ref none, ref none, ref none, ref none, ref none,
+                ref none, ref none);
+            #endregion
 
-                return true;
-            }
-            catch (COMException)
-            {
-                text = null;
-                return false;
-            }
+            var document = app.Documents.Application.ActiveDocument;
+            object startIndex = 0;
+            object endIndex = document.Characters.Count;
+            var docRange = document.Range(ref startIndex, ref endIndex);
+
+            var text = docRange.Text;
+            app.Quit(ref none, ref none, ref none);
+
+            return text;
         }
 
         public bool CanReadThatType(string type)

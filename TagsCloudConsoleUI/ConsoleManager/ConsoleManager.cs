@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using ResultPattern;
 using System;
 
 namespace TagsCloudConsoleUI
@@ -14,7 +15,7 @@ namespace TagsCloudConsoleUI
             });
         }
 
-        public static void Run(IConsoleManagerFormatter formatter, Action<BuildOptions> onCallAction)
+        public static void Run<T>(IConsoleManagerFormatter formatter, Func<BuildOptions, Result<T>> onCallAction)
         {
             var commandParser = InitCommandParser();
             Console.WriteLine(formatter.InitialMessage);
@@ -22,29 +23,25 @@ namespace TagsCloudConsoleUI
             while (true)
             {
                 Console.WriteLine('\n' + formatter.BorderString(Console.WindowWidth));
-                try
-                {
-                    var command = Console.ReadLine()?.Split(' ');
-                    Console.WriteLine();
+                var command = Console.ReadLine()?.Split(' ');
+                Console.WriteLine();
 
-                    commandParser.ParseArguments<BuildOptions>(command)
-                        .WithParsed(options =>
-                        {
-                            onCallAction(options);
+                commandParser.ParseArguments<BuildOptions>(command)
+                    .WithParsed(options =>
+                    {
+                        var result = onCallAction(options);
+                        if(result.IsSuccess)
                             Console.WriteLine(formatter.SuccessfulMessage(options.OutputFileName));
-                        })
-                        .WithNotParsed(errors =>
-                        {
-                            Console.WriteLine(formatter.ParseCommandErrorMessage);
-                            foreach (var error in errors)
-                                Console.WriteLine(formatter.ErrorSymbol + error);
-                        });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(formatter.ErrorMessage);
-                    Console.WriteLine(e);
-                }
+                        else
+                            Console.WriteLine(formatter.ErrorMessage + '\n' + result.Error);
+                    })
+                    .WithNotParsed(errors =>
+                    {
+                        Console.WriteLine(formatter.ParseCommandErrorMessage);
+                        foreach (var error in errors)
+                            Console.WriteLine(formatter.ErrorSymbol + error);
+                    });
+
             }
 
         }

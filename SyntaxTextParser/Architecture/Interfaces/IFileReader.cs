@@ -1,8 +1,11 @@
-﻿namespace SyntaxTextParser.Architecture
+﻿using ResultPattern;
+
+namespace SyntaxTextParser.Architecture
 {
     public interface IFileReader
     {
-        bool TryReadText(string filePath, out string text);
+        Result<string> ReadTextFromFile(string filePath);
+
         bool CanReadThatType(string type);
     }
 }

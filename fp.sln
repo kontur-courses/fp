@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{ACBC03B3-A778-4F66-9D6D-43C77D64CC23}"
 EndProject
@@ -12,6 +12,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summator\Summator.csproj", "{ADB55562-4353-4FC2-9486-E6C343C2F7F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntaxTextParser", "SyntaxTextParser\SyntaxTextParser.csproj", "{F7667BBC-E072-4271-9A86-DCA9FE572BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudConsoleUI", "TagsCloudConsoleUI\TagsCloudConsoleUI.csproj", "{4FCF393B-58D2-4EE3-9FA8-46C0E77570E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudGenerator", "TagsCloudGenerator\TagsCloudGenerator.csproj", "{633E9E73-D433-4AEA-B35E-215A0BCA178A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudGenerator_Tests", "TagsCloudGenerator_Tests\TagsCloudGenerator_Tests.csproj", "{24B50F88-1535-4B2A-B33D-E36BAB278B6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultPattern", "ResultPattern\ResultPattern.csproj", "{B094C6CC-48E2-4E06-A218-8D95E158D8D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,11 +45,34 @@ Global
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7667BBC-E072-4271-9A86-DCA9FE572BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7667BBC-E072-4271-9A86-DCA9FE572BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7667BBC-E072-4271-9A86-DCA9FE572BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7667BBC-E072-4271-9A86-DCA9FE572BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FCF393B-58D2-4EE3-9FA8-46C0E77570E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FCF393B-58D2-4EE3-9FA8-46C0E77570E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FCF393B-58D2-4EE3-9FA8-46C0E77570E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FCF393B-58D2-4EE3-9FA8-46C0E77570E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{633E9E73-D433-4AEA-B35E-215A0BCA178A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{633E9E73-D433-4AEA-B35E-215A0BCA178A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{633E9E73-D433-4AEA-B35E-215A0BCA178A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{633E9E73-D433-4AEA-B35E-215A0BCA178A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24B50F88-1535-4B2A-B33D-E36BAB278B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24B50F88-1535-4B2A-B33D-E36BAB278B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24B50F88-1535-4B2A-B33D-E36BAB278B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24B50F88-1535-4B2A-B33D-E36BAB278B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B094C6CC-48E2-4E06-A218-8D95E158D8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B094C6CC-48E2-4E06-A218-8D95E158D8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B094C6CC-48E2-4E06-A218-8D95E158D8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B094C6CC-48E2-4E06-A218-8D95E158D8D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ADB55562-4353-4FC2-9486-E6C343C2F7F6} = {53B60782-5F18-4FD1-9FC0-A6F2474751CB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4B21E4E-A507-4E63-A129-8D21D0601D8F}
 	EndGlobalSection
 EndGlobal

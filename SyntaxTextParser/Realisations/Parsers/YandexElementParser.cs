@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SyntaxTextParser.Architecture;
+﻿using SyntaxTextParser.Architecture;
 using SyntaxTextParser.YandexParser;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SyntaxTextParser
 {
@@ -20,7 +20,10 @@ namespace SyntaxTextParser
 
         protected override IEnumerable<TypedTextElement> ParseText(string text)
         {
-            foreach (var analysis in toolUser.ParseTextInTool(text))
+            var parsedText = toolUser.ParseTextInTool(text);
+
+            var elements = new List<TypedTextElement>();
+            foreach (var analysis in parsedText)
             {
                 var match = AnalysisRegex.Match(analysis);
                 var initialForm = match.Groups[1].Value;

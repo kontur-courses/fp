@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ResultPattern;
 
 namespace SyntaxTextParser.Architecture
 {
@@ -11,6 +12,6 @@ namespace SyntaxTextParser.Architecture
             ElementFormatter = elementFormatter;
         }
 
-        public abstract List<TextElement> ParseElementsFromText(string text);
+        public abstract Result<List<TextElement>> ParseElementsFromText(string text);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using System.Drawing;
+using ResultPattern;
 using TagsCloudConsoleUI.DIPresetModules;
 using TagsCloudGenerator;
 
@@ -25,7 +26,7 @@ namespace TagsCloudConsoleUI
             return builder.Build();
         }
 
-        private static void OnCallAction(BuildOptions options)
+        private static Result<Bitmap> OnCallAction(BuildOptions options)
         {
             var container = BuildContainer(options);
 
@@ -33,10 +34,15 @@ namespace TagsCloudConsoleUI
             var size = new Size(options.Width,options.Height);
             var format = container.Resolve<CloudFormat>();
 
-            var bitmapImage = container.Resolve<CloudBuilder<Bitmap>>()
+            var bitmapImageResult = container.Resolve<CloudBuilder<Bitmap>>()
                 .CreateTagCloudRepresentation(fullPath, size, format);
 
-            bitmapImage.Save(options.OutputFileName, ImageFormatter.ParseImageFormat(options.ImageExtension));
+            if(bitmapImageResult.IsSuccess)
+                bitmapImageResult
+                    .GetValueOrThrow()
+                    .Save(options.OutputFileName, ImageFormatter.ParseImageFormat(options.ImageExtension));
+            
+            return bitmapImageResult;
         }
     }
 }

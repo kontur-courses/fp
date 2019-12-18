@@ -48,6 +48,10 @@
     <Compile Include="Tests\CircularCloudLayouter_Should.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultPattern\ResultPattern.csproj">
+      <Project>{b094c6cc-48e2-4e06-a218-8d95e158d8d0}</Project>
+      <Name>ResultPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagsCloudGenerator\TagsCloudGenerator.csproj">
       <Project>{633e9e73-d433-4aea-b35e-215a0bca178a}</Project>
       <Name>TagsCloudGenerator</Name>
