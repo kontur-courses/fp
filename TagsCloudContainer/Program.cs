@@ -50,6 +50,13 @@ namespace TagsCloudContainer
             Console.WriteLine(helpText);
         }
 
+        static WindsorContainer SetUpContainer(WindsorContainer container, Config cfg)
+        {
+            return SetUpContainer(container, cfg.OutputFilePath, cfg.InputFilePath, cfg.LayoutSize,
+                cfg.FontAndBorderColor.Name,
+                cfg.TextFont.Name, cfg.CompressionFlag, cfg.FileFormat, cfg.ExcludedParts);
+        }
+
         static WindsorContainer SetUpContainer(WindsorContainer container, string output, string input, Size size,
             String color, String font, bool compression, string format, IEnumerable<string> excluded)
         {
@@ -107,18 +114,14 @@ namespace TagsCloudContainer
                     return;
                 }
 
-                var path = O.InputFile;
-                var size = new Size(O.Width, O.Height);
-                var output = O.OutputFile;
-
                 var container = new WindsorContainer();
-                container = SetUpContainer(container, output, path, size, O.Color, O.Font, O.Compression,
-                    O.Format, O.Excluded);
+                container = SetUpContainer(container, cfg.GetValueOrThrow());
 
                 var tagsContainer = container.Resolve<TagsCloudContainer>();
                 tagsContainer.Perform();
 
-                Console.WriteLine($"Your file was succesfuly created and saved into {output}.{O.Format}");
+                Console.WriteLine($"Your file was succesfuly created and saved into {cfg.GetValueOrThrow().OutputFilePath}" +
+                                  $".{cfg.GetValueOrThrow().FileFormat}");
             });
         }
     }
