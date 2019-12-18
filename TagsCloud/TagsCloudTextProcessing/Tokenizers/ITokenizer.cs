@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Tokenizers
 {
     public interface ITokenizer
     {
-        IEnumerable<string> Tokenize(string text);
+        Result<IEnumerable<string>> Tokenize(string text);
     }
 }

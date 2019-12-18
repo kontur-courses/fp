@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Tokenizers
 {
@@ -9,9 +10,9 @@ namespace TagsCloudTextProcessing.Tokenizers
         private readonly Regex splitRegex;
         public Tokenizer(string splitPattern = @"\W+") => splitRegex = new Regex(splitPattern);
 
-        public IEnumerable<string> Tokenize(string text)
+        public Result<IEnumerable<string>> Tokenize(string text)
         {
-            return splitRegex.Split(text).Where(w => w.Length > 0);
+            return Result.Ok(splitRegex.Split(text).Where(w => w.Length > 0));
         }
     }
 }

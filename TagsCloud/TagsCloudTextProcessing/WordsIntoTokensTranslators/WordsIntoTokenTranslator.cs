@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.WordsIntoTokensTranslators
 {
     public class WordsIntoTokenTranslator : IWordsIntoTokenTranslator
     {
-        public IEnumerable<Token> TranslateIntoTokens(IEnumerable<string> words)
+        public Result<List<Token>> TranslateIntoTokens(IEnumerable<string> words)
         {
             var tokensDictionary = new Dictionary<string, int>();
             foreach (var word in words)
@@ -16,7 +17,7 @@ namespace TagsCloudTextProcessing.WordsIntoTokensTranslators
                     tokensDictionary.Add(word, 1);
             }
 
-            return tokensDictionary.Select(v => new Token(v.Key, v.Value)).ToList();
+            return Result.Ok(tokensDictionary.Select(v => new Token(v.Key, v.Value)).ToList());
         }
     }
 }

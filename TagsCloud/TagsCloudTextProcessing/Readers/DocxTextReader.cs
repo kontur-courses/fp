@@ -1,3 +1,5 @@
+using System.IO;
+using TagCloudResult;
 using Xceed.Words.NET;
 
 namespace TagsCloudTextProcessing.Readers
@@ -9,10 +11,13 @@ namespace TagsCloudTextProcessing.Readers
         {
             this.path = path;
         }
-        public string ReadText()
+        public Result<string> ReadText()
         {
+            if(!File.Exists(path))
+                return Result.Fail<string>($"FILE {path} doesn't exist");
+            
             using (var document = DocX.Load(path))
-                return document.Text;
+                return Result.Ok(document.Text);
         }
     }
 }

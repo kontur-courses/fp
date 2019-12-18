@@ -14,6 +14,7 @@ namespace TagsCloudVisualization
             return Enumerable.Range(0, count)
                 .Select(x => layouter
                 .PutNextRectangle(new SizeF(random.Next(minSize, maxSize), random.Next(minSize, maxSize))))
+                .Select(r=>r.GetValueOrThrow())
                 .ToList();
         }
     }

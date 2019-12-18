@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Formatters
 {
     public interface IWordsFormatter
     {
-        IEnumerable<string> Format(IEnumerable<string> wordsInput);
+        Result<IEnumerable<string>> Format(IEnumerable<string> wordsInput);
     }
 }

@@ -1,4 +1,4 @@
-using System.Linq;
+using TagCloudResult;
 using TagsCloudTextProcessing.Filters;
 using TagsCloudTextProcessing.Formatters;
 using TagsCloudTextProcessing.Readers;
@@ -71,21 +71,23 @@ namespace TagsCloudConsole
             this.imageOutputPath = imageOutputPath;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            var textInput = textReader.ReadText();
-            var wordsInput = tokenizer.Tokenize(textInput);
-            var words = wordsFormatter.Format(wordsInput);
-            words = wordsFilter.Filter(words);
-            var tokens = wordsIntoTokenTranslator.TranslateIntoTokens(words);
-            var shuffledTokens = tokenShuffler.Shuffle(tokens);
-            var enumerable = shuffledTokens.ToList();
             var style = new Style(theme, fontProperties, tagSizeCalculator, tagColorizer);
-            var tags = cloudLayouter.GenerateTagsSequence(style, enumerable);
-            using (var bitmap = cloudVisualizer.Visualize(style, tags, width, height))
-            {
+            var bitmapResult = textReader.ReadText()
+                .Then(text => tokenizer.Tokenize(text))
+                .Then(w => wordsFormatter.Format(w))
+                .Then(w => wordsFilter.Filter(w))
+                .Then(w => wordsIntoTokenTranslator.TranslateIntoTokens(w))
+                .Then(t => tokenShuffler.Shuffle(t))
+                .Then(t => cloudLayouter.GenerateTagsSequence(style, t))
+                .Then(tags => cloudVisualizer.Visualize(style, tags, width, height));
+            if (!bitmapResult.IsSuccess)
+                return Result.Fail<None>(bitmapResult.Error);
+            
+            using (var bitmap = bitmapResult.GetValueOrThrow())
                 bitmapSaver.Save(bitmap, imageOutputPath);
-            }
+            return Result.Ok();
         }
     }
 }

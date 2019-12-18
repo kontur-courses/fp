@@ -129,7 +129,7 @@ namespace TagsCloudConsole
             if (wordsToExcludePath != "none")
             {
                 if (!File.Exists(wordsToExcludePath))
-                    return Result.Fail<ContainerBuilder>($"Words to exclude file {wordsToExcludePath} doesn't exist");
+                    return Result.Fail<ContainerBuilder>($"EXCLUDE_FILE {wordsToExcludePath} doesn't exist");
                 wordsToExclude = File.ReadAllLines(wordsToExcludePath);
             }
 
@@ -169,7 +169,7 @@ namespace TagsCloudConsole
                         .WithParameter(randomSeedName, randomSeed);
                     break;
                 default:
-                    return Result.Fail<ContainerBuilder>($"Unexpected shuffle type {shuffleType}");
+                    return Result.Fail<ContainerBuilder>($"Unexpected SHUFFLE {shuffleType}");
             }
 
             return Result.Ok(builder);
@@ -181,7 +181,7 @@ namespace TagsCloudConsole
             using (var font = new Font(fontName, 1))
             {
                 if (font.Name != fontName)
-                    return Result.Fail<ContainerBuilder>($"Can't find font {fontName}");
+                    return Result.Fail<ContainerBuilder>($"Can't find FONT {fontName}");
             }
 
             var sizeResult = ValidatePositiveInteger(fontSize, "FONT_SIZE");
@@ -206,7 +206,7 @@ namespace TagsCloudConsole
                     themeType = typeof(GodotEngineTheme);
                     break;
                 default:
-                    return Result.Fail<ContainerBuilder>($"{themeName} is incorrect theme");
+                    return Result.Fail<ContainerBuilder>($"THEME {themeName} is incorrect");
             }
 
             builder.RegisterType(themeType)
@@ -232,7 +232,7 @@ namespace TagsCloudConsole
                     colorizerType = typeof(BySizeTagColorizer);
                     break;
                 default:
-                    return Result.Fail<ContainerBuilder>($"{colorizeMethod} is incorrect colorizing method");
+                    return Result.Fail<ContainerBuilder>($"Unexpected colorizing METHOD {colorizeMethod}");
             }
 
             builder.RegisterType(colorizerType)
@@ -300,7 +300,7 @@ namespace TagsCloudConsole
                     saverType = typeof(JpegBitmapSaver);
                     break;
                 default:
-                    return Result.Fail<ContainerBuilder>($"{extension} is incorrect output file extension");
+                    return Result.Fail<ContainerBuilder>($"IMAGE_EXT {extension} is incorrect");
             }
 
             builder.RegisterType(saverType)

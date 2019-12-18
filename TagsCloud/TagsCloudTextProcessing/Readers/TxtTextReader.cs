@@ -1,4 +1,5 @@
 using System.IO;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Readers
 {
@@ -11,10 +12,11 @@ namespace TagsCloudTextProcessing.Readers
             this.path = path;
         }
 
-        public string ReadText()
+        public Result<string> ReadText()
         {
-         //   if(!File.Exists())
-            return File.ReadAllText(path);
+            return File.Exists(path) 
+                ? Result.Ok(File.ReadAllText(path)) 
+                : Result.Fail<string>($"FILE {path} doesn't exist");
         }
     }
 }

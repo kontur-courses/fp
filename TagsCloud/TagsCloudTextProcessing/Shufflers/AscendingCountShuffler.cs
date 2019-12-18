@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Shufflers
 {
     public class AscendingCountShuffler: ITokenShuffler
     {
-        public IEnumerable<Token> Shuffle(IEnumerable<Token> tokens)
+        public Result<List<Token>> Shuffle(IEnumerable<Token> tokens)
         {
-            return tokens.OrderBy(token => token.Count);
+            return Result.Ok(tokens.OrderBy(token => token.Count).ToList());
         }
     }
 }

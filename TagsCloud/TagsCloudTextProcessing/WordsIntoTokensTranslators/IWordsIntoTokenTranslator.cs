@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.WordsIntoTokensTranslators
 {
     public interface IWordsIntoTokenTranslator
     {
-        IEnumerable<Token> TranslateIntoTokens(IEnumerable<string> words);
+        Result<List<Token>> TranslateIntoTokens(IEnumerable<string> words);
     }
 }

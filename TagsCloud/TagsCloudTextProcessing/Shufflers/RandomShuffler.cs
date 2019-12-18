@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Shufflers
 {
@@ -8,21 +9,25 @@ namespace TagsCloudTextProcessing.Shufflers
 
     {
         private readonly int randomSeed;
+
         public RandomShuffler(int randomSeed)
         {
             this.randomSeed = randomSeed;
         }
 
-        public IEnumerable<Token> Shuffle(IEnumerable<Token> tokens)
+        public Result<List<Token>> Shuffle(IEnumerable<Token> tokens)
         {
             var random = new Random(randomSeed);
             var tokensList = tokens.ToList();
+            var resultList = new List<Token>();
             while (tokensList.Count > 0)
             {
                 var randomIndex = random.Next(0, tokensList.Count);
-                yield return tokensList[randomIndex];
+                resultList.Add(tokensList[randomIndex]);
                 tokensList.RemoveAt(randomIndex);
             }
+
+            return Result.Ok(resultList);
         }
     }
 }

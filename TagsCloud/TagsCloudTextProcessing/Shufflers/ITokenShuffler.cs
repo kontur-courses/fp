@@ -1,9 +1,10 @@
 using System.Collections.Generic;
- 
- namespace TagsCloudTextProcessing.Shufflers
+using TagCloudResult;
+
+namespace TagsCloudTextProcessing.Shufflers
  {
      public interface ITokenShuffler
      {
-         IEnumerable<Token> Shuffle(IEnumerable<Token> tokens);
+         Result<List<Token>> Shuffle(IEnumerable<Token> tokens);
      }
  }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TagCloudResult;
 using TagsCloudTextProcessing.Formatters;
 
 namespace TagsCloudTextProcessing.Filters
@@ -10,20 +11,21 @@ namespace TagsCloudTextProcessing.Filters
 
         public ExcludeFromListFilter(IEnumerable<string> wordsToExclude)
         {
-            wordsToExclude = ConvertToUnifiedFormat(wordsToExclude);
+            wordsToExclude = ConvertToUnifiedFormat(wordsToExclude).GetValueOrThrow();
             wordsToExcludeHashSet = new HashSet<string>(wordsToExclude);
         }
 
-        private static IEnumerable<string> ConvertToUnifiedFormat(IEnumerable<string> wordsToExclude)
+        private static Result<IEnumerable<string>> ConvertToUnifiedFormat(IEnumerable<string> wordsToExclude)
         {
-            wordsToExclude = new LowercaseFormatter().Format(wordsToExclude);
-            return wordsToExclude;
+           return new LowercaseFormatter().Format(wordsToExclude);
         }
 
-        public IEnumerable<string> Filter(IEnumerable<string> inputWords)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> inputWords)
         {
-            inputWords = ConvertToUnifiedFormat(inputWords);
-            return inputWords.Where(w => !wordsToExcludeHashSet.Contains(w));
+            var formattedWords = ConvertToUnifiedFormat(inputWords);
+            return formattedWords.IsSuccess 
+                ? formattedWords.Then(w => w.Where(words => !wordsToExcludeHashSet.Contains(words))) 
+                : Result.Fail<IEnumerable<string>>(formattedWords.Error);
         }
     }
 }

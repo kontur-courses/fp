@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using DocoptNet;
+using TagCloudResult;
 
 namespace TagsCloudConsole
 {
@@ -45,8 +46,13 @@ namespace TagsCloudConsole
         {
             var parameters = new Docopt().Apply(Usage, args, version: Version, exit: true);
             var containerResult = ContainerConfigurator.Configure(parameters);
-            if(containerResult.IsSuccess)
-                containerResult.GetValueOrThrow().Resolve<Application>().Run();
+            if (containerResult.IsSuccess)
+            {
+                var result = containerResult.GetValueOrThrow().Resolve<Application>().Run();
+                Console.WriteLine(result.IsSuccess
+                    ? "Generated tag cloud successfully!"
+                    : result.RefineError("Tag cloud wasn't generated").Error);
+            }
             else
                 Console.WriteLine(containerResult.Error);
         }

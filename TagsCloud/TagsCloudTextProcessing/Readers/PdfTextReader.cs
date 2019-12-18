@@ -1,4 +1,6 @@
+using System.IO;
 using BitMiracle.Docotic.Pdf;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Readers
 {
@@ -11,10 +13,13 @@ namespace TagsCloudTextProcessing.Readers
             this.path = path;
         }
 
-        public string ReadText()
+        public Result<string> ReadText()
         {
+            if(!File.Exists(path))
+                return Result.Fail<string>($"FILE {path} doesn't exist");
+            
             using (var pdfDocument = new PdfDocument(path))
-                return pdfDocument.GetText();
+                return Result.Ok(pdfDocument.GetText());
         }
     }
 }

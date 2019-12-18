@@ -13,7 +13,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var words = new[] {"cat", "cat", "dog", "dog", "dog"};
             
-            var tokens =  new WordsIntoTokenTranslator().TranslateIntoTokens(words);
+            var tokens =  new WordsIntoTokenTranslator().TranslateIntoTokens(words).GetValueOrThrow();
 
             tokens
                 .Should()
@@ -25,7 +25,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var words = new[] {"words", "words", "words"};
             
-            var tokens =  new WordsIntoTokenTranslator().TranslateIntoTokens(words);
+            var tokens =  new WordsIntoTokenTranslator().TranslateIntoTokens(words).GetValueOrThrow();
 
             tokens.Select(f => f.Word).Should().BeEquivalentTo("words");
         }

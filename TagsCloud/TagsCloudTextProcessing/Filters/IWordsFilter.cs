@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagCloudResult;
 
 namespace TagsCloudTextProcessing.Filters
 {
     public interface IWordsFilter
     {
-        IEnumerable<string> Filter(IEnumerable<string> inputWords);
+        Result<IEnumerable<string>> Filter(IEnumerable<string> inputWords);
     }
 }

@@ -13,7 +13,7 @@ namespace TagsCloudTextProcessing.Tests
             var excludedWords = new[] {"exclude", "this", "words"};
             var inputWords = new[] {"exclude", "tag", "this", "words", "cloud"};
 
-            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords);
+            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords).GetValueOrThrow();
 
             wordsAfterExclusion.Should().NotContain(excludedWords);
         }
@@ -24,7 +24,7 @@ namespace TagsCloudTextProcessing.Tests
             var excludedWords = new string[0];
             var inputWords = new[] {"should", "stay", "the", "same"};
 
-            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords);
+            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords).GetValueOrThrow();
 
             wordsAfterExclusion.Should().BeEquivalentTo(inputWords);
         }
@@ -35,7 +35,7 @@ namespace TagsCloudTextProcessing.Tests
             var excludedWords = new[] {"a", "b", "c"};
             var inputWords = new[] {"f", "a", "ab", "a b", "c a", "aba", "c", "a b a"};
 
-            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords);
+            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords).GetValueOrThrow();
 
             wordsAfterExclusion.Should().BeEquivalentTo("f", "ab", "a b", "c a", "aba", "a b a");
         }
@@ -46,7 +46,7 @@ namespace TagsCloudTextProcessing.Tests
             var excludedWords = new[] {"eXclude", "tHis", "Words"};
             var inputWords = new[] {"excludE", "tag", "thiS", "WORDS", "cloud"};
 
-            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords);
+            var wordsAfterExclusion = new ExcludeFromListFilter(excludedWords).Filter(inputWords).GetValueOrThrow();
 
             wordsAfterExclusion.Should().NotContain(excludedWords);
         }

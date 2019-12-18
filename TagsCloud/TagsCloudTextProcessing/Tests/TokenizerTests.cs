@@ -13,7 +13,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var textSplitter = new Tokenizer();
             
-            var words = textSplitter.Tokenize("cat. \"cat?\" %cat1!@");
+            var words = textSplitter.Tokenize("cat. \"cat?\" %cat1!@").GetValueOrThrow();
             
             words.Should().BeEquivalentTo("cat", "cat", "cat1");
         }
@@ -24,7 +24,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var textSplitter = new Tokenizer(pattern);
             
-            var words = textSplitter.Tokenize(text);
+            var words = textSplitter.Tokenize(text).GetValueOrThrow();
 
             words.Should().BeEquivalentTo(expected);
         }
@@ -33,7 +33,9 @@ namespace TagsCloudTextProcessing.Tests
         public void Tokenize_Should_RemoveEmptyWords()
         {
             var textPreparer = new Tokenizer();
-            var words = textPreparer.Tokenize("!?");
+            
+            var words = textPreparer.Tokenize("!?").GetValueOrThrow();
+            
             words.Count().Should().Be(0);
         }
     }
