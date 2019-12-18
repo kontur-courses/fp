@@ -9,13 +9,13 @@ namespace TagsCloudResult.Infrastructure.Common
         public string Format { get; }
         public string Name { get;  }
         
-        public Color BackGround { get; }
+        public string BackGround { get; }
 
-        public ImageSetting(int height, int width, string color, string format, string name)
+        public ImageSetting(int height, int width, string backGroundColor, string format, string name)
         {
             Height = height;
             Width = width;
-            BackGround = Color.FromName(color);
+            BackGround = backGroundColor;
             Format = format;
             Name = name;
         }

@@ -7,5 +7,6 @@ namespace TagsCloudResult.Infrastructure.Common
     {
         Rectangle PutNextRectangle(Size rectangleSize);
         HashSet<Rectangle> Centering();
+        ICloudLayouter Refresh(Point centre);
     }
 }

@@ -19,21 +19,30 @@ namespace TagsCloudResult.Layouter
             rectangles = new HashSet<Rectangle>();
         }
 
+        public CircularCloudLayouter() : this(Point.Empty)
+        {
+        }
+
         public HashSet<Rectangle> Centering()
         {
             var centeringCloudLayout = new CircularCloudLayouter(center);
             var newRectangles = new HashSet<Rectangle>();
-            foreach (var rectangle in rectangles.OrderBy(x =>  -x.Width * x.Height))
+            foreach (var rectangle in rectangles.OrderBy(x => -x.Width * x.Height))
                 newRectangles.Add(centeringCloudLayout.PutNextRectangle(rectangle.Size));
 
             return newRectangles;
+        }
+
+        public ICloudLayouter Refresh(Point centre)
+        {
+            return new CircularCloudLayouter(center);
         }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
                 throw new ArgumentException("rectangleSize");
-            
+
             foreach (var possibleLocation in cornerPoints)
             {
                 foreach (var rectangle in RectanglesHelper.GetAllPossibleRectangles(possibleLocation,
@@ -44,9 +53,10 @@ namespace TagsCloudResult.Layouter
                     rectangles.Add(rectangle);
                     foreach (var corner in RectanglesHelper.GetCorners(rectangle))
                     {
-                        cornerPoints.Add(corner);;
+                        cornerPoints.Add(corner);
+                        ;
                     }
-                    
+
                     return new Rectangle(rectangle.Location + (Size) center, rectangle.Size);
                 }
             }

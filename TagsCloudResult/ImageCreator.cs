@@ -5,9 +5,9 @@ namespace TagsCloudResult
 {
     public static class ImageCreator
     {
-        public static Result<None> Save(Bitmap image, ImageSetting setting)
+        public static Result<None> Save(Bitmap image, AppSettings setting)
         {
-            image.Save($"{setting.Name}.{setting.Format}");
+            image.Save($"{setting.ImageSetting.Name}.{setting.ImageSetting.Format}");
             image.Dispose();
             return Result.Ok();
         }

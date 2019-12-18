@@ -37,7 +37,7 @@ namespace TagsCloudResult
             public string Name { get; set; }
         }
 
-        public WordSetting GetWordSetting(string[] args)
+        private WordSetting GetAppSettings(string[] args)
         {
             var setting = default(WordSetting);
             Parser.Default.ParseArguments<Options>(args)
@@ -45,7 +45,7 @@ namespace TagsCloudResult
             return setting;
         }
 
-        public ImageSetting GetImageSetting(string[] args)
+        private ImageSetting GetImageSetting(string[] args)
         {
             var setting = default(ImageSetting);
             Parser.Default.ParseArguments<Options>(args)
@@ -56,7 +56,7 @@ namespace TagsCloudResult
             return setting;
         }
 
-        public AlgorithmsSettings GetAlgorithmsSettings(string[] args)
+        private AlgorithmsSettings GetAlgorithmsSettings(string[] args)
         {
             var setting = default(AlgorithmsSettings);
             Parser.Default.ParseArguments<Options>(args)
@@ -64,12 +64,21 @@ namespace TagsCloudResult
             return setting;
         }
 
-        public string GetPath(string[] args)
+        private string GetPath(string[] args)
         {
             var path = default(string);
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o => { path = o.Filename; });
             return path;
+        }
+
+        public AppSettings GetSettings(string[] args)
+        {
+            var imageSettings = GetImageSetting(args);
+            if (imageSettings == null)
+                return null;
+            return new AppSettings(imageSettings, GetAppSettings(args), GetAlgorithmsSettings(args),
+                GetPath(args));
         }
     }
 }
