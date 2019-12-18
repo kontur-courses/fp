@@ -12,7 +12,7 @@ namespace TagsCloudContainer.WordPreprocessors
         private Regex findInitialForm = new Regex(@"{(\w+)=");
         private Regex findPartOfSpeach = new Regex(@"=(\w+),");
 
-        public Result<ProcessedWord[]> WordPreprocessing(string[] text)
+        public Result<ProcessedWord[]> PreprocessWords(string[] text)
         {
             if (!System.IO.File.Exists("mystem.exe"))
                 return Result.Fail<ProcessedWord[]>("The mystem.exe utility file was not found, it should lie next to the program file");

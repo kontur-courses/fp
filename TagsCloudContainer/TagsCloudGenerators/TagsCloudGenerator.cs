@@ -28,7 +28,7 @@ namespace TagsCloudContainer.TagsCloudGenerators
         public Result<Bitmap> CreateTagCloud()
         {
             return reader.ReadAllLines()
-                .Then(wordPreprocessor.WordPreprocessing)
+                .Then(wordPreprocessor.PreprocessWords)
                 .Then(wordCounter.CountWords)
                 .Then(visualizer.VisualizeCloud);
         }
