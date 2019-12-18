@@ -34,11 +34,13 @@ namespace TagsCloudContainer.Readers
 
         private string[] ReadOther(string path)
         {
+            string[] text;
+            var stringSeparators = new[] { "\r\n" };
             using (var stream = new StreamReader(path))
             {
-                var stringSeparators = new[] { "\r\n" };
-                return stream.ReadToEnd().Split(stringSeparators, StringSplitOptions.None);
+                text = stream.ReadToEnd().Split(stringSeparators, StringSplitOptions.None);
             }
+            return text;
         }
 
         private string[] ReadDoc(string path)
