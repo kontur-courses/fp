@@ -1,5 +1,6 @@
 using System.Drawing;
 using TagCloudContainer.Api;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Implementations
 {
@@ -14,7 +15,7 @@ namespace TagCloudContainer.Implementations
             Font = font;
         }
 
-        public Size GetStringSize(string word, int occurrenceCount)
+        public Result<Size> GetStringSize(string word, int occurrenceCount)
         {
             var size = GraphicsBase.MeasureString(word, Font).ToSize();
             return new Size((int) (size.Width * 1.05f), (int) (size.Height / 1.2f));

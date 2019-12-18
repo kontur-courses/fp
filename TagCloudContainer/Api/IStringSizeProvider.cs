@@ -1,10 +1,11 @@
 using System.Drawing;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Api
 {
     [CliRole]
     public interface IStringSizeProvider
     {
-        Size GetStringSize(string word, int occurrenceCount);
+        Result<Size> GetStringSize(string word, int occurrenceCount);
     }
 }

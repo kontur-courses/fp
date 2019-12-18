@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudContainer.Api;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Implementations
 {
@@ -11,22 +12,24 @@ namespace TagCloudContainer.Implementations
     {
         private float spiralCounter;
 
-        public Rectangle PutNextRectangle(Size rectangleSize, List<Rectangle> container)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize, List<Rectangle> container)
         {
-            var rect = GetNextEmptyRectangleAtSpiral(rectangleSize, container);
-            container.Add(rect);
-            return rect;
+            return GetNextEmptyRectangleAtSpiral(rectangleSize, container)
+                .Then(r =>
+                {
+                    container.Add(r);
+                    return r;
+                });
         }
 
-        private Rectangle GetNextEmptyRectangleAtSpiral(Size rectangleSize, List<Rectangle> container)
+        private Result<Rectangle> GetNextEmptyRectangleAtSpiral(Size rectangleSize, List<Rectangle> container)
         {
-            if (container is null)
-                throw new ArgumentException("Container shouldn't be null");
-
-            return GetPointsOnSpiral()
-                .Select(p => new Rectangle(p - rectangleSize / 2, rectangleSize))
-                .SkipWhile(r => container.Any(r.IntersectsWith))
-                .FirstOrDefault();
+            return Result.Ok(container)
+                .Then(c => c ?? new List<Rectangle>())
+                .Then(c => GetPointsOnSpiral()
+                    .Select(p => new Rectangle(p - rectangleSize / 2, rectangleSize))
+                    .SkipWhile(r => container.Any(r.IntersectsWith))
+                    .FirstOrDefault());
         }
 
         private IEnumerable<Point> GetPointsOnSpiral()

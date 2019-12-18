@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudContainer.Api;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Implementations
 {
@@ -37,26 +38,35 @@ namespace TagCloudContainer.Implementations
             return bmp;
         }
 
-        private void WriteWordsOnImage(IReadOnlyDictionary<string, Rectangle> rectangles,
+        private void WriteWordsOnImage(Result<IReadOnlyDictionary<string, Rectangle>> rectangles,
             IReadOnlyDictionary<string, int> counts, Graphics graphics, Image bmp)
         {
-            var layoutDimensions = rectangles.Values.ToList().GetLayoutDimensions();
+            var layoutDimensions = rectangles
+                .Then(r => r.Values.ToList().GetLayoutDimensions())
+                .DefaultIfError();
             var widthRatio = bmp.Width / (float) layoutDimensions.width;
             var heightRatio = bmp.Height / (float) layoutDimensions.height;
 
             graphics.ScaleTransform(widthRatio, heightRatio);
 
-            foreach (var (word, rect) in rectangles)
+            rectangles.Then(d =>
             {
-                rect.Offset(+layoutDimensions.width / 2, +layoutDimensions.height / 2);
-                graphics.TranslateTransform(rect.X, rect.Y);
-                var count = counts[word];
-                var brush = wordBrushProvider.CreateBrushForWord(word, count);
-                graphics.ScaleTransform(count, count);
-                graphics.DrawString(word, options.Font, brush, 0, 0);
-                graphics.ScaleTransform(1f / count, 1f / count);
-                graphics.TranslateTransform(-rect.X, -rect.Y);
-            }
+                foreach (var (word, rect) in d)
+                {
+                    WriteWord(word, rect, counts[word], graphics, layoutDimensions.width, layoutDimensions.width);
+                }
+            });
+        }
+
+        private void WriteWord(string word, Rectangle rect, int count, Graphics graphics, int bmpWidth, int bmpHeight)
+        {
+            rect.Offset(bmpWidth / 2, bmpHeight / 2);
+            graphics.TranslateTransform(rect.X, rect.Y);
+            var brush = wordBrushProvider.CreateBrushForWord(word, count);
+            graphics.ScaleTransform(count, count);
+            graphics.DrawString(word, options.Font, brush, 0, 0);
+            graphics.ScaleTransform(1f / count, 1f / count);
+            graphics.TranslateTransform(-rect.X, -rect.Y);
         }
 
 

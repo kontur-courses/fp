@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using TagCloudContainer.Api;
+using TagCloudContainer.ResultMonad;
 
 namespace TagCloudContainer.Implementations
 {
@@ -17,20 +18,23 @@ namespace TagCloudContainer.Implementations
             this.sizeProvider = sizeProvider;
         }
 
-        public IReadOnlyDictionary<string, Rectangle> AddWords(
+        public Result<IReadOnlyDictionary<string, Rectangle>> AddWords(
             IReadOnlyDictionary<string, int> words, List<Rectangle> container)
         {
-            return words.OrderByDescending(pair => pair.Value)
-                .Select(pair => CreateBoundingRectangle(pair.Key, pair.Value, container))
-                .ToDictionary(p => p.word, p => p.rect);
+            return Result.Ok(words)
+                .Then(w => w.OrderByDescending(pair => pair.Value))
+                .Then(w => w.Select(pair => CreateBoundingRectangle(pair.Key, pair.Value, container)))
+                .Then(w => w.Select(r => r.GetValueOrThrow()))
+                .Then(w => w.ToDictionary(p => p.word, p => p.rect))
+                .Then(d => (IReadOnlyDictionary<string, Rectangle>) d);
         }
 
-        private (string word, Rectangle rect) CreateBoundingRectangle(string word, int occurrenceCount,
+        private Result<(string word, Rectangle rect)> CreateBoundingRectangle(string word, int occurrenceCount,
             List<Rectangle> container)
         {
-            var stringSize = sizeProvider.GetStringSize(word, occurrenceCount) * occurrenceCount;
-            var rectangle = rectangleLayouter.PutNextRectangle(stringSize, container);
-            return (word, rectangle);
+            return sizeProvider.GetStringSize(word, occurrenceCount)
+                .Then(s => s * occurrenceCount)
+                .Then(s => rectangleLayouter.PutNextRectangle(s, container)).Then(r => (word, r));
         }
     }
 }

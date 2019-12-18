@@ -38,17 +38,8 @@ namespace TagCloudContainer
 
             config = parameters.Aggregate(config, (current, o) => ProcessOption(o, current, cli));
 
-            if (!config.IsSuccess)
-            {
-                Console.Error.WriteLine(config.Error);
-                return;
-            }
-
             var result = config.Then(cfg => cfg.CreateCloud(inputFile, outputFile));
-            if (!result.IsSuccess)
-            {
-                Console.Error.WriteLine(result.Error);
-            }
+            result.GetValueOrThrow();
         }
 
         private static Result<TagCloudConfig> ProcessOption(ParsedOption o, Result<TagCloudConfig> config, Cli cli)
@@ -90,8 +81,8 @@ namespace TagCloudContainer
             parser.Setup<string>("layout");
             parser.Setup<string>("wordLayouter");
             parser.Setup<string>("sizeProvider");
-            parser.Setup<string>("brush");
-            parser.Setup<string>("pen");
+            parser.Setup<string>("brushProvider");
+            parser.Setup<string>("penProvider");
             parser.Setup<string>("wordVisualizer");
 
             return parser;

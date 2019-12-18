@@ -133,49 +133,34 @@ namespace TagCloudContainer.fluent
             });
         }
 
-        public Result<TagCloudConfig> UsingBackgroundBrush(Brush brush)
-        {
-            Options = Options.WithBackgroundBrush(brush);
-            return this;
-        }
-
-        public Result<TagCloudConfig> UsingFont(Font font)
-        {
-            Options = Options.WithFont(font);
-            return this;
-        }
-
-        public Result<TagCloudConfig> UsingWordBrush(Brush brush)
-        {
-            Options = Options.WithWordBrush(brush);
-            return this;
-        }
-
-        public Result<TagCloudConfig> UsingPen(Pen pen)
-        {
-            Options = Options.WithPen(pen);
-            return this;
-        }
-
         public Result<TagCloudConfig> SetSize(string size)
         {
+            return Result.Ok(size)
+                .Then(ValidateSizeFormat)
+                .Then(s => s.Split('x').Select(int.Parse).ToList())
+                .Then(s => Options.ImageSize = new Size(s[0], s[1]))
+                .Then(s => this);
+        }
+
+        private Result<string> ValidateSizeFormat(string size)
+        {
             if (size is null)
-                return Result.Fail<TagCloudConfig>("Size can't be null");
+                return Result.Fail<string>("Size can't be null");
             if (!size.Contains('x'))
-                return Result.Fail<TagCloudConfig>($"Size {size} has invalid size format. " +
-                                                   $"It must be WxH, where W and H is Width and Height");
+                return Result.Fail<string>($"Size {size} has invalid size format. " +
+                                           $"It must be WxH, where W and H is Width and Height");
             try
             {
                 var sizes = size.Split('x').Select(int.Parse).ToList();
                 Options.ImageSize = new Size(sizes[0], sizes[1]);
             }
-            catch (FormatException e)
+            catch (Exception e)
             {
-                return Result.Fail<TagCloudConfig>($"Size {size} has invalid size format. " +
-                                                   $"Width and Height have to be positive integers");
+                return Result.Fail<string>($"Size {size} has invalid size format. " +
+                                           $"Width and Height have to be positive integers");
             }
 
-            return this;
+            return Result.Ok(size);
         }
 
         public Result<TagCloudConfig> SetImageFormat(ImageFormat imageFormat)
@@ -188,11 +173,9 @@ namespace TagCloudContainer.fluent
 
         public Result<None> CreateCloud(string inputFile, string outputFile)
         {
-            var bitmap = PrepareContainer(inputFile).Then(c => c.Resolve<Image>());
-
-            if (!bitmap.IsSuccess)
-                return Result.Fail<None>(bitmap.Error);
-            return bitmap.Then(bmp => bmp.Save(outputFile, ImageFormat));
+            return PrepareContainer(inputFile)
+                .Then(c => c.Resolve<Image>())
+                .Then(bmp => bmp.Save(outputFile, ImageFormat));
         }
 
         private Result<IContainer> PrepareContainer(string inputFile)
