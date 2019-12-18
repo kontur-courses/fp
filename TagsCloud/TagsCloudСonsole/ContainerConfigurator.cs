@@ -26,7 +26,7 @@ namespace TagsCloudConsole
     {
         public static Result<IContainer> Configure(IDictionary<string, ValueObject> parameters)
         {
-            var resultBuilder = ConfigureApplication(
+            return ConfigureApplication(
                     parameters["--w"],
                     parameters["--h"],
                     parameters["--output"].ToString(),
@@ -53,11 +53,8 @@ namespace TagsCloudConsole
                     parameters["--angle"].ToString(),
                     b))
                 .Then(ConfigureLayouter)
-                .Then(b => ConfigureSaver(parameters["--output_ext"].ToString(), b));
-
-            return resultBuilder.IsSuccess
-                ? Result.Ok(resultBuilder.GetValueOrThrow().Build())
-                : Result.Fail<IContainer>(resultBuilder.Error);
+                .Then(b => ConfigureSaver(parameters["--output_ext"].ToString(), b))
+                .Then(b => b.Build());
         }
 
         private static Result<ContainerBuilder> ConfigureApplication(ValueObject width, ValueObject height,
