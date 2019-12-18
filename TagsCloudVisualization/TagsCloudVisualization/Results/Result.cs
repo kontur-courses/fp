@@ -12,7 +12,7 @@ namespace TagsCloudVisualization.Results
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
@@ -25,11 +25,6 @@ namespace TagsCloudVisualization.Results
 
         public string Error { get; }
         public T Value { get; }
-        public T GetValueOrThrow()
-        {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
-        }
         public bool IsSuccess => Error == null;
     }
 

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TagsCloudVisualization.Constunts;
+using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Structures;
 using TagsCloudVisualization.WordAnalyzers;
 
@@ -7,7 +10,7 @@ namespace TagsCloudVisualization.Filters
 {
     public class PartOfSpeechFilter: IFilter
     {
-        public IMorphAnalyzer Analyzer { get; private set; }
+        private IMorphAnalyzer Analyzer { get;  set; }
 
         public PartOfSpeechFilter(IMorphAnalyzer analyzer)
         {
@@ -16,20 +19,18 @@ namespace TagsCloudVisualization.Filters
 
         public static List<string> WhiteList { get; private set; } = new List<string>
         {
-            "A",
-            "ADV",
-            "ANUM",
-            "APRO",
-            "COM",
-            "INTJ",
-            "NUM",
-            "S",
-            "SPRO",
-            "V"
+            PartsOfSpeach.Adjective,
+            PartsOfSpeach.Gerund,
+            PartsOfSpeach.Noun,
+            PartsOfSpeach.Verb,
+            PartsOfSpeach.Numeral,
+            PartsOfSpeach.Participle,
+            PartsOfSpeach.Pronoun,
+            PartsOfSpeach.Adverb
         };
 
-        public bool Filter(WordInfo wordInfo) 
-            => wordInfo.StandartForm != string.Empty && WhiteList.Contains(wordInfo.PartOfSpeech);
+        public bool Filter(Result<WordInfo> wordInfo) 
+            => wordInfo.IsSuccess && wordInfo.Value.StandartForm != string.Empty && WhiteList.Contains(wordInfo.Value.PartOfSpeech);
 
         public IEnumerable<string> GetFilteredValues(string textToFilter)
         {
@@ -37,7 +38,7 @@ namespace TagsCloudVisualization.Filters
             {
                 var isValid = Filter(word);
                 if (isValid)
-                    yield return word.StandartForm;
+                    yield return word.Value.StandartForm;
             }
         }
     }

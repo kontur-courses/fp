@@ -7,7 +7,6 @@ namespace TagsCloudVisualization.Settings
     {
         public int Radius { get; private set; }
         public Point Center { get; private set; }
-
         public CloudSettings(Point center, int radius)
         {
             Radius = radius;

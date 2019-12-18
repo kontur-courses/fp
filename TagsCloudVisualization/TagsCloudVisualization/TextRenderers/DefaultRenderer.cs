@@ -15,15 +15,13 @@ namespace TagsCloudVisualization.TextRenderers
         };
 
         public Size GetRectangleSize(ImageSettings imageSettings, KeyValuePair<string, int> wordInfo)
-        {
-            
+        {  
             using (var font = GetFont(imageSettings.Font, imageSettings.MinimalTextSize * wordInfo.Value))
                 return TextRenderer.MeasureText(wordInfo.Key, font);
         }
 
         private Font GetFont(string font, float size) => new Font(font, size);
         
-
         public void PrintWords(int width, int height, Dictionary<string, Rectangle> info, ImageSettings imageSettings)
         {
             var colorSelector = new Random();

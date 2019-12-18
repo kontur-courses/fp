@@ -47,7 +47,6 @@ namespace TagsCloudVisualization.TagCloudLayouters
                          .OnFail(error => Console.WriteLine(error));    
         }
 
-
         private void AddPointsIntoList(IEnumerable<Point> points)
         {
             foreach (var point in points)
