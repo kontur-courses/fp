@@ -1,15 +1,14 @@
 ﻿using System.IO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace TagsCloudContainer.Readers
 {
     public class SimpleReader : IReader
     {
-        private string path { get; }
-        private Dictionary<string, Func<string, string[]>> readers;
+        private readonly string path;
+        private readonly Dictionary<string, Func<string, string[]>> readers;
 
         public SimpleReader(string path)
         {
@@ -35,9 +34,11 @@ namespace TagsCloudContainer.Readers
 
         private string[] ReadOther(string path)
         {
-            var stream = new StreamReader(path);
-            var stringSeparators = new[] { "\r\n" };
-            return stream.ReadToEnd().Split(stringSeparators, StringSplitOptions.None);
+            using (var stream = new StreamReader(path))
+            {
+                var stringSeparators = new[] { "\r\n" };
+                return stream.ReadToEnd().Split(stringSeparators, StringSplitOptions.None);
+            }
         }
 
         private string[] ReadDoc(string path)
