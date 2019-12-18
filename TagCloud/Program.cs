@@ -44,6 +44,7 @@ namespace TagCloud
             container.Register(Component.For<IAction>().ImplementedBy<GetPaletteNameAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetWidthAction>().LifestyleSingleton());
             container.Register(Component.For<IAction>().ImplementedBy<GetPathAction>().LifestyleSingleton());
+            container.Register(Component.For<IAction>().ImplementedBy<HelpAction>().LifestyleSingleton());
             container.Register(Component.For<IClient>().ImplementedBy<Client>());
             return container;
         }

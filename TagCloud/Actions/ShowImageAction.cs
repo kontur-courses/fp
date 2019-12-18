@@ -8,13 +8,14 @@ namespace TagCloud.Actions
 {
     public class ShowImageAction : IAction
     {
+        private UserSettings lastSettings;
         public string CommandName { get; } = "-showimage";
-
+        
         public string Description { get; } = "display image";
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (config.ImageToSave is null)
+            if (config.ImageToSave is null || !settings.Equals(lastSettings) )
             {
                 var createImageResult =
                     config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
@@ -32,7 +33,7 @@ namespace TagCloud.Actions
                 Application.Run(showImageForm);
             });
             thread.Start();
-
+            lastSettings = settings.Clone() as UserSettings;
             return Result.Ok();
         }
     }

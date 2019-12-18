@@ -63,6 +63,7 @@
     <Compile Include="Actions\GetPaletteNameAction.cs" />
     <Compile Include="Actions\GetPathAction.cs" />
     <Compile Include="Actions\GetWidthAction.cs" />
+    <Compile Include="Actions\HelpAction.cs" />
     <Compile Include="Actions\NewImageAction.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Models\ClientConfig.cs" />

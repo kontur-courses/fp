@@ -37,7 +37,7 @@ namespace TagCloud
             Console.WriteLine("Список доступных комманд :");
             foreach (var action in actions)
                 Console.WriteLine($"{action.CommandName}     \"{action.Description}\"");
-            var userSettings = new UserSettings();
+            var userSettings = UserSettings.GetDefaultUserSettings();
             while (!config.ToExit)
             {
                 Console.WriteLine("Введите команду");

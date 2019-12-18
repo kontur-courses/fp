@@ -34,8 +34,7 @@ namespace TagCloud.Actions
             fontName = fontName == string.Empty
                 ? defaultFontName
                 : fontName;
-            if (availableFontNames.Contains(fontName)) return true;
-            return false;
+            return availableFontNames.Contains(fontName);
         }
     }
 }

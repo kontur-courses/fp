@@ -16,27 +16,26 @@ namespace TagCloud.Actions
         public string Description { get; } = "Задать палитру";
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!TryReadPaletteName(config.AvailablePaletteNames, out var paletteName))
+            if (!TryReadPaletteName(config.AvailablePaletteNames,settings, out var paletteName))
                 Result.Fail<None>("Введенная палитра не поддерживается");
             settings.ImageSettings.ReadPaletteName(paletteName);
             return Result.Ok();
         }
 
-        private static bool TryReadPaletteName(HashSet<string> availablePaletteNames, out string paletteName)
+        private static bool TryReadPaletteName(HashSet<string> availablePaletteNames, UserSettings settings
+            , out string paletteName)
         {
-            var defaultPaletteName = "ShadesOfBlue";
             Console.WriteLine("Введите название палитры");
             Console.WriteLine("Список доступных палитр :");
             foreach (var name in availablePaletteNames)
                 Console.WriteLine(name);
-            Console.WriteLine("Оставьте строку пустой, чтоб использовать палитру: " + defaultPaletteName);
+            Console.WriteLine("Оставьте строку пустой, чтоб использовать палитру: " + settings.ImageSettings.PaletteName);
             Console.Write(">>>");
             paletteName = Console.ReadLine();
             paletteName = paletteName == string.Empty
-                ? defaultPaletteName
+                ? settings.ImageSettings.PaletteName
                 : paletteName;
-            if (availablePaletteNames.Contains(paletteName)) return true;
-            return false;
+            return availablePaletteNames.Contains(paletteName);
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace TagCloud.Models
 {
-    public class ImageSettings
+    public class ImageSettings : ICloneable
     {
+        public Dictionary<string, bool> FieldsToRead;
+
         public ImageSettings(int width, int height, string fontName, string paletteName)
         {
             PaletteName = paletteName;
@@ -26,13 +28,9 @@ namespace TagCloud.Models
 
         public bool IsCompleted
         {
-            get
-            {
-                return FieldsToRead.All(fieldIsRead => fieldIsRead.Value);
-            }
+            get { return FieldsToRead.All(fieldIsRead => fieldIsRead.Value); }
         }
 
-        public Dictionary<string, bool> FieldsToRead;
         public int Width { get; private set; }
         public int Height { get; set; }
         public string FontName { get; set; }
@@ -40,11 +38,10 @@ namespace TagCloud.Models
 
         private static Dictionary<string, bool> GetFieldsToRead()
         {
-            var result = typeof(ImageSettings)
+            return typeof(ImageSettings)
                 .GetProperties()
-                .Where(p=>p.Name!="IsCompleted")
-                .ToDictionary(f=>f.Name,f=>false);
-            return result;
+                .Where(p => p.Name != "IsCompleted")
+                .ToDictionary(f => f.Name, f => false);
         }
 
         public void ReadWidth(int width)
@@ -69,6 +66,29 @@ namespace TagCloud.Models
         {
             PaletteName = paletteName;
             FieldsToRead["PaletteName"] = true;
+        }
+
+        public static ImageSettings GetDefaultSettings()
+        {
+            return new ImageSettings(500,500,"Arial","ShadesOfBlue");
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GetType().GetProperties().Sum(p => p.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            var settings = obj as ImageSettings;
+            return !(obj is null) &&
+                   Width == settings.Width && Height == settings.Height &&
+                   FontName == settings.FontName && PaletteName == settings.PaletteName;
+        }
+
+        public object Clone()
+        {
+            return new ImageSettings(Width,Height,FontName,PaletteName);
         }
     }
 }

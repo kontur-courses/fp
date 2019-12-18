@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ResultOf;
-using TagCloud.IServices;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
@@ -18,16 +13,16 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            var defaultPath = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.FullName}\\test.txt";
             Console.WriteLine("Укажите путь к файлу с тегами");
-            Console.WriteLine("Оставьте строку пустой, чтоб использовать путь: " + defaultPath);
+            Console.WriteLine("Оставьте строку пустой, чтоб использовать путь: " + settings.PathToRead);
             Console.Write(">>>");
             var pathToRead = Console.ReadLine();
-            pathToRead = pathToRead == string.Empty
-                ? defaultPath
+            settings.PathToRead = pathToRead == string.Empty
+                ? settings.PathToRead
                 : pathToRead;
-            settings.PathToRead =pathToRead;
-            return Result.Ok();
+            return !File.Exists(settings.PathToRead) 
+                ? Result.Fail<None>($"Файл '{pathToRead}' не существует")
+                : Result.Ok();
         }
     }
 }
