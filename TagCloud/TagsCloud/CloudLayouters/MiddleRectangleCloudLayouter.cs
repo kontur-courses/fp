@@ -36,10 +36,10 @@ namespace TagsCloud.CloudLayouters
                 for (var i = 0; i < pointForAdd[distanceToCenter].Count; i++)
                 {
                     var (point, countNear) = pointForAdd[distanceToCenter][i];
-                    foreach (var corner in deltaRectangleCorner)
+                    foreach (var deltaCorner in deltaRectangleCorner)
                     {
-                        rect.MoveToPosition(new Point(point.X - corner.X,
-                            point.Y - corner.Y));
+                        rect.MoveToPosition(new Point(point.X - deltaCorner.X,
+                            point.Y - deltaCorner.Y));
                         if (IntersectsWithPrevious(rect)) continue;
                         AddRectangle(rect);
                         countNear += 1;

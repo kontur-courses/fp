@@ -9,7 +9,7 @@ namespace TagsCloud
     public class TagCloudVisualizer
     {
         private readonly BoringWordStream boringWordStream;
-        private readonly bool boringWordsWasReading;
+        private bool boringWordsWasRead;
         private readonly ICloudDrawer cloudDrawer;
         private readonly IImageSaver imageSaver;
         private readonly ITagCloudGenerator tagCloudGenerator;
@@ -35,6 +35,7 @@ namespace TagsCloud
             this.wordCounter = wordCounter;
             this.tagCloudSettings = tagCloudSettings;
             this.boringWordStream = boringWordStream;
+            boringWordsWasRead = false;
         }
 
         public Result<None> ReadBoringWords(string path)
@@ -49,7 +50,8 @@ namespace TagsCloud
 
         public Result<None> GenerateTagCloud()
         {
-            return (boringWordsWasReading ? new Result<None>() : ReadBoringWords(tagCloudSettings.pathToBoringWords))
+            return (boringWordsWasRead ? new Result<None>() : ReadBoringWords(tagCloudSettings.pathToBoringWords))
+                .Then(_ => boringWordsWasRead = true)
                 .Then(_ => wordStream.GetWords(tagCloudSettings.pathToInput))
                 .Then(wordCounter.GetWordsStatistics)
                 .Then(tagGenerator.GenerateTags)

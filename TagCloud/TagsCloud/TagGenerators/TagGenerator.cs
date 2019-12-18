@@ -34,10 +34,7 @@ namespace TagsCloud.TagGenerators
                 var color = colorGenerator.GetColorForCurrentWord(wordStatistics, currentPosition, countWord)
                     .RefineError("Color cannot be obtained")
                     .OnFail((error) => errors.Add(error));
-                if (!fontSettings.IsSuccess || !color.IsSuccess)
-                {
-                    continue;
-                }
+                if (!fontSettings.IsSuccess || !color.IsSuccess) continue;
                 result.Add(new Tag(fontSettings.Value, color.Value, wordStatistics.word));
                 currentPosition++;
             }

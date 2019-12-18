@@ -9,6 +9,8 @@ namespace TagsCloud.ColorSchemes
     {
         public Result<Color> GetColorForCurrentWord((string word, int frequency) wordFrequency, int positionByFrequency, int countWords)
         {
+            if (countWords == 0)
+                return Result.Fail<Color>("The count of words cannot be zero");
             var rnd = new Random();
             var alpha = (int)(255 * ((float)(countWords - positionByFrequency + 1) / countWords));
             alpha = Math.Min(alpha, 255);

@@ -11,26 +11,24 @@ namespace TagsCloud.CloudDrawers
     {
         public Result<Image> Paint(IEnumerable<(Tag tag, Rectangle position)> resultTagCloud, Size imageSize, Color backgroundColor, int widthOfBorder = 0)
         {
-            return GetBorderOfRectangles(resultTagCloud)
-                .Then(borderOfRectangles => (border:borderOfRectangles, 
-                    image: new Bitmap(borderOfRectangles.Width + widthOfBorder * 2, borderOfRectangles.Height + widthOfBorder * 2)))
-                .Then(drawSettings =>
-                {
-                    var (borderOfRectangles, image) = drawSettings;
-                    using var graph = Graphics.FromImage(image);
-                    graph.Clear(backgroundColor);
-                    foreach (var tagSettings in resultTagCloud)
-                    {
-                        using var brush = new SolidBrush(tagSettings.tag.colorTag);
-                        using var font = new Font(tagSettings.tag.fontSettings.fontFamily, tagSettings.tag.fontSettings.fontSize);
-                        graph.DrawString(tagSettings.tag.word,
-                            font, brush,
-                            tagSettings.position.Left - borderOfRectangles.X + widthOfBorder,
-                            tagSettings.position.Top - borderOfRectangles.Y + widthOfBorder);
-                    }
-                    return new Bitmap(image, imageSize);
-                })
-                .Then(bitmapImage => (Image)bitmapImage);
+            var tagCloudRectangles = resultTagCloud as (Tag tag, Rectangle position)[] ?? resultTagCloud.ToArray();
+            var borderOfRectangles = GetBorderOfRectangles(tagCloudRectangles);
+            if (!borderOfRectangles.IsSuccess)
+                return Result.Fail<Image>(borderOfRectangles.Error);
+            using var image = new Bitmap(borderOfRectangles.Value.Width + widthOfBorder * 2,
+                borderOfRectangles.Value.Height + widthOfBorder * 2);
+            using var graph = Graphics.FromImage(image);
+            graph.Clear(backgroundColor);
+            foreach (var (tag, position) in tagCloudRectangles)
+            {
+                using var brush = new SolidBrush(tag.colorTag);
+                using var font = new Font(tag.fontSettings.fontFamily, tag.fontSettings.fontSize);
+                graph.DrawString(tag.word,
+                    font, brush,
+                    position.Left - borderOfRectangles.Value.X + widthOfBorder,
+                    position.Top - borderOfRectangles.Value.Y + widthOfBorder);
+            }
+            return ((Image)new Bitmap(image, imageSize)).AsResult();
         }
 
         private static Result<Rectangle> GetBorderOfRectangles(IEnumerable<(Tag tag, Rectangle position)> rectangles)
