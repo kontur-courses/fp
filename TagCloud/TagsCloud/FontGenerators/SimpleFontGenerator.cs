@@ -21,6 +21,8 @@ namespace TagsCloud.FontGenerators
         public Result<FontSettings> GetFontSizeForCurrentWord((string word, int frequency) wordFrequency,
             int positionByFrequency, int countWords)
         {
+            if (countWords == 0)
+                return Result.Fail<FontSettings>("The count of words cannot be zero");
             var fontSize = maxFontSize * ((float) (countWords - positionByFrequency + 1) / countWords);
             fontSize = Math.Max(fontSize, minFontSize);
             return Result.Of(() => new FontSettings(fontFamily, fontSize));

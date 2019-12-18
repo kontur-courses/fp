@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using TagsCloud.ErrorHandling;
 using TagsCloud.Interfaces;
+using TagsCloud.WordCounter;
 using TagsCloud.WordStreams;
 using TagsCloud.WordValidators;
 
@@ -15,7 +16,7 @@ namespace TagsCloud
         private readonly ITagCloudGenerator tagCloudGenerator;
         private readonly TagCloudSettings tagCloudSettings;
         private readonly ITagGenerator tagGenerator;
-        private readonly IWordCounter wordCounter;
+        private readonly SimpleWordCounter wordCounter;
         private readonly WordStream wordStream;
 
         public TagCloudVisualizer(WordStream wordStream,
@@ -23,7 +24,7 @@ namespace TagsCloud
             ITagCloudGenerator tagCloudGenerator,
             ICloudDrawer cloudDrawer,
             IImageSaver imageSaver,
-            IWordCounter wordCounter,
+            SimpleWordCounter wordCounter,
             TagCloudSettings tagCloudSettings,
             BoringWordStream boringWordStream)
         {

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using TagsCloud.Interfaces;
 using System.Linq;
 using TagsCloud.ErrorHandling;
+using TagsCloud.Interfaces;
 
 namespace TagsCloud.TagGenerators
 {
     public class TagGenerator : ITagGenerator
     {
-        private readonly IFontSettingsGenerator fontGenerator;
         private readonly IColorScheme colorGenerator;
+        private readonly IFontSettingsGenerator fontGenerator;
 
         public TagGenerator(IFontSettingsGenerator fontGenerator, IColorScheme colorGenerator)
         {
@@ -17,29 +17,31 @@ namespace TagsCloud.TagGenerators
             this.colorGenerator = colorGenerator;
         }
 
-        public Result<IEnumerable<Tag>> GenerateTags(IEnumerable<(string word, int frequency)> wordsStatistics)
+        public Result<IEnumerable<Tag>> GenerateTags(Dictionary<string, int> wordsStatistics)
         {
             if (wordsStatistics == null)
                 return Result.Fail<IEnumerable<Tag>>($"{nameof(wordsStatistics)} cannot be null");
-            var currentPosition = 0;
-            var orderedStatistics = wordsStatistics.OrderBy(wordsStatistic => wordsStatistic.frequency).ToList();
-            var countWord = orderedStatistics.Count;
+            var wordsOrderedByFrequency = wordsStatistics.Keys.OrderBy(word => wordsStatistics[word]).ToList();
+            var countWord = wordsOrderedByFrequency.Count;
             var result = new List<Tag>();
             var errors = new List<string>();
-            foreach(var wordStatistics in orderedStatistics)
+            for (var currentPositionWord = 0; currentPositionWord < countWord; currentPositionWord++)
             {
-                var fontSettings = fontGenerator.GetFontSizeForCurrentWord(wordStatistics, currentPosition, countWord)
+                var word = wordsOrderedByFrequency[currentPositionWord];
+                var fontSettings = fontGenerator
+                    .GetFontSizeForCurrentWord((word, wordsStatistics[word]), currentPositionWord, countWord)
                     .RefineError("Font settings cannot be obtained")
-                    .OnFail((error) => errors.Add(error));
-                var color = colorGenerator.GetColorForCurrentWord(wordStatistics, currentPosition, countWord)
+                    .OnFail(error => errors.Add(error));
+                var color = colorGenerator
+                    .GetColorForCurrentWord((word, wordsStatistics[word]), currentPositionWord, countWord)
                     .RefineError("Color cannot be obtained")
-                    .OnFail((error) => errors.Add(error));
+                    .OnFail(error => errors.Add(error));
                 if (!fontSettings.IsSuccess || !color.IsSuccess) continue;
-                result.Add(new Tag(fontSettings.Value, color.Value, wordStatistics.word));
-                currentPosition++;
+                result.Add(new Tag(fontSettings.Value, color.Value, word));
             }
-            return errors.Count != 0 
-                ? Result.Fail<IEnumerable<Tag>>(string.Join(Environment.NewLine, errors)) 
+
+            return errors.Count != 0
+                ? Result.Fail<IEnumerable<Tag>>(string.Join(Environment.NewLine, errors))
                 : result.AsEnumerable().AsResult();
         }
     }

@@ -28,7 +28,7 @@ namespace TagsCloud.CloudDrawers
                     position.Left - borderOfRectangles.Value.X + widthOfBorder,
                     position.Top - borderOfRectangles.Value.Y + widthOfBorder);
             }
-            return ((Image)new Bitmap(image, imageSize)).AsResult();
+            return Result.Ok<Image>(new Bitmap(image, imageSize));
         }
 
         private static Result<Rectangle> GetBorderOfRectangles(IEnumerable<(Tag tag, Rectangle position)> rectangles)

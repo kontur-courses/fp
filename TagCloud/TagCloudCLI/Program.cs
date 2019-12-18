@@ -8,7 +8,7 @@ using TagsCloud.PathValidators;
 using TagsCloud.Splitters;
 using TagsCloud.WordStreams;
 using TagsCloud.TagGenerators;
-using TagsCloud.WordCounters;
+using TagsCloud.WordCounter;
 using TagsCloud.WordHandlers;
 using TagsCloud.WordValidators;
 using TagsCloud.FontGenerators;
@@ -51,7 +51,7 @@ namespace TagCloudCLI
             container.RegisterType<TagCloudGenerator>().AsImplementedInterfaces().SingleInstance();
             container.RegisterType<DefaultCloudDrawer>().AsImplementedInterfaces().SingleInstance();
             container.RegisterType<ImageSaver>().AsImplementedInterfaces().SingleInstance();
-            container.RegisterType<DictionaryBasedCounter>().AsImplementedInterfaces().SingleInstance();
+            container.RegisterType<SimpleWordCounter>().AsSelf().SingleInstance();
             container.RegisterType<TxtReader>().AsImplementedInterfaces().AsSelf().SingleInstance();
             container.RegisterType<ToLowerWordHandler>().AsImplementedInterfaces();
             container.RegisterType<TagCloudVisualizer>().AsSelf().SingleInstance();

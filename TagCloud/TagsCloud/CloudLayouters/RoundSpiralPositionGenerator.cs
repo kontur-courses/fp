@@ -6,22 +6,22 @@ namespace TagsCloud.CloudLayouters
 {
     public class RoundSpiralPositionGenerator : IPositionGenerator
     {
+        private const double DeltaAngle = 0.5;
+        private readonly double deltaRadiusBetweenTurns;
+        private double angle;
         private Point center = new Point(0, 0);
-        private double angle = 0;
-        public readonly double DeltaRadiusBetweenTurns;
-        public readonly double DeltaAngle = 0.5;
 
         public RoundSpiralPositionGenerator(double deltaRadiusBetweenTurns = Math.PI)
         {
-            this.DeltaRadiusBetweenTurns = deltaRadiusBetweenTurns;
+            this.deltaRadiusBetweenTurns = deltaRadiusBetweenTurns;
         }
 
         public Point GetNextPosition()
         {
             angle += DeltaAngle;
-            var dist = DeltaRadiusBetweenTurns * angle / 2 / Math.PI;
-            var x = (int)(center.X + (dist * Math.Cos(angle)));
-            var y = (int)(center.Y + (dist * Math.Sin(angle)));
+            var dist = deltaRadiusBetweenTurns * angle / 2 / Math.PI;
+            var x = (int) (center.X + dist * Math.Cos(angle));
+            var y = (int) (center.Y + dist * Math.Sin(angle));
             return new Point(x, y);
         }
     }

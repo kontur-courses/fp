@@ -31,7 +31,7 @@ namespace TagCloudCLI
                           Path.GetFullPath(Path.Combine("Resources", "mystem.exe")),
                           imageFormatResult));
               })
-              .WithNotParsed(o => settings = Result.Fail<TagCloudSettings>("Wrong comandline argument."));
+              .WithNotParsed(o => settings = Result.Fail<TagCloudSettings>("Wrong commandline argument."));
             return settings.Then(ValidateIsKnownColor)
                 .Then(ValidateImageSize)
                 .Then(ValidateMystemLocation)

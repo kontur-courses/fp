@@ -13,7 +13,8 @@ namespace TagsCloud.Splitters
         public Result<IEnumerable<string>> SplitText(string text)
         {
             return text?.Split(splitChar).AsEnumerable().AsResult()
-                       .Then(lines => lines.Where(line => !string.IsNullOrWhiteSpace(line))) ?? Result.Fail<IEnumerable<string>>("Text is null");
+                       .Then(lines => lines.Where(line => !string.IsNullOrWhiteSpace(line))) ??
+                   Result.Fail<IEnumerable<string>>("Text is null");
         }
     }
 }
