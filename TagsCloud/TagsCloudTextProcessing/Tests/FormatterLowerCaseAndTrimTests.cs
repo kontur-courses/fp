@@ -12,7 +12,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var inputWords = new[] {"CHANGE", "Case", "ToLower"};
             
-            var formattedWords =  new FormatterLowercaseAndTrim().Format(inputWords);
+            var formattedWords =  new FormatterLowercaseAndTrim().Format(inputWords).GetValueOrThrow();
             
             formattedWords.Should().BeEquivalentTo("change", "case", "tolower");
         }
@@ -22,7 +22,7 @@ namespace TagsCloudTextProcessing.Tests
         {
             var inputWords = new[] {"cat", "cat ", " cat", " cat "};
             
-            var formattedWords =  new FormatterLowercaseAndTrim().Format(inputWords);
+            var formattedWords =  new FormatterLowercaseAndTrim().Format(inputWords).GetValueOrThrow();
             
             formattedWords.Should().BeEquivalentTo("cat", "cat", "cat", "cat");
         }

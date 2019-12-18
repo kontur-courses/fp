@@ -7,6 +7,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using TagCloudResult;
 using TagsCloudVisualization.Layouters;
 using TagsCloudVisualization.Styling.Themes;
 using TagsCloudVisualization.Visualizers;
@@ -34,7 +35,7 @@ namespace TagsCloudVisualization.Tests
             action.Should().NotThrow<Exception>();
         }
     }
-    
+
     [TestFixture]
     public class SpiralLayouterPutNextRectangle_Should
     {
@@ -73,9 +74,10 @@ namespace TagsCloudVisualization.Tests
         [TestCase(10, -1, TestName = "Height y is negative")]
         public void Fail_When(int width, int height)
         {
-            Action action = () => layouter.PutNextRectangle(new SizeF(width, height));
+            var result = layouter.PutNextRectangle(new SizeF(width, height));
 
-            action.Should().Throw<ArgumentException>();
+            result.Should()
+                .BeEquivalentTo(Result.Fail<RectangleF>("Tag Cloud tag size parameters should be positive."));
         }
 
         [Test]
