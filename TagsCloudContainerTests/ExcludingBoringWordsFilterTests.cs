@@ -30,7 +30,8 @@ namespace TagsCloudContainerTests
         {
             var filteredWords = filter.FilterWords(words);
 
-            filteredWords.Should().BeEmpty();
+            filteredWords.IsSuccess.Should().BeTrue();
+            filteredWords.GetValueOrThrow().Should().BeEmpty();
         }
 
         private static IEnumerable FilterWordsShouldReturnEmptyEnumerableWhenAllWordsAreBoringTestCases
@@ -54,7 +55,8 @@ namespace TagsCloudContainerTests
             var filteredWords = filter.FilterWords(words);
 
             var expectedFilteredWords = new[] {"вместе", "целая", "страна"};
-            filteredWords.Should().BeEquivalentTo(expectedFilteredWords);
+            filteredWords.IsSuccess.Should().BeTrue();
+            filteredWords.GetValueOrThrow().Should().BeEquivalentTo(expectedFilteredWords);
         }
     }
 }

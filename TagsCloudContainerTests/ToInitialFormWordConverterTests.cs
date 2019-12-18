@@ -31,7 +31,8 @@ namespace TagsCloudContainerTests
         {
             var convertedWords = wordConverter.ConvertWords(words);
 
-            convertedWords.Should().BeEquivalentTo(words);
+            convertedWords.IsSuccess.Should().BeTrue();
+            convertedWords.GetValueOrThrow().Should().BeEquivalentTo(words);
         }
 
         private static IEnumerable ConvertWordsShouldReturnUnchangedWhenInputInInitialFormTestCases
@@ -54,7 +55,8 @@ namespace TagsCloudContainerTests
             var convertedWords = wordConverter.ConvertWords(words);
 
             var expectedConvertedWords = new[] {"прекрасный", "день", "хороший", "вечер", "вечер"};
-            convertedWords.Should().BeEquivalentTo(expectedConvertedWords);
+            convertedWords.IsSuccess.Should().BeTrue();
+            convertedWords.GetValueOrThrow().Should().BeEquivalentTo(expectedConvertedWords);
         }
 
         [TestCaseSource(nameof(ConvertWordsShouldConvertKindTestCases))]
@@ -62,7 +64,7 @@ namespace TagsCloudContainerTests
         {
             var convertedWords = wordConverter.ConvertWords(words);
 
-            return convertedWords.ToList();
+            return convertedWords.GetValueOrThrow().ToList();
         }
 
         private static IEnumerable ConvertWordsShouldConvertKindTestCases
@@ -85,7 +87,8 @@ namespace TagsCloudContainerTests
             var convertedWords = wordConverter.ConvertWords(words);
 
             var expectedConvertedWords = new[] { "быть", "жить", "сделать", "спать", "отдыхать" };
-            convertedWords.Should().BeEquivalentTo(expectedConvertedWords);
+            convertedWords.IsSuccess.Should().BeTrue();
+            convertedWords.GetValueOrThrow().Should().BeEquivalentTo(expectedConvertedWords);
         }
     }
 }

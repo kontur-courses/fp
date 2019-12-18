@@ -30,7 +30,7 @@ namespace TagsCloudContainerTests
         {
             var pictureSize = new Size(100, 100);
 
-            var layout = layoutAlgorithm.GetLayout(words, pictureSize);
+            var layout = layoutAlgorithm.GetLayout(words, pictureSize).GetValueOrThrow();
 
             layout.Select(p => p.Item1).Should().BeEquivalentTo(words.Distinct());
         }
@@ -50,7 +50,7 @@ namespace TagsCloudContainerTests
         {
             var pictureSize = new Size(100, 100);
 
-            var layout = layoutAlgorithm.GetLayout(words, pictureSize);
+            var layout = layoutAlgorithm.GetLayout(words, pictureSize).GetValueOrThrow();
             var rectangles = layout.Select(p => p.Item2).ToList();
 
             foreach (var rectangle in rectangles)
@@ -74,7 +74,7 @@ namespace TagsCloudContainerTests
         {
             var pictureSize = new Size(100, 100);
 
-            var layout = layoutAlgorithm.GetLayout(words, pictureSize);
+            var layout = layoutAlgorithm.GetLayout(words, pictureSize).GetValueOrThrow();
             var rectangles = layout.Select(p => p.Item2).ToList();
 
             var maxDiagonal = rectangles.Max(r =>

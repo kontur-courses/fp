@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.WordProcessing
 {
     public interface IWordProcessor
     {
-        IEnumerable<string> ProcessWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words);
     }
 }

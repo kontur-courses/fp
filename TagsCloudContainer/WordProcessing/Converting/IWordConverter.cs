@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.WordProcessing.Converting
 {
     public interface IWordConverter
     {
-        IEnumerable<string> ConvertWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> ConvertWords(IEnumerable<string> words);
     }
 }

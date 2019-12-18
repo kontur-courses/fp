@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.MyStem;
 
 namespace TagsCloudContainer.WordProcessing.Filtering
@@ -15,11 +16,19 @@ namespace TagsCloudContainer.WordProcessing.Filtering
             this.myStemResultParser = myStemResultParser;
         }
 
-        public IEnumerable<string> FilterWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            var myStemResult = myStemExecutor.GetMyStemResultForWords(words, "-ni");
+            return Result.Of(() => myStemExecutor.GetMyStemResultForWords(words, "-ni"))
+                .RefineError("Failed to execute MyStem")
+                .Then(myStemResult => myStemResultParser.GetPartsOfSpeechByResultOfNiCommand(myStemResult, words))
+                .RefineError("Failed to parse MyStem result")
+                .Then(FilterWordsWithPartsOfSpeech);
+        }
 
-            return myStemResultParser.GetPartsOfSpeechByResultOfNiCommand(myStemResult, words)
+        private IEnumerable<string> FilterWordsWithPartsOfSpeech(
+            IEnumerable<(string, string)> wordsWithPartsOfSpeech)
+        {
+            return wordsWithPartsOfSpeech
                 .Where(p => !IsPartOfSpeechBoring(p.Item2))
                 .Select(p => p.Item1);
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.Algorithm.Layouting;
 using TagsCloudContainer.Algorithm.Organizing;
 using TagsCloudContainer.Algorithm.SizeProviding;
@@ -24,15 +25,14 @@ namespace TagsCloudContainer.Algorithm
             this.layouter = layouter;
         }
 
-        public IEnumerable<(string, Rectangle)> GetLayout(IEnumerable<string> words, Size pictureSize)
+        public Result<IEnumerable<(string, Rectangle)>> GetLayout(IEnumerable<string> words, Size pictureSize)
         {
-            var convertedWords = words.Select(w => new Word { Value = w });
-            var weightedWords = wordWeightSetter.SetWordsWeights(convertedWords);
-            var wordsWithSize = wordSizeProvider.SetWordsSizes(weightedWords, pictureSize);
-            var wordsWithoutDuplicates = wordsWithSize.GroupBy(w => w.Value).Select(g => g.First());
-            var orderedWords = wordOrganizer.GetSortedWords(wordsWithoutDuplicates);
-
-            return layouter.GetWordsRectangles(orderedWords, pictureSize);
+            return words.Select(w => new Word {Value = w}).AsResult()
+                .Then(convertedWords => wordWeightSetter.SetWordsWeights(convertedWords))
+                .Then(weightedWords => wordSizeProvider.SetWordsSizes(weightedWords, pictureSize))
+                .Then(wordsWithSize => wordsWithSize.GroupBy(w => w.Value).Select(g => g.First()))
+                .Then(wordsWithoutDuplicates => wordOrganizer.GetSortedWords(wordsWithoutDuplicates))
+                .Then(orderedWords => layouter.GetWordsRectangles(orderedWords, pictureSize));
         }
     }
 }

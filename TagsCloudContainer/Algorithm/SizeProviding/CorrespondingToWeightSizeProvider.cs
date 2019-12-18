@@ -8,11 +8,11 @@ namespace TagsCloudContainer.Algorithm.SizeProviding
 {
     public class CorrespondingToWeightSizeProvider : IWordSizeProvider
     {
-        private readonly int error;
+        private readonly int scaleFactor;
 
-        public CorrespondingToWeightSizeProvider(int error)
+        public CorrespondingToWeightSizeProvider(int scaleFactor)
         {
-            this.error = error;
+            this.scaleFactor = scaleFactor;
         }
 
         public CorrespondingToWeightSizeProvider() : this(4) { }
@@ -37,7 +37,7 @@ namespace TagsCloudContainer.Algorithm.SizeProviding
 
         private int GetFirstWordSizeArea(int wordsCount, Size pictureSize)
         {
-            return pictureSize.GetArea() / (wordsCount * error);
+            return pictureSize.GetArea() / (wordsCount * scaleFactor);
         }
 
         private int GetNextWordSizeArea(int weight, int lastWordSizeArea, int lastWordWeight)

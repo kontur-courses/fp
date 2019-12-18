@@ -43,6 +43,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
       <Project>{071d5160-8076-48a9-bc50-1cb3a938bd5f}</Project>
       <Name>TagsCloudContainer</Name>

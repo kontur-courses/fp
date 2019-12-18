@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 using TagsCloudContainer.WordProcessing.Converting;
 using TagsCloudContainer.WordProcessing.Filtering;
 
@@ -15,10 +16,12 @@ namespace TagsCloudContainer.WordProcessing
             this.wordFilter = wordFilter;
         }
 
-        public IEnumerable<string> ProcessWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words)
         {
-            var convertedWords = wordConverter.ConvertWords(words);
-            return wordFilter.FilterWords(convertedWords);
+            return wordConverter.ConvertWords(words)
+                .RefineError("Failed to convert words")
+                .Then(convertedWords => wordFilter.FilterWords(convertedWords))
+                .RefineError("Failed to filter words");
         }
     }
 }
