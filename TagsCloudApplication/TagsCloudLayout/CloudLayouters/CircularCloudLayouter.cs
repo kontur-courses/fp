@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudLayout.PointLayouters;
@@ -22,14 +21,13 @@ namespace TagsCloudLayout.CloudLayouters
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            return Result.Of(() => PutRectangle(rectangleSize));
+            return PutRectangle(rectangleSize);
         }
 
-        private Rectangle PutRectangle(Size rectangleSize)
+        private Result<Rectangle> PutRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException(
-                    "Height and width of rectangle size must be greater than zero!");
+                return Result.Fail<Rectangle>("Height and width of rectangle size must be greater than zero!");
             var resultRectangle = FindRectanglePosition(rectangleSize);
             rectangles.Add(resultRectangle);
 

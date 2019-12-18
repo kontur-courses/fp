@@ -7,7 +7,6 @@ using TagsCloudLayout.PointLayouters;
 using TextConfiguration.WordFilters;
 using TextConfiguration.WordProcessors;
 using CommandLine;
-using System.Collections.Generic;
 
 namespace TagsCloudVisualization
 {
