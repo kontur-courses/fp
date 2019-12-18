@@ -18,27 +18,22 @@ namespace TagsCloudContainer
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
-                   .WithParsed(options =>
-                   {
-                       var result = Work(options);
-
-                       if (result.IsSuccess)
-                           result.Value.Save(options.Image);
-                       else
-                           Console.WriteLine(result.Error);
-                   });
+                .WithParsed(options =>
+                {
+                    var result = Work(options);
+                    
+                    if (result.IsSuccess)
+                        result.Value.Save(options.Image);
+                    else
+                        Console.WriteLine(result.Error);
+                });
         }
 
-        private static Result<Bitmap> Work(Options o)
+        private static ContainerBuilder CreateContainerBuilder(Options options)
         {
-            if (o.Size <= 0)
-                return Result.Fail<Bitmap>("Font size must be a natural number");
-            if (o.Height <= 0 || o.Width <= 0)
-                return Result.Fail<Bitmap>("Image sizes must be positive numbers.");
-
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().WithParameter("center", new Point());
             containerBuilder.RegisterType<SimpleWordPreprocessor>().As<IWordPreprocessor>();
@@ -49,14 +44,28 @@ namespace TagsCloudContainer
             .WithParameters(
                 new Parameter[]
                 {
-                               new NamedParameter("font", new Font(o.Font, o.Size)),
-                               new NamedParameter("painterWords", new SimplePainterWords(new SolidBrush(Color.FromName(o.Color))))
+                    new NamedParameter("font", new Font(options.Font, options.Size)),
+                    new NamedParameter("painterWords", new SimplePainterWords(new SolidBrush(Color.FromName(options.Color))))
                 }
                 );
-            containerBuilder.RegisterType<SimpleVisualizer>().As<IVisualizer>().WithParameter("imageSettings", new ImageSettings(o.Height, o.Width));
-            containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", o.File);
+            containerBuilder.RegisterType<SimpleVisualizer>()
+                .As<IVisualizer>()
+                .WithParameter("imageSettings", new ImageSettings(options.Height, options.Width));
+            containerBuilder.RegisterType<SimpleReader>().As<IReader>().WithParameter("path", options.File);
 
             containerBuilder.RegisterType<TagsCloudGenerator>().As<TagsCloudGenerator>();
+
+            return containerBuilder;
+        }
+
+        private static Result<Bitmap> Work(Options options)
+        {
+            if (options.Size <= 0)
+                return Result.Fail<Bitmap>("Font size must be a natural number");
+            if (options.Height <= 0 || options.Width <= 0)
+                return Result.Fail<Bitmap>("Image sizes must be positive numbers.");
+
+            var containerBuilder = CreateContainerBuilder(options);
 
             var container = containerBuilder.Build();
             var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
