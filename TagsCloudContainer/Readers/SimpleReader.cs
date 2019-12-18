@@ -49,7 +49,7 @@ namespace TagsCloudContainer.Readers
             Word.Application app = new Word.Application();
             app.Documents.Open(path);
             Word.Document doc = app.ActiveDocument;
-            for (int i = 1; i < doc.Paragraphs.Count; i++)
+            for (var i = 1; i < doc.Paragraphs.Count; i++)
             {
                 var word = doc.Paragraphs[i].Range.Text;
                 text.Add(word.Substring(0, word.Length - 1));

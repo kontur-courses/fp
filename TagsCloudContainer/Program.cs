@@ -26,7 +26,7 @@ namespace TagsCloudContainer
                     var result = Work(options);
                     
                     if (result.IsSuccess)
-                        result.Value.Save(options.Image);
+                        result.GetValueOrThrow().Save(options.Image);
                     else
                         Console.WriteLine(result.Error);
                 });

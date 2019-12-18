@@ -11,24 +11,27 @@ namespace TagsCloudContainer
 
     public struct Result<T>
     {
+        internal T Value { get; }
+        public bool IsSuccess => Error == null;
+        public string Error { get; }
+
         public Result(string error, T value = default(T))
         {
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
         }
 
-        public string Error { get; }
-        internal T Value { get; }
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
+            if (IsSuccess)
+                return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
-        public bool IsSuccess => Error == null;
     }
 
     public static class Result
@@ -42,6 +45,7 @@ namespace TagsCloudContainer
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -79,31 +83,31 @@ namespace TagsCloudContainer
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
+            Func<TInput, TOutput> ascribe)
         {
-            return input.Then(inp => Of(() => continuation(inp)));
+            return input.Then(inp => Of(() => ascribe(inp)));
         }
 
         public static Result<None> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Action<TInput> continuation)
+            Action<TInput> ascribe)
         {
-            return input.Then(inp => OfAction(() => continuation(inp)));
+            return input.Then(inp => OfAction(() => ascribe(inp)));
         }
 
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
-            Action<TInput> continuation)
+            Action<TInput> ascribe)
         {
-            return input.Then(inp => OfAction(() => continuation(inp)));
+            return input.Then(inp => OfAction(() => ascribe(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
+            Func<TInput, Result<TOutput>> ascribe)
         {
             return input.IsSuccess
-                ? continuation(input.Value)
+                ? ascribe(input.Value)
                 : Fail<TOutput>(input.Error);
         }
 
@@ -111,7 +115,8 @@ namespace TagsCloudContainer
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess) handleError(input.Error);
+            if (!input.IsSuccess)
+                handleError(input.Error);
             return input;
         }
 
@@ -119,7 +124,8 @@ namespace TagsCloudContainer
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
+            if (input.IsSuccess)
+                return input;
             return Fail<TInput>(replaceError(input.Error));
         }
 
