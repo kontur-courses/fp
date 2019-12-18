@@ -43,11 +43,10 @@ namespace TagsCloudVisualization.WordAnalyzers
 
         public string DefinePartOfSpeech(string word)
             => morph.Parse(new List<string>() { word }).First().BestTag[partOfSpeachTag];
-        
+
 
         public string GetStandardForm(string word)
-            => morph.Parse(new List<string>() { word }).First().Text;
-        
+            => morph.Parse(new List<string>() { word }).First().BestTag.Lemma;
 
         public string Convert(string obj) => partsOfSpeach[obj];
     }

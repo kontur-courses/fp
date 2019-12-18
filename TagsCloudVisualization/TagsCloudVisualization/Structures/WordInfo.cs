@@ -1,6 +1,4 @@
-﻿using TagsCloudVisualization.Results;
-
-namespace TagsCloudVisualization.Structures
+﻿namespace TagsCloudVisualization.Structures
 {
     public class WordInfo
     {
