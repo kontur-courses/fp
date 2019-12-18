@@ -108,6 +108,7 @@
     <Compile Include="App\UiActions\ParserListAction.cs" />
     <Compile Include="Infrastructure\Readers\DocReader.cs" />
     <Compile Include="App\UiActions\InputFileAction.cs" />
+    <Compile Include="LinqExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\WordExtractors\DefaultExtractor.cs" />
     <Compile Include="Infrastructure\WordToken\WordToken.cs" />

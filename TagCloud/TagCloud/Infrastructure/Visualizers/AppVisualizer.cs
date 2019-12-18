@@ -52,21 +52,20 @@ namespace TagCloud
         private Result<string[]> FilterWords(string[] words)
         {
             var filteredWords = words;
-            foreach (var filter in filters)
-                if (filter.IsChecked)
-                    filteredWords = filter.FilterWords(filteredWords).GetValueOrThrow();
+            filters
+                .Where(filter => filter.IsChecked)
+                .ForEach(filters => filteredWords = filters.FilterWords(filteredWords).GetValueOrThrow());
             return filteredWords;
         }
 
         private Result<string[]> ParseWords(string[] words)
         {
             var parsedWords = words;
-            foreach (var parser in parsers)
-                if (parser.IsChecked)
-                    parsedWords = parser.ParseWords(parsedWords).GetValueOrThrow();
+            parsers
+                .Where(parser => parser.IsChecked)
+                .ForEach(parser => parsedWords = parser.ParseWords(parsedWords).GetValueOrThrow());
             return parsedWords;
         }
-
 
         private Result<None> DrawWordTokens(WordToken[] wordTokens)
         {
@@ -82,7 +81,7 @@ namespace TagCloud
 
         private void DrawWord(WordToken wordToken, Graphics graphics, ITheme theme)
         {
-            var font = new Font(fontSettings.FontName, fontSettings.DefaultSize, fontSettings.Style);
+            var font = new Font(fontSettings.FontName, GetFontSize(wordToken), fontSettings.Style);
             var wordRectangle = layouter.PutNextRectangle(GetWordSize(wordToken, graphics, font));
             graphics.DrawString(wordToken.Value, font, new SolidBrush(theme.GetWordFontColor(wordToken)),
                 wordRectangle.GetValueOrThrow());
