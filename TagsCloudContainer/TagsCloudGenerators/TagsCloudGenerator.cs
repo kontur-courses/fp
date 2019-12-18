@@ -3,17 +3,15 @@ using TagsCloudContainer.Visualizers;
 using TagsCloudContainer.Readers;
 using System.Drawing;
 using TagsCloudContainer.WordPreprocessors;
-using System;
-using System.Linq;
 
 namespace TagsCloudContainer.TagsCloudGenerators
 {
     public class TagsCloudGenerator
     {
-        private IWordCounter wordCounter;
-        private IVisualizer visualizer;
-        private IReader reader;
-        private IWordPreprocessor wordPreprocessor;
+        private readonly IWordCounter wordCounter;
+        private readonly IVisualizer visualizer;
+        private readonly IReader reader;
+        private readonly IWordPreprocessor wordPreprocessor;
 
         public TagsCloudGenerator(
             IWordCounter wordCounter,
