@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.Core.Readers
 {
     interface IReader
     {
-        IEnumerable<string> ReadWords(string path);
+        Result<IEnumerable<string>> ReadWords(string path);
         bool CanRead(string path);
     }
 }
