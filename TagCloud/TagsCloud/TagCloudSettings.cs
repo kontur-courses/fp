@@ -6,19 +6,19 @@ namespace TagsCloud
 {
     public class TagCloudSettings
     {
-        public readonly string pathToInput;
-        public readonly string pathToOutput;
-        public readonly string pathToBoringWords;
-        public readonly int widthOutputImage;
-        public readonly int heightOutputImage;
         public readonly Color backgroundColor;
-        public readonly FontFamily fontFamily;
-        public readonly ImageFormat imageFormat;
-        public readonly string[] ignoredPartOfSpeech;
-        public readonly GenerationsAlgorithm generationAlgorithmName;
-        public readonly TextSplitter splitterName;
         public readonly SupportedTypes.ColorSchemes colorSchemeName;
+        public readonly FontFamily fontFamily;
+        public readonly GenerationsAlgorithm generationAlgorithmName;
+        public readonly int heightOutputImage;
+        public readonly string[] ignoredPartOfSpeech;
+        public readonly ImageFormat imageFormat;
+        public readonly string pathToBoringWords;
+        public readonly string pathToInput;
         public readonly string pathToMystem;
+        public readonly string pathToOutput;
+        public readonly TextSplitter splitterName;
+        public readonly int widthOutputImage;
 
         public TagCloudSettings(string pathToInput,
             string pathToOutput,

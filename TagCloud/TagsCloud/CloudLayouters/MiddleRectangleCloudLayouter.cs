@@ -51,6 +51,7 @@ namespace TagsCloud.CloudLayouters
                     }
                 }
             }
+
             return rect.AsResult();
         }
 
@@ -64,6 +65,7 @@ namespace TagsCloud.CloudLayouters
                     pointForAdd.Add(distanceToCenter, new List<(Point point, int countNear)>());
                 pointForAdd[distanceToCenter].Add((point, 0));
             }
+
             previousRectangles.Add(rect);
         }
 

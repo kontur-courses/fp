@@ -5,8 +5,8 @@ namespace TagsCloud.TagGenerators
 {
     public class Tag
     {
-        public readonly FontSettings fontSettings;
         public readonly Color colorTag;
+        public readonly FontSettings fontSettings;
         public readonly string word;
 
         public Tag(FontSettings fontSettings, Color color, string word)

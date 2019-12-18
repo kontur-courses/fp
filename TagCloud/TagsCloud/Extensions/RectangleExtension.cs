@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 
 namespace TagsCloud.Extensions
 {
-    static class RectangleExtension
+    internal static class RectangleExtension
     {
         public static void Move(this ref Rectangle rect, int deltaX, int deltaY)
         {

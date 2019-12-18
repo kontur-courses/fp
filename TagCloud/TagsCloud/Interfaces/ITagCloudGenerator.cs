@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using TagsCloud.TagGenerators;
 using TagsCloud.ErrorHandling;
+using TagsCloud.TagGenerators;
 
 namespace TagsCloud.Interfaces
 {

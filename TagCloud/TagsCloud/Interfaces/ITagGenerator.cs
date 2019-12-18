@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using TagsCloud.TagGenerators;
 using TagsCloud.ErrorHandling;
+using TagsCloud.TagGenerators;
 
 namespace TagsCloud.Interfaces
 {

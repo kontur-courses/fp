@@ -28,7 +28,7 @@ namespace TagsCloud.WordValidators
                 return previousResultValidation.AsResult();
             var speechPartOfCurrentWord = parsePartOfSpeechRegex.Match(myStem.Analysis(word)).Groups[1].Value;
             var wordIsValid = word.Length != 0 && !ignoringPartsOfSpeech.Contains(speechPartOfCurrentWord)
-                                           && !int.TryParse(word, out _);
+                                               && !int.TryParse(word, out _);
             viewedWords.Add(word, wordIsValid);
             return wordIsValid.AsResult();
         }

@@ -10,7 +10,6 @@ namespace TagsCloud
     public class TagCloudVisualizer
     {
         private readonly BoringWordStream boringWordStream;
-        private bool boringWordsWasRead;
         private readonly ICloudDrawer cloudDrawer;
         private readonly IImageSaver imageSaver;
         private readonly ITagCloudGenerator tagCloudGenerator;
@@ -18,6 +17,7 @@ namespace TagsCloud
         private readonly ITagGenerator tagGenerator;
         private readonly SimpleWordCounter wordCounter;
         private readonly WordStream wordStream;
+        private bool boringWordsWasRead;
 
         public TagCloudVisualizer(WordStream wordStream,
             ITagGenerator tagGenerator,

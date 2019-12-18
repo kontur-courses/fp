@@ -11,11 +11,12 @@ namespace TagsCloud.ErrorHandling
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -23,11 +24,13 @@ namespace TagsCloud.ErrorHandling
 
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -42,6 +45,7 @@ namespace TagsCloud.ErrorHandling
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -112,8 +116,7 @@ namespace TagsCloud.ErrorHandling
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(

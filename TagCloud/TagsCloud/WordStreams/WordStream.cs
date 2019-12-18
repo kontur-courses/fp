@@ -1,20 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System;
-using TagsCloud.Interfaces;
 using TagsCloud.ErrorHandling;
-using TagsCloud.WordValidators;
+using TagsCloud.Interfaces;
 
 namespace TagsCloud.WordStreams
 {
     public class WordStream
     {
-        private readonly IWordHandler wordHandler;
-        private readonly ITextSplitter textSplitter;
         private readonly ITextReader fileReader;
+        private readonly ITextSplitter textSplitter;
+        private readonly IWordHandler wordHandler;
         private readonly List<IWordValidator> wordValidators;
 
-        public WordStream(IWordHandler wordHandler, ITextSplitter textSplitter, ITextReader fileReader, IEnumerable<IWordValidator> wordValidators)
+        public WordStream(IWordHandler wordHandler, ITextSplitter textSplitter, ITextReader fileReader,
+            IEnumerable<IWordValidator> wordValidators)
         {
             this.textSplitter = textSplitter;
             this.wordHandler = wordHandler;
@@ -30,9 +30,9 @@ namespace TagsCloud.WordStreams
         public Result<IEnumerable<string>> GetWords(string path)
         {
             return fileReader.ReadFile(path)
-            .Then(text => textSplitter.SplitText(text))
-            .Then(words => words.Select(wordHandler.ProcessWord))
-            .Then(GetValidWords);
+                .Then(text => textSplitter.SplitText(text))
+                .Then(words => words.Select(wordHandler.ProcessWord))
+                .Then(GetValidWords);
         }
 
         private Result<IEnumerable<string>> GetValidWords(IEnumerable<string> words)
@@ -41,12 +41,13 @@ namespace TagsCloud.WordStreams
             var errors = new List<string>();
             var validWords = wordValidators.Aggregate(result, (current, wordValidator) => current.Where(word =>
                 {
-                    var isValid = wordValidator.IsValidWord(word).OnFail(errorMsg => errors.Add(word + ": " + errorMsg));
+                    var isValid = wordValidator.IsValidWord(word)
+                        .OnFail(errorMsg => errors.Add(word + ": " + errorMsg));
                     return isValid.IsSuccess && isValid.Value;
                 })
                 .ToList());
-            return errors.Count != 0 
-                ? Result.Fail<IEnumerable<string>>(string.Join(Environment.NewLine, errors)) 
+            return errors.Count != 0
+                ? Result.Fail<IEnumerable<string>>(string.Join(Environment.NewLine, errors))
                 : Result.Ok(validWords.AsEnumerable());
         }
     }

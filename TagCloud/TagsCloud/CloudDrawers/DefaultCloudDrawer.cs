@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloud.ErrorHandling;
 using TagsCloud.Interfaces;
 using TagsCloud.TagGenerators;
-using TagsCloud.ErrorHandling;
 
 namespace TagsCloud.CloudDrawers
 {
     public class DefaultCloudDrawer : ICloudDrawer
     {
-        public Result<Image> Paint(IEnumerable<(Tag tag, Rectangle position)> resultTagCloud, Size imageSize, Color backgroundColor, int widthOfBorder = 0)
+        public Result<Image> Paint(IEnumerable<(Tag tag, Rectangle position)> resultTagCloud, Size imageSize,
+            Color backgroundColor, int widthOfBorder = 0)
         {
             var tagCloudRectangles = resultTagCloud as (Tag tag, Rectangle position)[] ?? resultTagCloud.ToArray();
             var borderOfRectangles = GetBorderOfRectangles(tagCloudRectangles);
@@ -28,6 +29,7 @@ namespace TagsCloud.CloudDrawers
                     position.Left - borderOfRectangles.Value.X + widthOfBorder,
                     position.Top - borderOfRectangles.Value.Y + widthOfBorder);
             }
+
             return Result.Ok<Image>(new Bitmap(image, imageSize));
         }
 

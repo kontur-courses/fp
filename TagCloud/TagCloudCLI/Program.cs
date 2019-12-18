@@ -1,28 +1,28 @@
-﻿using Autofac;
-using TagsCloud.FileReader;
+﻿using System;
+using Autofac;
 using CommandLine;
-using TagsCloud.Interfaces;
-using System;
 using MyStemWrapper;
+using TagsCloud;
+using TagsCloud.CloudDrawers;
+using TagsCloud.ErrorHandling;
+using TagsCloud.FileReader;
+using TagsCloud.FontGenerators;
+using TagsCloud.ImageSavers;
+using TagsCloud.Interfaces;
 using TagsCloud.PathValidators;
 using TagsCloud.Splitters;
-using TagsCloud.WordStreams;
+using TagsCloud.TagCloudGenerators;
 using TagsCloud.TagGenerators;
 using TagsCloud.WordCounter;
 using TagsCloud.WordHandlers;
+using TagsCloud.WordStreams;
 using TagsCloud.WordValidators;
-using TagsCloud.FontGenerators;
-using TagsCloud.CloudDrawers;
-using TagsCloud.ImageSavers;
-using TagsCloud.TagCloudGenerators;
-using TagsCloud;
-using TagsCloud.ErrorHandling;
 
 namespace TagCloudCLI
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var parsedArgs = Parser.Default.ParseArguments<Options>(args);
 
@@ -37,9 +37,11 @@ namespace TagCloudCLI
         {
             var container = new ContainerBuilder();
             TypesCollector.GetTypeGenerationLayoutersByName(settings.generationAlgorithmName)
-                .Then(tagLayouterType => container.RegisterType(tagLayouterType).As<ITagCloudLayouter>().SingleInstance());
+                .Then(tagLayouterType =>
+                    container.RegisterType(tagLayouterType).As<ITagCloudLayouter>().SingleInstance());
             TypesCollector.GetTypeSplitterByName(settings.splitterName)
-                .Then(textSplitterType => container.RegisterType(textSplitterType).As<ITextSplitter>().SingleInstance());
+                .Then(textSplitterType =>
+                    container.RegisterType(textSplitterType).As<ITextSplitter>().SingleInstance());
             TypesCollector.GetColorSchemeByName(settings.colorSchemeName)
                 .Then(colorSchemeType => container.RegisterType(colorSchemeType).As<IColorScheme>().SingleInstance());
             container.RegisterType<BoringWordStream>().AsSelf().SingleInstance();
@@ -59,7 +61,7 @@ namespace TagCloudCLI
             container.RegisterType<DefaultWordValidator>().AsImplementedInterfaces().SingleInstance();
             container.RegisterType<BoringWordsValidator>().AsSelf().SingleInstance();
             container.RegisterType<SimpleFontGenerator>().AsImplementedInterfaces().SingleInstance();
-            container.RegisterInstance(new MyStem { PathToMyStem = settings.pathToMystem, Parameters = "-li" })
+            container.RegisterInstance(new MyStem {PathToMyStem = settings.pathToMystem, Parameters = "-li"})
                 .AsSelf().SingleInstance();
             return container.Build().AsResult();
         }
