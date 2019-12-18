@@ -12,7 +12,7 @@ namespace FileSenderRailway
     public interface IRecognizer
     {
         /// <exception cref="FormatException">Not recognized</exception>
-        Document Recognize(FileContent file);
+        Result<Document> Recognize(FileContent file);
     }
 
     public interface ISender
@@ -36,10 +36,8 @@ namespace FileSenderRailway
         public string Format { get; private  set; }
         public byte[] Content { get; private  set; }
 
-        public Document ChangeContent(byte[] content)
-        {
-            return new Document(Name, content, Created, Format);
-        }
+        public Document WithContent(byte[] newContent) 
+            => new Document(Name, newContent, Created, Format);
     }
 
     public class FileContent

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -57,7 +54,8 @@ namespace TagsCloudContainer.Layouter
         public void ThrowArgumentException_With_NegativeOrZeroSize(int width, int height)
         {
             var rectSize = new Size(width, height);
-            ccl.Invoking(y => y.PutNextRectangle(rectSize)).Should().Throw<ArgumentException>();
+            var res = ccl.PutNextRectangle(rectSize);
+            res.IsSuccess.Should().BeFalse();
         }
 
         private void CheckNotIntersection_EachWithEach()

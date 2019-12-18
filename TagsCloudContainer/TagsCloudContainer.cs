@@ -1,6 +1,7 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System;
+using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Layouter;
 
@@ -36,22 +37,40 @@ namespace TagsCloudContainer
             imageSaver = fileSaver;
         }
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            var text = textReader.Read(inputFile);
-            var textFiltered = wordsFilter.FilterWords(text);
-            var wordsCount = wordsCounter.CountWords(textFiltered);
-            var sizes = wordsToSizesConverter.GetSizesOf(wordsCount).ToArray();
-            sizes = sizes.OrderByDescending(x => x.Item2.Width).ThenBy(x => x.Item2.Height).ToArray();
+            var sizesResult = textReader.Read(inputFile)
+                .Then(wordsFilter.FilterWords)
+                .Then(wordsCounter.CountWords)
+                .Then(wordsToSizesConverter.GetSizesOf)
+                .OnFail(Console.WriteLine);
 
-            CCL.Center = new Point(CCL.Center.X, CCL.Center.Y - sizes[0].Item2.Height);
-            for (var i = 0; i < sizes.Length; i++)
+            if (sizesResult.IsSuccess)
             {
-                CCL.PutNextRectangle(sizes[i].Item2);
+                var sizes = sizesResult.GetValueOrThrow().OrderByDescending(x => x.Item2.Width)
+                    .ThenBy(x => x.Item2.Height).ToArray();
+
+                CCL.Center = new Point(CCL.Center.X, CCL.Center.Y - sizes[0].Item2.Height);
+                Result<Rectangle> rectangleRes = Result.Fail<Rectangle>("");
+                for (var i = 0; i < sizes.Length; i++)
+                {
+                    rectangleRes = CCL.PutNextRectangle(sizes[i].Item2)
+                        .RefineError("Probably you are giving too small size")
+                        .OnFail(Console.WriteLine);
+                    if (!rectangleRes.IsSuccess)
+                        break;
+                }
+
+                if (rectangleRes.IsSuccess)
+                {
+                    var result = visualiser.DrawRectangles(CCL, sizes).Then(inp => imageSaver.Save(inp, outputFile))
+                        .OnFail(Console.WriteLine);
+                    if (result.IsSuccess)
+                        return Result.Ok();
+                }
             }
 
-            var bitmap = visualiser.DrawRectangles(CCL, sizes);
-            imageSaver.Save(bitmap, outputFile);
+            return Result.Fail<None>("File wasn't created. Try again.");
         }
     }
 }

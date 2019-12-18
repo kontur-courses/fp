@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using NUnit.Framework;
-using FluentAssertions;
 using FakeItEasy;
 using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Layouter;

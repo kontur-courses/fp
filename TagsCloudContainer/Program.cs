@@ -105,23 +105,21 @@ namespace TagsCloudContainer
             var parserResult = parser.ParseArguments<CMDOptions>(args);
             parserResult.WithNotParsed(errs => DisplayHelp(parserResult, errs));
             Result<Config> cfg;
-            parserResult.WithParsed<CMDOptions>(O =>
+            parserResult.WithParsed(O =>
             {
-                cfg = Config.FromArguments(O);
-                if (!cfg.IsSuccess)
+                cfg = Config.FromArguments(O).OnFail(Console.WriteLine);
+                if (cfg.IsSuccess)
                 {
-                    Console.WriteLine(cfg.Error);
-                    return;
+                    var container = new WindsorContainer();
+                    container = SetUpContainer(container, cfg.GetValueOrThrow());
+
+                    var tagsContainer = container.Resolve<TagsCloudContainer>();
+                    tagsContainer.Perform()
+                        .Then(inp => Console.WriteLine(
+                            $"Your file was succesfuly created and saved into {cfg.GetValueOrThrow().OutputFilePath}" +
+                            $".{cfg.GetValueOrThrow().FileFormat}"))
+                        .OnFail(Console.WriteLine);
                 }
-
-                var container = new WindsorContainer();
-                container = SetUpContainer(container, cfg.GetValueOrThrow());
-
-                var tagsContainer = container.Resolve<TagsCloudContainer>();
-                tagsContainer.Perform();
-
-                Console.WriteLine($"Your file was succesfuly created and saved into {cfg.GetValueOrThrow().OutputFilePath}" +
-                                  $".{cfg.GetValueOrThrow().FileFormat}");
             });
         }
     }

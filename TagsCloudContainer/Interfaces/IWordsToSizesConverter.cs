@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudContainer.Interfaces
 {
@@ -8,6 +9,6 @@ namespace TagsCloudContainer.Interfaces
         Size Size { get; set; }
         int MaxHeight { get; set; }
         int MaxWidth { get; set; }
-        IEnumerable<(string, Size)> GetSizesOf(Dictionary<string, int> dictionary);
+        Result<IEnumerable<(string, Size)>> GetSizesOf(Dictionary<string, int> dictionary);
     }
 }

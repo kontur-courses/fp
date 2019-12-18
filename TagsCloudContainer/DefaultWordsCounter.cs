@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ResultOf;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer
@@ -10,8 +11,10 @@ namespace TagsCloudContainer
         {
         }
 
-        public Dictionary<string, int> CountWords(IEnumerable<string> arr)
+        public Result<Dictionary<string, int>> CountWords(IEnumerable<string> arr)
         {
+            if (arr.ToArray().Length == 0)
+                return Result.Fail<Dictionary<string, int>>("Count of words should be > 0");
             var res = new Dictionary<string, int>();
             foreach (var str in arr)
             {
