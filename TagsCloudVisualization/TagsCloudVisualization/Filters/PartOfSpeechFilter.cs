@@ -1,7 +1,6 @@
-﻿using System;
+﻿using ResultPatterLibrary;
 using System.Collections.Generic;
 using TagsCloudVisualization.Constunts;
-using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Structures;
 using TagsCloudVisualization.WordAnalyzers;
 

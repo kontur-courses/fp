@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using DocoptNet;
-using TagsCloudVisualization.Results;
+using ResultPatterLibrary;
 using TagsCloudVisualization.Settings;
 using TagsCloudVisualization.TextRenderers;
 using TagsCloudVisualization.WordAnalyzers;

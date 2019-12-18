@@ -86,7 +86,6 @@
     <Compile Include="Converter\IConverter.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\PartOfSpeechFilter.cs" />
-    <Compile Include="Results\Result.cs" />
     <Compile Include="Structures\WordInfo.cs" />
     <Compile Include="TextRenderers\DefaultRenderer.cs" />
     <Compile Include="TextRenderers\ITextRenderer.cs" />
@@ -117,7 +116,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ResultPatterLibrary\ResultPatterLibrary.csproj">
+      <Project>{f6d5d85b-5c5a-4440-a00c-0cc25d019412}</Project>
+      <Name>ResultPatterLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

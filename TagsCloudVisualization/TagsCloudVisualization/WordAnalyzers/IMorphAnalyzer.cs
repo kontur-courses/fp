@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using TagsCloudVisualization.Results;
+﻿using ResultPatterLibrary;
+using System.Collections.Generic;
 using TagsCloudVisualization.Structures;
 
 namespace TagsCloudVisualization.WordAnalyzers

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Structures;
+using ResultPatterLibrary;
 
 namespace TagsCloudVisualization.Filters
 {

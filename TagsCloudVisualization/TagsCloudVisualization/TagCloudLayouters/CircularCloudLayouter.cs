@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ResultPatterLibrary;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Geometry;
-using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.TagCloudLayouters

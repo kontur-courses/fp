@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "YandexStem", "YandexStem", 
 		TagsCloudVisualization\bin\Debug\YandexStem\mystem.exe = TagsCloudVisualization\bin\Debug\YandexStem\mystem.exe
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultPatterLibrary", "ResultPatterLibrary\ResultPatterLibrary.csproj", "{F6D5D85B-5C5A-4440-A00C-0CC25D019412}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{6E8B2C0C-E721-48B0-970D-D6C26C68302A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E8B2C0C-E721-48B0-970D-D6C26C68302A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E8B2C0C-E721-48B0-970D-D6C26C68302A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6D5D85B-5C5A-4440-A00C-0CC25D019412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6D5D85B-5C5A-4440-A00C-0CC25D019412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6D5D85B-5C5A-4440-A00C-0CC25D019412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6D5D85B-5C5A-4440-A00C-0CC25D019412}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

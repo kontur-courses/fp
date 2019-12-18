@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using TagsCloudVisualization.Results;
+﻿using ResultPatterLibrary;
+using System.Drawing;
 
 namespace TagsCloudVisualization.TagCloudLayouters
 {

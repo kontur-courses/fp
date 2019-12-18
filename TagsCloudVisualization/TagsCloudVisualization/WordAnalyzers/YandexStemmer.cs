@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ResultPatterLibrary;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using TagsCloudVisualization.Constunts;
 using TagsCloudVisualization.Converter;
-using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Structures;
 
 namespace TagsCloudVisualization.WordAnalyzers.YandexAnalyzer

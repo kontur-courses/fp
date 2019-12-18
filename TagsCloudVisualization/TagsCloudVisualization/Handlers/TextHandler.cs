@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ResultPatterLibrary;
 using Spire.Doc;
-using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.Handlers

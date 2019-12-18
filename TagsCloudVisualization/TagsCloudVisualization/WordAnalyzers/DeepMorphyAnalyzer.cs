@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 using TagsCloudVisualization.Structures;
 using TagsCloudVisualization.Converter;
 using TagsCloudVisualization.Constunts;
-using TagsCloudVisualization.Results;
 using System;
+using ResultPatterLibrary;
 
 namespace TagsCloudVisualization.WordAnalyzers
 {
