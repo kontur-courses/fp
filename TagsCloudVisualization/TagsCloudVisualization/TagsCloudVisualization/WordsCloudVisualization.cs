@@ -27,7 +27,7 @@ namespace TagsCloudVisualization.TagsCloudVisualization
                 var size = imageSettings.TextRenderer.GetRectangleSize(imageSettings, wordInfo);
                 var rectangle = circularCloudLayouter.PutNextRectangle(size);
                 if (!rectangle.IsSuccess)
-                    Environment.Exit(1);
+                    continue;
                 wordsRectangles.Add(wordInfo.Key, rectangle.Value);
             }
 

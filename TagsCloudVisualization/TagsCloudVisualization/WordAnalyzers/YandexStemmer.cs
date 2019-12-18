@@ -61,8 +61,8 @@ namespace TagsCloudVisualization.WordAnalyzers.YandexAnalyzer
                         continue;
                     yield return Result
                                         .Of(() => new WordInfo(GetStandardForm(stemmedString), Convert(DefinePartOfSpeech(stemmedString))))
-                                        .OnFail(error => Console.WriteLine($"'{stemmedString}' won't be used in tag cloud," +
-                                                    $" because this is boring or foreign string"));
+                                        .OnFail(error => Console.WriteLine($"'{stemmedString}' won't be used " +
+                                                $"in tag cloud, because this is boring or foreign string"));
                 }
             }
         }

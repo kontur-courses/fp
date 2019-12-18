@@ -2,6 +2,7 @@
 using System.Drawing;
 using DocoptNet;
 using ResultPatterLibrary;
+using TagsCloudVisualization.Exceptions;
 using TagsCloudVisualization.Settings;
 using TagsCloudVisualization.TextRenderers;
 using TagsCloudVisualization.WordAnalyzers;
@@ -59,7 +60,7 @@ namespace TagsCloudVisualization.Parsers
             var heightResult = IntParser(arguments["--image_height"].Value);
             var textSizeResult = IntParser(arguments["--text_size"].Value);
             if (!widthResult.IsSuccess || !heightResult.IsSuccess || !textSizeResult.IsSuccess)
-                Environment.Exit(1);
+                Environment.Exit((int)ErrorsCodes.IncorrectInput);
             var font = arguments["--font"].Value.ToString();
             var colors = arguments["--colors"].Value.ToString();
             var size = new Size(widthResult.Value, heightResult.Value);

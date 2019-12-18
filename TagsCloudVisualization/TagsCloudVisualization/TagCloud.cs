@@ -7,7 +7,6 @@ using TagsCloudVisualization.TagsCloudVisualization;
 using TagsCloudVisualization.TextRenderers;
 using TagsCloudVisualization.WordAnalyzers;
 
-
 namespace TagsCloudVisualization
 {
     internal class TagCloud

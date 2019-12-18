@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Constants\PartsOfSpeach.cs" />
     <Compile Include="Converter\IConverter.cs" />
+    <Compile Include="Exceptions\ErrorsCodes.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\PartOfSpeechFilter.cs" />
     <Compile Include="Structures\WordInfo.cs" />

@@ -23,8 +23,8 @@ namespace TagsCloudVisualization.TagCloudLayouters
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                return Result.Fail<Rectangle>($"Width and height should be greater than 0. " +
-                                              $"Your size was: {rectangleSize}")
+                return Result.Fail<Rectangle>($"This rectangle won't be added, because width and height " +
+                                              $"should be greater than 0. Your size was: {rectangleSize}")
                              .OnFail(error => Console.WriteLine(error));
 
             foreach (var corner in corners.Values)
@@ -41,9 +41,9 @@ namespace TagsCloudVisualization.TagCloudLayouters
                 }
             }
 
-            return Result.Fail<Rectangle>("We can't find the place to add your rectangle, " +
-                                                     "because rectangle was out of permissible range :(. " +
-                                                     $"Your size was: {rectangleSize}")
+            return Result.Fail<Rectangle>("This rectangle won't be added, because we can't find the place " +
+                                          "to add your rectangle, because rectangle was out of permissible" +
+                                          " range :(. Your size was: {rectangleSize}")
                          .OnFail(error => Console.WriteLine(error));    
         }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ResultPatterLibrary;
 using Spire.Doc;
+using TagsCloudVisualization.Exceptions;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.Handlers
@@ -45,7 +46,7 @@ namespace TagsCloudVisualization.Handlers
             var frequencyDict = new Dictionary<string, int>();
             var result = GetText(textSettings.FileExtention, textSettings.PathToFile);
             if (!result.IsSuccess)
-                Environment.Exit(1);
+                Environment.Exit((int)ErrorsCodes.FileNotFound);
             foreach (var value in textSettings.Filter.GetFilteredValues(result.Value))
                     frequencyDict[value] = frequencyDict.TryGetValue(value, out var frequency) ? ++frequency : 1;
             return frequencyDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, y => y.Value);
