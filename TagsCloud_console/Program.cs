@@ -24,46 +24,40 @@ namespace TagsCloud_console
 
             Parser.Default.ParseArguments<InputOptions>(args).WithParsed(opts =>
             {
-                var knownFilters = container.Resolve<IFilter[]>().Cast<object>();
-                var selectedFilters = ParseObjects(knownFilters, opts.Filters.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                    .OnFail(msg => Console.Error.WriteLine(msg));
-                if (!selectedFilters.IsSuccess) return;
+                ITagsCloudLayouter selectedLayouter = default;
+                ITagsCloudRenderer selectedRenderer = default;
+                IFilter[] selectedFilters = default;
 
-                var knownLayouters = container.Resolve<ITagsCloudLayouter[]>().Cast<object>();
-                var parsedLayouters = ParseObjects(knownLayouters, new string[] { opts.Layouter })
-                    .OnFail(msg => Console.Error.WriteLine(msg));
-                if (!parsedLayouters.IsSuccess) return;
-                if (parsedLayouters.GetValueOrThrow().Length != 1)
+                if (DetermineLayouter(opts, container)
+                .Then(layouter => selectedLayouter = layouter)
+                .Then(layouter => DetermineRenderer(opts, container))
+                .Then(renderer => selectedRenderer = renderer)
+                .Then(renderer => DetermineFilters(opts, container))
+                .Then(filters =>
                 {
-                    Console.Error.WriteLine($"One layouter must be selected");
-                    return;
-                }
-                var selectedLayouter = parsedLayouters.GetValueOrThrow()[0];
-
-                var knownRenderers = container.Resolve<ITagsCloudRenderer[]>().Cast<object>();
-                var parsedRenderers = ParseObjects(knownRenderers, new string[] { opts.Renderer })
-                    .OnFail(msg => Console.Error.WriteLine(msg));
-                if (!parsedRenderers.IsSuccess) return;
-                if (parsedRenderers.GetValueOrThrow().Length != 1)
+                    selectedFilters = filters;
+                    var wordsLoader = container.Resolve<WordsLoader>();
+                    return wordsLoader.LoadWords(opts.InputFile);
+                })
+                .Then(words =>
                 {
-                    Console.Error.WriteLine($"One renderer must be selected");
-                    return;
-                }
-                var selectedRenderer = parsedRenderers.GetValueOrThrow()[0];
-
-                var wordsLoader = container.Resolve<WordsLoader>();
-                var wordsFilterer = container.Resolve<WordsFilterer>(new NamedParameter("filters", selectedFilters.GetValueOrThrow().Cast<IFilter>().ToArray()));
-                var tagCloud = container.Resolve<TagsCloudGenerator>(
-                    new NamedParameter("layouter", selectedLayouter as ITagsCloudLayouter),
-                    new NamedParameter("renderer", selectedRenderer as ITagsCloudRenderer));
-                var imageSaveHelper = container.Resolve<ImageSaveHelper>();
-
-                if (wordsLoader.LoadWords(opts.InputFile)
-                    .Then(words => wordsFilterer.FilterWords(words))
-                    .Then(filteredWords => tagCloud.GenerateCloud(filteredWords))
-                    .Then(image => imageSaveHelper.SaveTo(image, opts.OutputFile))
-                    .OnFail(msg => Console.Error.WriteLine(msg))
-                    .IsSuccess)
+                    var wordsFilterer = container.Resolve<WordsFilterer>(new NamedParameter("filters", selectedFilters));
+                    return wordsFilterer.FilterWords(words);
+                })
+                .Then(filteredWords =>
+                {
+                    var tagCloud = container.Resolve<TagsCloudGenerator>(
+                        new NamedParameter("layouter", selectedLayouter),
+                        new NamedParameter("renderer", selectedRenderer));
+                    return tagCloud.GenerateCloud(filteredWords);
+                })
+                .Then(image =>
+                {
+                    var imageSaveHelper = container.Resolve<ImageSaveHelper>();
+                    return imageSaveHelper.SaveTo(image, opts.OutputFile);
+                })
+                .OnFail(msg => Console.Error.WriteLine(msg))
+                .IsSuccess)
                     Console.WriteLine("OK");
             });
 
@@ -71,7 +65,40 @@ namespace TagsCloud_console
             Console.ReadKey();
         }
 
-        private static Result<object[]> ParseObjects(IEnumerable<object> knownObjects, string[] settings)
+        private static Result<IFilter[]> DetermineFilters(InputOptions opts, IContainer container)
+        {
+            var knownFilters = container.Resolve<IFilter[]>();
+            var parseRes = ParseObjects(knownFilters, opts.Filters.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            return parseRes.IsSuccess
+                ? parseRes.GetValueOrThrow().Cast<IFilter>().ToArray().AsResult()
+                : Result.Fail<IFilter[]>(parseRes.Error);
+        }
+
+        private static Result<ITagsCloudLayouter> DetermineLayouter(InputOptions opts, IContainer container)
+        {
+            var knownLayouters = container.Resolve<ITagsCloudLayouter[]>();
+            var parseRes = ParseObjects(knownLayouters, opts.Layouter);
+            if (parseRes.IsSuccess)
+                return parseRes.GetValueOrThrow().Length != 1
+                    ? Result.Fail<ITagsCloudLayouter>($"One layouter must be selected")
+                    : (parseRes.GetValueOrThrow()[0] as ITagsCloudLayouter).AsResult();
+            else
+                return Result.Fail<ITagsCloudLayouter>(parseRes.Error);
+        }
+
+        private static Result<ITagsCloudRenderer> DetermineRenderer(InputOptions opts, IContainer container)
+        {
+            var knownRenderers = container.Resolve<ITagsCloudRenderer[]>();
+            var parseRes = ParseObjects(knownRenderers, opts.Renderer);
+            if (parseRes.IsSuccess)
+                return parseRes.GetValueOrThrow().Length != 1
+                    ? Result.Fail<ITagsCloudRenderer>($"One renderer must be selected")
+                    : (parseRes.GetValueOrThrow()[0] as ITagsCloudRenderer).AsResult();
+            else
+                return Result.Fail<ITagsCloudRenderer>(parseRes.Error);
+        }
+
+        private static Result<object[]> ParseObjects(IEnumerable<object> knownObjects, params string[] settings)
         {
             var res = new List<object>();
 

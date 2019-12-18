@@ -8,7 +8,7 @@ namespace TagsCloud.FileParsers
 
         public Result<ImmutableList<string>> Parse(string filename)
         {
-            return Result.Of(() => ImmutableList<string>.Empty.AddRange("Съешь ещё этих мягких французских булок да выпей же чаю".Split(' ')));
+            return Result.Of(() => ImmutableList.Create("Съешь ещё этих мягких французских булок да выпей же чаю".Split(' ')));
         }
     }
 }

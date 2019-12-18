@@ -21,14 +21,16 @@ namespace TagsCloud.Layouters
                 biggestItem.Rectangle.Y = -biggestItem.Rectangle.Height / 2;
 
                 var rnd = new Random();
-                for (var i = 1; i < sortedItems.Count; i++)
+                foreach (var i in Enumerable.Range(1, sortedItems.Count - 1))
                 {
                     var size = sortedItems[i].Rectangle.Size;
                     var minVertexDist = double.MaxValue;
                     Rectangle bestRect = default;
 
-                    for (var angle = rnd.NextDouble() * Math.PI / 18; angle < 1.99 * Math.PI; angle += (Math.PI / 18))
+                    var angleOffset = rnd.NextDouble();
+                    foreach (var a in Enumerable.Range(0, 36))
                     {
+                        var angle = angleOffset + a * Math.PI / 18;
                         var closestRectOnRay = GetClosestPlaceWithoutIntersects(angle, size, sortedItems.Take(i));
                         var farthestVertexDist = closestRectOnRay.GetDistanceOfFathestFromCenterVertex();
                         if (farthestVertexDist < minVertexDist)

@@ -28,8 +28,7 @@ namespace TagsCloud
 
         private ImmutableList<(string Tag, int Rate)> DetermineTags(ImmutableList<string> words)
         {
-            return ImmutableList<(string Tag, int Rate)>.Empty
-                .AddRange(words.GroupBy(word => word).Select(group => (group.Key, group.Count())));
+            return ImmutableList.ToImmutableList(words.GroupBy(word => word).Select(group => (group.Key, group.Count())));
         }
 
         private Result<ImmutableList<LayoutItem>> GetLayout(ImmutableList<(string Tag, int Rate)> tags)

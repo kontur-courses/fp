@@ -196,7 +196,7 @@ namespace TagsCloud.Layouters
 
         public static void SaveRectanglesToPngFile(IEnumerable<Rectangle> rectangles, string filename)
         {
-            if (rectangles.Count() == 0)
+            if (!rectangles.Any())
                 throw new ArgumentException("There are no items.");
 
             var left = rectangles.Min(r => r.Left);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using TagsCloud.Layouters;
@@ -34,7 +33,7 @@ namespace TagsCloud.Renderers
             }).RefineError("Renderer can't determine sizes of tags.");
         }
 
-        private float FontSizeByTagRate(int minRate, int maxRate, int rate)
+        protected float FontSizeByTagRate(int minRate, int maxRate, int rate)
         {
             if (rate <= minRate) return MinFontSize;
             if (rate >= maxRate) return MaxFontSize;
@@ -43,7 +42,7 @@ namespace TagsCloud.Renderers
 
         public virtual Result<Image> Render(ImmutableList<LayoutItem> layoutItems)
         {
-            if (layoutItems.Count() == 0)
+            if (layoutItems.IsEmpty)
                 return Result.Fail<Image>("There are no tags to render.");
 
             return Result.Of(() =>

@@ -15,14 +15,13 @@ namespace TagsCloud
             this.imageSavers = imageSavers;
         }
 
-        public void SaveTo(Image image, string filename)
+        public Result<None> SaveTo(Image image, string filename)
         {
-            var fileExtension = Path.GetExtension(filename);
-            var imageSaver = imageSavers.FirstOrDefault(p =>
-                p.FileExtensions.Any(ext => ext == fileExtension));
-            if (imageSaver == null)
-                throw new ArgumentException($"Can't select file saver for this file format ({filename})");
-            imageSaver.Save(image, filename);
+            return Result.Of(() => Path.GetExtension(filename))
+                .Then(fileExtension => imageSavers.First(p => p.FileExtensions.Any(ext => ext == fileExtension)))
+                .ReplaceError(msg => $"Can't select file saver for this file format ({filename})")
+                .Then(imageSaver => imageSaver.Save(image, filename))
+                .RefineError($"Can't save image to file '{filename}'");
         }
     }
 }

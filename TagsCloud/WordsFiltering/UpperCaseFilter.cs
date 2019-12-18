@@ -7,7 +7,7 @@ namespace TagsCloud.WordsFiltering
     {
         public Result<ImmutableList<string>> FilterWords(ImmutableList<string> words)
         {
-            return Result.Of(() => ImmutableList<string>.Empty.AddRange(words.Select(w => w.ToUpper())));
+            return Result.Of(() => ImmutableList.ToImmutableList(words.Select(w => w.ToUpper())));
         }
     }
 }

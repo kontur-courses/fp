@@ -52,9 +52,10 @@ namespace TagsCloud.WordsFiltering
         public Result<ImmutableList<string>> FilterWords(ImmutableList<string> words)
         {
             return Task.Run(() => GetGrammems(words)).Result
-                .Then(grammems => ImmutableList<string>.Empty.AddRange(grammems
+                .Then(grammems => ImmutableList.ToImmutableList(grammems
                     .Select(grammem => grammem.Split(new char[] { '=', ',' }, 4))
-                    .Where(grInfo => (grInfo.Length == 2 || (grInfo.Length >= 3 && grInfo[2] != "сокр")) && allowDict.TryGetValue(grInfo[1], out var isAllow) && isAllow)
+                    .Where(grInfo => grInfo.Length == 2 || (grInfo.Length >= 3 && grInfo[2] != "сокр"))
+                    .Where(grInfo => allowDict.TryGetValue(grInfo[1], out var isAllow) && isAllow)
                     .Select(grInfo => grInfo[0].Trim('?'))));
         }
 
