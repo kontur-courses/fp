@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Autofac;
+using Autofac.Core;
 using CommandLine;
 using CSharpFunctionalExtensions;
 using TagsCloudLibrary;
@@ -46,6 +47,9 @@ namespace TagsCloudCLI
             
             [Option("font", Required = false, Default = "Arial", HelpText = "Font family for text")]
             public string Font { get; set; }
+
+            [Option("no-mystem", Required = false, Default = false, HelpText = "Disable all myStem dependent features")]
+            public bool DisableMyStem { get; set; }
         }
 
         static void Main(string[] args)
@@ -56,7 +60,9 @@ namespace TagsCloudCLI
 
             if (options == null) return;
 
-            var tagsCloudGenerator = BuildTagsCloudGenerator(options);
+            var container = BuildTagsCloudGenerator(options);
+
+            var tagsCloudGenerator = container.Resolve<TagsCloudGenerator>();
 
             var (isSuccess, _, error) = tagsCloudGenerator.GenerateFromFile(options.InputFile, options.OutputFile, options.ImageWidth, options.ImageHeight);
 
@@ -65,13 +71,13 @@ namespace TagsCloudCLI
                 : $"Failed to generate tags cloud: {error}");
         }
 
-        private static TagsCloudGenerator BuildTagsCloudGenerator(Options options)
+        private static IContainer BuildTagsCloudGenerator(Options options)
         {
             var builder = new ContainerBuilder();
 
             builder.RegisterType<TxtReader>().As<IReader>();
 
-            if (options.IsText)
+            if (options.IsText && !options.DisableMyStem)
                 builder.RegisterType<LiteratureExtractor>().As<IWordsExtractor>();
             else
                 builder.RegisterType<LineByLineExtractor>().As<IWordsExtractor>();
@@ -79,34 +85,23 @@ namespace TagsCloudCLI
             RegisterBoringWordsConfig(builder, options);
 
             builder.RegisterType<ToLowercase>().As<IPreprocessor>();
-            builder.RegisterType<ExcludeBoringWords>().As<IPreprocessor>();
+            
+            if (!options.DisableMyStem)
+                builder.RegisterType<ExcludeBoringWords>().As<IPreprocessor>();
+
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>();
 
-            CheckAndRegisterTagsCloudGeneratorConfig(builder, options);
+            builder.RegisterInstance(new TagsCloudGeneratorConfig
+            {
+                FontFamilyName = options.Font
+            }).As<TagsCloudGeneratorConfig>();
 
             RegisterColorer(builder, options);
 
             RegisterImageWriter(builder, options);
 
             builder.RegisterType<TagsCloudGenerator>().AsSelf();
-
-            var container = builder.Build();
-
-            return container.Resolve<TagsCloudGenerator>();
-        }
-
-        private static void CheckAndRegisterTagsCloudGeneratorConfig(ContainerBuilder builder, Options options)
-        {
-            if (!FontFamilyExists(options.Font))
-            {
-                Console.WriteLine($"Cannot find font {options.Font} reverting to {FontFamily.GenericSansSerif.Name}");
-                options.Font = FontFamily.GenericSansSerif.Name;
-            }
-
-            builder.RegisterInstance(new TagsCloudGeneratorConfig
-            {
-                FontFamilyName = options.Font
-            }).As<TagsCloudGeneratorConfig>();
+            return builder.Build();
         }
 
         private static void RegisterBoringWordsConfig(ContainerBuilder builder, Options options)
@@ -123,9 +118,16 @@ namespace TagsCloudCLI
             }
             else
             {
+                var pos = PartsOfSpeechListFromStrings(options.PartsOfSpeechWhiteList);
+                if (pos.IsFailure)
+                {
+                    Console.WriteLine(pos.Error);
+                    return;
+                }
+
                 builder.RegisterInstance(
                         new BoringWordsConfig(
-                            PartsOfSpeechListFromStrings(options.PartsOfSpeechWhiteList)
+                            pos.Value
                         ))
                     .As<BoringWordsConfig>();
             }
@@ -166,7 +168,7 @@ namespace TagsCloudCLI
             }
         }
 
-        private static List<Word.PartOfSpeech> PartsOfSpeechListFromStrings(IEnumerable<string> partsOfSpeechWhitelist)
+        private static Result<List<Word.PartOfSpeech>> PartsOfSpeechListFromStrings(IEnumerable<string> partsOfSpeechWhitelist)
         {
             var posWhitelist = new List<Word.PartOfSpeech>();
             foreach (var pos in partsOfSpeechWhitelist)
@@ -177,28 +179,11 @@ namespace TagsCloudCLI
                 }
                 else
                 {
-                    Console.WriteLine($"{pos} is not a correct part of speech. Ignored.");
+                    Result.Failure($"{pos} is not a correct part of speech.");
                 }
             }
 
-            return posWhitelist;
-        }
-
-        private static bool FontFamilyExists(string fontFamilyName, FontStyle fontStyle = FontStyle.Regular)
-        {
-            bool result;
-
-            try
-            {
-                using (var family = new FontFamily(fontFamilyName))
-                    result = family.IsStyleAvailable(fontStyle);
-            }
-            catch (ArgumentException)
-            {
-                result = false;
-            }
-
-            return result;
+            return Result.Ok(posWhitelist);
         }
     }
 }

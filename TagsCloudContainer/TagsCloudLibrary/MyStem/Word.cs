@@ -40,7 +40,7 @@ namespace TagsCloudLibrary.MyStem
             const string errorMessage = "Given string is not a mystem conclusion";
             string initialString = "", initialForm = "";
 
-            return 
+            return
                 Result.Ok()
                 .Map(() => WordAndLemmaRegex.Match(myStemConclusion))
                 .Ensure(match => match.Success, errorMessage)
@@ -114,7 +114,10 @@ namespace TagsCloudLibrary.MyStem
                     pos = PartOfSpeech.Verb;
                     break;
                 default:
-                    return Result.Failure<PartOfSpeech>("Wrong part of speech was given. This is probably because of wrong version of mystem you are using.");
+                    return Result.Failure<PartOfSpeech>(
+                        "Wrong part of speech was given. This is probably because of wrong version of mystem you are using. " +
+                        "If you don't have access to myStem executable you can disable all myStem dependent features using --no-mystem option"
+                        );
             }
 
             return Result.Ok(pos);

@@ -47,6 +47,7 @@ namespace TagsCloudLibrary
         {
 
             return Result.Ok()
+                .Ensure(() => FontFamilyExists(tagsCloudGeneratorConfig.FontFamilyName), $"Cannot find font {tagsCloudGeneratorConfig.FontFamilyName}. Try using another font or default font.")
                 .Ensure(() => imageWidth > 0 && imageHeight > 0, "Image size is incorrect")
                 .Ensure(() => File.Exists(inputFile), $"File {inputFile} not found")
                 .Bind(() => reader.Read(inputFile))
@@ -136,6 +137,23 @@ namespace TagsCloudLibrary
 
                     });
                 });
+        }
+
+        private static bool FontFamilyExists(string fontFamilyName, FontStyle fontStyle = FontStyle.Regular)
+        {
+            bool result;
+
+            try
+            {
+                using (var family = new FontFamily(fontFamilyName))
+                    result = family.IsStyleAvailable(fontStyle);
+            }
+            catch (ArgumentException)
+            {
+                result = false;
+            }
+
+            return result;
         }
     }
 }
