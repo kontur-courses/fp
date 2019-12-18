@@ -17,6 +17,7 @@ namespace TagsCloudContainer.CloudLayouters
                 .AsParallel()
                 .ForAll(r => graphics.DrawRectangle(pen, r.X - size.X, r.Y - size.Y, r.Width, r.Height));
             bitmap.Save(fileName);
+            pen.Dispose();
         }
 
         private static Rectangle GetSizeBitmapFromRectangles(List<Rectangle> rectangles)
