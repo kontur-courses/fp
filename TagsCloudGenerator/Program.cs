@@ -1,19 +1,20 @@
-﻿using Autofac;
-using TagsCloudGenerator.Client;
+﻿using TagsCloudGenerator.Client;
+using TagsCloudGenerator.Client.Console;
 
 namespace TagsCloudGenerator
 {
-    class Program
+    internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
-            using (var container = DependenciesBuilder.BuildContainer())
-            {
-                var client = container.Resolve<IClient>();
-                var generator = container.Resolve<ICloudGenerator>();
+            var client = GetClient();
 
-                client.Run(generator);
-            }
+            client.Run();
+        }
+
+        private static IClient GetClient()
+        {
+            return new ConsoleClient();
         }
     }
 }

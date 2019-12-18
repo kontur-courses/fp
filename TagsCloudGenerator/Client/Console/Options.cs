@@ -1,14 +1,15 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 
 namespace TagsCloudGenerator.Client.Console
 {
     public class Options
     {
         [Option("input", Required = true, HelpText = "Path to file with words")]
-        public string Path { get; set; }
+        public string InputPath { get; set; }
 
         [Option('o', "output", Required = false, Default = "cloud.png", HelpText = "Output file name")]
-        public string Output { get; set; }
+        public string OutputPath { get; set; }
 
         [Option('w', "width", Required = false, Default = 5000, HelpText = "Output image width")]
         public int ImageWidth { get; set; }
@@ -16,7 +17,7 @@ namespace TagsCloudGenerator.Client.Console
         [Option('h', "height", Required = false, Default = 5000, HelpText = "Output image height")]
         public int ImageHeight { get; set; }
 
-        [Option('b', "backgroundColor", Required = false, Default = "Black",
+        [Option('b', "backgroundColor", Required = false, Default = "White",
             HelpText = "image background color name - initial letter must be uppercase")]
         public string BackgroundColor { get; set; }
 

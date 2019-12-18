@@ -1,13 +1,22 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
+using TagsCloudGenerator.Visualizer;
 
 namespace TagsCloudGenerator.Saver
 {
     public class ImageSaver : IImageSaver
     {
-        public void Save(Bitmap bitmap, string output, ImageFormat imageFormat)
+        private readonly string outputPath;
+        private readonly ImageSettings imageSettings;
+
+        public ImageSaver(string outputPath, ImageSettings imageSettings)
         {
-            bitmap.Save(output, imageFormat);
+            this.outputPath = outputPath;
+            this.imageSettings = imageSettings;
+        }
+
+        public Result<None> Save(Bitmap bitmap)
+        {
+            return Result.OfAction(() => bitmap.Save(outputPath, imageSettings.ImageFormat));
         }
     }
 }

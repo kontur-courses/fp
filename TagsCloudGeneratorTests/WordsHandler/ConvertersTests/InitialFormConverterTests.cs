@@ -19,13 +19,11 @@ namespace TagsCloudGeneratorTests.WordsHandler.ConvertersTests
         }
 
         [Test]
-        public void Convert_ArgumentIsNull_ShouldThrowArgumentNullException()
+        public void Convert_ArgumentIsNull_ShouldReturnResultWithError()
         {
             Dictionary<string, int> data = null;
 
-            Action act = () => converter.Convert(data);
-
-            act.Should().Throw<ArgumentNullException>();
+            converter.Convert(data).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -46,7 +44,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.ConvertersTests
                 ["love"] = 40
             };
 
-            var actual = converter.Convert(data);
+            var actual = converter.Convert(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -68,7 +66,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.ConvertersTests
                 ["love"] = 42
             };
 
-            var actual = converter.Convert(data);
+            var actual = converter.Convert(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }

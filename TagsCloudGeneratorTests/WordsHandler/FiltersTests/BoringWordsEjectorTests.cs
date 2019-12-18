@@ -14,8 +14,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
         [SetUp]
         public void SetUp()
         {
-           filter =  new BoringWordsEjector();
-           filter.AddBoringWords(boringWords);
+           filter = new BoringWordsEjector(boringWords);
         }
 
         [Test]
@@ -29,19 +28,17 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
                 ["sofa"] = 1
             };
 
-            var actual = filter.Filter(words);
+            var actual = filter.Filter(words).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(words);
         }
 
         [Test]
-        public void Filter_ArgumentIsNull_ShouldThrowArgumentNullException()
+        public void Filter_ArgumentIsNull_ShouldReturnResultWithError()
         {
             Dictionary<string, int> words = null;
 
-            Action act = () => filter.Filter(words);
-
-            act.Should().Throw<ArgumentNullException>();
+            filter.Filter(words).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -55,7 +52,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
                 ["are"] = 1
             };
 
-            var actual = filter.Filter(words);
+            var actual = filter.Filter(words).GetValueOrThrow();
 
             actual.Should().BeEmpty();
         }
@@ -78,7 +75,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
                 ["wrong"] = 15,
             };
 
-            var actual = filter.Filter(words);
+            var actual = filter.Filter(words).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }

@@ -6,6 +6,8 @@ namespace TagsCloudGenerator.FileReaders
 {
     public class TxtFileReader : IFileReader
     {
+        public string TargetExtension => "txt";
+
         private readonly IWordsParser parser;
 
         public TxtFileReader(IWordsParser parser)
@@ -13,12 +15,13 @@ namespace TagsCloudGenerator.FileReaders
             this.parser = parser;
         }
 
-        public Dictionary<string, int> ReadWords(string path)
+        public Result<Dictionary<string, int>> ReadWords(string path)
         {
-            var text = File.ReadAllText(path);
-            var words = parser.Parse(text);
-
-            return ParseHelper.GetWordToCount(words);
+            return Result
+                .Of(() => File.ReadAllText(path))
+                .Then(text => parser.Parse(text))
+                .Then(ParseHelper.GetWordToCount)
+                .RefineError($"Count not read word from file {path}");
         }
     }
 }

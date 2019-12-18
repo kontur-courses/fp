@@ -9,14 +9,12 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
     public class PredicateFilterTests
     {
         [Test]
-        public void Filter_ArgumentIsNull_ShouldThrowArgumentNullException()
+        public void Filter_ArgumentIsNull_ShouldReturnResultWithError()
         {
             Dictionary<string, int> data = null;
             var filter = new PredicateFilter(x=> x.Value<5);
 
-            Action act = () => filter.Filter(data);
-
-            act.Should().Throw<ArgumentNullException>();
+            filter.Filter(data).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -38,7 +36,7 @@ namespace TagsCloudGeneratorTests.WordsHandler.FiltersTests
             };
             var filter = new PredicateFilter(x => x.Value > 5);
 
-            var actual = filter.Filter(data);
+            var actual = filter.Filter(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }

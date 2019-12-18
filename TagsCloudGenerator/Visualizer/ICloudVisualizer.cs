@@ -5,6 +5,6 @@ namespace TagsCloudGenerator.Visualizer
 {
     public interface ICloudVisualizer
     {
-        Bitmap Draw(Cloud cloud, ImageSettings settings);
+        Result<Bitmap> Draw(Cloud cloud);
     }
 }

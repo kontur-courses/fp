@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudGenerator;
 using TagsCloudGenerator.WordsHandler;
 using TagsCloudGenerator.WordsHandler.Converters;
 using TagsCloudGenerator.WordsHandler.Filters;
@@ -19,7 +20,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
 
         private class TakeTenElementsFilter : IWordsFilter
         {
-            public Dictionary<string, int> Filter(Dictionary<string, int> wordToCount)
+            public Result<Dictionary<string, int>> Filter(Dictionary<string, int> wordToCount)
             {
                 var validWords = new Dictionary<string, int>();
                 var i = 0;
@@ -36,7 +37,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
 
         private class SpaceAdder : IConverter
         {
-            public Dictionary<string, int> Convert(Dictionary<string, int> wordToCount)
+            public Result<Dictionary<string, int>> Convert(Dictionary<string, int> wordToCount)
             {
                 return wordToCount.ToDictionary(word => word.Key + " ", word => word.Value);
             }
@@ -47,8 +48,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
         {
             var filter = new TakeTenElementsFilter();
             var converter = new SpaceAdder();
-            var realFilter = new BoringWordsEjector();
-            realFilter.AddBoringWords(boringWords);
+            var realFilter = new BoringWordsEjector(boringWords);
             var realConverter = new LowercaseConverter();
 
             handlerWithOnlyOneFilter = new WordHandler(new List<IWordsFilter>{realFilter}, new List<IConverter>{converter, realConverter});
@@ -73,7 +73,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
                 ["cat"] = 40,
             };
 
-            var actual = handlerWithOnlyOneConverter.GetValidWords(data);
+            var actual = handlerWithOnlyOneConverter.GetValidWords(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -87,7 +87,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
                 ["haVe"] = 33
             };
 
-            var actual = handlerWithOnlyOneConverter.GetValidWords(data);
+            var actual = handlerWithOnlyOneConverter.GetValidWords(data).GetValueOrThrow();
 
             actual.Should().BeEmpty();
         }
@@ -124,7 +124,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
                 ["math"] = 44
             };
 
-            var actual = handlerWithOnlyOneConverter.GetValidWords(data);
+            var actual = handlerWithOnlyOneConverter.GetValidWords(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -156,7 +156,7 @@ namespace TagsCloudGeneratorTests.WordsHandler
                 ["water "] = 33,
             };
 
-            var actual = handlerWithOnlyOneFilter.GetValidWords(data);
+            var actual = handlerWithOnlyOneFilter.GetValidWords(data).GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }

@@ -13,9 +13,11 @@ namespace TagsCloudGenerator.WordsHandler.Filters
             this.removePredicate = removePredicate;
         }
 
-        public Dictionary<string, int> Filter(Dictionary<string, int> wordToCount)
+        public Result<Dictionary<string, int>> Filter(Dictionary<string, int> wordToCount)
         {
-            return wordToCount.Where(el => !removePredicate(el)).ToDictionary(el => el.Key, el => el.Value);
+            return Result.Of(() => wordToCount
+                .Where(el => !removePredicate(el))
+                .ToDictionary(el => el.Key, el => el.Value));
         }
     }
 }

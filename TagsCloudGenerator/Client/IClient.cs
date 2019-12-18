@@ -2,6 +2,6 @@
 {
     public interface IClient
     {
-        void Run(ICloudGenerator generator);
+        void Run();
     }
 }

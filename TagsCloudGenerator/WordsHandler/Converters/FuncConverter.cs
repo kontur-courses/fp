@@ -13,11 +13,15 @@ namespace TagsCloudGenerator.WordsHandler.Converters
             this.convert = convert;
         }
 
-        public Dictionary<string, int> Convert(Dictionary<string, int> wordToCount)
+        public Result<Dictionary<string, int>> Convert(Dictionary<string, int> wordToCount)
         {
-            if (wordToCount == null)
-                throw new ArgumentNullException();
+            return Result
+                .Of(() => ConvertByFunc(wordToCount))
+                .RefineError("Couldn't convert by func");
+        }
 
+        private Dictionary<string, int> ConvertByFunc(Dictionary<string, int> wordToCount)
+        {
             return wordToCount.Select(convert).ToDictionary(x => x.Key, x => x.Value);
         }
     }

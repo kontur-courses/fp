@@ -13,5 +13,22 @@ namespace TagsCloudGenerator.CloudLayouter
             Center = center;
             Words = new List<Word>();
         }
+
+        public Cloud AddWord(Word word)
+        {
+            Words.Add(word);
+
+            return this;
+        }
+
+        public Cloud AddWords(IEnumerable<Word> words)
+        {
+            foreach (var word in words)
+            {
+                AddWord(word);
+            }
+
+            return this;
+        }
     }
 }

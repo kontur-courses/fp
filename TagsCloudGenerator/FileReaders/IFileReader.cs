@@ -4,6 +4,7 @@ namespace TagsCloudGenerator.FileReaders
 {
     public interface IFileReader
     {
-        Dictionary<string, int> ReadWords(string path);
+        string TargetExtension { get; }
+        Result<Dictionary<string, int>> ReadWords(string path);
     }
 }

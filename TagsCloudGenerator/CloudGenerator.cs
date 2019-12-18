@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using TagsCloudGenerator.CloudLayouter;
 using TagsCloudGenerator.WordsHandler;
 
@@ -16,11 +15,11 @@ namespace TagsCloudGenerator
             this.layouter = layouter;
         }
 
-        public Cloud Generate(Dictionary<string, int> wordsToCount, Font font)
+        public Result<Cloud> Generate(Dictionary<string, int> wordsToCount)
         {
-            var validWords = handler.GetValidWords(wordsToCount);
-
-            return layouter.LayoutWords(validWords, font);
+            return handler.GetValidWords(wordsToCount)
+                .Then(layouter.LayoutWords)
+                .RefineError("Generator error");
         }
     }
 }

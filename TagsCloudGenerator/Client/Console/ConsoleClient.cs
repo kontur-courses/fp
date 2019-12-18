@@ -1,36 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
+using Autofac;
 using CommandLine;
+using TagsCloudGenerator.FileReaders;
 using TagsCloudGenerator.Saver;
 using TagsCloudGenerator.Tools;
 using TagsCloudGenerator.Visualizer;
-using TagsCloudGenerator.WordsHandler.Filters;
 
 namespace TagsCloudGenerator.Client.Console
 {
     public class ConsoleClient : IClient
     {
-        private readonly IImageSaver saver;
-        private readonly ICloudVisualizer visualizer;
-        private readonly BoringWordsEjector boringWordsEjector;
-
-        public ConsoleClient(IImageSaver saver, ICloudVisualizer visualizer, BoringWordsEjector boringWordsEjector)
-        {
-            this.saver = saver;
-            this.visualizer = visualizer;
-            this.boringWordsEjector = boringWordsEjector;
-        }
-
-        public void Run(ICloudGenerator generator)
+        public void Run()
         {
             Parser
                 .Default
                 .ParseArguments<Options>(Environment.GetCommandLineArgs())
-                .WithParsed(options => Run(generator, options))
+                .WithParsed(Run)
                 .WithNotParsed(HandleErrors);
         }
 
@@ -42,71 +28,31 @@ namespace TagsCloudGenerator.Client.Console
                 System.Console.WriteLine(error);
         }
 
-        private void Run(ICloudGenerator generator, Options options)
+        private void Run(Options options)
         {
-            if (options.PathToBoringWords != null)
-                LoadBoringWords(options.PathToBoringWords);
-
-
-            var imageSettings = GetImageSettings(options);
-
-            var input = options.Path;
-
-            var extension = PathHelper.GetFileExtension(input);
-            var reader = ReaderFactory.GetReaderFor(extension);
-            var words = reader.ReadWords(options.Path);
-            var cloud = generator.Generate(words, imageSettings.Font);
-            var bitmap = visualizer.Draw(cloud, imageSettings);
-
-            saver.Save(bitmap, options.Output, imageSettings.ImageFormat);
+            ConsoleDependenciesBuilder
+                .BuildContainer(options)
+                .Then(container => Execute(container, options))
+                .OnFail(error => System.Console.WriteLine($"Couldn't create tag cloud: {error}"));
         }
 
-        private void LoadBoringWords(string path)
+        private static Result<None> Execute(ILifetimeScope container, Options options)
         {
-            var extension = PathHelper.GetFileExtension(path);
-            var boringWordsReader = ReaderFactory.GetReaderFor(extension);
-            var words = new List<string>();
-
-            try
+            using (container)
             {
-                words = boringWordsReader.ReadWords(path).Select(x => x.Key).ToList();
+                var generator = container.Resolve<ICloudGenerator>();
+                var readerFactory = container.Resolve<IReaderFactory>();
+                var saver = container.Resolve<IImageSaver>();
+                var visualizer = container.Resolve<ICloudVisualizer>();
+
+                return PathHelper.GetFileExtension(options.InputPath)
+                    .AsResult()
+                    .Then(readerFactory.GetReaderFor)
+                    .Then(reader => reader.ReadWords(options.InputPath))
+                    .Then(generator.Generate)
+                    .Then(visualizer.Draw)
+                    .Then(saver.Save);
             }
-            catch (FileNotFoundException e)
-            {
-                System.Console.WriteLine("Fail load file with boring words: " + e.Message);
-            }
-
-            boringWordsEjector.AddBoringWords(words);
-        }
-
-        private static ImageSettings GetImageSettings(Options options)
-        {
-            var colors = GetColorsByNames(options.Colors);
-            var backgroundColor = Color.FromName(options.BackgroundColor);
-            var format = GetImageFormat(PathHelper.GetFileExtension(options.Output));
-            var font = new Font(options.Font, options.FontSize);
-
-            return new ImageSettings(options.ImageWidth, options.ImageHeight, backgroundColor, colors, format, font);
-        }
-
-        private static List<Color> GetColorsByNames(string names)
-        {
-            var colors = names.Split(new[] {", "}, StringSplitOptions.None);
-
-            return colors.Select(Color.FromName).ToList();
-        }
-
-        private static ImageFormat GetImageFormat(string extension)
-        {
-            ImageFormat result = null;
-            var info = typeof(ImageFormat).GetProperties().FirstOrDefault(p =>
-                p.Name.Equals(extension, StringComparison.InvariantCultureIgnoreCase));
-
-            if (info != null)
-                result = info.GetValue(info) as ImageFormat;
-
-
-            return result;
         }
     }
 }

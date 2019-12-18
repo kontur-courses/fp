@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Console\ConsoleClient.cs" />
+    <Compile Include="Client\Console\ConsoleDependenciesBuilder.cs" />
     <Compile Include="Client\IClient.cs" />
     <Compile Include="CloudLayouter\CircularCloudLayouter.cs" />
     <Compile Include="CloudLayouter\Cloud.cs" />
@@ -67,11 +68,11 @@
     <Compile Include="CloudLayouter\ILayoutPointsGenerator.cs" />
     <Compile Include="CloudLayouter\Word.cs" />
     <Compile Include="CloudGenerator.cs" />
-    <Compile Include="DependenciesBuilder.cs" />
-    <Compile Include="FileReaders\DocFileReader.cs" />
+    <Compile Include="FileReaders\IReaderFactory.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="Tools\IWordsParser.cs" />
     <Compile Include="Tools\PathHelper.cs" />
-    <Compile Include="Tools\ReaderFactory.cs" />
+    <Compile Include="FileReaders\ReaderFactory.cs" />
     <Compile Include="Tools\ParseHelper.cs" />
     <Compile Include="FileReaders\XmlFileReader.cs" />
     <Compile Include="ICloudGenerator.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="Saver\ImageSaver.cs" />
     <Compile Include="Tools\WordsParser.cs" />
     <Compile Include="Visualizer\CloudVisualizer.cs" />
-    <Compile Include="Visualizer\ColoringRandomColorAlgorithm.cs" />
     <Compile Include="Visualizer\ImageSettings.cs" />
     <Compile Include="Visualizer\ICloudVisualizer.cs" />
     <Compile Include="Visualizer\IColoringAlgorithm.cs" />

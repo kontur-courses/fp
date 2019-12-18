@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace TagsCloudGenerator.Tools
 {
@@ -9,10 +8,7 @@ namespace TagsCloudGenerator.Tools
         {
             var extension = Path.GetExtension(path);
 
-            if (extension == null)
-                throw new ArgumentException("invalid path");
-
-            return extension.Substring(1);
+            return extension?.Substring(1);
         }
     }
 }

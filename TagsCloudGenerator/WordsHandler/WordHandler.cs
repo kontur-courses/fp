@@ -16,22 +16,27 @@ namespace TagsCloudGenerator.WordsHandler
             this.converters = converters.ToList();
         }
 
-        public Dictionary<string, int> GetValidWords(Dictionary<string, int> wordToCount)
+        public Result<Dictionary<string, int>> GetValidWords(Dictionary<string, int> wordToCount)
         {
-            var validWords = ApplyConverters(wordToCount);
-            validWords = ApplyFilters(validWords);
-
-            return validWords;
+            return wordToCount
+                .AsResult()
+                .Then(words => ApplyConverters(words))
+                .Then(words => ApplyFilters(words))
+                .RefineError("Couldn't get valid words");
         }
 
-        private Dictionary<string, int> ApplyFilters(Dictionary<string, int> words)
+        private Result<Dictionary<string, int>> ApplyFilters(Result<Dictionary<string, int>> words)
         {
-            return filters.Aggregate(words, (current, filter) => filter.Filter(current));
+            return filters
+                .Aggregate(words, (current, filter) => current.Then(filter.Filter))
+                .RefineError("Applying filters got error");
         }
 
-        private Dictionary<string, int> ApplyConverters(Dictionary<string, int> words)
+        private Result<Dictionary<string, int>> ApplyConverters(Result<Dictionary<string, int>> words)
         {
-            return converters.Aggregate(words, (current, converter) => converter.Convert(current));
+            return converters
+                .Aggregate(words, (current, converter) => current.Then(converter.Convert))
+                .RefineError("Applying converters got error");
         }
     }
 }

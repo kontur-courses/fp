@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TagsCloudGenerator.Tools;
+using TagsCloudGenerator.Visualizer;
 
 namespace TagsCloudGenerator.CloudLayouter
 {
@@ -11,41 +12,43 @@ namespace TagsCloudGenerator.CloudLayouter
     {
         private readonly Cloud cloud;
         private readonly IEnumerator<Point> layoutPointsEnumerator;
+        private readonly ImageSettings imageSettings;
 
-        public CircularCloudLayouter(Point center, ILayoutPointsGenerator layoutPointsGenerator)
+        public CircularCloudLayouter(Point center, ILayoutPointsGenerator layoutPointsGenerator, ImageSettings imageSettings)
         {
-            this.layoutPointsEnumerator = layoutPointsGenerator.GetPoints().GetEnumerator();
+            this.imageSettings = imageSettings;
+            layoutPointsEnumerator = layoutPointsGenerator.GetPoints().GetEnumerator();
+
             cloud = new Cloud(center);
         }
 
-        public Cloud LayoutWords(Dictionary<string, int> wordToCount, Font font)
+        public Result<Cloud> LayoutWords(Dictionary<string, int> wordToCount)
         {
-            var sortedWordsToCount = wordToCount.OrderByDescending(x => x.Value);
-
-            foreach (var item in sortedWordsToCount)
-            {
-                var word = item.Key;
-                var count = item.Value;
-                var size = GetSizeOfWord(word, count, font);
-                PutNextWord(word, count, size);
-            }
-
-            return cloud;
+            return Result
+                .Of(() => GetWords(wordToCount))
+                .Then(words => cloud.AddWords(words))
+                .RefineError("Couldn't layout words");
         }
 
-        private static Size GetSizeOfWord(string word, int count, Font font)
+        private IEnumerable<Word> GetWords(Dictionary<string, int> wordToCount)
+        {
+            return wordToCount
+                .OrderByDescending(x => x.Value)
+                .Select(x => (word: x, size: GetSizeOfWord(x.Key, x.Value)))
+                .Select(p => GetNextWord(p.word.Key, p.word.Value, p.size));
+        }
+
+        private Size GetSizeOfWord(string word, int count)
         {
             return TextRenderer.MeasureText(word,
-                new Font(font.FontFamily, font.Size * count));
+                new Font(imageSettings.Font.FontFamily, imageSettings.Font.Size * count));
         }
 
-        private Word PutNextWord(string value, int count, Size rectangleSize)
+        private Word GetNextWord(string value, int count, Size rectangleSize)
         {
             var position = GetRectangleLocation(rectangleSize);
             var rectangle = new Rectangle(position, rectangleSize);
             var word = new Word(value, rectangle, count);
-
-            cloud.Words.Add(word);
 
             return word;
         }
@@ -53,6 +56,7 @@ namespace TagsCloudGenerator.CloudLayouter
         private Point GetRectangleLocation(Size rectangleSize)
         {
             (bool success, Point location) nextLocation;
+
             do
             {
                 nextLocation = TryGetNextLocation(rectangleSize);
@@ -79,7 +83,6 @@ namespace TagsCloudGenerator.CloudLayouter
 
             return (NotIntersectsWithOther(rectangle), upperLeftCorner);
         }
-
 
         private Point TryMove(Size rectangleSize, Point from, Point to)
         {

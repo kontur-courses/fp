@@ -6,6 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudGenerator.CloudLayouter;
 using TagsCloudGenerator.Tools;
+using TagsCloudGenerator.Visualizer;
 using TagsCloudGeneratorTests.ToolsForTests;
 
 namespace TagsCloudGeneratorTests.CloudLayouterTests
@@ -15,7 +16,8 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
     {
         private readonly Point center = new Point(7, 11);
         private CircularCloudLayouter layouter;
-        private readonly Font font = SystemFonts.DefaultFont;
+        private readonly ImageSettings imageSettings 
+            = new ImageSettings(-1, -1, Color.AliceBlue, null, null, SystemFonts.DefaultFont);
 
         private readonly Dictionary<string, int> wordToCount =
             new Dictionary<string, int> {["fish"] = 2, ["sun"] = 1, ["sofa"] = 1, ["cat"] = 40};
@@ -24,13 +26,13 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         public void SetUp()
         {
             var spiralGenerator = new SpiralGenerator(center, 0.5, Math.PI / 16);
-            layouter = new CircularCloudLayouter(center, spiralGenerator);
+            layouter = new CircularCloudLayouter(center, spiralGenerator, imageSettings);
         }
 
         [Test]
         public void GetTagsCloudCenter_ShouldReturnRightPoint()
         {
-            var actual = layouter.LayoutWords(wordToCount, font);
+            var actual = layouter.LayoutWords(wordToCount).GetValueOrThrow();
 
             actual.Center.Should().Be(center);
         }
@@ -39,7 +41,7 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         public void LayoutWords_OnlyOneWord_CloudShouldContainsThisWord()
         {
             var word = "text";
-            var cloud = layouter.LayoutWords(new Dictionary<string, int> {[word] = 1}, font);
+            var cloud = layouter.LayoutWords(new Dictionary<string, int> {[word] = 1}).GetValueOrThrow();
 
             var actual = cloud.Words.First().Value;
 
@@ -49,7 +51,7 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         [Test]
         public void LayoutWords_ShouldNotIntersection()
         {
-            var words = layouter.LayoutWords(wordToCount, font).Words;
+            var words = layouter.LayoutWords(wordToCount).GetValueOrThrow().Words;
 
             words.All(w => words.Count(y => y.Rectangle.IntersectsWith(w.Rectangle)) == 1).Should().BeTrue();
         }
@@ -57,7 +59,9 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         [Test]
         public void LayoutWords_TwoRectanglesWithEqualsSize_RectanglesShouldNotIntersects()
         {
-            var cloud = layouter.LayoutWords(new Dictionary<string, int> {["fish"] = 1, ["cat"] = 1}, font);
+            var cloud = layouter
+                .LayoutWords(new Dictionary<string, int> {["fish"] = 1, ["cat"] = 1})
+                .GetValueOrThrow();
 
             var first = cloud.Words[0].Rectangle;
             var second = cloud.Words[1].Rectangle;
@@ -68,7 +72,7 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         [Test]
         public void LayoutWords_CloudShouldContainsNWords()
         {
-            var cloud = layouter.LayoutWords(wordToCount, font);
+            var cloud = layouter.LayoutWords(wordToCount).GetValueOrThrow();
             var actualWords = cloud.Words.Select(x => x.Value).ToList();
 
             actualWords.Should().BeEquivalentTo(wordToCount.Keys);
@@ -82,7 +86,7 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         {
             var manyWordToCount = CreateWordToCount(wordsCount);
 
-            var words = layouter.LayoutWords(manyWordToCount, font).Words;
+            var words = layouter.LayoutWords(manyWordToCount).GetValueOrThrow().Words;
 
             foreach (var word in words)
             {
@@ -103,7 +107,7 @@ namespace TagsCloudGeneratorTests.CloudLayouterTests
         {
             var manyWordsToCount = CreateWordToCount(wordsCount);
 
-            var words = layouter.LayoutWords(manyWordsToCount, font).Words;
+            var words = layouter.LayoutWords(manyWordsToCount).GetValueOrThrow().Words;
 
             var rectangles = words.Select(x => x.Rectangle).ToList();
             var hull = GeometryHelper.BuildConvexHull(rectangles);

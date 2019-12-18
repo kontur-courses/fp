@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NHunspell;
 
@@ -17,38 +15,22 @@ namespace TagsCloudGenerator.WordsHandler.Converters
             this.pathToDictionary = pathToDictionary;
         }
 
-        public Dictionary<string, int> Convert(Dictionary<string, int> wordToCount)
+        public Result<Dictionary<string, int>> Convert(Dictionary<string, int> wordToCount)
         {
-            if (wordToCount == null)
-                throw new ArgumentNullException();
+            return Result
+                .Of(() => ConvertToInitial(wordToCount))
+                .RefineError($"Couldn't convert to initial form");
+        }
 
-            var converted = new Dictionary<string, int>();
-
-            try
+        private Dictionary<string, int> ConvertToInitial(Dictionary<string, int> wordToCount)
+        {
+            using (var hunspell = new Hunspell(pathToAff, pathToDictionary))
             {
-                using (var hunspell = new Hunspell(pathToAff, pathToDictionary))
-                {
-                    foreach (var word in wordToCount)
-                    {
-                        var stem = hunspell.Stem(word.Key).LastOrDefault();
-
-                        if (stem == null)
-                            continue;
-
-                        if (!converted.ContainsKey(stem))
-                            converted.Add(stem, 0);
-
-                        converted[stem] += word.Value;
-                    }
-                }
+                return wordToCount
+                    .GroupBy(word => hunspell.Stem(word.Key).LastOrDefault())
+                    .Where(e => e.Key != null)
+                    .ToDictionary(e => e.Key, e => e.Sum(k => k.Value));
             }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine("failed to convert words to initial form: " + e.Message);
-                return wordToCount;
-            }
-
-            return converted;
         }
     }
 }

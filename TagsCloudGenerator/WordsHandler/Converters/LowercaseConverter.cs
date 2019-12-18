@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TagsCloudGenerator.WordsHandler.Converters
 {
     public class LowercaseConverter : IConverter
     {
-        public Dictionary<string, int> Convert(Dictionary<string, int> wordToCount)
+        public Result<Dictionary<string, int>> Convert(Dictionary<string, int> wordToCount)
         {
-            if (wordToCount == null)
-                throw new ArgumentNullException();
+            return Result
+                .Of(() => ConvertToLower(wordToCount))
+                .RefineError("Couldn't convert to lowercase");
+        }
 
-            var converted = new Dictionary<string, int>();
-
-            foreach (var el in wordToCount)
-            {
-                var newKey = el.Key.ToLower();
-
-                if (!converted.ContainsKey(newKey))
-                    converted.Add(newKey, el.Value);
-                else
-                    converted[newKey]++;
-            }
-
-            return converted;
+        private static Dictionary<string, int> ConvertToLower(Dictionary<string, int> wordToCount)
+        {
+            return wordToCount
+                .GroupBy(x => x.Key.ToLower())
+                .ToDictionary(x => x.Key, x => x.Sum(y => y.Value));
         }
     }
 }
