@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultPattern;
 using TagsCloudGenerator.ShapeGenerator;
 
 namespace TagsCloudGenerator.CloudPrepossessing
@@ -24,10 +25,10 @@ namespace TagsCloudGenerator.CloudPrepossessing
             this(center, new ArchimedeanShape(center, 0.5 / (2 * Math.PI)))
         { }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if(rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("Size of rectangle can't be less than zero.");
+                return Result.Fail<Rectangle>($"Size {rectangleSize} for rectangle can't be less than zero.");
 
             while (true)
             {
@@ -36,7 +37,7 @@ namespace TagsCloudGenerator.CloudPrepossessing
                 if (rectangles.Any(rectVariant.IntersectsWith)) continue;
 
                 rectangles.Add(rectVariant);
-                return rectVariant;
+                return rectVariant.AsResult();
             }
         }
 

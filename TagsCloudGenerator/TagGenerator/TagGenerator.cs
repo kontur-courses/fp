@@ -21,25 +21,23 @@ namespace TagsCloudGenerator
             var elements = parsedElements.GetValueOrThrow();
             elements = cloudFormat.TagOrderPreform.OrderEnumerable(elements);
             
-            var result = elements
-                .Select(element => FormingCloudTag(element, cloudFormat, tagPlacer))
-                .ToList();
+            var result = new List<CloudTag>();
+            foreach (var element in elements)
+            {
+                var font = new Font(cloudFormat.TagTextFontFamily,
+                    Math.Min(cloudFormat.MaximalFontSize, element.Count * cloudFormat.FontSizeMultiplier));
+                var size = new Size(TextRenderer.MeasureText(element.Element, font).Width,
+                    TextRenderer.MeasureText(element.Element, font).Height);
+
+                var rect = tagPlacer.PutNextRectangle(size);
+                if (!rect.IsSuccess)
+                    return Result.Fail<List<CloudTag>>(rect.Error);
+
+                result.Add(new CloudTag(rect.GetValueOrThrow(), element.Element,
+                    cloudFormat.TagTextFormat, font));
+            }
 
             return result.AsResult();
-        }
-
-        private static CloudTag FormingCloudTag(TextElement element, CloudFormat cloudFormat, ITagsPrepossessing tagPlacer)
-        {
-            var font = new Font(cloudFormat.TagTextFontFamily,
-                Math.Min(cloudFormat.MaximalFontSize, element.Count * cloudFormat.FontSizeMultiplier));
-
-            var size = new Size(TextRenderer.MeasureText(element.Element, font).Width,
-                TextRenderer.MeasureText(element.Element, font).Height);
-
-            var rect = tagPlacer.PutNextRectangle(size);
-
-            return new CloudTag(rect, element.Element,
-                cloudFormat.TagTextFormat, font);
         }
     }
 }

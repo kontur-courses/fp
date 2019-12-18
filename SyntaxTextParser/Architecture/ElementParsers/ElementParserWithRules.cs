@@ -23,7 +23,7 @@ namespace SyntaxTextParser.Architecture
         public override Result<List<TextElement>> ParseElementsFromText(string text)
         {
             var textElements = new Dictionary<TypedTextElement, int>();
-            var elements = Result.Of(() => ParseText(text));
+            var elements = Result.Of(() => ParseText(text).ToList());
 
             if (!elements.IsSuccess)
                 return Result.Fail<List<TextElement>>(elements.Error);
