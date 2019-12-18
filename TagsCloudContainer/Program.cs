@@ -2,6 +2,7 @@
 using Castle.Windsor;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+using TagsCloudContainer.Core;
 using TagsCloudContainer.Core.ColoringAlgorithms;
 using TagsCloudContainer.Core.ImageBuilder;
 using TagsCloudContainer.Core.ImageSavers;
@@ -31,6 +32,10 @@ namespace TagsCloudContainer
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel, false));
             container.Register(Component.For<IUi>()
                 .ImplementedBy<ConsoleUi>());
+            container.Register(Component.For<ApplicationCore>()
+                .LifestyleSingleton());
+            container.Register(Component.For<ReaderFinder>()
+                .LifestyleSingleton());
             container.Register(
                 Component.For<IReader>().ImplementedBy<TxtReader>(),
                 Component.For<IReader>().ImplementedBy<DocReader>());

@@ -88,15 +88,16 @@ namespace TagsCloudContainer.Core
 
         private IEnumerable<Tag> FormTags(IReadOnlyList<string> words, Font baseFont)
         {
-            return Enumerable
-                .Range(0, words.Count)
-                .Select(i =>
-                {
-                    var word = words[i];
-                    var font = new Font(baseFont.Name, 40 - i);
-                    var size = TextRenderer.MeasureText(word, font);
-                    return new Tag(word, layoutAlgorithm.PutNextRectangle(size), font);
-                });
+            var tags = new List<Tag>();
+            for (var i = 0; i < words.Count; i++)
+            {
+                var word = words[i];
+                var font = new Font(baseFont.Name, 40 - i);
+                var size = TextRenderer.MeasureText(word, font);
+                tags.Add(new Tag(word, layoutAlgorithm.PutNextRectangle(size), font));
+            }
+
+            return tags;
         }
     }
 }
