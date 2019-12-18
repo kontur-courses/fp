@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudGenerator", "TagCloudGenerator\TagCloudGenerator.csproj", "{7108C41E-8ABA-4103-8B58-910A52017DCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudGenerator_Tests", "TagCloudGenerator_Tests\TagCloudGenerator_Tests.csproj", "{45EAD98A-667B-41A0-B9E9-5326A9ABA7EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7108C41E-8ABA-4103-8B58-910A52017DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7108C41E-8ABA-4103-8B58-910A52017DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7108C41E-8ABA-4103-8B58-910A52017DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7108C41E-8ABA-4103-8B58-910A52017DCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45EAD98A-667B-41A0-B9E9-5326A9ABA7EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45EAD98A-667B-41A0-B9E9-5326A9ABA7EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45EAD98A-667B-41A0-B9E9-5326A9ABA7EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45EAD98A-667B-41A0-B9E9-5326A9ABA7EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
