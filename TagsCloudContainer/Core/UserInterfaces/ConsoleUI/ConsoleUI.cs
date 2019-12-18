@@ -55,7 +55,7 @@ namespace TagsCloudContainer.Core.UserInterfaces.ConsoleUI
             FormBoringWords(options.FileWithBoringWords)
                 .Then(words => filter.UserExcludedWords = words)
                 .OnFail(HandleError);
-            var rightWords = FormWordsFromFile(options.InputFile)
+            var rightWords = FormWords(options.InputFile)
                 .Then(words => words.MostCommon(30)
                     .Select(kvp => kvp.Item1)
                     .ToArray())
@@ -67,12 +67,11 @@ namespace TagsCloudContainer.Core.UserInterfaces.ConsoleUI
                 .OnFail(HandleError);
         }
 
-        private Result<HashSet<string>> FormWordsFromFile(string path)
+        private Result<HashSet<string>> FormWords(string path)
         {
-            var reader = readerFinder.Find(path);
-            if (reader == null)
-                return Result.Fail<HashSet<string>>("Формат входного файла не поддерживается");
-            return reader.ReadWords(path)
+            ;
+            return readerFinder.Find(path)
+                .Then(reader => reader.ReadWords(path))
                 .Then(filter.FilterWords)
                 .Then(wordConverter.ConvertWords)
                 .Then(words => words.ToHashSet());
@@ -90,7 +89,7 @@ namespace TagsCloudContainer.Core.UserInterfaces.ConsoleUI
         {
             return path == null
                 ? Result.Ok(new HashSet<string>())
-                : FormWordsFromFile(path);
+                : FormWords(path);
         }
 
         private IEnumerable<Tag> FormTags(IReadOnlyList<string> words, Font baseFont)

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ResultOf;
 
 namespace TagsCloudContainer.Core.Readers
 {
@@ -10,6 +12,12 @@ namespace TagsCloudContainer.Core.Readers
             this.readers = readers;
         }
 
-        public IReader Find(string filePath) => readers.FirstOrDefault(r => r.CanRead(filePath));
+        public Result<IReader> Find(string filePath)
+        {
+            var result = readers.FirstOrDefault(r => r.CanRead(filePath));
+            return result == null
+                ? Result.Fail<IReader>("Формат входного файла не поддерживается")
+                : Result.Ok<IReader>(result);
+        }
     }
 }
