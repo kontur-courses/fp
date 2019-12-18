@@ -23,7 +23,7 @@ namespace TagsCloudContainer.Core.ImageBuilder
             this.coloringAlgorithm = coloringAlgorithm;
         }
 
-        public Bitmap Build(string fontName, IEnumerable<Tag> tags, Size size)
+        public Bitmap Build(IEnumerable<Tag> tags, Size size)
         {
             var bitmap = new Bitmap(size.Width, size.Height);
             var graphics = Graphics.FromImage(bitmap);
@@ -32,7 +32,7 @@ namespace TagsCloudContainer.Core.ImageBuilder
             foreach (var tag in tags)
             {
                 var currentColor = coloringAlgorithm.GetNextColor();
-                graphics.DrawString(tag.Word, new Font(fontName, tag.FontSize),
+                graphics.DrawString(tag.Word, tag.Font,
                     new SolidBrush(currentColor), tag.Rectangle, stringFormat);
             }
 

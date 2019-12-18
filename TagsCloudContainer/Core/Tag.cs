@@ -6,13 +6,12 @@ namespace TagsCloudContainer.Core
     {
         public string Word { get; }
         public Rectangle Rectangle { get; }
-        public int FontSize { get; }
-
-        public Tag(string word, Rectangle rectangle, int fontSize)
+        public Font Font { get; }
+        public Tag(string word, Rectangle rectangle, Font font)
         {
             Word = word;
             Rectangle = rectangle;
-            FontSize = fontSize;
+            Font = font;
         }
     }
 }

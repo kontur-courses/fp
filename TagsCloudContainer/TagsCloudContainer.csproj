@@ -52,6 +52,7 @@
     <Compile Include="Core\ImageBuilder\IImageBuilder.cs" />
     <Compile Include="Core\LayoutAlgorithms\ILayoutAlgorithm.cs" />
     <Compile Include="Core\Readers\DocReader.cs" />
+    <Compile Include="Core\Readers\ReaderFinder.cs" />
     <Compile Include="Core\Readers\TxtReader.cs" />
     <Compile Include="Core\Readers\IReader.cs" />
     <Compile Include="Core\ImageBuilder\TagCloudImageBuilder.cs" />

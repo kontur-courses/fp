@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Core.ImageBuilder
 {
     interface IImageBuilder
     {
-        Bitmap Build(string fontName, IEnumerable<Tag> tags, Size size);
+        Bitmap Build(IEnumerable<Tag> tags, Size size);
     }
 }

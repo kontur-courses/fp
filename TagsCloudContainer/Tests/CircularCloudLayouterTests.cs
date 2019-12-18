@@ -30,11 +30,11 @@ namespace TagsCloudContainer.Tests
         {
             if (TestContext.CurrentContext.Result.Outcome != ResultState.Failure) return;
             var tags = circularCloudLayouter.Rectangles
-                .Select(rectangle => new Tag("a", rectangle, 1))
+                .Select(rectangle => new Tag("a", rectangle, new Font("Arial", 10)))
                 .ToList();
             var tagCloudImageCreator = new TagCloudImageBuilder(new RandomColoring());
             var testName = TestContext.CurrentContext.Test.FullName;
-            var bitmap = tagCloudImageCreator.Build("Arial", tags, new Size(1000, 1000));
+            var bitmap = tagCloudImageCreator.Build(tags, new Size(1000, 1000));
             new ImageSaver().Save(testName, bitmap, "jpeg");
             Console.WriteLine($"Tag cloud visualization saved to file {testName}");
         }
