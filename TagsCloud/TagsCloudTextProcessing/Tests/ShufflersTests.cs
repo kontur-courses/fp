@@ -19,7 +19,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new DescendingCountShuffler().Shuffle(tokens);
+            var shuffledTokens = new DescendingCountShuffler().Shuffle(tokens).GetValueOrThrow();
 
             shuffledTokens.Should().BeInDescendingOrder(t => t.Count);
         }
@@ -35,7 +35,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new DescendingCountShuffler().Shuffle(tokens);
+            var shuffledTokens = new DescendingCountShuffler().Shuffle(tokens).GetValueOrThrow();
 
             tokens.Should().BeEquivalentTo(shuffledTokens, o => o.WithoutStrictOrdering());
         }
@@ -51,7 +51,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new AscendingCountShuffler().Shuffle(tokens);
+            var shuffledTokens = new AscendingCountShuffler().Shuffle(tokens).GetValueOrThrow();
 
             shuffledTokens.Should().BeInAscendingOrder(t => t.Count);
         }
@@ -67,7 +67,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new AscendingCountShuffler().Shuffle(tokens);
+            var shuffledTokens = new AscendingCountShuffler().Shuffle(tokens).GetValueOrThrow();
 
             tokens.Should().BeEquivalentTo(shuffledTokens, o => o.WithoutStrictOrdering());
         }
@@ -90,7 +90,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new RandomShuffler(42).Shuffle(tokens).ToArray();
+            var shuffledTokens = new RandomShuffler(42).Shuffle(tokens).GetValueOrThrow();
 
             shuffledTokens.Should().BeEquivalentTo(expectedTokens, o => o.WithStrictOrdering());
         }
@@ -106,7 +106,7 @@ namespace TagsCloudTextProcessing.Tests
                 new Token("f", 7)
             };
 
-            var shuffledTokens = new RandomShuffler(42).Shuffle(tokens);
+            var shuffledTokens = new RandomShuffler(42).Shuffle(tokens).GetValueOrThrow();
 
             tokens.Should().BeEquivalentTo(shuffledTokens, o => o.WithoutStrictOrdering());
         }

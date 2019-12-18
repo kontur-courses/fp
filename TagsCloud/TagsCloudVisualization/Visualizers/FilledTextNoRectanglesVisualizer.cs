@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using TagCloudResult;
 using TagsCloudVisualization.Styling;
 using TagsCloudVisualization.Styling.Themes;
 
@@ -9,44 +10,63 @@ namespace TagsCloudVisualization.Visualizers
 {
     public class TextNoRectanglesVisualizer : ICloudVisualizer
     {
-        public Bitmap Visualize(ITheme theme, IEnumerable<RectangleF> rectangles,
+        public Result<Bitmap> Visualize(ITheme theme, IEnumerable<RectangleF> rectangles,
             int width = 1000, int height = 1000)
         {
             var result = new Bitmap(width, height);
+            var bordersRectangle = new RectangleF(0, 0, width, height);
             var random = new Random();
             using (var graphics = Graphics.FromImage(result))
             {
-                graphics.FillRectangle(DrawingUtils.GetBrushFromHexColor(theme.BackgroundColor), new RectangleF(0, 0, width, height));
+                graphics.Clear(DrawingUtils.GetBrushFromHexColor(theme.BackgroundColor).Color);
                 foreach (var rectangle in rectangles)
+                {
+                    if (!bordersRectangle.Contains(rectangle))
+                        return Result.Fail<Bitmap>(
+                            "Tag cloud went out of image bounds, please specify bigger image or decrease font size");
                     graphics.FillRectangle(GetRandomBrush(random, theme.TextColors), rectangle);
-                return result;
+                }
+
+                return Result.Ok(result);
             }
         }
-        
+
         private static Brush GetRandomBrush(Random random, string[] brushes)
         {
             return DrawingUtils.GetBrushFromHexColor(brushes[random.Next(0, brushes.Length)]);
         }
 
-        public Bitmap Visualize(Style style, IEnumerable<Tag> tags,
+        public Result<Bitmap> Visualize(Style style, IEnumerable<Tag> tags,
             int width = 1000, int height = 1000)
         {
             var result = new Bitmap(width, height);
+            var bordersRectangle = new RectangleF(0, 0, width, height);
             using (var graphics = Graphics.FromImage(result))
             {
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.CompositingMode = CompositingMode.SourceOver;
-                graphics.FillRectangle(DrawingUtils.GetBrushFromHexColor(style.Theme.BackgroundColor), new Rectangle(0, 0, width, height));
+                graphics.Clear(DrawingUtils.GetBrushFromHexColor(style.Theme.BackgroundColor).Color);
                 foreach (var tag in tags)
-                    DrawTag(style, tag, graphics);
+                {
+                    if (!bordersRectangle.Contains(tag.Area))
+                        return Result.Fail<Bitmap>(
+                            "Tag cloud went out of image bounds, please specify bigger image or decrease font size");
+                    var tagResult = DrawTag(style, tag, graphics);
+                    if(!tagResult.IsSuccess)
+                        return Result.Fail<Bitmap>(tagResult.Error);
+                }
                 return result;
             }
         }
 
-        private static void DrawTag(Style style, Tag tag, Graphics graphics)
+        private static Result<None> DrawTag(Style style, Tag tag, Graphics graphics)
         {
-            using (var path = GenerateTagPath(style, tag))
+            var pathResult = GenerateTagPath(style, tag);
+            if (!pathResult.IsSuccess)
+                return Result.Fail<None>(pathResult.Error);
+            
+            using (var path = pathResult.GetValueOrThrow())
             {
                 var transformMatrix = new[]
                 {
@@ -55,17 +75,23 @@ namespace TagsCloudVisualization.Visualizers
                     new PointF(tag.Area.Left, tag.Area.Bottom)
                 };
                 graphics.Transform = new Matrix(path.GetBounds(), transformMatrix);
-                
-                var tagBrush = DrawingUtils.GetBrushFromHexColor(style.TagColorizer.GetTagColor(style.Theme.TextColors,tag));
-                
+
+                var tagBrush =
+                    DrawingUtils.GetBrushFromHexColor(style.TagColorizer.GetTagColor(style.Theme.TextColors, tag));
+
                 graphics.FillPath(tagBrush, path);
             }
+            return Result.Ok();
         }
 
-        private static GraphicsPath GenerateTagPath(Style style, Tag tag)
+        private static Result<GraphicsPath> GenerateTagPath(Style style, Tag tag)
         {
-            using (var font = new Font(style.FontProperties.Name,
-                style.TagSizeCalculator.GetScaleFactor(tag.Count,style.FontProperties.MinSize)))
+            var fontResult = style.TagSizeCalculator.GetScaleFactor(tag.Count, style.FontProperties.MinSize)
+                .Then(s => style.FontProperties.CreateFont(s));
+            if (!fontResult.IsSuccess)
+                return Result.Fail<GraphicsPath>(fontResult.Error);
+
+            using (var font = fontResult.GetValueOrThrow())
             {
                 var formatCentered = new StringFormat
                 {
@@ -80,9 +106,8 @@ namespace TagsCloudVisualization.Visualizers
                     tag.Area.Height,
                     new PointF(0, 0),
                     formatCentered);
-                return path;
+                return Result.Ok(path);
             }
         }
-        
     }
 }

@@ -61,7 +61,7 @@ namespace TagsCloudVisualization.Tests
                 var time = DateTime.Now.ToString("yy-MM-dd hh-mm-ss");
                 var filename = Path.Combine(directory, $"{testName} {time}.png");
                 new TextNoRectanglesVisualizer()
-                    .Visualize(new GrayDarkTheme(), layouterRectangles)
+                    .Visualize(new GrayDarkTheme(), layouterRectangles).GetValueOrThrow()
                     .Save(filename, ImageFormat.Png);
                 Console.WriteLine($"Tag cloud visualization saved to file {filename}");
             }
@@ -71,7 +71,7 @@ namespace TagsCloudVisualization.Tests
         [TestCase(10, 0, TestName = "Height y is zero")]
         [TestCase(-1, 10, TestName = "Width x is negative")]
         [TestCase(10, -1, TestName = "Height y is negative")]
-        public void ThrowArgumentException_When(int width, int height)
+        public void Fail_When(int width, int height)
         {
             Action action = () => layouter.PutNextRectangle(new SizeF(width, height));
 
@@ -81,7 +81,7 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void AddFirstRectangleInTheCloudCenter()
         {
-            var addedRectangle = layouter.PutNextRectangle(new SizeF(100, 200));
+            var addedRectangle = layouter.PutNextRectangle(new SizeF(100, 200)).GetValueOrThrow();
 
             layouterRectangles = new List<RectangleF> {addedRectangle};
 
@@ -93,10 +93,10 @@ namespace TagsCloudVisualization.Tests
         {
             var rectangles = new List<RectangleF>
             {
-                layouter.PutNextRectangle(new SizeF(100, 200)),
-                layouter.PutNextRectangle(new SizeF(130, 250)),
-                layouter.PutNextRectangle(new SizeF(210, 160)),
-                layouter.PutNextRectangle(new SizeF(120, 115))
+                layouter.PutNextRectangle(new SizeF(100, 200)).GetValueOrThrow(),
+                layouter.PutNextRectangle(new SizeF(130, 250)).GetValueOrThrow(),
+                layouter.PutNextRectangle(new SizeF(210, 160)).GetValueOrThrow(),
+                layouter.PutNextRectangle(new SizeF(120, 115)).GetValueOrThrow()
             };
 
             rectangles.Any(r1 => rectangles.Any(r2 => r1.IntersectsWith(r2) && r1 != r2)).Should().BeFalse();
@@ -105,8 +105,8 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void AddNextRectangle_That_DoesntIntersectWithFirst()
         {
-            var firstRectangle = layouter.PutNextRectangle(new SizeF(100, 200));
-            var secondRectangle = layouter.PutNextRectangle(new SizeF(50, 100));
+            var firstRectangle = layouter.PutNextRectangle(new SizeF(100, 200)).GetValueOrThrow();
+            var secondRectangle = layouter.PutNextRectangle(new SizeF(50, 100)).GetValueOrThrow();
 
             layouterRectangles = new List<RectangleF> {firstRectangle, secondRectangle};
 
@@ -116,7 +116,7 @@ namespace TagsCloudVisualization.Tests
         [Test]
         public void NotChangeRectangleSize()
         {
-            var addedRectangle = layouter.PutNextRectangle(new SizeF(100, 200));
+            var addedRectangle = layouter.PutNextRectangle(new SizeF(100, 200)).GetValueOrThrow();
 
             layouterRectangles = new List<RectangleF> {addedRectangle};
 
@@ -128,8 +128,8 @@ namespace TagsCloudVisualization.Tests
         {
             var acceptableYAxisShift = 5;
             var acceptableXAxisShift = 25;
-            var firstRectangle = layouter.PutNextRectangle(new SizeF(100, 100));
-            var secondRectangle = layouter.PutNextRectangle(new SizeF(20, 102));
+            var firstRectangle = layouter.PutNextRectangle(new SizeF(100, 100)).GetValueOrThrow();
+            var secondRectangle = layouter.PutNextRectangle(new SizeF(20, 102)).GetValueOrThrow();
 
             layouterRectangles = new List<RectangleF> {firstRectangle, secondRectangle};
 

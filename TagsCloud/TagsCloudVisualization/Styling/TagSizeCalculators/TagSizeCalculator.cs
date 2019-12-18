@@ -1,12 +1,13 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using TagCloudResult;
 using TagsCloudTextProcessing;
 
 namespace TagsCloudVisualization.Styling.TagSizeCalculators
 {
     public abstract class TagSizeCalculator
     {
-        public SizeF GetTagSize(FontProperties fontProperties, float wordSize, Token word)
+        public Result<SizeF> GetTagSize(FontProperties fontProperties, float wordSize, Token word)
         {
             SizeF result;
             var font = new Font(fontProperties.Name, wordSize);
@@ -23,9 +24,9 @@ namespace TagsCloudVisualization.Styling.TagSizeCalculators
                 }
             }
 
-            return result;
+            return Result.Ok(result);
         }
 
-        public abstract float GetScaleFactor(int tagCount, int minFontSize);
+        public abstract Result<float> GetScaleFactor(int tagCount, int minFontSize);
     }
 }
