@@ -46,7 +46,7 @@ namespace TagCloud.CloudVisualizerSpace.CloudViewConfigurationSpace
         private void InitializeDefaultValues()
         {
             WordsCount = 10;
-            ScaleCoefficient = 100;
+            ScaleCoefficient = 10;
             ImageSize = new Size(600, 300);
             CloudCenter = new Point(300, 150);
             try
