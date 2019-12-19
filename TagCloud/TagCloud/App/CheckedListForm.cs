@@ -13,7 +13,7 @@ namespace TagCloud
 
     public class CheckedListForm<T> : Form
     {
-        private CheckedListBox checkedListBox;
+        protected readonly CheckedListBox checkedListBox;
         private readonly T[] items;
 
         public CheckedListForm(T[] items)
@@ -33,22 +33,30 @@ namespace TagCloud
                 Dock = DockStyle.Fill,
                 CheckOnClick = true,
             };
-
-            foreach (var item in items)
-                checkedListBox.Items.Add((item as ICheckable).Name);
-
-            for (int i = 0; i < checkedListBox.Items.Count; i++)
-            {
-                var item = checkedListBox.Items[i];
-                checkedListBox.SetItemChecked(i, (items[i] as ICheckable).IsChecked);
-            }
+            this.AddItems(items);
+            CheckItems(items);
             Controls.Add(checkedListBox);
             AcceptButton = okButton;
         }
 
+        protected virtual void AddItems(T[] items)
+        {
+            foreach (var item in items)
+                checkedListBox.Items.Add(item.GetType());
+        }
+
+        private void CheckItems(T[] items)
+        {
+            for (var i = 0; i < checkedListBox.Items.Count; i++)
+            {
+                var item = checkedListBox.Items[i];
+                checkedListBox.SetItemChecked(i, (items[i] as ICheckable).IsChecked);
+            }
+        }
+
         private void OkButton_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < checkedListBox.Items.Count; i++)
+            for (var i = 0; i < checkedListBox.Items.Count; i++)
             {
                 var item = checkedListBox.Items[i];
                 (items[i] as ICheckable).IsChecked = checkedListBox.GetItemChecked(i);
@@ -60,5 +68,7 @@ namespace TagCloud
             base.OnLoad(e);
             Text = "CheckedList";
         }
+
+
     }
 }

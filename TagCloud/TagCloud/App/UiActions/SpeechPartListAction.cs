@@ -15,7 +15,7 @@
 
         public void Perform()
         {
-            CheckedListForm.For(speechParts).ShowDialog();
+            SpeechPartsForm.For(speechParts).ShowDialog();
         }
     }
 }

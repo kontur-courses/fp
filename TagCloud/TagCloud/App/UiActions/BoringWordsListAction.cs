@@ -15,7 +15,7 @@
 
         public void Perform()
         {
-            CheckedListForm.For(boringWords).ShowDialog();
+            BoringWordsForm.For(boringWords).ShowDialog();
         }
     }
 }

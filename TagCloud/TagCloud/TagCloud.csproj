@@ -123,6 +123,8 @@
     <Compile Include="Infrastructure\Enums\SpeechPartEnum.cs" />
     <Compile Include="Infrastructure\Reader.cs" />
     <Compile Include="Infrastructure\Parsers\UpperCaseParser.cs" />
+    <Compile Include="App\BoringWordsForm.cs" />
+    <Compile Include="App\SpeechPartsForm.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
