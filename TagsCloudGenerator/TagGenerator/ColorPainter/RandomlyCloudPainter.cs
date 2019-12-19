@@ -3,18 +3,18 @@ using System.Drawing;
 
 namespace TagsCloudGenerator
 {
-    public class RandomlyCloudPainer : ICloudColorPainter
+    public class RandomlyCloudPainter : ICloudColorPainter
     {
         protected Color[] Palette;
         protected Random Randomizer;
         protected int GetRandomIndex() => Randomizer.Next(Palette.Length - 1);
 
-        public RandomlyCloudPainer(Color[] paletteColors, Color backgroundColor)
+        public RandomlyCloudPainter(Color[] colorsPalette, Color backgroundColor)
         {
-            if (paletteColors.Length == 0)
+            if (colorsPalette.Length == 0)
                 throw new ArgumentException("Colors palette can't be zero");
             
-            Palette = paletteColors;
+            Palette = colorsPalette;
             BackgroundColor = backgroundColor;
             Randomizer = new Random();
         }

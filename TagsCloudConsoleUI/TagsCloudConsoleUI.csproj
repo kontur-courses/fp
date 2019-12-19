@@ -50,11 +50,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleManager\ConsoleParsedOptions.cs" />
     <Compile Include="ConsoleManager\BuildOptions.cs" />
     <Compile Include="ConsoleManager\ConsoleManager.cs" />
     <Compile Include="ConsoleManager\ConsoleFormatter\DefaultConsoleFormatter.cs" />
     <Compile Include="ConsoleManager\ConsoleFormatter\IConsoleManagerFormatter.cs" />
     <Compile Include="DIPresetModules\BitmapImageCreatorModule.cs" />
+    <Compile Include="DIPresetModules\CloudSettingsSetupModule.cs" />
     <Compile Include="DIPresetModules\CircularRandomCloudModule.cs" />
     <Compile Include="DIPresetModules\DiPreset.cs" />
     <Compile Include="DIPresetModules\WordParserWithYandexToolModule.cs" />

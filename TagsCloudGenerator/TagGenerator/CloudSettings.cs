@@ -2,7 +2,7 @@
 
 namespace TagsCloudGenerator
 {
-    public class CloudFormat
+    public class CloudSettings
     {
         public readonly ICloudColorPainter ColorPainter;
         public readonly ITagOrder TagOrderPreform;
@@ -13,15 +13,15 @@ namespace TagsCloudGenerator
 
         public readonly StringFormat TagTextFormat;
 
-        public CloudFormat(ICloudColorPainter colorPainter, ITagOrder tagOrderPreform, ITagTextPreform tagTextPreform,
-            int fontSizeMultiplier, string tagTextFontFamily, int maximalFontSize, StringFormat tagTextFormat = null)
+        public CloudSettings(ICloudColorPainter colorPainter, ITagOrder tagOrderPreform, ITagTextPreform tagTextPreform,
+            int fontSizeMultiplier, FontFamily tagTextFontFamily, int maximalFontSize, StringFormat tagTextFormat = null)
         {
             ColorPainter = colorPainter;
             TagOrderPreform = tagOrderPreform;
             TagTextPreform = tagTextPreform;
             FontSizeMultiplier = fontSizeMultiplier;
             MaximalFontSize = maximalFontSize;
-            TagTextFontFamily = new FontFamily(tagTextFontFamily);
+            TagTextFontFamily = tagTextFontFamily;
             TagTextFormat = tagTextFormat ?? new StringFormat
                                 {FormatFlags = StringFormatFlags.NoWrap, Trimming = StringTrimming.None};
         }

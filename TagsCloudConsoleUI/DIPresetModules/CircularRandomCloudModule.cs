@@ -9,38 +9,25 @@ namespace TagsCloudConsoleUI.DIPresetModules
     internal class CircularRandomCloudModule : DiPreset
     {
         private readonly Color backgroundColor;
-        private readonly Color[] paletteColors;
+        private readonly Color[] colorsPalette;
         private readonly Point center;
         private readonly float spiralStep;
-        private readonly int fontSizeMultiplier;
-        private readonly int maximalFontSize;
-        private readonly string textFontFamily;
 
         public CircularRandomCloudModule(BuildOptions options) : base(options)
         {
-            backgroundColor = ColorsHexConverter.CreateFromHex(options.BackgroundColor);
-            paletteColors = ColorsHexConverter.CreateFromHexEnumerable(options.ColorsPalette);
+            backgroundColor = options.BackgroundColor;
+            colorsPalette = options.ColorsPalette;
             center = new Point(options.Width / 2, options.Height / 2);
             spiralStep = options.SpiralStep;
-            fontSizeMultiplier = options.FontSizeMultiplier;
-            maximalFontSize = options.MaximalFontSize;
-            textFontFamily = options.FontFamily;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CloudFormat>().WithParameters(new[]
-            {
-                new NamedParameter("tagTextFontFamily", textFontFamily),
-                new NamedParameter("fontSizeMultiplier", fontSizeMultiplier),
-                new NamedParameter("maximalFontSize", maximalFontSize)
-            });
-
             builder.RegisterType<RandomTagOrder>().As<ITagOrder>();
             builder.RegisterType<FirstBigLetterPreform>().As<ITagTextPreform>();
-            builder.RegisterType<RandomlyCloudPainer>().As<ICloudColorPainter>()
+            builder.RegisterType<RandomlyCloudPainter>().As<ICloudColorPainter>()
                 .WithParameters(new[]{
-                    new NamedParameter("paletteColors", paletteColors),
+                    new NamedParameter("colorsPalette", colorsPalette),
                     new NamedParameter("backgroundColor", backgroundColor)
                 });
 

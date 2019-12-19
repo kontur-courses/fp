@@ -20,29 +20,37 @@ namespace TagsCloudConsoleUI
             builder.RegisterModule(new CircularRandomCloudModule(options));
             builder.RegisterModule(new WordParserWithYandexToolModule(options));
             builder.RegisterModule(new BitmapImageCreatorModule(options));
+            builder.RegisterModule(new CloudSettingsSetupModule(options));
 
-            builder.RegisterInstance(options.InputFileName).Named<string>("filepath");
+            builder.RegisterInstance(options.InputFilePath).Named<string>("filepath");
 
             return builder.Build();
         }
 
-        private static Result<Bitmap> OnCallAction(BuildOptions options)
+        private static Result<Bitmap> OnCallAction(ConsoleParsedOptions parsedOptions)
         {
-            var container = BuildContainer(options);
-
-            var fullPath = options.InputFileName;
-            var size = new Size(options.Width,options.Height);
-            var format = container.Resolve<CloudFormat>();
-
-            var bitmapImageResult = container.Resolve<CloudBuilder<Bitmap>>()
-                .CreateTagCloudRepresentation(fullPath, size, format);
-
-            if(bitmapImageResult.IsSuccess)
-                bitmapImageResult
-                    .GetValueOrThrow()
-                    .Save(options.OutputFileName, ImageFormatter.ParseImageFormat(options.ImageExtension));
+            var resultOptions = Result.Of(() => new BuildOptions(parsedOptions));
+            if (!resultOptions.IsSuccess)
+                return Result.Fail<Bitmap>(resultOptions.Error);
             
-            return bitmapImageResult;
+            var options = resultOptions.GetValueOrThrow();
+
+            return resultOptions
+                .Then(BuildContainer)
+                .Then(container =>
+                {
+                    var fullPath = options.InputFilePath;
+                    var size = new Size(options.Width, options.Height);
+                    var format = container.Resolve<CloudSettings>();
+
+                    return container.Resolve<CloudBuilder<Bitmap>>()
+                        .CreateTagCloudRepresentation(fullPath, size, format);
+                })
+                .Then(image => Result.Of(() =>
+                {
+                    image.Save(options.OutputFilePath, ImageFormatter.ParseImageFormat(options.ImageExtension));
+                    return image;
+                }));
         }
     }
 }

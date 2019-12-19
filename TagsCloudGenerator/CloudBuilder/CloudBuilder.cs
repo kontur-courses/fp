@@ -17,6 +17,6 @@ namespace TagsCloudGenerator
             TagPlacer = tagPlacer;
         }
 
-        public abstract Result<T> CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudFormat format);
+        public abstract Result<T> CreateTagCloudRepresentation(string fullPath, Size imageSize, CloudSettings settings);
     }
 }

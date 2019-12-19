@@ -36,11 +36,6 @@ namespace ResultPattern
             return new Result<T>(e);
         }
 
-        public static Result<TOutput> Fail<TInput, TOutput>(this Result<TInput> result, string e = null)
-        {
-            return new Result<TOutput>(e ?? result.Error);
-        }
-
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
             try

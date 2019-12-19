@@ -51,11 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TagGenerator\CloudFormat.cs" />
+    <Compile Include="TagGenerator\CloudSettings.cs" />
     <Compile Include="TagGenerator\TagGenerator.cs" />
     <Compile Include="TagGenerator\CloudTag.cs" />
     <Compile Include="TagGenerator\ColorPainter\ICloudColorPainter.cs" />
-    <Compile Include="TagGenerator\ColorPainter\RandomlyCloudPainer.cs" />
+    <Compile Include="TagGenerator\ColorPainter\RandomlyCloudPainter.cs" />
     <Compile Include="TagGenerator\ColorPalette\ColorsHEXConverter.cs" />
     <Compile Include="TagGenerator\TagOrder\ITagOrder.cs" />
     <Compile Include="TagGenerator\TagOrder\RandomTagOrder.cs" />

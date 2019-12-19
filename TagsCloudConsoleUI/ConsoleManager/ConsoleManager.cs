@@ -15,7 +15,7 @@ namespace TagsCloudConsoleUI
             });
         }
 
-        public static void Run<T>(IConsoleManagerFormatter formatter, Func<BuildOptions, Result<T>> onCallAction)
+        public static void Run<T>(IConsoleManagerFormatter formatter, Func<ConsoleParsedOptions, Result<T>> onCallAction)
         {
             var commandParser = InitCommandParser();
             Console.WriteLine(formatter.InitialMessage);
@@ -26,14 +26,14 @@ namespace TagsCloudConsoleUI
                 var command = Console.ReadLine()?.Split(' ');
                 Console.WriteLine();
 
-                commandParser.ParseArguments<BuildOptions>(command)
+                commandParser.ParseArguments<ConsoleParsedOptions>(command)
                     .WithParsed(options =>
                     {
-                        var result = onCallAction(options);
-                        if(result.IsSuccess)
-                            Console.WriteLine(formatter.SuccessfulMessage(options.OutputFileName));
+                        var action = onCallAction(options);
+                        if (action.IsSuccess)
+                            Console.WriteLine(formatter.SuccessfulMessage(options.OutputFilePath));
                         else
-                            Console.WriteLine(formatter.ErrorMessage + '\n' + result.Error);
+                            Console.WriteLine(formatter.ErrorMessage + '\n' + action.Error);
                     })
                     .WithNotParsed(errors =>
                     {
@@ -41,9 +41,7 @@ namespace TagsCloudConsoleUI
                         foreach (var error in errors)
                             Console.WriteLine(formatter.ErrorSymbol + error);
                     });
-
             }
-
         }
     }
 }

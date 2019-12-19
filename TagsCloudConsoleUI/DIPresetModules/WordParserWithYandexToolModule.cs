@@ -14,8 +14,8 @@ namespace TagsCloudConsoleUI.DIPresetModules
 
         public WordParserWithYandexToolModule(BuildOptions options) : base(options)
         {
-            boringSpeech = options.BoringPartsOfSpeech.Split(' ');
-            boringWords = options.BoringWords.Split(' ');
+            boringSpeech = options.BoringPartsOfSpeech;
+            boringWords = options.BoringWords;
         }
 
         protected override void Load(ContainerBuilder builder)
