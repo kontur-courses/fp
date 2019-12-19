@@ -30,7 +30,7 @@ namespace TagCloud.CloudVisualizerSpace.CloudViewConfigurationSpace
         }
 
 
-        public CloudViewConfiguration(IFigurePathFactory figureFactory, Func<ICloudLayouter> createCloudLayouter, IColorWordPicker colorWordPicker)
+        public CloudViewConfiguration(IFigurePathFactory figureFactory, Func<ICloudLayouter> createCloudLayouter)
         {
             FigurePath = figureFactory;
             CloudLayouter = createCloudLayouter;

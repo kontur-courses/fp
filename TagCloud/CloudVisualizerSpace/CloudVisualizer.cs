@@ -7,23 +7,18 @@ namespace TagCloud.CloudVisualizerSpace
 {
     public class CloudVisualizer
     {
-        private CloudViewConfiguration cloudViewConfiguration; 
+        private readonly CloudViewConfiguration cloudViewConfiguration; 
 
         public CloudVisualizer(CloudViewConfiguration configuration)
         {
             cloudViewConfiguration = configuration;
         }
 
-        public Result<Bitmap> GetCloud(Result<Word[]> words)
+        public Result<Bitmap> GetCloud(Word[] words)
         {
             var cloudLayouter = cloudViewConfiguration.CloudLayouter();
             if (cloudViewConfiguration.ImageSize.Width <= 0 || cloudViewConfiguration.ImageSize.Height <= 0)
                 return Result.Fail<Bitmap>("Image size should be a non-negative");
-
-            if (!words.IsSuccess)
-            {
-                return Result.Fail<Bitmap>(words.Error);
-            }
 
             if (!cloudViewConfiguration.FontFamily.IsSuccess)
                 return Result.Fail<Bitmap>(cloudViewConfiguration.FontFamily.Error);
@@ -33,7 +28,7 @@ namespace TagCloud.CloudVisualizerSpace
             using (var graphics = Graphics.FromImage(image))
             {
                 graphics.Clear(cloudViewConfiguration.BackgroundColor);
-                foreach (var word in words.Value)
+                foreach (var word in words)
                 {
                     var font = new Font(cloudViewConfiguration.FontFamily.Value,
                         (float)(word.Frequency * cloudViewConfiguration.ScaleCoefficient + 1));

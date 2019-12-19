@@ -10,13 +10,11 @@ namespace TagCloud.Interfaces
     {
         [Browsable(false)] public string FilePath { get; set; }
 
-        [Browsable(false)] public Encoding TextEncoding { get; set; } = Encoding.Default;
+        [Browsable(false)] public Encoding TextEncoding { get; set; } = Encoding.UTF8;
 
         public Result<StreamReader> GetDocumentStream()
         {
-            if (FilePath is null || !File.Exists(FilePath))
-                return Result.Fail<StreamReader>("File is not selected or not found");
-            return Result.Ok(new StreamReader(File.OpenRead(FilePath), TextEncoding));
+            return Result.Of(() => new StreamReader(File.OpenRead(FilePath), TextEncoding), "Can not open the file");
         }
 
         [Browsable(false)] public ITextAnalyzer[] TextAnalyzers { get; }

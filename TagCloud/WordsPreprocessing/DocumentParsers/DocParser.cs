@@ -6,7 +6,7 @@ using MsWord = Microsoft.Office.Interop.Word;
 
 namespace TagCloud.WordsPreprocessing.DocumentParsers
 {
-    public class DocParser : IDocumentParser
+    public class DocParser // : IDocumentParser - закоменчено чтобы коннйнер не видел его как анализатор
     {
         public HashSet<string> AllowedTypes { get; }
         private MsWord.Application application;
@@ -16,7 +16,7 @@ namespace TagCloud.WordsPreprocessing.DocumentParsers
             AllowedTypes = new HashSet<string> {".doc", ".docx"};
         }
 
-        public IEnumerable<string> GetWords(ApplicationSettings settings)
+        public Result<IEnumerable<string>> GetWords(ApplicationSettings settings)
         {
             if (application is null)
             {

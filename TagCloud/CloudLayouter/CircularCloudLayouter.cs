@@ -14,8 +14,8 @@ namespace TagCloud.CloudLayouter
 
         private readonly List<Rectangle> rectangles;
 
-        private CloudViewConfiguration configuration;
-        private IFigurePath figurePath;
+        private readonly CloudViewConfiguration configuration;
+        private readonly IFigurePath figurePath;
         private Rectangle wrapperRectangle;
 
 

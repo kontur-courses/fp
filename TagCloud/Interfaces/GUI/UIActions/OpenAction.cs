@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using TagCloud.WordsPreprocessing.DocumentParsers;
 
@@ -9,7 +8,7 @@ namespace TagCloud.Interfaces.GUI.UIActions
     {
         private readonly string[] allowedTypes;
         private readonly ApplicationSettings applicationSettings;
-        private CloudConfigurationAction cloudConfigurationAction;
+        private readonly CloudConfigurationAction cloudConfigurationAction;
 
         public OpenAction(ApplicationSettings settings, IDocumentParser[] parsers, CloudConfigurationAction cloudConfigurationAction)
         {

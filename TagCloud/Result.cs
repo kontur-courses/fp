@@ -9,7 +9,7 @@ namespace TagCloud
         }
     }
 
-    public struct Result<T>
+    public readonly struct Result<T>
     {
         public Result(string error, T value = default(T))
         {
@@ -22,7 +22,7 @@ namespace TagCloud
         }
 
         public string Error { get; }
-        internal T Value { get; }
+        public T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;

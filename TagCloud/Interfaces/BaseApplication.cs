@@ -26,8 +26,10 @@ namespace TagCloud.Interfaces
         {
             var format = $".{AppSettings.FilePath.Split('.').Last()}";
             var parser = Parsers.First(p => p.AllowedTypes.Contains(format));
-            var words = AppSettings.CurrentTextAnalyzer.GetWords(parser.GetWords(AppSettings), CloudConfiguration.WordsCount);
-            var bitmapResult = visualizer.GetCloud(words);
+            var bitmapResult = parser.GetWords(AppSettings)
+                .Then(e => AppSettings.CurrentTextAnalyzer
+                    .GetWords(e, CloudConfiguration.WordsCount))
+                .Then(visualizer.GetCloud);
             return bitmapResult.IsSuccess
                 ? Result.Ok((Image) bitmapResult.Value)
                 : Result.Fail<Image>(bitmapResult.Error);

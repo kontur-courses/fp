@@ -71,8 +71,6 @@
     <Compile Include="CloudLayouter\ICloudLayouter.cs" />
     <Compile Include="CloudLayouter\FigurePaths\IFigurePath.cs" />
     <Compile Include="CloudLayouter\FigurePaths\Spiral.cs" />
-    <Compile Include="CloudVisualizerSpace\CloudViewConfigurationSpace\DefaultColorPicker.cs" />
-    <Compile Include="CloudVisualizerSpace\CloudViewConfigurationSpace\IColorWordPicker.cs" />
     <Compile Include="CloudVisualizerSpace\CloudVisualizer.cs" />
     <Compile Include="CloudVisualizerSpace\CloudViewConfigurationSpace\CloudViewConfiguration.cs" />
     <Compile Include="Factories\SpiralFactory.cs" />

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TagCloud.Interfaces.GUI.UIActions
 {
     class SaveAction : IUiAction
     {
-        private Lazy<MainForm> mainForm;
+        private readonly Lazy<MainForm> mainForm;
         public SaveAction(Lazy<MainForm> mainForm)
         {
             this.mainForm = mainForm;

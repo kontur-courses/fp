@@ -6,9 +6,9 @@ namespace TagCloud.Interfaces.GUI.UIActions
 {
     class ApplicationSettingsAction : IUiAction
     {
-        private Lazy<MainForm> mainForm;
-        private ApplicationSettings applicationSettings;
-        private Form applicationSettingsDialog;
+        private readonly Lazy<MainForm> mainForm;
+        private readonly ApplicationSettings applicationSettings;
+        private readonly Form applicationSettingsDialog;
 
         public ApplicationSettingsAction(Lazy<MainForm> mainForm,
             ApplicationSettings appSettings, ApplicationSettingsForm appSettingsDialog)

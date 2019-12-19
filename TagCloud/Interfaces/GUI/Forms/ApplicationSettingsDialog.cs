@@ -2,14 +2,17 @@
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TagCloud.Interfaces.GUI.Forms
 {
     public class ApplicationSettingsForm : Form
     {
-        private ApplicationSettings settings;
-        private WordSelectorForm wordSelectorForm;
+        private readonly ApplicationSettings settings;
+        private readonly WordSelectorForm wordSelectorForm;
+
+        private readonly Encoding[] encodings = {Encoding.GetEncoding(1251), Encoding.UTF8};
 
         public ApplicationSettingsForm(ApplicationSettings settings, WordSelectorForm wordSelectorForm)
         {
@@ -46,11 +49,33 @@ namespace TagCloud.Interfaces.GUI.Forms
 
             textAnalyzers.Items.AddRange(analyzerNames);
 
+            var encodingsLabel = new Label
+            {
+                Text = "Кодировки",
+                Location = labelAnalyzer.Location + new Size(0, labelAnalyzer.Size.Height + 15)
+            };
+
+            var encodingsBox = new ComboBox()
+            {
+                Location = labelAnalyzer.Location + new Size(encodingsLabel.Size.Width, labelAnalyzer.Size.Height)
+            };
+            var encodingNames = encodings.Select(e => e.BodyName).ToArray();
+            encodingsBox.Items.AddRange(encodingNames);
+
+
             Controls.Add(labelAnalyzer);
             Controls.Add(textAnalyzers);
             Controls.Add(wordSeletorBtn);
+            Controls.Add(encodingsLabel);
+            Controls.Add(encodingsBox);
 
             textAnalyzers.SelectedIndexChanged += OnUpdateTextAnalyzer;
+            encodingsBox.SelectedIndexChanged += OnUpdateEncoding;
+        }
+
+        private void OnUpdateEncoding(object sender, EventArgs e)
+        {
+            settings.TextEncoding = encodings[((ComboBox) sender).SelectedIndex];
         }
 
         private void OnUpdateTextAnalyzer(object sender, EventArgs e)

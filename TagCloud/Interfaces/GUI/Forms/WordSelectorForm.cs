@@ -10,7 +10,7 @@ namespace TagCloud.Interfaces.GUI.Forms
     public class WordSelectorForm : Form
     {
         private ListBox ignoredWordsBox;
-        private WordSelectorSettings wordSelectorSettings;
+        private readonly WordSelectorSettings wordSelectorSettings;
         private TextBox textBox;
 
         public WordSelectorForm(WordSelectorSettings wordSelectorSettings)

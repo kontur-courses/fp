@@ -43,14 +43,14 @@ namespace TagCloudTests.CloudVisualizerSpace
             if (changed)
                 configuration.ImageSize = imageSize;
 
-            var image = cloudVisualizer.GetCloud(new [] {testWord});
+            var image = cloudVisualizer.GetCloud(new [] {testWord}).GetValueOrThrow();
             image.Size.Should().Be(configuration.ImageSize);
         }
 
         [Test]
         public void GetCloud_WithoutWords_DoesNotCrash()
         {
-            Action action = () => cloudVisualizer.GetCloud(new Word[0]);
+            Action action = () => cloudVisualizer.GetCloud(new Word[0]).GetValueOrThrow();
 
             action.Should().NotThrow();
         }
@@ -62,7 +62,7 @@ namespace TagCloudTests.CloudVisualizerSpace
             {
                 Frequency = 0
             };
-            Action action = () => cloudVisualizer.GetCloud(new[] {zeroFrequencyWord});
+            Action action = () => cloudVisualizer.GetCloud(new[] {zeroFrequencyWord}).GetValueOrThrow();
             
             action.Should().NotThrow();
         }
@@ -72,9 +72,8 @@ namespace TagCloudTests.CloudVisualizerSpace
         {
             container.Get<CloudViewConfiguration>().ImageSize = Size.Empty;
 
-            Action action = () => cloudVisualizer.GetCloud(new Word[0]);
+            cloudVisualizer.GetCloud(new Word[0]).IsSuccess.Should().BeFalse();
 
-            action.Should().Throw<ArgumentException>();
         }
 
         [TearDown]

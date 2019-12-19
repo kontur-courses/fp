@@ -36,9 +36,7 @@ namespace TagCloudTests.CloudLayouter
         [TestCase(2, 0, TestName = "Zero height")]
         public void PutNextRectangle_ThrowArgumentException_WhenIncorrectDirectionsOfRectangle(int width, int height)
         {
-            Action action = () => cloudLayouter.PutNextRectangle(new Size(width, height));
-
-            action.Should().Throw<ArgumentException>();
+            cloudLayouter.PutNextRectangle(new Size(width, height)).IsSuccess.Should().BeFalse();
         }
 
         [TestCase(0, 0, TestName = "Zero center")]
@@ -52,7 +50,7 @@ namespace TagCloudTests.CloudLayouter
             var tempCenter = cloudConfiguration.CloudCenter;
             cloudConfiguration.CloudCenter = cloudCenter;
 
-            var actualRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
+            var actualRectangle = cloudLayouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
 
             actualRectangle.Should().Be(expectedRectangle);
 
@@ -73,7 +71,7 @@ namespace TagCloudTests.CloudLayouter
             var random = new Random();
             for (var i = 0; i < rectanglesCount; i++)
             {
-                var rectangle = cloudLayouter.PutNextRectangle(new Size(random.Next(1, maxWidth), random.Next(1, maxHeight)));
+                var rectangle = cloudLayouter.PutNextRectangle(new Size(random.Next(1, maxWidth), random.Next(1, maxHeight))).GetValueOrThrow();
                 rectangles.Any(rect => rect.IntersectsWith(rectangle)).Should().BeFalse();
                 rectangles.Add(rectangle);
             }
@@ -93,7 +91,8 @@ namespace TagCloudTests.CloudLayouter
             var random = new Random();
             for (var i = 0; i < rectanglesCount; i++)
             {
-                var rectangle = cloudLayouter.PutNextRectangle(new Size(random.Next(1, maxWidth), random.Next(1, maxHeight)));
+                var rectangle = cloudLayouter
+                    .PutNextRectangle(new Size(random.Next(1, maxWidth), random.Next(1, maxHeight))).GetValueOrThrow();
                 var deltaX = Math.Sign(rectangle.X);
                 var deltaY = Math.Sign(rectangle.Y);
 

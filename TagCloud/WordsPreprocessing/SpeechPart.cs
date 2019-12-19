@@ -4,6 +4,7 @@
     {
         Noun,
         Verb,
-        Adjective
+        Adjective,
+        Unknown
     }
 }

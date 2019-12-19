@@ -7,18 +7,23 @@ namespace TagCloud.WordsPreprocessing.DocumentParsers
     /// <summary>
     /// Returns whole text as one string from the StreamReader
     /// </summary>
-    class TxtParser : IDocumentParser
+    public class TxtParser : IDocumentParser
     {
         public HashSet<string> AllowedTypes => new HashSet<string>{".txt"};
 
-        public IEnumerable<string> GetWords(ApplicationSettings settings)
+        public Result<IEnumerable<string>> GetWords(ApplicationSettings settings)
         {
             var streamResult = settings.GetDocumentStream();
             if (streamResult.IsSuccess)
-                return settings.GetDocumentStream().Value.ReadToEnd()
-                    .Split(new[] {" ", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            {
+                var wordsResult = Result.Of(() => (IEnumerable<string>)streamResult.Value.ReadToEnd()
+                    .Split(new[] {" ", "\r\n", "\n"}, StringSplitOptions.RemoveEmptyEntries));
 
-            return new string[0];
+                streamResult.Value.Dispose();
+                return wordsResult;
+            }
+
+            return Result.Fail<IEnumerable<string>>("Can not parse words");
         }
 
         public void Close()

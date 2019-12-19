@@ -6,9 +6,9 @@ namespace TagCloud.Interfaces.GUI.UIActions
 {
     class CloudConfigurationAction : IUiAction
     {
-        private ApplicationSettings appSettings;
-        private Lazy<MainForm> mainForm;
-        private CloudSettingsForm cloudSettingsForm;
+        private readonly ApplicationSettings appSettings;
+        private readonly Lazy<MainForm> mainForm;
+        private readonly CloudSettingsForm cloudSettingsForm;
 
         public CloudConfigurationAction(ApplicationSettings appSettings,
             CloudSettingsForm form, Lazy<MainForm> mainForm)

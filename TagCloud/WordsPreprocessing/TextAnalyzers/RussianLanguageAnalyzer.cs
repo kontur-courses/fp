@@ -75,8 +75,11 @@ namespace TagCloud.WordsPreprocessing.TextAnalyzers
                 case GramPartsEnum.Adjective:
                     speechPart = SpeechPart.Adjective;
                     break;
-                default:
+                case GramPartsEnum.Noun:
                     speechPart = SpeechPart.Noun;
+                    break;
+                default:
+                    speechPart = SpeechPart.Unknown;
                     break;
             }
             return new Word(model.Lexems[0].Lexeme, speechPart);
