@@ -9,10 +9,17 @@ namespace TagsCloudVisualization.ApplicationOptions
         {
             var applicationOptions = new ApplicationOptions();
             var result = Result.OfAction(() => parsedOptions.WithParsed(options => applicationOptions = options));
-
+                
             return result.IsSuccess
                 ? applicationOptions.AsResult()
                 : Result.Fail<ApplicationOptions>("Can't get options");
+            
+            /*var applicationOptions = new ApplicationOptions();
+            var result = Result.OfAction(() => parsedOptions.WithParsed(options => applicationOptions = options));
+
+            return result.IsSuccess
+                ? applicationOptions.AsResult()
+                : Result.Fail<ApplicationOptions>("Can't get options");*/
         }
     }
 }
