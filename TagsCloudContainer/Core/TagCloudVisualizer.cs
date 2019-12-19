@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using ResultOf;
+﻿using ResultOf;
+using System.Drawing;
 using TagsCloudContainer.Algorithm;
 using TagsCloudContainer.FileReading;
 using TagsCloudContainer.Visualizing;

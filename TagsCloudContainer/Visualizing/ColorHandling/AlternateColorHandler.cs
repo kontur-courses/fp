@@ -25,7 +25,7 @@ namespace TagsCloudContainer.Visualizing.ColorHandling
         }
 
         public Color BackgroundColor => colors.Count <= 1 ? DefaultBackgroundColor : colors.First();
-        
+
         public void SetColorsToUse(List<Color> colorsToUse)
         {
             colors = colorsToUse;

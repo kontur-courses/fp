@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using ResultOf;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using ResultOf;
 using TagsCloudContainer.Algorithm.Layouting;
 using TagsCloudContainer.Algorithm.Organizing;
 using TagsCloudContainer.Algorithm.SizeProviding;
@@ -27,7 +27,7 @@ namespace TagsCloudContainer.Algorithm
 
         public Result<IEnumerable<(string, Rectangle)>> GetLayout(IEnumerable<string> words, Size pictureSize)
         {
-            return words.Select(w => new Word {Value = w}).AsResult()
+            return words.Select(w => new Word { Value = w }).AsResult()
                 .Then(convertedWords => wordWeightSetter.SetWordsWeights(convertedWords))
                 .Then(weightedWords => wordSizeProvider.SetWordsSizes(weightedWords, pictureSize))
                 .Then(wordsWithSize => wordsWithSize.GroupBy(w => w.Value).Select(g => g.First()))

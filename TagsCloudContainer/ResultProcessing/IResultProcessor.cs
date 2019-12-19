@@ -1,6 +1,6 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System.Drawing;
 using System.Drawing.Imaging;
-using ResultOf;
 
 namespace TagsCloudContainer.ResultProcessing
 {

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ResultOf;
+﻿using ResultOf;
+using System.Collections.Generic;
 
 namespace TagsCloudContainer.WordProcessing.Converting
 {

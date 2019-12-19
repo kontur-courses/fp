@@ -1,6 +1,6 @@
-﻿using System.Drawing;
+﻿using MetroFramework.Forms;
+using System.Drawing;
 using System.Windows.Forms;
-using MetroFramework.Forms;
 
 namespace TagsCloudContainer.UserInterface.Window
 {
@@ -10,7 +10,7 @@ namespace TagsCloudContainer.UserInterface.Window
         {
             ShadowType = MetroFormShadowType.None;
             Size = bitmap.Size;
-            Controls.Add(new PictureBox {Image = bitmap, Size = bitmap.Size, Dock = DockStyle.Fill});
+            Controls.Add(new PictureBox { Image = bitmap, Size = bitmap.Size, Dock = DockStyle.Fill });
         }
     }
 }

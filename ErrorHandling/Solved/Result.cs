@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ResultOf
 {
@@ -52,31 +50,6 @@ namespace ResultOf
         public static Result<T> Fail<T>(string e)
         {
             return new Result<T>(e);
-        }
-
-        public static Result<(T1, T2)> AddToPairFromLeft<T1, T2>(this Result<T2> result, T1 item)
-        {
-            return !result.IsSuccess
-                ? Fail<(T1, T2)>(result.Error)
-                : Ok((item, result.GetValueOrThrow()));
-        }
-
-        public static Result<(T1, T2)> AddToPairFromRight<T1, T2>(this Result<T1> result, T2 item)
-        {
-            return !result.IsSuccess
-                ? Fail<(T1, T2)>(result.Error)
-                : Ok((result.GetValueOrThrow(), item));
-        }
-
-        public static Result<IEnumerable<T>> OfCollection<T>(ICollection<Result<T>> collection)
-        {
-            if (collection.Any(e => !e.IsSuccess))
-            {
-                var error = collection.First(e => !e.IsSuccess).Error;
-                return Fail<IEnumerable<T>>(error);
-            }
-
-            return Ok(collection.Select(e => e.GetValueOrThrow()));
         }
 
         public static Result<T> Of<T>(Func<T> f, string error = null)

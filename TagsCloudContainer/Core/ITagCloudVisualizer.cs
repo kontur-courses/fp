@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using ResultOf;
+﻿using ResultOf;
+using System.Drawing;
 
 namespace TagsCloudContainer.Core
 {

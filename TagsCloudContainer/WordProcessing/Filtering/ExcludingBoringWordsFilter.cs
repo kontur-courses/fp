@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ResultOf;
+using System.Collections.Generic;
 using System.Linq;
-using ResultOf;
 using TagsCloudContainer.MyStem;
 
 namespace TagsCloudContainer.WordProcessing.Filtering
@@ -20,7 +20,8 @@ namespace TagsCloudContainer.WordProcessing.Filtering
         {
             return Result.Of(() => myStemExecutor.GetMyStemResultForWords(words, "-ni"))
                 .RefineError("Failed to execute MyStem")
-                .Then(myStemResult => myStemResultParser.GetPartsOfSpeechByResultOfNiCommand(myStemResult, words))
+                .Then(myStemResult =>
+                    myStemResultParser.GetPartsOfSpeechByResultOfNiCommand(myStemResult, words).ToList())
                 .RefineError("Failed to parse MyStem result")
                 .Then(FilterWordsWithPartsOfSpeech);
         }

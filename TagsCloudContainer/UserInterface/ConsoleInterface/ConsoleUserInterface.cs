@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Fclp;
+using ResultOf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Fclp;
-using ResultOf;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.UserInterface.ArgumentsParsing;
 
@@ -61,7 +61,7 @@ namespace TagsCloudContainer.UserInterface.ConsoleInterface
                 .WithDescription("height of image, default is 600");
             parser.Setup(arg => arg.Font).As('f', "font").SetDefault("Arial")
                 .WithDescription("name of font, default is Arial");
-            parser.Setup(arg => arg.Colors).As("colors").SetDefault(new List<string> {"Aqua", "Black"})
+            parser.Setup(arg => arg.Colors).As("colors").SetDefault(new List<string> { "Aqua", "Black" })
                 .WithDescription("names of colors to use, default: Aqua Black");
             parser.Setup(arg => arg.ImageFormat).As('e', "extension").SetDefault("Png")
                 .WithDescription("extension of image file, default is Png");

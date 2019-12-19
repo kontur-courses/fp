@@ -12,7 +12,7 @@ namespace TagsCloudContainer.Core
 
         public List<Color> Colors { get; }
 
-        public Font Font { get;}
+        public Font Font { get; }
 
         public Size ImageSize { get; }
         public ImageFormat ImageFormat { get; }

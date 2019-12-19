@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.IO;
 using System.Reflection;
-using Autofac;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.ResultProcessing;
 using TagsCloudContainer.UserInterface;

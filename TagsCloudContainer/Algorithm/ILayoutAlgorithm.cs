@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ResultOf;
+using System.Collections.Generic;
 using System.Drawing;
-using ResultOf;
 
 namespace TagsCloudContainer.Algorithm
 {

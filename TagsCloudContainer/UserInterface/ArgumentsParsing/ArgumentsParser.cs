@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ResultOf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
-using ResultOf;
 using TagsCloudContainer.Core;
 
 namespace TagsCloudContainer.UserInterface.ArgumentsParsing
@@ -25,7 +25,7 @@ namespace TagsCloudContainer.UserInterface.ArgumentsParsing
 
         private ImageFormat ParseImageFormat(string formatName)
         {
-            var imageFormat = (ImageFormat) typeof(ImageFormat)
+            var imageFormat = (ImageFormat)typeof(ImageFormat)
                 .GetProperty(formatName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
                 ?.GetValue(null);
 

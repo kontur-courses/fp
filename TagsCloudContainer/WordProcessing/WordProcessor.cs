@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ResultOf;
+﻿using ResultOf;
+using System.Collections.Generic;
 using TagsCloudContainer.WordProcessing.Converting;
 using TagsCloudContainer.WordProcessing.Filtering;
 

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using MetroFramework.Controls;
+using MetroFramework.Forms;
+using ResultOf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using MetroFramework.Controls;
-using MetroFramework.Forms;
-using ResultOf;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.UserInterface.ArgumentsParsing;
@@ -77,16 +77,16 @@ namespace TagsCloudContainer.UserInterface.Window
 
         private List<Control> InitControls()
         {
-            inputFilePathTextBox = new MetroTextBox {Name = "Путь к входному файлу"};
-            outputFileTextBox = new MetroTextBox {Name = "Путь к выходному файлу", Text = @"test.png"};
-            widthSetter = new NumericUpDown {Name = "Ширина результата", Maximum = 2000, Minimum = 1, Value = 800};
-            heightSetter = new NumericUpDown {Name = "Высота результата", Maximum = 2000, Minimum = 1, Value = 600};
+            inputFilePathTextBox = new MetroTextBox { Name = "Путь к входному файлу" };
+            outputFileTextBox = new MetroTextBox { Name = "Путь к выходному файлу", Text = @"test.png" };
+            widthSetter = new NumericUpDown { Name = "Ширина результата", Maximum = 2000, Minimum = 1, Value = 800 };
+            heightSetter = new NumericUpDown { Name = "Высота результата", Maximum = 2000, Minimum = 1, Value = 600 };
             fontSelector = Elements.TypeBox(FontFamily.Families.Select(f => f.Name), "Arial", "Используемый шрифт");
             formatSelector = Elements.TypeBox(
                 typeof(ImageFormat).GetProperties().Select(p => p.Name).Where(name => name != "Guid"),
                 "Png",
                 "Формат результата");
-            colorSelector = new MetroTextBox {Name = "Используемые цвета", Text = @"Aqua Black"};
+            colorSelector = new MetroTextBox { Name = "Используемые цвета", Text = @"Aqua Black" };
             return new List<Control>
             {
                 inputFilePathTextBox, outputFileTextBox, widthSetter, heightSetter, fontSelector, formatSelector,
@@ -106,7 +106,7 @@ namespace TagsCloudContainer.UserInterface.Window
             {
                 var colors = colorSelector.Text.Split(' ').Where(s => s.Length > 0).ToList();
                 var arguments = new UserInterfaceArguments(inputFilePathTextBox.Text,
-                    outputFileTextBox.Text, (int) widthSetter.Value, (int) heightSetter.Value,
+                    outputFileTextBox.Text, (int)widthSetter.Value, (int)heightSetter.Value,
                     fontSelector.Text, colors, formatSelector.Text);
                 argumentsParser.ParseArgumentsToParameters(arguments)
                     .OnFail(ShowError)
