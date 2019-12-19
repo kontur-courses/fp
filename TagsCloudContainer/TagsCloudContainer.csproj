@@ -71,6 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clients\CLI\OptionValidatorExtension.cs" />
     <Compile Include="Data\Processors\WordStemProcessor.cs" />
     <Compile Include="Data\Readers\DocWordsFileReader.cs" />
     <Compile Include="Data\Readers\IFileFormatReader.cs" />

@@ -29,8 +29,9 @@ namespace TagsCloudContainer.Clients.CLI
 
         private Result<None> Execute(Options options)
         {
-            ConfigureCloud(options);
-            return CreateTagsCloud(CloudSettings)
+            return options.Validate()
+                .Then(ConfigureCloud)
+                .Then(_ => CreateTagsCloud(CloudSettings))
                 .Then(image => SaveTagsCloud(options.ImagePath, image));
         }
 
