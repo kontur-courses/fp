@@ -62,9 +62,12 @@
     <Compile Include="CloudLayouter\CircularLayouter\CircularCloudLayouter.cs" />
     <Compile Include="CloudLayouter\CircularLayouter\SpiralSettings.cs" />
     <Compile Include="CloudLayouter\ICloudLayouter.cs" />
+    <Compile Include="ErrorHandler\ErrorHandler.cs" />
+    <Compile Include="ErrorHandler\IErrorHandler.cs" />
+    <Compile Include="Extensions\EnumerableExtension.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="FrequencyDictionaryMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringExtension.cs" />
     <Compile Include="TextColoration\ITextColoration.cs" />
     <Compile Include="TextColoration\RandomTextColoration.cs" />
     <Compile Include="TextColoration\SimpleTextColoration.cs" />

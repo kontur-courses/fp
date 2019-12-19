@@ -100,6 +100,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{c83b0a70-dba6-45bf-a792-fd2b14528ebb}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagCloud\TagCloud.csproj">
       <Project>{eba7532b-a2f5-4bf5-9ce9-4f52d9e574bd}</Project>
       <Name>TagCloud</Name>
