@@ -79,7 +79,11 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Solved" />
+    <Content Include="FileSender_Should.Fail_WhenBadFormatOrTimestamp.ForScenario.1.0.0.approved.txt" />
+    <Content Include="FileSender_Should.Fail_WhenBadFormatOrTimestamp.ForScenario.3.1.32.approved.txt" />
+    <Content Include="FileSender_Should.Fail_WhenBadFormatOrTimestamp.ForScenario.4.0.32.approved.txt" />
+    <Content Include="FileSender_Should.Fail_WhenBadFormatOrTimestamp.ForScenario.wrong.32.approved.txt" />
+    <Content Include="FileSender_Should.Fail_WhenNotRecognized.approved.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

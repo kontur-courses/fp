@@ -6,11 +6,10 @@ using ResultOf;
 
 //using CSharpFunctionalExtensions;
 
-namespace FileSenderRailway
+namespace FileSenderRailway.Solved
 {
     public class FileSender
     {
-        private Dictionary<int, int> dict = new Dictionary<Int32,Int32>();
         private readonly ICryptographer cryptographer;
         private readonly IRecognizer recognizer;
         private readonly Func<DateTime> now;

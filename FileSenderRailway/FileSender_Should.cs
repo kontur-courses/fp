@@ -9,7 +9,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using ResultOf;
 
-namespace FileSenderRailway
+namespace FileSenderRailway.Solved
 {
     [TestFixture]
     [UseReporter(typeof(DiffReporter))]

@@ -1,1 +1,1 @@
-﻿Can't prepare file to send. Invalid format version
+﻿Can't prepare file to send. Invalid format version '1.0'

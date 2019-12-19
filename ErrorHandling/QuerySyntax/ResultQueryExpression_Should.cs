@@ -1,6 +1,7 @@
 using System;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 
 namespace ResultOfTask
 {
@@ -22,7 +23,7 @@ namespace ResultOfTask
         {
             var res =
                 "1358571172".ParseIntResult()
-                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new { i, hex })
+                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new {i, hex})
                     .SelectMany(t => (t.hex + t.hex + t.hex + t.hex).ParseGuidResult());
             res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
@@ -42,8 +43,8 @@ namespace ResultOfTask
         [Test]
         public void SupportQueryExpressions_WithComplexSelect()
         {
-            // Тот сценарий, ради которого стоило делать Query Expressions для Result<T>
-            // Обратите внимание на использование i в select
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Query Expressions пїЅпїЅпїЅ Result<T>
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ i пїЅ select
             var res =
                 from i in "1358571172".ParseIntResult()
                 from hex in Convert.ToString(i, 16).AsResult()

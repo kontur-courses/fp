@@ -1,4 +1,5 @@
 using System;
+using ResultOf;
 
 namespace ResultOfTask
 {
@@ -9,14 +10,14 @@ namespace ResultOfTask
             int v;
             return int.TryParse(s, out v)
                 ? v.AsResult()
-                : Result.Fail<int>(error ?? "Не число " + s);
+                : Result.Fail<int>(error ?? "пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ " + s);
         }
         public static Result<Guid> ParseGuidResult(this string s, string error = null)
         {
             Guid v;
             return Guid.TryParse(s, out v)
                 ? v.AsResult()
-                : Result.Fail<Guid>(error ?? "Не GUID " + s);
+                : Result.Fail<Guid>(error ?? "пїЅпїЅ GUID " + s);
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using ResultOf;
 
-namespace FileSenderRailway
+namespace FileSenderRailway.Solved
 {
     public class Document
     {
