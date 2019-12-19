@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using TagsCloudContainer.Core;
 using TagsCloudContainer.ResultProcessing;
 using TagsCloudContainer.UserInterface;
@@ -17,6 +19,8 @@ namespace TagsCloudContainer
         [STAThread]
         public static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             var userInterface = Container.Resolve<IUserInterface>();
             userInterface.Run(args, RunProgram);
         }
