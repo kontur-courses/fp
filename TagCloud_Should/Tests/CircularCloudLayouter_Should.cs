@@ -19,28 +19,13 @@ namespace TagCloud_Should.Tests
             spiralSettings = new SpiralSettings();
         }
 
-//        [TestCase(-1, -1)]
-//        [TestCase(-1, 1)]
-//        [TestCase(1, -1)]
-//        [TestCase(0, 0)]
-//        [TestCase(0, 1)]
-//        [TestCase(1, 0)]
-//        public void NonPositiveLayouterSize_ThrowsException(int width, int height)
-//        {
-//            var imageSettings = new ImageSettings(new ErrorHandler())
-//                {ImageSize = new Size(width, height)};
-//            Action action = () =>
-//                layouter = new CircularCloudLayouter(new ArchimedeanSpiral(spiralSettings), imageSettings);
-//            action.Should().Throw<ArgumentException>();
-//        }
-
         [Test]
         public void PutNextRectangle_FirstRect_ShouldBeInCenterWithSomeBias()
         {
             var imageSettings = new ImageSettings(new ErrorHandler())
                 {ImageSize = new Size(600, 600)};
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(spiralSettings), imageSettings);
-            var rectangle = layouter.PutNextRectangle(new Size(10, 3), out _).GetValueOrThrow();
+            var rectangle = layouter.PutNextRectangle(new Size(10, 3)).GetValueOrThrow();
             rectangle.Location.Should().BeEquivalentTo(new Point(7, 3));
         }
 
@@ -55,7 +40,7 @@ namespace TagCloud_Should.Tests
             var imageSettings = new ImageSettings(new ErrorHandler())
                 {ImageSize = new Size(600, 600)};
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(spiralSettings), imageSettings);
-            layouter.PutNextRectangle(new Size(width, height), out _).IsSuccess.Should().BeFalse();
+            layouter.PutNextRectangle(new Size(width, height)).IsSuccess.Should().BeFalse();
         }
 
         [TestCase(101, 50, 100, 100)]
@@ -68,7 +53,7 @@ namespace TagCloud_Should.Tests
                 {ImageSize = new Size(screenWidth, screenHeight)};
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(spiralSettings), imageSettings);
             layouter
-                .PutNextRectangle(new Size(width, height), out _).Error.Should()
+                .PutNextRectangle(new Size(width, height)).Error.Should()
                 .BeEquivalentTo("Rectangle is out of layouter");
         }
 
@@ -79,8 +64,8 @@ namespace TagCloud_Should.Tests
                 {ImageSize = new Size(100, 100)};
             layouter = new CircularCloudLayouter(new ArchimedeanSpiral(spiralSettings), imageSettings);
             for (var i = 0; i < 50; i++)
-                layouter.PutNextRectangle(new Size(10, 10), out _);
-            layouter.PutNextRectangle(new Size(10, 10), out _)
+                layouter.PutNextRectangle(new Size(10, 10));
+            layouter.PutNextRectangle(new Size(10, 10))
                 .Error
                 .Should()
                 .BeEquivalentTo("Rectangle is out of layouter");

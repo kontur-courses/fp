@@ -19,16 +19,15 @@ namespace TagCloud.Visualization
             get => imageSize;
             set
             {
-                if (!IsCorrectSize(value))
+                if (IsNotCorrectSize(value))
                     errorHandler.HandleError($"Wrong size parameters: width: {value.Width}, height: {value.Height}");
                 else imageSize = value;
             }
         }
 
-        private bool IsCorrectSize(Size rectangleSize)
+        private bool IsNotCorrectSize(Size rectangleSize)
         {
-            return !(rectangleSize.Width <= 0
-                     || rectangleSize.Height <= 0);
+            return rectangleSize.Width <= 0 || rectangleSize.Height <= 0;
         }
     }
 }

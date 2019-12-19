@@ -10,6 +10,6 @@ namespace TagCloud.CloudLayouter
         ImageSettings LayouterSettings { get; }
         HashSet<Rectangle> Rectangles { get; set; }
         void ResetLayouter();
-        Result<Rectangle> PutNextRectangle(Size rectangleSize, out Size outRectSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

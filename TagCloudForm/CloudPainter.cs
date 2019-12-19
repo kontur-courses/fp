@@ -24,8 +24,9 @@ namespace TagCloudForm
         public void Paint()
         {
             imageHolder.RecreateImage(imageSettings)
-                .Then(_ => imageHolder.Image = cloudVisualization.Visualize().GetValueOrThrow())
-                .Then(_ => imageHolder.UpdateUi())
+                .Then(_ => cloudVisualization.Visualize())
+                .Then(image => imageHolder.Image = image)
+                .Then(imageHolder.UpdateUi)
                 .OnFail(error => errorHandler.HandleError(error));
         }
     }

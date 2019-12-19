@@ -26,9 +26,8 @@ namespace TagCloud.CloudLayouter.CircularLayouter
             Rectangles = new HashSet<Rectangle>();
         }
 
-        public Result<Rectangle> PutNextRectangle(Size rectangleSize, out Size outRectSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            outRectSize = rectangleSize;
             if (!IsCorrectSize(rectangleSize))
                 return Result.Fail<Rectangle>(
                     $"Incorrect size of rectangle. Width: {rectangleSize.Width}, Height: {rectangleSize.Height}");
