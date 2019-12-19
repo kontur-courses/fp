@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using TagsCloudContainer.Cloud;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Savers;
 
 namespace TagsCloudContainer.Clients
@@ -21,16 +22,17 @@ namespace TagsCloudContainer.Clients
             this.saver = saver;
         }
 
-        public abstract void Run();
+        public abstract Result<None> Run();
 
-        protected Image CreateTagsCloud(TagsCloudSettings settings)
+        protected Result<Bitmap> CreateTagsCloud(TagsCloudSettings settings)
         {
-            return cloudFactory().Create(settings);
+            return Result.Of(cloudFactory)
+                .Then(cloud => cloud.Create(settings));
         }
 
-        protected void SaveTagsCloud(string path, Image image)
+        protected Result<None> SaveTagsCloud(string path, Image image)
         {
-            saver.Save(path, image);
+            return Result.OfAction(() => saver.Save(path, image));
         }
     }
 }

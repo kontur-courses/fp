@@ -8,6 +8,7 @@ using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using TagsCloudContainer.Core.Generators;
 using TagsCloudContainer.Core.Layouters;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Visualization;
 using TagsCloudContainer.Visualization.Painters;
 
@@ -47,6 +48,7 @@ namespace TagsCloudContainer.Tests
             var layouter = GetTestProperty<CircularCloudLayouter>(LayouterKey);
             var rectangles = Enumerable.Repeat(new Size(10, 10), 30)
                 .Select(layouter.PutNextRectangle)
+                .Select(result => result.Value)
                 .ToArray();
 
             rectangles
@@ -65,6 +67,7 @@ namespace TagsCloudContainer.Tests
 
             var rectangles = Enumerable.Repeat(size, count)
                 .Select(layouter.PutNextRectangle)
+                .Select(result => result.Value)
                 .ToArray();
 
             rectangles
@@ -90,7 +93,7 @@ namespace TagsCloudContainer.Tests
             var visualizer = new TagsCloudVisualizer();
             var layouter = GetTestProperty<CircularCloudLayouter>(LayouterKey);
             var rectangles = layouter.Rectangles.ToArray();
-            using (var bitmap = visualizer.Visualize(Painter.Colorize(rectangles)))
+            using (var bitmap = Painter.Colorize(rectangles).Then(visualizer.Visualize).Value)
             {
                 bitmap.Save(path);
             }

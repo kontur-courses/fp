@@ -32,28 +32,27 @@ namespace TagsCloudContainer.Visualization
 
         public Bitmap Visualize(ColorizedTag[] colorizedTags)
         {
-            var rectangles = colorizedTags.Select(c => c.Tag.Rectangle);
-            var viewport = GetViewport(rectangles);
-            var border = GetBorder(colorizedTags);
-            var bitmap = CreateBitmap(viewport, border);
-            var graphics = CreateGraphics(bitmap, viewport, border);
-
-            foreach (var tag in colorizedTags)
-                DrawTag(graphics, tag);
-
-            return bitmap;
+            return Visualize(colorizedTags, colorized => colorized.Tag.Rectangle, DrawTag);
         }
 
         public Bitmap Visualize(ColorizedRectangle[] colorizedRectangles)
         {
-            var rectangles = colorizedRectangles.Select(c => c.Rectangle);
+            return Visualize(colorizedRectangles, colorized => colorized.Rectangle, DrawRectangle);
+        }
+
+        private Bitmap Visualize<T>(
+            IReadOnlyList<T> colorized,
+            Func<T, Rectangle> rectangleSelector,
+            Action<Graphics, T> drawer) where T : ColorizedRectangle
+        {
+            var rectangles = colorized.Select(rectangleSelector);
             var viewport = GetViewport(rectangles);
-            var border = GetBorder(colorizedRectangles);
+            var border = GetBorder(colorized);
             var bitmap = CreateBitmap(viewport, border);
             var graphics = CreateGraphics(bitmap, viewport, border);
 
-            foreach (var rectangle in colorizedRectangles)
-                DrawRectangle(graphics, rectangle);
+            foreach (var item in colorized)
+                drawer(graphics, item);
 
             return bitmap;
         }

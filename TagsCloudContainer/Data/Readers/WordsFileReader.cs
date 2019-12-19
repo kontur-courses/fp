@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Data.Readers
 {
@@ -14,9 +15,11 @@ namespace TagsCloudContainer.Data.Readers
                 this.readers[extension] = reader;
         }
 
-        public IEnumerable<string> ReadAllWords(string path)
+        public Result<IEnumerable<string>> ReadAllWords(string path)
         {
-            return readers[PathUtils.GetExtension(path)].ReadAllWords(path);
+            return readers.TryGetValue(PathUtils.GetExtension(path), out var reader)
+                ? reader.ReadAllWords(path)
+                : Result.Fail<IEnumerable<string>>($"Could not find a suitable reader for {path}");
         }
     }
 }

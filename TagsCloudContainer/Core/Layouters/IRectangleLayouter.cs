@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Core.Layouters
 {
@@ -7,6 +8,6 @@ namespace TagsCloudContainer.Core.Layouters
     {
         IEnumerable<Rectangle> Rectangles { get; }
 
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

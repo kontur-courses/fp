@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using TagsCloudContainer.Data;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Visualization.Measurers
 {
     public interface IWordMeasurer
     {
-        (Font font, Size size) Measure(Word word);
+        Result<(Font font, Size size)> Measure(Word word);
     }
 }

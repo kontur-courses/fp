@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Visualization.Measurers;
 
 namespace TagsCloudContainer.Visualization.Painters
@@ -24,7 +25,7 @@ namespace TagsCloudContainer.Visualization.Painters
             minorityBrush = new SolidBrush(minority);
         }
 
-        public ColorizedRectangle[] Colorize(Rectangle[] rectangles)
+        public Result<ColorizedRectangle[]> Colorize(Rectangle[] rectangles)
         {
             var half = rectangles.Length / 2;
             return rectangles
@@ -32,7 +33,7 @@ namespace TagsCloudContainer.Visualization.Painters
                 .ToArray();
         }
 
-        public ColorizedTag[] Colorize(Tag[] tags)
+        public Result<ColorizedTag[]> Colorize(Tag[] tags)
         {
             var half = tags.Length / 2;
             return tags

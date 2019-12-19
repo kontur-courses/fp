@@ -1,12 +1,13 @@
 ﻿using System.Drawing;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Visualization.Measurers;
 
 namespace TagsCloudContainer.Visualization.Painters
 {
     public interface IPainter
     {
-        ColorizedRectangle[] Colorize(Rectangle[] rectangles);
+        Result<ColorizedRectangle[]> Colorize(Rectangle[] rectangles);
 
-        ColorizedTag[] Colorize(Tag[] tags);
+        Result<ColorizedTag[]> Colorize(Tag[] tags);
     }
 }

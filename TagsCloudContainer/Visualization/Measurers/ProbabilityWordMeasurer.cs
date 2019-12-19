@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using TagsCloudContainer.Data;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Visualization.Measurers
 {
@@ -19,7 +20,7 @@ namespace TagsCloudContainer.Visualization.Measurers
             this.sizeFactor = sizeFactor;
         }
 
-        public (Font font, Size size) Measure(Word word)
+        public Result<(Font font, Size size)> Measure(Word word)
         {
             var emSize = (int) (100 * word.Probability * sizeFactor);
             var font = new Font(fontFamily, emSize);

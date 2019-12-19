@@ -75,6 +75,8 @@
     <Compile Include="Data\Readers\DocWordsFileReader.cs" />
     <Compile Include="Data\Readers\IFileFormatReader.cs" />
     <Compile Include="Data\Readers\WordsFileReader.cs" />
+    <Compile Include="Functional\Result.cs" />
+    <Compile Include="Functional\ResultQueryExpressionExtensions.cs" />
     <Compile Include="PathUtils.cs" />
     <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\CLI\ConsoleClient.cs" />
@@ -116,12 +118,27 @@
     <Folder Include="Core" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Hunspellx64.dll" />
-    <Content Include="Hunspellx86.dll" />
-    <Content Include="Resources\boring_words.txt" />
-    <Content Include="Resources\ru_RU.aff" />
-    <Content Include="Resources\ru_RU.dic" />
-    <Content Include="Resources\words.txt" />
+    <Content Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\boring_words.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\boring_words.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ru_RU.aff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ru_RU.dic">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\words.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

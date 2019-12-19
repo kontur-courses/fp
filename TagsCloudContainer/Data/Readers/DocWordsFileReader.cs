@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudContainer.Functional;
 using Xceed.Words.NET;
 
 namespace TagsCloudContainer.Data.Readers
@@ -8,9 +9,9 @@ namespace TagsCloudContainer.Data.Readers
     {
         public IEnumerable<string> Extensions { get; } = new[] {".doc", ".docx"};
 
-        public IEnumerable<string> ReadAllWords(string path)
+        public Result<IEnumerable<string>> ReadAllWords(string path)
         {
-            return DocX.Load(path).Paragraphs.Select(p => p.Text);
+            return Result.Of(() => DocX.Load(path).Paragraphs.Select(p => p.Text));
         }
     }
 }

@@ -9,6 +9,7 @@ using TagsCloudContainer.Core.Generators;
 using TagsCloudContainer.Core.Layouters;
 using TagsCloudContainer.Data.Processors;
 using TagsCloudContainer.Data.Readers;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Savers;
 using TagsCloudContainer.Visualization;
 using TagsCloudContainer.Visualization.Measurers;
@@ -20,9 +21,10 @@ namespace TagsCloudContainer
     {
         public static void Main(string[] args)
         {
-            var container = CreateContainer();
-            var clientFactory = container.Resolve<Func<string[], BaseClient>>();
-            clientFactory(args).Run();
+            CreateContainer().AsResult()
+                .Then(container => container.Resolve<Func<string[], BaseClient>>())
+                .Then(clientFactory => clientFactory(args).Run())
+                .OnFail(PrintError);
         }
 
         private static IContainer CreateContainer()
@@ -53,14 +55,14 @@ namespace TagsCloudContainer
                 var settings = c.Resolve<TagsCloudSettings>();
                 return new Hunspell(settings.AffFile, settings.DicFile);
             }).As<Hunspell>();
-            builder.RegisterType<WordStemProcessor>().As<IWordProcessor>();
+            builder.RegisterType<LowerCaseWordProcessor>().As<IWordProcessor>();
             builder.Register(context =>
             {
                 var reader = context.Resolve<IWordsFileReader>();
                 var settings = context.Resolve<TagsCloudSettings>();
-                return new WordFilter(reader.ReadAllWords(settings.BoringWordsPath));
+                return new WordFilter(reader.ReadAllWords(settings.BoringWordsPath).GetValueOrThrow());
             }).As<IWordProcessor>();
-            builder.RegisterType<LowerCaseWordProcessor>().As<IWordProcessor>();
+            builder.RegisterType<WordStemProcessor>().As<IWordProcessor>();
 
             builder.RegisterType<ProbabilityWordMeasurer>().As<IWordMeasurer>()
                 .UsingConstructor(typeof(ProbabilityWordMeasurer.ISettings));
@@ -91,5 +93,7 @@ namespace TagsCloudContainer
 
             return builder.Build();
         }
+
+        private static void PrintError(string error) => Console.Error.WriteLine(error);
     }
 }

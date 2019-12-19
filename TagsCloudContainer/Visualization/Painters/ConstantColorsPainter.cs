@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Visualization.Measurers;
 
 namespace TagsCloudContainer.Visualization.Painters
@@ -24,14 +25,14 @@ namespace TagsCloudContainer.Visualization.Painters
             borderPen = new Pen(borderColor);
         }
 
-        public ColorizedRectangle[] Colorize(Rectangle[] rectangles)
+        public Result<ColorizedRectangle[]> Colorize(Rectangle[] rectangles)
         {
             return rectangles
                 .Select(rect => new ColorizedRectangle(rect, fillBrush, borderPen))
                 .ToArray();
         }
 
-        public ColorizedTag[] Colorize(Tag[] tags)
+        public Result<ColorizedTag[]> Colorize(Tag[] tags)
         {
             return tags
                 .Select(tag => new ColorizedTag(tag, textBrush, fillBrush, borderPen))

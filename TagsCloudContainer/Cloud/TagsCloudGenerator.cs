@@ -5,6 +5,7 @@ using TagsCloudContainer.Core.Layouters;
 using TagsCloudContainer.Data;
 using TagsCloudContainer.Data.Processors;
 using TagsCloudContainer.Data.Readers;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Visualization;
 using TagsCloudContainer.Visualization.Measurers;
 using TagsCloudContainer.Visualization.Painters;
@@ -36,18 +37,29 @@ namespace TagsCloudContainer.Cloud
             this.visualizer = visualizer;
         }
 
-        public Image Create(TagsCloudSettings settings)
+        public Result<Bitmap> Create(TagsCloudSettings settings)
         {
-            var words = processors.Aggregate(wordReader.ReadAllWords(settings.WordsPath),
-                (current, processor) => processor.Process(current)).ToArray();
-            var tags = WordCounter.Count(words)
-                .Select(word =>
-                {
-                    var (font, size) = wordMeasurer.Measure(word);
-                    return new Tag(word.Value, font, layouter.PutNextRectangle(size));
-                })
-                .ToArray();
-            return visualizer.Visualize(painter.Colorize(tags));
+            return wordReader.ReadAllWords(settings.WordsPath)
+                .Then(HandleWords)
+                .Then(WordCounter.Count)
+                .Map(CreateTag)
+                .Then(tags => tags.ToArray())
+                .Then(painter.Colorize)
+                .Then(visualizer.Visualize);
+        }
+
+        private Result<string[]> HandleWords(IEnumerable<string> words)
+        {
+            return processors
+                .Aggregate(words.AsResult(), (current, processor) => current.Then(processor.Process))
+                .Then(s => s.ToArray());
+        }
+
+        private Result<Tag> CreateTag(Word word)
+        {
+            return wordMeasurer.Measure(word)
+                .SelectMany(tuple => layouter.PutNextRectangle(tuple.size),
+                    (tuple, rectangle) => new Tag(word.Value, tuple.font, rectangle));
         }
     }
 }

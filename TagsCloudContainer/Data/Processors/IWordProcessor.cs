@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Data.Processors
 {
     public interface IWordProcessor
     {
-        IEnumerable<string> Process(IEnumerable<string> words);
+        Result<IEnumerable<string>> Process(IEnumerable<string> words);
     }
 }

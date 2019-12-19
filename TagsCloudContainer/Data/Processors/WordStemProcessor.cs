@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NHunspell;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Data.Processors
 {
@@ -13,7 +14,12 @@ namespace TagsCloudContainer.Data.Processors
             this.hunspellFactory = hunspellFactory;
         }
         
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
+        {
+            return Result.Of(() => ConvertWordsToStems(words), "Check the paths to the Hunspell dictionaries");
+        }
+
+        private IEnumerable<string> ConvertWordsToStems(IEnumerable<string> words)
         {
             using (var hunspell = hunspellFactory())
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudContainer.Functional;
 
 namespace TagsCloudContainer.Data.Processors
 {
@@ -12,9 +13,9 @@ namespace TagsCloudContainer.Data.Processors
             this.excluded = new HashSet<string>(excluded);
         }
 
-        public IEnumerable<string> Process(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Process(IEnumerable<string> words)
         {
-            return words.Where(word => !excluded.Contains(word));
+            return words.Where(word => !excluded.Contains(word)).AsResult();
         }
     }
 }

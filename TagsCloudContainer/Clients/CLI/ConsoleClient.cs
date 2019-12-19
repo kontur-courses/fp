@@ -2,6 +2,7 @@
 using System.Drawing;
 using CommandLine;
 using TagsCloudContainer.Cloud;
+using TagsCloudContainer.Functional;
 using TagsCloudContainer.Savers;
 
 namespace TagsCloudContainer.Clients.CLI
@@ -20,16 +21,17 @@ namespace TagsCloudContainer.Clients.CLI
             this.args = args;
         }
 
-        public override void Run()
+        public override Result<None> Run()
         {
-            Parser.Default.ParseArguments<Options>(args).WithParsed(Execute);
+            return Parser.Default.ParseArguments<Options>(args)
+                .MapResult(Execute, _ => Result.Fail<None>($"Error parsing arguments {string.Join(" ", args)}"));
         }
 
-        private void Execute(Options options)
+        private Result<None> Execute(Options options)
         {
             ConfigureCloud(options);
-            var image = CreateTagsCloud(CloudSettings);
-            SaveTagsCloud(options.ImagePath, image);
+            return CreateTagsCloud(CloudSettings)
+                .Then(image => SaveTagsCloud(options.ImagePath, image));
         }
 
         private void ConfigureCloud(Options options)
