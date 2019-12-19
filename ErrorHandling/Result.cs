@@ -97,6 +97,15 @@ namespace ErrorHandling
                 : input.Then(inp => OfAction(() => continuation(inp)));
         }
 
+        public static Result<None> Then<TInput>(
+            this Result<TInput> input,
+            Action continuation)
+        {
+            return !input.IsSuccess
+                ? Fail<None>(input.Error)
+                : input.Then(inp => OfAction(continuation));
+        }
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)

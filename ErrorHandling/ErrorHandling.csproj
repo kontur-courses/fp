@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Result.cs" />
+    <Compile Include="ResultExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
