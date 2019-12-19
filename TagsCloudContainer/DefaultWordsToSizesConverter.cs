@@ -44,42 +44,36 @@ namespace TagsCloudContainer
 
         public Result<IEnumerable<(string, Size)>> GetSizesOf(Dictionary<string, int> dictionary)
         {
-            try
-            {
-                var res = new List<(string, Size)>();
-                foreach (var key in dictionary.Keys)
+            return Result.Of(() =>
                 {
-                    var tup = (key, GetSizeOf(key, dictionary));
-                    res.Add(tup);
-                }
+                    var res = new List<(string, Size)>();
+                    foreach (var key in dictionary.Keys)
+                    {
+                        var tup = (key, GetSizeOf(key, dictionary));
+                        res.Add(tup);
+                    }
 
-                var ourSquare = 0.0;
-                foreach (var item in res)
-                {
-                    var rect = item.Item2;
-                    ourSquare += rect.Height * rect.Width;
-                }
+                    var ourSquare = 0.0;
+                    foreach (var item in res)
+                    {
+                        var rect = item.Item2;
+                        ourSquare += rect.Height * rect.Width;
+                    }
 
-                double bitmapSquare = (Size.Height - Size.Height / 2.5) * (Size.Width - Size.Width / 2.5);
+                    double bitmapSquare = (Size.Height - Size.Height / 2.5) * (Size.Width - Size.Width / 2.5);
+                    var coeff = Math.Sqrt(bitmapSquare / ourSquare);
+                    var result = new List<(string, Size)>();
+                    foreach (var item in res)
+                    {
+                        var newRect = new Size((int) (item.Item2.Width * coeff), (int) (item.Item2.Height * coeff));
+                        result.Add((item.Item1, newRect));
+                    }
 
-                var coeff = Math.Sqrt(bitmapSquare / ourSquare);
-
-                var result = new List<(string, Size)>();
-                foreach (var item in res)
-                {
-                    var newRect = new Size((int) (item.Item2.Width * coeff), (int) (item.Item2.Height * coeff));
-                    result.Add((item.Item1, newRect));
-                }
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                return Result.Fail<IEnumerable<(string, Size)>>(e.Message).RefineError(
-                    "Something wrong with your size layout " +
-                    "and words count. Maybe there are too " +
-                    "many words for this size");
-            }
+                    return (IEnumerable<(string, Size)>) result;
+                }, "Something wrong with your size layout " +
+                   "and words count. Maybe there are too " +
+                   "many words for this size"
+            );
         }
     }
 }

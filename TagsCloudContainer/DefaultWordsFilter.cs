@@ -64,16 +64,13 @@ namespace TagsCloudContainer
 
         private Result<List<WordModel>> GetInfoAboutWords(string[] words)
         {
-            try
-            {
-                var mst = new Mysteam();
-                var res = mst.GetWords(WordsToString(words));
-                return Result.Ok(res);
-            }
-            catch (Exception e)
-            {
-                return Result.Fail<List<WordModel>>(e.Message);
-            }
+            return Result.Of(() =>
+                {
+                    var mst = new Mysteam();
+                    var res = mst.GetWords(WordsToString(words));
+                    return res;
+                }
+            );
         }
     }
 }
