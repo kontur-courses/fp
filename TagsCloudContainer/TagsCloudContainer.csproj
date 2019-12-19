@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99FD5DA7-413B-484A-922C-9778CC64AC11}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagsCloudContainer</RootNamespace>
+    <AssemblyName>TagsCloudContainer</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
+      <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CommandLine, Version=2.6.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379">
+      <HintPath>..\packages\CommandLineParser.2.6.0\lib\net461\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentAssertions, Version=5.9.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.5.9.0\lib\net47\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366">
+      <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+      <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Xceed.Document.NET, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4">
+      <HintPath>..\packages\DocX.1.5.0\lib\net40\Xceed.Document.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Words.NET, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4">
+      <HintPath>..\packages\DocX.1.5.0\lib\net40\Xceed.Words.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Processors\WordStemProcessor.cs" />
+    <Compile Include="Data\Readers\DocWordsFileReader.cs" />
+    <Compile Include="Data\Readers\IFileFormatReader.cs" />
+    <Compile Include="Data\Readers\WordsFileReader.cs" />
+    <Compile Include="PathUtils.cs" />
+    <Compile Include="Clients\BaseClient.cs" />
+    <Compile Include="Clients\CLI\ConsoleClient.cs" />
+    <Compile Include="Clients\CLI\Options.cs" />
+    <Compile Include="Cloud\TagsCloudGenerator.cs" />
+    <Compile Include="Cloud\TagsCloudSettings.cs" />
+    <Compile Include="Core\Generators\ArchimedeanSpiral.cs" />
+    <Compile Include="Core\Generators\IPointGenerator.cs" />
+    <Compile Include="Core\Layouters\IRectangleLayouter.cs" />
+    <Compile Include="Core\Layouters\CircularCloudLayouter.cs" />
+    <Compile Include="Data\Processors\IWordProcessor.cs" />
+    <Compile Include="Data\Processors\LowerCaseWordProcessor.cs" />
+    <Compile Include="Data\Processors\WordFilter.cs" />
+    <Compile Include="Data\Readers\TxtWordsFileReader.cs" />
+    <Compile Include="Data\Readers\IWordsFileReader.cs" />
+    <Compile Include="Data\Word.cs" />
+    <Compile Include="Data\WordCounter.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Savers\IImageSaver.cs" />
+    <Compile Include="Savers\FileImageSaver.cs" />
+    <Compile Include="Savers\DefaultImageSaver.cs" />
+    <Compile Include="Tests\ArchimedeanSpiralTests.cs" />
+    <Compile Include="Tests\CircularCloudLayouterTests.cs" />
+    <Compile Include="Visualization\Painters\SteppedColorPainter.cs" />
+    <Compile Include="Visualization\TagsCloudVisualizer.cs" />
+    <Compile Include="Visualization\Measurers\ProbabilityWordMeasurer.cs" />
+    <Compile Include="Visualization\Measurers\IWordMeasurer.cs" />
+    <Compile Include="Visualization\Measurers\Tag.cs" />
+    <Compile Include="Visualization\Painters\ColorizedTag.cs" />
+    <Compile Include="Visualization\Painters\ColorizedRectangle.cs" />
+    <Compile Include="Visualization\Painters\ConstantColorsPainter.cs" />
+    <Compile Include="Visualization\Painters\IPainter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Hunspellx64.dll" />
+    <Content Include="Hunspellx86.dll" />
+    <Content Include="Resources\boring_words.txt" />
+    <Content Include="Resources\ru_RU.aff" />
+    <Content Include="Resources\ru_RU.dic" />
+    <Content Include="Resources\words.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.12.0\build\NUnit.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
