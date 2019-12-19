@@ -6,7 +6,7 @@ namespace TagCloudGenerator.ResultPattern
     {
         private readonly T value;
 
-        public Result(string error, T value = default)
+        internal Result(string error, T value = default)
         {
             Error = error;
             this.value = value;
@@ -25,7 +25,5 @@ namespace TagCloudGenerator.ResultPattern
                 throw new InvalidOperationException($"No value. Only error '{Error}'");
             }
         }
-
-        public static explicit operator Result<T>(T value) => Result.Ok(value);
     }
 }

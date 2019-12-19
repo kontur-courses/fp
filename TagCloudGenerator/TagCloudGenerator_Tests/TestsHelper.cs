@@ -4,13 +4,8 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework.Internal;
-using TagCloudGenerator.Clients;
-using TagCloudGenerator.GeneratorCore;
-using TagCloudGenerator.GeneratorCore.CloudVocabularyPreprocessors;
-using TagCloudGenerator.GeneratorCore.TagClouds;
 using TagCloudGenerator.GeneratorCore.Tags;
 using TagCloudGenerator.ResultPattern;
-using TagCloudGenerator_Tests.TestFixtures;
 using TagType = TagCloudGenerator_Tests.WrongVisualization.TagType;
 
 namespace TagCloudGenerator_Tests
@@ -26,20 +21,6 @@ namespace TagCloudGenerator_Tests
             [TagType.FirstWrong] = new TagStyle(Color.Teal, null)
         };
 
-        public static ITagCloudOptions<ITagCloud> DefaultCloudOptions =>
-            new CloudOptions<CommonWordsCloud>
-            {
-                CloudVocabularyFilename = "CommonWordsCloudFilename.txt",
-                ImageSize = "800x600",
-                ExcludedWordsVocabularyFilename = "ExcludedWords.txt",
-                ImageFilename = "CommonWordsTagCloud.png",
-                GroupsCount = 2,
-                MutualFont = "Bahnschrift SemiLight",
-                BackgroundColor = "#FFFFFFFF",
-                FontSizes = "30_18",
-                TagColors = "#FF000000_#FF000000"
-            };
-
         public static (Rectangle, Rectangle)? GetAnyPairOfIntersectingRectangles(Rectangle[] rectangles)
         {
             for (var i = 0; i < rectangles.Length; i++)
@@ -51,9 +32,8 @@ namespace TagCloudGenerator_Tests
 
         public static void HandleErrors(Action<string> errorHandler, params IResult[] results)
         {
-            foreach (var result in results)
-                if (!result.IsSuccess)
-                    errorHandler(result.Error);
+            foreach (var result in results.Where(result => !result.IsSuccess))
+                errorHandler(result.Error);
         }
 
         public static IEnumerable<T> SelectValues<T>(IEnumerable<Result<T>> results)
@@ -71,14 +51,6 @@ namespace TagCloudGenerator_Tests
             return new string(Enumerable.Repeat(chars, length)
                                   .Select(charsString => charsString[randomizer.Next(charsString.Length)])
                                   .ToArray());
-        }
-
-        public static CloudVocabularyPreprocessor PreprocessorConstructor(TagCloudContext cloudContext)
-        {
-            CloudVocabularyPreprocessor preprocessor = new ExcludingPreprocessor(null, cloudContext);
-            preprocessor = new ToLowerPreprocessor(preprocessor);
-
-            return preprocessor;
         }
     }
 }

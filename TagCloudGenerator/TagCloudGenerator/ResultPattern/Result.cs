@@ -1,13 +1,10 @@
 ﻿using System;
+using System.Linq;
 
 namespace TagCloudGenerator.ResultPattern
 {
     public static class Result
     {
-        public static Result<T> Ok<T>(T value) => new Result<T>(null, value);
-
-        private static Result<None> Ok() => Ok<None>(null);
-
         public static Result<T> AsResult<T>(this T value) => Ok(value);
 
         public static Result<T> Fail<T>(string error) => new Result<T>(error);
@@ -37,12 +34,11 @@ namespace TagCloudGenerator.ResultPattern
             }
         }
 
-        public static IResult FindErrorResult(params IResult[] results)
-        {
-            foreach (var result in results)
-                if (!result.IsSuccess)
-                    return result;
-            return Ok();
-        }
+        public static IResult FindErrorResult(params IResult[] results) =>
+            results.FirstOrDefault(result => !result.IsSuccess) ?? Ok();
+
+        private static Result<T> Ok<T>(T value) => new Result<T>(null, value);
+
+        private static Result<None> Ok() => Ok<None>(null);
     }
 }

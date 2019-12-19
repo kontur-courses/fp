@@ -82,7 +82,7 @@
     <Compile Include="ResultPattern\None.cs" />
     <Compile Include="ResultPattern\ResultExtensions.cs" />
     <Compile Include="ResultPattern\Result.cs" />
-    <Compile Include="ResultPattern\ResultGeneric.cs" />
+    <Compile Include="ResultPattern\ResultOfT.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\CommonWordsTagCloud.png" />
