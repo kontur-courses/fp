@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A99E9356-1023-4DED-91AF-AB319AD7D17B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagCloud</RootNamespace>
+    <AssemblyName>TagCloud</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
+      <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FakeItEasy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c">
+      <HintPath>..\packages\FakeItEasy.5.5.0\lib\net45\FakeItEasy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentAssertions, Version=5.9.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.5.9.0\lib\net47\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+      <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConsoleCommands\DrawTagCloud.cs" />
+    <Compile Include="ConsoleCommands\ListLayoutAlgorithms.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\ImageName.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\ImageSize.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\LayoutAlgorithm.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\MaxFontSize.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\MinFontSize.cs" />
+    <Compile Include="ConsoleCommands\PainterConfigCommands\PathToSave.cs" />
+    <Compile Include="ConsoleCommands\TextRiderConfigCommands\AddSkipWord.cs" />
+    <Compile Include="ConsoleCommands\TextRiderConfigCommands\PathToFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Result.cs" />
+    <Compile Include="TagCloudCreator.cs" />
+    <Compile Include="TagCloudPainter\ITagCloudPainter.cs" />
+    <Compile Include="TagCloudPainter\Painter.cs" />
+    <Compile Include="TagCloudPainter\PainterConfig.cs" />
+    <Compile Include="TagCloudVisualisation\Canvas\Canvas.cs" />
+    <Compile Include="TagCloudVisualisation\Canvas\TagCloudCanvas.cs" />
+    <Compile Include="TagCloudVisualisation\Spirals\ArchimedeanSpiral.cs" />
+    <Compile Include="TagCloudVisualisation\Spirals\ISpiral.cs" />
+    <Compile Include="TagCloudVisualisation\Spirals\RectangularSpiral.cs" />
+    <Compile Include="TagCloudVisualisation\TagCloudLayouter\CircularCloudLayouter.cs" />
+    <Compile Include="TagCloudVisualisation\TagCloudLayouter\ITagCloudLayouter.cs" />
+    <Compile Include="TagCloudVisualisation\TagCloudLayouter\LayouterFactory.cs" />
+    <Compile Include="Tests\TagCloudTests.cs" />
+    <Compile Include="Tests\TagCloudVisualizationTests\CircularCloudLayouter_should.cs" />
+    <Compile Include="Tests\TagCloudVisualizationTests\Spiral_should.cs" />
+    <Compile Include="Tests\TextPreprocessorTests\FrequencyTextAnalyzerTests.cs" />
+    <Compile Include="Tests\TextPreprocessorTests\TextRiderTests.cs" />
+    <Compile Include="TextPreprocessor\Core\Tag.cs" />
+    <Compile Include="TextPreprocessor\Core\TagInfo.cs" />
+    <Compile Include="TextPreprocessor\TextAnalyzers\FrequencyTextAnalyzer.cs" />
+    <Compile Include="TextPreprocessor\TextAnalyzers\ITextAnalyzer.cs" />
+    <Compile Include="TextPreprocessor\TextRiders\IFileTextRider.cs" />
+    <Compile Include="TextPreprocessor\TextRiders\MSWordTextRider.cs" />
+    <Compile Include="TextPreprocessor\TextRiders\TextRiderConfig.cs" />
+    <Compile Include="TextPreprocessor\TextRiders\TxtTextRider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UIConsole\UIConsole.csproj">
+      <Project>{b1f3e754-5a95-43eb-909a-1cea160acc58}</Project>
+      <Name>UIConsole</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TagCloudVisualisation" />
+    <Folder Include="TextPreprocessor" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.12.0\build\NUnit.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
