@@ -29,7 +29,7 @@ namespace TagsCloudVisualization.Tests.Painters
             };
             var text = new AnalyzedLayoutedText(layoutedWords, statDict);
 
-            foreach (var paintedWord in wordPainter.GetPaintedWords(text))
+            foreach (var paintedWord in wordPainter.GetPaintedWords(text).Value)
                 paintedWord.FontColor.Should().NotBe(default(Color));
         }
     }

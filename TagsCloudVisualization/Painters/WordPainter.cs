@@ -1,5 +1,6 @@
 ﻿using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Layouters;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Painters
 {
@@ -12,6 +13,6 @@ namespace TagsCloudVisualization.Painters
             this.palette = palette;
         }
 
-        public abstract PaintedWord[] GetPaintedWords(AnalyzedLayoutedText analyzedLayoutedText);
+        public abstract Result<PaintedWord[]> GetPaintedWords(AnalyzedLayoutedText analyzedLayoutedText);
     }
 }

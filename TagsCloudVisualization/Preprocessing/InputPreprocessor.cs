@@ -2,6 +2,7 @@
 using System.Linq;
 using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Settings;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Preprocessing
 {
@@ -16,15 +17,15 @@ namespace TagsCloudVisualization.Preprocessing
             this.appSettings = appSettings;
         }
 
-        public Word[] PreprocessWords(IEnumerable<string> words)
+        public Result<Word[]> PreprocessWords(IEnumerable<string> words)
         {
-            var preprocessedWords = preprocessors
-                .Aggregate(words, (current, action) => action.ProcessWords(current))
-                .Select(x => new Word(x));
+            var preprocessedWords = words.AsResult().Then(x => preprocessors
+                .Aggregate(x, (current, action) => action.ProcessWords(current))
+                .Select(word => new Word(word)));
 
             return appSettings.Restrictions.AmountOfWordsOnTagCloud >= 0
-                ? preprocessedWords.Take(appSettings.Restrictions.AmountOfWordsOnTagCloud).ToArray()
-                : preprocessedWords.ToArray();
+                ? preprocessedWords.Then(x => x.Take(appSettings.Restrictions.AmountOfWordsOnTagCloud).ToArray())
+                : preprocessedWords.Then(x => x.ToArray());
         }
     }
 }

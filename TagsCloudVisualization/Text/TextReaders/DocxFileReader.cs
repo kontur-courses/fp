@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TagsCloudVisualization.Utils;
 using MsWord = Microsoft.Office.Interop.Word;
 
 namespace TagsCloudVisualization.Text.TextReaders
@@ -18,12 +19,16 @@ namespace TagsCloudVisualization.Text.TextReaders
             this.separators = separators;
         }
 
-
         public HashSet<string> Formats { get; } = new HashSet<string> {"docx", "doc"};
 
-        public IEnumerable<string> GetAllWords(string filepath)
+        public Result<IEnumerable<string>> GetAllWords(string filepath)
         {
-            application = new MsWord.Application {Visible = false};
+            return filepath.AsResult().Then(GetAllWordsAsEnumerable);
+        }
+
+        private IEnumerable<string> GetAllWordsAsEnumerable(string filepath)
+        {
+            application = new MsWord.Application { Visible = false };
 
             var document = application.Documents.Open(filepath);
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Drawers;
 using TagsCloudVisualization.Layouters;
@@ -34,8 +33,7 @@ namespace TagsCloudVisualization.Core
 
         public Result<Bitmap> GetTagCloud(string filepath)
         {
-            return filepath.AsResult()
-                .Then(FindTextReader)
+            return FindTextReader(filepath)
                 .Then(textReader => textReader.GetAllWords(filepath))
                 .Then(words => preprocessor.PreprocessWords(words))
                 .Then(preprocessedWords => statCounter.GetAnalyzedText(preprocessedWords))
@@ -44,17 +42,17 @@ namespace TagsCloudVisualization.Core
                 .Then(paintedWords => drawer.GetDrawnLayoutedWords(paintedWords));
         }
 
-        private ITextReader FindTextReader(string filepath)
+        private Result<ITextReader> FindTextReader(string filepath)
         {
-            if(filepath == null)
-                throw new NullReferenceException("Text file was not specified");
+            if (filepath == null)
+                return ResultExt.Fail<ITextReader>("Text file was not specified");
             if(!filepath.Contains('.'))
-                throw new FormatException("File doesn't contain format information!");
+                return ResultExt.Fail<ITextReader>("File doesn't contain format information!");
             var format = filepath.Split('.').Last().ToLower();
             var reader = textReaders.FirstOrDefault(x => x.Formats.Contains(format));
             if (reader == null)
-                throw new FormatException($"{format.ToUpper()} format is not supported");
-            return reader;
+                return ResultExt.Fail<ITextReader>($"{format.ToUpper()} format is not supported");
+            return reader.AsResult();
         }
     }
 }

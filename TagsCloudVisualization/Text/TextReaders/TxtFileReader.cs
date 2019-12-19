@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Text.TextReaders
 {
@@ -19,7 +20,12 @@ namespace TagsCloudVisualization.Text.TextReaders
 
         public HashSet<string> Formats { get; } = new HashSet<string> {"txt"};
 
-        public IEnumerable<string> GetAllWords(string filepath)
+        public Result<IEnumerable<string>> GetAllWords(string filepath)
+        {
+            return filepath.AsResult().Then(GetAllWordsAsEnumerable);
+        }
+
+        public IEnumerable<string> GetAllWordsAsEnumerable(string filepath)
         {
             using (var fileStream = new FileStream(filepath, FileMode.Open))
             {

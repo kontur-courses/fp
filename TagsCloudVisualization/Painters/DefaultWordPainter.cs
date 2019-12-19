@@ -1,5 +1,6 @@
 ﻿using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Layouters;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Painters
 {
@@ -9,12 +10,12 @@ namespace TagsCloudVisualization.Painters
         {
         }
 
-        public override PaintedWord[] GetPaintedWords(AnalyzedLayoutedText analyzedLayoutedText)
+        public override Result<PaintedWord[]> GetPaintedWords(AnalyzedLayoutedText analyzedLayoutedText)
         {
             var words = new PaintedWord[analyzedLayoutedText.Words.Length];
             for (var i = 0; i < words.Length; i++)
                 words[i] = new PaintedWord(analyzedLayoutedText.Words[i], palette.FontColor);
-            return words;
+            return words.AsResult();
         }
     }
 }

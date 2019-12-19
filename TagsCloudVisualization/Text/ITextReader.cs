@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagsCloudVisualization.Utils;
 
 namespace TagsCloudVisualization.Text
 {
@@ -6,6 +7,6 @@ namespace TagsCloudVisualization.Text
     {
         HashSet<string> Formats { get; }
 
-        IEnumerable<string> GetAllWords(string filepath);
+        Result<IEnumerable<string>> GetAllWords(string filepath);
     }
 }

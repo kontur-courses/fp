@@ -188,6 +188,7 @@
     <Compile Include="Tests\Preprocessing\RemoveNotNounsTests.cs" />
     <Compile Include="Tests\Preprocessing\RemoveNotWordsTests.cs" />
     <Compile Include="Tests\TagCloudVisualizerTests.cs" />
+    <Compile Include="Tests\Utils\ResultTests.cs" />
     <Compile Include="Text\TextReaders\DocxFileReader.cs" />
     <Compile Include="UI\IVisualizer.cs" />
     <Compile Include="Utils\RectanglesExtensions.cs" />

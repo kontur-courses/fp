@@ -42,7 +42,7 @@ namespace TagsCloudVisualization.Tests
         {
             var wordLayouter = new WordLayouter(new CloudLayouterConfiguration(() => cloudLayouter), sizeChooser);
             var previousHeight = -1;
-            foreach (var layoutedWord in wordLayouter.GetLayoutedText(analyzedText).Words
+            foreach (var layoutedWord in wordLayouter.GetLayoutedText(analyzedText).Value.Words
                 .OrderBy(x => x.Position.Height))
             {
                 layoutedWord.Position.Height.Should().BeGreaterThan(previousHeight);
