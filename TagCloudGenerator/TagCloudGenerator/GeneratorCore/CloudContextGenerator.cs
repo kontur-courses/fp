@@ -8,11 +8,13 @@ using System.Text.RegularExpressions;
 using TagCloudGenerator.Clients;
 using TagCloudGenerator.Clients.VocabularyParsers;
 using TagCloudGenerator.GeneratorCore.CloudLayouters;
+using TagCloudGenerator.GeneratorCore.TagClouds;
 using TagCloudGenerator.GeneratorCore.Tags;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator.GeneratorCore
 {
-    public class CloudContextGenerator
+    public class CloudContextGenerator : ICloudContextGenerator
     {
         private const string WidthGroupName = "width";
         private const string HeightGroupName = "height";
@@ -22,109 +24,132 @@ namespace TagCloudGenerator.GeneratorCore
 
         private static readonly Regex hexColorPattern = new Regex(@"#[0-9a-fA-F]{8}");
 
-        private readonly IClient client;
+        private readonly ITagCloudOptions<ITagCloud> cloudOptions;
+        private readonly ICloudVocabularyParser vocabularyParser;
 
-        public CloudContextGenerator(IClient client) => this.client = client;
-
-        public TagCloudContext GetTagCloudContext()
+        public CloudContextGenerator(ITagCloudOptions<ITagCloud> cloudOptions,
+                                     ICloudVocabularyParser vocabularyParser)
         {
-            var cloudOptions = client.GetOptions();
+            this.cloudOptions = cloudOptions;
+            this.vocabularyParser = vocabularyParser;
+        }
 
-            VerifyFilename(cloudOptions.ImageFilename);
-
-            var cloudVocabulary = ParseCloudVocabulary(cloudOptions.CloudVocabularyFilename).ToArray();
-            var excludedWords = ParseCloudVocabulary(cloudOptions.ExcludedWordsVocabularyFilename).ToHashSet();
+        public Result<TagCloudContext> GetTagCloudContext()
+        {
+            var imageFilename = VerifyFilename(cloudOptions.ImageFilename);
+            var cloudVocabulary = ParseCloudVocabulary(cloudOptions.CloudVocabularyFilename);
+            var excludedWords = ParseCloudVocabulary(cloudOptions.ExcludedWordsVocabularyFilename);
             var imageSize = ParseImageSize(cloudOptions.ImageSize);
             var backgroundColor = ParseColor(cloudOptions.BackgroundColor);
             var tagStyleByTagType = TagStylesParse(
                 cloudOptions.GroupsCount, cloudOptions.MutualFont, cloudOptions.FontSizes, cloudOptions.TagColors);
-            var imageCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
-            var tagCloud = cloudOptions.ConstructCloud(backgroundColor, tagStyleByTagType);
 
-            return new TagCloudContext(cloudOptions.ImageFilename,
-                                       imageSize,
-                                       cloudVocabulary,
-                                       tagCloud,
-                                       new CircularCloudLayouter(imageCenter),
-                                       excludedWords);
+            var foundErrorResult = Result.FindErrorResult(imageFilename,
+                                                          cloudVocabulary,
+                                                          excludedWords,
+                                                          imageSize,
+                                                          backgroundColor,
+                                                          tagStyleByTagType);
+            if (!foundErrorResult.IsSuccess)
+                return Result.Fail<TagCloudContext>(foundErrorResult.Error);
+
+            var imageCenter = new Point(imageSize.Value.Width / 2, imageSize.Value.Height / 2);
+            var tagCloud = cloudOptions.ConstructCloud(backgroundColor.Value, tagStyleByTagType.Value);
+            var cloudContext = new TagCloudContext(imageFilename.Value,
+                                                   imageSize.Value,
+                                                   cloudVocabulary.Value.ToArray(),
+                                                   tagCloud,
+                                                   new CircularCloudLayouter(imageCenter),
+                                                   excludedWords.Value.ToHashSet()).AsResult();
+            return cloudContext;
         }
 
-        private static void VerifyFilename(string filename)
+        private static Result<string> VerifyFilename(string filename)
         {
             var invalidCharacterIndex = filename.IndexOfAny(Path.GetInvalidFileNameChars());
 
-            if (invalidCharacterIndex > -1)
-                throw new FormatException(
-                    $@"Filename contains invalid character '{filename[invalidCharacterIndex]}' by index {
-                        invalidCharacterIndex}");
+            return invalidCharacterIndex > -1
+                       ? Result.Fail<string>(
+                           $@"Filename contains invalid character '{filename[invalidCharacterIndex]}' by index {
+                               invalidCharacterIndex}")
+                       : filename.AsResult();
         }
 
-        private static IEnumerable<string> ParseCloudVocabulary(string cloudVocabularyFilename)
-        {
-            if (cloudVocabularyFilename is null)
-                return Enumerable.Empty<string>();
+        private Result<IEnumerable<string>> ParseCloudVocabulary(string cloudVocabularyFilename) =>
+            cloudVocabularyFilename is null
+                ? Enumerable.Empty<string>().AsResult()
+                : vocabularyParser.GetCloudVocabulary(cloudVocabularyFilename);
 
-            var txtVocabularyParser = new TxtVocabularyParser(null);
-
-            return txtVocabularyParser.GetCloudVocabulary(cloudVocabularyFilename);
-        }
-
-        private static Size ParseImageSize(string imageSize)
+        private static Result<Size> ParseImageSize(string imageSize)
         {
             var match = imageSizeValidator.Match(imageSize);
 
             if (!(match.Success && match.Length == imageSize.Length))
-                throw new FormatException("Invalid image size format.");
+                return Result.Fail<Size>($"Invalid image size format '{imageSize}'. Correct format example: '800x600'");
 
             var width = int.Parse(match.Groups[WidthGroupName].Value);
             var height = int.Parse(match.Groups[HeightGroupName].Value);
 
-            return new Size(width, height);
+            return new Size(width, height).AsResult();
         }
 
-        private static Color ParseColor(string hexColor)
+        private static Result<Color> ParseColor(string hexColor)
         {
+            if (!IsFullMatch(hexColorPattern, hexColor))
+                return Result.Fail<Color>(
+                    $"Invalid background color format '{hexColor}'. Correct format example: '#FFA05A2C'");
+
             var argbColor = int.Parse(hexColor.Replace("#", ""), NumberStyles.HexNumber);
 
-            return Color.FromArgb(argbColor);
+            return Color.FromArgb(argbColor).AsResult();
         }
 
-        private static Dictionary<TagType, TagStyle> TagStylesParse(
+        private static Result<Dictionary<TagType, TagStyle>> TagStylesParse(
             int groupsCount, string mutualFont, string fontSizes, string tagColors)
         {
-            var sizes = ParseSizes(fontSizes).ToArray();
-            var colors = ParseColors(tagColors).ToArray();
+            const string separator = "_";
+
+            var sizes = ParseSizes(fontSizes, separator).ToArray();
+            var colors = ParseColors(tagColors, separator).ToArray();
 
             if (sizes.Length != groupsCount || colors.Length != groupsCount)
-                throw new FormatException($"Sizes count has to be equal to colors count and GroupsCount={groupsCount}");
+                return Result.Fail<Dictionary<TagType, TagStyle>>(
+                    $@"Wrong format: sizes count has to be equal to colors count and GroupsCount={groupsCount}{
+                            Environment.NewLine}Sizes correct format example: '60_22'{
+                            Environment.NewLine}Colors correct format example: '#FFFFFFFF_#FFFF6600'");
 
             var tagStyleByTagType = Enumerable.Range(0, groupsCount)
-                .ToDictionary(i => (TagType)i,
-                              i =>
-                              {
-                                  var font = new Font(mutualFont, sizes[i]);
-                                  return new TagStyle(colors[i], font);
-                              });
+                .ToDictionary(tagTypeAsNumber => (TagType)tagTypeAsNumber, GetStyle);
 
-            return tagStyleByTagType;
+            if (tagStyleByTagType.Values.First().Font.Name != mutualFont)
+                return Result.Fail<Dictionary<TagType, TagStyle>>(
+                    $"Specified mutual font name '{mutualFont}' is not installed on the current machine.");
+
+            return tagStyleByTagType.AsResult();
+
+            TagStyle GetStyle(int tagTypeAsNumber)
+            {
+                var font = new Font(mutualFont, sizes[tagTypeAsNumber]);
+                return new TagStyle(colors[tagTypeAsNumber], font);
+            }
         }
 
-        private static IEnumerable<Color> ParseColors(string tagColors) =>
-            tagColors.Split('_')
-                .Where(colorString => IsFullMatch(hexColorPattern, colorString))
-                .Select(ParseColor);
-
-        private static IEnumerable<int> ParseSizes(string fontSizes)
+        private static IEnumerable<int> ParseSizes(string fontSizes, string sizesSeparator)
         {
-            foreach (var sizeString in fontSizes.Split('_'))
-                if (int.TryParse(sizeString, out var size) && size > 0 && size < 200)
+            foreach (var sizeString in fontSizes.Split(sizesSeparator.ToCharArray()))
+                if (int.TryParse(sizeString, out var size) && size > 0)
                     yield return size;
         }
+
+        private static IEnumerable<Color> ParseColors(string tagColors, string sizesSeparator) =>
+            tagColors.Split(sizesSeparator.ToCharArray())
+                .Select(ParseColor)
+                .Where(resultColor => resultColor.IsSuccess)
+                .Select(resultColor => resultColor.Value);
 
         private static bool IsFullMatch(Regex pattern, string input)
         {
             var match = pattern.Match(input);
-
             return match.Success && match.Length == input.Length;
         }
     }

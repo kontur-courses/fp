@@ -2,35 +2,44 @@ using System;
 using System.Linq;
 using TagCloudGenerator.GeneratorCore.CloudVocabularyPreprocessors;
 using TagCloudGenerator.GeneratorCore.Extensions;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator.GeneratorCore
 {
     public class CloudGenerator
     {
-        private readonly CloudContextGenerator cloudContextGenerator;
-        private readonly CloudVocabularyPreprocessor vocabularyPreprocessor;
+        private readonly ICloudContextGenerator cloudContextGenerator;
+        private readonly Func<TagCloudContext, CloudVocabularyPreprocessor> vocabularyPreprocessorConstructor;
 
-        public CloudGenerator(CloudContextGenerator cloudContextGenerator,
-                              CloudVocabularyPreprocessor vocabularyPreprocessor)
+        public CloudGenerator(ICloudContextGenerator cloudContextGenerator,
+                              Func<TagCloudContext, CloudVocabularyPreprocessor> vocabularyPreprocessorConstructor)
         {
             this.cloudContextGenerator = cloudContextGenerator;
-            this.vocabularyPreprocessor = vocabularyPreprocessor;
+            this.vocabularyPreprocessorConstructor = vocabularyPreprocessorConstructor;
         }
 
-        public void CreateTagCloudImage()
+        public Result<None> CreateTagCloudImage()
         {
-            var cloudContext = cloudContextGenerator.GetTagCloudContext();
+            var cloudContextResult = cloudContextGenerator.GetTagCloudContext();
+
+            if (!cloudContextResult.IsSuccess)
+                return Result.Fail<None>(cloudContextResult.Error);
+
+            var cloudContext = cloudContextResult.Value;
+            var vocabularyPreprocessor = vocabularyPreprocessorConstructor(cloudContext);
             var processedVocabulary = vocabularyPreprocessor.Process(cloudContext.TagCloudContent).ToArray();
 
             var shuffledContentStrings = processedVocabulary
                 .Take(1)
                 .Concat(processedVocabulary.Skip(1).SequenceShuffle(new Random()))
+                .Distinct()
                 .ToArray();
 
-            using var bitmap = cloudContext.Cloud.CreateBitmap(
-                shuffledContentStrings, cloudContext.CloudLayouter, cloudContext.ImageSize);
-
-            bitmap.Save(cloudContext.ImageName);
+            return cloudContext.Cloud.CreateBitmap(shuffledContentStrings,
+                                                   cloudContext.CloudLayouter,
+                                                   cloudContext.ImageSize)
+                .Then(bitmap => bitmap.Save(cloudContext.ImageName))
+                .ReplaceError(error => $"Bitmap creation error was handled:{Environment.NewLine}{error}");
         }
     }
 }

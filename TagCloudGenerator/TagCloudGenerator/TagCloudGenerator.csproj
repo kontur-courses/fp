@@ -53,21 +53,21 @@
     <Compile Include="Clients\CmdClient\CommandLineVerbs\DoubleFontsCloud.cs" />
     <Compile Include="Clients\CmdClient\CommandLineVerbs\FourFontsCloud.cs" />
     <Compile Include="Clients\CmdClient\CommandLineVerbs\TagCloudOptions.cs" />
-    <Compile Include="Clients\IClient.cs" />
     <Compile Include="Clients\ITagCloudOptions.cs" />
     <Compile Include="Clients\VocabularyParsers\CloudVocabularyParser.cs" />
+    <Compile Include="Clients\VocabularyParsers\ICloudVocabularyParser.cs" />
     <Compile Include="Clients\VocabularyParsers\TxtVocabularyParser.cs" />
-    <Compile Include="ContainerBuilderExtensions.cs" />
     <Compile Include="GeneratorCore\CloudContextGenerator.cs" />
     <Compile Include="GeneratorCore\CloudGenerator.cs" />
     <Compile Include="GeneratorCore\CloudLayouters\ArchimedeanSpiral.cs" />
     <Compile Include="GeneratorCore\CloudLayouters\CircularCloudLayouter.cs" />
     <Compile Include="GeneratorCore\CloudLayouters\ICloudLayouter.cs" />
     <Compile Include="GeneratorCore\CloudVocabularyPreprocessors\CloudVocabularyPreprocessor.cs" />
-    <Compile Include="GeneratorCore\CloudVocabularyPreprocessors\ExcludingPreprocessors.cs" />
+    <Compile Include="GeneratorCore\CloudVocabularyPreprocessors\ExcludingPreprocessor.cs" />
     <Compile Include="GeneratorCore\CloudVocabularyPreprocessors\ToLowerPreprocessor.cs" />
     <Compile Include="GeneratorCore\Extensions\EnumerableExtensions.cs" />
     <Compile Include="GeneratorCore\Extensions\RectangleExtensions.cs" />
+    <Compile Include="GeneratorCore\ICloudContextGenerator.cs" />
     <Compile Include="GeneratorCore\TagCloudContext.cs" />
     <Compile Include="GeneratorCore\TagClouds\CommonWordsCloud.cs" />
     <Compile Include="GeneratorCore\TagClouds\ITagCloud.cs" />
@@ -78,9 +78,9 @@
     <Compile Include="GeneratorCore\Tags\TagType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultPattern\IResult.cs" />
     <Compile Include="ResultPattern\None.cs" />
     <Compile Include="ResultPattern\ResultExtensions.cs" />
-    <Compile Include="ResultPattern\StringExtensions.cs" />
     <Compile Include="ResultPattern\Result.cs" />
     <Compile Include="ResultPattern\ResultGeneric.cs" />
   </ItemGroup>

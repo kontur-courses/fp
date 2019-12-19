@@ -6,7 +6,7 @@ using TagCloudGenerator.GeneratorCore.TagClouds;
 
 namespace TagCloudGenerator.Clients.CmdClient
 {
-    public class CommandLineClient : IClient
+    public class CommandLineClient
     {
         private readonly string[] args;
 

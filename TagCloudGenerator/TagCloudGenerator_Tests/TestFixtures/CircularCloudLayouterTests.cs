@@ -49,8 +49,13 @@ namespace TagCloudGenerator_Tests.TestFixtures
             Assert.DoesNotThrow(() => new CircularCloudLayouter(new Point(10, 20)));
 
         [Test]
-        public void PutNextRectangle_OnZeroSize_ThrowArgumentException() =>
-            Assert.Throws<ArgumentException>(() => circularCloudLayouter.PutNextRectangle(new Size(0, 0)));
+        public void PutNextRectangle_OnZeroSize_ThrowArgumentException()
+        {
+            var rectangleResult = circularCloudLayouter.PutNextRectangle(new Size(0, 0));
+
+            rectangleResult.IsSuccess.Should().BeFalse();
+            rectangleResult.Error.Should().Be("Was passed empty rectangle size.");
+        }
 
         [TestCase(12, 8, TestName = "WhenEvenWidthAndHeight")]
         [TestCase(100, 5555, TestName = "WhenEvenWidthAndOddHeight")]
@@ -60,12 +65,14 @@ namespace TagCloudGenerator_Tests.TestFixtures
             circularCloudLayouter = new CircularCloudLayouter(origin);
             var firstRectangle = circularCloudLayouter.PutNextRectangle(new Size(width, height));
 
+            firstRectangle.Error.Should().BeNull();
+
             wrongVisualizationCloud = new WrongVisualizationCloud(
                 TestsHelper.BackgroundColor,
                 TestsHelper.TagStyleByTagType,
-                (firstRectangle, new Rectangle(origin, new Size(1, 1))));
+                (firstRectangle.Value, new Rectangle(origin, new Size(1, 1))));
 
-            firstRectangle.CheckIfPointIsCenterOfRectangle(origin, Precision).Should().BeTrue();
+            firstRectangle.Value.CheckIfPointIsCenterOfRectangle(origin, Precision).Should().BeTrue();
         }
 
         [TestCase(0, 0, TestName = "WhenOriginAsCenter")]
@@ -76,12 +83,14 @@ namespace TagCloudGenerator_Tests.TestFixtures
             var center = new Point(xCenter, yCenter);
             var firstRectangle = new CircularCloudLayouter(center).PutNextRectangle(new Size(100, 50));
 
+            firstRectangle.Error.Should().BeNull();
+
             wrongVisualizationCloud = new WrongVisualizationCloud(
                 TestsHelper.BackgroundColor,
                 TestsHelper.TagStyleByTagType,
-                (firstRectangle, new Rectangle(center, new Size(1, 1))));
+                (firstRectangle.Value, new Rectangle(center, new Size(1, 1))));
 
-            firstRectangle.CheckIfPointIsCenterOfRectangle(center, Precision).Should().BeTrue();
+            firstRectangle.Value.CheckIfPointIsCenterOfRectangle(center, Precision).Should().BeTrue();
         }
 
         [Test]
@@ -90,11 +99,13 @@ namespace TagCloudGenerator_Tests.TestFixtures
             var firstRectangle = circularCloudLayouter.PutNextRectangle(new Size(10, 5));
             var secondRectangle = circularCloudLayouter.PutNextRectangle(new Size(7, 3));
 
+            TestsHelper.HandleErrors(error => error.Should().BeNull(), firstRectangle, secondRectangle);
+
             wrongVisualizationCloud = new WrongVisualizationCloud(TestsHelper.BackgroundColor,
                                                                   TestsHelper.TagStyleByTagType,
-                                                                  (firstRectangle, secondRectangle));
+                                                                  (firstRectangle.Value, secondRectangle.Value));
 
-            firstRectangle.IntersectsWith(secondRectangle).Should().BeFalse();
+            firstRectangle.Value.IntersectsWith(secondRectangle.Value).Should().BeFalse();
         }
 
         [Test]
@@ -102,10 +113,11 @@ namespace TagCloudGenerator_Tests.TestFixtures
         {
             var randomizer = TestContext.CurrentContext.Random;
 
-            var rectangles = Enumerable.Range(0, 60)
-                .Select(i => circularCloudLayouter.PutNextRectangle(
-                            new Size(randomizer.Next(50, 100), randomizer.Next(50, 100))))
-                .ToArray();
+            var rectangleResults = Enumerable.Range(0, 60)
+                .Select(_ => circularCloudLayouter.PutNextRectangle(
+                            new Size(randomizer.Next(50, 100), randomizer.Next(50, 100))));
+
+            var rectangles = TestsHelper.SelectValues(rectangleResults).ToArray();
 
             var intersectingRectangles = TestsHelper.GetAnyPairOfIntersectingRectangles(rectangles);
 
@@ -124,7 +136,9 @@ namespace TagCloudGenerator_Tests.TestFixtures
             var specifiedSize = new Size(width, height);
             var firstRectangle = circularCloudLayouter.PutNextRectangle(specifiedSize);
 
-            firstRectangle.Size.Should().Be(specifiedSize);
+            firstRectangle.Error.Should().BeNull();
+
+            firstRectangle.Value.Size.Should().Be(specifiedSize);
         }
 
         [Test]
@@ -135,7 +149,9 @@ namespace TagCloudGenerator_Tests.TestFixtures
             var inputSizes = Enumerable.Range(0, 500)
                 .Select(i => new Size(randomizer.Next(1, 500), randomizer.Next(1, 500)))
                 .ToArray();
-            var rectangles = inputSizes.Select(size => circularCloudLayouter.PutNextRectangle(size));
+
+            var rectangleResults = inputSizes.Select(size => circularCloudLayouter.PutNextRectangle(size));
+            var rectangles = TestsHelper.SelectValues(rectangleResults);
 
             rectangles.Select(rectangle => rectangle.Size).Should().Equal(inputSizes);
         }
@@ -145,10 +161,11 @@ namespace TagCloudGenerator_Tests.TestFixtures
         public void PutNextRectangle_OnALotOfCallsWithRandomSize_ReturnsDenseRoundlyCloud()
         {
             var randomizer = TestContext.CurrentContext.Random;
-            var rectangles = Enumerable.Range(0, randomizer.Next(50, 100))
+            var rectangleResults = Enumerable.Range(0, randomizer.Next(50, 100))
                 .Select(i => new Size(randomizer.Next(40, 100), randomizer.Next(40, 80)))
-                .Select(size => circularCloudLayouter.PutNextRectangle(size))
-                .ToArray();
+                .Select(size => circularCloudLayouter.PutNextRectangle(size));
+
+            var rectangles = TestsHelper.SelectValues(rectangleResults).ToArray();
 
             wrongVisualizationCloud = new WrongVisualizationCloud(TestsHelper.BackgroundColor,
                                                                   TestsHelper.TagStyleByTagType,

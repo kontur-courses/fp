@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TagCloudGenerator.GeneratorCore.CloudLayouters;
 using TagCloudGenerator.GeneratorCore.Tags;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator.GeneratorCore.TagClouds
 {
@@ -26,7 +27,7 @@ namespace TagCloudGenerator.GeneratorCore.TagClouds
                 tag.Text, tag.Style.Font, GetBrush(tag.Style.TextColor, brushByColor), tag.TagBox, TagStyle.TextFormat);
         }
 
-        protected override IEnumerable<Tag> GetTags(
+        protected override IEnumerable<Result<Tag>> GetTags(
             string[] cloudStrings, Graphics graphics, ICloudLayouter circularCloudLayouter)
         {
             for (var i = 0; i < cloudStrings.Length; i++)
@@ -40,7 +41,9 @@ namespace TagCloudGenerator.GeneratorCore.TagClouds
 
                 var tagBox = circularCloudLayouter.PutNextRectangle(size);
 
-                yield return new Tag(tagText, tagStyle, tagBox);
+                yield return tagBox
+                    .Then(rectangle => new Tag(tagText, tagStyle, tagBox.Value).AsResult())
+                    .ReplaceError(error => "TagBox size cannot be zero.");
             }
 
             static TagType GetTagType(int tagIndex)

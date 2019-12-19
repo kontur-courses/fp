@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using TagCloudGenerator.GeneratorCore.CloudLayouters;
 using TagCloudGenerator.GeneratorCore.Tags;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator.GeneratorCore.TagClouds
 {
@@ -20,7 +21,7 @@ namespace TagCloudGenerator.GeneratorCore.TagClouds
 
         protected Dictionary<TTagType, TagStyle> TagStyleByTagType { get; }
 
-        public Bitmap CreateBitmap(string[] cloudStrings, ICloudLayouter cloudLayouter, Size bitmapSize)
+        public Result<Bitmap> CreateBitmap(string[] cloudStrings, ICloudLayouter cloudLayouter, Size bitmapSize)
         {
             var bitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
             using var graphics = GetGraphics(bitmap);
@@ -29,18 +30,27 @@ namespace TagCloudGenerator.GeneratorCore.TagClouds
             graphics.FillRectangle(backgroundBrush, new Rectangle(Point.Empty, bitmap.Size));
 
             var tagDrawer = GetTagDrawer(graphics);
+            var canvas = new Rectangle(Point.Empty, bitmapSize);
 
             foreach (var tag in GetTags(cloudStrings, graphics, cloudLayouter))
-                tagDrawer(tag);
+                if (tag.IsSuccess)
+                {
+                    if (!canvas.Contains(tag.Value.TagBox))
+                        return Result.Fail<Bitmap>($"Tag {tag.Value.TagBox} is out of canvas.");
 
-            return bitmap;
+                    tagDrawer(tag.Value);
+                }
+                else
+                    return Result.Fail<Bitmap>($"Tag error was handled:{Environment.NewLine}{tag.Error}");
+
+            return bitmap.AsResult();
         }
 
         protected abstract Action<Tag> GetTagDrawer(Graphics graphics);
 
-        protected abstract IEnumerable<Tag> GetTags(string[] cloudStrings,
-                                                    Graphics graphics,
-                                                    ICloudLayouter circularCloudLayouter);
+        protected abstract IEnumerable<Result<Tag>> GetTags(string[] cloudStrings,
+                                                            Graphics graphics,
+                                                            ICloudLayouter circularCloudLayouter);
 
         protected static Brush GetBrush(Color color, Dictionary<Color, Brush> brushByColor)
         {

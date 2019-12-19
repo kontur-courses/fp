@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloudGenerator.GeneratorCore.Extensions;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator.GeneratorCore.CloudLayouters
 {
@@ -16,10 +17,10 @@ namespace TagCloudGenerator.GeneratorCore.CloudLayouters
 
         public CircularCloudLayouter(Point center) => centralOffset = new Size(center);
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.IsEmpty)
-                throw new ArgumentException("Passed argument is empty.", nameof(rectangleSize));
+                return Result.Fail<Rectangle>("Was passed empty rectangle size.");
 
             var newRectangle = FindNextRectangleOnTheSpiral(rectangleSize);
 
@@ -34,7 +35,7 @@ namespace TagCloudGenerator.GeneratorCore.CloudLayouters
 
             rectangles.Add(newRectangle);
 
-            return newRectangle.CreateMovedCopy(centralOffset);
+            return newRectangle.CreateMovedCopy(centralOffset).AsResult();
         }
 
         private Rectangle FindNextRectangleOnTheSpiral(Size rectangleSize)
@@ -68,8 +69,9 @@ namespace TagCloudGenerator.GeneratorCore.CloudLayouters
 
             var sizes = new[] { new Size(xDelta, 0), new Size(0, yDelta) }.Where(size => !size.IsEmpty);
 
-            foreach (var size in sizes)
-                for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
+                // ReSharper disable once PossibleMultipleEnumeration
+                foreach (var size in sizes)
                     while (true)
                     {
                         var movedRectangle = rectangle.CreateMovedCopy(size);

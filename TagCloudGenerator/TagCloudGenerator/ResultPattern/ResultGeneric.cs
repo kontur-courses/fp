@@ -2,7 +2,7 @@
 
 namespace TagCloudGenerator.ResultPattern
 {
-    public struct Result<T>
+    public struct Result<T> : IResult
     {
         private readonly T value;
 
@@ -22,10 +22,10 @@ namespace TagCloudGenerator.ResultPattern
                 if (IsSuccess)
                     return value;
 
-                throw new InvalidOperationException($"No value. Only Error {Error}");
+                throw new InvalidOperationException($"No value. Only error '{Error}'");
             }
         }
 
-        public static implicit operator Result<T>(T value) => Result.Ok(value);
+        public static explicit operator Result<T>(T value) => Result.Ok(value);
     }
 }

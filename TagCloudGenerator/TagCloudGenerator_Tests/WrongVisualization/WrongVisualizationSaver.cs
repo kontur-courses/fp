@@ -3,12 +3,13 @@ using System.Drawing;
 using System.IO;
 using NUnit.Framework;
 using TagCloudGenerator.GeneratorCore.TagClouds;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator_Tests.WrongVisualization
 {
     public static class WrongVisualizationSaver
     {
-        public static string SaveAndGetPathToWrongVisualization(
+        public static Result<string> SaveAndGetPathToWrongVisualization(
             TagCloud<TagType> tagCloud, Size imageSize, string directoryName)
         {
             var failedTestFilename = $"{GetCurrentTestName()}_{DateTime.Now:dd.MM.yyyy-HH.mm.ss}.png";
@@ -17,13 +18,18 @@ namespace TagCloudGenerator_Tests.WrongVisualization
             var wrongVisualisationImageFilepath = Path.Combine(
                 TestContext.CurrentContext.TestDirectory, directoryName, failedTestFilename);
 
-            using var image = tagCloud.CreateBitmap(null, null, imageSize);
-            image.Save(wrongVisualisationImageFilepath);
+            var bitmapResult = tagCloud.CreateBitmap(null, null, imageSize);
+
+            if (!bitmapResult.IsSuccess)
+                return Result.Fail<string>(
+                    $"Bitmap creation error was handled:{Environment.NewLine}{bitmapResult.Error}");
+
+            bitmapResult.Value.Save(wrongVisualisationImageFilepath);
 
             TestContext.WriteLine($@"Tag cloud visualization saved to file:{Environment.NewLine
                                       }{wrongVisualisationImageFilepath}");
 
-            return wrongVisualisationImageFilepath;
+            return wrongVisualisationImageFilepath.AsResult();
 
             static string GetCurrentTestName() => TestContext.CurrentContext.Test is var test &&
                                                   test.MethodName == test.Name

@@ -6,6 +6,7 @@ using System.Linq;
 using TagCloudGenerator.GeneratorCore.CloudLayouters;
 using TagCloudGenerator.GeneratorCore.TagClouds;
 using TagCloudGenerator.GeneratorCore.Tags;
+using TagCloudGenerator.ResultPattern;
 
 namespace TagCloudGenerator_Tests.WrongVisualization
 {
@@ -47,14 +48,14 @@ namespace TagCloudGenerator_Tests.WrongVisualization
                 graphics.DrawRectangle(pen, tag.TagBox);
             };
 
-        protected override IEnumerable<Tag> GetTags(string[] cloudStrings,
-                                                    Graphics graphics,
-                                                    ICloudLayouter circularCloudLayouter) =>
+        protected override IEnumerable<Result<Tag>> GetTags(string[] cloudStrings,
+                                                            Graphics graphics,
+                                                            ICloudLayouter circularCloudLayouter) =>
             from rectangle in allRectangles
             let tagType = wrongRectanglesPair.Item1 == rectangle ? TagType.FirstWrong :
                           wrongRectanglesPair.Item2 == rectangle ? TagType.SecondWrong :
                                                                    TagType.Normal
             let tagStyle = TagStyleByTagType[tagType]
-            select new Tag(null, tagStyle, rectangle);
+            select new Tag(null, tagStyle, rectangle).AsResult();
     }
 }

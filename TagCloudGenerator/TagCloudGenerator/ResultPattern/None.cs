@@ -1,7 +1,4 @@
 ﻿namespace TagCloudGenerator.ResultPattern
 {
-    public class None
-    {
-        private None() { }
-    }
+    public abstract class None { }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagCloudGenerator.GeneratorCore.CloudLayouters;
+using TagCloudGenerator.ResultPattern;
 using TagCloudGenerator_Tests.WrongVisualization;
 
 namespace TagCloudGenerator_Tests.TestFixtures
@@ -26,10 +27,14 @@ namespace TagCloudGenerator_Tests.TestFixtures
 
             if (TestContext.CurrentContext.Result.Outcome.Status is TestStatus.Failed &&
                 wrongVisualizationCloud != null)
-                createdTempFileNames.Add(
-                    WrongVisualizationSaver.SaveAndGetPathToWrongVisualization(
-                        wrongVisualizationCloud, VisualizationImageSize, failedTestsDirectoryName)
-                );
+            {
+                var pathResult = WrongVisualizationSaver.SaveAndGetPathToWrongVisualization(
+                    wrongVisualizationCloud, VisualizationImageSize, failedTestsDirectoryName);
+
+                TestsHelper.HandleErrors(HandleError, pathResult);
+
+                createdTempFileNames.Add(pathResult.Value);
+            }
         }
 
         [OneTimeTearDown]
@@ -53,11 +58,12 @@ namespace TagCloudGenerator_Tests.TestFixtures
             var cloudLayouter = new CircularCloudLayouter(imageCenter);
 
             var randomizer = TestContext.CurrentContext.Random;
-            var rectangles = Enumerable.Range(0, 50)
+            var rectangleResults = Enumerable.Range(0, 50)
                 .Select(i => cloudLayouter.PutNextRectangle(
                             new Size(randomizer.Next(50, 100), randomizer.Next(50, 100))))
-                .Append(new Rectangle(imageCenter.X + 45, imageCenter.Y + 90, 86, 54))
-                .ToArray();
+                .Append(new Rectangle(imageCenter.X + 45, imageCenter.Y + 90, 86, 54).AsResult());
+
+            var rectangles = TestsHelper.SelectValues(rectangleResults).ToArray();
 
             var intersectingRectangles = TestsHelper.GetAnyPairOfIntersectingRectangles(rectangles);
 
@@ -80,5 +86,11 @@ namespace TagCloudGenerator_Tests.TestFixtures
             Assert.Throws<ArgumentException>(() => new WrongVisualizationCloud(TestsHelper.BackgroundColor,
                                                                                TestsHelper.TagStyleByTagType,
                                                                                (Rectangle.Empty, Rectangle.Empty)));
+
+        private static void HandleError(string error)
+        {
+            TestContext.Error.WriteLine(error);
+            Environment.Exit(0);
+        }
     }
 }

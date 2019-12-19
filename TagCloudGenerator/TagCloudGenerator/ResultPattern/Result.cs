@@ -6,7 +6,9 @@ namespace TagCloudGenerator.ResultPattern
     {
         public static Result<T> Ok<T>(T value) => new Result<T>(null, value);
 
-        public static Result<None> Ok() => Ok<None>(null);
+        private static Result<None> Ok() => Ok<None>(null);
+
+        public static Result<T> AsResult<T>(this T value) => Ok(value);
 
         public static Result<T> Fail<T>(string error) => new Result<T>(error);
 
@@ -33,6 +35,14 @@ namespace TagCloudGenerator.ResultPattern
             {
                 return Fail<None>(error ?? exception.Message);
             }
+        }
+
+        public static IResult FindErrorResult(params IResult[] results)
+        {
+            foreach (var result in results)
+                if (!result.IsSuccess)
+                    return result;
+            return Ok();
         }
     }
 }
