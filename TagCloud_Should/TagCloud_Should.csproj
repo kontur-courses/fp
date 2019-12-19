@@ -63,14 +63,15 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchimedeanSpiral_Should.cs" />
-    <Compile Include="CircularCloudLayouter_Should.cs" />
-    <Compile Include="EndToEndTest.cs" />
-    <Compile Include="FrequencyDictionaryMaker_Should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextConverter_Should.cs" />
-    <Compile Include="TextFilter_Should.cs" />
-    <Compile Include="TextParser_Should.cs" />
+    <Compile Include="Tests\ArchimedeanSpiral_Should.cs" />
+    <Compile Include="Tests\CircularCloudLayouter_Should.cs" />
+    <Compile Include="Tests\EndToEndTest.cs" />
+    <Compile Include="Tests\FrequencyDictionaryMaker_Should.cs" />
+    <Compile Include="Tests\TextConverter_Should.cs" />
+    <Compile Include="Tests\TextFilter_Should.cs" />
+    <Compile Include="Tests\TextParser_Should.cs" />
+    <Compile Include="UnitTestErrorHandler.cs" />
     <Compile Include="UnitTestsTextProvider.cs" />
   </ItemGroup>
   <ItemGroup>
