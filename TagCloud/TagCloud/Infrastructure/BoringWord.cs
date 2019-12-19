@@ -4,12 +4,12 @@
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
+        public string Value { get; }
 
-        public BoringWord(string name)
+        public BoringWord(string value)
         {
+            Value = value;
             IsChecked = true;
-            Name = name;
         }
     }
 }

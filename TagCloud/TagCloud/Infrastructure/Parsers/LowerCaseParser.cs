@@ -7,12 +7,9 @@ namespace TagCloud
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
-
         public LowerCaseParser()
         {
             IsChecked = true;
-            Name = "LowerCase parser";
         }
 
         public Result<string[]> ParseWords(string[] words)

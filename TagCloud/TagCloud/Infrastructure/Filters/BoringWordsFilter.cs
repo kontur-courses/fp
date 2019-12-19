@@ -10,20 +10,16 @@ namespace TagCloud
 
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
-
         public BoringWordsFilter(BoringWord[] boringWords)
         {
             this.boringWords = boringWords;
             IsChecked = true;
-            Name = "Boring words filter";
         }
 
-        public Result<string[]> FilterWords(string[] wordsResult)
+        public Result<string[]> FilterWords(string[] words)
         {
-            if (wordsResult == null)
+            if (words == null)
                 return Result.Fail<string[]>("Words cannot be null");
-            var words = wordsResult;
             var boringWords = GetBoringWords();
             var boringWordsHashet = new HashSet<string>(boringWords);
             return GetFilteredWords(words, boringWordsHashet);
@@ -33,7 +29,7 @@ namespace TagCloud
         {
             return boringWords
                 .Where(word => word.IsChecked)
-                .Select(word => word.Name);
+                .Select(word => word.Value);
         }
 
         private Result<string[]> GetFilteredWords(string[] words, HashSet<string> boringWords)

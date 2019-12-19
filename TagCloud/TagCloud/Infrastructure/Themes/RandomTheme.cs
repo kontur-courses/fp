@@ -9,13 +9,10 @@ namespace TagCloud
 
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
-
         public RandomTheme()
         {
             random = new Random();
             IsChecked = true;
-            Name = "RandomTheme";
         }
 
         public Color BackgroundColor =>

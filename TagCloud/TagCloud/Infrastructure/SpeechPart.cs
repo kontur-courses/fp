@@ -4,14 +4,11 @@
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
-
         public SpeechPartEnum Value { get; }
 
-        public SpeechPart(string name, SpeechPartEnum value)
+        public SpeechPart(SpeechPartEnum value)
         {
             IsChecked = true;
-            Name = name;
             Value = value;
         }
     }

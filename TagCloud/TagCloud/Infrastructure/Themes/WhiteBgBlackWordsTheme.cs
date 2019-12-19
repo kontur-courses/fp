@@ -6,12 +6,9 @@ namespace TagCloud
     {
         public bool IsChecked { get; set; }
 
-        public string Name { get; }
-
         public WhiteBgBlackWordsTheme()
         {
             IsChecked = true;
-            Name = "Black and White theme";
         }
 
         public Color BackgroundColor => Color.White;
