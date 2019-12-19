@@ -12,18 +12,21 @@ namespace TagsCloudVisualization
     {
         public static void Main(string[] args)
         {
-            var applicationOptions = new ApplicationOptions.ApplicationOptions();
-            var result = Result
+            var applicationOptionsResult = Result
                 .Of(() => Parser.Default.ParseArguments<ApplicationOptions.ApplicationOptions>(args))
                 .Then(parsedArguments => new ApplicationOptionsExtractor().GetOptions(parsedArguments))
-                .Then(options => applicationOptions = options)
-                .Then(applicationOptions => new ContainerCreator().GetContainer(applicationOptions))
-                .Then(container => container.Resolve<CloudCreator>())
-                .Then(cloudCreator => cloudCreator.GetCloud(applicationOptions.TextPath))
-                .Then(cloud => ImageSaver.SaveImage(applicationOptions.ImagePath, cloud, ImageFormat.Png))
                 .OnFail(new ConsoleErrorHandler().HandleError);
-            if (result.IsSuccess)
-                Console.WriteLine($"Success! Picture saved to {applicationOptions.ImagePath}");
+            if (applicationOptionsResult.IsSuccess)
+            {
+                var applicationOptions = applicationOptionsResult.Value;
+                var result = Result.Of(() => new ContainerCreator().GetContainer(applicationOptions))
+                    .Then(container => container.Value.Resolve<CloudCreator>())
+                    .Then(cloudCreator => cloudCreator.GetCloud(applicationOptions.TextPath))
+                    .Then(cloud => ImageSaver.SaveImage(applicationOptions.ImagePath, cloud, ImageFormat.Png))
+                    .OnFail(new ConsoleErrorHandler().HandleError);
+                if (result.IsSuccess)
+                    Console.WriteLine($"Success! Picture saved to {applicationOptions.ImagePath}");
+            }
         }
     }
 }
