@@ -2,7 +2,7 @@
 
 namespace ErrorHandling
 {
-    public class None
+    public abstract class None
     {
         private None()
         {
@@ -16,6 +16,7 @@ namespace ErrorHandling
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -23,11 +24,13 @@ namespace ErrorHandling
 
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            throw new InvalidOperationException(Error);
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -42,6 +45,7 @@ namespace ErrorHandling
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -88,7 +92,9 @@ namespace ErrorHandling
             this Result<TInput> input,
             Action<TInput> continuation)
         {
-            return input.Then(inp => OfAction(() => continuation(inp)));
+            return !input.IsSuccess
+                ? Fail<None>(input.Error)
+                : input.Then(inp => OfAction(() => continuation(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
@@ -112,8 +118,7 @@ namespace ErrorHandling
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(

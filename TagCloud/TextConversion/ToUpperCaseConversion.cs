@@ -1,4 +1,6 @@
-﻿namespace TagCloud.TextConversion
+﻿using TagCloud.Extensions;
+
+namespace TagCloud.TextConversion
 {
     public class ToUpperCaseConversion : ITextConversion
     {

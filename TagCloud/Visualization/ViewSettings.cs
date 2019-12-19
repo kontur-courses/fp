@@ -12,18 +12,12 @@ namespace TagCloud.Visualization
             Brushes.Gold, Brushes.Green, Brushes.Fuchsia, Brushes.BlueViolet
         };
 
-        private Color backgroundColor = Color.DarkBlue;
-
         public string FontName { get; set; } = "courier new";
 
-        public Color BackgroundColor
-        {
-            get => backgroundColor;
-            set => backgroundColor = value;
-        }
+        public Color BackgroundColor { get; set; } = Color.DarkBlue;
 
         public bool EnableWordRectangles { get; set; } = false;
 
-        public int WordsCount { get; set; } = 100;
+        public int WordsCount { get; set; } = 50;
     }
 }

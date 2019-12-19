@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ErrorHandling;
 using TagCloud.Visualization;
 
 namespace TagCloudForm.Holder
@@ -6,7 +7,7 @@ namespace TagCloudForm.Holder
     public interface IImageHolder
     {
         void UpdateUi();
-        void RecreateImage(ImageSettings settings);
+        Result<None> RecreateImage(ImageSettings settings);
         void SaveImage(string fileName);
 
         Image Image { set; }

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using ErrorHandling;
 using TagCloud.CloudLayouter;
+using TagCloud.Extensions;
 using TagCloud.TextColoration;
 using TagCloud.TextConversion;
 
@@ -33,70 +34,50 @@ namespace TagCloud.Visualization
             ResetWordsFrequenciesDictionary();
         }
 
-        public Bitmap Visualize()
+        public Result<Bitmap> Visualize()
         {
             var bitmap = new Bitmap(imageSettings.ImageSize.Width, imageSettings.ImageSize.Height);
             using (var graphics =
                 Graphics.FromImage(bitmap))
             {
-                var result =
-                    SetUpCanvas(graphics)
-                        .Then(_ => SetCenterPoint(graphics))
-                        .Then(_ => PaintAllWords(graphics));
-                result.OnFail(_ => throw new Exception(result.Error));
+                SetUpCanvas(graphics);
+                SetCenterPoint(graphics);
+                if (!PaintAllWords(graphics).IsSuccess)
+                    return Result.Fail<Bitmap>("Failed to visualize. Too many words.");
             }
 
-            return bitmap;
+            return Result.Ok(bitmap);
         }
 
-        private Result<None> SetUpCanvas(Graphics graphics)
+        private void SetUpCanvas(Graphics graphics)
         {
             layouter.ResetLayouter();
             graphics.FillRectangle(new SolidBrush(viewSettings.BackgroundColor), 0, 0,
                 imageSettings.ImageSize.Width, imageSettings.ImageSize.Height);
-            return Result.Ok<None>(null);
         }
 
         private Result<None> PaintAllWords(Graphics graphics)
         {
-            foreach (var word in words.OrderByDescending(w => w.Value).Take(viewSettings.WordsCount))
-            {
-                var result = PaintRectangleOnCanvas(word.Key, word.Value, graphics);
-                if (!result.IsSuccess)
-                    return Result.Fail<None>(result.Error);
-            }
-
-            return Result.Ok<None>(null);
+            return words
+                .OrderByDescending(w => w.Value)
+                .Take(viewSettings.WordsCount)
+                .Select(x => PaintRectangleOnCanvas(x.Key, x.Value, graphics))
+                .ToOneResult();
         }
 
-        private Result<None> SetCenterPoint(Graphics graphics)
+        private void SetCenterPoint(Graphics graphics)
         {
             var centerPoint = GetCenterPoint();
             graphics.TranslateTransform(centerPoint.X, centerPoint.Y);
-            return Result.Ok<None>(null);
         }
 
         private Result<None> PaintRectangleOnCanvas(string word, int frequency, Graphics graphics)
         {
-            var newRectangleSize = SetNewRectangleSize(frequency, word.Length);
-            var rectangleResult = layouter.PutNextRectangle(newRectangleSize);
-
-            if (CheckRectangleErrors(rectangleResult, out var paintRectangleOnCanvas)) return paintRectangleOnCanvas;
-            TryPaintWordRectangle(graphics, rectangleResult);
-            TryPaintWord(word, frequency, graphics, rectangleResult, newRectangleSize);
-
-            return Result.Ok<None>(null);
-        }
-
-        private static bool CheckRectangleErrors(Result<Rectangle> rectangleResult,
-            out Result<None> paintRectangleOnCanvas)
-        {
-            paintRectangleOnCanvas = Result.Ok<None>(null);
-            if (rectangleResult.IsSuccess) return false;
-            paintRectangleOnCanvas = rectangleResult.Error.Equals("Incorrect rectangle position")
-                ? Result.Ok<None>(null)
-                : Result.Fail<None>("Failed to put next rectangle");
-            return true;
+            var outRectSize = Size.Empty;
+            return SetNewRectangleSize(frequency, word.Length)
+                .Then(size => layouter.PutNextRectangle(size, out outRectSize))
+                .Then(rect => TryPaintWordRectangle(graphics, rect))
+                .Then(rect => TryPaintWord(word, frequency, graphics, rect, outRectSize));
         }
 
         private void TryPaintWord(string word, int frequency, Graphics graphics, Result<Rectangle> rectangleResult,
@@ -107,26 +88,34 @@ namespace TagCloud.Visualization
                     textColoration.GetTextColor(word, frequency), rectangleResult.GetValueOrThrow());
         }
 
-        private void TryPaintWordRectangle(Graphics graphics, Result<Rectangle> rectangleResult)
+        private Result<Rectangle> TryPaintWordRectangle(Graphics graphics, Result<Rectangle> rectangleResult)
         {
             var color = viewSettings.Colors.ElementAt(random.Next(0, viewSettings.Colors.Count));
             if (viewSettings.EnableWordRectangles)
                 graphics.FillRectangle(color, rectangleResult.GetValueOrThrow());
+            return rectangleResult;
         }
 
         private Point GetCenterPoint()
-            => new Point(imageSettings.ImageSize.Width / 2, imageSettings.ImageSize.Height / 2);
+        {
+            return new Point(imageSettings.ImageSize.Width / 2, imageSettings.ImageSize.Height / 2);
+        }
 
-        private float GetFontSize(string word, int width) => width / word.Length;
+        private float GetFontSize(string word, int width)
+        {
+            return width / word.Length;
+        }
 
-        private Size SetNewRectangleSize(int frequency, int wordLength)
+        private Result<Size> SetNewRectangleSize(int frequency, int wordLength)
         {
             var width = (int) ((Math.Log(frequency) + 1) * 10 * wordLength);
             var height = 2 * width / wordLength;
-            return new Size(width, height);
+            return Result.Ok(new Size(width, height));
         }
 
         public void ResetWordsFrequenciesDictionary()
-            => words = frequencyDictionaryMaker.MakeFrequencyDictionary(textConverter.ConvertWords());
+        {
+            words = frequencyDictionaryMaker.MakeFrequencyDictionary(textConverter.ConvertWords());
+        }
     }
 }

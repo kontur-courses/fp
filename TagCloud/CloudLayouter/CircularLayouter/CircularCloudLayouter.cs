@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using ErrorHandling;
@@ -18,8 +17,6 @@ namespace TagCloud.CloudLayouter.CircularLayouter
         {
             LayouterSettings = layouterSettings;
             this.spiral = spiral;
-            if (!IsCorrectSize(layouterSettings.ImageSize)) 
-                throw new ArgumentException("Incorrect size of layouter");
             Rectangles = new HashSet<Rectangle>();
         }
 
@@ -29,8 +26,9 @@ namespace TagCloud.CloudLayouter.CircularLayouter
             Rectangles = new HashSet<Rectangle>();
         }
 
-        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize, out Size outRectSize)
         {
+            outRectSize = rectangleSize;
             if (!IsCorrectSize(rectangleSize))
                 return Result.Fail<Rectangle>(
                     $"Incorrect size of rectangle. Width: {rectangleSize.Width}, Height: {rectangleSize.Height}");
@@ -39,21 +37,18 @@ namespace TagCloud.CloudLayouter.CircularLayouter
             {
                 var rect = new Rectangle(point, rectangleSize);
                 if (!IsCorrectRectanglePosition(rect))
-                    return Result.Fail<Rectangle>("Incorrect rectangle position");
+                    return Result.Fail<Rectangle>("Rectangle is out of layouter");
                 if (!RectangleDoesNotIntersect(rect)) continue;
                 Rectangles.Add(rect);
                 return Result.Ok(rect);
             }
 
-            return Result.Fail<Rectangle>("Rectangle should be added after foreach block");
+            return Result.Fail<Rectangle>("Failed to put next rectangle");
         }
 
         private bool IsCorrectSize(Size rectangleSize)
         {
-            return !(rectangleSize.Width <= 0
-                     || rectangleSize.Width > LayouterSettings.ImageSize.Width
-                     || rectangleSize.Height <= 0
-                     || rectangleSize.Height > LayouterSettings.ImageSize.Height);
+            return !(rectangleSize.Width <= 0 || rectangleSize.Height <= 0);
         }
 
         private bool IsCorrectRectanglePosition(Rectangle rect)

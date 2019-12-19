@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using ErrorHandling;
 using TagCloud.Visualization;
 
 namespace TagCloudForm.Holder
@@ -18,9 +19,10 @@ namespace TagCloudForm.Holder
             Application.DoEvents();
         }
 
-        public void RecreateImage(ImageSettings imageSettings)
+        public Result<None> RecreateImage(ImageSettings imageSettings)
         {
             Image = new Bitmap(imageSettings.ImageSize.Width, imageSettings.ImageSize.Height);
+            return Result.Ok<None>(null);
         }
 
         public void SaveImage(string fileName)

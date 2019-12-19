@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
-using Autofac.Core;
 using TagCloud;
 using TagCloud.CloudLayouter;
 using TagCloud.CloudLayouter.CircularLayouter;
+using TagCloud.ErrorHandler;
 using TagCloud.TextColoration;
 using TagCloud.TextConversion;
 using TagCloud.TextFilterConditions;
@@ -68,6 +68,7 @@ namespace TagCloudForm
             builder.RegisterType<FrequencyDictionaryMaker>().AsSelf().SingleInstance();
             builder.RegisterType<RandomTextColoration>().As<ITextColoration>();
             builder.RegisterType<ToLowerCaseConversion>().As<ITextConversion>();
+            builder.RegisterType<ErrorHandler>().As<IErrorHandler>().SingleInstance();
             return builder.Build();
         }
     }
