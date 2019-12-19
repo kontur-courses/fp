@@ -6,14 +6,14 @@ namespace TagCloud
     {
         private readonly IImageHolder imageHolder;
 
+        public MenuCategory Category => MenuCategory.File;
+        public string Name => "Save";
+        public string Description => "Save image into file";
+
         public SaveImageAction(IImageHolder imageHolder)
         {
             this.imageHolder = imageHolder;
         }
-
-        public MenuCategory Category => MenuCategory.File;
-        public string Name => "Save";
-        public string Description => "Save image into file";
 
         public void Perform()
         {

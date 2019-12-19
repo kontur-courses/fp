@@ -4,6 +4,9 @@ namespace ResultOF
 {
     public struct Result<T>
     {
+        public string Error { get; }
+        public T Value { get; }
+
         public Result(string error, T value = default(T))
         {
             Error = error;
@@ -13,14 +16,12 @@ namespace ResultOF
         {
             return Result.Ok(v);
         }
-
-        public string Error { get; }
-        internal T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error: {Error}");
+            throw new InvalidOperationException($"Error occured: {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 }

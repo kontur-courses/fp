@@ -16,7 +16,7 @@ namespace TagCloudTests
         {
             var fontSettings = new FontSettings(name, FontStyle.Regular, size, multiplier);
             Action action = () => fontSettings.ValidateFontSettings().GetValueOrThrow();
-            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Invalid font settings");
+            action.Should().Throw<InvalidOperationException>().WithMessage("Error occured: Invalid font settings");
         }
 
         [TestCase(0, 100, 50, 50)]
@@ -27,7 +27,7 @@ namespace TagCloudTests
         {
             var imageSettings = new ImageSettings(height, width, x, y);
             Action action = () => imageSettings.ValidateImageSettings().GetValueOrThrow();
-            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Invalid image settings");
+            action.Should().Throw<InvalidOperationException>().WithMessage("Error occured: Invalid image settings");
         }
 
     }

@@ -22,7 +22,7 @@ namespace TagCloudTests
         public void LowerCaseParserShould_ThrowException_OnNullText()
         {
             Action action = () => lowerCaseParser.ParseWords(null).GetValueOrThrow();
-            action.Should().Throw<Exception>().WithMessage("No value. Only Error: Words cannot be null");
+            action.Should().Throw<Exception>().WithMessage("Error occured: Words cannot be null");
         }
 
         [TestCase(new object[] { "" }, ExpectedResult = new string[] { "" })]
@@ -38,7 +38,7 @@ namespace TagCloudTests
         public void UpperCaseParserShould_ThrowException_OnNullText()
         {
             Action action = () => upperCaseParser.ParseWords(null).GetValueOrThrow();
-            action.Should().Throw<Exception>().WithMessage("No value. Only Error: Words cannot be null");
+            action.Should().Throw<Exception>().WithMessage("Error occured: Words cannot be null");
         }
 
         [TestCase(new object[] { "" }, ExpectedResult = new string[] { "" })]

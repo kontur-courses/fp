@@ -38,7 +38,7 @@ namespace TagCloudTests
         public void BoringWordsFilterShould_ThrowException_OnNullWords()
         {
             Action action = () => boringWordsFilter.FilterWords(null).GetValueOrThrow();
-            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Words cannot be null");
+            action.Should().Throw<InvalidOperationException>().WithMessage("Error occured: Words cannot be null");
         }
 
         [Test]

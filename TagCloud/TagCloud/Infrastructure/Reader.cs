@@ -9,6 +9,8 @@ namespace TagCloud
         public readonly DocReader docReader;
         public readonly TxtReader txtReader;
 
+        public string PathToFile { get; set; }
+
         public Reader(DocReader docReader, TxtReader txtReader)
         {
             this.docReader = docReader;
@@ -19,6 +21,8 @@ namespace TagCloud
         {
             if (PathToFile == null)
                 return Result.Fail<string>("Get words to read first!");
+            if (!File.Exists(PathToFile))
+                return Result.Fail<string>("No such file exist");
             if (Regex.IsMatch(PathToFile, @"\w*.doc$"))
                 return docReader.ReadAllText(PathToFile);
             else if (Regex.IsMatch(PathToFile, @"\w*.txt$"))
@@ -26,8 +30,5 @@ namespace TagCloud
             else
                 return Result.Fail<string>("No reader for this file");
         }
-
-        public string PathToFile { get; set; }
-
     }
 }

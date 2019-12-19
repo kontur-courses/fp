@@ -4,14 +4,15 @@
     {
         private readonly IFilter[] filters;
 
+        public MenuCategory Category => MenuCategory.Lists;
+        public string Name => "Filters...";
+        public string Description => "Filters choice";
+
         public FilterListAction(IFilter[] filters)
         {
             this.filters = filters;
         }
 
-        public MenuCategory Category => MenuCategory.Lists;
-        public string Name => "Filters...";
-        public string Description => "Filters choice";
 
         public void Perform()
         {

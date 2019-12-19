@@ -33,7 +33,7 @@ namespace TagCloud
                 Dock = DockStyle.Fill,
                 CheckOnClick = true,
             };
-            this.AddItems(items);
+            AddItems(items);
             CheckItems(items);
             Controls.Add(checkedListBox);
             AcceptButton = okButton;

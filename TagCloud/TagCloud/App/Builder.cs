@@ -29,7 +29,8 @@ namespace TagCloud
 
         private static void RegisterBoringWords(ContainerBuilder builder)
         {
-            var boringWords = File.ReadAllLines($"{HelperMethods.GetProjectDirectory().GetValueOrThrow()}\\BoringWords.txt");
+            var boringWordsPath = Path.Combine(HelperMethods.GetProjectDirectory().GetValueOrThrow(), "BoringWords.txt");
+            var boringWords = File.ReadAllLines(boringWordsPath);
             foreach (var word in boringWords)
                 builder.RegisterInstance(new BoringWord(word)).As<BoringWord>();
         }
@@ -38,10 +39,7 @@ namespace TagCloud
         {
             var speechParts = Enum.GetValues(typeof(SpeechPartEnum)).Cast<SpeechPartEnum>();
             foreach (var speechPart in speechParts)
-            {
-                var speechPartValue = Enum.GetName(typeof(SpeechPartEnum), speechPart);
-                builder.RegisterInstance(new SpeechPart(speechPartValue, speechPart)).As<SpeechPart>();
-            }
+                builder.RegisterInstance(new SpeechPart(speechPart)).As<SpeechPart>();
         }
 
         private static void RegisterReaders(ContainerBuilder builder)

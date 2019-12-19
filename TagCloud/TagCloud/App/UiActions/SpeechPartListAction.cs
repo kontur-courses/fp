@@ -4,14 +4,14 @@
     {
         private readonly SpeechPart[] speechParts;
 
+        public MenuCategory Category => MenuCategory.Lists;
+        public string Name => "Speech parts...";
+        public string Description => "Speech parts choice";
+
         public SpeechPartListAction(SpeechPart[] speechParts)
         {
             this.speechParts = speechParts;
         }
-
-        public MenuCategory Category => MenuCategory.Lists;
-        public string Name => "Speech parts...";
-        public string Description => "Speech parts choice";
 
         public void Perform()
         {

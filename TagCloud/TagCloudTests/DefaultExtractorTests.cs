@@ -1,12 +1,7 @@
-﻿using NUnit.Framework;
-using FluentAssertions;
-using TagCloud;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+using TagCloud;
 
 namespace TagCloudTests
 {
@@ -25,7 +20,7 @@ namespace TagCloudTests
         public void ExtractWordTokenShould_ThrowArgumentNullException_OnNullText()
         {
             Action action = () => defaultExtractor.ExtractWords(null).GetValueOrThrow();
-            action.Should().Throw<InvalidOperationException>().WithMessage("No value. Only Error: Text cannot be null");
+            action.Should().Throw<InvalidOperationException>().WithMessage("Error occured: Text cannot be null");
         }
 
         [TestCase("", ExpectedResult = 0)]

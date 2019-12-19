@@ -6,14 +6,14 @@ namespace TagCloud
     {
         private readonly Reader reader;
 
+        public MenuCategory Category => MenuCategory.File;
+        public string Name => "Read from file";
+        public string Description => "Read words from selected file";
+
         public InputFileAction(Reader reader)
         {
             this.reader = reader;
         }
-
-        public MenuCategory Category => MenuCategory.File;
-        public string Name => "Read from file";
-        public string Description => "Read words from selected file";
 
         public void Perform()
         {

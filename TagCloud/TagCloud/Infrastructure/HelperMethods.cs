@@ -8,8 +8,8 @@ namespace TagCloud
     {
         public static Result<string> GetProjectDirectory()
         {
-            string workingDirectory = Environment.CurrentDirectory;
-            string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+            var workingDirectory = Environment.CurrentDirectory;
+            var projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
             return projectDirectory;
         }
     }

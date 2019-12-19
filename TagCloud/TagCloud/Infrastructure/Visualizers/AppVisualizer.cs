@@ -7,7 +7,7 @@ namespace TagCloud
     public class AppVisualizer : IVisualizer
     {
         private readonly Reader reader;
-        private readonly IExtractor extracter;
+        private readonly IExtractor extractor;
         private readonly ILayouter layouter;
         private readonly IParser[] parsers;
         private readonly IFilter[] filters;
@@ -16,12 +16,12 @@ namespace TagCloud
         private readonly ImageHolder imageHolder;
         private readonly ITheme[] themes;
 
-        public AppVisualizer(Reader reader, IExtractor extracter, ILayouter layouter,
+        public AppVisualizer(Reader reader, IExtractor extractor, ILayouter layouter,
             IParser[] parsers, IFilter[] filters, FontSettings fontSettings, ITheme[] themes,
             ImageSettings imageSettings, ImageHolder imageHolder)
         {
             this.reader = reader;
-            this.extracter = extracter;
+            this.extractor = extractor;
             this.layouter = layouter;
             this.parsers = parsers;
             this.filters = filters;
@@ -43,7 +43,7 @@ namespace TagCloud
         {
             var text = reader.ReadTextFromFile().GetValueOrThrow();
 
-            return extracter.ExtractWords(text)
+            return extractor.ExtractWords(text)
                 .Then(FilterWords)
                 .Then(ParseWords)
                 .Then(WordTokenizer.TokenizeWithNoSpeechPart);
@@ -90,7 +90,7 @@ namespace TagCloud
         private float GetFontSize(WordToken wordToken) =>
              fontSettings.DefaultSize + wordToken.Count * fontSettings.CountMultiplier;
 
-        private SizeF GetWordSize(WordToken wordToken, Graphics graphics, Font font) =>
+        private static SizeF GetWordSize(WordToken wordToken, Graphics graphics, Font font) =>
             graphics.MeasureString(wordToken.Value, font);
     }
 }
