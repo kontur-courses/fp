@@ -2,7 +2,7 @@
 using SyntaxTextParser.Architecture;
 using System;
 using System.IO;
-using ResultPattern;
+using Results;
 
 namespace SyntaxTextParser
 {

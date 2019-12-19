@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ResultPattern;
+using Results;
 using SyntaxTextParser.Architecture;
 
 namespace SyntaxTextParser

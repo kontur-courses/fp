@@ -63,7 +63,7 @@ namespace TagsCloudGenerator_Tests
             var newCloutLayouter = new CircularCloudPrepossessing(new Point(centerX, centerY));
 
             var rectangle = newCloutLayouter.PutNextRectangle(new Size(213, 313));
-            rectangle.Location.Should().Be(newCloutLayouter.Center);
+            rectangle.GetValueOrThrow().Location.Should().Be(newCloutLayouter.Center);
         }
 
         [TestCase(1, 1, 1, 1, TestName ="Two minimal rectangles")]
@@ -75,7 +75,7 @@ namespace TagsCloudGenerator_Tests
             var rect1 = cloudPrepossessing.PutNextRectangle(new Size(firstWidth, firstHeight));
             var rect2 = cloudPrepossessing.PutNextRectangle(new Size(secondWidth, secondHeight));
 
-            rect1.IntersectsWith(rect2).Should().BeFalse();
+            rect1.GetValueOrThrow().IntersectsWith(rect2.GetValueOrThrow()).Should().BeFalse();
         }
 
         [TestCase(50, 200, TestName = "Fifty rectangles")]
@@ -91,7 +91,7 @@ namespace TagsCloudGenerator_Tests
             {
                 var size = new Size(randomizer.Next(1, maxSizeParam), 
                                     randomizer.Next(1, maxSizeParam));
-                rectangles.Add(cloudPrepossessing.PutNextRectangle(size));
+                rectangles.Add(cloudPrepossessing.PutNextRectangle(size).GetValueOrThrow());
             }
 
             for (var i = 0; i < rectangles.Count; i++)

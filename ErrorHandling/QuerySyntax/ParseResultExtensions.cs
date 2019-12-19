@@ -1,6 +1,6 @@
 using System;
 
-namespace ResultPattern
+namespace Results
 {
     public static class ParseResultExtensions
     {

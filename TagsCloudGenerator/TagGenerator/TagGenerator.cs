@@ -1,4 +1,4 @@
-﻿using ResultPattern;
+﻿using Results;
 using SyntaxTextParser;
 using System;
 using System.Collections.Generic;
@@ -36,7 +36,7 @@ namespace TagsCloudGenerator
                     cloudSettings.TagTextFormat, font));
             }
 
-            return result.AsResult();
+            return result;
         }
     }
 }

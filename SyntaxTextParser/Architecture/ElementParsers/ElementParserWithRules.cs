@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ResultPattern;
+using Results;
 
 namespace SyntaxTextParser.Architecture
 {
@@ -40,8 +40,7 @@ namespace SyntaxTextParser.Architecture
 
             return textElements
                 .Select(x => x.Key.ConvertToTextElement(x.Value))
-                .ToList()
-                .AsResult();
+                .ToList();
         }
 
         protected abstract IEnumerable<TypedTextElement> ParseText(string text);

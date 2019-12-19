@@ -1,5 +1,5 @@
 ﻿using CommandLine;
-using ResultPattern;
+using Results;
 using System;
 
 namespace TagsCloudConsoleUI

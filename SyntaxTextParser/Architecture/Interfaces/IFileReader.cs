@@ -1,4 +1,4 @@
-﻿using ResultPattern;
+﻿using Results;
 
 namespace SyntaxTextParser.Architecture
 {

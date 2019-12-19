@@ -78,9 +78,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ResultPattern\ResultPattern.csproj">
+    <ProjectReference Include="..\ResultPattern\Results.csproj">
       <Project>{b094c6cc-48e2-4e06-a218-8d95e158d8d0}</Project>
-      <Name>ResultPattern</Name>
+      <Name>Results</Name>
     </ProjectReference>
     <ProjectReference Include="..\SyntaxTextParser\SyntaxTextParser.csproj">
       <Project>{f7667bbc-e072-4271-9a86-dca9fe572bce}</Project>

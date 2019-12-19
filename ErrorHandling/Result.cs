@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultPattern
+namespace Results
 {
     public class None
     {

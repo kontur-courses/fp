@@ -1,6 +1,6 @@
 ﻿using SyntaxTextParser;
 using System.Drawing;
-using ResultPattern;
+using Results;
 using TagsCloudGenerator.CloudPrepossessing;
 
 namespace TagsCloudGenerator

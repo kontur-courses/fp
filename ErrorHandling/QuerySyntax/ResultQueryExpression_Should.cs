@@ -2,7 +2,7 @@ using System;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultPattern
+namespace Results
 {
     [TestFixture]
     public class ResultQueryExpression_Should

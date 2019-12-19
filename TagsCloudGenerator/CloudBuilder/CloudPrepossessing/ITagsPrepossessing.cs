@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using ResultPattern;
+using Results;
 
 namespace TagsCloudGenerator.CloudPrepossessing
 {

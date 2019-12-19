@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudGenerator", "TagsC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudGenerator_Tests", "TagsCloudGenerator_Tests\TagsCloudGenerator_Tests.csproj", "{24B50F88-1535-4B2A-B33D-E36BAB278B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultPattern", "ResultPattern\ResultPattern.csproj", "{B094C6CC-48E2-4E06-A218-8D95E158D8D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Results", "ResultPattern\Results.csproj", "{B094C6CC-48E2-4E06-A218-8D95E158D8D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

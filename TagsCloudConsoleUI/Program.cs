@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using System.Drawing;
-using ResultPattern;
+using Results;
 using TagsCloudConsoleUI.DIPresetModules;
 using TagsCloudGenerator;
 

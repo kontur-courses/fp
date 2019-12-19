@@ -1,6 +1,6 @@
 ﻿using SyntaxTextParser;
 using System.Drawing;
-using ResultPattern;
+using Results;
 using TagsCloudGenerator.CloudPrepossessing;
 
 namespace TagsCloudGenerator
@@ -36,7 +36,7 @@ namespace TagsCloudGenerator
                     tag.Shape.ConvertToRectangleF(), tag.Format);
             }
 
-            return bitmap.AsResult();
+            return bitmap;
         }
     }
 }

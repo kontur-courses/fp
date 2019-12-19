@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using ResultPattern;
+using Results;
 using TagsCloudGenerator.ShapeGenerator;
 
 namespace TagsCloudGenerator.CloudPrepossessing
@@ -37,7 +37,7 @@ namespace TagsCloudGenerator.CloudPrepossessing
                 if (rectangles.Any(rectVariant.IntersectsWith)) continue;
 
                 rectangles.Add(rectVariant);
-                return rectVariant.AsResult();
+                return rectVariant;
             }
         }
 

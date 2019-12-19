@@ -3,7 +3,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultPattern
+namespace Results
 {
     [TestFixture]
     public class Result_Should

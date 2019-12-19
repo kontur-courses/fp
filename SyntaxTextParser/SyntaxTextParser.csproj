@@ -74,9 +74,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ResultPattern\ResultPattern.csproj">
+    <ProjectReference Include="..\ResultPattern\Results.csproj">
       <Project>{b094c6cc-48e2-4e06-a218-8d95e158d8d0}</Project>
-      <Name>ResultPattern</Name>
+      <Name>Results</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

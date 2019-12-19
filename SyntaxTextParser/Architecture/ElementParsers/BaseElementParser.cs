@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ResultPattern;
+using Results;
 
 namespace SyntaxTextParser.Architecture
 {

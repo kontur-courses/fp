@@ -3,7 +3,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultPattern.Tests
+namespace Results.Tests
 {
     internal class None
     {
@@ -18,7 +18,7 @@ namespace ResultPattern.Tests
         [Test]
         public void Create_Ok()
         {
-            var r = Result.Ok(42);
+            var r = (Result<int>) 42;
             r.IsSuccess.Should().BeTrue();
             r.GetValueOrThrow().Should().Be(42);
         }

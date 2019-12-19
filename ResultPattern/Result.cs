@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultPattern
+namespace Results
 {
     public struct Result<T>
     {
@@ -17,15 +17,16 @@ namespace ResultPattern
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
+
+
+        public static implicit operator Result<T>(T value)
+        {
+            return new Result<T>(null, value);
+        }
     }
 
     public static class Result
     {
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
-
         public static Result<T> Ok<T>(T value)
         {
             return new Result<T>(null, value);
@@ -33,14 +34,16 @@ namespace ResultPattern
 
         public static Result<T> Fail<T>(string e)
         {
-            return new Result<T>(e);
+            return new Result<T>(e ?? "");
         }
+
+        public static Result<T> IsFail<T>(this string e) => Fail<T>(e);
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
             try
             {
-                return Ok(f());
+                return f();
             }
             catch (Exception e)
             {

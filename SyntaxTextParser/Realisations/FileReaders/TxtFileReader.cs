@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using ResultPattern;
+using Results;
 using SyntaxTextParser.Architecture;
 
 namespace SyntaxTextParser
@@ -8,7 +8,7 @@ namespace SyntaxTextParser
     {
         public Result<string> ReadTextFromFile(string filePath)
         {
-            return File.ReadAllText(filePath).AsResult();
+            return File.ReadAllText(filePath);
         }
 
         public bool CanReadThatType(string type)
