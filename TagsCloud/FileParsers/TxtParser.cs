@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TagsCloud.FileParsers
 {
@@ -10,11 +11,9 @@ namespace TagsCloud.FileParsers
 
         public Result<ImmutableList<string>> Parse(string filename)
         {
-            //todo without separators
-            var separators = new char[] { ' ', ',', '.', '!', '?', '(', ')', '{', '}', '[', ']' };
             return Result.Of(() => File.ReadAllLines(filename))
                 .RefineError($"Can't read file '{filename}'.")
-                .Then(lines => ImmutableList.ToImmutableList(lines.SelectMany(line => line.Split(separators, System.StringSplitOptions.RemoveEmptyEntries))));
+                .Then(lines => ImmutableList.ToImmutableList(lines.SelectMany(line => Regex.Split(line, @"\W+").Where(item => !string.IsNullOrEmpty(item)))));
         }
     }
 }

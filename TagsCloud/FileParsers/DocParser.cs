@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TagsCloud.FileParsers
 {
@@ -8,7 +10,9 @@ namespace TagsCloud.FileParsers
 
         public Result<ImmutableList<string>> Parse(string filename)
         {
-            return Result.Of(() => ImmutableList.Create("Съешь ещё этих мягких французских булок да выпей же чаю".Split(' ')));
+            return Result.Of(() => ImmutableList.ToImmutableList(
+                Regex.Split("Съешь ещё этих мягких французских булок, да выпей же чаю!", @"\W+")
+                .Where(item => !string.IsNullOrEmpty(item))));
         }
     }
 }
