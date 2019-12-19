@@ -6,7 +6,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class ShowImageAction : IAction
+    public class ShowImageConsoleAction : IConsoleAction
     {
         private UserSettings lastSettings;
         public string CommandName { get; } = "-showimage";

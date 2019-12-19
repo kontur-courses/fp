@@ -5,7 +5,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetPathAction : IAction
+    public class GetPathConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-readpathtowords";
 

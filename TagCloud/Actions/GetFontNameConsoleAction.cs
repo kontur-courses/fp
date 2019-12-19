@@ -6,7 +6,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetFontNameAction : IAction
+    public class GetFontNameConsoleAction : IConsoleAction
     {
         public string CommandName { get; }= "-readfontname";
 

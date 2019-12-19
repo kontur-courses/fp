@@ -35,16 +35,16 @@ namespace TagCloud
             container.Register(Component.For<ICloudVisualization>().ImplementedBy<CloudVisualization>());
             container.Register(Component.For<IPaletteNamesFactory>().ImplementedBy<PaletteNamesFactory>()
                 .LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<NewImageAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<SaveImageAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<ShowImageAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<ExitAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetFontNameAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetHeightAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetPaletteNameAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetWidthAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<GetPathAction>().LifestyleSingleton());
-            container.Register(Component.For<IAction>().ImplementedBy<HelpAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<NewImageConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<SaveImageConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<ShowImageConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<ExitConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<GetFontNameConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<GetHeightConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<GetPaletteNameConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<GetWidthConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<GetPathConsoleAction>().LifestyleSingleton());
+            container.Register(Component.For<IConsoleAction>().ImplementedBy<HelpConsoleAction>().LifestyleSingleton());
             container.Register(Component.For<IClient>().ImplementedBy<Client>());
             return container;
         }

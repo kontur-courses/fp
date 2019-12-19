@@ -9,14 +9,14 @@ namespace TagCloud
 {
     public class Client : IClient
     {
-        private readonly IAction[] actions;
+        private readonly IConsoleAction[] actions;
         private readonly IPaletteNamesFactory paletteNamesFactory;
         private readonly ICloudVisualization visualization;
         private readonly HashSet<string> availableFontNames;
         private HashSet<string> availablePaletteNames;
         private ClientConfig config;
 
-        public Client(IAction[] actions, IPaletteNamesFactory paletteNamesFactory, ICloudVisualization visualization)
+        public Client(IConsoleAction[] actions, IPaletteNamesFactory paletteNamesFactory, ICloudVisualization visualization)
         {
             availableFontNames = new HashSet<string>
             {
@@ -50,11 +50,11 @@ namespace TagCloud
             }
         }
 
-        private Result<IAction> ReadCommand(string commandName, Dictionary<string, IAction> availableCommands)
+        private Result<IConsoleAction> ReadCommand(string commandName, Dictionary<string, IConsoleAction> availableCommands)
         {
             return availableCommands.ContainsKey(commandName)
                 ? Result.Ok(availableCommands[commandName])
-                : Result.Fail<IAction>("Unknown command");
+                : Result.Fail<IConsoleAction>("Unknown command");
         }
     }
 }

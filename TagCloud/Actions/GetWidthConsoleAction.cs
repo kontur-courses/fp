@@ -4,7 +4,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetWidthAction : IAction
+    public class GetWidthConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-readwidth";
         public string Description { get; } = "Задать ширину картинки";

@@ -57,14 +57,14 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ExitAction.cs" />
-    <Compile Include="Actions\GetFontNameAction.cs" />
-    <Compile Include="Actions\GetHeightAction.cs" />
-    <Compile Include="Actions\GetPaletteNameAction.cs" />
-    <Compile Include="Actions\GetPathAction.cs" />
-    <Compile Include="Actions\GetWidthAction.cs" />
-    <Compile Include="Actions\HelpAction.cs" />
-    <Compile Include="Actions\NewImageAction.cs" />
+    <Compile Include="Actions\ExitConsoleAction.cs" />
+    <Compile Include="Actions\GetFontNameConsoleAction.cs" />
+    <Compile Include="Actions\GetHeightConsoleAction.cs" />
+    <Compile Include="Actions\GetPaletteNameConsoleAction.cs" />
+    <Compile Include="Actions\GetPathConsoleAction.cs" />
+    <Compile Include="Actions\GetWidthConsoleAction.cs" />
+    <Compile Include="Actions\HelpConsoleAction.cs" />
+    <Compile Include="Actions\NewImageConsoleAction.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Models\ClientConfig.cs" />
     <Compile Include="Factories\FontSettingsFactory.cs" />
@@ -74,8 +74,8 @@
     <Compile Include="Factories\IPaletteNamesFactory.cs" />
     <Compile Include="Factories\ITagCollectionFactory.cs" />
     <Compile Include="Parsers\IWordsToTagsParser.cs" />
-    <Compile Include="Actions\SaveImageAction.cs" />
-    <Compile Include="Actions\ShowImageAction.cs" />
+    <Compile Include="Actions\SaveImageConsoleAction.cs" />
+    <Compile Include="Actions\ShowImageConsoleAction.cs" />
     <Compile Include="Factories\PaletteDictionaryFactory.cs" />
     <Compile Include="Factories\PaletteNamesFactory.cs" />
     <Compile Include="Models\ColorTagRectangle.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="Services\CircularCloudLayouter.cs" />
     <Compile Include="Services\Cloud.cs" />
     <Compile Include="Services\CloudVisualization.cs" />
-    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Actions\IConsoleAction.cs" />
     <Compile Include="Services\IAlgorithm.cs" />
     <Compile Include="Services\ICircularCloudLayouter.cs" />
     <Compile Include="Services\ICloud.cs" />

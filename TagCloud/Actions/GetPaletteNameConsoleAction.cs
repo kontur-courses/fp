@@ -9,7 +9,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetPaletteNameAction : IAction
+    public class GetPaletteNameConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-readpalettename";
 

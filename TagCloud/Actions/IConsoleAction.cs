@@ -3,7 +3,7 @@ using TagCloud.Models;
 
 namespace TagCloud
 {
-    public interface IAction
+    public interface IConsoleAction
     {
         string CommandName { get; }
         string Description { get; }

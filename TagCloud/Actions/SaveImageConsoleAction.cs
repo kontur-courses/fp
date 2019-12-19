@@ -8,11 +8,11 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class SaveImageAction : IAction
+    public class SaveImageConsoleAction : IConsoleAction
     {
         private readonly Dictionary<string, ImageFormat> namesFormatsToSave;
 
-        public SaveImageAction()
+        public SaveImageConsoleAction()
         {
             namesFormatsToSave = ImageFormatCollectionFactory.GetFormats();
         }

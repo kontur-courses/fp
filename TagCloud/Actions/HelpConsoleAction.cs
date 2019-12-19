@@ -5,14 +5,14 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class HelpAction : IAction
+    public class HelpConsoleAction : IConsoleAction
     {
-        private readonly IAction[] actions;
+        private readonly IConsoleAction[] actions;
         public string CommandName { get; } = "-help";
 
         public string Description { get; } = "показать все команды";
 
-        public HelpAction(IAction[] actions)
+        public HelpConsoleAction(IConsoleAction[] actions)
         {
             this.actions = actions;
         }

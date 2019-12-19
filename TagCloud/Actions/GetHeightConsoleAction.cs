@@ -4,7 +4,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class GetHeightAction : IAction
+    public class GetHeightConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-readheight";
         public string Description { get; } = "Задать высоту картинки";

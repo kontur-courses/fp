@@ -4,7 +4,7 @@ using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
-    public class NewImageAction : IAction
+    public class NewImageConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-newimage";
         public string Description { get; } = "обновить пользовательские настройки";
