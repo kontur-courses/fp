@@ -10,5 +10,11 @@ namespace TagsCloudVisualization.Extensions
             
             return rectangle;
         }
+
+        public static bool FitsToImage(this Rectangle rectangle, Size imageSize)
+        {
+            return rectangle.Location.X + rectangle.Width <= imageSize.Width &&
+                   rectangle.Location.Y + rectangle.Height <= imageSize.Height;
+        }
     }
 }

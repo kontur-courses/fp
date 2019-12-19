@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using TagsCloudVisualization.ErrorHandling;
+using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.Visualization;
 
 namespace TagsCloudVisualization.CloudPainters
@@ -18,8 +19,7 @@ namespace TagsCloudVisualization.CloudPainters
                 graphics.Clear(visualisingOptions.BackgroundColor);
                 foreach (var (word, rectangle) in drawnComponents)
                 {
-                    if (rectangle.Location.X + rectangle.Width > visualisingOptions.ImageSize.Width ||
-                        rectangle.Location.Y + rectangle.Height > visualisingOptions.ImageSize.Height)
+                    if(!rectangle.FitsToImage(visualisingOptions.ImageSize))
                         return Result.Fail<Bitmap>("Cloud didn't fit on image");
                     graphics.DrawString(word, visualisingOptions.Font, brush, rectangle.Location);
                 }
