@@ -19,7 +19,7 @@ namespace TagsCloudVisualization.WordStatistics
             var statistics = new Dictionary<WordStatistics, int>();
             foreach (var collector in statCollectors)
             {
-                var wordsAnalysisResult = words.AsResult().Then(x => collector.GetStatistics(x));
+                var wordsAnalysisResult = ResultExt.Of(() => collector.GetStatistics(words));
                 if (!wordsAnalysisResult.IsSuccess)
                     return ResultExt.Fail<AnalyzedText>(wordsAnalysisResult.Error);
                 foreach (var (wordStatistics, value) in wordsAnalysisResult.Value)

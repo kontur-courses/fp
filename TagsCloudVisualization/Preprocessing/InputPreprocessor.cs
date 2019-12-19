@@ -19,8 +19,8 @@ namespace TagsCloudVisualization.Preprocessing
 
         public Result<Word[]> PreprocessWords(IEnumerable<string> words)
         {
-            var preprocessedWords = words.AsResult().Then(x => preprocessors
-                .Aggregate(x, (current, action) => action.ProcessWords(current))
+            var preprocessedWords = ResultExt.Of(() => preprocessors
+                .Aggregate(words, (current, action) => action.ProcessWords(current))
                 .Select(word => new Word(word)));
 
             return appSettings.Restrictions.AmountOfWordsOnTagCloud >= 0

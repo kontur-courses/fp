@@ -22,7 +22,7 @@ namespace TagsCloudVisualization.Text.TextReaders
 
         public Result<IEnumerable<string>> GetAllWords(string filepath)
         {
-            return filepath.AsResult().Then(GetAllWordsAsEnumerable);
+            return ResultExt.Of(() => GetAllWordsAsEnumerable(filepath));
         }
 
         public IEnumerable<string> GetAllWordsAsEnumerable(string filepath)

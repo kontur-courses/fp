@@ -16,7 +16,7 @@ namespace TagsCloudVisualization.Drawers
         public override Result<Bitmap> GetDrawnLayoutedWords(PaintedWord[] paintedWords)
         {
             var bitmap = new Bitmap(appSettings.ImageSettings.Width, appSettings.ImageSettings.Height);
-            var graphicsResult = bitmap.AsResult().Then(Graphics.FromImage);
+            var graphicsResult = ResultExt.Of(() => Graphics.FromImage(bitmap));
             if (!graphicsResult.IsSuccess)
                 return ResultExt.Fail<Bitmap>(graphicsResult.Error);
             var backgroundBrush = new SolidBrush(appSettings.Palette.BackgroundColor);

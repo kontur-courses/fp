@@ -21,17 +21,17 @@ namespace TagsCloudVisualization.Layouters
 
         public Result<AnalyzedLayoutedText> GetLayoutedText(AnalyzedText analyzedText)
         {
-            var getLayouterResult = cloudLayouterConfiguration.AsResult().Then(x => x.GetCloudLayouter());
+            var getLayouterResult = ResultExt.Of(() => cloudLayouterConfiguration.GetCloudLayouter());
             if (!getLayouterResult.IsSuccess)
                 return ResultExt.Fail<AnalyzedLayoutedText>(getLayouterResult.Error);
-            var getSizesResult = sizeChooser.AsResult().Then(x => x.GetWordSizes(analyzedText, 20, 20));
+            var getSizesResult = ResultExt.Of(() => sizeChooser.GetWordSizes(analyzedText, 20, 20));
             if (!getSizesResult.IsSuccess)
                 return ResultExt.Fail<AnalyzedLayoutedText>(getSizesResult.Error);
             var layout = new Dictionary<Word, Rectangle>();
             foreach (var wordSizePair in getSizesResult.Value.OrderByDescending(x => x.Value.Width))
             {
-                var putRectangleResult = wordSizePair.Value.AsResult()
-                    .Then(x => getLayouterResult.Value.PutNextRectangle(x));
+                var putRectangleResult = ResultExt.Of(() => getLayouterResult.Value
+                        .PutNextRectangle(wordSizePair.Value));
                 if (!putRectangleResult.IsSuccess)
                     return ResultExt.Fail<AnalyzedLayoutedText>(putRectangleResult.Error);
                 layout[wordSizePair.Key] = putRectangleResult.Value;
