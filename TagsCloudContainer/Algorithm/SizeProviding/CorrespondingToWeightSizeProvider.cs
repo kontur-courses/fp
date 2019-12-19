@@ -29,6 +29,7 @@ namespace TagsCloudContainer.Algorithm.SizeProviding
                     : GetNextWordSizeArea(word.Weight, lastWordSize.GetArea(), lastWordWeight);
 
                 word.Size = GetWordSizeByArea(area);
+                CheckIfWordSizeIsCorrect(word.Size);
                 yield return word;
                 lastWordSize = word.Size;
                 lastWordWeight = word.Weight;
@@ -50,6 +51,14 @@ namespace TagsCloudContainer.Algorithm.SizeProviding
             var height = (int)Math.Sqrt((double)area / 2);
             var width = height * 2;
             return new Size(width, height);
+        }
+
+        private void CheckIfWordSizeIsCorrect(Size wordSize)
+        {
+            if (wordSize.Height == 0 || wordSize.Width == 0)
+            {
+                throw new ArgumentException($"Can't provide sizes for words, maybe picture size was too small");
+            }
         }
     }
 }
