@@ -88,7 +88,6 @@
     <Compile Include="TagCloudVisualisation\TagCloudLayouter\CircularCloudLayouter.cs" />
     <Compile Include="TagCloudVisualisation\TagCloudLayouter\ITagCloudLayouter.cs" />
     <Compile Include="TagCloudVisualisation\TagCloudLayouter\LayouterFactory.cs" />
-    <Compile Include="Tests\TagCloudTests.cs" />
     <Compile Include="Tests\TagCloudVisualizationTests\CircularCloudLayouter_should.cs" />
     <Compile Include="Tests\TagCloudVisualizationTests\Spiral_should.cs" />
     <Compile Include="Tests\TextPreprocessorTests\FrequencyTextAnalyzerTests.cs" />
@@ -111,10 +110,7 @@
       <Name>UIConsole</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TagCloudVisualisation" />
-    <Folder Include="TextPreprocessor" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
