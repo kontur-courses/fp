@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using TagsCloudVisualization.WordSource.Interfaces;
+using TagsCloudVisualization.Providers.WordSource.Interfaces;
 
-namespace TagsCloudVisualization.WordSource.Readers
+namespace TagsCloudVisualization.Providers.WordSource.Readers
 {
     internal class TextReaderFactory
     {
@@ -25,11 +25,9 @@ namespace TagsCloudVisualization.WordSource.Readers
                     return txtReader;
                 case var pt when new Regex(@".*pdf").IsMatch(pt):
                     return pdfReader;
-                case var pt when new Regex(@".*doc").IsMatch(pt):
+                default:
                     return docReader;
             }
-
-            throw new ArgumentException($"Unexpected Format on path : {path}");
         }
     }
 }

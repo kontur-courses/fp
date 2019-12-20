@@ -1,4 +1,4 @@
-﻿namespace TagsCloudVisualization.ImageSaver
+﻿namespace TagsCloudVisualization.Settings
 {
     public enum ImageExt
     {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using TagsCloudVisualization.Results;
 
 namespace TagsCloudVisualization
 {
     internal class PathHelper
     {
-        public static string ResourcesPath
+        public static Result<string> ResourcesPath
         {
             get
             {
@@ -13,7 +14,15 @@ namespace TagsCloudVisualization
 
                 for (var i = 0; i < 3; i++)
                 {
-                    pathToResources = Directory.GetParent(pathToResources).FullName;
+
+                    try
+                    {
+                        pathToResources = Directory.GetParent(pathToResources).FullName;
+                    }
+                    catch (Exception e)
+                    {
+                        return Result.Fail<string>($"Cant get parent directory for {pathToResources} "+e.Message);
+                    }
                 }
 
                 pathToResources += "\\Resources";

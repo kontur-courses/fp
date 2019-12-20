@@ -1,22 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using DocoptNet;
+using ikvm.extensions;
 using TagsCloudVisualization.ImageSaver;
 using TagsCloudVisualization.Providers.Layouter.Interfaces;
 using TagsCloudVisualization.Providers.Sizable;
+using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization
 {
     internal class SettingsParser
     {
-        public static ApplicationSettings GetSettings(IDictionary<string, ValueObject> parameters)
+        private static readonly List<string> parametersToUse = new List<string>()
         {
+            "--input", "--max_words", "--exclude", "--sizer", "--brush", "--back", "--font", "--font_size",
+            "--width", "--height", "--x", "--y", "--coef", "--type", "--output_path", "--output_ext"
+        };
+
+        public static Result<ApplicationSettings> GetSettings(IDictionary<string, ValueObject> parameters)
+        {
+            if (parameters.Any(param => param.Value == null))
+            {
+                return Result.Fail<ApplicationSettings>(
+                    $"{parameters.First(param => param.Value == null).Key} is null");
+            }
+
+            if (parametersToUse.Any(param => !parameters.Keys.Contains(param)))
+            {
+                return Result.Fail<ApplicationSettings>(
+                    $"{parametersToUse.First(param => !parameters.Keys.Contains(param))} parameter not find");
+            }
+
             var readerSettings = GetReaderSettings(parameters["--input"].ToString(),
                 parameters["--max_words"].ToString(),
                 parameters["--exclude"].ToString());
-
+            if (!readerSettings.IsSuccess)
+            {
+                return Result.Fail<ApplicationSettings>(readerSettings.Error);
+            }
 
             var drawerSettings = GetDrawerSettings(parameters["--brush"].ToString(),
                 parameters["--back"].ToString(),
@@ -25,33 +49,63 @@ namespace TagsCloudVisualization
                 parameters["--height"].ToString(),
                 parameters["--width"].ToString(),
                 parameters["--sizer"].ToString());
+            if (!drawerSettings.IsSuccess)
+            {
+                return Result.Fail<ApplicationSettings>(drawerSettings.Error);
+            }
+
             var layouterSettings = GetLayouterSettings(parameters["--x"].ToString(),
                 parameters["--y"].ToString(),
                 parameters["--coef"].ToString(),
                 parameters["--type"].ToString());
+            if (!layouterSettings.IsSuccess)
+            {
+                return Result.Fail<ApplicationSettings>(layouterSettings.Error);
+            }
 
-            var imageExt = (ImageExt) Enum.Parse(typeof(ImageExt),
-                parameters["--output_ext"].ToString());
+
+            var imageExt = Result.Of(() => (ImageExt) Enum.Parse(typeof(ImageExt),
+                parameters["--output_ext"].ToString()));
+            if (!imageExt.IsSuccess)
+            {
+                return Result.Fail<ApplicationSettings>("cant parse imageExt");
+            }
+
             var savePath = parameters["--output_path"].ToString();
-            savePath = string.IsNullOrEmpty(savePath) ? PathHelper.ResourcesPath : savePath;
-            return new ApplicationSettings(imageExt, readerSettings, layouterSettings, drawerSettings, savePath);
+
+            if (savePath.isEmpty())
+            {
+                var res = PathHelper.ResourcesPath;
+                if (!res.IsSuccess)
+                    return Result.Fail<ApplicationSettings>("Can't get path to save Path");
+                savePath = res.Value;
+            }
+
+            return new ApplicationSettings(imageExt.Value, readerSettings.Value, layouterSettings.Value,
+                drawerSettings.Value, savePath);
         }
 
-        private static LayouterSettings GetLayouterSettings(string x, string y, string spiralCoefficient,
+        private static Result<LayouterSettings> GetLayouterSettings(string x, string y, string spiralCoefficient,
             string spiralType)
         {
-            int.TryParse(x, out var xInt);
-            int.TryParse(y, out var yInt);
+            if (!int.TryParse(x, out var xInt))
+                return Result.Fail<LayouterSettings>("Cant parse x");
+
+            if (!int.TryParse(y, out var yInt))
+                return Result.Fail<LayouterSettings>("Cant parse y");
+
             var sType = (SpiralType) Enum.Parse(typeof(SpiralType), spiralType);
             if (!int.TryParse(spiralCoefficient, out var spiralCoefficientInt))
-                spiralCoefficientInt = 1;
+                return Result.Fail<LayouterSettings>("Cant parse spiral coefficient");
+
             return new LayouterSettings(new Point(xInt, yInt), spiralCoefficientInt, sType);
         }
 
-        private static ReaderSettings GetReaderSettings(string textDirectory, string maxObjectCount,
+        private static Result<ReaderSettings> GetReaderSettings(string textDirectory, string maxObjectCount,
             string badWordsDirectory)
         {
-            int.TryParse(maxObjectCount, out var count);
+            if (!int.TryParse(maxObjectCount, out var count))
+                return Result.Fail<ReaderSettings>("cant parse max words count");
             badWordsDirectory =
                 string.IsNullOrEmpty(badWordsDirectory)
                     ? PathHelper.ResourcesPath + "\\BadWords.txt"
@@ -62,25 +116,29 @@ namespace TagsCloudVisualization
             return new ReaderSettings(textDirectory, count, badWordsDirectory);
         }
 
-        private static DrawerSettings GetDrawerSettings(string brushColorName, string backGroundColorName,
+        private static Result<DrawerSettings> GetDrawerSettings(string brushColorName, string backGroundColorName,
             string fontName, string fontSize, string imageHeight, string imageWidth, string sizer)
         {
             if (!int.TryParse(fontSize, out var size))
-                throw new ArgumentException("Cant parse fontSize");
-            if (!int.TryParse(imageHeight, out var height))
-                throw new ArgumentException("Cant parse height");
-            if (!int.TryParse(imageWidth, out var width))
-                throw new ArgumentException("Cant parse width");
+                return Result.Fail<DrawerSettings>("Cant parse fontSize");
+            if (!int.TryParse(imageHeight, out var height) || height > 15000)
+                return Result.Fail<DrawerSettings>("Cant parse height");
+            if (!int.TryParse(imageWidth, out var width) || width > 15000)
+                return Result.Fail<DrawerSettings>("Cant parse width");
 
             var brushColor = Color.FromName(brushColorName);
             var backGroundColor = Color.FromName(backGroundColorName);
 
             var textBrush = new SolidBrush(brushColor);
-            var font = new Font(fontName, size);
+            var font = Result.Of(() => new Font(fontName, size));
+            if (!font.IsSuccess)
+                return Result.Fail<DrawerSettings>("Cant parse font");
 
-            var sizerType = (SizeSelectorType) Enum.Parse(typeof(SizeSelectorType), sizer);
+            var sizerType = Result.Of(() => (SizeSelectorType) Enum.Parse(typeof(SizeSelectorType), sizer));
+            if (!sizerType.IsSuccess)
+                return Result.Fail<DrawerSettings>("Cant parse sizerType");
 
-            return new DrawerSettings(textBrush, backGroundColor, font, height, width, sizerType);
+            return new DrawerSettings(textBrush, backGroundColor, font.Value, height, width, sizerType.Value);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TagsCloudVisualization.WordSource.Interfaces;
+using TagsCloudVisualization.Providers.WordSource.Interfaces;
 
-namespace TagsCloudVisualization.WordSource
+namespace TagsCloudVisualization.Providers.WordSource
 {
     internal class TextSplitter : IWordReader
     {

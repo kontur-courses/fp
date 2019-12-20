@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Providers.Layouter.Interfaces;
 using TagsCloudVisualization.Providers.Layouter.Spirals;
+using TagsCloudVisualization.Results;
 using TagsCloudVisualization.Settings;
 using TagsCloudVisualization.SourcesTypes;
 
@@ -21,20 +22,29 @@ namespace TagsCloudVisualization.Providers.Layouter
             this.factory = factory;
         }
 
-        public IEnumerable<DrawableWord> GetDrawableSource(IEnumerable<SizableWord> sizableSource,
+        public Result<List<DrawableWord>> GetDrawableSource(List<SizableWord> sizableSource,
             LayouterSettings settings)
         {
+            var drawableSource = new List<DrawableWord>();
             Rectangles = new List<Rectangle>();
             center = settings.Center;
             spiralPointer = factory.Create(settings);
 
-            return sizableSource.Select(sizable => new DrawableWord(sizable.Value, PutNextRectangle(sizable.DrawSize)));
+            foreach (var sizable in sizableSource)
+            {
+                var nextRect = PutNextRectangle(sizable.DrawSize);
+                if (!nextRect.IsSuccess)
+                    return Result.Fail<List<DrawableWord>>(nextRect.Error);
+                drawableSource.Add(new DrawableWord(sizable.Value, nextRect.Value));
+            }
+
+            return drawableSource.AsResult();
         }
 
-        private Rectangle PutNextRectangle(Size rectangleSize)
+        private Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.IsEmpty || rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("Rectangle does not exist");
+                return Result.Fail<Rectangle>("Rectangle does not exist");
 
             var rect = new Rectangle(spiralPointer.GetSpiralCurrent(), rectangleSize);
             while (Rectangles.Any(currentR => currentR.IntersectsWith(rect)))

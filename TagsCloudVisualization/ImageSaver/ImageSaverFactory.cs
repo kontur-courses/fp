@@ -1,4 +1,5 @@
 ﻿using System;
+using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.ImageSaver
 {

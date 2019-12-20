@@ -24,9 +24,8 @@ namespace TagsCloudVisualization.Providers.Sizable
                     return sqrtSelector;
                 case SizeSelectorType.Log:
                     return logSelector;
-                case SizeSelectorType.SqrtL:
+                default:
                     return sqrtLengthSelector;
-                default: throw new ArgumentException("Cant resolve type");
             }
         }
     }

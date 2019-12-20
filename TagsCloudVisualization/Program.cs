@@ -1,7 +1,10 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Autofac;
 using DocoptNet;
+using org.omg.CORBA.portable;
 using TagsCloudVisualization.ImageSaver;
+using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization
 {
@@ -48,14 +51,33 @@ namespace TagsCloudVisualization
 
         internal static void Main(string[] args)
         {
-            
             var parameters = new Docopt().Apply(Usage, args, version: Version, exit: true);
-            var appSettings = SettingsParser.GetSettings(parameters);
+            var appSettingsResult = SettingsParser.GetSettings(parameters);
+            if (!appSettingsResult.IsSuccess)
+            {
+                Console.WriteLine(appSettingsResult.Error);
+                return;
+            }
+
+            var appSettings = appSettingsResult.Value;
 
             var container = ContainerProvider.Build();
             var bitmap = container.Resolve<TagCreator>().DrawTag(appSettings.ReaderSettings, appSettings.DrawerSettings,
                 appSettings.LayouterSettings);
-            container.Resolve<IImageSaverFactory>().GetSaver(appSettings.ImageExt).Save(bitmap, appSettings.SavePath);
+
+            if (!bitmap.IsSuccess)
+            {
+                Console.WriteLine(bitmap.Error);
+                return;
+            }
+
+            var saveResult = container.Resolve<IImageSaverFactory>().GetSaver(appSettings.ImageExt)
+                .Save(bitmap.Value, appSettings.SavePath);
+
+            if (!saveResult.IsSuccess)
+            {
+                Console.WriteLine(saveResult.Error);
+            }
         }
     }
 }
