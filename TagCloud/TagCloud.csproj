@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3B691135-8CE8-4B60-A2FD-58DD5D5A655A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TagCloud</RootNamespace>
+    <AssemblyName>TagCloud</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithm\ITagCloudLayouter.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\CircularCloudLayouter.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\DistanceUtils.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\GeometryUtils.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\ISpiral.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\LayouterParameters.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\RectangleUtils.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\Segment.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\ShiftUtils.cs" />
+    <Compile Include="Algorithm\SpiralBasedLayouter\ArchimedeanSpiral.cs" />
+    <Compile Include="App\Application.cs" />
+    <Compile Include="App\ConsoleSettingsProvider.cs" />
+    <Compile Include="App\ISettingsProvider.cs" />
+    <Compile Include="App\Options.cs" />
+    <Compile Include="App\AppSettings.cs" />
+    <Compile Include="Infrastructure\ColorExtensions.cs" />
+    <Compile Include="Infrastructure\FileInfoProvider.cs" />
+    <Compile Include="Infrastructure\IImageFormat.cs" />
+    <Compile Include="Infrastructure\PngImageFormat.cs" />
+    <Compile Include="Infrastructure\SizeUtils.cs" />
+    <Compile Include="Infrastructure\IFileInfoProvider.cs" />
+    <Compile Include="TextReading\ITextReaderSelector.cs" />
+    <Compile Include="TextReading\MicrosoftWordTextReader.cs" />
+    <Compile Include="TextReading\TextReaderSelector.cs" />
+    <Compile Include="Visualization\WordPainting\IndexBasedWordPainter.cs" />
+    <Compile Include="Visualization\ITagCloudElementDrawer.cs" />
+    <Compile Include="Visualization\ITagCloudElementsPreparer.cs" />
+    <Compile Include="Visualization\WordPainting\IWordPainter.cs" />
+    <Compile Include="Visualization\IWordSizeSetter.cs" />
+    <Compile Include="Visualization\ITagCloudGenerator.cs" />
+    <Compile Include="Infrastructure\Palette.cs" />
+    <Compile Include="Infrastructure\PictureConfig.cs" />
+    <Compile Include="Visualization\RectangleDrawer.cs" />
+    <Compile Include="Visualization\TagCloudElement.cs" />
+    <Compile Include="Visualization\TagCloudElementsPreparer.cs" />
+    <Compile Include="Visualization\WordPainting\RandomColorWordPainter.cs" />
+    <Compile Include="Visualization\WordPainting\WordClassBasedWordPainter.cs" />
+    <Compile Include="Visualization\WordDrawer.cs" />
+    <Compile Include="WordsProcessing\WordClassSettings.cs" />
+    <Compile Include="WordsProcessing\IWordCounter.cs" />
+    <Compile Include="Visualization\TagCloudGenerator.cs" />
+    <Compile Include="Infrastructure\Word.cs" />
+    <Compile Include="WordsProcessing\WordCounter.cs" />
+    <Compile Include="Visualization\WordSizeSetter.cs" />
+    <Compile Include="WordsProcessing\IWordProcessor.cs" />
+    <Compile Include="WordsProcessing\IWordSelector.cs" />
+    <Compile Include="WordsProcessing\IWordClassIdentifier.cs" />
+    <Compile Include="WordsProcessing\MyStemBasedWordClassIdentifier.cs" />
+    <Compile Include="WordsProcessing\WordProcessor.cs" />
+    <Compile Include="TextReading\ITextReader.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="TextReading\TxtTextReader.cs" />
+    <Compile Include="Infrastructure\WordClass.cs" />
+    <Compile Include="WordsProcessing\WordClassBasedSelector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="CliWrap, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CliWrap.2.5.0\lib\net45\CliWrap.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine, Version=2.6.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.6.0\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
