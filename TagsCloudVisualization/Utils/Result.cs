@@ -2,7 +2,7 @@
 
 namespace TagsCloudVisualization.Utils
 {
-    public struct Result
+    public class Result
     {
         public Result(string error = null)
         {
@@ -12,33 +12,7 @@ namespace TagsCloudVisualization.Utils
         public string Error { get; }
 
         public bool IsSuccess => Error == null;
-    }
 
-    public struct Result<T>
-    {
-        public Result(string error, T value = default(T))
-        {
-            Error = error;
-            Value = value;
-        }
-
-        public static implicit operator Result<T>(T v)
-        {
-            return ResultExt.Ok(v);
-        }
-
-        public string Error { get; }
-        internal T Value { get; }
-        public T GetValueOrThrow()
-        {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
-        }
-        public bool IsSuccess => Error == null;
-    }
-
-    public static class ResultExt
-    {
         public static Result Ok()
         {
             return new Result();
@@ -49,9 +23,17 @@ namespace TagsCloudVisualization.Utils
             return new Result(error);
         }
 
-        public static Result<T> AsResult<T>(this T value)
+        public static Result OfAction(Action f, string error = null)
         {
-            return Ok(value);
+            try
+            {
+                f();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Fail(error ?? e.Message);
+            }
         }
 
         public static Result<T> Ok<T>(T value)
@@ -76,77 +58,69 @@ namespace TagsCloudVisualization.Utils
             }
         }
 
-        public static Result OfAction(Action f, string error = null)
+        public Result ReplaceError(Func<string, string> replaceError)
         {
-            try
-            {
-                f();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return Fail(error ?? e.Message);
-            }
+            if (IsSuccess) return this;
+            return Fail(replaceError(Error));
         }
 
-        public static Result<TOutput> Then<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
+        public Result RefineError(string errorMessage)
         {
-            return input.Then(inp => Of(() => continuation(inp)));
+            return ReplaceError(err => errorMessage + ". " + err);
+        }
+    }
+
+    public class Result<T> : Result
+    {
+        public Result(string error, T value = default(T)) : base(error)
+        {
+            Value = value;
         }
 
-        public static Result Then<TInput>(
-            this Result<TInput> input,
-            Action<TInput> continuation)
+        public static implicit operator Result<T>(T v)
         {
-            return input.Then(inp => OfAction(() => continuation(inp))).Value;
+            return Ok(v);
         }
 
-        public static Result<TOutput> Then<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
+        internal T Value { get; }
+        public T GetValueOrThrow()
         {
-            return input.IsSuccess
-                ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
+            if (IsSuccess) return Value;
+            throw new InvalidOperationException($"No value. Only Error {Error}");
         }
 
-        public static Result<TInput> OnFail<TInput>(
-            this Result<TInput> input,
-            Action<string> handleError)
+        public Result<TOutput> Then<TOutput>(Func<T, TOutput> continuation)
         {
-            if (!input.IsSuccess) handleError(input.Error);
-            return input;
+            return Then(inp => Of(() => continuation(Value)));
         }
 
-        public static Result<TInput> ReplaceError<TInput>(
-            this Result<TInput> input,
-            Func<string, string> replaceError)
+        public Result Then(Action<T> continuation)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return Then(inp => OfAction(() => continuation(Value)));
         }
 
-        public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input,
-            string errorMessage)
+        public Result<TOutput> Then<TOutput>(Func<T, Result<TOutput>> continuation)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            return IsSuccess
+                ? continuation(Value)
+                : Fail<TOutput>(Error);
         }
 
-        public static Result ReplaceError(this Result input,
-            Func<string, string> replaceError)
+        public Result<T> OnFail(Action<string> handleError)
         {
-            if (input.IsSuccess) return input;
-            return Fail(replaceError(input.Error));
+            if (!IsSuccess) handleError(Error);
+            return this;
         }
 
-        public static Result RefineError(
-            this Result input,
-            string errorMessage)
+        public new Result<T> ReplaceError(Func<string, string> replaceError)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            if (IsSuccess) return this;
+            return Fail<T>(replaceError(Error));
+        }
+
+        public new Result<T> RefineError(string errorMessage)
+        {
+            return ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

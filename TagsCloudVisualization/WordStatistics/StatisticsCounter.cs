@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TagsCloudVisualization.Core;
 using TagsCloudVisualization.Utils;
 
@@ -16,16 +15,16 @@ namespace TagsCloudVisualization.WordStatistics
 
         public Result<AnalyzedText> GetAnalyzedText(Word[] words)
         {
+            return Result.Of(() => AnalyzeText(words));
+        }
+
+        private AnalyzedText AnalyzeText(Word[] words)
+        {
             var statistics = new Dictionary<WordStatistics, int>();
             foreach (var collector in statCollectors)
-            {
-                var wordsAnalysisResult = ResultExt.Of(() => collector.GetStatistics(words));
-                if (!wordsAnalysisResult.IsSuccess)
-                    return ResultExt.Fail<AnalyzedText>(wordsAnalysisResult.Error);
-                foreach (var (wordStatistics, value) in wordsAnalysisResult.Value)
+                foreach (var (wordStatistics, value) in collector.GetStatistics(words))
                     statistics[wordStatistics] = value;
-            }
-            return new AnalyzedText(words, statistics).AsResult();
+            return new AnalyzedText(words, statistics);
         }
     }
 }

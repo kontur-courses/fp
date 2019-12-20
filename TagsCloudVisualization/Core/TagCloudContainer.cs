@@ -45,13 +45,13 @@ namespace TagsCloudVisualization.Core
         private Result<ITextReader> FindTextReader(string filepath)
         {
             if (filepath == null)
-                return ResultExt.Fail<ITextReader>("Text file was not specified");
+                return Result.Fail<ITextReader>("Text file was not specified");
             if(!filepath.Contains('.'))
-                return ResultExt.Fail<ITextReader>("File doesn't contain format information!");
+                return Result.Fail<ITextReader>("File doesn't contain format information!");
             var format = filepath.Split('.').Last().ToLower();
             var reader = textReaders.FirstOrDefault(x => x.Formats.Contains(format));
             if (reader == null)
-                return ResultExt.Fail<ITextReader>($"{format.ToUpper()} format is not supported");
+                return Result.Fail<ITextReader>($"{format.ToUpper()} format is not supported");
             return reader.AsResult();
         }
     }

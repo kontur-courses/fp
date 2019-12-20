@@ -19,13 +19,17 @@ namespace TagsCloudVisualization.Preprocessing
 
         public Result<Word[]> PreprocessWords(IEnumerable<string> words)
         {
-            var preprocessedWords = ResultExt.Of(() => preprocessors
-                .Aggregate(words, (current, action) => action.ProcessWords(current))
-                .Select(word => new Word(word)));
+            return Result.Of(() => GetPreprocessedWords(words).ToArray());
+        }
+
+        private IEnumerable<Word> GetPreprocessedWords(IEnumerable<string> words)
+        {
+            var preprocessedWords = preprocessors.Aggregate(words, (current, action) => action.ProcessWords(current))
+                .Select(word => new Word(word));
 
             return appSettings.Restrictions.AmountOfWordsOnTagCloud >= 0
-                ? preprocessedWords.Then(x => x.Take(appSettings.Restrictions.AmountOfWordsOnTagCloud).ToArray())
-                : preprocessedWords.Then(x => x.ToArray());
+                ? preprocessedWords.Take(appSettings.Restrictions.AmountOfWordsOnTagCloud)
+                : preprocessedWords;
         }
     }
 }

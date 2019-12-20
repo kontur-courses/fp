@@ -12,10 +12,15 @@ namespace TagsCloudVisualization.Painters
 
         public override Result<PaintedWord[]> GetPaintedWords(AnalyzedLayoutedText analyzedLayoutedText)
         {
+            return Result.Of(() => PaintWords(analyzedLayoutedText));
+        }
+
+        private PaintedWord[] PaintWords(AnalyzedLayoutedText analyzedLayoutedText)
+        {
             var words = new PaintedWord[analyzedLayoutedText.Words.Length];
             for (var i = 0; i < words.Length; i++)
                 words[i] = new PaintedWord(analyzedLayoutedText.Words[i], palette.FontColor);
-            return words.AsResult();
+            return words;
         }
     }
 }

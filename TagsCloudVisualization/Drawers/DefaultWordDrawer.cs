@@ -15,25 +15,30 @@ namespace TagsCloudVisualization.Drawers
 
         public override Result<Bitmap> GetDrawnLayoutedWords(PaintedWord[] paintedWords)
         {
+            if (paintedWords.SelectMany(x => x.Position.GetCornerPoints()).Any(IsPointOutOfScreen))
+                return Result.Fail<Bitmap>("Current tag cloud is too big for this screen size");
+            return Result.Of(() => DrawLayoutedWords(paintedWords));
+        }
+
+        private Bitmap DrawLayoutedWords(PaintedWord[] paintedWords)
+        {
             var bitmap = new Bitmap(appSettings.ImageSettings.Width, appSettings.ImageSettings.Height);
-            var graphicsResult = ResultExt.Of(() => Graphics.FromImage(bitmap));
-            if (!graphicsResult.IsSuccess)
-                return ResultExt.Fail<Bitmap>(graphicsResult.Error);
+            var graphics = Graphics.FromImage(bitmap);
             var backgroundBrush = new SolidBrush(appSettings.Palette.BackgroundColor);
             var fontBrush = new SolidBrush(appSettings.Palette.FontColor);
-            var stringFormat = new StringFormat {LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center};
-            graphicsResult.Value.FillRectangle(backgroundBrush, 0, 0, appSettings.ImageSettings.Width,
+            var stringFormat = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+            graphics.FillRectangle(backgroundBrush, 0, 0, appSettings.ImageSettings.Width,
                 appSettings.ImageSettings.Height);
             foreach (var paintedWord in paintedWords)
             {
-                if (paintedWord.Position.GetCornerPoints().Any(IsPointOutOfScreen))
-                    return ResultExt.Fail<Bitmap>("Current tag cloud is too big for this screen size");
                 var font = GetScaledFontFor(paintedWord);
-                graphicsResult.Value
-                    .DrawString(paintedWord.Value, font, fontBrush, paintedWord.Position, stringFormat);
+                graphics.DrawString(paintedWord.Value, font, fontBrush, paintedWord.Position, stringFormat);
             }
-            return bitmap.AsResult();
+            return bitmap;
         }
 
         private bool IsPointOutOfScreen(Point point)

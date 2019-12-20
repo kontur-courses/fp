@@ -21,24 +21,19 @@ namespace TagsCloudVisualization.Layouters
 
         public Result<AnalyzedLayoutedText> GetLayoutedText(AnalyzedText analyzedText)
         {
-            var getLayouterResult = ResultExt.Of(() => cloudLayouterConfiguration.GetCloudLayouter());
-            if (!getLayouterResult.IsSuccess)
-                return ResultExt.Fail<AnalyzedLayoutedText>(getLayouterResult.Error);
-            var getSizesResult = ResultExt.Of(() => sizeChooser.GetWordSizes(analyzedText, 20, 20));
-            if (!getSizesResult.IsSuccess)
-                return ResultExt.Fail<AnalyzedLayoutedText>(getSizesResult.Error);
+            return Result.Of(() => LayoutText(analyzedText));
+        }
+
+        private AnalyzedLayoutedText LayoutText(AnalyzedText analyzedText)
+        {
+            var layouter = cloudLayouterConfiguration.GetCloudLayouter();
+            var sizes = sizeChooser.GetWordSizes(analyzedText, 20, 20);
             var layout = new Dictionary<Word, Rectangle>();
-            foreach (var wordSizePair in getSizesResult.Value.OrderByDescending(x => x.Value.Width))
-            {
-                var putRectangleResult = ResultExt.Of(() => getLayouterResult.Value
-                        .PutNextRectangle(wordSizePair.Value));
-                if (!putRectangleResult.IsSuccess)
-                    return ResultExt.Fail<AnalyzedLayoutedText>(putRectangleResult.Error);
-                layout[wordSizePair.Key] = putRectangleResult.Value;
-            }
+            foreach (var wordSizePair in sizes.OrderByDescending(x => x.Value.Width))
+                layout[wordSizePair.Key] = layouter.PutNextRectangle(wordSizePair.Value);
             return analyzedText.ToLayoutedText(layout
                 .Select(x => new LayoutedWord(x.Key, x.Value))
-                .ToArray()).AsResult();
+                .ToArray());
         }
     }
 }
