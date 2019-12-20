@@ -1,5 +1,4 @@
-﻿using System;
-using TagsCloudVisualization.Settings;
+﻿using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.ImageSaver
 {
@@ -7,13 +6,7 @@ namespace TagsCloudVisualization.ImageSaver
     {
         public IImageSaver GetSaver(ImageExt ext)
         {
-            switch (ext)
-            {
-                case ImageExt.Jpg:
-                    return new JpgSaver();
-            }
-
-            throw new ArgumentException($"Unexpected ImageExt {ext}");
+            return new JpgSaver();
         }
     }
 }

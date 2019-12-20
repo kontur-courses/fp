@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Text.RegularExpressions;
 using TagsCloudVisualization.Results;
 
 namespace TagsCloudVisualization
@@ -10,22 +10,11 @@ namespace TagsCloudVisualization
         {
             get
             {
-                var pathToResources = Environment.CurrentDirectory;
-
-                for (var i = 0; i < 3; i++)
-                {
-                    try
-                    {
-                        pathToResources = Directory.GetParent(pathToResources).FullName;
-                    }
-                    catch (Exception e)
-                    {
-                        return Result.Fail<string>($"Cant get parent directory for {pathToResources} " + e.Message);
-                    }
-                }
-
-                pathToResources += "\\Resources";
-                return pathToResources;
+                var projectPathRegex = new Regex(@".*TagsCloudVisualization");
+                var match = projectPathRegex.Match(Environment.CurrentDirectory);
+                if (!match.Success)
+                    return Result.Fail<string>($"Can't get parent directory for {Environment.CurrentDirectory} ");
+                return match.Value + "\\Resources";
             }
         }
     }

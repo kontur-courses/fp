@@ -8,14 +8,11 @@ namespace TagsCloudVisualization.Providers.WordSource
     {
         public IEnumerable<string> SplitByPunctuation(IEnumerable<string> lineSource)
         {
-            foreach (var line in lineSource)
+            return lineSource.SelectMany(line =>
             {
                 var punctuation = line.Where(char.IsPunctuation).Distinct().ToArray();
-                foreach (var word in line.Split().Select(x => x.Trim(punctuation)))
-                {
-                    yield return word;
-                }
-            }
+                return line.Split().Select(x => x.Trim(punctuation));
+            });
         }
     }
 }

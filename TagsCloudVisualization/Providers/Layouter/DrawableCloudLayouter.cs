@@ -67,42 +67,38 @@ namespace TagsCloudVisualization.Providers.Layouter
 
         private bool TryMoveToCenter(Rectangle rect, out Rectangle rectOut)
         {
+            if (rect.X == center.X && rect.Y == center.Y)
             {
-                if (rect.X == center.X && rect.Y == center.Y)
-                {
-                    rectOut = rect;
-                    return false;
-                }
-
-                var dx = center.X - rect.X;
-                var dy = center.Y - rect.Y;
-
                 rectOut = rect;
-                var canMoveX = dx != 0 &&
-                               (dx > 0
-                                   ? TryMove(rect, 1, 0, out rectOut)
-                                   : TryMove(rect, -1, 0, out rectOut));
-                var canMoveY = dy != 0 &&
-                               (dy > 0
-                                   ? TryMove(rectOut, 0, 1, out rectOut)
-                                   : TryMove(rectOut, 0, -1, out rectOut));
-                return canMoveX || canMoveY;
+                return false;
             }
+
+            var dx = center.X - rect.X;
+            var dy = center.Y - rect.Y;
+
+            rectOut = rect;
+            var canMoveX = dx != 0 &&
+                           (dx > 0
+                               ? TryMove(rect, 1, 0, out rectOut)
+                               : TryMove(rect, -1, 0, out rectOut));
+            var canMoveY = dy != 0 &&
+                           (dy > 0
+                               ? TryMove(rectOut, 0, 1, out rectOut)
+                               : TryMove(rectOut, 0, -1, out rectOut));
+            return canMoveX || canMoveY;
         }
 
         private bool TryMove(Rectangle rect, int dx, int dy, out Rectangle rectOut)
         {
-            {
-                rect.X += dx;
-                rect.Y += dy;
-                rectOut = rect;
-                if (!Rectangles.Any(r => r.IntersectsWith(rect)))
-                    return true;
+            rect.X += dx;
+            rect.Y += dy;
+            rectOut = rect;
+            if (!Rectangles.Any(r => r.IntersectsWith(rect)))
+                return true;
 
-                rectOut.X -= dx;
-                rectOut.Y -= dy;
-                return false;
-            }
+            rectOut.X -= dx;
+            rectOut.Y -= dy;
+            return false;
         }
     }
 }

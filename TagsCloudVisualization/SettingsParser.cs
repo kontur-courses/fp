@@ -13,7 +13,7 @@ namespace TagsCloudVisualization
 {
     internal class SettingsParser
     {
-        private static readonly List<string> parametersToUse = new List<string>
+        private static readonly List<string> ParametersToUse = new List<string>
         {
             "--input", "--max_words", "--exclude", "--sizer", "--brush", "--back", "--font", "--font_size",
             "--width", "--height", "--x", "--y", "--coef", "--type", "--output_path", "--output_ext"
@@ -27,10 +27,10 @@ namespace TagsCloudVisualization
                     $"{parameters.First(param => param.Value == null).Key} is null");
             }
 
-            if (parametersToUse.Any(param => !parameters.Keys.Contains(param)))
+            if (ParametersToUse.Any(param => !parameters.Keys.Contains(param)))
             {
                 return Result.Fail<ApplicationSettings>(
-                    $"{parametersToUse.First(param => !parameters.Keys.Contains(param))} parameter not find");
+                    $"{ParametersToUse.First(param => !parameters.Keys.Contains(param))} parameter not find");
             }
 
             var readerSettings = GetReaderSettings(parameters["--input"].ToString(),
@@ -48,6 +48,7 @@ namespace TagsCloudVisualization
                 parameters["--height"].ToString(),
                 parameters["--width"].ToString(),
                 parameters["--sizer"].ToString());
+
             if (!drawerSettings.IsSuccess)
             {
                 return Result.Fail<ApplicationSettings>(drawerSettings.Error);
@@ -62,12 +63,9 @@ namespace TagsCloudVisualization
                 return Result.Fail<ApplicationSettings>(layouterSettings.Error);
             }
 
-
-            var imageExt = Result.Of(() => (ImageExt) Enum.Parse(typeof(ImageExt),
-                parameters["--output_ext"].ToString()));
-            if (!imageExt.IsSuccess)
+            if (!Enum.TryParse(typeof(ImageExt), parameters["--output_ext"].ToString(), out var imageExt))
             {
-                return Result.Fail<ApplicationSettings>("cant parse imageExt");
+                return Result.Fail<ApplicationSettings>("Can't parse imageExt");
             }
 
             var savePath = parameters["--output_path"].ToString();
@@ -80,7 +78,7 @@ namespace TagsCloudVisualization
                 savePath = res.Value;
             }
 
-            return new ApplicationSettings(imageExt.Value, readerSettings.Value, layouterSettings.Value,
+            return new ApplicationSettings((ImageExt) imageExt, readerSettings.Value, layouterSettings.Value,
                 drawerSettings.Value, savePath);
         }
 
@@ -88,16 +86,22 @@ namespace TagsCloudVisualization
             string spiralType)
         {
             if (!int.TryParse(x, out var xInt))
-                return Result.Fail<LayouterSettings>("Cant parse x");
+                return Result.Fail<LayouterSettings>("Can;t parse x");
 
             if (!int.TryParse(y, out var yInt))
-                return Result.Fail<LayouterSettings>("Cant parse y");
+                return Result.Fail<LayouterSettings>("Can't parse y");
 
-            var sType = (SpiralType) Enum.Parse(typeof(SpiralType), spiralType);
+            if (!Enum.TryParse(typeof(SpiralType), spiralType, out var sType))
+            {
+                return Result.Fail<LayouterSettings>("Can't parse spiralType");
+            }
+
             if (!int.TryParse(spiralCoefficient, out var spiralCoefficientInt))
-                return Result.Fail<LayouterSettings>("Cant parse spiral coefficient");
+            {
+                return Result.Fail<LayouterSettings>("Can't parse spiral coefficient");
+            }
 
-            return new LayouterSettings(new Point(xInt, yInt), spiralCoefficientInt, sType);
+            return new LayouterSettings(new Point(xInt, yInt), spiralCoefficientInt, (SpiralType) sType);
         }
 
         private static Result<ReaderSettings> GetReaderSettings(string textDirectory, string maxObjectCount,
@@ -110,7 +114,7 @@ namespace TagsCloudVisualization
             }
 
             if (!int.TryParse(maxObjectCount, out var count))
-                return Result.Fail<ReaderSettings>("cant parse max words count");
+                return Result.Fail<ReaderSettings>("Can't parse max words count");
             badWordsDirectory =
                 string.IsNullOrEmpty(badWordsDirectory)
                     ? resources.Value + "\\BadWords.txt"
@@ -125,11 +129,11 @@ namespace TagsCloudVisualization
             string fontName, string fontSize, string imageHeight, string imageWidth, string sizer)
         {
             if (!int.TryParse(fontSize, out var size))
-                return Result.Fail<DrawerSettings>("Cant parse fontSize");
+                return Result.Fail<DrawerSettings>("Can't parse fontSize");
             if (!int.TryParse(imageHeight, out var height) || height > 15000)
-                return Result.Fail<DrawerSettings>("Cant parse height");
+                return Result.Fail<DrawerSettings>("Can't parse height");
             if (!int.TryParse(imageWidth, out var width) || width > 15000)
-                return Result.Fail<DrawerSettings>("Cant parse width");
+                return Result.Fail<DrawerSettings>("Can't parse width");
 
             var brushColor = Color.FromName(brushColorName);
             var backGroundColor = Color.FromName(backGroundColorName);
@@ -137,13 +141,13 @@ namespace TagsCloudVisualization
             var textBrush = new SolidBrush(brushColor);
             var font = Result.Of(() => new Font(fontName, size));
             if (!font.IsSuccess)
-                return Result.Fail<DrawerSettings>("Cant parse font");
+                return Result.Fail<DrawerSettings>("Can't parse font");
 
-            var sizerType = Result.Of(() => (SizeSelectorType) Enum.Parse(typeof(SizeSelectorType), sizer));
-            if (!sizerType.IsSuccess)
-                return Result.Fail<DrawerSettings>("Cant parse sizerType");
+            if (!Enum.TryParse(typeof(SizeSelectorType), sizer, out var sizerSelectorTypeResult))
+                return Result.Fail<DrawerSettings>("Can't parse sizerType");
 
-            return new DrawerSettings(textBrush, backGroundColor, font.Value, height, width, sizerType.Value);
+            return new DrawerSettings(textBrush, backGroundColor, font.Value, height, width,
+                (SizeSelectorType) sizerSelectorTypeResult);
         }
     }
 }

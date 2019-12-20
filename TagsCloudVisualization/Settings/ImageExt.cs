@@ -2,7 +2,6 @@
 {
     public enum ImageExt
     {
-        Jpg,
-        Bmp
+        Jpg
     }
 }

@@ -30,7 +30,7 @@ namespace TagsCloudVisualization.Providers.WordSource
             var badWords = GetWords(settings.BadWordsPath);
             if (!words.IsSuccess || !badWords.IsSuccess)
                 return Result.Fail<List<string>>(
-                    $"Cant read file on path{(words.IsSuccess ? settings.BadWordsPath : settings.PathToText)}");
+                    $"Can't read file on path {(words.IsSuccess ? settings.BadWordsPath : settings.PathToText)}");
             settings.BadWords = badWords.Value;
             var changed = ChangeWords(settings, words.Value);
             var selected = SelectWords(settings, changed).ToList();
