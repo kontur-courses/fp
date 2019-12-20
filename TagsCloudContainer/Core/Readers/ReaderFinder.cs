@@ -7,6 +7,7 @@ namespace TagsCloudContainer.Core.Readers
     class ReaderFinder
     {
         private readonly IReader[] readers;
+
         public ReaderFinder(IReader[] readers)
         {
             this.readers = readers;
@@ -15,9 +16,9 @@ namespace TagsCloudContainer.Core.Readers
         public Result<IReader> Find(string filePath)
         {
             var result = readers.FirstOrDefault(r => r.CanRead(filePath));
-            return result == null
-                ? Result.Fail<IReader>("Формат входного файла не поддерживается")
-                : Result.Ok<IReader>(result);
+            return Result.Ok(result)
+                .FailIf(r => r == null,
+                    "Формат входного файла не поддерживается");
         }
     }
 }

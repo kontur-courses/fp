@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using FluentAssertions;
 using ResultOf;
-using TagsCloudContainer.Core.Extensions;
 using TagsCloudContainer.Core.ImageBuilder;
 using TagsCloudContainer.Core.ImageSavers;
 using TagsCloudContainer.Core.LayoutAlgorithms;
@@ -14,6 +13,7 @@ using TagsCloudContainer.Core.Readers;
 using TagsCloudContainer.Core.TextHandler.WordConverters;
 using TagsCloudContainer.Core.TextHandler.WordFilters;
 using TagsCloudContainer.Core.UserInterfaces.ConsoleUI;
+using TagsCloudContainer.Extensions;
 
 namespace TagsCloudContainer.Core
 {
@@ -41,12 +41,12 @@ namespace TagsCloudContainer.Core
 
         public void Run(Options options)
         {
-            FormBoringWords(options.FileWithBoringWords)
+            FormBoringWords(options.FileWithBoringWords, readerFinder, filter)
                 .Then(words => filter.UserExcludedWords = words)
                 .OnFail(HandleError);
-            var rightWords = FormWords(options.InputFile)
+            var rightWords = FormWords(options.InputFile, readerFinder, filter)
                 .Then(words => words.MostCommon(30)
-                    .Select(kvp => kvp.Item1)
+                    .Select(kvp => kvp.Element)
                     .ToArray())
                 .OnFail(HandleError);
             GetBaseFont(options.FontName)
@@ -62,28 +62,37 @@ namespace TagsCloudContainer.Core
             Environment.Exit(1);
         }
 
-        private Result<HashSet<string>> FormWords(string path)
+        private Result<HashSet<string>> FormWords(string path, ReaderFinder readerFinder, Filter filter)
         {
-            return readerFinder.Find(path)
-                .Then(reader => reader.ReadWords(path))
+            return ReadWords(path, readerFinder)
                 .Then(filter.FilterWords)
                 .Then(wordConverter.ConvertWords)
                 .Then(words => words.ToHashSet());
         }
 
-        private Result<Font> GetBaseFont(string fontName)
+        private Result<HashSet<string>> ReadWords(string path, ReaderFinder readerFinder)
         {
-            var font = new Font(fontName, 1);
-            return font.Name == fontName
-                ? Result.Ok(font)
-                : Result.Fail<Font>($"Шрифт {fontName} не найден");
+            return File.Exists(path)
+                .AsResult()
+                .FailIf(e => !e, $"Файла {path} не существует")
+                .Then(e => readerFinder.Find(path))
+                .Then(reader => reader.ReadWords(path))
+                .Then(words => words.ToHashSet())
+                .OnFail(HandleError);
         }
 
-        private Result<HashSet<string>> FormBoringWords(string path)
+        private Result<Font> GetBaseFont(string fontName)
+        {
+            return new Font(fontName, 1)
+                .AsResult()
+                .FailIf(f => f.Name != fontName, $"Шрифт {fontName} не найден");
+        }
+
+        private Result<HashSet<string>> FormBoringWords(string path, ReaderFinder readerFinder, Filter filter)
         {
             return path == null
                 ? Result.Ok(new HashSet<string>())
-                : FormWords(path);
+                : FormWords(path, readerFinder, filter);
         }
 
         private IEnumerable<Tag> FormTags(IReadOnlyList<string> words, Font baseFont)

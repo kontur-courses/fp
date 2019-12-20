@@ -44,7 +44,7 @@
     <Compile Include="Core\ApplicationCore.cs" />
     <Compile Include="Core\ColoringAlgorithms\IColoringAlgorithm.cs" />
     <Compile Include="Core\ColoringAlgorithms\RandomColoring.cs" />
-    <Compile Include="Core\Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Core\ImageSavers\IImageSaver.cs" />
     <Compile Include="Core\ImageSavers\ImageSaver.cs" />
     <Compile Include="Core\LayoutAlgorithms\ArchimedeanSpiral.cs" />

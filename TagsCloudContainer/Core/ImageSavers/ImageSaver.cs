@@ -30,7 +30,7 @@ namespace TagsCloudContainer.Core.ImageSavers
                 {
                     bitmap.Save(pathImage, formats[format]);
                     Console.WriteLine($"Tag cloud visualization saved to file {pathImage}");
-                }, "Не удалось сохранить файл")
+                }).RefineError("Не удалось сохранить файл")
                 : Result.Fail<None>(
                     $"Неподдерживаемый формат\nПоддерживаются {string.Join(", ", formats.Keys)}");
         }

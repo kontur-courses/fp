@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Core.Extensions;
+using TagsCloudContainer.Extensions;
 
 namespace TagsCloudContainer.Tests
 {
@@ -15,7 +15,7 @@ namespace TagsCloudContainer.Tests
         {
             words.MostCommon(3)
                 .Should()
-                .BeInDescendingOrder(kvp => kvp.Item2);
+                .BeInDescendingOrder(kvp => kvp.Count);
         }
     }
 }
