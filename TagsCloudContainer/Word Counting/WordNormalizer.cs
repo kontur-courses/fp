@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NHunspell;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Word_Counting
 {
@@ -12,13 +14,20 @@ namespace TagsCloudContainer.Word_Counting
             this.hunspell = hunspell;
         }
 
-        public string Normalize(string word)
+        public Result<string> Normalize(string word)
         {
-            var lowered = word.ToLower();
-            var stemmed = hunspell.Stem(lowered);
-            return stemmed.Count != 0
-                ? hunspell.Stem(word.ToLower())[0]
-                : lowered;
+            try
+            {
+                var lowered = word.ToLower();
+                var stemmed = hunspell.Stem(lowered);
+                return stemmed.Count != 0
+                    ? hunspell.Stem(word.ToLower())[0]
+                    : lowered;
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<string>(e.Message);
+            }
         }
     }
 }

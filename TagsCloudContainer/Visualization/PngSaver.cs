@@ -20,17 +20,17 @@ namespace TagsCloudContainer.Visualization
             try
             {
                 image.Save(path, format);
-                return ResultExtensions.Ok<None>(null);
+                return Result.Ok<None>(null);
             }
             catch (Exception e)
             {
-                return ResultExtensions.Fail<None>(e.Message);
+                return Result.Fail<None>(e.Message);
             }
         }
 
         private Result<Bitmap> GetResizeResult(Bitmap bmp, int width, int height)
         {
-            return ResultExtensions.Of(() => ResizeBitmap(bmp, width, height));
+            return Result.Of(() => ResizeBitmap(bmp, width, height));
         }
 
         private Bitmap ResizeBitmap(Bitmap bmp, int width, int height)

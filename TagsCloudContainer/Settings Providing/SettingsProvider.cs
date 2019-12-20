@@ -41,13 +41,13 @@ namespace TagsCloudContainer.Settings_Providing
                 var excludedWords = GetWordsHashSet(options.ExcludedWordsPath, parser);
                 var excludedPartsOfSpeech = GetWordsHashSet(options.ExcludedPartsOfSpeechPath, parser);
                 var resolution = GetSizeFromString(options.ResolutionString);
-                return ResultExtensions.Ok(new Settings(options.InputPath, options.OutputPath, coloringOptions,
+                return Result.Ok(new Settings(options.InputPath, options.OutputPath, coloringOptions,
                     excludedWords,
                     excludedPartsOfSpeech, resolution, options.FontName));
             }
             catch (Exception e)
             {
-                return ResultExtensions.Fail<Settings>(e.Message);
+                return Result.Fail<Settings>(e.Message);
             }
         }
 

@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Word_Counting
+﻿using TagsCloudContainer.ResultInfrastructure;
+
+namespace TagsCloudContainer.Word_Counting
 {
     public interface IWordNormalizer
     {
-        string Normalize(string word);
+        Result<string> Normalize(string word);
     }
 }

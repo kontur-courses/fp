@@ -10,12 +10,13 @@ namespace TagsCloudContainer.Parsing
         {
             if (!File.Exists(filePath))
             {
-                return ResultExtensions.Fail<string[]>("Cannot read file" + filePath);
+                var a = Result.Fail<string>("as");
+                return Result.Fail<string[]>("Cannot read file" + filePath);
             }
 
             using (var reader = new StreamReader(filePath))
             {
-                return ResultExtensions.Ok(reader.ReadToEnd().Split('\n'));
+                return Result.Ok(reader.ReadToEnd().Split('\n'));
             }
         }
     }

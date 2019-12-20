@@ -19,7 +19,11 @@ namespace TagsCloudContainer.Word_Counting
             var resultDictionary = new Dictionary<string, int>();
             foreach (var word in words)
             {
-                var normalizedWord = normalizer.Normalize(word);
+                var normalizedWordResult = normalizer.Normalize(word);
+                if (!normalizedWordResult.IsSuccess)
+                    return Result.Fail<Dictionary<string, int>>(
+                        $"Cannot normalize word {word} {normalizedWordResult.Error}");
+                var normalizedWord = normalizedWordResult.Value;
                 if (filter.IsExcluded(normalizedWord))
                     continue;
                 if (resultDictionary.ContainsKey(normalizedWord))
@@ -28,7 +32,7 @@ namespace TagsCloudContainer.Word_Counting
                     resultDictionary[normalizedWord] = 1;
             }
 
-            return ResultExtensions.Ok(resultDictionary);
+            return Result.Ok(resultDictionary);
         }
     }
 }

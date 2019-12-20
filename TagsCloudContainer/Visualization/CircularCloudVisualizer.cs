@@ -49,7 +49,7 @@ namespace TagsCloudContainer.Visualization
 
         private Result<Bitmap> GetVisualizationResult(IEnumerable<WordRectangle> rectangles)
         {
-            return ResultExtensions.Of(() => GetVisualization(rectangles));
+            return Result.Of(() => GetVisualization(rectangles));
         }
 
         private static Size GetImageSize(IEnumerable<WordRectangle> rectangles)
