@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TagCloud.TagCloudPainter;
 using TagCloud.TagCloudVisualisation.Spirals;
@@ -27,11 +26,9 @@ namespace TagCloud.ConsoleCommands
                 .FirstOrDefault(spiral => spiral.Name.Equals(layoutAlgorithmName));
 
             if (layoutAlgorithm == null)
-            {
-                throw new Exception($"No algorithm found with the name {layoutAlgorithmName}");
-            }
+                console.PrintInConsole($"No algorithm found with the name {layoutAlgorithmName}");
 
-            painterConfig.layoutAlgorithm = layoutAlgorithm;
+            painterConfig.LayoutAlgorithm = layoutAlgorithm;
         }
 
         public List<string> ArgsName => new List<string>() { "AlgorithmName" };

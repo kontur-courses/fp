@@ -68,7 +68,7 @@ namespace TagCloud.TagCloudPainter
         private Result<None> DrawTags(Canvas canvas, IEnumerable<TagInfo> tagInfos)
         {
             var layouter = layouterFactory
-                .GetCircularLayouter(painterConfig.CloudCenter, painterConfig.layoutAlgorithm);
+                .GetCircularLayouter(painterConfig.CloudCenter, painterConfig.LayoutAlgorithm);
             
             var sortedTagInfos = tagInfos
                 .OrderByDescending(tagInfo => tagInfo.Frequency)

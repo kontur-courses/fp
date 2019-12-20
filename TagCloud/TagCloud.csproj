@@ -96,7 +96,7 @@
     <Compile Include="TextPreprocessor\TextAnalyzers\FrequencyTextAnalyzer.cs" />
     <Compile Include="TextPreprocessor\TextAnalyzers\ITextAnalyzer.cs" />
     <Compile Include="TextPreprocessor\TextRiders\IFileTextRider.cs" />
-    <Compile Include="TextPreprocessor\TextRiders\MSWordTextRider.cs" />
+    <Compile Include="TextPreprocessor\TextRiders\MSwordTextRider.cs" />
     <Compile Include="TextPreprocessor\TextRiders\TextRiderConfig.cs" />
     <Compile Include="TextPreprocessor\TextRiders\TxtTextRider.cs" />
   </ItemGroup>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.Office.Interop.Word;
 using ResultLogic;
@@ -8,11 +7,11 @@ using TagCloud.TextPreprocessor.Core;
 
 namespace TagCloud.TextPreprocessor.TextRiders
 {
-    public class MSWordTextRider : IFileTextRider
+    public class MSwordTextRider : IFileTextRider
     {
         private TextRiderConfig textRiderConfig;
         
-        public MSWordTextRider(TextRiderConfig textRiderConfig)
+        public MSwordTextRider(TextRiderConfig textRiderConfig)
         {
             this.textRiderConfig = textRiderConfig;
         }

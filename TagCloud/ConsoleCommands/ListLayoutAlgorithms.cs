@@ -20,12 +20,11 @@ namespace TagCloud.ConsoleCommands
         public void Execute(ConsoleUserInterface console, Dictionary<string, object> args)
         {
             var output = new StringBuilder();
+            
             output.Append("Layout algorithms:" + Environment.NewLine);
             foreach (var spiral in spirals)
-            {
                 output.Append($"\t{spiral.Name}" + Environment.NewLine);
-            }
-            
+
             console.PrintInConsole(output.ToString());
         }
 

@@ -20,7 +20,7 @@ namespace TagCloud.TagCloudPainter
 
         public Color BackgroundColor;
         public Color[] Pallet;
-        public ISpiral layoutAlgorithm;
+        public ISpiral LayoutAlgorithm;
 
         public static PainterConfig Default()
         {
@@ -34,7 +34,7 @@ namespace TagCloud.TagCloudPainter
                 PathForSave = Directory.GetCurrentDirectory(),
                 FontFamily = FontFamily.GenericMonospace,
                 CloudCenter = new Point(2500, 2500),
-                layoutAlgorithm = new ArchimedeanSpiral(),
+                LayoutAlgorithm = new ArchimedeanSpiral(),
                 BackgroundColor = Color.Black,
                 Pallet = new []
                 {

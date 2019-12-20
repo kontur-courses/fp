@@ -25,7 +25,7 @@ namespace TagCloud
             
             containerBuilder.RegisterInstance(TextRiderConfig.Default()).As<TextRiderConfig>().SingleInstance();
             containerBuilder.RegisterType<TxtTextRider>().As<IFileTextRider>().SingleInstance();
-            containerBuilder.RegisterType<MSWordTextRider>().As<IFileTextRider>().SingleInstance();
+            containerBuilder.RegisterType<MSwordTextRider>().As<IFileTextRider>().SingleInstance();
             
             containerBuilder.RegisterInstance(PainterConfig.Default()).As<PainterConfig>().SingleInstance();
             containerBuilder.RegisterType<Painter>().As<ITagCloudPainter>().SingleInstance();

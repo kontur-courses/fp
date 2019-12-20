@@ -24,8 +24,8 @@ namespace TagCloud.TagCloudVisualisation.Canvas
             Graphics = Graphics.FromImage(Bitmap);
         }
 
-        public abstract Result<None> Draw(Rectangle rectangle, Brush brush = null);
-        public abstract Result<None> Draw(string word, Font font, RectangleF rectangleF, Brush brush = null);
+        public abstract Result<None> Draw(Rectangle rectangle, Brush brush);
+        public abstract Result<None> Draw(string word, Font font, RectangleF rectangleF, Brush brush);
         public abstract Result<None> Save(string directoryPath, string fileName);
     }
 }

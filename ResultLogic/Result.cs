@@ -29,12 +29,6 @@ namespace ResultLogic
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
-
-
-        //public static implicit operator Result<T>(T value)
-        //{
-        //    return Result.Ok(value);
-        //}
     }
 
     public static class Result
