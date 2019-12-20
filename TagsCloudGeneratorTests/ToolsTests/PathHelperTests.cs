@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudGenerator.Tools;
 
@@ -8,13 +7,9 @@ namespace TagsCloudGeneratorTests.ToolsTests
     public class PathHelperTests
     {
         [Test]
-        public void GetFileExtension_InvalidPath_ShouldThrowArgumentException()
+        public void GetFileExtension_InvalidPath_ShouldReturnResultWithError()
         {
-            var path = "texttexttext";
-
-            Action act = () => PathHelper.GetFileExtension(path);
-
-            act.Should().Throw<ArgumentException>();
+            PathHelper.GetFileExtension("texttexttext").IsSuccess.Should().BeFalse();
         }
 
 
@@ -25,7 +20,7 @@ namespace TagsCloudGeneratorTests.ToolsTests
         [TestCase("arch.zip", "zip")]
         public void GetFileExtension_ValidFileName_ShouldReturnRightValue(string path, string expected)
         {
-            var actual = PathHelper.GetFileExtension(path);
+            var actual = PathHelper.GetFileExtension(path).GetValueOrThrow();
             actual.Should().BeEquivalentTo(expected);
         }
 
@@ -36,7 +31,7 @@ namespace TagsCloudGeneratorTests.ToolsTests
         [TestCase(@"..\..\path\arch.zip", "zip")]
         public void GetFileExtension_ValidPath_ShouldReturnRightValue(string path, string expected)
         {
-            var actual = PathHelper.GetFileExtension(path);
+            var actual = PathHelper.GetFileExtension(path).GetValueOrThrow();
             actual.Should().BeEquivalentTo(expected);
         }
     }

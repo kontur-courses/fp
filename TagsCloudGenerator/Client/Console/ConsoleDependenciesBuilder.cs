@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using FunctionalTools;
 using TagsCloudGenerator.CloudLayouter;
 using TagsCloudGenerator.FileReaders;
 using TagsCloudGenerator.Saver;
@@ -78,7 +79,7 @@ namespace TagsCloudGenerator.Client.Console
             var colors = GetColorsByNames(options.Colors);
             var backgroundColor = Color.FromName(options.BackgroundColor);
             var extension = PathHelper.GetFileExtension(options.OutputPath);
-            var format = GetImageFormat(extension);
+            var format = GetImageFormat(extension.GetValueOrThrow());
             var font = new Font(options.Font, options.FontSize);
 
             return new ImageSettings(options.ImageWidth, options.ImageHeight, backgroundColor, colors, format, font);
@@ -110,7 +111,7 @@ namespace TagsCloudGenerator.Client.Console
                 .Then(text => text
                     .Split(new[] {" ", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(w => w.Trim()))
-                .RefineError($"Couldn't read boring words");
+                .RefineError("Couldn't read boring words");
         }
     }
 }

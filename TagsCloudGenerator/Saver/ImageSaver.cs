@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using FunctionalTools;
 using TagsCloudGenerator.Visualizer;
 
 namespace TagsCloudGenerator.Saver

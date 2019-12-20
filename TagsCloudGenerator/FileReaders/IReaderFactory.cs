@@ -1,4 +1,6 @@
-﻿namespace TagsCloudGenerator.FileReaders
+﻿using FunctionalTools;
+
+namespace TagsCloudGenerator.FileReaders
 {
     public interface IReaderFactory
     {

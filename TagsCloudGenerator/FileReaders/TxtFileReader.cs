@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using FunctionalTools;
 using TagsCloudGenerator.Tools;
 
 namespace TagsCloudGenerator.FileReaders

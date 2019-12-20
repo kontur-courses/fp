@@ -69,7 +69,6 @@
     <Compile Include="CloudLayouter\Word.cs" />
     <Compile Include="CloudGenerator.cs" />
     <Compile Include="FileReaders\IReaderFactory.cs" />
-    <Compile Include="Result.cs" />
     <Compile Include="Tools\IWordsParser.cs" />
     <Compile Include="Tools\PathHelper.cs" />
     <Compile Include="FileReaders\ReaderFactory.cs" />
@@ -149,7 +148,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FunctionalTools\FunctionalTools.csproj">
+      <Project>{f61d9d81-868b-4562-a0bc-0d59a09da5cb}</Project>
+      <Name>FunctionalTools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FunctionalTools;
 using TagsCloudGenerator.CloudLayouter;
 
 namespace TagsCloudGenerator

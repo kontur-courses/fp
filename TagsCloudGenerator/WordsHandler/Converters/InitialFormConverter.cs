@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FunctionalTools;
 using NHunspell;
 
 namespace TagsCloudGenerator.WordsHandler.Converters

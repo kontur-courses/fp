@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using CommandLine;
+using FunctionalTools;
 using TagsCloudGenerator.FileReaders;
 using TagsCloudGenerator.Saver;
 using TagsCloudGenerator.Tools;
@@ -28,7 +29,7 @@ namespace TagsCloudGenerator.Client.Console
                 System.Console.WriteLine(error);
         }
 
-        private void Run(Options options)
+        private static void Run(Options options)
         {
             ConsoleDependenciesBuilder
                 .BuildContainer(options)
@@ -46,7 +47,6 @@ namespace TagsCloudGenerator.Client.Console
                 var visualizer = container.Resolve<ICloudVisualizer>();
 
                 return PathHelper.GetFileExtension(options.InputPath)
-                    .AsResult()
                     .Then(readerFactory.GetReaderFor)
                     .Then(reader => reader.ReadWords(options.InputPath))
                     .Then(generator.Generate)

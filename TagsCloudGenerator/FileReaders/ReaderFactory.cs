@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FunctionalTools;
 
 namespace TagsCloudGenerator.FileReaders
 {
@@ -14,9 +15,9 @@ namespace TagsCloudGenerator.FileReaders
 
         public Result<IFileReader> GetReaderFor(string extension)
         {
-            return Result
-                .Of(() => extensionToReader[extension])
-                .ReplaceError(err => $"Unsupported extension {extension}");
+            return extensionToReader.TryGetValue(extension, out var reader)
+                ? Result.Ok(reader)
+                : Result.Fail<IFileReader>($"Unsupported extension {extension}");
         }
     }
 }

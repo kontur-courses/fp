@@ -1,14 +1,15 @@
 ﻿using System.IO;
+using FunctionalTools;
 
 namespace TagsCloudGenerator.Tools
 {
     public static class PathHelper
     {
-        public static string GetFileExtension(string path)
+        public static Result<string> GetFileExtension(string path)
         {
-            var extension = Path.GetExtension(path);
-
-            return extension?.Substring(1);
+            return Result
+                .Of(() => Path.GetExtension(path)?.Substring(1))
+                .RefineError($"Can't get extension of {path}");
         }
     }
 }

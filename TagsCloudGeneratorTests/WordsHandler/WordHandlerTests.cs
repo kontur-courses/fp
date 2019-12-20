@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FunctionalTools;
 using NUnit.Framework;
 using TagsCloudGenerator;
 using TagsCloudGenerator.WordsHandler;
