@@ -14,14 +14,14 @@ namespace TagCloudTests.CloudLayouter
     class CircularCloudLayouterShould
     {
         private CircularCloudLayouter cloudLayouter;
-        private CloudViewConfiguration cloudConfiguration;
+        private CloudConfiguration cloudConfiguration;
         private Container container;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             container = TagCloud.Program.InitializeContainer();
-            cloudConfiguration = container.Get<CloudViewConfiguration>();
+            cloudConfiguration = container.Get<CloudConfiguration>();
         }
 
         [SetUp]

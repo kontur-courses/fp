@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using TagCloud.CloudLayouter;
 using TagCloud.CloudVisualizerSpace;
 using TagCloud.CloudVisualizerSpace.CloudViewConfigurationSpace;
 using TagCloud.WordsPreprocessing.DocumentParsers;
@@ -10,42 +11,42 @@ namespace TagCloud.Interfaces
     {
         public ApplicationSettings AppSettings { get; }
         private readonly CloudVisualizer visualizer;
-        public CloudViewConfiguration CloudConfiguration { get; }
+        public CloudViewConfiguration CloudViewConfiguration { get; }
+        public CloudConfiguration CloudConfiguration { get; }
         public IDocumentParser[] Parsers { get; }
 
-        public BaseApplication(CloudVisualizer visualizer, CloudViewConfiguration cloudConfiguration,
+        public BaseApplication(CloudVisualizer visualizer, CloudViewConfiguration cloudViewConfiguration, CloudConfiguration cloudConfiguration,
             IDocumentParser[] parsers, ApplicationSettings settings)
         {
             AppSettings = settings;
             this.visualizer = visualizer;
-            CloudConfiguration = cloudConfiguration;
+            CloudViewConfiguration = cloudViewConfiguration;
             Parsers = parsers;
+            CloudConfiguration = cloudConfiguration;
         }
 
         public Result<Image> GetImage()
         {
             var format = $".{AppSettings.FilePath.Split('.').Last()}";
-            var parser = Parsers.First(p => p.AllowedTypes.Contains(format));
-            var bitmapResult = parser.GetWords(AppSettings)
+            return Result.Of(() => Parsers.First(p => p.AllowedTypes.Contains(format)))
+                .Then(p => p.GetWords(AppSettings))
                 .Then(e => AppSettings.CurrentTextAnalyzer
                     .GetWords(e, CloudConfiguration.WordsCount))
-                .Then(visualizer.GetCloud);
-            return bitmapResult.IsSuccess
-                ? Result.Ok((Image) bitmapResult.Value)
-                : Result.Fail<Image>(bitmapResult.Error);
+                .Then(visualizer.GetCloud)
+                .Then(x => (Image) x);
         }
 
         public void Close()
         {
             foreach (var parser in Parsers)
             {
-                parser.Close();
+                parser.Dispose();
             }
         }
 
         public void SetFontFamily(string fontFamily)
         {
-            CloudConfiguration.FontFamily = new FontFamily(fontFamily);
+            CloudViewConfiguration.FontFamily = new FontFamily(fontFamily);
         }
     }
 }

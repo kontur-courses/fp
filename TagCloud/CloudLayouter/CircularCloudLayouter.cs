@@ -14,12 +14,12 @@ namespace TagCloud.CloudLayouter
 
         private readonly List<Rectangle> rectangles;
 
-        private readonly CloudViewConfiguration configuration;
+        private readonly CloudConfiguration configuration;
         private readonly IFigurePath figurePath;
         private Rectangle wrapperRectangle;
 
 
-        public CircularCloudLayouter(CloudViewConfiguration configuration)
+        public CircularCloudLayouter(CloudConfiguration configuration)
         {
             this.configuration = configuration;
             rectangles = new List<Rectangle>();

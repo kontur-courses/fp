@@ -1,27 +1,36 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using TagCloud.CloudLayouter;
 using TagCloud.CloudVisualizerSpace.CloudViewConfigurationSpace;
 
 namespace TagCloud.Interfaces.GUI.Forms
 {
     class CloudSettingsForm : Form
     {
-        private CloudViewConfiguration configuration;
+        private CloudViewConfiguration cloudViewConfiguration;
+        private CloudConfiguration cloudConfiguration;
 
-        public CloudSettingsForm(CloudViewConfiguration configuration)
+        public CloudSettingsForm(CloudViewConfiguration cloudViewConfiguration, CloudConfiguration cloudConfiguration)
         {
-            this.configuration = configuration;
+            this.cloudViewConfiguration = cloudViewConfiguration;
+            this.cloudConfiguration = cloudConfiguration;
             InitializeForm();
         }
 
         private void InitializeForm()
         {
+            Size = new Size(300, 500);
             Controls.Add(new PropertyGrid
             {
-                SelectedObject = configuration,
-                Dock = DockStyle.Fill,
-                MaximumSize = new Size(Size.Width, Size.Height - 20)
+                SelectedObject = cloudConfiguration,
+                Size = new Size(300, 200)
+            });
+            Controls.Add(new PropertyGrid
+            {
+                SelectedObject = cloudViewConfiguration,
+                Size = new Size(300, 200),
+                Location = new Point(0, 200)
             });
 
             var fontFamily = new Button
@@ -43,7 +52,7 @@ namespace TagCloud.Interfaces.GUI.Forms
             var result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                configuration.FontFamily = dialog.Font.FontFamily;
+                cloudViewConfiguration.FontFamily = dialog.Font.FontFamily;
             }
         }
     }

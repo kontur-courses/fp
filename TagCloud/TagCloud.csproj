@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CloudLayouter\CircularCloudLayouter.cs" />
+    <Compile Include="CloudLayouter\CloudConfiguration.cs" />
     <Compile Include="CloudLayouter\ICloudLayouter.cs" />
     <Compile Include="CloudLayouter\FigurePaths\IFigurePath.cs" />
     <Compile Include="CloudLayouter\FigurePaths\Spiral.cs" />
