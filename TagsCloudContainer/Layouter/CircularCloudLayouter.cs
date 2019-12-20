@@ -76,16 +76,29 @@ namespace TagsCloudContainer.Layouter
             return Result.Fail<Rectangle>("There was no suitable place for the rectangle");
         }
 
+        //private Result<Rectangle> GetFirstRectangle(Size rectangleSize)
+        //{
+        //    var location = Center - new Size(rectangleSize.Width / 2, rectangleSize.Height / 2);
+        //    return Result.Ok(new Rectangle(location, rectangleSize));
+        //}
+
         private void PutNextRectangle(Size rectangleSize, List<Rectangle> rectangles, SortedSet<Point> corners)
         {
-            Result<Rectangle> rectangleResult;
-            if (rectangles.Count == 0)
+            //Result<Rectangle> rectangleResult;
+            //if (rectangles.Count == 0)
+            //{
+            //    var location = Center - new Size(rectangleSize.Width / 2, rectangleSize.Height / 2);
+            //    rectangleResult = Result.Ok(new Rectangle(location, rectangleSize));
+            //}
+            //else
+            //    rectangleResult = GetRectangle(rectangleSize, rectangles, corners);
+            Result<Rectangle> GetFirstRectangle(Size size)
             {
-                var location = Center - new Size(rectangleSize.Width / 2, rectangleSize.Height / 2);
-                rectangleResult = Result.Ok(new Rectangle(location, rectangleSize));
+                var location = Center - new Size(size.Width / 2, size.Height / 2);
+                return Result.Ok(new Rectangle(location, size));
             }
-            else
-                rectangleResult = GetRectangle(rectangleSize, rectangles, corners);
+
+            var rectangleResult = rectangles.Count == 0 ? GetFirstRectangle(rectangleSize) : GetRectangle(rectangleSize, rectangles, corners);
 
             rectangleResult
                 .Then(rectangle =>
