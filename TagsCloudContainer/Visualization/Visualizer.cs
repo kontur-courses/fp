@@ -21,12 +21,12 @@ namespace TagsCloudContainer.Visualization
             graphics.Clear(CloudSetting.BackgroundColor);
         }
 
-        public void DrawTag(TagRectangle tag, Font font)
+        public void DrawTag(TagRectangle tag)
         {
             var brash = new SolidBrush(CloudSetting.TextColor);
-            graphics.DrawString(tag.Value, font, brash, tag.Rectangle.Location);
+            graphics.DrawString(tag.Value, tag.Font, brash, tag.Rectangle.Location);
         }
-        
+
         public void DrawRectangles(IEnumerable<Rectangle> rectangles)
         {
             var pen = new Pen(CloudSetting.BackgroundColor, 2);

@@ -15,13 +15,12 @@ namespace TagsCloudContainer.Filters
             this.allowedWorldType = allowedWorldType;
             this.mysteam = mysteam;
         }
-        
+
         public IEnumerable<string> Filtering(IEnumerable<string> tokens)
         {
-            var result =mysteam.GetWords(string.Join(" ", tokens))
-                .Where(el => allowedWorldType.Contains(el.Lexems[0].GramPart))
-                .Select(t => t.SourceWord.Text)
-                .Where(s => s.Length > 3);
+            var result = mysteam.GetWords(string.Join(" ", tokens))
+                .Where(el => el.Lexems.Count > 0 && allowedWorldType.Contains(el.Lexems[0].GramPart))
+                .Select(t => t.SourceWord.Text);
             return result;
         }
     }

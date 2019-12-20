@@ -16,6 +16,7 @@ namespace TagsCloudContainer
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -23,11 +24,13 @@ namespace TagsCloudContainer
 
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -42,6 +45,7 @@ namespace TagsCloudContainer
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);

@@ -9,7 +9,7 @@ namespace TagsCloudContainer.Filters
 
         public BoringFilter(IEnumerable<string> boringWords)
         {
-            this.boringWords = new HashSet<string>(boringWords.Select(word =>  word.ToLower()));
+            this.boringWords = new HashSet<string>(boringWords.Select(word => word.ToLower()));
         }
 
         public IEnumerable<string> Filtering(IEnumerable<string> tokens)

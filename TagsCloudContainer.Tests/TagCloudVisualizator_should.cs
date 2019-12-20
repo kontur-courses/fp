@@ -47,9 +47,10 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void DrawTagCloud_ShouldPutRectangle()
         {
-            var filteringWord = new[] {"aba", "abc"};
+            var filteringWord = new[] {"abac", "abcd"};
             A.CallTo(() => filter.Filtering(A<IEnumerable<string>>.Ignored)).Returns(filteringWord);
-            tagCloudVisualizator.DrawTagCloud("", TagsCloudSetting.GetDefault());
+            A.CallTo(() => tokensParser.GetTokens(A<string>.Ignored)).Returns(filteringWord);
+            tagCloudVisualizator.DrawTagCloud("aba abc", TagsCloudSetting.GetDefault());
             A.CallTo(() => rectangleGenerator.PutNextRectangle(A<Size>.Ignored))
                 .MustHaveHappened(filteringWord.Length, Times.Exactly);
         }
@@ -57,7 +58,7 @@ namespace TagsCloudContainer.Tests
         [Test]
         public void DrawTagCloud_ShouldCorrectWorkVisualizer()
         {
-            var filteringWord = new[] {"aba", "abc"};
+            var filteringWord = new[] {"abac", "abcd"};
             A.CallTo(() => filter.Filtering(A<IEnumerable<string>>.Ignored)).Returns(filteringWord);
             var rectangles = new[] {new Rectangle(0, 0, 50, 50), new Rectangle(50, 50, 50, 50)};
             A.CallTo(() => rectangleGenerator.PutNextRectangle(A<Size>.Ignored)).Returns(rectangles[1]).Once();
@@ -65,10 +66,8 @@ namespace TagsCloudContainer.Tests
 
             tagCloudVisualizator.DrawTagCloud("", TagsCloudSetting.GetDefault());
 
-            A.CallTo(() => visualizer.DrawTag(A<TagRectangle>.That.Matches(x => x.Equals(new TagRectangle(filteringWord[0],rectangles[0]))), A<Font>.Ignored))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => visualizer.DrawTag(A<TagRectangle>.That.Matches(x => x.Equals(new TagRectangle(filteringWord[1],rectangles[1]))), A<Font>.Ignored))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => visualizer.DrawTag(A<TagRectangle>.Ignored))
+                .MustHaveHappenedTwiceExactly();
         }
     }
 }

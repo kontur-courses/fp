@@ -6,6 +6,6 @@ namespace TagsCloudContainer.Visualization
     {
         Bitmap Save();
         void Clear();
-        void DrawTag(TagRectangle tagRectangle, Font font);
+        void DrawTag(TagRectangle tagRectangle);
     }
 }

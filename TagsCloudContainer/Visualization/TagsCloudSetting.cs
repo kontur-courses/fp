@@ -9,6 +9,7 @@ namespace TagsCloudContainer.Visualization
         public Size ImageSize { get; }
         public Color TextColor { get; }
         public Color BackgroundColor { get; }
+
         public Point GetCenterImage()
         {
             return new Point(ImageSize.Width / 2, ImageSize.Height / 2);
@@ -21,15 +22,15 @@ namespace TagsCloudContainer.Visualization
             TextColor = textColor;
             BackgroundColor = backgroundColor;
         }
-        
+
         public TagsCloudSetting(ArgumentParser.Options argument)
         {
-            Font = new Font(FontFamily.GenericMonospace,argument.FontSize);
-            ImageSize = new Size(argument.Size,argument.Size);
+            Font = new Font(FontFamily.GenericMonospace, argument.FontSize);
+            ImageSize = new Size(argument.Size, argument.Size);
             TextColor = GetTextColor(argument.TextColor);
             BackgroundColor = GetBackgroundColor(argument.BackgroundColor);
         }
-        
+
         private static Color GetBackgroundColor(int number)
         {
             switch (number)
@@ -42,7 +43,7 @@ namespace TagsCloudContainer.Visualization
                     throw new ArgumentException();
             }
         }
-        
+
         private static Color GetTextColor(int number)
         {
             switch (number)
@@ -56,12 +57,13 @@ namespace TagsCloudContainer.Visualization
                 default:
                     throw new ArgumentException();
             }
-        } 
+        }
 
 
         public static TagsCloudSetting GetDefault()
         {
-            return new TagsCloudSetting(new Font(FontFamily.GenericMonospace,60), new Size(1000,1000), Color.Red,Color.Black);
+            return new TagsCloudSetting(new Font(FontFamily.GenericMonospace, 60), new Size(1000, 1000), Color.Red,
+                Color.Black);
         }
     }
 }

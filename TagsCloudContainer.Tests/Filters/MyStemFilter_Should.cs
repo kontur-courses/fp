@@ -12,7 +12,7 @@ namespace TagsCloudContainer.Tests.Filters
         [SetUp]
         public void SetUp()
         {
-            filter = null; //new MyStemFilter( new []{GramPartsEnum.Noun});
+            filter = new MyStemFilter( new []{GramPartsEnum.Noun}, new Mysteam());
         }
 
         [Test]

@@ -31,26 +31,16 @@ namespace TagsCloudContainer
                 Default = 0,
                 HelpText = "Set size for text.\r\n0 - red(default);\r\n1 - black;\r\n2 - white;n")]
             public int TextColor { get; set; }
-            
+
             [Option('b', "background", Required = false,
                 Default = 0,
                 HelpText = "Set size for background.\r\n0 - black(default);\r\n1 - white;")]
             public int BackgroundColor { get; set; }
         }
 
-        public static Options ParseArguments(string[] args)
+        public static ParserResult<Options> ParseArguments(string[] args)
         {
-            Options options = null;
-            Parser.Default.ParseArguments<Options>(args).WithParsed(opt => options = opt).WithNotParsed(PrintErrors);
-            return options;
-        }
-
-        private static void PrintErrors(IEnumerable<Error> errors)
-        {
-            foreach (var error in errors)
-            {
-                Console.WriteLine(error);
-            }
+            return Parser.Default.ParseArguments<Options>(args);
         }
     }
 }

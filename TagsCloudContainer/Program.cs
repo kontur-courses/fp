@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Autofac;
+using CommandLine;
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.RectangleGenerator;
 using TagsCloudContainer.RectangleGenerator.PointGenerator;
 using TagsCloudContainer.TokensGenerator;
 using TagsCloudContainer.Visualization;
-using YandexMystem.Wrapper;
 using YandexMystem.Wrapper.Enums;
 
 namespace TagsCloudContainer
@@ -15,18 +16,32 @@ namespace TagsCloudContainer
     {
         public static void Main(string[] args)
         {
-            var options = ArgumentParser.ParseArguments(args);
+            ArgumentParser.ParseArguments(args)
+                .WithNotParsed(PrintErrors)
+                .WithParsed(Execute);
+        }
+
+        private static void Execute(ArgumentParser.Options options)
+        {
             var setting = new TagsCloudSetting(options);
             //var setting = TagsCloudSetting.GetDefault();
 
             var container = BuildContainer(setting);
             var tagCloudVisualizator = container.Resolve<TagCloudVisualizator>();
-            var text = File.ReadAllText(options.InputFile);
-            tagCloudVisualizator.DrawTagCloud(text, setting)
-                .Save(options.OutputFile);
-            Console.WriteLine($"Image save in {options.OutputFile}");
+            Result.Of(() => File.ReadAllText(options.InputFile))
+                .Then(text => tagCloudVisualizator.DrawTagCloud(text, setting))
+                .Then(img => img.Save(options.OutputFile))
+                .Then((_) => Console.WriteLine($"Image save in {options.OutputFile}"))
+                .OnFail(Console.WriteLine);
         }
 
+        private static void PrintErrors(IEnumerable<Error> errors)
+        {
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error);
+            }
+        }
 
         private static IContainer BuildContainer(TagsCloudSetting setting)
         {

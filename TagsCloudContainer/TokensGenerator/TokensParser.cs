@@ -5,7 +5,6 @@ namespace TagsCloudContainer.TokensGenerator
 {
     public class TokensParser : ITokensParser
     {
-
         public TokensParser()
         {
         }
@@ -16,7 +15,8 @@ namespace TagsCloudContainer.TokensGenerator
             {
                 throw new ArgumentNullException();
             }
-            var splitToken = str.Split(new[] {"\r\n","\r"}, StringSplitOptions.RemoveEmptyEntries);
+
+            var splitToken = str.Split(new[] {"\r\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
             return splitToken;
         }
     }
