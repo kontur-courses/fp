@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using ErrorHandling;
+using TagCloud.Extensions;
 using TagCloud.Visualization;
 
 namespace TagCloud.CloudLayouter.CircularLayouter
@@ -28,7 +29,7 @@ namespace TagCloud.CloudLayouter.CircularLayouter
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (!IsCorrectSize(rectangleSize))
+            if (rectangleSize.IsNotCorrectSize())
                 return Result.Fail<Rectangle>(
                     $"Incorrect size of rectangle. Width: {rectangleSize.Width}, Height: {rectangleSize.Height}");
 
@@ -43,11 +44,6 @@ namespace TagCloud.CloudLayouter.CircularLayouter
             }
 
             return Result.Fail<Rectangle>("Failed to put next rectangle");
-        }
-
-        private bool IsCorrectSize(Size rectangleSize)
-        {
-            return !(rectangleSize.Width <= 0 || rectangleSize.Height <= 0);
         }
 
         private bool IsCorrectRectanglePosition(Rectangle rect)

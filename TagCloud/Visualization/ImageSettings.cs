@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagCloud.ErrorHandler;
+using TagCloud.Extensions;
 
 namespace TagCloud.Visualization
 {
@@ -19,15 +20,10 @@ namespace TagCloud.Visualization
             get => imageSize;
             set
             {
-                if (IsNotCorrectSize(value))
+                if (value.IsNotCorrectSize())
                     errorHandler.HandleError($"Wrong size parameters: width: {value.Width}, height: {value.Height}");
                 else imageSize = value;
             }
-        }
-
-        private bool IsNotCorrectSize(Size rectangleSize)
-        {
-            return rectangleSize.Width <= 0 || rectangleSize.Height <= 0;
         }
     }
 }

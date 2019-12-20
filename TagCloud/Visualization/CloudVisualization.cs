@@ -78,12 +78,12 @@ namespace TagCloud.Visualization
                 .Then(rect => TryPaintWord(word, frequency, graphics, rect));
         }
 
-        private void TryPaintWord(string word, int frequency, Graphics graphics, Result<Rectangle> rectangleResult)
+        private void TryPaintWord(string word, int frequency, Graphics graphics, Rectangle rectangleResult)
         {
-            if (!rectangleResult.GetValueOrThrow().IsEmpty)
+            if (!rectangleResult.IsEmpty)
                 graphics.DrawString(word,
-                    new Font(viewSettings.FontName, GetFontSize(word, rectangleResult.GetValueOrThrow().Width)),
-                    textColoration.GetTextColor(word, frequency), rectangleResult.GetValueOrThrow());
+                    new Font(viewSettings.FontName, GetFontSize(word, rectangleResult.Width)),
+                    textColoration.GetTextColor(word, frequency), rectangleResult);
         }
 
         private Rectangle TryPaintWordRectangle(Graphics graphics, Rectangle rectangle)

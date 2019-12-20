@@ -65,6 +65,7 @@
     <Compile Include="ErrorHandler\ErrorHandler.cs" />
     <Compile Include="ErrorHandler\IErrorHandler.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
+    <Compile Include="Extensions\SizeExtension.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="FrequencyDictionaryMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
