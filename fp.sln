@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Samples\Summato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{CBCBD763-6734-4520-9745-2C9E9084D54B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer.Tests", "TagsCloudContainer.Tests\TagsCloudContainer.Tests.csproj", "{650862F5-90C0-48B7-B4C1-2C99BE49006C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83B0A70-DBA6-45BF-A792-FD2B14528EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBCBD763-6734-4520-9745-2C9E9084D54B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBCBD763-6734-4520-9745-2C9E9084D54B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBCBD763-6734-4520-9745-2C9E9084D54B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBCBD763-6734-4520-9745-2C9E9084D54B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{650862F5-90C0-48B7-B4C1-2C99BE49006C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{650862F5-90C0-48B7-B4C1-2C99BE49006C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{650862F5-90C0-48B7-B4C1-2C99BE49006C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{650862F5-90C0-48B7-B4C1-2C99BE49006C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
