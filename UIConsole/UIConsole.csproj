@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Result.cs" />
     <Compile Include="SystemCommands\ClearConsoleText.cs" />
     <Compile Include="SystemCommands\ConsoleCommandList.cs" />
     <Compile Include="SystemCommands\Exit.cs" />
@@ -58,6 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResultLogic\ResultLogic.csproj">
+      <Project>{9b61f20a-db58-4dcd-9aba-4d9f66c4b95c}</Project>
+      <Name>ResultLogic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

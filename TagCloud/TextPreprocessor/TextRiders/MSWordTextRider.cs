@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Office.Interop.Word;
+using ResultLogic;
 using TagCloud.TextPreprocessor.Core;
-using TagsCloud;
 
 namespace TagCloud.TextPreprocessor.TextRiders
 {
@@ -22,12 +22,13 @@ namespace TagCloud.TextPreprocessor.TextRiders
 
         public Result<IEnumerable<Tag>> GetTags()
         {
-            return Result.Of(() => GetFileContent(textRiderConfig.FilePath)
-                .Split(textRiderConfig.WordsDelimiters)
-                .Select(str => textRiderConfig.GetCorrectWordFormat(str))
-                .Where(str => !textRiderConfig.IsSkipWord(str))
-                .Where(str => str != "")
-                .Select(str => new Tag(str)));
+            return Result.Of(() => GetFileContent(textRiderConfig.FilePath))
+                .Then(content => content.Split(textRiderConfig.WordsDelimiters))
+                .Then(words => words
+                    .Select(str => textRiderConfig.GetCorrectWordFormat(str))
+                    .Where(str => !textRiderConfig.IsSkipWord(str))
+                    .Where(str => str != "")
+                    .Select(str => new Tag(str)));
         }
         
         private string GetFileContent(string filePath)
@@ -48,6 +49,7 @@ namespace TagCloud.TextPreprocessor.TextRiders
                 
             var text = docRange.Text;
             app.Quit(ref none, ref none, ref none);
+
             return text;
         }
     }

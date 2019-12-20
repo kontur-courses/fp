@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using TagsCloud;
+using ResultLogic;
 
 namespace TagCloud.TagCloudVisualisation.TagCloudLayouter
 {

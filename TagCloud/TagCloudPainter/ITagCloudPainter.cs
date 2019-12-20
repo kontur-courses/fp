@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using ResultLogic;
 using TagCloud.TextPreprocessor.Core;
-using TagsCloud;
 
 namespace TagCloud.TagCloudPainter
 {

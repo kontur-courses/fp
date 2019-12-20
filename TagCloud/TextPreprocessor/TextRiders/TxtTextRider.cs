@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
+using ResultLogic;
 using TagCloud.TextPreprocessor.Core;
-using TagsCloud;
 
 namespace TagCloud.TextPreprocessor.TextRiders
 {
@@ -22,16 +21,17 @@ namespace TagCloud.TextPreprocessor.TextRiders
 
         public Result<IEnumerable<Tag>> GetTags()
         {
-            return Result.Of(() => GetFileContent(textRiderConfig.FilePath)
-                .Split(textRiderConfig.WordsDelimiters)
-                .Select(str => textRiderConfig.GetCorrectWordFormat(str))
-                .Where(str => !textRiderConfig.IsSkipWord(str))
-                .Where(str => str != "")
-                .Select(str => new Tag(str)));
+            return Result.Of(() => GetFileContent(textRiderConfig.FilePath))
+                .Then(content => content.Split(textRiderConfig.WordsDelimiters))
+                .Then(words => words
+                    .Select(str => textRiderConfig.GetCorrectWordFormat(str))
+                    .Where(str => !textRiderConfig.IsSkipWord(str))
+                    .Where(str => str != "")
+                    .Select(str => new Tag(str)));
         }
 
         private string GetFileContent(string filePath)
-        {
+        {            
             string text;
             
             using (StreamReader sr = new StreamReader(filePath))

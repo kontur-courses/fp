@@ -9,7 +9,6 @@ using NUnit.Framework.Interfaces;
 using TagCloud.TagCloudVisualisation.Canvas;
 using TagCloud.TagCloudVisualisation.Spirals;
 using TagCloud.TagCloudVisualisation.TagCloudLayouter;
-using TagCloud.TagCloudVizualisation.Canvas;
 
 namespace TagCloud.TagCloudVisualisation.Tests
 {

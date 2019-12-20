@@ -75,7 +75,6 @@
     <Compile Include="ConsoleCommands\TextRiderConfigCommands\PathToFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
     <Compile Include="TagCloudCreator.cs" />
     <Compile Include="TagCloudPainter\ITagCloudPainter.cs" />
     <Compile Include="TagCloudPainter\Painter.cs" />
@@ -105,6 +104,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultLogic\ResultLogic.csproj">
+      <Project>{9b61f20a-db58-4dcd-9aba-4d9f66c4b95c}</Project>
+      <Name>ResultLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UIConsole\UIConsole.csproj">
       <Project>{b1f3e754-5a95-43eb-909a-1cea160acc58}</Project>
       <Name>UIConsole</Name>

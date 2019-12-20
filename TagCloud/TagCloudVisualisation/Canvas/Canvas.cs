@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using ResultLogic;
 
-namespace TagCloud.TagCloudVizualisation.Canvas
+namespace TagCloud.TagCloudVisualisation.Canvas
 {
     public abstract class Canvas
     {
@@ -23,8 +24,8 @@ namespace TagCloud.TagCloudVizualisation.Canvas
             Graphics = Graphics.FromImage(Bitmap);
         }
 
-        public abstract void Draw(Rectangle rectangle, Brush brush = null);
-        public abstract void Draw(string word, Font font, RectangleF rectangleF, Brush brush = null);
-        public abstract void Save(string directoryPath, string fileName);
+        public abstract Result<None> Draw(Rectangle rectangle, Brush brush = null);
+        public abstract Result<None> Draw(string word, Font font, RectangleF rectangleF, Brush brush = null);
+        public abstract Result<None> Save(string directoryPath, string fileName);
     }
 }

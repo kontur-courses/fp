@@ -31,6 +31,9 @@ namespace TagCloud.TextPreprocessor.TextRiders
         
         private static IEnumerable<string> GetSkipWords(string filePath)
         {
+            if (File.Exists(filePath))
+                return new List<string>();
+
             using (var sr = new StreamReader(filePath))
             {
                 return sr.ReadToEnd().Split();

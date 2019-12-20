@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TagsCloud;
+using ResultLogic;
 using UIConsole.SystemCommands;
 
 namespace UIConsole
@@ -46,13 +46,11 @@ namespace UIConsole
             {
                 if(IsStopped) break;
                 var inputString = Console.ReadLine();
-                
-                var result = Result.Of(() => GetCommand(inputString))
-                    .Then(command => command.Value
-                        .Execute(this, GetArgs(command.Value, inputString).Value));
 
-                if (!result.IsSuccess)
-                    PrintInConsole(result.Error.Message);
+                GetCommand(inputString)
+                    .Then(command => command
+                        .Execute(this, GetArgs(command, inputString).Value))
+                    .OnFail(exeption => PrintInConsole(exeption.Message));
             }
         }
 
@@ -61,7 +59,13 @@ namespace UIConsole
         private Result<IConsoleCommand> GetCommand(string input)
         {
             var splittingCommand = input.Split();
-            return Result.Of(() => commands[splittingCommand[0].ToLower()]);
+
+            if (splittingCommand.Length == 0)
+                return Result.Fail<IConsoleCommand>(new ArgumentException("Пожалуйста введите команду"));
+            if (!commands.ContainsKey(splittingCommand[0].ToLower()))
+                return Result.Fail<IConsoleCommand>(new ArgumentException("Введене не верная команда"));
+
+            return Result.Ok(commands[splittingCommand[0].ToLower()]);
         }
 
         private Result<Dictionary<string, object>> GetArgs(IConsoleCommand consoleCommand, string input)
@@ -71,12 +75,12 @@ namespace UIConsole
             var args = input.Split().Skip(1).ToList();
             
             if (consoleCommand.ArgsName.Count != args.Count)
-                throw new ArgumentException("Указаны не все аргументы");
+                return Result.Fail<Dictionary<string, object>>(new ArgumentException("Указано не верное колличество аргументов"));
 
             var argsName = consoleCommand.ArgsName;
             for (var i = 0; i < argsName.Count; i++)
                 output.Add(argsName[i], GetArg(i));
-            return output;
+            return Result.Ok(output);
 
             string GetArg(int i)
             {

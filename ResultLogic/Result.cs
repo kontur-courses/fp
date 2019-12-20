@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace ResultLogic
 {
     public class None
     {
@@ -11,7 +11,7 @@ namespace ResultOf
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(Exception error, T value = default)
         {
             Error = error;
             Value = value;
@@ -21,14 +21,20 @@ namespace ResultOf
             return Result.Ok(v);
         }
 
-        public string Error { get; }
-        internal T Value { get; }
+        public Exception Error { get; }
+        public T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
+
+
+        //public static implicit operator Result<T>(T value)
+        //{
+        //    return Result.Ok(value);
+        //}
     }
 
     public static class Result
@@ -42,17 +48,18 @@ namespace ResultOf
         {
             return new Result<T>(null, value);
         }
+        
         public static Result<None> Ok()
         {
             return Ok<None>(null);
         }
 
-        public static Result<T> Fail<T>(string e)
+        public static Result<T> Fail<T>(Exception exception)
         {
-            return new Result<T>(e);
+            return new Result<T>(exception);
         }
 
-        public static Result<T> Of<T>(Func<T> f, string error = null)
+        public static Result<T> Of<T>(Func<T> f, Exception error = null)
         {
             try
             {
@@ -60,11 +67,11 @@ namespace ResultOf
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message);
+                return Fail<T>(error ?? e);
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> OfAction(Action f, Exception error = null)
         {
             try
             {
@@ -73,7 +80,7 @@ namespace ResultOf
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message);
+                return Fail<None>(error ?? e);
             }
         }
 
@@ -109,25 +116,10 @@ namespace ResultOf
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
-            Action<string> handleError)
+            Action<Exception> handleError)
         {
             if (!input.IsSuccess) handleError(input.Error);
             return input;
-        }
-
-        public static Result<TInput> ReplaceError<TInput>(
-            this Result<TInput> input,
-            Func<string, string> replaceError)
-        {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
-        }
-
-        public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input,
-            string errorMessage)
-        {
-            return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

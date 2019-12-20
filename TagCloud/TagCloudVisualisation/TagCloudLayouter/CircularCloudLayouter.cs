@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.TagCloudVisualisation.Spirals;
-using TagsCloud;
+using ResultLogic;
 
 namespace TagCloud.TagCloudVisualisation.TagCloudLayouter
 {
@@ -37,12 +37,12 @@ namespace TagCloud.TagCloudVisualisation.TagCloudLayouter
 
             while(true)
             {
-                var curentSpiralPoint = spiralPoints.Current;
-                var curentPosition = new Point(
-                    Center.X + curentSpiralPoint.X, 
-                    Center.Y + curentSpiralPoint.Y);
+                var currentSpiralPoint = spiralPoints.Current;
+                var currentPosition = new Point(
+                    Center.X + currentSpiralPoint.X, 
+                    Center.Y + currentSpiralPoint.Y);
 
-                var rectangle = new Rectangle(curentPosition, rectangleSize);
+                var rectangle = new Rectangle(currentPosition, rectangleSize);
 
                 if (TryAddRectangle(rectangle)) 
                     return Result.Ok(rectangle);
