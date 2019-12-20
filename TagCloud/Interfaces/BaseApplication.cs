@@ -29,11 +29,18 @@ namespace TagCloud.Interfaces
         {
             var format = $".{AppSettings.FilePath.Split('.').Last()}";
             return Result.Of(() => Parsers.First(p => p.AllowedTypes.Contains(format)))
-                .Then(p => p.GetWords(AppSettings))
-                .Then(e => AppSettings.CurrentTextAnalyzer
-                    .GetWords(e, CloudConfiguration.WordsCount))
-                .Then(visualizer.GetCloud)
-                .Then(x => (Image) x);
+                .Then(p =>
+                {
+                    using (p)
+                    {
+                        return p.GetWords(AppSettings)
+                            .Then(e => AppSettings.CurrentTextAnalyzer
+                                .GetWords(e, CloudConfiguration.WordsCount))
+                            .Then(visualizer.GetCloud)
+                            .Then(x => (Image) x);
+                    }
+                });
+
         }
 
         public void Close()
