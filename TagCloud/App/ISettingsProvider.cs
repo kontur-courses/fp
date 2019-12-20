@@ -1,7 +1,9 @@
-﻿namespace TagCloud.App
+﻿using ResultOf;
+
+namespace TagCloud.App
 {
     public interface ISettingsProvider
     {
-        AppSettings GetSettings();
+        Result<AppSettings> GetSettings();
     }
 }

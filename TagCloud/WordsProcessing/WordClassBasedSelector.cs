@@ -8,8 +8,8 @@ namespace TagCloud.WordsProcessing
     {
         private readonly IWordClassIdentifier wordClassIdentifier;
         private readonly ISettingsProvider settingsProvider;
-        private HashSet<WordClass> WordClasses => settingsProvider.GetSettings().WordClassSettings.WordClasses;
-        private bool IsBlackList => settingsProvider.GetSettings().WordClassSettings.IsBlackList;
+        private HashSet<WordClass> WordClasses => settingsProvider.GetSettings().GetValueOrThrow().WordClassSettings.WordClasses;
+        private bool IsBlackList => settingsProvider.GetSettings().GetValueOrThrow().WordClassSettings.IsBlackList;
 
         public WordClassBasedSelector(
             IWordClassIdentifier wordClassIdentifier, 

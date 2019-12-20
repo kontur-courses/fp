@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using ResultOf;
 
 
 namespace TagCloud.TextReading
 {
     public class MicrosoftWordTextReader : ITextReader
     {
-        public IEnumerable<string> ReadWords(FileInfo file)
+        public Result<IEnumerable<string>> ReadWords(FileInfo file)
         {
             Body body;
             try
@@ -21,14 +23,17 @@ namespace TagCloud.TextReading
             }
             catch (IOException e)
             {
-                throw new IOException($"File {file.FullName} is in use", e);
+                return Result
+                    .Fail<IEnumerable<string>>(e.Message)
+                    .RefineError($"File {file.FullName} is in use");
             }
-            foreach (var element in body.ChildElements)
-            {
-                var text = element.InnerText;
-                if (text != "")
-                    yield return text;
-            }
+
+            return Result.Ok(ExtractWordsFromBody(body));
+        }
+
+        private IEnumerable<string> ExtractWordsFromBody(Body body)
+        {
+            return body.ChildElements.Select(element => element.InnerText).Where(text => text != "");
         }
 
         public string Extension => ".docx";

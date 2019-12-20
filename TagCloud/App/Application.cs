@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using ResultOf;
 using TagCloud.Infrastructure;
 using TagCloud.TextReading;
 using TagCloud.Visualization;
@@ -34,16 +35,20 @@ namespace TagCloud.App
             this.imageFormat = imageFormat;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            var settings = settingsProvider.GetSettings();
-            var file = fileInfoProvider.GetFileInfo(settings.InputFilePath);
-            var textReader = textReaderSelector.GetTextReader(file);
-            var rawWords = textReader.ReadWords(file).ToList();
+            var settings = settingsProvider.GetSettings().GetValueOrThrow();
+           // var file = fileInfoProvider.GetFileInfo(settings.InputFilePath);
+            var textReader = textReaderSelector.GetTextReader(settings.InputFileInfo);
+            var wordReadingResult = textReader.ReadWords(settings.InputFileInfo);
+            if (!wordReadingResult.IsSuccess)
+                return Result.Fail<None>(wordReadingResult.Error);
+            var rawWords = wordReadingResult.GetValueOrThrow();
             var preparedWords = wordProcessor.PrepareWords(rawWords).ToList();
             var sizedWords = wordSizeSetter.GetSizedWords(preparedWords, settings.PictureConfig).ToList();
             var bitmap = tagCloudGenerator.GetTagCloudBitmap(sizedWords);
             imageFormat.SaveImage(bitmap, settings.OutputFilePath);
+            return Result.Ok();
         }
     }
 }

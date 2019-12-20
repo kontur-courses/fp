@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using ResultOf;
 
 namespace TagCloud.Infrastructure
 {
     public interface IFileInfoProvider
     {
-        FileInfo GetFileInfo(string path);
+        Result<FileInfo> GetFileInfo(string path);
     }
 }

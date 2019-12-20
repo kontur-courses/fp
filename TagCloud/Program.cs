@@ -9,6 +9,7 @@ using TagCloud.Visualization;
 using TagCloud.WordsProcessing;
 using Autofac;
 using CommandLine;
+using ResultOf;
 using TagCloud.Algorithm;
 using TagCloud.App;
 using TagCloud.Visualization.WordPainting;
@@ -28,6 +29,11 @@ namespace TagCloud
             builder.RegisterType<WordSizeSetter>().As<IWordSizeSetter>();
             builder.RegisterType<WordProcessor>().As<IWordProcessor>();
             builder.RegisterType<WordClassBasedSelector>().As<IWordSelector>();
+            builder.RegisterType<WordPainterFabric>().As<IWordPainterFabric>();
+            builder.RegisterType<IndexBasedWordPainter>().As<IWordPainter>()
+                .InstancePerLifetimeScope().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies); 
+            builder.RegisterType<RandomColorWordPainter>().As<IWordPainter>();
+            builder.RegisterType<WordClassBasedWordPainter>().As<IWordPainter>();
             builder.RegisterType<CircularCloudLayouter>().As<ITagCloudLayouter>();
             builder.RegisterType<ArchimedeanSpiral>().As<ISpiral>();
             builder.RegisterType<PngImageFormat>().As<IImageFormat>();
@@ -36,20 +42,6 @@ namespace TagCloud
                 .InstancePerLifetimeScope();
             builder.RegisterType<WordDrawer>().As<ITagCloudElementDrawer>();
             builder.RegisterType<Application>().AsSelf();
-        }
-
-        private static IWordPainter GetWordPainter(IComponentContext c)
-        {
-            var settings = c.Resolve<ISettingsProvider>().GetSettings();
-            var config = c.Resolve<PictureConfig>();
-            var painters = new List<IWordPainter>
-            {
-                new IndexBasedWordPainter(config),
-                new RandomColorWordPainter(),
-                new WordClassBasedWordPainter(config)
-            };
-            var painter = painters.First(p => p.Name == settings.WordPainterAlgorithmName);
-            return painter;
         }
 
         private static void Execute(Options options)
@@ -62,17 +54,15 @@ namespace TagCloud
             builder.RegisterInstance(new MyStemBasedWordClassIdentifier(myStemPath)).As<IWordClassIdentifier>();
 
             builder.Register(c =>
-                    new ConsoleSettingsProvider(options, c.Resolve<PictureConfig>()))
+                    new ConsoleSettingsProvider(options, c.Resolve<PictureConfig>(), c.Resolve<IFileInfoProvider>()))
                 .As<ISettingsProvider>().InstancePerLifetimeScope();
-            builder.Register(GetWordPainter).As<IWordPainter>()
-                  .InstancePerLifetimeScope().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
-
-
+           
             var container = builder.Build();
 
 
             using (var scope = container.BeginLifetimeScope())
             {
+                
                 var app = scope.Resolve<Application>();
                 try
                 {
@@ -96,6 +86,7 @@ namespace TagCloud
 
         public static void Main(string[] args)
         {
+            args = "-i 4.txt -o 888".Split();
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(Execute)
                 .WithNotParsed(errors => Console.WriteLine(string.Join("\\n", errors)));

@@ -48,6 +48,8 @@
     <Compile Include="Algorithm\SpiralBasedLayouter\ShiftUtils.cs" />
     <Compile Include="Algorithm\SpiralBasedLayouter\ArchimedeanSpiral.cs" />
     <Compile Include="App\Application.cs" />
+    <Compile Include="App\WordPainterFabric.cs" />
+    <Compile Include="App\IWordPainterFabric.cs" />
     <Compile Include="App\ConsoleSettingsProvider.cs" />
     <Compile Include="App\ISettingsProvider.cs" />
     <Compile Include="App\Options.cs" />
@@ -121,6 +123,11 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj">
+      <Project>{c83b0a70-dba6-45bf-a792-fd2b14528ebb}</Project>
+      <Name>ErrorHandling</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
