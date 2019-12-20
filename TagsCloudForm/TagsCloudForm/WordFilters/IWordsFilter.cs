@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using TagsCloudForm.Common;
 using TagsCloudForm.CircularCloudLayouterSettings;
 
 namespace TagsCloudForm.WordFilters
 {
     public interface IWordsFilter
     {
-        IEnumerable<string> Filter(ICircularCloudLayouterWithWordsSettings settings, IEnumerable<string> words);
+        Result<IEnumerable<string>> Filter(ICircularCloudLayouterWithWordsSettings settings, IEnumerable<string> words);
     }
 }

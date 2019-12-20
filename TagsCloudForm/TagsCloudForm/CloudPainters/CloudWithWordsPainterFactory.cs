@@ -20,9 +20,11 @@ namespace TagsCloudForm.CloudPainters
         private readonly ICircularCloudLayouterWithWordsSettings settings;
         private readonly IWordsFilter[] filters;
         private readonly IWordsFrequencyParser parser;
+        private readonly ITextReader textReader;
         public CloudWithWordsPainterFactory(IImageHolder imageHolder,
             IPalette palette,
             ICircularCloudLayouterWithWordsSettings settings,
+            ITextReader textReader,
             Func<Point, ICircularCloudLayouter> circularCloudLayouterFactory, IWordsFilter[] filters, IWordsFrequencyParser parser)
         {
             this.imageHolder = imageHolder;
@@ -31,38 +33,34 @@ namespace TagsCloudForm.CloudPainters
             this.settings = settings;
             this.filters = filters;
             this.parser = parser;
+            this.textReader = textReader;
         }
 
-        public ICloudPainter Create()
+        public ICloudPainter Create()//лучше сделать чтобы тоже result возвращало
         {
             IEnumerable<string> lines;
-            try
+            var linesResult = textReader.ReadLines(settings.WordsSource);
+            if (!linesResult.IsSuccess)
             {
-                lines = File.ReadLines(settings.WordsSource);
-            }
-            catch (Exception e)
-            {
+                MessageBox.Show(linesResult.Error);
                 lines = new List<string>();
-                MessageBox.Show(e.Message, "Не удалось загрузить файл с словами");
             }
-
+            else
+            {
+                lines = linesResult.Value;
+            }
             if (settings.UpperCase)
                 lines = lines.Select(x => x.ToUpper());
             else
                 lines = lines.Select(x => x.ToLower());
             foreach (var filter in filters)
             {
-                IEnumerable<string> filtered = lines;
-                try
-                {
-                    filtered = filter.Filter(settings, lines);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                    filtered = lines;
-                }
-                lines = filtered;
+                Result<IEnumerable<string>> filtered;
+                filtered = filter.Filter(settings, lines);
+                if (filtered.IsSuccess)
+                    lines = filtered.Value;
+                else
+                    MessageBox.Show(filtered.Error);
             }
             var wordsWithFrequency = parser.GetWordsFrequency(lines, settings.Language);
             var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));

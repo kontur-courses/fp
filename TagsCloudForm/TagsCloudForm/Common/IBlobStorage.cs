@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TagsCloudForm.Common
 {
     public interface IBlobStorage

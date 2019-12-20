@@ -16,7 +16,7 @@ namespace TagsCloudTests.FiltersTests
 
             var filtered = checker.Filter(words, LanguageEnum.English);
 
-            filtered.Should().BeEquivalentTo("hello");
+            filtered.Value.Should().BeEquivalentTo("hello");
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace TagsCloudTests.FiltersTests
 
             var filtered = checker.Filter(words, LanguageEnum.English);
 
-            filtered.Should().BeEquivalentTo("Hello");
+            filtered.Value.Should().BeEquivalentTo("Hello");
         }
     }
 }

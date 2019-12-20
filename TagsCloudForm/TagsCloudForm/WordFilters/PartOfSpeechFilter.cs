@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using OpenNLP.Tools.PosTagger;
 using TagsCloudForm.CircularCloudLayouterSettings;
+using TagsCloudForm.Common;
 
 namespace TagsCloudForm.WordFilters
 {
@@ -25,7 +26,7 @@ namespace TagsCloudForm.WordFilters
         }
 
 
-        public IEnumerable<string> Filter(ICircularCloudLayouterWithWordsSettings settings, IEnumerable<string> words)
+        public Result<IEnumerable<string>> Filter(ICircularCloudLayouterWithWordsSettings settings, IEnumerable<string> words)
         {
             HashSet<string> partOfSpeechToFilter;
             try
@@ -33,12 +34,16 @@ namespace TagsCloudForm.WordFilters
                 var settingsFilename = settings.PartOfSpeechToFilterFile;
                 partOfSpeechToFilter = File.ReadAllLines(settingsFilename).ToHashSet(StringComparer.OrdinalIgnoreCase);
             }
+            catch (FileNotFoundException e)
+            {
+                return new Result<IEnumerable<string>>("Не удалось загрузить файл с part of speech to filter: файл отсутствует", words);
+            }
             catch (Exception e)
             {
-                throw new Exception("Не удалось загрузить файл с part of speech to filter");
+                return new Result<IEnumerable<string>>("Не удалось загрузить файл с part of speech to filter: "+e.Message, words);
             }
 
-            return Filter(partOfSpeechToFilter, words);
+            return Result.Ok(Filter(partOfSpeechToFilter, words));
         }
     }
 }

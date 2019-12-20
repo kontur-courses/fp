@@ -20,6 +20,7 @@ namespace TagsCloudForm
             var builder = new ContainerBuilder();
             builder.RegisterType<CloudForm>().As<CloudForm>();
             builder.RegisterType<Palette>().As<IPalette>().SingleInstance();
+            builder.RegisterType<TextReader>().As<ITextReader>().SingleInstance();
             builder.RegisterType<CircularCloudLayouter.CircularCloudLayouter>().As<ICircularCloudLayouter>();
             RegisterPainters(builder);
             RegisterWordFiltersAndFunctions(builder);

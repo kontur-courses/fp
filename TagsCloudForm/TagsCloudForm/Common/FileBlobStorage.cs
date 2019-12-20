@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
+using NUnit.Framework;
 
 namespace TagsCloudForm.Common
 {
@@ -8,6 +11,7 @@ namespace TagsCloudForm.Common
         {
             return File.Exists(name) ? File.ReadAllBytes(name) : null;
         }
+
 
         public void Set(string name, byte[] content)
         {
