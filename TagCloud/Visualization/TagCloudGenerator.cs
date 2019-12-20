@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagCloud.Infrastructure;
 
 namespace TagCloud.Visualization
@@ -20,9 +21,12 @@ namespace TagCloud.Visualization
             this.tagCloudElementDrawer = tagCloudElementDrawer;
         }
 
-        public Bitmap GetTagCloudBitmap(IEnumerable<Word> words)
+        public Result<Bitmap> GetTagCloudBitmap(IEnumerable<Word> words)
         {
-            var tagCloudElements = tagCloudElementsPreparer.PrepareTagCloudElements(words);
+            var tagCloudElementsResult = tagCloudElementsPreparer.PrepareTagCloudElements(words);
+            if (!tagCloudElementsResult.IsSuccess)
+                return Result.Fail<Bitmap>(tagCloudElementsResult.Error);
+            var tagCloudElements = tagCloudElementsResult.GetValueOrThrow();
             var bitmap = new Bitmap(pictureConfig.Size.Width, pictureConfig.Size.Height);
             var g = Graphics.FromImage(bitmap);
             g.Clear(pictureConfig.Palette.BackgroundColor);

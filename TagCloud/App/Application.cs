@@ -11,7 +11,6 @@ namespace TagCloud.App
     public class Application
     {
         private readonly ISettingsProvider settingsProvider;
-        private readonly IFileInfoProvider fileInfoProvider;
         private readonly ITextReaderSelector textReaderSelector;
         private readonly IWordProcessor wordProcessor;
         private readonly IWordSizeSetter wordSizeSetter;
@@ -20,7 +19,6 @@ namespace TagCloud.App
 
         public Application(
             ISettingsProvider settingsProvider,
-            IFileInfoProvider fileInfoProvider,
             ITextReaderSelector textReaderSelector,
             IWordProcessor wordProcessor, 
             IWordSizeSetter wordSizeSetter,
@@ -28,7 +26,6 @@ namespace TagCloud.App
             IImageFormat imageFormat)
         {
             this.settingsProvider = settingsProvider;
-            this.fileInfoProvider = fileInfoProvider;
             this.textReaderSelector = textReaderSelector;
             this.wordProcessor = wordProcessor;
             this.wordSizeSetter = wordSizeSetter;
@@ -42,17 +39,13 @@ namespace TagCloud.App
             if (!settingsResult.IsSuccess)
                 return Result.Fail<None>(settingsResult.Error);
             var settings = settingsResult.GetValueOrThrow();
-            var rawWordsResult = textReaderSelector
+            return textReaderSelector
                 .GetTextReader(settings.InputFileInfo)
-                .Then(r => r.ReadWords(settings.InputFileInfo));
-
-            var rawWords = rawWordsResult.GetValueOrThrow();
-
-            var preparedWords = wordProcessor.PrepareWords(rawWords).ToList();
-            var sizedWords = wordSizeSetter.GetSizedWords(preparedWords, settings.PictureConfig).ToList();
-            var bitmap = tagCloudGenerator.GetTagCloudBitmap(sizedWords);
-            imageFormat.SaveImage(bitmap, settings.OutputFilePath);
-            return Result.Ok();
+                .Then(r => r.ReadWords(settings.InputFileInfo))
+                .Then(w => wordProcessor.PrepareWords(w))
+                .Then(w => wordSizeSetter.GetSizedWords(w, settings.PictureConfig))
+                .Then(w => tagCloudGenerator.GetTagCloudBitmap(w))
+                .Then(b => imageFormat.SaveImage(b, settings.OutputFilePath));
         }
     }
 }

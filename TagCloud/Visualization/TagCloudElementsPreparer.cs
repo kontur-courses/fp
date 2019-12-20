@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 using TagCloud.Algorithm;
 using TagCloud.App;
 using TagCloud.Infrastructure;
@@ -24,9 +25,17 @@ namespace TagCloud.Visualization
             this.config = config;
         }
 
-        public IEnumerable<TagCloudElement> PrepareTagCloudElements(IEnumerable<Word> words)
+        public Result<IEnumerable<TagCloudElement>> PrepareTagCloudElements(IEnumerable<Word> words)
         {
-            var wordPainter = wordPainterFabric.GetWordPainter().GetValueOrThrow();
+            var wordPainterResult = wordPainterFabric.GetWordPainter();
+            return !wordPainterResult.IsSuccess 
+                ? Result.Fail<IEnumerable<TagCloudElement>>(wordPainterResult.Error) 
+                : Result.Ok(PrepareTagCloudElements(words, wordPainterResult.GetValueOrThrow()));
+        }
+
+        private IEnumerable<TagCloudElement> PrepareTagCloudElements(
+            IEnumerable<Word> words, IWordPainter wordPainter)
+        {
             foreach (var word in words)
             {
                 var rectangle = tagCloudLayouter.PutNextRectangle(word.WordRectangleSize);
@@ -36,6 +45,6 @@ namespace TagCloud.Visualization
             }
         }
 
-        
+
     }
 }

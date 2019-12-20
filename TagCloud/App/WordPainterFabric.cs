@@ -28,7 +28,7 @@ namespace TagCloud.App
             var name = settingsResult.GetValueOrThrow().WordPainterAlgorithmName;
             painter = painters.FirstOrDefault(p => p.Name == name);
             if (painter == null)
-                throw new ArgumentException($"Unknown painter algorithm: {name}");
+                return Result.Fail<IWordPainter>($"Unknown painter algorithm: {name}");
             return Result.Ok(painter);
         }
     }

@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagCloud.Infrastructure
 {
     public interface IImageFormat
     {
-        void SaveImage(Bitmap bitmap, string filePath);
+        Result<None> SaveImage(Bitmap bitmap, string filePath);
     }
 }

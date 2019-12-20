@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TagCloud.Algorithm.SpiralBasedLayouter;
 using TagCloud.Infrastructure;
 using TagCloud.TextReading;
@@ -9,7 +7,6 @@ using TagCloud.Visualization;
 using TagCloud.WordsProcessing;
 using Autofac;
 using CommandLine;
-using ResultOf;
 using TagCloud.Algorithm;
 using TagCloud.App;
 using TagCloud.Visualization.WordPainting;
@@ -61,24 +58,10 @@ namespace TagCloud
 
             using (var scope = container.BeginLifetimeScope())
             {
-                
                 var app = scope.Resolve<Application>();
-                try
-                {
-                    app.Run();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                var result = app.Run();
+                if (!result.IsSuccess)
+                    Console.WriteLine(result.Error);
             }
         }
 

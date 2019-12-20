@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 using TagCloud.Infrastructure;
 
 namespace TagCloud.WordsProcessing
@@ -15,14 +16,18 @@ namespace TagCloud.WordsProcessing
             this.wordCounter = wordCounter;
         }
 
-        public IEnumerable<Word> PrepareWords(IEnumerable<string> rawWords)
+        public Result<IEnumerable<Word>> PrepareWords(IEnumerable<string> rawWords)
         {
             var convertedWords = rawWords
                 .Select(rawWord => rawWord.ToLower())
-                .Select(word => new Word(word));
+                .Select(word => new Word(word))
+                .ToList();
+            if (convertedWords.Count == 0)
+                return Result.Fail<IEnumerable<Word>>("No words were given");
             var countedWords = wordCounter.GetCountedWords(convertedWords);
-            return countedWords
+            var selectedWords = countedWords
                 .Where(word => wordSelector.IsSelectedWord(word));
+            return Result.Ok(selectedWords);
 
         }
     }

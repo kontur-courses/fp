@@ -8,7 +8,6 @@ namespace TagCloud.App
     {
         public PictureConfig PictureConfig { get; set; }
         public FileInfo InputFileInfo { get; set; }
-        //public string InputFilePath { get; set; }
         public string OutputFilePath{ get; set; }
         public WordClassSettings WordClassSettings { get; set; }
         public string WordPainterAlgorithmName { get; set; }

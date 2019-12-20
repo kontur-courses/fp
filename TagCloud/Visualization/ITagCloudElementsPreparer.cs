@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 using TagCloud.Infrastructure;
 
 namespace TagCloud.Visualization
 {
     public interface ITagCloudElementsPreparer
     {
-        IEnumerable<TagCloudElement> PrepareTagCloudElements(IEnumerable<Word> words);
+        Result<IEnumerable<TagCloudElement>> PrepareTagCloudElements(IEnumerable<Word> words);
         int CurrentWordIndex { get; }
     }
 }

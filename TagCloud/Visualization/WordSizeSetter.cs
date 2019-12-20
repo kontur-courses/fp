@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagCloud.Infrastructure;
 
 namespace TagCloud.Visualization
@@ -19,16 +21,22 @@ namespace TagCloud.Visualization
         public WordSizeSetter() : this(100f, 1) { }
 
 
-        public IEnumerable<Word> GetSizedWords(IEnumerable<Word> words, PictureConfig pictureConfig)
+        public Result<IEnumerable<Word>> GetSizedWords(IEnumerable<Word> words, PictureConfig pictureConfig)
         {
             var wordsList = words.ToList();
             var maxWord = wordsList.OrderByDescending(w => w.Count).First();
             var maxWordFontSize = GetMaxWordFontSize(maxWord, wordsList.Count, pictureConfig);
             var fontSizeCoefficient = Math.Max(wordsList.Count / wordsCountCorrectionCoefficient, 1) * maxWordFontSize / maxWord.Count;
+            return Result.Ok(GetSizedWords(wordsList, fontSizeCoefficient, pictureConfig.FontFamily));
+        }
+
+        private static IEnumerable<Word> GetSizedWords(
+            List<Word> wordsList, float fontSizeCoefficient, FontFamily fontFamily)
+        {
             foreach (var word in wordsList)
             {
                 var fontSize = word.Count * fontSizeCoefficient;
-                var size = SizeUtils.GetWordBasedSize(word.Value, pictureConfig.FontFamily, fontSize);
+                var size = SizeUtils.GetWordBasedSize(word.Value, fontFamily, fontSize);
                 yield return word.SetSize(size).SetFontSize(fontSize);
             }
         }
