@@ -78,6 +78,8 @@
     <Compile Include="Filters\BoringFilter.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\MyStemFilter.cs" />
+    <Compile Include="IMysteam.cs" />
+    <Compile Include="Mysteam.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangleGenerator\CircularCloudLayouter.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="RectangleGenerator\PointGenerator\IPointGenerator.cs" />
     <Compile Include="RectangleGenerator\PointGenerator\SpiralGenerator.cs" />
     <Compile Include="RectangleGenerator\RectangleExtension.cs" />
+    <Compile Include="Result.cs" />
     <Compile Include="TagCloudVisualizator.cs" />
     <Compile Include="TagRectangle.cs" />
     <Compile Include="TokensGenerator\ITokensParser.cs" />

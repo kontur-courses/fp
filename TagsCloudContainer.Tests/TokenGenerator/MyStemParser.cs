@@ -16,7 +16,7 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         public void SetUp()
         {
             word = "слово";
-            tokenParser = new MyStemParser();
+            tokenParser = null; //new MyStemParser();
         }
 
         [Test]

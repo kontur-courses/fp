@@ -7,11 +7,11 @@ namespace TagsCloudContainer.TokensGenerator
 {
     public class MyStemParser : ITokensParser
     {
-        private Mysteam mystem;
+        private readonly IMysteam mysteam;
 
-        public MyStemParser(string pathToMyStem = null)
+        public MyStemParser(IMysteam mysteam)
         {
-            mystem = new Mysteam();
+            this.mysteam = mysteam;
         }
 
         public IEnumerable<string> GetTokens(string str)
@@ -19,7 +19,7 @@ namespace TagsCloudContainer.TokensGenerator
             if (str == null)
                 throw new ArgumentNullException();
             var replace = str.Replace("\r\n", " ");
-            return mystem.GetWords(replace).Select(el => el.SourceWord.Analysis.FirstOrDefault()?.Lex ?? el.SourceWord.Text.ToLower());
+            return mysteam.GetWords(replace).Select(el => el.SourceWord.Analysis.FirstOrDefault()?.Lex ?? el.SourceWord.Text.ToLower());
         }
     }
 }

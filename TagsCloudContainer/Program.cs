@@ -6,6 +6,7 @@ using TagsCloudContainer.RectangleGenerator;
 using TagsCloudContainer.RectangleGenerator.PointGenerator;
 using TagsCloudContainer.TokensGenerator;
 using TagsCloudContainer.Visualization;
+using YandexMystem.Wrapper;
 using YandexMystem.Wrapper.Enums;
 
 namespace TagsCloudContainer
@@ -31,6 +32,7 @@ namespace TagsCloudContainer
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
+            builder.RegisterType<Mysteam>().As<IMysteam>().SingleInstance();
             builder.RegisterType<MyStemParser>().As<ITokensParser>().SingleInstance();
             builder.RegisterType<MyStemFilter>().As<IFilter>().SingleInstance()
                 .WithParameter("allowedWorldType",

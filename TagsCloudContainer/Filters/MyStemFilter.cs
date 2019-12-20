@@ -8,18 +8,17 @@ namespace TagsCloudContainer.Filters
     public class MyStemFilter : IFilter
     {
         private readonly GramPartsEnum[] allowedWorldType;
-        private Mysteam mystem;
+        private readonly IMysteam mysteam;
 
-        public MyStemFilter(GramPartsEnum[] allowedWorldType, string pathToMyStem = null)
+        public MyStemFilter(GramPartsEnum[] allowedWorldType, IMysteam mysteam)
         {
             this.allowedWorldType = allowedWorldType;
-            mystem = new Mysteam();
-
+            this.mysteam = mysteam;
         }
         
         public IEnumerable<string> Filtering(IEnumerable<string> tokens)
         {
-            var result =mystem.GetWords(string.Join(" ", tokens))
+            var result =mysteam.GetWords(string.Join(" ", tokens))
                 .Where(el => allowedWorldType.Contains(el.Lexems[0].GramPart))
                 .Select(t => t.SourceWord.Text)
                 .Where(s => s.Length > 3);
