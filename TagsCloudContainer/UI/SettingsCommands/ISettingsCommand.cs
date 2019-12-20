@@ -8,7 +8,7 @@ namespace TagsCloudContainer.UI.SettingsCommands
     public interface ISettingsCommand
     {
         string Name { get; }
-        bool IsThisCommandInput(string input, out string[] arguments);
+        Result<string[]> GetArguments(string input);
         Result<IInitialSettings> TryChangeSettings(string[] arguments, IInitialSettings settings);
     }
 }

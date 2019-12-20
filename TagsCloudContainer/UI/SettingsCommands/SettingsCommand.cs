@@ -9,12 +9,12 @@ namespace TagsCloudContainer.UI.SettingsCommands
     {
         public abstract string Name { get; }
 
-        public bool IsThisCommandInput(string input, out string[] arguments)
+        public Result<string[]> GetArguments(string input)
         {
-            arguments = input.Split(' ');
+            var arguments = input.Split(' ');
             if (arguments.Length == 0 || arguments[0] != Name)
-                return false;
-            return true;
+                return Result.Fail<string[]>("This input is not for this command");
+            return arguments.AsResult();
         }
 
         public abstract Result<IInitialSettings> TryChangeSettings(string[] arguments, IInitialSettings settings);

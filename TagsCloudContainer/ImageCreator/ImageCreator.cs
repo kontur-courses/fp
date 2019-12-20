@@ -42,30 +42,38 @@ namespace TagsCloudContainer.ImageCreator
             this.saver = saver;
         }
 
-        public Result<bool> CreateImage(IInitialSettings settings)
+        private static Result<Size> HandleSize(IInitialSettings settings, Size calculatedSize)
+        {
+            if (settings.ImageSize == Size.Empty)
+                return calculatedSize;
+            if (settings.ImageSize.Width < calculatedSize.Width ||
+                settings.ImageSize.Height < calculatedSize.Height)
+                return Result.Fail<Size>("Tag cloud does not fit to size");
+            return settings.ImageSize;
+        }
+
+        private List<WordRectangle> GetWordRectangles(IEnumerable<string> words, IEnumerable<Rectangle> rectangles, Size imageSize)
+        {
+            var transformedRectangles = rectanglesTransformer.TransformRectangles(rectangles, imageSize);
+            return words.Zip(transformedRectangles, (w, r) => new WordRectangle(w, r)).ToList();
+        }
+
+        public Result<None> CreateImage(IInitialSettings settings)
         {
             var words = reader.ReadWords(settings.InputFilePath);
-            var wordProcessorResult = wordProcessor.ProcessWords(words);
-            if (!wordProcessorResult.IsSuccess)
-                return Result.Fail<bool>(wordProcessorResult.Error);
-            var wordsWithCount = wordProcessorResult.Value.ToList();
-            if (wordsWithCount.Count == 0)
-                return Result.Fail<bool>("Empty words list");
-            var sizes = converter.ConvertToSizes(wordsWithCount);
-            var rectangles = layouter.GetRectangles(sizes);
-            var imageSize = imageSizeCalculator.CalculateImageSize(rectangles).Value;
-            if (settings.ImageSize != Size.Empty)
-            {
-                if (settings.ImageSize.Width < imageSize.Width || settings.ImageSize.Height < imageSize.Height)
-                    return Result.Fail<bool>("Tag cloud does not fit to size");
-                imageSize = settings.ImageSize;
-            }
-            rectangles = rectanglesTransformer.TransformRectangles(rectangles, imageSize);
-            words = wordsWithCount.Select(e => e.Word);
-            var wordRectangles = words.Zip(rectangles, (w, r) => new WordRectangle(w, r)).ToList();
-            var image = visualizer.DrawImage(wordRectangles, imageSize);
-            saver.SaveImage(image, settings.OutputFilePath);
-            return Result.Ok(true);
+            return wordProcessor.ProcessWords(words)
+                .Then(wordsWithCount => wordsWithCount.ToList())
+                .Then(wordsWithCount =>
+                {
+                    words = wordsWithCount.Select(e => e.Word);
+                    var sizes = converter.ConvertToSizes(wordsWithCount);
+                    var rectangles = layouter.GetRectangles(sizes);
+                    return imageSizeCalculator.CalculateImageSize(rectangles)
+                        .Then(calculatedSize => HandleSize(settings, calculatedSize))
+                        .Then(imageSize => (rect: GetWordRectangles(words, rectangles, imageSize), imageSize));
+                })
+                .Then(x => visualizer.DrawImage(x.rect, x.imageSize))
+                .Then(image => saver.SaveImage(image, settings.OutputFilePath));
         }
     }
 }

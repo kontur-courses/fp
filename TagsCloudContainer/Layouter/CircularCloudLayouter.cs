@@ -87,11 +87,12 @@ namespace TagsCloudContainer.Layouter
             else
                 rectangleResult = GetRectangle(rectangleSize, rectangles, corners);
 
-            if (!rectangleResult.IsSuccess)
-                return;
-
-            rectangles.Add(rectangleResult.Value);
-            AddCorners(rectangleResult.Value, corners);
+            rectangleResult
+                .Then(rectangle =>
+                {
+                    rectangles.Add(rectangle);
+                    AddCorners(rectangle, corners);
+                });
         }
 
         public IList<Rectangle> GetRectangles(IEnumerable<Size> sizes)

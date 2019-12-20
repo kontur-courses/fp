@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using CommandLine.Text;
 using TagsCloudContainer.ImageCreator;
 using TagsCloudContainer.UI.SettingsCommands;
@@ -34,15 +35,12 @@ exit - закрывает программу
 
         private Result<IInitialSettings> TryChangeSettings(string input, IInitialSettings settings)
         {
-            foreach (var command in settingsCommands)
-            {
-                if (!command.IsThisCommandInput(input, out var arguments))
-                    continue;
-                var result = command.TryChangeSettings(arguments, settings);
-                return result;
-            }
-
-            return Result.Fail<IInitialSettings>("Unknown command");
+            return Result.Of(() => settingsCommands
+                    .Select(cmd => cmd
+                        .GetArguments(input)
+                        .Then(args => (cmd, args)))
+                    .First(r => r.IsSuccess).Value, "Unknown command")
+                .Then(x => x.cmd.TryChangeSettings(x.args, settings));
         }
 
         public void Run(IEnumerable<string> args)
@@ -72,19 +70,16 @@ exit - закрывает программу
                         Console.WriteLine("Please enter paths for input and output files");
                     else
                     {
-                        var creationResult = imageCreator.CreateImage(settings);
-                        if (creationResult.IsSuccess)
-                            Console.WriteLine("Image saved");
-                        else
-                            Console.WriteLine(creationResult.Error);
+                        imageCreator.CreateImage(settings)
+                            .Then(r => Console.WriteLine("Image saved"))
+                            .OnFail(Console.WriteLine);
                     }
                     continue;
                 }
-                var result = TryChangeSettings(input, settings);
-                if (result.IsSuccess)
-                    settings = result.Value;
-                else
-                    Console.WriteLine(result.Error);
+
+                TryChangeSettings(input, settings)
+                    .Then(s => settings = s)
+                    .OnFail(Console.WriteLine);
             }
         }
     }

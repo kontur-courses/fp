@@ -9,6 +9,6 @@ namespace TagsCloudContainer.ImageCreator
 {
     public interface IImageCreator
     {
-        Result<bool> CreateImage(IInitialSettings settings);
+        Result<None> CreateImage(IInitialSettings settings);
     }
 }

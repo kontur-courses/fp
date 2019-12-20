@@ -37,6 +37,9 @@ namespace TagsCloudContainer.WordProcessor
                     processedWords.Add(initialForm);
             }
 
+            if (processedWords.Count == 0)
+                return Result.Fail<IEnumerable<WordWithCount>>("Empty words list after processing");
+
             return Result.Ok(GetWordsWithCount(processedWords));
         }
 

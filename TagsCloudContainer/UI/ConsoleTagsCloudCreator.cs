@@ -58,15 +58,9 @@ namespace TagsCloudContainer.UI
 
         public void Run(IEnumerable<string> args)
         {
-            var settingsResult = GetSettings(args);
-            if (settingsResult.IsSuccess)
-            {
-                var creationResult = imageCreator.CreateImage(settingsResult.Value);
-                if (!creationResult.IsSuccess)
-                    Console.WriteLine(creationResult.Error);
-            }
-            else
-                Console.WriteLine(settingsResult.Error);
+            GetSettings(args)
+                .Then(settings => imageCreator.CreateImage(settings))
+                .OnFail(Console.WriteLine);
         }
     }
 }
