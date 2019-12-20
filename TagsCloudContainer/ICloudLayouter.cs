@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer
+﻿using TagsCloudContainer.ResultInfrastructure;
+
+namespace TagsCloudContainer
 {
     public interface ICloudLayouter
     {
-        void Layout(string inputPath, string outputPath);
+        Result<None> Layout(string inputPath, string outputPath);
     }
 }

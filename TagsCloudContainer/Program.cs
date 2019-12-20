@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using Autofac;
 using CommandLine;
 using NHunspell;
 using TagsCloudContainer.Parsing;
 using TagsCloudContainer.RectangleTranslation;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Settings_Providing;
 using TagsCloudContainer.Visualization;
 using TagsCloudContainer.Visualization.Interfaces;
@@ -25,27 +27,44 @@ namespace TagsCloudContainer
 
         private static void Execute(Options options)
         {
-            SetDependencies(options);
+            var dependencySetResult = SetDependencies(options);
+            if (!dependencySetResult.IsSuccess)
+            {
+                Console.WriteLine(dependencySetResult.Error);
+                return;
+            }
+
             var layouter = container.Resolve<ICloudLayouter>();
-            layouter.Layout(options.InputPath, options.OutputPath);
+            var result = layouter.Layout(options.InputPath, options.OutputPath);
+            if (!result.IsSuccess)
+                Console.WriteLine(result.Error);
+            else
+                Console.WriteLine("layout saved to " + options.OutputPath);
         }
 
-        private static void SetDependencies(Options options)
+        private static Result<None> SetDependencies(Options options)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<TxtParser>().As<IFileParser>();
+            var txtParser = new TxtParser();
+            builder.RegisterInstance(txtParser).As<IFileParser>();
             builder.RegisterType<SizeTranslator>().As<ISizeTranslator>();
             builder.RegisterType<WordNormalizer>().As<IWordNormalizer>();
             builder.RegisterType<CircularCloudLayouter>().As<IWordLayouter>();
-            builder.RegisterInstance(new Hunspell(
-                GetDictionaryDirectoryPath("index.aff"),
-                GetDictionaryDirectoryPath("index.dic"))).As<Hunspell>();
+
+            var hunspellGetResult = GetHunspellResult();
+            if (!hunspellGetResult.IsSuccess)
+                return ResultExtensions.Fail<None>("cannot find hunspell dicts : " + hunspellGetResult.Error);
+            builder.RegisterInstance(hunspellGetResult.Value).As<Hunspell>();
             builder.RegisterType<PngSaver>().As<ISaver>();
-            builder.Register(c => new SettingsProvider(options, c.Resolve<IFileParser>()))
-                .As<SettingsProvider>();
-            builder.Register(c => c.Resolve<SettingsProvider>().GetSettings()).As<Settings>();
-            builder.Register(c => c.Resolve<SettingsProvider>().GetColoringOptions()).As<ColoringOptions>();
-            
+
+            var settingsProvider = new SettingsProvider(options, txtParser);
+            builder.RegisterInstance(settingsProvider).As<SettingsProvider>();
+
+            var settingsResult = settingsProvider.GetSettings();
+            if (!settingsResult.IsSuccess)
+                return ResultExtensions.Fail<None>("settings are incorrect : " + settingsResult.Error);
+            builder.RegisterInstance(settingsResult.Value).As<Settings>();
+            builder.Register(c => settingsProvider.GetColoringOptions()).As<ColoringOptions>();
             builder.Register(c =>
             {
                 var settings = c.Resolve<Settings>();
@@ -60,6 +79,21 @@ namespace TagsCloudContainer
             builder.RegisterType<WordCounter>().As<IWordCounter>();
             builder.RegisterType<CloudLayouter>().As<ICloudLayouter>();
             container = builder.Build();
+            return ResultExtensions.Ok();
+        }
+
+        private static Result<Hunspell> GetHunspellResult()
+        {
+            try
+            {
+                return ResultExtensions.Ok(new Hunspell(
+                    GetDictionaryDirectoryPath("index.aff"),
+                    GetDictionaryDirectoryPath("index.dic")));
+            }
+            catch (Exception e)
+            {
+                return ResultExtensions.Fail<Hunspell>(e.Message);
+            }
         }
 
         private static string GetDictionaryDirectoryPath(string filename)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Visualization.Interfaces;
 
 namespace TagsCloudContainer.Visualization
@@ -28,10 +29,11 @@ namespace TagsCloudContainer.Visualization
             this.fontName = fontName;
         }
 
-        public void Visualize(IEnumerable<WordRectangle> wordRectangles, string path)
+        public Result<None> Visualize(IEnumerable<WordRectangle> wordRectangles, string path)
         {
-            var visualization = GetVisualization(wordRectangles);
-            saver.SaveImage(path, visualization, resolution);
+            return GetVisualizationResult(wordRectangles)
+                .Then(result => saver.SaveImage(path, result, resolution))
+                .RefineError("Cannot create visualization : ");
         }
 
         public Bitmap GetVisualization(IEnumerable<WordRectangle> rectangles)
@@ -43,6 +45,11 @@ namespace TagsCloudContainer.Visualization
             }
 
             return GetImage(imageSize, rectangles);
+        }
+
+        private Result<Bitmap> GetVisualizationResult(IEnumerable<WordRectangle> rectangles)
+        {
+            return ResultExtensions.Of(() => GetVisualization(rectangles));
         }
 
         private static Size GetImageSize(IEnumerable<WordRectangle> rectangles)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Word_Counting
 {
@@ -13,7 +14,7 @@ namespace TagsCloudContainer.Word_Counting
             this.normalizer = normalizer;
         }
 
-        public Dictionary<string, int> CountWords(IEnumerable<string> words)
+        public Result<Dictionary<string, int>> CountWords(IEnumerable<string> words)
         {
             var resultDictionary = new Dictionary<string, int>();
             foreach (var word in words)
@@ -27,7 +28,7 @@ namespace TagsCloudContainer.Word_Counting
                     resultDictionary[normalizedWord] = 1;
             }
 
-            return resultDictionary;
+            return ResultExtensions.Ok(resultDictionary);
         }
     }
 }

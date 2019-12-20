@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CommandLine;
 using TagsCloudContainer.Parsing;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Visualization;
 
 namespace TagsCloudContainer.Settings_Providing
 {
     public class SettingsProvider : ISettingsProvider
     {
-        private Settings settings;
+        private Result<Settings> settings;
 
         public SettingsProvider(IFileParser parser)
         {
-            Parser.Default.ParseArguments<Options>(null).WithParsed(opts => settings = GetSettings(opts, parser));
+            Parser.Default.ParseArguments<Options>(new[] {""}).WithParsed(opts => settings = GetSettings(opts, parser));
         }
 
         public SettingsProvider(Options options, IFileParser parser)
@@ -21,24 +23,32 @@ namespace TagsCloudContainer.Settings_Providing
             settings = GetSettings(options, parser);
         }
 
-        public Settings GetSettings()
+        public Result<Settings> GetSettings()
         {
             return settings;
         }
 
         public ColoringOptions GetColoringOptions()
         {
-            return settings.ColoringOptions;
+            return settings.Value.ColoringOptions;
         }
 
-        private static Settings GetSettings(Options options, IFileParser parser)
+        private static Result<Settings> GetSettings(Options options, IFileParser parser)
         {
-            var coloringOptions = GetColoringOptions(options);
-            var excludedWords = GetWordsHashSet(options.ExcludedWordsPath, parser);
-            var excludedPartsOfSpeech = GetWordsHashSet(options.ExcludedPartsOfSpeechPath, parser);
-            var resolution = GetSizeFromString(options.ResolutionString);
-            return new Settings(options.InputPath, options.OutputPath, coloringOptions, excludedWords,
-                excludedPartsOfSpeech, resolution, options.FontName);
+            try
+            {
+                var coloringOptions = GetColoringOptions(options);
+                var excludedWords = GetWordsHashSet(options.ExcludedWordsPath, parser);
+                var excludedPartsOfSpeech = GetWordsHashSet(options.ExcludedPartsOfSpeechPath, parser);
+                var resolution = GetSizeFromString(options.ResolutionString);
+                return ResultExtensions.Ok(new Settings(options.InputPath, options.OutputPath, coloringOptions,
+                    excludedWords,
+                    excludedPartsOfSpeech, resolution, options.FontName));
+            }
+            catch (Exception e)
+            {
+                return ResultExtensions.Fail<Settings>(e.Message);
+            }
         }
 
         private static ColoringOptions GetColoringOptions(Options options)
@@ -62,7 +72,7 @@ namespace TagsCloudContainer.Settings_Providing
 
         private static HashSet<string> GetWordsHashSet(string path, IFileParser parser)
         {
-            return parser.ParseFile(path).ToHashSet();
+            return parser.ParseFile(path).Value.ToHashSet();
         }
 
         private static Size GetSizeFromString(string sizeString)

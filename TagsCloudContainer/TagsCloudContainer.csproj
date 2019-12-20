@@ -67,6 +67,10 @@
     <Compile Include="ICloudLayouter.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="RectangleTranslation\SizedWord.cs" />
+    <Compile Include="ResultInfrastructure\None.cs" />
+    <Compile Include="ResultInfrastructure\Result.cs" />
+    <Compile Include="ResultInfrastructure\ResultExtensions.cs" />
+    <Compile Include="ResultInfrastructure\tests\TxtParser_Should.cs" />
     <Compile Include="Settings Providing\ISettingsProvider.cs" />
     <Compile Include="Settings Providing\SettingsProvider.cs" />
     <Compile Include="Visualization\Interfaces\ISaver.cs" />
@@ -115,6 +119,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

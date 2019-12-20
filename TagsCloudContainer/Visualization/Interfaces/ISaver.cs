@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Visualization.Interfaces
 {
     public interface ISaver
     {
-        void SaveImage(string path, Bitmap bitmap, Size resolution);
+        Result<None> SaveImage(string path, Bitmap bitmap, Size resolution);
     }
 }

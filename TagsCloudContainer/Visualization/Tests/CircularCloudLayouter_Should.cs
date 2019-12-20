@@ -25,7 +25,9 @@ namespace TagsCloudContainer.Visualization.Tests
         public void Initialize()
         {
             var settingsProvider = new SettingsProvider(new TxtParser());
-            visualizer = new CircularCloudVisualizer(settingsProvider.GetSettings().ColoringOptions, new PngSaver(),
+            var settings = settingsProvider.GetSettings();
+            var coloringOptions = settings.Value.ColoringOptions;
+            visualizer = new CircularCloudVisualizer(coloringOptions, new PngSaver(),
                 new Size(1920, 1080), "Consolas");
         }
 

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Parsing
 {
     public interface IFileParser
     {
-        IEnumerable<string> ParseFile(string filePath);
+        Result<string[]> ParseFile(string filePath);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Visualization.Interfaces
 {
     public interface IVisualizer
     {
-        void Visualize(IEnumerable<WordRectangle> wordRectangles, string path);
+        Result<None> Visualize(IEnumerable<WordRectangle> wordRectangles, string path);
     }
 }

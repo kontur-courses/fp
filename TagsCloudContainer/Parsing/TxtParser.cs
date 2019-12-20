@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Parsing
 {
     public class TxtParser : IFileParser
     {
-        public IEnumerable<string> ParseFile(string filePath)
+        public Result<string[]> ParseFile(string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                return ResultExtensions.Fail<string[]>("Cannot read file" + filePath);
+            }
+
             using (var reader = new StreamReader(filePath))
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    yield return line;
-                }
+                return ResultExtensions.Ok(reader.ReadToEnd().Split('\n'));
             }
         }
     }

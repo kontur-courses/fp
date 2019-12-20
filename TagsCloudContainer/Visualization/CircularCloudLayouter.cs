@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.RectangleTranslation;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Visualization.Interfaces;
 
 namespace TagsCloudContainer.Visualization
@@ -18,7 +19,7 @@ namespace TagsCloudContainer.Visualization
             layoutAlgorithm = new ArchimedeanSpiral(center);
         }
 
-        public List<WordRectangle> LayoutWords(IEnumerable<SizedWord> sizedWords)
+        public Result<List<WordRectangle>> LayoutWords(IEnumerable<SizedWord> sizedWords)
         {
             var layout = sizedWords.Select(PutNextWord).ToList();
             var rectanglesWithOffset = OffsetCenter(layout);

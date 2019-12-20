@@ -1,5 +1,6 @@
 ﻿using TagsCloudContainer.Parsing;
 using TagsCloudContainer.RectangleTranslation;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Visualization.Interfaces;
 using TagsCloudContainer.Word_Counting;
 
@@ -24,12 +25,14 @@ namespace TagsCloudContainer
             this.layouter = layouter;
         }
 
-        public void Layout(string inputPath, string outputPath)
+        public Result<None> Layout(string inputPath, string outputPath)
         {
-            var parsed = parser.ParseFile(inputPath);
-            var wordCount = wordCounter.CountWords(parsed);
-            var rectangles = layouter.LayoutWords(translator.TranslateWordsToSizedWords(wordCount));
-            visualizer.Visualize(rectangles, outputPath);
+            return parser.ParseFile(inputPath)
+                .Then(parsed => wordCounter.CountWords(parsed))
+                .Then(countDict => translator.TranslateWordsToSizedWords(countDict))
+                .Then(translated => layouter.LayoutWords(translated))
+                .Then(rectangles => visualizer.Visualize(rectangles, outputPath))
+                .RefineError("Cannot layout:");
         }
     }
 }

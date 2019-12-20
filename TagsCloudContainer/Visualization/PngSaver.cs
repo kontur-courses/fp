@@ -1,15 +1,36 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
+using TagsCloudContainer.ResultInfrastructure;
 using TagsCloudContainer.Visualization.Interfaces;
 
 namespace TagsCloudContainer.Visualization
 {
     public class PngSaver : ISaver
     {
-        public void SaveImage(string path, Bitmap image, Size resolution)
+        public Result<None> SaveImage(string path, Bitmap image, Size resolution)
         {
-            var resizedImage = ResizeBitmap(image, resolution.Width, resolution.Height);
-            resizedImage.Save(path, ImageFormat.Png);
+            return GetResizeResult(image, resolution.Width, resolution.Height)
+                .Then(resizedImage => GetSaveResult(resizedImage, path, ImageFormat.Png));
+        }
+
+
+        private Result<None> GetSaveResult(Bitmap image, string path, ImageFormat format)
+        {
+            try
+            {
+                image.Save(path, format);
+                return ResultExtensions.Ok<None>(null);
+            }
+            catch (Exception e)
+            {
+                return ResultExtensions.Fail<None>(e.Message);
+            }
+        }
+
+        private Result<Bitmap> GetResizeResult(Bitmap bmp, int width, int height)
+        {
+            return ResultExtensions.Of(() => ResizeBitmap(bmp, width, height));
         }
 
         private Bitmap ResizeBitmap(Bitmap bmp, int width, int height)

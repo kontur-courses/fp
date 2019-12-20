@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Settings_Providing
+﻿using TagsCloudContainer.ResultInfrastructure;
+
+namespace TagsCloudContainer.Settings_Providing
 {
     public interface ISettingsProvider
     {
-        Settings GetSettings();
+        Result<Settings> GetSettings();
     }
 }
