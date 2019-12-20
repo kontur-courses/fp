@@ -10,7 +10,7 @@ namespace TagsCloudVisualization
         private const string Usage = @"Tags Cloud Visualizer
 
     Usage:
-        TagsCloudVisualization.exe create 
+        TagsCloudVisualization.exe 
             [--input FILE] [--max_words MAX_WORD_COUNT] [--exclude BADWORDS_FILE] 
             [--sizer SIZE_SELECTOR]
             [--brush TEXT_BRUSH] [--back BACKGOUND_COLOR] 
