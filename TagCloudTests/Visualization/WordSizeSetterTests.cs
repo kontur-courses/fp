@@ -46,9 +46,10 @@ namespace TagCloudTests.Visualization
                 SizeUtils.GetWordBasedSize(word3.Value, pictureConfig.FontFamily, word3MinFontSize)
             };
             pictureConfig.Size = new Size(20, 20);
-            var result = wordSizeSetter.GetSizedWords(words, pictureConfig).ToList();
+            var result = wordSizeSetter.GetSizedWords(words, pictureConfig);
 
-            result.Select(w => w.WordRectangleSize).Should().BeEquivalentTo(expectedSizes);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Select(w => w.WordRectangleSize).Should().BeEquivalentTo(expectedSizes);
         }
 
         [Test]
@@ -63,16 +64,17 @@ namespace TagCloudTests.Visualization
             pictureConfig.Size = new Size(200, 100);
             var result = wordSizeSetter.GetSizedWords(words, pictureConfig);
 
-            result.Select(w => w.WordRectangleSize).Should().BeEquivalentTo(expectedSizes);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Select(w => w.WordRectangleSize).Should().BeEquivalentTo(expectedSizes);
         }
 
         [Test]
         public void GetSizedWords_ShouldThrow_OnTooSmallPictureSize()
         {
             pictureConfig.Size = new Size(15, 6);
-            Action action = () => wordSizeSetter.GetSizedWords(words, pictureConfig).ToList();
+            var result = wordSizeSetter.GetSizedWords(words, pictureConfig);
 
-            action.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

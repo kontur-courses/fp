@@ -25,7 +25,10 @@ namespace TagCloud.Visualization
         {
             var wordsList = words.ToList();
             var maxWord = wordsList.OrderByDescending(w => w.Count).First();
-            var maxWordFontSize = GetMaxWordFontSize(maxWord, wordsList.Count, pictureConfig);
+            var maxWordFontSizeResult = GetMaxWordFontSize(maxWord, wordsList.Count, pictureConfig);
+            if (!maxWordFontSizeResult.IsSuccess)
+                return Result.Fail<IEnumerable<Word>>(maxWordFontSizeResult.Error);
+            var maxWordFontSize = maxWordFontSizeResult.GetValueOrThrow();
             var fontSizeCoefficient = Math.Max(wordsList.Count / wordsCountCorrectionCoefficient, 1) * maxWordFontSize / maxWord.Count;
             return Result.Ok(GetSizedWords(wordsList, fontSizeCoefficient, pictureConfig.FontFamily));
         }
@@ -41,14 +44,14 @@ namespace TagCloud.Visualization
             }
         }
 
-        private float GetMaxWordFontSize(Word mostFrequentWord, int wordsCount, PictureConfig pictureConfig)
+        private Result<float> GetMaxWordFontSize(Word mostFrequentWord, int wordsCount, PictureConfig pictureConfig)
         {
             var currentSize = SizeUtils.GetWordBasedSize(
                 mostFrequentWord.Value, pictureConfig.FontFamily, minFontSize);
 
             if (!SizeUtils.CanFillSizeWithSizes(
                 pictureConfig.Size, currentSize, wordsCount))
-                throw new ArgumentException(
+                return Result.Fail<float>(
                     $"Picture size {pictureConfig.Size.Width}x{pictureConfig.Size.Height} is too small for this word set");
 
             var currentFontSize = minFontSize;

@@ -32,7 +32,8 @@ namespace TagCloudTests.WordsProcessing
 
             var result = processor.PrepareWords(words);
 
-            result.Select(w => w.Value).Should().BeEquivalentTo(expectedWordsValues);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Select(w => w.Value).Should().BeEquivalentTo(expectedWordsValues);
         }
 
         [Test]
@@ -44,7 +45,8 @@ namespace TagCloudTests.WordsProcessing
 
             var result = processor.PrepareWords(words);
 
-            result.Should().AllBeEquivalentTo(expectedWordsValue);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().AllBeEquivalentTo(expectedWordsValue);
         }
 
         [Test]
@@ -56,7 +58,8 @@ namespace TagCloudTests.WordsProcessing
 
             var result = processor.PrepareWords(words);
 
-            result.Select(w => w.Value).Should().BeEquivalentTo(words);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Select(w => w.Value).Should().BeEquivalentTo(words);
         }
 
         [Test]
@@ -68,7 +71,8 @@ namespace TagCloudTests.WordsProcessing
 
             var result = processor.PrepareWords(words);
 
-            result.Should().BeEmpty();
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().BeEmpty();
         }
 
         [Test]
@@ -81,7 +85,8 @@ namespace TagCloudTests.WordsProcessing
 
             var result = processor.PrepareWords(words);
 
-            result.Should().HaveCount(1).And.AllBeEquivalentTo(expectedWordsValue);
+            result.IsSuccess.Should().BeTrue();
+            result.GetValueOrThrow().Should().HaveCount(1).And.AllBeEquivalentTo(expectedWordsValue);
         }
     }
 }

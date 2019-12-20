@@ -6,6 +6,7 @@ using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using ResultOf;
 using TagCloud.Algorithm.SpiralBasedLayouter;
 using TagCloud.Infrastructure;
 using TagCloud.Visualization;
@@ -22,7 +23,7 @@ namespace TagCloudTests.Algorithm.SpiralBasedLayouter
         public void SetUp()
         {
             rectangles = null;
-            config = new PictureConfig {Size = new Size(0, 0)};
+            config = new PictureConfig { Size = new Size(0, 0) };
             var spiral = new ArchimedeanSpiral(config);
             layouter = new CircularCloudLayouter(spiral, config);
         }
@@ -33,7 +34,7 @@ namespace TagCloudTests.Algorithm.SpiralBasedLayouter
             var size = new Size(2, 1);
 
             var rectangle = layouter.PutNextRectangle(size);
-            rectangles = new List<Rectangle> {rectangle};
+            rectangles = new List<Rectangle> { rectangle };
 
             rectangle.Should()
                 .Match<Rectangle>(r =>
@@ -51,7 +52,7 @@ namespace TagCloudTests.Algorithm.SpiralBasedLayouter
 
             var firstRectangle = layouter.PutNextRectangle(firstSize);
             var secondRectangle = layouter.PutNextRectangle(secondSize);
-            rectangles = new List<Rectangle> {firstRectangle, secondRectangle};
+            rectangles = new List<Rectangle> { firstRectangle, secondRectangle };
 
             RectangleUtils.RectanglesAreIntersected(firstRectangle, secondRectangle)
                 .Should()
@@ -222,7 +223,7 @@ namespace TagCloudTests.Algorithm.SpiralBasedLayouter
             config.Size = GetSize(resizedAndMovedRectangles);
             var cloudGenerator = new TagCloudGenerator(config, GetPreparer(resizedAndMovedRectangles), new RectangleDrawer());
             var bitmap = cloudGenerator.GetTagCloudBitmap(null);
-            return bitmap;
+            return bitmap.GetValueOrThrow();
         }
 
         private ITagCloudElementsPreparer GetPreparer(List<Rectangle> resizedRectangles)
@@ -230,7 +231,7 @@ namespace TagCloudTests.Algorithm.SpiralBasedLayouter
             var elements = resizedRectangles
                 .Select(r => new TagCloudElement(null, r, Color.White, config.FontFamily));
             var elementPreparer = Substitute.For<ITagCloudElementsPreparer>();
-            elementPreparer.PrepareTagCloudElements(null).ReturnsForAnyArgs(elements);
+            elementPreparer.PrepareTagCloudElements(null).ReturnsForAnyArgs(Result.Ok(elements));
             return elementPreparer;
         }
 
