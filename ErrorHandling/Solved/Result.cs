@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace ResultO
 {
     public class None
     {
