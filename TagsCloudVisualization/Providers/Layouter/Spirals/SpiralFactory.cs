@@ -1,5 +1,4 @@
-﻿using System;
-using TagsCloudVisualization.Providers.Layouter.Interfaces;
+﻿using TagsCloudVisualization.Providers.Layouter.Interfaces;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.Providers.Layouter.Spirals

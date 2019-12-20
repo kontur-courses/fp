@@ -9,7 +9,7 @@ namespace TagsCloudVisualization.ImageSaver
     {
         public Result<None> Save(Bitmap bitmap, string pathToSave)
         {
-            return Results.Result.OfAction(() =>
+            return Result.OfAction(() =>
             {
                 var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
                 var myEncoder = Encoder.Quality;

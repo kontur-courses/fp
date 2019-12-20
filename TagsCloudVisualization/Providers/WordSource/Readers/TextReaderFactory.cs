@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TagsCloudVisualization.Providers.WordSource.Interfaces;
 
 namespace TagsCloudVisualization.Providers.WordSource.Readers

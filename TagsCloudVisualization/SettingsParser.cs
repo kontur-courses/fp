@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using DocoptNet;
 using ikvm.extensions;
-using TagsCloudVisualization.ImageSaver;
 using TagsCloudVisualization.Providers.Layouter.Interfaces;
 using TagsCloudVisualization.Providers.Sizable;
 using TagsCloudVisualization.Results;
@@ -14,7 +13,7 @@ namespace TagsCloudVisualization
 {
     internal class SettingsParser
     {
-        private static readonly List<string> parametersToUse = new List<string>()
+        private static readonly List<string> parametersToUse = new List<string>
         {
             "--input", "--max_words", "--exclude", "--sizer", "--brush", "--back", "--font", "--font_size",
             "--width", "--height", "--x", "--y", "--coef", "--type", "--output_path", "--output_ext"
@@ -104,14 +103,20 @@ namespace TagsCloudVisualization
         private static Result<ReaderSettings> GetReaderSettings(string textDirectory, string maxObjectCount,
             string badWordsDirectory)
         {
+            var resources = PathHelper.ResourcesPath;
+            if (!resources.IsSuccess)
+            {
+                return Result.Fail<ReaderSettings>(resources.Error);
+            }
+
             if (!int.TryParse(maxObjectCount, out var count))
                 return Result.Fail<ReaderSettings>("cant parse max words count");
             badWordsDirectory =
                 string.IsNullOrEmpty(badWordsDirectory)
-                    ? PathHelper.ResourcesPath + "\\BadWords.txt"
+                    ? resources.Value + "\\BadWords.txt"
                     : badWordsDirectory;
             textDirectory = string.IsNullOrEmpty(textDirectory)
-                ? PathHelper.ResourcesPath + "\\HarryPotter.txt"
+                ? resources.Value + "\\HarryPotter.txt"
                 : textDirectory;
             return new ReaderSettings(textDirectory, count, badWordsDirectory);
         }

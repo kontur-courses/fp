@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using Autofac;
 using DocoptNet;
-using org.omg.CORBA.portable;
 using TagsCloudVisualization.ImageSaver;
-using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization
 {

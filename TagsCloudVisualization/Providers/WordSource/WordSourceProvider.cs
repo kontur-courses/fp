@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using javax.naming.spi;
 using TagsCloudVisualization.Providers.WordSource.Interfaces;
 using TagsCloudVisualization.Providers.WordSource.Readers;
 using TagsCloudVisualization.Results;

@@ -25,6 +25,7 @@ namespace TagsCloudVisualization
             {
                 return bitmap;
             }
+
             var graphics = PrepareGraphics(bitmap.Value, cloudInfo, drawerSettings.BackgroundColor, biggestCoefficient);
 
             foreach (var drawable in cloudInfo.DrawableSource)

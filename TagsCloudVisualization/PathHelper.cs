@@ -14,14 +14,13 @@ namespace TagsCloudVisualization
 
                 for (var i = 0; i < 3; i++)
                 {
-
                     try
                     {
                         pathToResources = Directory.GetParent(pathToResources).FullName;
                     }
                     catch (Exception e)
                     {
-                        return Result.Fail<string>($"Cant get parent directory for {pathToResources} "+e.Message);
+                        return Result.Fail<string>($"Cant get parent directory for {pathToResources} " + e.Message);
                     }
                 }
 
