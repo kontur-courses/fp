@@ -25,6 +25,9 @@ namespace TagCloud.TagCloudPainter
         
         public Result<None> Draw(IEnumerable<TagInfo> tagInfos)
         {
+            if (painterConfig.ImageWidth < 0 || painterConfig.ImageHeight < 0)
+                return Result.Fail<None>(new Exception($"Не верно заданы размеры изображение ширина:{painterConfig.ImageWidth} высота: {painterConfig.ImageHeight}"));
+
             var canvas = new TagCloudCanvas(painterConfig.ImageWidth, painterConfig.ImageHeight);
             
             return DrawBackground(canvas)
@@ -34,6 +37,9 @@ namespace TagCloud.TagCloudPainter
 
         private int GetTagFontSize(TagInfo tagInfo, PainterConfig config, int maxFrequency, int minFrequency)
         {
+            if (maxFrequency == minFrequency)
+                return config.MaxFontSize;
+
             var fontSize = config.MinFontSize + ((config.MaxFontSize - config.MinFontSize) * tagInfo.Frequency) /
                            (maxFrequency - minFrequency);
             return fontSize;
