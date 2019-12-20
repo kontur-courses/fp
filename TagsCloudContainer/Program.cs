@@ -12,7 +12,7 @@ namespace TagsCloudContainer
     {
         public static void Main(string[] args)
         {
-            Result.Of(() => DefaultVisualizationSettings.Create().GetValueOrThrow())
+            AppSettings.CreateDefault()
                 .Then(CreateUsage)
                 .Then(usage => ParseArguments(usage, args))
                 .Then(AutofacConfig.ConfigureContainer)
@@ -27,11 +27,11 @@ namespace TagsCloudContainer
             if (!argumentsResult.IsSuccess)
                 return Result.Fail<IDictionary<string, ValueObject>>($"DocoptNet error: {argumentsResult.Error}");
             var arguments = argumentsResult.GetValueOrThrow();
-            return arguments["--help"].IsTrue 
-                ? Result.Fail<IDictionary<string, ValueObject>>(usage) 
+            return arguments["--help"].IsTrue
+                ? Result.Fail<IDictionary<string, ValueObject>>(usage)
                 : Result.Ok(arguments);
         }
-        
+
         private static Result<string> RunProgramWithContainer(IContainer container)
         {
             var wordProvider = container.Resolve<IWordProvider>();
@@ -42,8 +42,8 @@ namespace TagsCloudContainer
             var visualizer = container.Resolve<IVisualizer>();
             var imgSaver = container.Resolve<IImageSaver>();
 
-            return Result.Of(() => wordProvider.GetWords())
-                .Then(words => wordNormalizer.NormalizeWords(words.GetValueOrThrow()))
+            return wordProvider.GetWords()
+                .Then(words => wordNormalizer.NormalizeWords(words))
                 .Then(words => wordFilter.Filter(words))
                 .Then(words => wordCalculator.CalculateStatistics(words))
                 .Then(wordData => layouter.PlaceWords(wordData))
@@ -52,9 +52,9 @@ namespace TagsCloudContainer
                 .Then(savedImgPath => $"Tag cloud saved at {savedImgPath}");
         }
 
-        private static string CreateUsage(DefaultVisualizationSettings defaultSettings)
+        private static string CreateUsage(AppSettings settings)
         {
-       return $@"Tag Cloud.
+            return $@"Tag Cloud.
         Usage:
           tag_cloud.exe [<inputFile>] [--format=<format>] [--font=<font>] [--fontSize=<fontSize>] [--bgcolor=<bgcolor>]
  [--textcolor=<textcolor>] [--size=<width>x<height>]
@@ -65,15 +65,15 @@ namespace TagsCloudContainer
 
         Options:
           -h --help                       Show this screen.
-          --format=<format>               Set image format [default: {defaultSettings.Format}]
-          --font=<font>                   Set font [default: {defaultSettings.FontName}]
-          --fontSize=<fontSize>           Set size of font [default: {defaultSettings.FontSize}]
-          --bgcolor=<bgcolor>             Set background color [default: {defaultSettings.BackgroundColorName}]
-          --textcolor=<textcolor>         Set text color [default: {defaultSettings.TextColorName}]
-          --size=<width>x<height>         Set size of image [default: {defaultSettings.SizeOfImage}]
+          --format=<format>               Set image format [default: {settings.Format}]
+          --font=<font>                   Set font [default: {settings.FontName}]
+          --fontSize=<fontSize>           Set size of font [default: {settings.FontSize}]
+          --bgcolor=<bgcolor>             Set background color [default: {settings.BackgroundColorName}]
+          --textcolor=<textcolor>         Set text color [default: {settings.TextColorName}]
+          --size=<width>x<height>         Set size of image [default: {settings.SizeOfImage}]
           -d --debug                      Enable debug mode
-          --dbgrectcolor=<dbgrectcolor>   Set word rectangle color [default: {defaultSettings.DebugItemBoundsColorName}]
-          --dbgmarkcolor=<dbgmarkcolor>   Set marking color [default: {defaultSettings.DebugMarkingColorName}]
+          --dbgrectcolor=<dbgrectcolor>   Set word rectangle color [default: {settings.DebugItemBoundsColorName}]
+          --dbgmarkcolor=<dbgmarkcolor>   Set marking color [default: {settings.DebugMarkingColorName}]
        ";
         }
     }

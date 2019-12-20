@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using ResultOf;
 
 namespace TagsCloudContainer
 {
@@ -13,12 +14,15 @@ namespace TagsCloudContainer
             this.imageFormat = imageFormat;
         }
 
-        public string Save(Bitmap bitmap)
+        public Result<string> Save(Bitmap bitmap)
         {
-            var path = Directory.GetCurrentDirectory();
-            var fullname = Path.Combine(path, $"tagCloud.{imageFormat.ToString().ToLower()}");
-            bitmap.Save(fullname, imageFormat);
-            return fullname;
+            return Result.Of(() =>
+            {
+                var path = Directory.GetCurrentDirectory();
+                var fullname = Path.Combine(path, $"tagCloud.{imageFormat.ToString().ToLower()}");
+                bitmap.Save(fullname, imageFormat);
+                return fullname;
+            });
         }
     }
 }

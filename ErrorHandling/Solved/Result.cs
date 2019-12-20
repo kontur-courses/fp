@@ -16,6 +16,7 @@ namespace ResultOf
             Error = error;
             Value = value;
         }
+        
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -27,7 +28,6 @@ namespace ResultOf
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException(Error);
-            //throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
     }

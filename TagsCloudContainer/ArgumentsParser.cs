@@ -22,7 +22,7 @@ namespace TagsCloudContainer
         {
             var parsedColor = Color.FromName(strColor);
             return parsedColor.IsKnownColor
-                ? parsedColor
+                ? parsedColor.AsResult()
                 : Result.Fail<Color>($"Unknown color: {strColor}");
         }
 
@@ -36,8 +36,8 @@ namespace TagsCloudContainer
         {
             var font = new Font(fontName, fontSize);
             return string.Equals(font.Name, fontName, StringComparison.CurrentCultureIgnoreCase)
-                ? font
-                : Result.Fail<Font>($"Font with {fontName} name was not found on the system");
+                ? font.AsResult()
+                : Result.Fail<Font>($"Font with {fontName} name was not found in the system");
         }
 
         public static Result<Size> ParseSize(string strSize)

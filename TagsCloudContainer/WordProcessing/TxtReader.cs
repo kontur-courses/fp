@@ -15,7 +15,7 @@ namespace TagsCloudContainer.WordProcessing
 
         public Result<IEnumerable<string>> GetWords()
         {
-            return Result.Of<IEnumerable<string>>(() =>File.ReadAllLines(filePath),
+            return Result.Of<IEnumerable<string>>(() => File.ReadAllLines(filePath),
                 $"Error reading file {filePath}");
         }
     }

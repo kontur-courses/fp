@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using Newtonsoft.Json;
 using ResultOf;
 
 namespace TagsCloudContainer.TagCloudVisualization
@@ -8,7 +9,7 @@ namespace TagsCloudContainer.TagCloudVisualization
         public Font Font { get; set; }
         public Brush BackgroundBrush { get; set; }
         public Brush TextBrush { get; set; }
-        public Size ImageSize { set; get; }
+        public Size ImageMaxSize { set; get; }
         public bool IsDebugMode { get; set; }
         public Color DebugMarkingColor { get; set; }
         public Color DebugItemBoundsColor { get; set; }
@@ -18,7 +19,7 @@ namespace TagsCloudContainer.TagCloudVisualization
             default(Size));
 
         protected VisualizationSettings(Font font, Brush backgroundBrush, Brush textBrush, bool isDebugMode,
-            Color debugMarkingColor, Color debugItemBoundsColor, Size imageSize)
+            Color debugMarkingColor, Color debugItemBoundsColor, Size imageMaxSize)
         {
             Font = font;
             BackgroundBrush = backgroundBrush;
@@ -26,12 +27,13 @@ namespace TagsCloudContainer.TagCloudVisualization
             IsDebugMode = isDebugMode;
             DebugMarkingColor = debugMarkingColor;
             DebugItemBoundsColor = debugItemBoundsColor;
-            ImageSize = imageSize;
+            ImageMaxSize = imageMaxSize;
         }
 
         public static Result<VisualizationSettings> CreateDefaultSettings()
         {
-            return Result.Of<VisualizationSettings>(DefaultVisualizationSettings.Create().GetValueOrThrow);
+            return AppSettings.CreateDefault()
+                .Then(settings => (VisualizationSettings) settings);
         }
     }
 }

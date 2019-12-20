@@ -20,9 +20,9 @@ namespace TagsCloudContainer.TagCloudVisualization
             var tagCloudItems = items.ToList();
             var bitmapWidth = 2 * tagCloudItems.Max(item => Math.Abs(item.Rectangle.X));
             var bitmapHeight = 2 * tagCloudItems.Max(item => Math.Abs(item.Rectangle.Y));
-            if (settings.ImageSize.Width < bitmapWidth || settings.ImageSize.Height < bitmapHeight)
+            if (settings.ImageMaxSize.Width < bitmapWidth || settings.ImageMaxSize.Height < bitmapHeight)
                 return Result.Fail<Bitmap>("Tag cloud did not fit on the image of the specified size " +
-                                           $"(specified: {settings.ImageSize.Width}x{settings.ImageSize.Height}, " +
+                                           $"(specified: {settings.ImageMaxSize.Width}x{settings.ImageMaxSize.Height}, " +
                                            $"actual: {bitmapWidth}x{bitmapHeight})");
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             var graphics = Graphics.FromImage(bitmap);

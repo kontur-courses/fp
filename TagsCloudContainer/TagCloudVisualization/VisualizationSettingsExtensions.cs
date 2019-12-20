@@ -43,7 +43,7 @@ namespace TagsCloudContainer.TagCloudVisualization
         
         public static VisualizationSettings WithSize(this VisualizationSettings settings, Size size)
         {
-            settings.ImageSize = size;
+            settings.ImageMaxSize = size;
             return settings;
         }
     }
