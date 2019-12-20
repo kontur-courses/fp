@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using ResultOf;
 
 namespace TagCloud.TextReading
 {
     public interface ITextReaderSelector
     {
-        ITextReader GetTextReader(FileInfo file);
+        Result<ITextReader> GetTextReader(FileInfo file);
     }
 }

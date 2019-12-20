@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ResultOf;
 
 namespace TagCloud.TextReading
 {
@@ -14,12 +15,12 @@ namespace TagCloud.TextReading
             this.textReaders = textReaders;
         }
 
-        public ITextReader GetTextReader(FileInfo file)
+        public Result<ITextReader> GetTextReader(FileInfo file)
         {
             var reader = textReaders.FirstOrDefault(r => r.Extension == file.Extension);
-            if (reader == null)
-                throw new NotSupportedException("Files of this type are not supported");
-            return reader;
+            return reader == null 
+                ? Result.Fail<ITextReader>($"{file.Extension} files are not supported") 
+                : Result.Ok(reader);
         }
     }
 }

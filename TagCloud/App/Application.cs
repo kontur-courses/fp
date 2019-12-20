@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ResultOf;
 using TagCloud.Infrastructure;
 using TagCloud.TextReading;
@@ -37,13 +38,16 @@ namespace TagCloud.App
 
         public Result<None> Run()
         {
-            var settings = settingsProvider.GetSettings().GetValueOrThrow();
-           // var file = fileInfoProvider.GetFileInfo(settings.InputFilePath);
-            var textReader = textReaderSelector.GetTextReader(settings.InputFileInfo);
-            var wordReadingResult = textReader.ReadWords(settings.InputFileInfo);
-            if (!wordReadingResult.IsSuccess)
-                return Result.Fail<None>(wordReadingResult.Error);
-            var rawWords = wordReadingResult.GetValueOrThrow();
+            var settingsResult = settingsProvider.GetSettings();
+            if (!settingsResult.IsSuccess)
+                return Result.Fail<None>(settingsResult.Error);
+            var settings = settingsResult.GetValueOrThrow();
+            var rawWordsResult = textReaderSelector
+                .GetTextReader(settings.InputFileInfo)
+                .Then(r => r.ReadWords(settings.InputFileInfo));
+
+            var rawWords = rawWordsResult.GetValueOrThrow();
+
             var preparedWords = wordProcessor.PrepareWords(rawWords).ToList();
             var sizedWords = wordSizeSetter.GetSizedWords(preparedWords, settings.PictureConfig).ToList();
             var bitmap = tagCloudGenerator.GetTagCloudBitmap(sizedWords);

@@ -59,7 +59,6 @@ namespace TagCloud
            
             var container = builder.Build();
 
-
             using (var scope = container.BeginLifetimeScope())
             {
                 
@@ -86,7 +85,6 @@ namespace TagCloud
 
         public static void Main(string[] args)
         {
-            args = "-i 4.txt -o 888".Split();
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(Execute)
                 .WithNotParsed(errors => Console.WriteLine(string.Join("\\n", errors)));
