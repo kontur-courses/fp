@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Visualization.Interfaces
 {
     public interface IVisualizer
     {
-        Result<None> Visualize(IEnumerable<WordRectangle> wordRectangles, string path);
+        Result Visualize(IEnumerable<WordRectangle> wordRectangles, string path);
     }
 }

@@ -29,7 +29,7 @@ namespace TagsCloudContainer.Visualization
             this.fontName = fontName;
         }
 
-        public Result<None> Visualize(IEnumerable<WordRectangle> wordRectangles, string path)
+        public Result Visualize(IEnumerable<WordRectangle> wordRectangles, string path)
         {
             return GetVisualizationResult(wordRectangles)
                 .Then(result => saver.SaveImage(path, result, resolution))

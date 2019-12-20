@@ -25,7 +25,7 @@ namespace TagsCloudContainer
             this.layouter = layouter;
         }
 
-        public Result<None> Layout(string inputPath, string outputPath)
+        public Result Layout(string inputPath, string outputPath)
         {
             return parser.ParseFile(inputPath)
                 .Then(parsed => wordCounter.CountWords(parsed))

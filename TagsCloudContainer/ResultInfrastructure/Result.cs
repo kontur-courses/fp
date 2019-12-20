@@ -6,6 +6,8 @@ namespace TagsCloudContainer.ResultInfrastructure
     {
         public string Error { get; }
 
+        public bool IsSuccess => Error == null;
+
         public Result(string error)
         {
             Error = error;
@@ -16,9 +18,14 @@ namespace TagsCloudContainer.ResultInfrastructure
             return new Result<T>(null, value);
         }
 
-        public static Result<None> Ok()
+        public static Result Ok()
         {
-            return Ok<None>(null);
+            return new Result(null);
+        }
+
+        public static Result Fail(string error)
+        {
+            return new Result(error);
         }
 
         public static Result<T> Fail<T>(string e)
@@ -37,21 +44,8 @@ namespace TagsCloudContainer.ResultInfrastructure
                 return Fail<T>(error ?? e.Message);
             }
         }
-
-        public static Result<None> OfAction(Action f, string error = null)
-        {
-            try
-            {
-                f();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return Fail<None>(error ?? e.Message);
-            }
-        }
-
     }
+
     public class Result<T> : Result
     {
         internal T Value { get; }
@@ -67,22 +61,9 @@ namespace TagsCloudContainer.ResultInfrastructure
         }
 
 
-        public T GetValueOrThrow()
-        {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
-        }
-
-        public bool IsSuccess => Error == null;
-
         public Result<TOutput> Then<TOutput>(Func<T, TOutput> continuation)
         {
             return Then(inp => Of(() => continuation(inp)));
-        }
-
-        public Result<None> Then(Action<T> continuation)
-        {
-            return Then(inp => OfAction(() => continuation(inp)));
         }
 
         public Result<TOutput> Then<TOutput>(Func<T, Result<TOutput>> continuation)
@@ -90,12 +71,6 @@ namespace TagsCloudContainer.ResultInfrastructure
             return IsSuccess
                 ? continuation(Value)
                 : Fail<TOutput>(Error);
-        }
-
-        public Result<T> OnFail(Action<string> handleError)
-        {
-            if (!IsSuccess) handleError(Error);
-            return this;
         }
 
         public Result<T> ReplaceError(Func<string, string> replaceError)

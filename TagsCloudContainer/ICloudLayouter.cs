@@ -4,6 +4,6 @@ namespace TagsCloudContainer
 {
     public interface ICloudLayouter
     {
-        Result<None> Layout(string inputPath, string outputPath);
+        Result Layout(string inputPath, string outputPath);
     }
 }

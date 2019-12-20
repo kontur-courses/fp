@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Visualization.Interfaces
 {
     public interface ISaver
     {
-        Result<None> SaveImage(string path, Bitmap bitmap, Size resolution);
+        Result SaveImage(string path, Bitmap bitmap, Size resolution);
     }
 }

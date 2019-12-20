@@ -8,23 +8,23 @@ namespace TagsCloudContainer.Visualization
 {
     public class PngSaver : ISaver
     {
-        public Result<None> SaveImage(string path, Bitmap image, Size resolution)
+        public Result SaveImage(string path, Bitmap image, Size resolution)
         {
             return GetResizeResult(image, resolution.Width, resolution.Height)
                 .Then(resizedImage => GetSaveResult(resizedImage, path, ImageFormat.Png));
         }
 
 
-        private Result<None> GetSaveResult(Bitmap image, string path, ImageFormat format)
+        private Result GetSaveResult(Bitmap image, string path, ImageFormat format)
         {
             try
             {
                 image.Save(path, format);
-                return Result.Ok<None>(null);
+                return Result.Ok();
             }
             catch (Exception e)
             {
-                return Result.Fail<None>(e.Message);
+                return Result.Fail(e.Message);
             }
         }
 

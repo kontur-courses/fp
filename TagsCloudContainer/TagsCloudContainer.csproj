@@ -67,7 +67,6 @@
     <Compile Include="ICloudLayouter.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="RectangleTranslation\SizedWord.cs" />
-    <Compile Include="ResultInfrastructure\None.cs" />
     <Compile Include="ResultInfrastructure\Result.cs" />
     <Compile Include="ResultInfrastructure\tests\TxtParser_Should.cs" />
     <Compile Include="Settings Providing\ISettingsProvider.cs" />

@@ -42,11 +42,11 @@ namespace TagsCloudContainer
                 Console.WriteLine("layout saved to " + options.OutputPath);
         }
 
-        private static Result<None> SetDependencies(Options options)
+        private static Result SetDependencies(Options options)
         {
             var builder = new ContainerBuilder();
             var txtParser = new TxtParser();
-           // builder.RegisterInstance(txtParser).As<IFileParser>();
+            // builder.RegisterInstance(txtParser).As<IFileParser>();
             builder.RegisterType<TxtParser>().As<IFileParser>();
             builder.RegisterType<SizeTranslator>().As<ISizeTranslator>();
             builder.RegisterType<WordNormalizer>().As<IWordNormalizer>();
@@ -54,7 +54,7 @@ namespace TagsCloudContainer
 
             var hunspellGetResult = GetHunspellResult();
             if (!hunspellGetResult.IsSuccess)
-                return Result.Fail<None>("cannot find hunspell dicts : " + hunspellGetResult.Error);
+                return Result.Fail("cannot find hunspell dicts : " + hunspellGetResult.Error);
             builder.RegisterInstance(hunspellGetResult.Value).As<Hunspell>();
             builder.RegisterType<PngSaver>().As<ISaver>();
 
@@ -63,7 +63,7 @@ namespace TagsCloudContainer
 
             var settingsResult = settingsProvider.GetSettings();
             if (!settingsResult.IsSuccess)
-                return Result.Fail<None>("settings are incorrect : " + settingsResult.Error);
+                return Result.Fail("settings are incorrect : " + settingsResult.Error);
             builder.RegisterInstance(settingsResult.Value).As<Settings>();
             builder.Register(c => settingsProvider.GetColoringOptions()).As<ColoringOptions>();
             builder.Register(c =>
