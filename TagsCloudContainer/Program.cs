@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using Autofac;
 using CommandLine;
@@ -45,27 +44,18 @@ namespace TagsCloudContainer
         private static Result SetDependencies(Options options)
         {
             var builder = new ContainerBuilder();
-            var txtParser = new TxtParser();
-            // builder.RegisterInstance(txtParser).As<IFileParser>();
             builder.RegisterType<TxtParser>().As<IFileParser>();
             builder.RegisterType<SizeTranslator>().As<ISizeTranslator>();
             builder.RegisterType<WordNormalizer>().As<IWordNormalizer>();
             builder.RegisterType<CircularCloudLayouter>().As<IWordLayouter>();
-
             var hunspellGetResult = GetHunspellResult();
             if (!hunspellGetResult.IsSuccess)
                 return Result.Fail("cannot find hunspell dicts : " + hunspellGetResult.Error);
             builder.RegisterInstance(hunspellGetResult.Value).As<Hunspell>();
             builder.RegisterType<PngSaver>().As<ISaver>();
-
-            var settingsProvider = new SettingsProvider(options, txtParser);
-            builder.RegisterInstance(settingsProvider).As<SettingsProvider>();
-
-            var settingsResult = settingsProvider.GetSettings();
-            if (!settingsResult.IsSuccess)
-                return Result.Fail("settings are incorrect : " + settingsResult.Error);
-            builder.RegisterInstance(settingsResult.Value).As<Settings>();
-            builder.Register(c => settingsProvider.GetColoringOptions()).As<ColoringOptions>();
+            builder.Register(c => new SettingsProvider(options, c.Resolve<IFileParser>())).As<SettingsProvider>();
+            builder.Register(c => c.Resolve<SettingsProvider>().GetSettings().Value).As<Settings>();
+            builder.Register(c => c.Resolve<SettingsProvider>().GetColoringOptions()).As<ColoringOptions>();
             builder.Register(c =>
             {
                 var settings = c.Resolve<Settings>();

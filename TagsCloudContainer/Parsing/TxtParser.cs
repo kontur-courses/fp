@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using TagsCloudContainer.ResultInfrastructure;
 
 namespace TagsCloudContainer.Parsing

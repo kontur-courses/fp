@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using Autofac;
 using TagsCloudContainer.Visualization;
 
 namespace TagsCloudContainer.Settings_Providing
