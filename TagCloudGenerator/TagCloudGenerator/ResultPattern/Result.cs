@@ -37,6 +37,11 @@ namespace TagCloudGenerator.ResultPattern
         public static IResult FindErrorResult(params IResult[] results) =>
             results.FirstOrDefault(result => !result.IsSuccess) ?? Ok();
 
+        public static Result<T> FailIf<T>(this T value, Func<bool> failCondition, Func<string> errorGenerator) =>
+            failCondition()
+                ? Fail<T>(errorGenerator())
+                : value.AsResult();
+
         private static Result<T> Ok<T>(T value) => new Result<T>(null, value);
 
         private static Result<None> Ok() => Ok<None>(null);

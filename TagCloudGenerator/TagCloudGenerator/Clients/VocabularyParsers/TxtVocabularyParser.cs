@@ -11,11 +11,12 @@ namespace TagCloudGenerator.Clients.VocabularyParsers
 
         protected override bool VerifyFilename(string filePath) => Path.GetExtension(filePath) == FileExtension;
 
-        protected override IEnumerable<string> ParseCloudVocabulary(StreamReader vocabularyFileStream)
+        protected override IEnumerable<string> ParseCloudVocabulary(string cloudVocabularyFilename)
         {
-            using (vocabularyFileStream)
-                while (!vocabularyFileStream.EndOfStream)
-                    yield return vocabularyFileStream.ReadLine();
+            using var vocabularyFileStream = File.OpenText(cloudVocabularyFilename);
+
+            while (!vocabularyFileStream.EndOfStream)
+                yield return vocabularyFileStream.ReadLine();
         }
     }
 }

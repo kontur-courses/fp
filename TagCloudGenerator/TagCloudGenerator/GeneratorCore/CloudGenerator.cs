@@ -1,8 +1,11 @@
 using System;
+using System.Drawing;
 using System.Linq;
+using TagCloudGenerator.GeneratorCore.CloudLayouters;
 using TagCloudGenerator.GeneratorCore.CloudVocabularyPreprocessors;
 using TagCloudGenerator.GeneratorCore.Extensions;
 using TagCloudGenerator.ResultPattern;
+using TagCloudGenerator.ResultPattern.DoHelper;
 
 namespace TagCloudGenerator.GeneratorCore
 {
@@ -20,25 +23,24 @@ namespace TagCloudGenerator.GeneratorCore
 
         public Result<None> CreateTagCloudImage()
         {
-            var cloudContextResult = cloudContextGenerator.GetTagCloudContext();
+            var tagCloudContext = cloudContextGenerator.GetTagCloudContext();
 
-            if (!cloudContextResult.IsSuccess)
-                return Result.Fail<None>(cloudContextResult.Error);
+            var shuffledContentStrings = tagCloudContext
+                .SelectValue(context => (preprocessor: vocabularyPreprocessorConstructor(context),
+                                         cloudContent: context.TagCloudContent))
+                .SelectValue(tuple => tuple.preprocessor.Process(tuple.cloudContent))
+                .SelectValue(words => words.SequenceShuffle(new Random()))
+                .SelectValue(words => words.Distinct())
+                .SelectValue(words => words.ToArray());
 
-            var cloudContext = cloudContextResult.Value;
-            var vocabularyPreprocessor = vocabularyPreprocessorConstructor(cloudContext);
-            var processedVocabulary = vocabularyPreprocessor.Process(cloudContext.TagCloudContent).ToArray();
+            var layouter = tagCloudContext.SelectValue(context => context.CloudLayouter);
+            var size = tagCloudContext.SelectValue(context => context.ImageSize);
+            var imageName = tagCloudContext.SelectValue(context => context.ImageName);
 
-            var shuffledContentStrings = processedVocabulary
-                .Take(1)
-                .Concat(processedVocabulary.Skip(1).SequenceShuffle(new Random()))
-                .Distinct()
-                .ToArray();
-
-            return cloudContext.Cloud.CreateBitmap(shuffledContentStrings,
-                                                   cloudContext.CloudLayouter,
-                                                   cloudContext.ImageSize)
-                .Then(bitmap => bitmap.Save(cloudContext.ImageName))
+            return tagCloudContext
+                .Then(context => Do.Call<string[], ICloudLayouter, Size, Result<Bitmap>>(context.Cloud.CreateBitmap)
+                          .With(shuffledContentStrings, layouter, size))
+                .ActionOverValue(bitmap => Do.Call<string>(bitmap.Save).With(imageName))
                 .ReplaceError(error => $"Bitmap creation error was handled:{Environment.NewLine}{error}");
         }
     }

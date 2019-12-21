@@ -78,6 +78,9 @@
     <Compile Include="GeneratorCore\Tags\TagType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultPattern\DoHelper\Configs\ConfigOfT1_T2_T3_TResult.cs" />
+    <Compile Include="ResultPattern\DoHelper\Configs\ConfigOfT1.cs" />
+    <Compile Include="ResultPattern\DoHelper\Do.cs" />
     <Compile Include="ResultPattern\IResult.cs" />
     <Compile Include="ResultPattern\None.cs" />
     <Compile Include="ResultPattern\ResultExtensions.cs" />

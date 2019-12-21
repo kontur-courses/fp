@@ -68,11 +68,9 @@ namespace TagCloudGenerator.GeneratorCore
         {
             var invalidCharacterIndex = filename.IndexOfAny(Path.GetInvalidFileNameChars());
 
-            return invalidCharacterIndex > -1
-                       ? Result.Fail<string>(
-                           $@"Filename contains invalid character '{filename[invalidCharacterIndex]}' by index {
-                               invalidCharacterIndex}")
-                       : filename.AsResult();
+            return filename.FailIf(() => invalidCharacterIndex > -1,
+                                   () => $@"Filename contains invalid character '{filename[invalidCharacterIndex]
+                                       }' by index {invalidCharacterIndex}");
         }
 
         private Result<IEnumerable<string>> ParseCloudVocabulary(string cloudVocabularyFilename) =>

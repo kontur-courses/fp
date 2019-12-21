@@ -16,6 +16,11 @@ namespace TagCloudGenerator.Clients.VocabularyParsers
                 return Result.Fail<IEnumerable<string>>(
                     $"Specified file path '{cloudVocabularyFilename}' doesn't exist.");
 
+            return GetVocabulary(cloudVocabularyFilename);
+        }
+
+        private Result<IEnumerable<string>> GetVocabulary(string cloudVocabularyFilename)
+        {
             if (!VerifyFilename(cloudVocabularyFilename))
             {
                 if (nextParser is null)
@@ -23,14 +28,13 @@ namespace TagCloudGenerator.Clients.VocabularyParsers
                         $@"Invalid vocabulary filename format: specified filename not supported '{
                             cloudVocabularyFilename}'.");
 
-                nextParser.GetCloudVocabulary(cloudVocabularyFilename);
+                return nextParser.GetCloudVocabulary(cloudVocabularyFilename);
             }
 
-            return Result.Of(() => File.OpenText(cloudVocabularyFilename))
-                .Then(ParseCloudVocabulary);
+            return Result.Of(() => ParseCloudVocabulary(cloudVocabularyFilename));
         }
 
         protected abstract bool VerifyFilename(string filePath);
-        protected abstract IEnumerable<string> ParseCloudVocabulary(StreamReader vocabularyFileStream);
+        protected abstract IEnumerable<string> ParseCloudVocabulary(string cloudVocabularyFilename);
     }
 }
