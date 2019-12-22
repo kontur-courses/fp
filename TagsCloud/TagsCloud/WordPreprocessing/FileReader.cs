@@ -31,7 +31,7 @@ namespace TagsCloud.WordPreprocessing
             using (var sr = new StreamReader(FileName.FullName, Encoding))
             {
                 return Result.Ok<IEnumerable<string>>(sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => !Regex.IsMatch(w)));
+                    .Where(w => !Regex.IsMatch(w)).Select(w => w.Trim()));
             }
         }
     }

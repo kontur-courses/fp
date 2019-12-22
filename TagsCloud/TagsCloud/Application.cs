@@ -61,18 +61,21 @@ namespace TagsCloud
                 _errorHandler.Handle(tags.Error);
                 return;
             }
-            CreateImageAndSave(tags.Value);
+            CreateImageAndSave(tags.Value).OnFail(e => _errorHandler.Handle(e));
         }
 
-        private void CreateImageAndSave(IEnumerable<Tag> tags)
+        private Result<None> CreateImageAndSave(IEnumerable<Tag> tags)
         {
-            using (var bitmap = _visualizer.GetCloudVisualization(tags.ToList()))
+            return Result.OfAction(() =>
             {
-                var name = Path.GetFileName(_options.FilePath);
-                var imgName = Path.ChangeExtension(name, ImageFormatDenotation[_imageFormat]);
-                _writer.Write($"Your image located at:  {new FileInfo(imgName).FullName}");
-                bitmap.Save(imgName, _imageFormat);
-            }
+                using (var bitmap = _visualizer.GetCloudVisualization(tags.ToList()))
+                {
+                    var name = Path.GetFileName(_options.FilePath);
+                    var imgName = Path.ChangeExtension(name, ImageFormatDenotation[_imageFormat]);
+                    _writer.Write($"Your image located at:  {new FileInfo(imgName).FullName}");
+                    bitmap.Save(imgName, _imageFormat);
+                }
+            });
         }
 
         public Result<IEnumerable<Tag>> GetTags()
@@ -89,9 +92,8 @@ namespace TagsCloud
                 _errorHandler.Handle(error);
             }
             var statistics = _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
-            var result =  _layouter.GetTags(statistics);
-            return result.Any(x => !x.IsSuccess) ? Result.Fail<IEnumerable<Tag>>($"Can't construct cloud'") :
-                Result.Ok(result.Select(r => r.Value));
+            var tags =  _layouter.GetTags(statistics);
+            return tags.IsSuccess ? tags : Result.Fail<IEnumerable<Tag>>($"Can't construct cloud'");
         }
     }
 }
