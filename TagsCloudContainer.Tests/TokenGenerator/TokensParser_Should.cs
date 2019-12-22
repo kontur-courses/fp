@@ -32,13 +32,13 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         [Test]
         public void GetTokens_WhenEmpty()
         {
-            tokenParser.GetTokens("").Should().HaveCount(0);
+            tokenParser.GetTokens("").GetValueOrThrow().Should().HaveCount(0);
         }
 
         [Test]
         public void GetTokens_WhenWord_ReturnWord()
         {
-            tokenParser.GetTokens(word).First().Should().Be(word);
+            tokenParser.GetTokens(word).GetValueOrThrow().First().Should().Be(word);
         }
 
 //        [Test]
@@ -52,7 +52,7 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         [Test]
         public void GetTokens_WhenDuplicate_ContainOneToken()
         {
-            tokenParser.GetTokens(word + Environment.NewLine + word).Should().HaveCount(2);
+            tokenParser.GetTokens(word + Environment.NewLine + word).GetValueOrThrow().Should().HaveCount(2);
         }
 
 //        [Test]

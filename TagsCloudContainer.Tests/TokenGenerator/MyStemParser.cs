@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.TokensGenerator;
@@ -11,6 +12,7 @@ namespace TagsCloudContainer.Tests.TokenGenerator
     {
         private MyStemParser tokenParser;
         private string word;
+        private IMysteam mysteam;
 
         [SetUp]
         public void SetUp()
@@ -29,34 +31,34 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         [Test]
         public void GetTokens_WhenEmpty()
         {
-            tokenParser.GetTokens("").Should().HaveCount(0);
+            tokenParser.GetTokens("").GetValueOrThrow().Should().HaveCount(0);
         }
 
         [Test]
         public void GetTokens_WhenWord_ReturnWord()
         {
-            tokenParser.GetTokens(word).First().Should().Be(word);
+            tokenParser.GetTokens(word).GetValueOrThrow().First().Should().Be(word);
         }
 
         [Test]
         public void GetTokens_WhenOneWord_ContainOneTokenWithCountIsOne()
         {
             var token = tokenParser.GetTokens(word);
-            token.Should().HaveCount(1);
+            token.GetValueOrThrow().Should().HaveCount(1);
         }
 
         [Test]
         public void GetTokens_WhenDuplicate_ContainOneToken()
         {
             var result = tokenParser.GetTokens(word + Environment.NewLine + word);
-            result.Should().HaveCount(2);
+            result.GetValueOrThrow().Should().HaveCount(2);
         }
 
         [Test]
         public void GetTokens_WhenDuplicate_TokenCountIsTwo()
         {
             var token = tokenParser.GetTokens(word + Environment.NewLine + word);
-            token.Should().HaveCount(2);
+            token.GetValueOrThrow().Should().HaveCount(2);
         }
 
         [Test]
@@ -64,7 +66,7 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         {
             var text = @"слова, с - пунктуацией точка.";
             var token = tokenParser.GetTokens(text);
-            token.Should().NotContain(new []{",",".", "-"});
+            token.GetValueOrThrow().Should().NotContain(new []{",",".", "-"});
         }
 
         [Test]
@@ -72,7 +74,7 @@ namespace TagsCloudContainer.Tests.TokenGenerator
         {
             var text = "Слова С Большой Буквы";
             var token = tokenParser.GetTokens(text);
-            token.All(el => el.ToLower() == el).Should().BeTrue();
+            token.GetValueOrThrow().All(el => el.ToLower() == el).Should().BeTrue();
         }
     }
 }

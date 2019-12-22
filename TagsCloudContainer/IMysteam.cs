@@ -5,6 +5,6 @@ namespace TagsCloudContainer
 {
     public interface IMysteam
     {
-        List<WordModel> GetWords(string text);
+        Result<List<WordModel>> GetWords(string text);
     }
 }

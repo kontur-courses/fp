@@ -12,9 +12,9 @@ namespace TagsCloudContainer
             mysteam = new YandexMystem.Wrapper.Mysteam();
         }
 
-        public List<WordModel> GetWords(string text)
+        public Result<List<WordModel>> GetWords(string text)
         {
-            return mysteam.GetWords(text);
+            return Result.Of(() =>mysteam.GetWords(text));
         }
     }
 }

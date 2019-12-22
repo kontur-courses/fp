@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Mime;
 using Autofac;
 using CommandLine;
+using FakeItEasy;
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.RectangleGenerator;
 using TagsCloudContainer.RectangleGenerator.PointGenerator;
@@ -28,11 +30,12 @@ namespace TagsCloudContainer
 
             var container = BuildContainer(setting);
             var tagCloudVisualizator = container.Resolve<TagCloudVisualizator>();
-            Result.Of(() => File.ReadAllText(options.InputFile))
+            var res = Result.Of(() => File.ReadAllText(options.InputFile))
                 .Then(text => tagCloudVisualizator.DrawTagCloud(text, setting))
                 .Then(img => img.Save(options.OutputFile))
-                .Then((_) => Console.WriteLine($"Image save in {options.OutputFile}"))
-                .OnFail(Console.WriteLine);
+                .OnFail(Console.WriteLine)
+                .Then((_) => Console.WriteLine($"Image save in {options.OutputFile}"));
+
         }
 
         private static void PrintErrors(IEnumerable<Error> errors)
@@ -47,7 +50,7 @@ namespace TagsCloudContainer
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
-            builder.RegisterType<Mysteam>().As<IMysteam>().SingleInstance();
+            builder.Register(c => new Mysteam()).As<IMysteam>().SingleInstance();
             builder.RegisterType<MyStemParser>().As<ITokensParser>().SingleInstance();
             builder.RegisterType<MyStemFilter>().As<IFilter>().SingleInstance()
                 .WithParameter("allowedWorldType",

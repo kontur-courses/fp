@@ -9,7 +9,7 @@ namespace TagsCloudContainer.TokensGenerator
         {
         }
 
-        public IEnumerable<string> GetTokens(string str)
+        public Result<IEnumerable<string>> GetTokens(string str)
         {
             if (str == null)
             {

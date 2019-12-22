@@ -12,9 +12,9 @@ namespace TagsCloudContainer.Filters
             this.boringWords = new HashSet<string>(boringWords.Select(word => word.ToLower()));
         }
 
-        public IEnumerable<string> Filtering(IEnumerable<string> tokens)
+        public Result<IEnumerable<string>> Filtering(IEnumerable<string> tokens)
         {
-            return tokens.Where(token => !boringWords.Contains(token.ToLower())).Where(token => token.Length > 3);
+            return Result.Ok(tokens.Where(token => !boringWords.Contains(token.ToLower())));
         }
     }
 }

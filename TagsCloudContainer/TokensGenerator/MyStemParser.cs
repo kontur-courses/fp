@@ -13,13 +13,16 @@ namespace TagsCloudContainer.TokensGenerator
             this.mysteam = mysteam;
         }
 
-        public IEnumerable<string> GetTokens(string str)
+        public Result<IEnumerable<string>> GetTokens(string str)
         {
             if (str == null)
                 throw new ArgumentNullException();
-            var replace = str.Replace("\r\n", " ");
-            return mysteam.GetWords(replace)
-                .Select(el => el.SourceWord.Analysis.FirstOrDefault()?.Lex ?? el.SourceWord.Text.ToLower());
+            var res = Result.Ok(str)
+                .Then(s => s.Replace("\r\n", " "))
+                .Then(mysteam.GetWords)
+                .Then(words =>
+                    words.Select(el => el.SourceWord.Analysis.FirstOrDefault()?.Lex ?? el.SourceWord.Text.ToLower()));
+            return res;
         }
     }
 }

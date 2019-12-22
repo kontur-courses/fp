@@ -26,10 +26,10 @@ namespace TagsCloudContainer
             this.visualizer = visualizer;
         }
 
-        public Bitmap DrawTagCloud(string text, ICloudSetting setting)
+        public Result<Bitmap> DrawTagCloud(string text, ICloudSetting setting)
         {
             visualizer.Clear();
-            Result.Ok(text)
+            return Result.Ok(text)
                 .Then(tokensParser.GetTokens)
                 .Then(filter.Filtering)
                 .Then(el => el.Where(w => w.Length > 3))
@@ -43,8 +43,8 @@ namespace TagsCloudContainer
                     {
                         visualizer.DrawTag(tagRectangle);
                     }
-                });
-            return visualizer.Save();
+                })
+                .Then(el => visualizer.Save());
         }
 
 

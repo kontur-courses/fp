@@ -16,11 +16,12 @@ namespace TagsCloudContainer.Filters
             this.mysteam = mysteam;
         }
 
-        public IEnumerable<string> Filtering(IEnumerable<string> tokens)
+        public Result<IEnumerable<string>> Filtering(IEnumerable<string> tokens)
         {
-            var result = mysteam.GetWords(string.Join(" ", tokens))
-                .Where(el => el.Lexems.Count > 0 && allowedWorldType.Contains(el.Lexems[0].GramPart))
-                .Select(t => t.SourceWord.Text);
+            var result =  mysteam.GetWords(string.Join(" ", tokens))
+                .Then(words =>
+                    words.Where(el => el.Lexems.Count > 0 && allowedWorldType.Contains(el.Lexems[0].GramPart)))
+                .Then(words => words.Select(t => t.SourceWord.Text));
             return result;
         }
     }

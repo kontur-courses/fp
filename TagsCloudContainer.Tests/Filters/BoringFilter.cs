@@ -21,21 +21,21 @@ namespace TagsCloudContainer.Tests.Filters
         {
             var boringFilter = new BoringFilter(new string[0]);
             var collection = new[]{"NonBoring","Boring","NonBoring"};
-            boringFilter.Filtering(collection).Should().BeEquivalentTo(collection);
+            boringFilter.Filtering(collection).GetValueOrThrow().Should().BeEquivalentTo(collection);
         }
 
         [Test]
         public void Filtering_WhenCollectionHavntBoringWord_ReturnThisCollection()
         {
             var collection = new[]{"NonBoring","NonBoring"};
-            boringFilter.Filtering(collection).Should().BeEquivalentTo(collection);
+            boringFilter.Filtering(collection).GetValueOrThrow().Should().BeEquivalentTo(collection);
         }
         
         [Test]
         public void Filtering_WhenBoringWordWithDifferentRegister_ShouldntContainBoringWord()
         {
             var collection = new[]{"NonBoring","boring","Boring","NonBoring"};
-            boringFilter.Filtering(collection).Should().NotContain("boring").And.NotContain("Boring");
+            boringFilter.Filtering(collection).GetValueOrThrow().Should().NotContain("boring").And.NotContain("Boring");
         }
 
         [Test]

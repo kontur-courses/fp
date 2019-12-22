@@ -4,6 +4,6 @@ namespace TagsCloudContainer.Filters
 {
     public interface IFilter
     {
-        IEnumerable<string> Filtering(IEnumerable<string> tokens);
+        Result<IEnumerable<string>> Filtering(IEnumerable<string> tokens);
     }
 }

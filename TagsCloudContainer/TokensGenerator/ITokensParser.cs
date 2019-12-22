@@ -4,6 +4,6 @@ namespace TagsCloudContainer.TokensGenerator
 {
     public interface ITokensParser
     {
-        IEnumerable<string> GetTokens(string str);
+        Result<IEnumerable<string>> GetTokens(string str);
     }
 }
