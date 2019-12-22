@@ -16,9 +16,8 @@ namespace TagsCloud
 {
     public static class ContainerConstructor
     {
-        public static IContainer Configure(IEnumerable<string> args)
+        public static IContainer Configure(Options options)
         {
-            var options = Options.Parse(args);
             var builder = new ContainerBuilder();
             builder.RegisterType<Application>().AsSelf();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().WithParameter("center", new Point())
@@ -29,7 +28,7 @@ namespace TagsCloud
                 new NamedParameter("fontName", options.Font),
                 new NamedParameter("backgroundColor", Color.FromName(options.BackgroundColor)),
             });
-            builder.RegisterType<FileReader>().As<IWordGetter>().WithParameter("fileName", new FileInfo(options.File));
+            builder.RegisterType<FileReader>().As<IWordGetter>().WithParameter("fileName", new FileInfo(options.FilePath));
             builder.RegisterType<WordStatisticGetter>().As<IWordAnalyzer>();
             builder.RegisterType<RandomColorDefiner>().As<IColorDefiner>();
             builder.RegisterType<FrequencySizeDefiner>().As<ISizeDefiner>().WithParameters(new List<Parameter>
