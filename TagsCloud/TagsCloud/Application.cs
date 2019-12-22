@@ -25,7 +25,7 @@ namespace TagsCloud
         private readonly char[] _delimiters = new char[]
             {',', '.', ' ', ':', ';', '(', ')', '—', '–', '[', ']', '!', '?', '\n'};
 
-        private readonly Dictionary<ImageFormat, string> _imageFormatDenotation =
+        public static readonly Dictionary<ImageFormat, string> ImageFormatDenotation =
             new Dictionary<ImageFormat, string>
             {
                 {ImageFormat.Jpeg, "jpg"},
@@ -58,8 +58,8 @@ namespace TagsCloud
         {
             using (var bitmap = _visualizer.GetCloudVisualization(tags.ToList()))
             {
-                var name = Path.GetFileName(_options.File);
-                var imgName = Path.ChangeExtension(name, _imageFormatDenotation[_imageFormat]);
+                var name = Path.GetFileName(_options.FilePath);
+                var imgName = Path.ChangeExtension(name, ImageFormatDenotation[_imageFormat]);
                 _writer.Write($"Your image located at:  {new FileInfo(imgName).FullName}");
                 bitmap.Save(imgName, _imageFormat);
             }
