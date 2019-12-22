@@ -137,7 +137,7 @@ namespace ResultOf
         public static Result<TInput> FailIf<TInput>(this Result<TInput> input, Func<TInput, bool> condition,
             string errorMessage)
         {
-            return condition(input.Value) ? Fail<TInput>(errorMessage) : input;
+            return input.Then(x => condition(input.Value) ? Fail<TInput>(errorMessage) : input);
         }
     }
 }
