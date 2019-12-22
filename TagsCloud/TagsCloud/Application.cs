@@ -38,7 +38,8 @@ namespace TagsCloud
 
         public Application(IWordAnalyzer wordStatisticGetter, ILayouter layouter, IVisualizer visualizer,
             Options options,
-            IWriter writer, IWordGetter wordGetter, IWordsProcessor wordsProcessor, IErrorHandler errorHandler, ImageFormat imageFormat = null)
+            IWriter writer, IWordGetter wordGetter, IWordsProcessor wordsProcessor, IErrorHandler errorHandler,
+            ImageFormat imageFormat = null)
         {
             this._wordStatisticGetter = wordStatisticGetter;
             this._layouter = layouter;
@@ -68,10 +69,15 @@ namespace TagsCloud
             }
         }
 
-        public IEnumerable<Tag> GetTags()
+        public Result<IEnumerable<Tag>> GetTags()
         {
             var rawWords = _wordGetter.GetWords(_delimiters);
-            var words = _wordsProcessor.ProcessWords(rawWords);
+            if (!rawWords.IsSuccess)
+            {
+                _errorHandler.Handle(rawWords.Error);
+                return Result.Fail<IEnumerable<Tag>>($"Can't read words");
+            }
+            var words = _wordsProcessor.ProcessWords(rawWords.Value);
             var statistics = _wordStatisticGetter.GetWordsStatistics(words);
             return _layouter.GetTags(statistics);
         }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud.WordPreprocessing
 {
@@ -16,18 +17,21 @@ namespace TagsCloud.WordPreprocessing
 
         public FileReader(FileInfo fileName, Encoding encoding = null)
         {
-            if (!fileName.Exists) throw new FileNotFoundException();
             FileName = fileName;
             Encoding = encoding ?? Encoding.Default;
         }
 
-        public IEnumerable<string> GetWords(params char[] delimiters)
+        public Result<IEnumerable<string>> GetWords(params char[] delimiters)
         {
+            if (!FileName.Exists)
+            {
+                return Result.Fail<IEnumerable<string>>($"File '{FileName}' not found");
+            }
             delimiters = delimiters.ToList().Append(' ').ToArray();
             using (var sr = new StreamReader(FileName.FullName, Encoding))
             {
-                return sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => !_regex.IsMatch(w));
+                return Result.Ok<IEnumerable<string>>(sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(w => !_regex.IsMatch(w)));
             }
         }
     }
