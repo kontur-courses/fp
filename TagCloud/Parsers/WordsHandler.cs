@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using ResultOf;
 
 namespace TagCloud
@@ -24,12 +25,12 @@ namespace TagCloud
         public Result<Dictionary<string, int>> GetWordsAndCount(string path)
         {
             return Result.Of(() => File.ReadAllLines(path, Encoding.UTF8)
-                .Where(s => s != string.Empty)
-                .Select(s => s.Trim())
-                .GroupBy(word => word.ToLower())
-                .ToDictionary(g => g.Key, g => g.Count()))
-                .ReplaceError(error => 
-                    error.Replace("Значение не может быть неопределенным.\r\n","Параметр не определен"));
+                    .SelectMany(s => Regex.Split(s.ToLower().Trim(), @"\W|_", RegexOptions.IgnoreCase))
+                    .Where(s => s != string.Empty)
+                    .GroupBy(word => word)
+                    .ToDictionary(g => g.Key, g => g.Count()))
+                    .ReplaceError(error => 
+                        error.Replace("Значение не может быть неопределенным.\r\n","Параметр не определен"));
         }
 
         private string GetCurrentDirectoryPath()

@@ -11,7 +11,7 @@ namespace TagCloud.Models
 
         public FontSettings()
         {
-            defaultFontSize = 12;
+            defaultFontSize = 10;
             fontFamily = new FontFamily("Arial");
             fontStyle = FontStyle.Bold;
             color = Color.Black;
@@ -19,9 +19,9 @@ namespace TagCloud.Models
 
         public FontSettings(string fontName)
         {
-            defaultFontSize = 12;
+            defaultFontSize = 10;
             fontFamily = new FontFamily(fontName);
-            fontStyle = FontStyle.Bold;
+            fontStyle = FontStyle.Italic;
             color = Color.Black;
         }
     }
