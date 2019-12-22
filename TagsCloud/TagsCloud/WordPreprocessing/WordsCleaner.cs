@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using MyStemWrapper;
 using Newtonsoft.Json.Linq;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud.WordPreprocessing
 {
@@ -49,30 +50,44 @@ namespace TagsCloud.WordPreprocessing
             _infinitive = infinitive;
         }
 
-        public IEnumerable<string> ProcessWords(IEnumerable<string> words)
+        public IEnumerable<Result<string>> ProcessWords(IEnumerable<string> words)
         {
+            if (!File.Exists(_stemmer.PathToMyStem))
+            {
+                yield return Result.Fail<string>("Can't find path to 'mystem.exe");
+            }
             words = words.Select(w => w.ToLower());
             foreach (var word in words)
             {
                 var wordData = _stemmer.Analysis(word);
-                var partOfSpeech = GetPartOfSpeech(wordData);
-                if (!boringPartsOfSpeech.Contains(partOfSpeech))
-                    yield return _infinitive ? GetInfinitiveForm(wordData) : word;
+                var partOfSpeech = GetPartOfSpeech(wordData, word);
+                if (!partOfSpeech.IsSuccess)
+                {
+                    yield return Result.Fail<string>(partOfSpeech.Error);
+                }
+                var infinitive = GetInfinitiveForm(wordData, word);
+                if (!boringPartsOfSpeech.Contains(partOfSpeech.Value))
+                    yield return _infinitive && infinitive.IsSuccess ? infinitive : word;
             }
         }
 
-        private PartOfSpeech GetPartOfSpeech(string jsonAnalysis)
+        private Result<PartOfSpeech> GetPartOfSpeech(string jsonAnalysis, string word)
         {
             var jsonArray = JArray.Parse(jsonAnalysis);
             if (!jsonAnalysis.Contains("gr")) return PartOfSpeech.Unknown;
-            var designation = jsonArray[0]["analysis"][0]["gr"].ToString().Split(',', '=')[0];
-            return partOfSpeechDenotation[designation];
+            return Result.Of(() =>
+                {
+                    var designation = jsonArray[0]["analysis"][0]["gr"].ToString().Split(',', '=')[0];
+                    return partOfSpeechDenotation[designation];
+                })
+                .ReplaceError(e => $"Can't define the type of the word: '{word}'");;
         }
 
-        private string GetInfinitiveForm(string jsonAnalysis)
+        private Result<string> GetInfinitiveForm(string jsonAnalysis, string word)
         {
             var jsonArray = JArray.Parse(jsonAnalysis);
-            return jsonArray[0]["analysis"][0]["lex"].ToString();
+            return  Result.Of(() => jsonArray[0]["analysis"][0]["lex"].ToString())
+                .ReplaceError(e => $"Can't define the infinitive form of the word '{word}'");
         }
     }
 }

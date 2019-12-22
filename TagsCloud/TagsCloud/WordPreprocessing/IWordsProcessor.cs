@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud.WordPreprocessing
 {
     public interface IWordsProcessor
     {
-        IEnumerable<string> ProcessWords(IEnumerable<string> words);
+        IEnumerable<Result<string>> ProcessWords(IEnumerable<string> words);
     }
 }

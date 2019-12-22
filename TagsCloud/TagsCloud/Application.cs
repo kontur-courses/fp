@@ -55,10 +55,15 @@ namespace TagsCloud
         public void Run()
         {
             var tags = GetTags();
-            CreateImageAndSave(tags);
+            if (!tags.IsSuccess)
+            {
+                _errorHandler.Handle(tags.Error);
+                return;
+            }
+            CreateImageAndSave(tags.Value).OnFail(e => _errorHandler.Handle(e));
         }
 
-        private void CreateImageAndSave(IEnumerable<Tag> tags)
+        private Result<None> CreateImageAndSave(IEnumerable<Tag> tags)
         {
             using (var bitmap = _visualizer.GetCloudVisualization(tags.ToList()))
             {
@@ -78,8 +83,12 @@ namespace TagsCloud
                 return Result.Fail<IEnumerable<Tag>>($"Can't read words");
             }
             var words = _wordsProcessor.ProcessWords(rawWords.Value);
-            var statistics = _wordStatisticGetter.GetWordsStatistics(words);
-            return _layouter.GetTags(statistics);
+            foreach (var error in words.Where(x=>!x.IsSuccess).Select(x => x.Error))
+            {
+                _errorHandler.Handle(error);
+            }
+            var statistics = _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
+            return Result.Of(() => _layouter.GetTags(statistics));
         }
     }
 }
