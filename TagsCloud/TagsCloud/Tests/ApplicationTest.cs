@@ -41,7 +41,12 @@ namespace TagsCloud.Tests
 
         private static List<Tag> GetTags(IEnumerable<string> args)
         {
-            var container = ContainerConstructor.Configure(args);
+            var options = Options.Parse(args);
+            if (!options.IsSuccess)
+            {
+                return null;
+            }
+            var container = ContainerConstructor.Configure(options.Value);
             var app = container.Resolve<Application>();
             return app.GetTags().ToList();
         }
@@ -49,8 +54,8 @@ namespace TagsCloud.Tests
         [Test]
         public void GetTags_ThrowException_OnWrongArgs()
         {
-            Action act = () => GetTags(new[] {"--pew"});
-            act.Should().Throw<ArgumentException>();
+            var tags = GetTags(new[] {"--pew"});
+            tags.Should().BeNull();
         }
 
         [Test]
