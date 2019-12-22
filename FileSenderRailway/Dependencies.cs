@@ -32,7 +32,7 @@ namespace FileSenderRailway
 
         public string Name { get; set; }
         public DateTime Created { get; set; }
-        public string Format { get; set; }
+        public string Format { get; private set; }
         public byte[] Content { get; set; }
     }
 
