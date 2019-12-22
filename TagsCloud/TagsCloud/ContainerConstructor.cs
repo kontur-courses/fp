@@ -6,6 +6,7 @@ using System.IO;
 using Autofac;
 using Autofac.Core;
 using TagsCloud.CloudConstruction;
+using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ColorDefiner;
 using TagsCloud.Visualization.SizeDefiner;
@@ -38,6 +39,7 @@ namespace TagsCloud
                     new NamedParameter("maxFontSize", options.MaxFontSize)
                 }
             );
+            builder.RegisterType<ConsoleHandler>().As<IErrorHandler>();
             builder.RegisterType<ConsoleWriter>().As<IWriter>();
             builder.RegisterType<WordsCleaner>().As<IWordsProcessor>().WithParameter("infinitive", options.Infinitive);
             builder.RegisterType<Application>().AsSelf().WithParameters(new List<Parameter>
@@ -45,6 +47,7 @@ namespace TagsCloud
                 new NamedParameter("options", options),
                 new NamedParameter("imageFormat", options.Format),
             });
+            
 
             return builder.Build();
         }

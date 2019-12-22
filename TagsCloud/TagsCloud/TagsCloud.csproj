@@ -134,6 +134,8 @@
     <Compile Include="CloudConstruction\Extensions\PointExtensions.cs" />
     <Compile Include="CloudConstruction\Extensions\RectangleExtensions.cs" />
     <Compile Include="CloudConstruction\ICloudLayouter.cs" />
+    <Compile Include="ErrorHandler\ConsoleHandler.cs" />
+    <Compile Include="ErrorHandler\IErrorHandler.cs" />
     <Compile Include="ErrorHandler\Result.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />

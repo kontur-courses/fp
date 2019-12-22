@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.Tag;
 using TagsCloud.WordPreprocessing;
@@ -21,6 +22,7 @@ namespace TagsCloud
         private readonly IWordGetter _wordGetter;
         private readonly IWordsProcessor _wordsProcessor;
         private readonly ImageFormat _imageFormat;
+        private readonly IErrorHandler _errorHandler;
 
         private readonly char[] _delimiters = new char[]
             {',', '.', ' ', ':', ';', '(', ')', '—', '–', '[', ']', '!', '?', '\n'};
@@ -36,7 +38,7 @@ namespace TagsCloud
 
         public Application(IWordAnalyzer wordStatisticGetter, ILayouter layouter, IVisualizer visualizer,
             Options options,
-            IWriter writer, IWordGetter wordGetter, IWordsProcessor wordsProcessor, ImageFormat imageFormat = null)
+            IWriter writer, IWordGetter wordGetter, IWordsProcessor wordsProcessor, IErrorHandler errorHandler, ImageFormat imageFormat = null)
         {
             this._wordStatisticGetter = wordStatisticGetter;
             this._layouter = layouter;
@@ -46,6 +48,7 @@ namespace TagsCloud
             this._wordGetter = wordGetter;
             this._wordsProcessor = wordsProcessor;
             this._imageFormat = imageFormat ?? ImageFormat.Jpeg;
+            this._errorHandler = errorHandler;
         }
 
         public void Run()
