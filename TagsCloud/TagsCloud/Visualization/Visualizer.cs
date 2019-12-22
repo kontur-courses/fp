@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using TagsCloud.CloudConstruction;
+using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization.ColorDefiner;
 
 namespace TagsCloud.Visualization
@@ -21,7 +22,7 @@ namespace TagsCloud.Visualization
             ColorDefiner = colorDefiner;
         }
 
-        public Bitmap GetCloudVisualization(List<Tag.Tag> tags)
+        public Bitmap GetCloudVisualization(IEnumerable<Tag.Tag> tags)
         {
             var imgRectangle = GetImageRectangle(tags);
             var bitmap = new Bitmap(imgRectangle.Width, imgRectangle.Height);

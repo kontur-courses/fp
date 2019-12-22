@@ -70,7 +70,7 @@ namespace TagsCloud
         }
 
 
-        [Option('f', "file", Required = false, Default = @"input1.txt",
+        [Option('f', "file", Required = false, Default = @"in1.txt",
             HelpText = "The file from which we take the words")]
         public string FilePath { get; set; }
 
@@ -97,7 +97,7 @@ namespace TagsCloud
             "Possible types are: Frequency")]
         public SizeDefinersType SizeDefiner { get; set; }
 
-        [Option("inf", Required = false, Default = true, HelpText = "Get words in infinitive form")]
+        [Option("inf", Required = false, Default = false, HelpText = "Get words in infinitive form")]
         public bool Infinitive { get; set; }
 
         [Option('o', "outputFormat", Required = false, HelpText = "Format of image")]

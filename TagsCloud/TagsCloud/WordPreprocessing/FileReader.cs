@@ -13,7 +13,7 @@ namespace TagsCloud.WordPreprocessing
         public readonly FileInfo FileName;
 
         public readonly Encoding Encoding;
-        private readonly Regex _regex = new Regex(@"^\s*$", RegexOptions.Compiled);
+        public readonly Regex Regex = new Regex(@"^\s*$", RegexOptions.Compiled);
 
         public FileReader(FileInfo fileName, Encoding encoding = null)
         {
@@ -31,7 +31,7 @@ namespace TagsCloud.WordPreprocessing
             using (var sr = new StreamReader(FileName.FullName, Encoding))
             {
                 return Result.Ok<IEnumerable<string>>(sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => !_regex.IsMatch(w)));
+                    .Where(w => !Regex.IsMatch(w)));
             }
         }
     }

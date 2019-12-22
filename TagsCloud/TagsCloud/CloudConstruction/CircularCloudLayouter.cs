@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloud.CloudConstruction.Exceptions;
 using TagsCloud.CloudConstruction.Extensions;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud.CloudConstruction
 {
@@ -20,16 +21,20 @@ namespace TagsCloud.CloudConstruction
             Rectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException(rectangleSize.ToString());
+                return Result.Fail<Rectangle>($"Wrong rectangle size: {rectangleSize}. Width or height can't be negative");
             var rectangle = GenerateRectangle(rectangleSize);
-            Rectangles.Add(rectangle);
+            if (!rectangle.IsSuccess)
+            {
+                return Result.Fail<Rectangle>(rectangle.Error);
+            }
+            Rectangles.Add(rectangle.Value);
             return rectangle;
         }
 
-        private Rectangle GenerateRectangle(Size rectSize)
+        private Result<Rectangle> GenerateRectangle(Size rectSize)
         {
             try
             {
@@ -40,7 +45,7 @@ namespace TagsCloud.CloudConstruction
             }
             catch (InvalidOperationException)
             {
-                throw new SpiralPointGeneratorException();
+                return Result.Fail<Rectangle>("Can't find correct location");
             }
         }
 

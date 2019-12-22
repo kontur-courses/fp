@@ -26,6 +26,7 @@ namespace TagsCloud
 
         private readonly char[] _delimiters = new char[]
             {',', '.', ' ', ':', ';', '(', ')', '—', '–', '[', ']', '!', '?', '\n'};
+        
 
         public static readonly Dictionary<ImageFormat, string> ImageFormatDenotation =
             new Dictionary<ImageFormat, string>
@@ -60,10 +61,10 @@ namespace TagsCloud
                 _errorHandler.Handle(tags.Error);
                 return;
             }
-            CreateImageAndSave(tags.Value).OnFail(e => _errorHandler.Handle(e));
+            CreateImageAndSave(tags.Value);
         }
 
-        private Result<None> CreateImageAndSave(IEnumerable<Tag> tags)
+        private void CreateImageAndSave(IEnumerable<Tag> tags)
         {
             using (var bitmap = _visualizer.GetCloudVisualization(tags.ToList()))
             {
@@ -88,7 +89,9 @@ namespace TagsCloud
                 _errorHandler.Handle(error);
             }
             var statistics = _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
-            return Result.Of(() => _layouter.GetTags(statistics));
+            var result =  _layouter.GetTags(statistics);
+            return result.Any(x => !x.IsSuccess) ? Result.Fail<IEnumerable<Tag>>($"Can't construct cloud'") :
+                Result.Ok(result.Select(r => r.Value));
         }
     }
 }

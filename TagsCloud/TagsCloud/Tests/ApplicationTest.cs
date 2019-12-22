@@ -48,7 +48,7 @@ namespace TagsCloud.Tests
             }
             var container = ContainerConstructor.Configure(options.Value);
             var app = container.Resolve<Application>();
-            return app.GetTags().ToList();
+            return app.GetTags().Value.ToList();
         }
 
         [Test]

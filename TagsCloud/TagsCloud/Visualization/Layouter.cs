@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TagsCloud.CloudConstruction;
+using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization.SizeDefiner;
 using TagsCloud.Visualization.Tag;
 
@@ -17,7 +18,7 @@ namespace TagsCloud.Visualization
             this._sizeDefiner = sizeDefiner;
         }
 
-        public IEnumerable<Tag.Tag> GetTags(Dictionary<string, int> wordFrequency)
+        public IEnumerable<Result<Tag.Tag>> GetTags(Dictionary<string, int> wordFrequency)
         {
             var maxFrequency = wordFrequency.Values.Max();
             var minFrequency = wordFrequency.Values.Min();
@@ -25,7 +26,12 @@ namespace TagsCloud.Visualization
             {
                 var tagSize = _sizeDefiner.GetTagSize(item.Key, item.Value, minFrequency, maxFrequency);
                 var locationRectangle = _cloud.PutNextRectangle(tagSize.RectangleSize);
-                yield return new Tag.Tag(locationRectangle, item.Key, tagSize.FontSize, item.Value);
+                if (!locationRectangle.IsSuccess)
+                {
+                    yield return Result.Fail<Tag.Tag>(locationRectangle.Error);
+                    yield break;
+                }
+                yield return new Tag.Tag(locationRectangle.Value, item.Key, tagSize.FontSize, item.Value);
             }
         }
     }

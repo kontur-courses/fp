@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud.CloudConstruction
 {
     public interface ICloudLayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

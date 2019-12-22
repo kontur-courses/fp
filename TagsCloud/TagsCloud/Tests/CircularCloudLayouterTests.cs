@@ -47,8 +47,7 @@ namespace TagsCloud.Tests
         [TestCase(1, 0, TestName = "Zero height")]
         public void PutNextRectangle_ThrowsArgumentException_OnWrongRectangle(int width, int height)
         {
-            Action act = () => _cloud.PutNextRectangle(new Size(width, height));
-            act.Should().Throw<ArgumentException>();
+            _cloud.PutNextRectangle(new Size(width, height)).IsSuccess.Should().BeFalse();
         }
 
         [TestCase(4, 2, TestName = "With even size")]
@@ -62,7 +61,7 @@ namespace TagsCloud.Tests
 
             var rectangle = _cloud.PutNextRectangle(rectangleSize);
 
-            rectangle.Location.Should().Be(expectedLocation);
+            rectangle.Value.Location.Should().Be(expectedLocation);
         }
 
         [Test]
@@ -71,7 +70,7 @@ namespace TagsCloud.Tests
             var rect1 = _cloud.PutNextRectangle(new Size(1, 1));
             var rect2 = _cloud.PutNextRectangle(new Size(1, 1));
 
-            rect1.Location.Should().NotBe(rect2.Location);
+            rect1.Value.Location.Should().NotBe(rect2.Value.Location);
         }
 
         [Test]
@@ -80,7 +79,7 @@ namespace TagsCloud.Tests
             var rect1 = _cloud.PutNextRectangle(new Size(10, 2));
             var rect2 = _cloud.PutNextRectangle(new Size(40, 200));
 
-            rect1.IntersectsWith(rect2).Should().BeFalse();
+            rect1.Value.IntersectsWith(rect2.Value).Should().BeFalse();
         }
 
         [Test]
