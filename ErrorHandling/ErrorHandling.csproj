@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ErrorHandling</RootNamespace>
     <AssemblyName>ErrorHandling</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -76,11 +76,15 @@
     <Compile Include="QuerySyntax\ParseResultExtensions.cs" />
     <Compile Include="QuerySyntax\ResultQueryExpressionExtensions.cs" />
     <Compile Include="QuerySyntax\ResultQueryExpression_Should.cs" />
-    <Compile Include="Result.cs" />
-    <Compile Include="Result_Should.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResultOf\ResultOf.csproj">
+      <Project>{d12d49e3-f318-4741-9dca-63c7fc36c0db}</Project>
+      <Name>ResultOf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

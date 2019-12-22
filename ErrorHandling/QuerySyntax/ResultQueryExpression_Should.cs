@@ -3,7 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using ResultOf;
 
-namespace ResultOfTask
+namespace ErrorHandling.QuerySyntax
 {
     [TestFixture]
     public class ResultQueryExpression_Should

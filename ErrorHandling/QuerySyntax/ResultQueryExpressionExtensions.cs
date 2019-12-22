@@ -1,7 +1,7 @@
 ﻿using System;
 using ResultOf;
 
-namespace ResultOfTask
+namespace ErrorHandling.QuerySyntax
 {
     public static class ResultQueryExpressionExtensions
     {
