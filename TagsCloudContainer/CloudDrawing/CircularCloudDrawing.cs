@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using CloudLayouter;
+using ResultOf;
 
 namespace CloudDrawing
 {
@@ -16,33 +17,41 @@ namespace CloudDrawing
             layouter = cloudLayouter;
         }
 
-        public void SetOptions(ImageSettings imageSettings)
+        public Result<None> SetOptions(ImageSettings imageSettings)
         {
             if (imageSettings.Size.Height <= 0 || imageSettings.Size.Height <= 0)
-                throw new AggregateException("Size have zero width or height");
+                return Result.Fail<None>("Ширина или высота была меньше или равна нулю");
             bitmap = new Bitmap(imageSettings.Size.Width, imageSettings.Size.Height);
             graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(imageSettings.Background);
+
             layouter.SetCenter(new Point(imageSettings.Size.Width / 2, imageSettings.Size.Height / 2));
+            graphics.Clear(imageSettings.Background);
+            return Result.Ok();
         }
 
-        public void DrawWords(IEnumerable<(string, int)> wordsFontSize, WordDrawSettings settings)
+        public Result<None> DrawWords(IEnumerable<(string, int)> wordsFontSize, WordDrawSettings settings)
         {
             foreach (var (word, fontSize) in wordsFontSize)
             {
-                var rectangle = DrawWord(word, new Font(settings.FamilyName, fontSize),
-                    settings.Brush, settings.StringFormat);
-                if (settings.HaveDelineation)
-                    DrawRectangle(rectangle);
+                var rectangle = 
+                    DrawWord(word, new Font(settings.FamilyName, fontSize), settings.Brush, settings.StringFormat)
+                    .Apply(r =>
+                    {
+                        if (settings.HaveDelineation) DrawRectangle(r);
+                    });
+                if (!rectangle.IsSuccess)
+                    return Result.Fail<None>(rectangle.Error);
             }
+            return Result.Ok();
         }
 
-        private Rectangle DrawWord(string word, Font font, Brush brush, StringFormat stringFormat)
+        private Result<Rectangle> DrawWord(string word, Font font, Brush brush, StringFormat stringFormat)
         {
             var stringSize = (graphics.MeasureString(word, font) + new SizeF(1, 1)).ToSize();
             var stringRectangle = layouter.PutNextRectangle(stringSize);
             graphics.DrawString(word, font, brush, stringRectangle, stringFormat);
-            return stringRectangle;
+            return Result.Validate(stringRectangle, r => graphics.IsVisible(r),
+                "Слово вышло за пределы области видимости");
         }
 
         private void DrawRectangle(Rectangle rectangle)
@@ -50,9 +59,11 @@ namespace CloudDrawing
             graphics.DrawRectangle(new Pen(Color.Black), rectangle);
         }
 
-        public void SaveImage(string filename)
+        public Result<None> SaveImage(string filename)
         {
-            bitmap.Save(filename);
+            return filename.AsResult()
+                .Then(bitmap.Save)
+                .RefineError("Не удается сохранить в указанный файл");
         }
     }
 }

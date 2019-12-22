@@ -1,4 +1,5 @@
 ﻿using CloudDrawing;
+using ResultOf;
 using TagsCloudContainer.PreprocessingWords;
 using TagsCloudContainer.Reader;
 
@@ -6,28 +7,32 @@ namespace TagsCloudContainer.ProcessingWords
 {
     public class Processor : IProcessor
     {
-        private readonly IReaderLinesFromFile readerLinesFromFile;
+        private readonly IReaderFromFile readerFromFile;
         private readonly IPreprocessingWords preprocessingWords;
         private readonly ICircularCloudDrawing circularCloudDrawing;
 
         public Processor(
-            IReaderLinesFromFile readerLinesFromFile,
+            IReaderFromFile readerFromFile,
             IPreprocessingWords preprocessingWords,
             ICircularCloudDrawing circularCloudDrawing)
         {
-            this.readerLinesFromFile = readerLinesFromFile;
+            this.readerFromFile = readerFromFile;
             this.preprocessingWords = preprocessingWords;
             this.circularCloudDrawing = circularCloudDrawing;
         }
 
-        public void Run(string pathToFile, string pathToSaveFile, ImageSettings imageSettings,
+        public Result<None> Run(string pathToFile, string pathToSaveFile, ImageSettings imageSettings,
             WordDrawSettings wordDrawSettings)
         {
             circularCloudDrawing.SetOptions(imageSettings);
-            var processedWord = preprocessingWords.Preprocessing(readerLinesFromFile.GetWordsSet(pathToFile));
-            circularCloudDrawing.DrawWords(CountingWords.GetWordAndNumberOfRepetitions(processedWord),
-                wordDrawSettings);
-            circularCloudDrawing.SaveImage(pathToSaveFile);
+
+            return pathToFile.AsResult()
+                .Then(readerFromFile.GetWordsSet)
+                .Then(preprocessingWords.Preprocessing)
+                .Then(CountingWords.GetWordAndNumberOfRepetitions)
+                .Then(e => circularCloudDrawing.DrawWords(e, wordDrawSettings))
+                .Then((_) => circularCloudDrawing.SaveImage(pathToSaveFile));
+            ;
         }
     }
 }

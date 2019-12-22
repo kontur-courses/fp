@@ -23,7 +23,7 @@ namespace TagsCloudContainerTests
                 });
 
             var stemUtility = new MyStemUtility(createProcess);
-            stemUtility.Preprocessing(new[] {"это", "строки"}).ToArray().Should().BeEquivalentTo(new[] {"строка"});
+            stemUtility.Preprocessing(new[] {"это", "строки"}).GetValueOrThrow().ToArray().Should().BeEquivalentTo(new[] {"строка"});
         }
     }
 }

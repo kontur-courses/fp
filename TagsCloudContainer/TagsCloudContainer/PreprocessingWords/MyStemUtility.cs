@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using ResultOf;
 
 namespace TagsCloudContainer.PreprocessingWords
 {
@@ -12,7 +13,12 @@ namespace TagsCloudContainer.PreprocessingWords
         private readonly string flags;
         private readonly ICreateProcess createProcess;
 
-        public IEnumerable<string> Preprocessing(IEnumerable<string> strings)
+        public Result<IEnumerable<string>> Preprocessing(IEnumerable<string> strings)
+        {
+            return strings.AsResult().Then(PreprocessingFunc).RefineError("Ошибка работы с MyStemUtility");
+        }
+
+        private IEnumerable<string> PreprocessingFunc(IEnumerable<string> strings)
         {
             var pathTempFile = Path.GetTempFileName();
             try
@@ -25,7 +31,6 @@ namespace TagsCloudContainer.PreprocessingWords
                     .GetResult(pathMyStemUtility, flags + " " + pathTempFile)
                     .Select(s => JsonConvert.DeserializeObject<MyStemOutput>(s).GetPrimaryFormOfNouns())
                     .Where(s => s != null);
-                ;
             }
             finally
             {

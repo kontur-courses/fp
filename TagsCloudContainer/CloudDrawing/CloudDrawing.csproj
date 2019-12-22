@@ -50,6 +50,10 @@
       <Project>{a2441f5f-d7e1-4be2-9b5e-3da0e7058855}</Project>
       <Name>CloudLayouter</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ResultOf\ResultOf.csproj">
+      <Project>{e8fab1e1-f911-487d-aad8-a202ac53f039}</Project>
+      <Name>ResultOf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

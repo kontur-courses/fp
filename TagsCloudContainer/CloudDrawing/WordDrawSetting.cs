@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using ResultOf;
 
 namespace CloudDrawing
 {
@@ -10,6 +12,21 @@ namespace CloudDrawing
             Brush = brush;
             StringFormat = stringFormat;
             HaveDelineation = haveDelineation;
+        }
+        
+        public static Result<WordDrawSettings> GetWordDrawSettings(string famyilyNameFont, string colorBrush, bool haveDelineation)
+        {
+            return Result.Validate(colorBrush, color => Enum.TryParse(color, true, out KnownColor knownColor),
+                    $"Не существует такого цвета {colorBrush} заданного для кисти")
+                .Then(Color.FromName)
+                .Then(color => new SolidBrush(color))
+                .Then(brush => new WordDrawSettings(famyilyNameFont,
+                    brush,
+                    new StringFormat()
+                    {
+                        LineAlignment = StringAlignment.Center
+                    },
+                    haveDelineation));
         }
         
         public string FamilyName { get;}

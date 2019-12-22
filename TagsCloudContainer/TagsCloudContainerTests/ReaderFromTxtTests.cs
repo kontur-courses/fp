@@ -16,8 +16,8 @@ namespace TagsCloudContainerTests
             {
                 using (var sw = File.CreateText(pathTempFile))
                     sw.WriteLine("Это пример текстового файла.\nЭто вторая строка текстового файла?");
-                var reader = new ReaderLinesFromTxt();
-                reader.GetWordsSet(pathTempFile).ToArray().Should()
+                var reader = new ReaderFromTxt();
+                reader.GetWordsSet(pathTempFile).GetValueOrThrow().ToArray().Should()
                     .BeEquivalentTo(new[]
                     {
                         "Это пример текстового файла.",

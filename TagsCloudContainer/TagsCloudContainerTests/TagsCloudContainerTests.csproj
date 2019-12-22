@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultOf\ResultOf.csproj">
+      <Project>{e8fab1e1-f911-487d-aad8-a202ac53f039}</Project>
+      <Name>ResultOf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
       <Project>{10be1105-8d5d-4c88-b6cd-1d96baa66457}</Project>
       <Name>TagsCloudContainer</Name>

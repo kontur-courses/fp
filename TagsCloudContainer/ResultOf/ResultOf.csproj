@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2BD872E4-D424-489B-A43C-BF797FAC20C7}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{E8FAB1E1-F911-487D-AAD8-A202AC53F039}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TagsCloudConsoleVersion</RootNamespace>
-    <AssemblyName>TagsCloudConsoleVersion</AssemblyName>
+    <RootNamespace>Result</RootNamespace>
+    <AssemblyName>ResultOf</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,46 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
-      <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CommandLine, Version=2.6.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379">
-      <HintPath>..\packages\CommandLineParser.2.6.0\lib\net461\CommandLine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Options.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CloudDrawing\CloudDrawing.csproj">
-      <Project>{23ca448c-3c74-462e-b977-c27b50cf0519}</Project>
-      <Name>CloudDrawing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CloudLayouter\CloudLayouter.csproj">
-      <Project>{a2441f5f-d7e1-4be2-9b5e-3da0e7058855}</Project>
-      <Name>CloudLayouter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ResultOf\ResultOf.csproj">
-      <Project>{e8fab1e1-f911-487d-aad8-a202ac53f039}</Project>
-      <Name>ResultOf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
-      <Project>{10be1105-8d5d-4c88-b6cd-1d96baa66457}</Project>
-      <Name>TagsCloudContainer</Name>
-    </ProjectReference>
+    <Compile Include="Result.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
