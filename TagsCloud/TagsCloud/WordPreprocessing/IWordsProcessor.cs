@@ -5,6 +5,6 @@ namespace TagsCloud.WordPreprocessing
 {
     public interface IWordsProcessor
     {
-        IEnumerable<Result<string>> ProcessWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words);
     }
 }

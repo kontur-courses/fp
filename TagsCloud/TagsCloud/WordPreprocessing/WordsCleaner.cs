@@ -51,25 +51,29 @@ namespace TagsCloud.WordPreprocessing
             _infinitive = infinitive;
         }
 
-        public IEnumerable<Result<string>> ProcessWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words)
         {
             if (!File.Exists(_stemmer.PathToMyStem))
             {
-                yield return Result.Fail<string>("Can't find path to 'mystem.exe");
-                yield break;
+                return Result.Fail<IEnumerable<string>>("Can't find path to 'mystem.exe'");
             }
-
+            var processedWords = new List<string>();
+            var lastError = "";
             words = words.Select(w => w.ToLower());
             foreach (var word in words)
             {
                 var wordData = _stemmer.Analysis(word);
-                var partOfSpeech = GetPartOfSpeech(wordData, word);
-                if (!partOfSpeech.IsSuccess) yield return Result.Fail<string>(partOfSpeech.Error);
-
-                var infinitive = GetInfinitiveForm(wordData, word);
-                if (!boringPartsOfSpeech.Contains(partOfSpeech.Value))
-                    yield return _infinitive && infinitive.IsSuccess ? infinitive : word;
+                Result.Ok(wordData)
+                    .Then(wd => GetPartOfSpeech(wd, word))
+                    .Then(ps =>
+                    {
+                        var infinitive = GetInfinitiveForm(wordData, word);
+                        if (!boringPartsOfSpeech.Contains(ps))
+                            processedWords.Add(_infinitive && infinitive.IsSuccess ? infinitive.Value : word);
+                    }).OnFail(e => lastError = e);
             }
+
+            return lastError != "" ? Result.Fail<IEnumerable<string>>(lastError) : processedWords;
         }
 
         private Result<PartOfSpeech> GetPartOfSpeech(string jsonAnalysis, string word)

@@ -27,7 +27,7 @@ namespace TagsCloud.Tests
 
             var words = cleaner.ProcessWords(_getter);
 
-            words.Select(w => w.Value)
+            words.Value
                 .GroupBy(g => g)
                 .ToDictionary(x => x.Key, x => x.Count()).Should().HaveCount(2)
                 .And.Contain(new KeyValuePair<string, int>("жужжать", 3))
@@ -42,7 +42,7 @@ namespace TagsCloud.Tests
 
             var words = cleaner.ProcessWords(_getter);
 
-            words.Select(w => w.Value)
+            words.Value
                 .GroupBy(g => g)
                 .ToDictionary(x => x.Key, x => x.Count()).Should().HaveCount(2)
                 .And.Contain(new KeyValuePair<string, int>("жужжать", 3))
@@ -56,7 +56,7 @@ namespace TagsCloud.Tests
 
             var words = cleaner.ProcessWords(_getter);
 
-            words.Select(w => w.Value)
+            words.Value
                 .GroupBy(g => g)
                 .ToDictionary(x => x.Key, x => x.Count())
                 .Should().HaveCount(2)

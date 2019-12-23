@@ -51,14 +51,10 @@ namespace TagsCloud
 
         public void Run()
         {
-            var tags = GetTags();
-            if (!tags.IsSuccess)
-            {
-                _errorHandler.Handle(tags.Error);
-                return;
-            }
-
-            CreateImageAndSave(tags.Value).OnFail(e => _errorHandler.Handle(e));
+            Result.Ok()
+                .Then(x => GetTags())
+                .Then(CreateImageAndSave)
+                .OnFail(e => _errorHandler.Handle(e));
         }
 
         private Result<None> CreateImageAndSave(IEnumerable<Tag> tags)
@@ -77,19 +73,11 @@ namespace TagsCloud
 
         public Result<IEnumerable<Tag>> GetTags()
         {
-            var rawWords = _wordGetter.GetWords(_delimiters);
-            if (!rawWords.IsSuccess)
-            {
-                _errorHandler.Handle(rawWords.Error);
-                return Result.Fail<IEnumerable<Tag>>("Can't read words");
-            }
-
-            var words = _wordsProcessor.ProcessWords(rawWords.Value);
-            foreach (var error in words.Where(x => !x.IsSuccess).Select(x => x.Error)) _errorHandler.Handle(error);
-            var statistics =
-                _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
-            var tags = _layouter.GetTags(statistics);
-            return tags.IsSuccess ? tags : Result.Fail<IEnumerable<Tag>>("Can't construct cloud'");
+            return Result.Ok(_delimiters)
+                .Then(_wordGetter.GetWords)
+                .Then(_wordsProcessor.ProcessWords)
+                .Then(_wordStatisticGetter.GetWordsStatistics)
+                .Then(_layouter.GetTags);
         }
     }
 }

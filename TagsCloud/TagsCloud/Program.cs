@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using TagsCloud.ErrorHandler;
 
 namespace TagsCloud
 {
@@ -7,16 +8,12 @@ namespace TagsCloud
     {
         public static void Main(string[] args)
         {
-            var options = Options.Parse(args);
-            if (!options.IsSuccess)
-            {
-                Console.WriteLine(options.Error);
-                return;
-            }
-
-            var container = ContainerConstructor.Configure(options.Value);
-            var app = container.Resolve<Application>();
-            app.Run();
+            Result.Ok(args)
+                .Then(Options.Parse)
+                .Then(ContainerConstructor.Configure)
+                .Then(c => c.Resolve<Application>())
+                .Then(a => a.Run())
+                .OnFail(Console.WriteLine);
         }
     }
 }
