@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace CloudLayouterеTests
 {
-    [TestFixture()]
+    [TestFixture]
     public class SpiralTests
     {
         [TestCaseSource(nameof(cloudCenters))]

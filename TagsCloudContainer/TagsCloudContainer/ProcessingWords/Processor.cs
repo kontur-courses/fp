@@ -7,9 +7,9 @@ namespace TagsCloudContainer.ProcessingWords
 {
     public class Processor : IProcessor
     {
-        private readonly IReaderFromFile readerFromFile;
-        private readonly IPreprocessingWords preprocessingWords;
         private readonly ICircularCloudDrawing circularCloudDrawing;
+        private readonly IPreprocessingWords preprocessingWords;
+        private readonly IReaderFromFile readerFromFile;
 
         public Processor(
             IReaderFromFile readerFromFile,
@@ -31,7 +31,7 @@ namespace TagsCloudContainer.ProcessingWords
                 .Then(preprocessingWords.Preprocessing)
                 .Then(CountingWords.GetWordAndNumberOfRepetitions)
                 .Then(e => circularCloudDrawing.DrawWords(e, wordDrawSettings))
-                .Then((_) => circularCloudDrawing.SaveImage(pathToSaveFile));
+                .Then(_ => circularCloudDrawing.SaveImage(pathToSaveFile));
             ;
         }
     }

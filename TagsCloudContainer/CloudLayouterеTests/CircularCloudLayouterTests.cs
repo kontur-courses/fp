@@ -11,6 +11,12 @@ namespace CloudLayouterеTests
 {
     public class CircularCloudLayouterTests
     {
+        private static IEnumerable<Point> cloudCenters = Enumerable
+            .Range(-1, 3)
+            .SelectMany(i => Enumerable
+                .Range(-1, 3)
+                .Select(j => new Point(i, j)));
+
         private List<Rectangle> rectangles;
 
         [SetUp]
@@ -61,11 +67,5 @@ namespace CloudLayouterеTests
 
             CircularCloudLayouter.HasOverlappingRectangles(rectangles).Should().BeFalse();
         }
-
-        private static IEnumerable<Point> cloudCenters = Enumerable
-            .Range(-1, 3)
-            .SelectMany(i => Enumerable
-                .Range(-1, 3)
-                .Select(j => new Point(i, j)));
     }
 }

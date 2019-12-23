@@ -12,6 +12,7 @@ namespace TagsCloudContainer.Reader
                 .Then(GetLine)
                 .RefineError("Ошибка, невозможно прочитать из файла");
         }
+
         private IEnumerable<string> GetLine(string path)
         {
             using (var streamReader = new StreamReader(path))

@@ -3,21 +3,20 @@ using System.Drawing;
 using System.Linq;
 using CloudLayouter.Spiral;
 
-
 namespace CloudLayouter
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
         protected readonly List<Rectangle> Rectangles;
-        protected IEnumerator<Point> SpiralPoint;
         protected readonly ISpiral Spiral;
 
         public Point center;
+        protected IEnumerator<Point> SpiralPoint;
 
         public CircularCloudLayouter(ISpiral spiral)
         {
             Rectangles = new List<Rectangle>();
-            this.Spiral = spiral;
+            Spiral = spiral;
         }
 
         public void SetCenter(Point center)
@@ -45,11 +44,15 @@ namespace CloudLayouter
         }
 
 
-        public static bool HasOverlappingRectangles(Rectangle rectangle, IEnumerable<Rectangle> rectangles) =>
-            rectangles.Any(r => r.IntersectsWith(rectangle));
+        public static bool HasOverlappingRectangles(Rectangle rectangle, IEnumerable<Rectangle> rectangles)
+        {
+            return rectangles.Any(r => r.IntersectsWith(rectangle));
+        }
 
         //различная реализация из-за сложностей алгоритмов 
-        public static bool HasOverlappingRectangles(IEnumerable<Rectangle> rectangles) =>
-            rectangles.Any(r => rectangles.Any(r1 => r != r1 && r.IntersectsWith(r1)));
+        public static bool HasOverlappingRectangles(IEnumerable<Rectangle> rectangles)
+        {
+            return rectangles.Any(r => rectangles.Any(r1 => r != r1 && r.IntersectsWith(r1)));
+        }
     }
 }

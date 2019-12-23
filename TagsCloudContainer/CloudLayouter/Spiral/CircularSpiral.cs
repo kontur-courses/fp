@@ -8,7 +8,7 @@ namespace CloudLayouter.Spiral
     {
         public IEnumerable<Point> GetPoints(Point center)
         {
-            var radius = 0.0; 
+            var radius = 0.0;
             var angle = 0.0;
             while (true)
             {
@@ -16,8 +16,8 @@ namespace CloudLayouter.Spiral
                 point.Offset(center);
                 yield return point;
 
-                radius = angle < Math.PI * 2 ? radius : radius + 1; 
-                angle = angle < Math.PI * 2 ?  angle + 0.1 : angle - Math.PI * 2  ;
+                radius = angle < Math.PI * 2 ? radius : radius + 1;
+                angle = angle < Math.PI * 2 ? angle + 0.1 : angle - Math.PI * 2;
             }
         }
 
@@ -25,7 +25,7 @@ namespace CloudLayouter.Spiral
         {
             var x = (int) Math.Round(radius * Math.Cos(angle));
             var y = (int) Math.Round(radius * Math.Sin(angle));
-            return new Point(x,y);
+            return new Point(x, y);
         }
     }
 }

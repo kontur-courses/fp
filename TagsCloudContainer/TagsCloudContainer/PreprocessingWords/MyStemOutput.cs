@@ -1,19 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using ResultOf;
 
 namespace TagsCloudContainer.PreprocessingWords
 {
     internal class MyStemOutput
     {
-        [JsonProperty("text")] 
-        public string Text { get; set; }
-
-        [JsonProperty("analysis")] 
-        public WordInfo[] Analysis { get; set; }
-
-
         // тут  все возможные за исключением существительного
         // "S",	существительное
         private readonly HashSet<string> overlookedPartsOfSpeech = new HashSet<string>
@@ -33,6 +25,10 @@ namespace TagsCloudContainer.PreprocessingWords
             "V" //глагол
         };
 
+        [JsonProperty("text")] public string Text { get; set; }
+
+        [JsonProperty("analysis")] public WordInfo[] Analysis { get; set; }
+
         public string GetPrimaryFormOfNouns()
         {
             if (Analysis == null || Text.Length < 2 ||
@@ -40,11 +36,9 @@ namespace TagsCloudContainer.PreprocessingWords
                     overlookedPartsOfSpeech.Any(p => a.Grammar.Contains(p))))
                 return null;
             foreach (var wordInfo in Analysis)
-            {
                 if (wordInfo.Grammar.Contains("S") && wordInfo.Grammar.Contains("ед") &&
                     wordInfo.Grammar.Contains("им"))
                     return wordInfo.LexicalForm.ToLower();
-            }
 
             return null;
         }

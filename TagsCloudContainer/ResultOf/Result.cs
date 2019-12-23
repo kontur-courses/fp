@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 
 namespace ResultOf
 {
@@ -11,11 +11,12 @@ namespace ResultOf
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -23,11 +24,13 @@ namespace ResultOf
 
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -37,18 +40,19 @@ namespace ResultOf
         {
             return Ok(value);
         }
-        
+
         public static Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
         {
             return predicate(obj)
-                ? Result.Ok(obj)
-                : Result.Fail<T>(errorMessage);
+                ? Ok(obj)
+                : Fail<T>(errorMessage);
         }
 
         public static Result<T> Ok<T>(T value)
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -70,7 +74,7 @@ namespace ResultOf
                 return Fail<T>(error ?? e.Message);
             }
         }
-        
+
         public static Result<None> OfAction(Action f, string error = null)
         {
             try
@@ -90,18 +94,20 @@ namespace ResultOf
         {
             return input.Then(inp => Of(() => continuation(inp)));
         }
-        
+
         public static Result<TInput> Apply<TInput>(
             this Result<TInput> input,
             Action<TInput> continuation)
         {
-            return input.Then(inp =>
-            {
-                continuation(inp);
-                return inp;
-            });
+            return input.IsSuccess
+                ? input.Then(inp =>
+                {
+                    continuation(inp);
+                    return inp;
+                })
+                : Fail<TInput>(input.Error);
         }
-        
+
         public static Result<None> Then<TInput, TOutput>(
             this Result<TInput> input,
             Action<TInput> continuation)
@@ -116,6 +122,24 @@ namespace ResultOf
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
+        public static Result<(TInput1, TInput2)> Then<TInput1, TInput2>(
+            this Result<TInput1> input,
+            Func<Result<TInput2>> addition)
+        {
+            if (!input.IsSuccess) return Fail<(TInput1, TInput2)>(input.Error);
+            var adding = addition();
+            return adding.IsSuccess ? (input.Value, adding.Value) : Fail<(TInput1, TInput2)>(adding.Error);
+        }
+        
+        public static Result<(T1, T2, T3)> Then<T1, T2, T3>(this Result<(T1, T2)> input, Func<Result<T3>> addition)
+        {
+            if (!input.IsSuccess) return Fail<(T1, T2, T3)>(input.Error);
+            var adding = addition();
+            return adding.IsSuccess
+                ? (input.Value.Item1, input.Value.Item2, adding.Value)
+                : Fail<(T1, T2, T3)>(adding.Error);
+        }
+        
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)

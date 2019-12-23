@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using Autofac;
 using CloudDrawing;
 using CloudLayouter;
@@ -16,51 +15,38 @@ namespace TagsCloudConsoleVersion
     {
         public static void Main(string[] args)
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterType<CircularSpiral>().As<ISpiral>();
-            builder.RegisterType<CircularCloudDrawing>().As<ICircularCloudDrawing>();
-            builder.RegisterType<ReaderFromTxt>().As<IReaderFromFile>();
-            builder.RegisterType<MyStemUtility>().As<IPreprocessingWords>();
-            builder.RegisterType<CreateProcess>().As<ICreateProcess>();
-            builder.RegisterType<Processor>().As<IProcessor>();
-
             Parser.Default.ParseArguments<Options>(args).WithParsed(option =>
             {
-                var processor = builder.AsResult()
-                    .Apply(b =>
+                GetProcessor(option.UseSqueezedAlgorithm)
+                    .Then(() => ImageSettings.GetImageSettings(option.ColorBackground, option.Width, option.Height))
+                    .Then(() => WordDrawSettings.GetWordDrawSettings(option.FamyilyNameFont, option.ColorBrush, option.HaveDelineation))
+                    .Then(tuple =>
                     {
-                        if (option.UseSqueezedAlgorithm)
-                            b.RegisterType<SqueezedCircularCloudLayouter>().As<ICloudLayouter>();
-                        else
-                            b.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
+                        var (processor, imageSettings, wordDrawSettings) = tuple;
+                        return processor.Run(option.PathToFile, option.PathSaveFile, imageSettings, wordDrawSettings);
                     })
-                    .Then(b => b.Build().Resolve<IProcessor>())
-                    .RefineError("Ошибка при сборке графа зависимостей");
-                if (!processor.IsSuccess)
-                {
-                    Console.WriteLine(processor.Error);
-                    return;
-                }
-
-                var imageSettings = ImageSettings.GetImageSettings(option.ColorBackground, option.Width, option.Height);
-                if (!imageSettings.IsSuccess)
-                {
-                    Console.WriteLine(imageSettings.Error);
-                    return;
-                }
-
-                var wordDrawSettings = WordDrawSettings.GetWordDrawSettings(option.FamyilyNameFont, option.ColorBrush, option.HaveDelineation);
-                if (!wordDrawSettings.IsSuccess)
-                {
-                    Console.WriteLine(wordDrawSettings.Error);
-                    return;
-                }
-
-                var result = processor.GetValueOrThrow().Run(option.PathToFile, option.PathSaveFile,
-                    imageSettings.GetValueOrThrow(), wordDrawSettings.GetValueOrThrow());
-                if (!result.IsSuccess)
-                    Console.WriteLine(result.Error);
+                    .OnFail(Console.WriteLine);
             });
+        }
+
+        private static Result<IProcessor> GetProcessor(bool useSqueezedAlgorithm)
+        {
+            return new ContainerBuilder().AsResult()
+                .Apply(builder => builder.RegisterType<CircularSpiral>().As<ISpiral>())
+                .Apply(builder => builder.RegisterType<CircularCloudDrawing>().As<ICircularCloudDrawing>())
+                .Apply(builder => builder.RegisterType<ReaderFromTxt>().As<IReaderFromFile>())
+                .Apply(builder => builder.RegisterType<MyStemUtility>().As<IPreprocessingWords>())
+                .Apply(builder => builder.RegisterType<CreateProcess>().As<ICreateProcess>())
+                .Apply(builder => builder.RegisterType<Processor>().As<IProcessor>())
+                .Apply(builder =>
+                {
+                    if (useSqueezedAlgorithm)
+                        builder.RegisterType<SqueezedCircularCloudLayouter>().As<ICloudLayouter>();
+                    else
+                        builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
+                })
+                .Then(builder => builder.Build().Resolve<IProcessor>())
+                .RefineError("Ошибка при сборке графа зависимостей");
         }
     }
 }

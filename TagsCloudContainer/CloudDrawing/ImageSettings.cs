@@ -12,6 +12,9 @@ namespace CloudDrawing
             Size = size;
         }
 
+        public Color Background { get; }
+        public Size Size { get; }
+
         public static Result<ImageSettings> GetImageSettings(string colorBackground, int width, int height)
         {
             return Result.Validate(colorBackground, color => Enum.TryParse(color, out KnownColor knownColor),
@@ -19,8 +22,5 @@ namespace CloudDrawing
                 .Then(Color.FromName)
                 .Then(color => new ImageSettings(color, new Size(width, height)));
         }
-
-        public Color Background { get; }
-        public Size Size { get; }
     }
 }

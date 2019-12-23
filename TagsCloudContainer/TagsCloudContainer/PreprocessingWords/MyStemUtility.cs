@@ -9,9 +9,16 @@ namespace TagsCloudContainer.PreprocessingWords
 {
     public class MyStemUtility : IPreprocessingWords
     {
-        private readonly string pathMyStemUtility;
-        private readonly string flags;
         private readonly ICreateProcess createProcess;
+        private readonly string flags;
+        private readonly string pathMyStemUtility;
+
+        public MyStemUtility(ICreateProcess createProcess)
+        {
+            this.createProcess = createProcess;
+            pathMyStemUtility = Environment.CurrentDirectory + @"\mystem.exe";
+            flags = "-nig --format json";
+        }
 
         public Result<IEnumerable<string>> Preprocessing(IEnumerable<string> strings)
         {
@@ -24,8 +31,10 @@ namespace TagsCloudContainer.PreprocessingWords
             try
             {
                 using (var sw = File.CreateText(pathTempFile))
+                {
                     foreach (var str in strings)
                         sw.WriteLine(str);
+                }
 
                 return createProcess
                     .GetResult(pathMyStemUtility, flags + " " + pathTempFile)
@@ -36,13 +45,6 @@ namespace TagsCloudContainer.PreprocessingWords
             {
                 File.Delete(pathTempFile);
             }
-        }
-
-        public MyStemUtility(ICreateProcess createProcess)
-        {
-            this.createProcess = createProcess;
-            pathMyStemUtility = Environment.CurrentDirectory + @"\mystem.exe";
-            flags = "-nig --format json";
         }
     }
 }

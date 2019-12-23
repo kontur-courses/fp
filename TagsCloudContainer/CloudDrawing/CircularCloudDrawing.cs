@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using CloudLayouter;
 using ResultOf;
@@ -8,9 +7,9 @@ namespace CloudDrawing
 {
     public class CircularCloudDrawing : ICircularCloudDrawing
     {
-        private ICloudLayouter layouter;
         private Bitmap bitmap;
         private Graphics graphics;
+        private readonly ICloudLayouter layouter;
 
         public CircularCloudDrawing(ICloudLayouter cloudLayouter)
         {
@@ -33,16 +32,24 @@ namespace CloudDrawing
         {
             foreach (var (word, fontSize) in wordsFontSize)
             {
-                var rectangle = 
+                var rectangle =
                     DrawWord(word, new Font(settings.FamilyName, fontSize), settings.Brush, settings.StringFormat)
-                    .Apply(r =>
-                    {
-                        if (settings.HaveDelineation) DrawRectangle(r);
-                    });
+                        .Apply(r =>
+                        {
+                            if (settings.HaveDelineation) DrawRectangle(r);
+                        });
                 if (!rectangle.IsSuccess)
                     return Result.Fail<None>(rectangle.Error);
             }
+
             return Result.Ok();
+        }
+
+        public Result<None> SaveImage(string filename)
+        {
+            return filename.AsResult()
+                .Then(bitmap.Save)
+                .RefineError("Не удается сохранить в указанный файл");
         }
 
         private Result<Rectangle> DrawWord(string word, Font font, Brush brush, StringFormat stringFormat)
@@ -57,13 +64,6 @@ namespace CloudDrawing
         private void DrawRectangle(Rectangle rectangle)
         {
             graphics.DrawRectangle(new Pen(Color.Black), rectangle);
-        }
-
-        public Result<None> SaveImage(string filename)
-        {
-            return filename.AsResult()
-                .Then(bitmap.Save)
-                .RefineError("Не удается сохранить в указанный файл");
         }
     }
 }
