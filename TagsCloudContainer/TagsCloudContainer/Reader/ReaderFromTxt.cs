@@ -9,8 +9,10 @@ namespace TagsCloudContainer.Reader
         public Result<IEnumerable<string>> GetWordsSet(string path)
         {
             return path.AsResult()
+                .Validate(File.Exists, $"Не существует такого файла {path}")
                 .Then(GetLine)
-                .RefineError("Ошибка, невозможно прочитать из файла");
+                .RefineError($"Ошибка при чтении файла {path}");
+
         }
 
         private IEnumerable<string> GetLine(string path)

@@ -16,16 +16,13 @@ namespace CloudDrawing
             layouter = cloudLayouter;
         }
 
-        public Result<None> SetOptions(ImageSettings imageSettings)
+        public void SetOptions(ImageSettings imageSettings)
         {
-            if (imageSettings.Size.Height <= 0 || imageSettings.Size.Height <= 0)
-                return Result.Fail<None>("Ширина или высота была меньше или равна нулю");
             bitmap = new Bitmap(imageSettings.Size.Width, imageSettings.Size.Height);
             graphics = Graphics.FromImage(bitmap);
 
             layouter.SetCenter(new Point(imageSettings.Size.Width / 2, imageSettings.Size.Height / 2));
             graphics.Clear(imageSettings.Background);
-            return Result.Ok();
         }
 
         public Result<None> DrawWords(IEnumerable<(string, int)> wordsFontSize, WordDrawSettings settings)
@@ -57,8 +54,9 @@ namespace CloudDrawing
             var stringSize = (graphics.MeasureString(word, font) + new SizeF(1, 1)).ToSize();
             var stringRectangle = layouter.PutNextRectangle(stringSize);
             graphics.DrawString(word, font, brush, stringRectangle, stringFormat);
-            return Result.Validate(stringRectangle, r => graphics.IsVisible(r),
+            return Result.Validate(stringRectangle, r => new Rectangle(new Point(0, 0), bitmap.Size).Contains(r),
                 "Слово вышло за пределы области видимости");
+            
         }
 
         private void DrawRectangle(Rectangle rectangle)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
@@ -9,7 +10,7 @@ namespace TagsCloudContainerTests
     public class MyStemUtilityTests
     {
         [Test]
-        public void GetWordsSetReturnLineFile()
+        public void PreprocessingReturnLineFile()
         {
             var createProcess = A.Fake<ICreateProcess>();
             A.CallTo(() => createProcess.GetResult(null, null))
@@ -25,6 +26,30 @@ namespace TagsCloudContainerTests
             var stemUtility = new MyStemUtility(createProcess);
             stemUtility.Preprocessing(new[] {"это", "строки"}).GetValueOrThrow().ToArray().Should()
                 .BeEquivalentTo("строка");
+        }
+        
+        [Test]
+        public void PreprocessingReturnResultError_WhenCreateProcessReturnNull()
+        {
+            var createProcess = A.Fake<ICreateProcess>();
+            A.CallTo(() => createProcess.GetResult(null, null))
+                .WithAnyArguments()
+                .Returns(null);
+
+            var stemUtility = new MyStemUtility(createProcess);
+            stemUtility.Preprocessing(new[] {"строка"}).IsSuccess.Should().BeFalse();
+        }
+        
+        [Test]
+        public void PreprocessingReturnResultError_WhenCreateProcessThrowsException()
+        {
+            var createProcess = A.Fake<ICreateProcess>();
+            A.CallTo(() => createProcess.GetResult(null, null))
+                .WithAnyArguments()
+                .Throws<Exception>();
+            
+            var stemUtility = new MyStemUtility(createProcess);
+            stemUtility.Preprocessing(new[] {"строка"}).IsSuccess.Should().BeFalse();
         }
     }
 }

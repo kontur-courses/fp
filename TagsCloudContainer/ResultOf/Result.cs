@@ -114,6 +114,15 @@ namespace ResultOf
         {
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
+        
+        public static Result<TInput> Validate<TInput>(this Result<TInput> input, Func<TInput, bool> predicate, string errorMessage)
+        {
+            if (input.IsSuccess)
+                return Validate(input.Value, predicate, errorMessage);
+            if(predicate(input.Value))
+                return Fail<TInput>(input.Error);
+            return Fail<TInput>(input.Error + "\n" + errorMessage);
+        }
 
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
@@ -122,13 +131,11 @@ namespace ResultOf
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
-        public static Result<(TInput1, TInput2)> Then<TInput1, TInput2>(
-            this Result<TInput1> input,
-            Func<Result<TInput2>> addition)
+        public static Result<(T1, T2)> Then<T1, T2>(this Result<T1> input, Func<Result<T2>> addition)
         {
-            if (!input.IsSuccess) return Fail<(TInput1, TInput2)>(input.Error);
+            if (!input.IsSuccess) return Fail<(T1, T2)>(input.Error);
             var adding = addition();
-            return adding.IsSuccess ? (input.Value, adding.Value) : Fail<(TInput1, TInput2)>(adding.Error);
+            return adding.IsSuccess ? (input.Value, adding.Value) : Fail<(T1, T2)>(adding.Error);
         }
         
         public static Result<(T1, T2, T3)> Then<T1, T2, T3>(this Result<(T1, T2)> input, Func<Result<T3>> addition)
@@ -168,7 +175,7 @@ namespace ResultOf
             this Result<TInput> input,
             string errorMessage)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            return input.ReplaceError(err => errorMessage + " " + err);
         }
     }
 }

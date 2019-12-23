@@ -5,7 +5,7 @@ namespace CloudDrawing
 {
     public interface ICircularCloudDrawing
     {
-        Result<None> SetOptions(ImageSettings imageSettings);
+        void SetOptions(ImageSettings imageSettings);
         Result<None> DrawWords(IEnumerable<(string, int)> wordsFontSize, WordDrawSettings settings);
         Result<None> SaveImage(string filename);
     }

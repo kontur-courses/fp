@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -27,6 +28,15 @@ namespace TagsCloudContainerTests
             {
                 File.Delete(pathTempFile);
             }
+        }
+        
+        [TestCase("", TestName = "Empty string")]
+        [TestCase(null, TestName = "Null")]
+        [TestCase("*", TestName = "Path is \"*\"")]
+        public void GetWordsSetReturnResultError_WhenThereIsNoFile(string path)
+        {
+            var reader = new ReaderFromTxt();
+            reader.GetWordsSet(path).IsSuccess.Should().BeFalse();
         }
     }
 }
