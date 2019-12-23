@@ -10,9 +10,8 @@ namespace TagsCloud.WordPreprocessing
 {
     public class FileReader : IWordGetter
     {
-        public readonly FileInfo FileName;
-
         public readonly Encoding Encoding;
+        public readonly FileInfo FileName;
         public readonly Regex Regex = new Regex(@"^\s*$", RegexOptions.Compiled);
 
         public FileReader(FileInfo fileName, Encoding encoding = null)
@@ -23,14 +22,11 @@ namespace TagsCloud.WordPreprocessing
 
         public Result<IEnumerable<string>> GetWords(params char[] delimiters)
         {
-            if (!FileName.Exists)
-            {
-                return Result.Fail<IEnumerable<string>>($"File '{FileName}' not found");
-            }
+            if (!FileName.Exists) return Result.Fail<IEnumerable<string>>($"File '{FileName}' not found");
             delimiters = delimiters.ToList().Append(' ').ToArray();
             using (var sr = new StreamReader(FileName.FullName, Encoding))
             {
-                return Result.Ok<IEnumerable<string>>(sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+                return Result.Ok(sr.ReadToEnd().Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
                     .Where(w => !Regex.IsMatch(w)).Select(w => w.Trim()));
             }
         }

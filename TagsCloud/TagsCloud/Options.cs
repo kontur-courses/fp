@@ -8,33 +8,11 @@ using CommandLine;
 using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization.ColorDefiner;
 using TagsCloud.Visualization.SizeDefiner;
-using static System.Drawing.Imaging.ImageFormat;
 
 namespace TagsCloud
 {
     public class Options
     {
-        private class Checker
-        {
-            public Checker(Func<Options, bool> condition, string error)
-            {
-                Condition = condition;
-                Error = error;
-            }
-
-            public readonly Func<Options, bool> Condition;
-            public readonly string Error;
-        }
-
-        public static Result<Options> Parse(IEnumerable<string> args)
-        {
-            var options = new Result<Options>();
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(o => options = o)
-                .WithNotParsed(e => options = Result.Fail<Options>("Wrong options"));
-            return options;
-        }
-
         private static readonly List<Checker> Checkups = new List<Checker>
         {
             new Checker(o => File.Exists(o.FilePath), "File not found"),
@@ -54,20 +32,6 @@ namespace TagsCloud
                 return o.Font == font.Name;
             }, "Wrong background color name.")
         };
-
-        private static Result<Options> CheckOptions(Options options)
-        {
-            var result = options.AsResult();
-            foreach (var check in Checkups.Where(check => !check.Condition(options)))
-            {
-                if (result.Error == null)
-                    result = Result.Fail<Options>(check.Error);
-                else
-                    result.ReplaceError(e => $"{e} {check.Error}");
-            }
-
-            return result;
-        }
 
 
         [Option('f', "file", Required = false, Default = @"in1.txt",
@@ -102,5 +66,38 @@ namespace TagsCloud
 
         [Option('o', "outputFormat", Required = false, HelpText = "Format of image")]
         public ImageFormat Format { get; set; }
+
+        public static Result<Options> Parse(IEnumerable<string> args)
+        {
+            var options = new Result<Options>();
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(o => options = o)
+                .WithNotParsed(e => options = Result.Fail<Options>("Wrong options"));
+            return options;
+        }
+
+        private static Result<Options> CheckOptions(Options options)
+        {
+            var result = options.AsResult();
+            foreach (var check in Checkups.Where(check => !check.Condition(options)))
+                if (result.Error == null)
+                    result = Result.Fail<Options>(check.Error);
+                else
+                    result.ReplaceError(e => $"{e} {check.Error}");
+
+            return result;
+        }
+
+        private class Checker
+        {
+            public readonly Func<Options, bool> Condition;
+            public readonly string Error;
+
+            public Checker(Func<Options, bool> condition, string error)
+            {
+                Condition = condition;
+                Error = error;
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Autofac;
 
 namespace TagsCloud
@@ -14,6 +13,7 @@ namespace TagsCloud
                 Console.WriteLine(options.Error);
                 return;
             }
+
             var container = ContainerConstructor.Configure(options.Value);
             var app = container.Resolve<Application>();
             app.Run();

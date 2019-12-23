@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using TagsCloud.Visualization.Tag;
 
@@ -13,9 +12,9 @@ namespace TagsCloud.Visualization.SizeDefiner
 
         public FrequencySizeDefiner(string fontName, int minFontSize, int maxFontSize)
         {
-            this._fontName = fontName;
-            this._maxFontSize = maxFontSize;
-            this._minFontSize = minFontSize;
+            _fontName = fontName;
+            _maxFontSize = maxFontSize;
+            _minFontSize = minFontSize;
         }
 
         public TagSize GetTagSize(string word, int frequency, int minFrequency, int maxFrequency)
@@ -27,8 +26,8 @@ namespace TagsCloud.Visualization.SizeDefiner
 
         private int GetFontSize(int frequency, int minFrequency, int maxFrequency)
         {
-            var intervalSize = (maxFrequency - minFrequency);
-            intervalSize = (intervalSize == 0) ? maxFrequency : intervalSize;
+            var intervalSize = maxFrequency - minFrequency;
+            intervalSize = intervalSize == 0 ? maxFrequency : intervalSize;
             return _maxFontSize - (_maxFontSize - _minFontSize) * (maxFrequency - frequency) / intervalSize;
         }
     }

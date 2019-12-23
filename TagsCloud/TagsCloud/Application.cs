@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.Tag;
@@ -14,20 +12,6 @@ namespace TagsCloud
 {
     public class Application
     {
-        private readonly IWordAnalyzer _wordStatisticGetter;
-        private readonly ILayouter _layouter;
-        private readonly IVisualizer _visualizer;
-        private readonly Options _options;
-        private readonly IWriter _writer;
-        private readonly IWordGetter _wordGetter;
-        private readonly IWordsProcessor _wordsProcessor;
-        private readonly ImageFormat _imageFormat;
-        private readonly IErrorHandler _errorHandler;
-
-        private readonly char[] _delimiters = new char[]
-            {',', '.', ' ', ':', ';', '(', ')', '—', '–', '[', ']', '!', '?', '\n'};
-        
-
         public static readonly Dictionary<ImageFormat, string> ImageFormatDenotation =
             new Dictionary<ImageFormat, string>
             {
@@ -37,20 +21,32 @@ namespace TagsCloud
                 {ImageFormat.Gif, "gif"}
             };
 
+        private readonly char[] _delimiters = {',', '.', ' ', ':', ';', '(', ')', '—', '–', '[', ']', '!', '?', '\n'};
+
+        private readonly IErrorHandler _errorHandler;
+        private readonly ImageFormat _imageFormat;
+        private readonly ILayouter _layouter;
+        private readonly Options _options;
+        private readonly IVisualizer _visualizer;
+        private readonly IWordGetter _wordGetter;
+        private readonly IWordsProcessor _wordsProcessor;
+        private readonly IWordAnalyzer _wordStatisticGetter;
+        private readonly IWriter _writer;
+
         public Application(IWordAnalyzer wordStatisticGetter, ILayouter layouter, IVisualizer visualizer,
             Options options,
             IWriter writer, IWordGetter wordGetter, IWordsProcessor wordsProcessor, IErrorHandler errorHandler,
             ImageFormat imageFormat = null)
         {
-            this._wordStatisticGetter = wordStatisticGetter;
-            this._layouter = layouter;
-            this._visualizer = visualizer;
-            this._options = options;
-            this._writer = writer;
-            this._wordGetter = wordGetter;
-            this._wordsProcessor = wordsProcessor;
-            this._imageFormat = imageFormat ?? ImageFormat.Jpeg;
-            this._errorHandler = errorHandler;
+            _wordStatisticGetter = wordStatisticGetter;
+            _layouter = layouter;
+            _visualizer = visualizer;
+            _options = options;
+            _writer = writer;
+            _wordGetter = wordGetter;
+            _wordsProcessor = wordsProcessor;
+            _imageFormat = imageFormat ?? ImageFormat.Jpeg;
+            _errorHandler = errorHandler;
         }
 
         public void Run()
@@ -61,6 +57,7 @@ namespace TagsCloud
                 _errorHandler.Handle(tags.Error);
                 return;
             }
+
             CreateImageAndSave(tags.Value).OnFail(e => _errorHandler.Handle(e));
         }
 
@@ -84,16 +81,15 @@ namespace TagsCloud
             if (!rawWords.IsSuccess)
             {
                 _errorHandler.Handle(rawWords.Error);
-                return Result.Fail<IEnumerable<Tag>>($"Can't read words");
+                return Result.Fail<IEnumerable<Tag>>("Can't read words");
             }
+
             var words = _wordsProcessor.ProcessWords(rawWords.Value);
-            foreach (var error in words.Where(x=>!x.IsSuccess).Select(x => x.Error))
-            {
-                _errorHandler.Handle(error);
-            }
-            var statistics = _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
-            var tags =  _layouter.GetTags(statistics);
-            return tags.IsSuccess ? tags : Result.Fail<IEnumerable<Tag>>($"Can't construct cloud'");
+            foreach (var error in words.Where(x => !x.IsSuccess).Select(x => x.Error)) _errorHandler.Handle(error);
+            var statistics =
+                _wordStatisticGetter.GetWordsStatistics(words.Where(x => x.IsSuccess).Select(x => x.Value));
+            var tags = _layouter.GetTags(statistics);
+            return tags.IsSuccess ? tags : Result.Fail<IEnumerable<Tag>>("Can't construct cloud'");
         }
     }
 }

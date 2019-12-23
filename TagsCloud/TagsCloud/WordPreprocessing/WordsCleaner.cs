@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Resources;
 using MyStemWrapper;
 using Newtonsoft.Json.Linq;
 using TagsCloud.ErrorHandler;
@@ -12,8 +10,18 @@ namespace TagsCloud.WordPreprocessing
 {
     public class WordsCleaner : IWordsProcessor
     {
-        private readonly MyStem _stemmer = new MyStem();
         private readonly bool _infinitive;
+        private readonly MyStem _stemmer = new MyStem();
+
+        private readonly HashSet<PartOfSpeech> boringPartsOfSpeech = new HashSet<PartOfSpeech>
+        {
+            PartOfSpeech.Particle,
+            PartOfSpeech.Conjunction,
+            PartOfSpeech.Pretext,
+            PartOfSpeech.PronounNoun,
+            PartOfSpeech.PronounAdjective,
+            PartOfSpeech.Unknown
+        };
 
         private readonly Dictionary<string, PartOfSpeech> partOfSpeechDenotation =
             new Dictionary<string, PartOfSpeech>
@@ -34,20 +42,10 @@ namespace TagsCloud.WordPreprocessing
                 {"V", PartOfSpeech.Verb}
             };
 
-        private readonly HashSet<PartOfSpeech> boringPartsOfSpeech = new HashSet<PartOfSpeech>
-        {
-            PartOfSpeech.Particle,
-            PartOfSpeech.Conjunction,
-            PartOfSpeech.Pretext,
-            PartOfSpeech.PronounNoun,
-            PartOfSpeech.PronounAdjective,
-            PartOfSpeech.Unknown
-        };
-
         public WordsCleaner(bool infinitive)
         {
             var stemmerPath = Path.GetTempFileName();
-            File.WriteAllBytes(stemmerPath,Properties.Resources.mystem);
+            File.WriteAllBytes(stemmerPath, Resources.mystem);
             _stemmer.PathToMyStem = stemmerPath;
             _stemmer.Parameters = "-i --format json";
             _infinitive = infinitive;
@@ -58,6 +56,7 @@ namespace TagsCloud.WordPreprocessing
             if (!File.Exists(_stemmer.PathToMyStem))
             {
                 yield return Result.Fail<string>("Can't find path to 'mystem.exe");
+                yield break;
             }
 
             words = words.Select(w => w.ToLower());
@@ -65,10 +64,7 @@ namespace TagsCloud.WordPreprocessing
             {
                 var wordData = _stemmer.Analysis(word);
                 var partOfSpeech = GetPartOfSpeech(wordData, word);
-                if (!partOfSpeech.IsSuccess)
-                {
-                    yield return Result.Fail<string>(partOfSpeech.Error);
-                }
+                if (!partOfSpeech.IsSuccess) yield return Result.Fail<string>(partOfSpeech.Error);
 
                 var infinitive = GetInfinitiveForm(wordData, word);
                 if (!boringPartsOfSpeech.Contains(partOfSpeech.Value))

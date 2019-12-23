@@ -5,6 +5,6 @@ namespace TagsCloud.Visualization
 {
     public interface ILayouter
     {
-       Result<IEnumerable<Tag.Tag>> GetTags(Dictionary<string, int> wordFrequency);
+        Result<IEnumerable<Tag.Tag>> GetTags(Dictionary<string, int> wordFrequency);
     }
 }

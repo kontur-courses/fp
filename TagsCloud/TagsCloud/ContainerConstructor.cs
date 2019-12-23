@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -27,9 +25,10 @@ namespace TagsCloud
             builder.RegisterType<Visualizer>().As<IVisualizer>().WithParameters(new List<Parameter>
             {
                 new NamedParameter("fontName", options.Font),
-                new NamedParameter("backgroundColor", Color.FromName(options.BackgroundColor)),
+                new NamedParameter("backgroundColor", Color.FromName(options.BackgroundColor))
             });
-            builder.RegisterType<FileReader>().As<IWordGetter>().WithParameter("fileName", new FileInfo(options.FilePath));
+            builder.RegisterType<FileReader>().As<IWordGetter>()
+                .WithParameter("fileName", new FileInfo(options.FilePath));
             builder.RegisterType<WordStatisticGetter>().As<IWordAnalyzer>();
             builder.RegisterType<RandomColorDefiner>().As<IColorDefiner>();
             builder.RegisterType<FrequencySizeDefiner>().As<ISizeDefiner>().WithParameters(new List<Parameter>
@@ -45,9 +44,9 @@ namespace TagsCloud
             builder.RegisterType<Application>().AsSelf().WithParameters(new List<Parameter>
             {
                 new NamedParameter("options", options),
-                new NamedParameter("imageFormat", options.Format),
+                new NamedParameter("imageFormat", options.Format)
             });
-            
+
 
             return builder.Build();
         }

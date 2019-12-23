@@ -1,19 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using TagsCloud.CloudConstruction;
-using TagsCloud.ErrorHandler;
 using TagsCloud.Visualization.ColorDefiner;
 
 namespace TagsCloud.Visualization
 {
     public class Visualizer : IVisualizer
     {
-        public readonly string FontName;
         public readonly Color BackgroundColor;
         public readonly IColorDefiner ColorDefiner;
+        public readonly string FontName;
 
         public Visualizer(string fontName, Color backgroundColor, IColorDefiner colorDefiner)
         {
@@ -31,13 +27,11 @@ namespace TagsCloud.Visualization
                 graphics.Clear(BackgroundColor);
                 graphics.TranslateTransform(-imgRectangle.X, -imgRectangle.Y);
                 foreach (var tag in tags)
-                {
                     using (var font = new Font(FontName, tag.Size))
                     using (var brush = new SolidBrush(ColorDefiner.DefineColor(tag.Frequency)))
                     {
                         graphics.DrawString(tag.Word, font, brush, tag.LocationRectangle.Location);
                     }
-                }
             }
 
             return bitmap;

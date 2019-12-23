@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using TagsCloud.Visualization.Tag;
+﻿using TagsCloud.Visualization.Tag;
 
 namespace TagsCloud.Visualization.SizeDefiner
 {

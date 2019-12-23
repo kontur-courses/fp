@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloud.CloudConstruction.Exceptions;
 using TagsCloud.CloudConstruction.Extensions;
 using TagsCloud.ErrorHandler;
 
@@ -10,26 +9,24 @@ namespace TagsCloud.CloudConstruction
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
-        public readonly Point Center;
         private const int Frequency = 36;
-
-        public List<Rectangle> Rectangles { get; set; }
+        public readonly Point Center;
 
         public CircularCloudLayouter(Point center)
         {
-            this.Center = center;
+            Center = center;
             Rectangles = new List<Rectangle>();
         }
+
+        public List<Rectangle> Rectangles { get; set; }
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                return Result.Fail<Rectangle>($"Wrong rectangle size: {rectangleSize}. Width or height can't be negative");
+                return Result.Fail<Rectangle>(
+                    $"Wrong rectangle size: {rectangleSize}. Width or height can't be negative");
             var rectangle = GenerateRectangle(rectangleSize);
-            if (!rectangle.IsSuccess)
-            {
-                return Result.Fail<Rectangle>(rectangle.Error);
-            }
+            if (!rectangle.IsSuccess) return Result.Fail<Rectangle>(rectangle.Error);
             Rectangles.Add(rectangle.Value);
             return rectangle;
         }
