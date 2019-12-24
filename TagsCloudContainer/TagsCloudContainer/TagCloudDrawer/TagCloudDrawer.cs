@@ -41,18 +41,13 @@ namespace TagsCloudContainer
 
         public Result<None> DrawTagCloud(int maxWordsCnt)
         {
-            if (maxWordsCnt <= 0)
-                return Result.Fail<None>("Count of words in tag cloud must be positive.\n" +
-                                         "Change count to positive number");
-            var tagsResult = tagCloudBuilder.GetTagsCloud();
+            var tagsResult = GetTags(maxWordsCnt);
             if (!tagsResult.IsSuccess)
                 return Result.Fail<None>(tagsResult.Error);
-            var tags = tagsResult.Value.Take(maxWordsCnt).ToList();
-            var rectangles = GetRectangles(tags);
+            var tags = tagsResult.Value;
+            var rectangles = GetShiftedRectangles(tags).Value;
             var width = GetWidth(rectangles);
             var height = GetHeight(rectangles);
-            var shiftX = GetShiftX(rectangles);
-            var shiftY = GetShiftY(rectangles);
             using (var image = new Bitmap(width, height))
             using (var drawingObj = Graphics.FromImage(image))
             using (var strFormat = new StringFormat { Alignment = StringAlignment.Center })
@@ -62,28 +57,59 @@ namespace TagsCloudContainer
                 {
                     var curTag = tags[ind];
                     var curRectangle = rectangles[ind];
-                    curRectangle.Location = new Point(curRectangle.Location.X - shiftX,
-                        curRectangle.Location.Y - shiftY);
-                    var curRectangleSize = curRectangle.Size;
                     var curColor = colors[ind];
-                    using (var font = new Font("Georgia", curRectangleSize.Height / 2))
+                    using (var font = new Font("Georgia", curRectangle.Size.Height / 2))
                     using (var brush = new SolidBrush(curColor))
                         drawingObj.DrawString(curTag.Word, font, brush, curRectangle, strFormat);
                 }
-
-                var imagePath = pictureInfo.FileName + '.' + pictureInfo.Format.ToString();
-                try
-                {
-                    image.Save(imagePath, pictureInfo.Format);
-                }
-                catch
-                {
-                    return Result.Fail<None>(string.Format("File can't be saved to path: {0}\n" +
-                                                           "Check if it's correct", imagePath));
-                }
-                logger.LogOut("Tag cloud visualization saved to file " + imagePath);
-                return new Result<None>();
+                return SaveTagCloud(image, pictureInfo);
             }
+        }
+
+        private Result<List<Tag>> GetTags(int maxWordsCnt)
+        {
+            if (maxWordsCnt <= 0)
+                return Result.Fail<List<Tag>>("Count of words in tag cloud must be positive.\n" +
+                                              "Change count to positive number");
+            var tagsResult = tagCloudBuilder.GetTagsCloud();
+            if (!tagsResult.IsSuccess)
+                return Result.Fail<List<Tag>>(tagsResult.Error);
+            return tagsResult.Value.Take(maxWordsCnt).ToList();
+        }
+
+        private Result<List<Rectangle>> GetShiftedRectangles(List<Tag> tags)
+        {
+            var result = new List<Rectangle>();
+            var rectangles = GetRectangles(tags);
+            var shiftX = GetShiftX(rectangles);
+            var shiftY = GetShiftY(rectangles);
+            for (var ind = 0; ind < tags.Count; ind++)
+            {
+                var curRectangle = rectangles[ind];
+                curRectangle.Location = new Point(curRectangle.Location.X - shiftX,
+                    curRectangle.Location.Y - shiftY);
+                var curRectangleSize = curRectangle.Size;
+                result.Add(new Rectangle(new Point(curRectangle.Location.X - shiftX,
+                    curRectangle.Location.Y - shiftY), curRectangleSize));
+            }
+            return result;
+        }
+
+
+        private Result<None> SaveTagCloud(Bitmap image, PictureInfo pictureInfo)
+        {
+            var imagePath = pictureInfo.FileName + '.' + pictureInfo.Format.ToString();
+            try
+            {
+                image.Save(imagePath, pictureInfo.Format);
+            }
+            catch
+            {
+                return Result.Fail<None>(string.Format("File can't be saved to path: {0}\n" +
+                                                       "Check if it's correct", imagePath));
+            }
+            logger.LogOut("Tag cloud visualization saved to file " + imagePath);
+            return new Result<None>();
         }
     }
 }
