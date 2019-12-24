@@ -19,7 +19,8 @@ namespace TagsCloudContainer
             set
             {
                 if (value.Length == 0)
-                    throw new ArgumentException("File name must be not empty");
+                    throw new ArgumentException("Text file name must be not empty.\n" +
+                                                "Change it.");
                 fileName = value;
             }
         }

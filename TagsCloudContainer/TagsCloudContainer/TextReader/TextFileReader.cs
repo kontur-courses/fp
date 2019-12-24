@@ -16,7 +16,8 @@ namespace TagsCloudContainer
         {
             if (!File.Exists(fileName))
                 return Result.Fail<IEnumerable<string>>
-                    (string.Format("Text file {0} is not found", fileName));
+                    (string.Format("Text file {0} is not found.\n" +
+                                   "Check if file path is correct.", fileName));
             return Result.Ok(File.ReadLines(fileName));
         }
     }

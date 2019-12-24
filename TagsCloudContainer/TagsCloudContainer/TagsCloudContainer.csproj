@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Result\Result.cs" />
+    <Compile Include="TagCloudException\TagCloudException.cs" />
     <Compile Include="Tests\CircularTagsCloudLayouterTests.cs" />
     <Compile Include="DullWordsEliminator\NothingDullEliminator.cs" />
     <Compile Include="Tests\IDullWordsEliminatorTests.cs" />

@@ -41,6 +41,9 @@ namespace TagsCloudContainer
 
         public Result<None> DrawTagCloud(int maxWordsCnt)
         {
+            if (maxWordsCnt <= 0)
+                return Result.Fail<None>("Count of words in tag cloud must be positive.\n" +
+                                         "Change count to positive number");
             var tagsResult = tagCloudBuilder.GetTagsCloud();
             if (!tagsResult.IsSuccess)
                 return Result.Fail<None>(tagsResult.Error);
@@ -68,10 +71,17 @@ namespace TagsCloudContainer
                         drawingObj.DrawString(curTag.Word, font, brush, curRectangle, strFormat);
                 }
 
-                var imagePath = Path.Combine(new string[] { AppDomain.CurrentDomain.BaseDirectory,
-                    pictureInfo.FileName  + '.' + pictureInfo.Format.ToString()});
+                var imagePath = pictureInfo.FileName + '.' + pictureInfo.Format.ToString();
+                try
+                {
+                    image.Save(imagePath, pictureInfo.Format);
+                }
+                catch
+                {
+                    return Result.Fail<None>(string.Format("File can't be saved to path: {0}\n" +
+                                                           "Check if it's correct", imagePath));
+                }
                 logger.LogOut("Tag cloud visualization saved to file " + imagePath);
-                image.Save(imagePath, pictureInfo.Format);
                 return new Result<None>();
             }
         }

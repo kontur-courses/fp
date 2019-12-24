@@ -37,19 +37,23 @@ namespace TagsCloudContainer
                 builder.RegisterInstance(logger).As<ILogger>();
                 builder.RegisterInstance(new OnlyNounDullWordsEliminator())
                     .As<IDullWordsEliminator>();
-                builder.RegisterInstance(new TextFileReader(inputInfo.FileName)).As<ITextReader>();
+                builder.RegisterInstance(new TextFileReader(inputInfo.TextFileName)).As<ITextReader>();
                 builder.RegisterType<TextHandler>().AsSelf();
                 builder.RegisterType<DefaultTagCloudBuildingAlgorithm>().As<ITagCloudBuildingAlgorithm>();
                 builder.RegisterType<TagCloudBuilder>().As<ITagCloudBuilder>();
-                builder.RegisterInstance(new PictureInfo("tagCloud", inputInfo.ImageFormat)).AsSelf();
+                builder.RegisterInstance(new PictureInfo(inputInfo.ImageFileName, inputInfo.ImageFormat)).AsSelf();
                 builder.RegisterType<DefaultTagsPaintingAlgorithm>().As<ITagsPaintingAlgorithm>();
                 builder.RegisterInstance(new CircularTagsCloudLayouter()).As<ITagsLayouter>();
                 builder.RegisterType<TagCloudDrawer>().AsSelf();
                 return Result.Ok(builder.Build());
             }
-            catch (Exception e)
+            catch (TagCloudException e)
             {
                 return Result.Fail<IContainer>(e.Message);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<IContainer>("Program inner exception:\n" + e.Message);
             }
         }
 
@@ -63,9 +67,13 @@ namespace TagsCloudContainer
                     return Result.Fail<None>(drawingResult.Error);
                 return new Result<None>();
             }
-            catch (Exception e)
+            catch (TagCloudException e)
             {
                 return Result.Fail<None>(e.Message);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<None>("Program inner exception:\n" + e.Message);
             }
         }
     }

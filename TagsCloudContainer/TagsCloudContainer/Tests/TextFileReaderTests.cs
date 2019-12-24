@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using FluentAssertions;
-using javax.swing.filechooser;
 using System;
 
 namespace TagsCloudContainer
@@ -45,7 +44,8 @@ namespace TagsCloudContainer
             var linesResult = textFileReader.GetLines();
 
             linesResult.IsSuccess.Should().BeFalse();
-            linesResult.Error.Should().BeEquivalentTo(string.Format("Text file {0} is not found", fileName));
+            linesResult.Error.Should().BeEquivalentTo(string.Format("Text file {0} is not found.\n" +
+                                                                    "Check if file path is correct.", fileName));
         }
     }
 }

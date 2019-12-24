@@ -1,15 +1,18 @@
 ﻿using System;
 using CommandLine;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Linq;
+using System.IO;
 
 namespace TagsCloudContainer
 {
     public class StandartOptions
     {
-        [Value(1, HelpText = "File to take words from")]
+        [Value(1, HelpText = "Text file to take words from")]
         public string File { get; set; }
+
+        [Option('p', "path", Required = false, HelpText = "Path to save image")]
+        public string ImageFile { get; set; }
+
         [Option('c', "count", Required = false, Default = int.MaxValue, HelpText = "Count of words in tag cloud")]
         public int MaxCnt { get; set; }
 

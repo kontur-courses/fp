@@ -18,7 +18,8 @@ namespace TagsCloudContainer
         {
             Result<InputInfo> inputInfoResult = new InputInfo();
             var a = Parser.Default.ParseArguments<StandartOptions>(args)
-                    .WithParsed(opts => inputInfoResult = new InputInfo(opts.File, opts.MaxCnt, opts.Format))
+                    .WithParsed(opts => inputInfoResult = new InputInfo(opts.File, opts.ImageFile,
+                        opts.MaxCnt, opts.Format))
                     .WithNotParsed(opts => inputInfoResult = Result.Fail<InputInfo>(opts.First().ToString()));
             return inputInfoResult;
         }
