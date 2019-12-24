@@ -86,8 +86,6 @@ namespace TagsCloudContainer
             for (var ind = 0; ind < tags.Count; ind++)
             {
                 var curRectangle = rectangles[ind];
-                curRectangle.Location = new Point(curRectangle.Location.X - shiftX,
-                    curRectangle.Location.Y - shiftY);
                 var curRectangleSize = curRectangle.Size;
                 result.Add(new Rectangle(new Point(curRectangle.Location.X - shiftX,
                     curRectangle.Location.Y - shiftY), curRectangleSize));
