@@ -16,7 +16,6 @@ namespace TagsCloud
         private static readonly List<Checker> Checkups = new List<Checker>
         {
             new Checker(o => File.Exists(o.FilePath), "File not found"),
-            new Checker(o => Application.ImageFormatDenotation.ContainsKey(o.Format), "Wrong image format"),
             new Checker(o => o.MinFontSize > 0, "Minimum font size should be greater than 0."),
             new Checker(o => o.MaxFontSize > 0, "Maximum font size should be greater than 0."),
             new Checker(o => o.MaxFontSize >= o.MinFontSize,
@@ -71,7 +70,7 @@ namespace TagsCloud
         {
             var options = new Result<Options>();
             Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(o => options = o)
+                .WithParsed(o => options = CheckOptions(o))
                 .WithNotParsed(e => options = Result.Fail<Options>("Wrong options"));
             return options;
         }

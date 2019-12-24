@@ -49,12 +49,11 @@ namespace TagsCloud
             _errorHandler = errorHandler;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            Result.Ok()
+            return Result.Ok()
                 .Then(x => GetTags())
-                .Then(CreateImageAndSave)
-                .OnFail(e => _errorHandler.Handle(e));
+                .Then(CreateImageAndSave);
         }
 
         private Result<None> CreateImageAndSave(IEnumerable<Tag> tags)
