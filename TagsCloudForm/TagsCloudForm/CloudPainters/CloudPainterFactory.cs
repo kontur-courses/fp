@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using CircularCloudLayouter;
-using TagsCloudForm.Actions;
 using TagsCloudForm.Common;
 
 namespace TagsCloudForm.CloudPainters
@@ -24,11 +23,11 @@ namespace TagsCloudForm.CloudPainters
             this.settings = settings;
         }
 
-        public ICloudPainter Create()
+        public Result<ICloudPainter> Create()
         {
             var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));
             layouter.SetCompression(settings.XCompression, settings.YCompression);
-            return new CloudPainter(imageHolder, settings, palette, layouter);
+            return Result.Ok<ICloudPainter>(new CloudPainter(imageHolder, settings, palette, layouter));
         }
     }
 }

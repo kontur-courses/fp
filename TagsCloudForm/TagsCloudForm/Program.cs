@@ -12,7 +12,7 @@ using TagsCloudForm.CloudPainters;
 
 namespace TagsCloudForm
 {
-    class Program
+    public class Program
     {
         [STAThread]
         public static void Main()

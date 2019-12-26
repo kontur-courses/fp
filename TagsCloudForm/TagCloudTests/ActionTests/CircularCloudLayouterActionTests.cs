@@ -2,6 +2,7 @@
 using FakeItEasy;
 using TagsCloudForm.Actions;
 using TagsCloudForm.CloudPainters;
+using TagsCloudForm.Common;
 
 namespace TagsCloudTests.ActionTests
 {
@@ -16,7 +17,7 @@ namespace TagsCloudTests.ActionTests
         {
             painterFactory = A.Fake<IPainterFactory>();
             painter = A.Fake<ICloudPainter>();
-            A.CallTo(() => painterFactory.Create()).Returns(painter);
+            A.CallTo(() => painterFactory.Create()).Returns(Result.Ok(painter));
         }
 
         [Test]

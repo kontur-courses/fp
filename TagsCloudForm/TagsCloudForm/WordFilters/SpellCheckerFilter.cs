@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using NHunspell;
 using TagsCloudForm.CircularCloudLayouterSettings;
 using TagsCloudForm.Common;
@@ -26,7 +25,7 @@ namespace TagsCloudForm.WordFilters
                     return new Result<IEnumerable<string>>("Файлы словарей для Hunspell не найдены: "+e.Message, words);
                 }
             else
-                return new Result<IEnumerable<string>>("Chosen Language not supported", words);
+                return new Result<IEnumerable<string>>("Выбранный язык на данный момент не поддерживается", words);
             return Result.Ok(words.Where(x=>checker.Spell(x.ToLower())));
         }
 

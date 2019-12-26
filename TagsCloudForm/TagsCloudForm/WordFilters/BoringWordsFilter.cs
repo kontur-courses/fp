@@ -18,7 +18,7 @@ namespace TagsCloudForm.WordFilters
                 var settingsFilename = settings.BoringWordsFile;
                 boringWords = File.ReadAllLines(settingsFilename).ToHashSet(StringComparer.OrdinalIgnoreCase);
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return new Result<IEnumerable<string>>("Не удалось загрузить файл с boring words: файл отсутствует", words);
             }

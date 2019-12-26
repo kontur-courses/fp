@@ -1,7 +1,9 @@
-﻿namespace TagsCloudForm.CloudPainters
+﻿using TagsCloudForm.Common;
+
+namespace TagsCloudForm.CloudPainters
 {
     public interface IPainterFactory
     {
-        ICloudPainter Create();
+        Result<ICloudPainter> Create();
     }
 }

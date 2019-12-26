@@ -19,11 +19,13 @@ namespace CircularCloudLayouter
                 && segment.Start.Y > rect.Top
                 && segment.Start.Y < rect.Bottom)
                     return true;
+
                 if (segment.End.X <= rect.Right
                 && segment.End.X > rect.Left
                 && segment.End.Y > rect.Top
                 && segment.End.Y < rect.Bottom)
                     return true;
+
                 if (rect.Top < segment.Start.Y
                     && rect.Bottom > segment.Start.Y
                     && rect.Left > segment.Start.X

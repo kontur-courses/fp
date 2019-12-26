@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CircularCloudLayouter;
-using TagsCloudForm.Actions;
 using TagsCloudForm.CircularCloudLayouterSettings;
 using TagsCloudForm.Common;
 

@@ -1,4 +1,6 @@
-﻿using TagsCloudForm.CloudPainters;
+﻿using System.Windows.Forms;
+using TagsCloudForm.CloudPainters;
+using TagsCloudForm.Common;
 using TagsCloudForm.UiActions;
 
 namespace TagsCloudForm.Actions
@@ -17,7 +19,7 @@ namespace TagsCloudForm.Actions
 
         public void Perform()
         {
-            factory.Create().Paint();
+            factory.Create().GetWithOnError(err => MessageBox.Show(err)).Paint();
         }
     }
 }

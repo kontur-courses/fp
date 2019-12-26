@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using CircularCloudLayouter;
-using TagsCloudForm.Actions;
 using TagsCloudForm.Common;
 
 namespace TagsCloudForm.CloudPainters

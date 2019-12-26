@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using TagsCloudForm.CloudPainters;
+using TagsCloudForm.Common;
 using TagsCloudForm.UiActions;
 
 [assembly: InternalsVisibleTo("TagsCloudTests")]
@@ -18,7 +20,7 @@ namespace TagsCloudForm.Actions
 
         public void Perform()
         {
-            factory.Create().Paint();
+            factory.Create().GetWithOnError(err=> MessageBox.Show(err)).Paint();
         }
     }
 }

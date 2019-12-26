@@ -245,10 +245,10 @@ namespace CircularCloudLayouter
             return AddedRectangles;
         }
 
-        public void SetCompression(int xCompression, int yCompression)
+        public void SetCompression(int xCompr, int yCompr)
         {
-            this.xCompression = xCompression;
-            this.yCompression = yCompression;
+            this.xCompression = xCompr;
+            this.yCompression = yCompr;
         }
     }
 

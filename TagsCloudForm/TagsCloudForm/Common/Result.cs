@@ -1,4 +1,5 @@
 ﻿using System;
+using NUnit.Framework.Interfaces;
 
 namespace TagsCloudForm.Common
 {
@@ -121,6 +122,13 @@ namespace TagsCloudForm.Common
             string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
+        }
+
+        public static TInput GetWithOnError<TInput>(this Result<TInput> input, Action<string> onError)
+        {
+            if (!input.IsSuccess)
+                onError.Invoke(input.Error);
+            return input.Value;
         }
     }
 }

@@ -1,15 +1,21 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
 
 namespace TagsCloudForm.Common
 {
     public class FileBlobStorage : IBlobStorage
     {
-        public byte[] Get(string name)
+        public Result<byte[]> Get(string name)
         {
-            return File.Exists(name) ? File.ReadAllBytes(name) : null;
+            try
+            {
+                var output = File.ReadAllBytes(name);
+                return Result.Ok(output);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<byte[]>(e.Message);
+            }
         }
 
 

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+using System.Text;
 using CircularCloudLayouter;
-using TagsCloudForm.Actions;
 using TagsCloudForm.CircularCloudLayouterSettings;
 using TagsCloudForm.Common;
 using TagsCloudForm.WordFilters;
@@ -36,13 +34,15 @@ namespace TagsCloudForm.CloudPainters
             this.textReader = textReader;
         }
 
-        public ICloudPainter Create()//лучше сделать чтобы тоже result возвращало
+        public Result<ICloudPainter> Create()
         {
+            var errors = new StringBuilder();
             IEnumerable<string> lines;
             var linesResult = textReader.ReadLines(settings.WordsSource);
             if (!linesResult.IsSuccess)
             {
-                MessageBox.Show(linesResult.Error);
+                errors.Append("\n");
+                errors.Append(linesResult.Error);
                 lines = new List<string>();
             }
             else
@@ -60,11 +60,17 @@ namespace TagsCloudForm.CloudPainters
                 if (filtered.IsSuccess)
                     lines = filtered.Value;
                 else
-                    MessageBox.Show(filtered.Error);
+                {
+                    errors.Append("\n");
+                    errors.Append(filtered.Error);
+                }
             }
             var wordsWithFrequency = parser.GetWordsFrequency(lines, settings.Language);
             var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));
-            return new CloudWithWordsPainter(imageHolder, settings, palette, layouter, wordsWithFrequency);
+            var painter = new CloudWithWordsPainter(imageHolder, settings, palette, layouter, wordsWithFrequency);
+            return errors.Length == 0 ? 
+                Result.Ok<ICloudPainter>(painter) : 
+                new Result<ICloudPainter>(errors.ToString(), painter);
         }
     }
 }

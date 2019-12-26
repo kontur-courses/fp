@@ -6,6 +6,6 @@ namespace CircularCloudLayouter
     {
         Rectangle PutNextRectangle(Size rectangleSize);
 
-        void SetCompression(int xCompression, int yCompression);
+        void SetCompression(int xCompr, int yCompr);
     }
 }

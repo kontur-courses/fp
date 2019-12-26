@@ -34,7 +34,7 @@ namespace TagsCloudForm.WordFilters
                 var settingsFilename = settings.PartOfSpeechToFilterFile;
                 partOfSpeechToFilter = File.ReadAllLines(settingsFilename).ToHashSet(StringComparer.OrdinalIgnoreCase);
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return new Result<IEnumerable<string>>("Не удалось загрузить файл с part of speech to filter: файл отсутствует", words);
             }

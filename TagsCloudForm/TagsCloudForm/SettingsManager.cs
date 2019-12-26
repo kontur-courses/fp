@@ -22,13 +22,13 @@ namespace TagsCloudForm
             {
                 settingsFilename = "app.settings";
                 var data = storage.Get(settingsFilename);
-                if (data == null)
+                if (!data.IsSuccess)
                 {
                     var defaultSettings = CreateDefaultSettings();
                     Save(defaultSettings);
                     return defaultSettings;
                 }
-                return serializer.Deserialize<AppSettings>(data);
+                return serializer.Deserialize<AppSettings>(data.Value);
             }
             catch (Exception e)
             {
