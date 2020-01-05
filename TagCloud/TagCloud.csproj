@@ -67,7 +67,9 @@
     <Compile Include="Actions\NewImageConsoleAction.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Factories\BoringWordsFactory.cs" />
+    <Compile Include="Factories\FileReader.cs" />
     <Compile Include="Factories\IBoringWordsFactory.cs" />
+    <Compile Include="Factories\IFileReader.cs" />
     <Compile Include="Models\ClientConfig.cs" />
     <Compile Include="Factories\FontSettingsFactory.cs" />
     <Compile Include="IClient.cs" />

@@ -26,7 +26,8 @@ namespace TagCloud
                 .LifestyleSingleton());
             container.Register(Component.For<IFontSettingsFactory>().ImplementedBy<FontSettingsFactory>()
                 .LifestyleSingleton());
-            container.Register(Component.For<IBoringWordsFactory>().ImplementedBy<BoringWordsFactory>());
+            container.Register(Component.For<IFileReader>().ImplementedBy<FileReader>().LifestyleSingleton());
+            container.Register(Component.For<IBoringWordsFactory>().ImplementedBy<BoringWordsFactory>().LifestyleSingleton());
             container.Register(Component.For<IWordsToTagsParser>().ImplementedBy<WordsToTagsParser>());
             container.Register(Component.For<IWordsHandler>().ImplementedBy<WordsHandler>());
             container.Register(Component.For<ITagCollectionFactory>().ImplementedBy<TagCollectionFactory>()
