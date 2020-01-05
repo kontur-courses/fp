@@ -12,12 +12,10 @@ namespace TagCloud
     public class WordsHandler : IWordsHandler
     {
         private readonly IBoringWordsFactory boringWordsFactory;
-        private readonly IFileReader fileReader;
 
-        public WordsHandler(IBoringWordsFactory boringWordsFactory, IFileReader fileReader)
+        public WordsHandler(IBoringWordsFactory boringWordsFactory)
         {
             this.boringWordsFactory = boringWordsFactory;
-            this.fileReader = fileReader;
         }
         public Result<Dictionary<string, int>> RemoveBoringWords(Dictionary<string, int> wordsAndCount,
                 string pathToBoringWords)
@@ -29,10 +27,9 @@ namespace TagCloud
                     .ToDictionary(p => p.Key, p => p.Value));
         }
 
-        public Result<Dictionary<string, int>> GetWordsAndCount(string path)
+        public Result<Dictionary<string, int>> GetWordsAndCount(IEnumerable<string> words)
         {
-            return fileReader.ReadWordsFromFile(path)
-                    .Then(words => words
+            return Result.Of(() => words
                     .GroupBy(word => word)
                     .ToDictionary(g => g.Key, g => g.Count()))
                     .ReplaceError(error =>

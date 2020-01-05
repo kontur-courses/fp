@@ -14,16 +14,20 @@ namespace TagCloud
     {
         private readonly IWordsToTagsParser parser;
         private readonly IWordsHandler wordsHandler;
+        private readonly IFileReader fileReader;
 
-        public TagCollectionFactory(IWordsHandler wordsHandler, IWordsToTagsParser parser)
+        public TagCollectionFactory(IWordsHandler wordsHandler, IWordsToTagsParser parser,
+                IFileReader fileReader)
         {
             this.wordsHandler = wordsHandler;
             this.parser = parser;
+            this.fileReader = fileReader;
         }
 
         public Result<List<Tag>> Create(ImageSettings imageSettings, string path)
         {
-            return wordsHandler.GetWordsAndCount(path)
+            return  fileReader.ReadWordsFromFile(path)
+                .Then(words => wordsHandler.GetWordsAndCount(words))
                 .Then(wordsAndCount => wordsHandler.RemoveBoringWords(wordsAndCount, $"{GetCurrentDirectoryPath()}\\BoringWords.txt"))
                 .Then(wordsAfterConversion => parser.GetTags(wordsAfterConversion,imageSettings));
         }
