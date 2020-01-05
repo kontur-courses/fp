@@ -44,9 +44,9 @@ namespace TagCloud
 
         private static bool IsRectangleInPolygon(RectangleF rectangle, int width, int height)
         {
-            return rectangle.Bottom>0 && rectangle.Left>0 && 
+            return rectangle.Top>0 && rectangle.Left>0 && 
                    rectangle.Bottom < height && rectangle.Top > 0 && 
-                   rectangle.Left < width && rectangle.Right > 0;
+                   rectangle.Right < width && rectangle.Left > 0;
         }
         private static SizeF GetWordSize(Tag tag, Graphics graphics)
         {

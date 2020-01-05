@@ -39,7 +39,7 @@ namespace TagCloud.Actions
             var imageFormat = TryReadFormat();
             if (!imageFormat.IsSuccess)
                 return Result.Fail<None>(imageFormat.Error);
-            path = path == string.Empty ? Path.GetTempPath() + "\\image." + imageFormat : path;
+            path = path == string.Empty ? Path.GetTempPath() + "\\image." + imageFormat.Value : path;
             config.ImageToSave.Save(path, imageFormat.GetValueOrThrow());
             Console.WriteLine($"Файл сохранен в {path}");
             return Result.Ok();
