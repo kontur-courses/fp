@@ -43,7 +43,7 @@ namespace TagCloudTests
         {
             var expectedDictionary = new Dictionary<string, int> {{"i", 4}, {"boat", 4}};
             var primaryCollection = wordsHandler.GetWordsAndCount(pathToReadWords);
-            wordsHandler.Conversion(primaryCollection.GetValueOrThrow())
+            wordsHandler.RemoveBoringWords(primaryCollection.GetValueOrThrow())
                 .GetValueOrThrow()
                 .Should()
                 .BeEquivalentTo(expectedDictionary);

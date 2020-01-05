@@ -3,6 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using TagCloud.Actions;
+using TagCloud.Factories;
 using TagCloud.IServices;
 
 namespace TagCloud
@@ -25,6 +26,7 @@ namespace TagCloud
                 .LifestyleSingleton());
             container.Register(Component.For<IFontSettingsFactory>().ImplementedBy<FontSettingsFactory>()
                 .LifestyleSingleton());
+            container.Register(Component.For<IBoringWordsFactory>().ImplementedBy<BoringWordsFactory>());
             container.Register(Component.For<IWordsToTagsParser>().ImplementedBy<WordsToTagsParser>());
             container.Register(Component.For<IWordsHandler>().ImplementedBy<WordsHandler>());
             container.Register(Component.For<ITagCollectionFactory>().ImplementedBy<TagCollectionFactory>()
