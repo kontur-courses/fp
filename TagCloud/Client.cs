@@ -10,13 +10,14 @@ namespace TagCloud
     public class Client : IClient
     {
         private readonly IConsoleAction[] actions;
-        private readonly ICloudVisualization visualization;
         private readonly HashSet<string> availableFontNames;
-        private HashSet<string> availablePaletteNames;
-        private Dictionary<string, IConsoleAction> actionsDictionary;
+        private readonly ICloudVisualization visualization;
+        private readonly Dictionary<string, IConsoleAction> actionsDictionary;
+        private readonly HashSet<string> availablePaletteNames;
         private ClientConfig config;
 
-        public Client(IConsoleAction[] actions, IPaletteNamesFactory paletteNamesFactory, ICloudVisualization visualization)
+        public Client(IConsoleAction[] actions, IPaletteNamesFactory paletteNamesFactory,
+            ICloudVisualization visualization)
         {
             availableFontNames = new HashSet<string>
             {
@@ -31,22 +32,23 @@ namespace TagCloud
 
         public void Start()
         {
-            config = new ClientConfig(availableFontNames, availablePaletteNames,visualization);
+            config = new ClientConfig(availableFontNames, availablePaletteNames, visualization);
             var userSettings = UserSettings.GetDefaultUserSettings();
-            actionsDictionary["-help"].Perform(config,userSettings);
+            actionsDictionary["-help"].Perform(config, userSettings);
             while (!config.ToExit)
             {
                 Console.WriteLine("Введите команду");
-                    Console.Write(">>>");
-                    var command = Console.ReadLine().ToLower();
-                    var commandResult = GetCommandResult(command, actionsDictionary);
-                    var perform = commandResult.Value.Perform(config, userSettings);
-                    if(!perform.IsSuccess)
-                        Console.WriteLine(perform.Error);
+                Console.Write(">>>");
+                var performResult = Result.Of(() => Console.ReadLine().ToLower())
+                    .Then(command => GetCommandResult(command, actionsDictionary))
+                    .Then(commandResult => commandResult.Perform(config, userSettings));
+                if (!performResult.IsSuccess)
+                    Console.WriteLine(performResult.Error);
             }
         }
 
-        private Result<IConsoleAction> GetCommandResult(string commandName, Dictionary<string, IConsoleAction> availableCommands)
+        private Result<IConsoleAction> GetCommandResult(string commandName,
+            Dictionary<string, IConsoleAction> availableCommands)
         {
             return availableCommands.ContainsKey(commandName)
                 ? Result.Ok(availableCommands[commandName])
