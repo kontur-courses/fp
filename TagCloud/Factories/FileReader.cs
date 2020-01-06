@@ -12,7 +12,6 @@ namespace TagCloud.Factories
     public class FileReader : IFileReader
     {
         private readonly Regex regex;
-
         public FileReader()
         {
             regex = new Regex(@"\W|_", RegexOptions.IgnoreCase);
