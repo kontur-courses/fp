@@ -17,14 +17,17 @@ namespace TagCloud.Actions
             namesFormatsToSave = ImageFormatCollectionFactory.GetFormats();
         }
 
+        private UserSettings lastSettings;
         public string CommandName { get; } = "-saveimage";
 
         public string Description { get; } = "save image";
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (config.ImageToSave is null)
+            if (config.ImageToSave is null || !settings.Equals(lastSettings))
             {
+                if (!(config.ImageToSave is null))
+                    config.ImageToSave.Dispose();
                 var createImageResult =
                     config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
                 if (!createImageResult.IsSuccess)
@@ -42,6 +45,7 @@ namespace TagCloud.Actions
             path = path == string.Empty ? Path.GetTempPath() + "\\image." + imageFormat.Value : path;
             config.ImageToSave.Save(path, imageFormat.GetValueOrThrow());
             Console.WriteLine($"Файл сохранен в {path}");
+            lastSettings = settings.Clone() as UserSettings;
             return Result.Ok();
         }
 

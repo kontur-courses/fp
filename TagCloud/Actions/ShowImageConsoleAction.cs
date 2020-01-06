@@ -17,6 +17,8 @@ namespace TagCloud.Actions
         {
             if (config.ImageToSave is null || !settings.Equals(lastSettings) )
             {
+                if (!(config.ImageToSave is null))
+                    config.ImageToSave.Dispose();
                 var createImageResult =
                     config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
                 if (!createImageResult.IsSuccess)
