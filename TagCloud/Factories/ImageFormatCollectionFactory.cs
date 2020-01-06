@@ -11,11 +11,12 @@ namespace TagCloud.Models
     {
         public static Dictionary<string, ImageFormat> GetFormats()
         {
-            var namesFormatsToSave = new Dictionary<string, ImageFormat>();
-            namesFormatsToSave["jpg"] = ImageFormat.Jpeg;
-            namesFormatsToSave["png"] = ImageFormat.Png;
-            namesFormatsToSave["bmp"] = ImageFormat.Bmp;
-            return namesFormatsToSave;
+            return new Dictionary<string, ImageFormat>()
+            {
+                {"jpg", ImageFormat.Jpeg},
+                {"png", ImageFormat.Png },
+                {"bmp", ImageFormat.Bmp }
+            };
         }
     }
 }
