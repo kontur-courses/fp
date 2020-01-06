@@ -128,7 +128,9 @@ namespace TagsCloudForm.Common
         {
             if (!input.IsSuccess)
                 onError.Invoke(input.Error);
-            return input.Value;
+            if (input.Value!=null)
+                return input.Value;
+            throw new InvalidOperationException($"No value. Only Error {input.Error}");
         }
     }
 }
