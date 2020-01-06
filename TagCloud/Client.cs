@@ -10,10 +10,10 @@ namespace TagCloud
     public class Client : IClient
     {
         private readonly IConsoleAction[] actions;
-        private readonly IPaletteNamesFactory paletteNamesFactory;
         private readonly ICloudVisualization visualization;
         private readonly HashSet<string> availableFontNames;
         private HashSet<string> availablePaletteNames;
+        private Dictionary<string, IConsoleAction> actionsDictionary;
         private ClientConfig config;
 
         public Client(IConsoleAction[] actions, IPaletteNamesFactory paletteNamesFactory, ICloudVisualization visualization)
@@ -24,20 +24,16 @@ namespace TagCloud
                 "Comic Sans MS"
             };
             this.actions = actions;
-            this.paletteNamesFactory = paletteNamesFactory;
             this.visualization = visualization;
-            availablePaletteNames = new HashSet<string>();
+            availablePaletteNames = paletteNamesFactory.GetPaletteNames(visualization);
+            actionsDictionary = actions.ToDictionary(a => a.CommandName, a => a);
         }
 
         public void Start()
         {
-            availablePaletteNames = paletteNamesFactory.GetPaletteNames(visualization);
             config = new ClientConfig(availableFontNames, availablePaletteNames,visualization);
-            var actionsDictionary = actions.ToDictionary(a => a.CommandName, a => a);
-            Console.WriteLine("Список доступных комманд :");
-            foreach (var action in actions)
-                Console.WriteLine($"{action.CommandName}     \"{action.Description}\"");
             var userSettings = UserSettings.GetDefaultUserSettings();
+            actionsDictionary["-help"].Perform(config,userSettings);
             while (!config.ToExit)
             {
                 Console.WriteLine("Введите команду");

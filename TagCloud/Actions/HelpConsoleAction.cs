@@ -19,8 +19,10 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
+            Console.WriteLine("Список доступных комманд :");
             foreach (var action in actions)
                 Console.WriteLine($"{action.CommandName}     \"{action.Description}\"");
+            Console.WriteLine($"{CommandName}      \"{Description}\"");
             return Result.Ok();
         }
     }
