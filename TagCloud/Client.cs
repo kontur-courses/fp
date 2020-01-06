@@ -43,14 +43,14 @@ namespace TagCloud
                 Console.WriteLine("Введите команду");
                     Console.Write(">>>");
                     var command = Console.ReadLine().ToLower();
-                    var commandResult = ReadCommand(command, actionsDictionary);
+                    var commandResult = GetCommandResult(command, actionsDictionary);
                     var perform = commandResult.Value.Perform(config, userSettings);
                     if(!perform.IsSuccess)
                         Console.WriteLine(perform.Error);
             }
         }
 
-        private Result<IConsoleAction> ReadCommand(string commandName, Dictionary<string, IConsoleAction> availableCommands)
+        private Result<IConsoleAction> GetCommandResult(string commandName, Dictionary<string, IConsoleAction> availableCommands)
         {
             return availableCommands.ContainsKey(commandName)
                 ? Result.Ok(availableCommands[commandName])
