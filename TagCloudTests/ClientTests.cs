@@ -30,10 +30,9 @@ namespace TagCloudTests
             {
                 var thread = new Thread(() => throw new ArgumentException());
                 thread.Start();
-                Thread.Sleep(5000);
-                //thread.Abort();
+                thread.Abort();
             };
-            action.Should().NotThrow();
+            action.Should().Throw<ArgumentException>();
         }
     }
 }
