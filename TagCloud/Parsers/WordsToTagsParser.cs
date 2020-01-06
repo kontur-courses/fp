@@ -27,7 +27,7 @@ namespace TagCloud
         private Font GetFont(FontSettings fontSettings, int count, Dictionary<string,int> words)
         {
             var fontSize= fontSettings.defaultFontSize + count * 300 / words.Count ;
-            return new Font(fontSettings.fontFamily, (float) fontSize, fontSettings.fontStyle);
+            return new Font(fontSettings.fontFamilyName, (float) fontSize, fontSettings.fontStyle);
         }
     }
 }
