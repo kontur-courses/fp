@@ -36,41 +36,30 @@ namespace TagsCloudForm.CloudPainters
 
         public Result<ICloudPainter> Create()
         {
-            var errors = new StringBuilder();
-            IEnumerable<string> lines;
-            var linesResult = textReader.ReadLines(settings.WordsSource);
-            if (!linesResult.IsSuccess)
-            {
-                errors.Append("\n");
-                errors.Append(linesResult.Error);
-                lines = new List<string>();
-            }
-            else
-            {
-                lines = linesResult.Value;
-            }
-            if (settings.UpperCase)
-                lines = lines.Select(x => x.ToUpper());
-            else
-                lines = lines.Select(x => x.ToLower());
-            foreach (var filter in filters)
-            {
-                Result<IEnumerable<string>> filtered;
-                filtered = filter.Filter(settings, lines);
-                if (filtered.IsSuccess)
-                    lines = filtered.Value;
-                else
-                {
-                    errors.Append("\n");
-                    errors.Append(filtered.Error);
-                }
-            }
-            var wordsWithFrequency = parser.GetWordsFrequency(lines, settings.Language);
             var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));
-            var painter = new CloudWithWordsPainter(imageHolder, settings, palette, layouter, wordsWithFrequency);
-            return errors.Length == 0 ? 
-                Result.Ok<ICloudPainter>(painter) : 
-                new Result<ICloudPainter>(errors.ToString(), painter);
+            var filterFuncs = CreateFuncsFromFilters(filters);
+            return Result
+                .Of(() => textReader.ReadLines(settings.WordsSource), new List<string>())
+                .Then(x => UseCaseSettings(x, settings))
+                .Then(filterFuncs)
+                .Then(x => parser.GetWordsFrequency(x, settings.Language))
+                .Then(x=> new CloudWithWordsPainter(imageHolder, settings, palette, layouter, x))
+                .Then(x=> (ICloudPainter)x);
+        }
+
+        private IEnumerable<string> UseCaseSettings(IEnumerable<string> input, ICircularCloudLayouterWithWordsSettings settings)
+        {
+            if (settings.UpperCase)
+                return input.Select(y => y.ToUpper());
+            return input.Select(y => y.ToLower());
+        }
+
+        private IEnumerable<Func<IEnumerable<string>, Result<IEnumerable<string>>>> CreateFuncsFromFilters(
+            IEnumerable<IWordsFilter> filters)
+        {
+            return filters.Select<IWordsFilter, Func<IEnumerable<string>, Result<IEnumerable<string>>>>(
+                x => a => x.Filter(settings, a)
+            );
         }
     }
 }

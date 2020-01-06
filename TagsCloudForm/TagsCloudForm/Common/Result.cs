@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework.Interfaces;
 
 namespace TagsCloudForm.Common
@@ -29,7 +31,9 @@ namespace TagsCloudForm.Common
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
-        public bool IsSuccess => Error == null;
+        public bool IsSuccess => !Equals(Value, default(T));
+
+        public bool HasErrors => Error != null;
     }
 
     public static class Result
@@ -65,6 +69,19 @@ namespace TagsCloudForm.Common
             }
         }
 
+
+        public static Result<T> Of<T>(Func<T> f, T defaultValue, string error = null)
+        {
+            try
+            {
+                return Ok(f());
+            }
+            catch (Exception e)
+            {
+                return new Result<T>(error ?? e.Message, defaultValue);
+            }
+        }
+
         public static Result<None> OfAction(Action f, string error = null)
         {
             try
@@ -85,6 +102,18 @@ namespace TagsCloudForm.Common
             return input.Then(inp => Of(() => continuation(inp)));
         }
 
+
+        public static Result<TInput> Then<TInput>(
+            this Result<TInput> input,
+            IEnumerable<Func<TInput, Result<TInput>>> continuation)
+        {
+            Result<TInput> output = input;
+            foreach (var func in continuation)
+                output = output.Then(func);
+            return output;
+        }
+
+
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
             Action<TInput> continuation)
@@ -97,9 +126,12 @@ namespace TagsCloudForm.Common
             Func<TInput, Result<TOutput>> continuation)
         {
             return input.IsSuccess
-                ? continuation(input.Value)
+                ? input.HasErrors
+                    ? continuation(input.Value).AddError(input.Error)
+                    : continuation(input.Value)
                 : Fail<TOutput>(input.Error);
         }
+
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
@@ -124,9 +156,18 @@ namespace TagsCloudForm.Common
             return input.ReplaceError(err => errorMessage + ". " + err);
         }
 
+        public static Result<TInput> AddError<TInput>(
+            this Result<TInput> input,
+            string errorMessage)
+        {
+            if (input.HasErrors)
+                return new Result<TInput>(input.Error+"\n"+errorMessage, input.Value);
+            return new Result<TInput>(errorMessage, input.Value);
+        }
+
         public static TInput GetWithOnError<TInput>(this Result<TInput> input, Action<string> onError)
         {
-            if (!input.IsSuccess)
+            if (input.Error!=null)
                 onError.Invoke(input.Error);
             if (input.Value!=null)
                 return input.Value;
