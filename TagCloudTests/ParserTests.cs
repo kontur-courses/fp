@@ -7,6 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using ResultOf;
 using TagCloud;
+using TagCloud.Factories;
 using TagCloud.IServices;
 using TagCloud.Models;
 
@@ -27,6 +28,7 @@ namespace TagCloudTests
                 "BOAT", "in", "IN");
             container = TagCloud.Program.GetContainer();
             wordsHandler = container.Resolve<IWordsHandler>();
+            fileReader = container.Resolve<IFileReader>();
             tagCollectionFactory = container.Resolve<ITagCollectionFactory>();
             imageSettings = new ImageSettings(300, 300, "Arial", "ShadesOfPink");
         }
@@ -35,6 +37,7 @@ namespace TagCloudTests
         private string pathToReadWords;
         private IWordsHandler wordsHandler;
         private WindsorContainer container;
+        private IFileReader fileReader;
         private ITagCollectionFactory tagCollectionFactory;
         private ImageSettings imageSettings;
 
@@ -42,8 +45,8 @@ namespace TagCloudTests
         public void WordsHandler_Should_ConvertWordsCorrectly()
         {
             var expectedDictionary = new Dictionary<string, int> {{"i", 4}, {"boat", 4}};
-            var primaryCollection = wordsHandler.GetWordsAndCount(pathToReadWords);
-            wordsHandler.RemoveBoringWords(primaryCollection.GetValueOrThrow())
+            var primaryCollection = wordsHandler.GetWordsAndCount(fileReader.ReadWordsFromFile(pathToReadWords).GetValueOrThrow());
+            wordsHandler.RemoveBoringWords(primaryCollection.GetValueOrThrow(), pathToBoringWords)
                 .GetValueOrThrow()
                 .Should()
                 .BeEquivalentTo(expectedDictionary);
@@ -53,7 +56,7 @@ namespace TagCloudTests
         public void WordsHandler_Should_ParseWordsCorrectly()
         {
             var expectedDictionary = new Dictionary<string, int> {{"i", 4}, {"boat", 4}, {"in", 2}};
-            wordsHandler.GetWordsAndCount(pathToReadWords)
+            wordsHandler.GetWordsAndCount(fileReader.ReadWordsFromFile(pathToReadWords).GetValueOrThrow())
                 .GetValueOrThrow()
                 .Should()
                 .BeEquivalentTo(expectedDictionary);
@@ -63,7 +66,7 @@ namespace TagCloudTests
         public void WordsHandler_Should_ReturnError_When_FileNotExist()
         {
             var tempPath = Environment.CurrentDirectory;
-            wordsHandler.GetWordsAndCount("kkk")
+            wordsHandler.GetWordsAndCount(fileReader.ReadWordsFromFile("kkk").GetValueOrThrow())
                 .Error
                 .Should()
                 .Be($"Файл '{tempPath}\\kkk' не найден.");
@@ -72,7 +75,7 @@ namespace TagCloudTests
         [Test]
         public void WordsHadler_Should_Not_Throws_WhenFileNotExist()
         {
-            Func<Result<Dictionary<string, int>>> getWordsAndCount = () => wordsHandler.GetWordsAndCount("kkk");
+            Func<Result<Dictionary<string, int>>> getWordsAndCount = () => wordsHandler.GetWordsAndCount(fileReader.ReadWordsFromFile("kkk").GetValueOrThrow());
             getWordsAndCount.Should().NotThrow();
         }
 

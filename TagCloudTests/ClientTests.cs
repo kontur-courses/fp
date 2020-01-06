@@ -28,13 +28,10 @@ namespace TagCloudTests
             var watch = Stopwatch.StartNew();
             Action action = () =>
             {
-                var thread = new Thread(() => client.Start());
+                var thread = new Thread(() => throw new ArgumentException());
                 thread.Start();
-                while (watch.ElapsedMilliseconds < 5000)
-                {
-                }
-
-                thread.Abort();
+                Thread.Sleep(5000);
+                //thread.Abort();
             };
             action.Should().NotThrow();
         }
