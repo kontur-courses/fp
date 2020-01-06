@@ -47,10 +47,10 @@ namespace TagCloud.Actions
 
         private Result<ImageFormat> TryReadFormat()
         {
-            var defaultFormatName = "png";
+            var defaultFormatName = UserSettings.GetDefaultUserSettings().ImageSettings.FormatName;
             Console.WriteLine("Введите формат в котором хотите сохранить");
             Console.WriteLine("Список доступных форматов :");
-            foreach (var formatName in namesFormatsToSave) Console.WriteLine(formatName);
+            foreach (var formatName in namesFormatsToSave) Console.WriteLine(formatName.Key);
             Console.WriteLine("Оставьте строку пустой, чтоб использовать формат : " + defaultFormatName);
             Console.Write(">>>");
             var name = Console.ReadLine();

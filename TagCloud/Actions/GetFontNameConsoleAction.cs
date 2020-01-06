@@ -16,7 +16,7 @@ namespace TagCloud.Actions
         {
             if (!TryReadFontName(config.AvailableFontNames, out var fontName))
                 return Result.Fail<None>("Введенный шрифт не поддерживается");
-            settings.ImageSettings.ReadFontName(fontName);
+            settings.ImageSettings.FontName = fontName;
             return Result.Ok();
         }
 

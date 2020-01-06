@@ -18,7 +18,7 @@ namespace TagCloud.Actions
         {
             if (!TryReadPaletteName(config.AvailablePaletteNames,settings, out var paletteName))
                 Result.Fail<None>("Введенная палитра не поддерживается");
-            settings.ImageSettings.ReadPaletteName(paletteName);
+            settings.ImageSettings.PaletteName = paletteName;
             return Result.Ok();
         }
 

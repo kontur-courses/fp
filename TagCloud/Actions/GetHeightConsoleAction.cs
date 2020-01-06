@@ -13,7 +13,7 @@ namespace TagCloud.Actions
         {
             if (!TryReadHeight(out var height))
                 return Result.Fail<None>("Введенная высота не является корректной");
-            settings.ImageSettings.ReadHeight(height);
+            settings.ImageSettings.Height = height;
             return Result.Ok();
         }
 

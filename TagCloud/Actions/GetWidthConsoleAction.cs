@@ -13,7 +13,7 @@ namespace TagCloud.Actions
         {
             if (!TryReadWidth(out var width))
                 return Result.Fail<None>("Введенная ширина не является корректной");
-            settings.ImageSettings.ReadWidth(width);
+            settings.ImageSettings.Width = width;
             return Result.Ok();
         }
 
