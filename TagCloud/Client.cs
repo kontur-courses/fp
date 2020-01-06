@@ -50,8 +50,8 @@ namespace TagCloud
         private Result<IConsoleAction> GetCommandResult(string commandName,
             Dictionary<string, IConsoleAction> availableCommands)
         {
-            return availableCommands.ContainsKey(commandName)
-                ? Result.Ok(availableCommands[commandName])
+            return availableCommands.TryGetValue(commandName, out var action)
+                ? Result.Ok(action)
                 : Result.Fail<IConsoleAction>("Unknown command");
         }
     }
