@@ -10,7 +10,7 @@ namespace TagsCloudForm.WordFilters
 {
     public class PartOfSpeechFilter : IWordsFilter
     {
-        public IEnumerable<string> Filter(HashSet<string> partOfSpeechToFilter, IEnumerable<string> words)
+        public Result<IEnumerable<string>> Filter(HashSet<string> partOfSpeechToFilter, IEnumerable<string> words)
         {
             var modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\", "EnglishPOS.nbin");
             var tagDictDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\", "tagdict");
@@ -22,7 +22,7 @@ namespace TagsCloudForm.WordFilters
                 if (!partOfSpeechToFilter.Contains(speechPart[0]))
                     outList.Add(word);
             }
-            return outList;
+            return Result.Ok((IEnumerable<string>)outList);
         }
 
 
@@ -43,7 +43,7 @@ namespace TagsCloudForm.WordFilters
                 return new Result<IEnumerable<string>>("Не удалось загрузить файл с part of speech to filter: "+e.Message, words);
             }
 
-            return Result.Ok(Filter(partOfSpeechToFilter, words));
+            return Filter(partOfSpeechToFilter, words);
         }
     }
 }

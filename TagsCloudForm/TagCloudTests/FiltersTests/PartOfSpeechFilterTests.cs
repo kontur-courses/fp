@@ -14,7 +14,7 @@ namespace TagsCloudTests.FiltersTests
             var words = new string[] { "www", "hello", "asd", "to" };
             var partOfSpeechToFilter = new HashSet<string> { "TO" };
 
-            var filtered = checker.Filter(partOfSpeechToFilter, words);
+            var filtered = checker.Filter(partOfSpeechToFilter, words).Value;
 
             filtered.Should().BeEquivalentTo(new string[] { "www", "hello", "asd" });
         }
@@ -26,7 +26,7 @@ namespace TagsCloudTests.FiltersTests
             var words = new string[] { "www", "hello", "asd", "to" };
             var partOfSpeechToFilter = new HashSet<string>();
 
-            var filtered = checker.Filter(partOfSpeechToFilter, words);
+            var filtered = checker.Filter(partOfSpeechToFilter, words).Value;
 
             filtered.Should().BeEquivalentTo(words);
         }

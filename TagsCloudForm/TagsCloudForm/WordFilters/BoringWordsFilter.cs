@@ -20,19 +20,20 @@ namespace TagsCloudForm.WordFilters
             }
             catch (FileNotFoundException)
             {
-                return new Result<IEnumerable<string>>("Не удалось загрузить файл с boring words: файл отсутствует", words);
+                return new Result<IEnumerable<string>>("Не удалось загрузить файл с boring words: файл отсутствует",
+                    words);
             }
             catch (Exception e)
             {
-                return new Result<IEnumerable<string>>("Не удалось загрузить файл с boring words: "+e.Message, words);
+                return new Result<IEnumerable<string>>("Не удалось загрузить файл с boring words: " + e.Message, words);
             }
 
-            return Result.Ok(words.Where(x => !boringWords.Contains(x)));
+            return Filter(boringWords, words);
         }
 
-        public IEnumerable<string> Filter(HashSet<string> boringWords, IEnumerable<string> words)
-            {
-                return words.Where(x => !boringWords.Contains(x));
-            }
+        public Result<IEnumerable<string>> Filter(HashSet<string> boringWords, IEnumerable<string> words)
+        {
+            return Result.Of(() => words.Where(x => !boringWords.Contains(x)));
         }
+    }
 }

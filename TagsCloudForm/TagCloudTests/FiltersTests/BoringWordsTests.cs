@@ -15,7 +15,7 @@ namespace TagsCloudTests.FiltersTests
             var words = new List<string> { "www", "hello", "asd" };
             var boringWords = new HashSet<string>();
 
-            var filtered = filter.Filter(boringWords, words);
+            var filtered = filter.Filter(boringWords, words).Value;
 
             filtered.Should().BeEquivalentTo(words);
         }
@@ -28,7 +28,7 @@ namespace TagsCloudTests.FiltersTests
             var words = new List<string> { "www", "hello", "asd" };
             var boringWords = new HashSet<string> { "asd", "www"};
 
-            var filtered = filter.Filter(boringWords, words);
+            var filtered = filter.Filter(boringWords, words).Value;
 
             filtered.Should().BeEquivalentTo(new List<string> {"hello"});
         }
