@@ -43,11 +43,16 @@ namespace TagsCloudForm.CloudPainters
             using (var textBrush = new SolidBrush(palette.PrimaryColor))
             using (var backgroundPictureBrush = new SolidBrush(palette.BackgroundColor))
             {
-                graphics.FillRectangle(backgroundPictureBrush, 0, 0, imageSize.Width,
-                    imageSize.Height);
+                Result
+                    .OfAction(() => graphics.FillRectangle(backgroundPictureBrush, 0, 0, imageSize.Width,
+                        imageSize.Height))
+                    .OnError(err => MessageBox.Show(err));
                 foreach (var word in shuffledWords)
                 {
-                    DrawRectangle(graphics, word.Key, word.Value, backgroundBrush, rectPen, textBrush);
+                    Result
+                        .OfAction(() =>
+                            DrawRectangle(graphics, word.Key, word.Value, backgroundBrush, rectPen, textBrush))
+                        .OnError(err=>MessageBox.Show(err));
                 }
             }
 

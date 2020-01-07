@@ -31,6 +31,7 @@ namespace TagsCloudForm.Common
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => !Equals(Value, default(T));
 
         public bool HasErrors => Error != null;
@@ -140,6 +141,15 @@ namespace TagsCloudForm.Common
             if (!input.IsSuccess) handleError(input.Error);
             return input;
         }
+
+        public static Result<TInput> OnError<TInput>(
+            this Result<TInput> input,
+            Action<string> handleError)
+        {
+            if (input.HasErrors) handleError(input.Error);
+            return input;
+        }
+
 
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
