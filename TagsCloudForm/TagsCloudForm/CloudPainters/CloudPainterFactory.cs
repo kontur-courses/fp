@@ -25,7 +25,7 @@ namespace TagsCloudForm.CloudPainters
 
         public Result<ICloudPainter> Create()
         {
-            var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));
+            var layouter = circularCloudLayouterFactory(new Point(settings.CenterX, settings.CenterY));
             layouter.SetCompression(settings.XCompression, settings.YCompression);
             return Result.Ok<ICloudPainter>(new CloudPainter(imageHolder, settings, palette, layouter));
         }

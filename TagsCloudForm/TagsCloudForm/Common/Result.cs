@@ -168,7 +168,7 @@ namespace TagsCloudForm.Common
         public static TInput GetWithOnError<TInput>(this Result<TInput> input, Action<string> onError)
         {
             if (input.Error!=null)
-                onError.Invoke(input.Error);
+                onError(input.Error);
             if (input.Value!=null)
                 return input.Value;
             throw new InvalidOperationException($"No value. Only Error {input.Error}");

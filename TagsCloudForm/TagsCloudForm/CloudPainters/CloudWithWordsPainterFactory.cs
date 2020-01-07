@@ -36,15 +36,15 @@ namespace TagsCloudForm.CloudPainters
 
         public Result<ICloudPainter> Create()
         {
-            var layouter = circularCloudLayouterFactory.Invoke(new Point(settings.CenterX, settings.CenterY));
+            var layouter = circularCloudLayouterFactory(new Point(settings.CenterX, settings.CenterY));
             var filterFuncs = CreateFuncsFromFilters(filters);
             return Result
                 .Of(() => textReader.ReadLines(settings.WordsSource), new List<string>())
                 .Then(x => UseCaseSettings(x, settings))
                 .Then(filterFuncs)
                 .Then(x => parser.GetWordsFrequency(x, settings.Language))
-                .Then(x=> new CloudWithWordsPainter(imageHolder, settings, palette, layouter, x))
-                .Then(x=> (ICloudPainter)x);
+                .Then(x => new CloudWithWordsPainter(imageHolder, settings, palette, layouter, x))
+                .Then(x => (ICloudPainter)x);
         }
 
         private IEnumerable<string> UseCaseSettings(IEnumerable<string> input, ICircularCloudLayouterWithWordsSettings settings)
@@ -55,9 +55,9 @@ namespace TagsCloudForm.CloudPainters
         }
 
         private IEnumerable<Func<IEnumerable<string>, Result<IEnumerable<string>>>> CreateFuncsFromFilters(
-            IEnumerable<IWordsFilter> filters)
+            IEnumerable<IWordsFilter> wordFilters)
         {
-            return filters.Select<IWordsFilter, Func<IEnumerable<string>, Result<IEnumerable<string>>>>(
+            return wordFilters.Select<IWordsFilter, Func<IEnumerable<string>, Result<IEnumerable<string>>>>(
                 x => a => x.Filter(settings, a)
             );
         }
