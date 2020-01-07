@@ -9,13 +9,13 @@ namespace TagsCloudForm
         public Dictionary<string, int> GetWordsFrequency(IEnumerable<string> lines, LanguageEnum language)
         {
             var frequencies = new Dictionary<string, int>();
-            lines.ToList().ForEach(line =>
+            foreach (var line in lines)
             {
                 if (frequencies.ContainsKey(line))
                     frequencies[line] = frequencies[line] + 1;
                 else
                     frequencies.Add(line, 1);
-            });
+            }
 
             return frequencies;
         }
