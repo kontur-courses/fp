@@ -33,7 +33,7 @@ namespace TagsCloudForm.WordFilters
 
         public Result<IEnumerable<string>> Filter(HashSet<string> boringWords, IEnumerable<string> words)
         {
-            return Result.Of(() => words.Where(x => !boringWords.Contains(x)));
+            return Result.Of(() => words.Where(x => !boringWords.Contains(x)), words);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace TagsCloudForm.WordFilters
                 }
             else
                 return new Result<IEnumerable<string>>("Выбранный язык на данный момент не поддерживается", words);
-            return Result.Of(() => words.Where(x=>checker.Spell(x.ToLower())));
+            return Result.Of(() => words.Where(x=>checker.Spell(x.ToLower())), words);
         }
 
         public Result<IEnumerable<string>> Filter(ICircularCloudLayouterWithWordsSettings settings, IEnumerable<string> words)
