@@ -37,12 +37,13 @@ namespace TagsCloudForm.CloudPainters
             var shuffledWords = settings.Ordered
                 ? words.OrderByDescending(x => x.Value)
                 : words.OrderBy(a => rng.Next());
-            var backgroundBrush = new SolidBrush(palette.SecondaryColor);
-            var rectPen = new Pen(palette.PrimaryColor);
-            var textBrush = new SolidBrush(palette.PrimaryColor);
             using (var graphics = imageHolder.StartDrawing())
+            using (var backgroundBrush = new SolidBrush(palette.SecondaryColor))
+            using (var rectPen = new Pen(palette.PrimaryColor))
+            using (var textBrush = new SolidBrush(palette.PrimaryColor))
+            using (var backgroundPictureBrush = new SolidBrush(palette.BackgroundColor))
             {
-                graphics.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Width,
+                graphics.FillRectangle(backgroundPictureBrush, 0, 0, imageSize.Width,
                     imageSize.Height);
                 foreach (var word in shuffledWords)
                 {

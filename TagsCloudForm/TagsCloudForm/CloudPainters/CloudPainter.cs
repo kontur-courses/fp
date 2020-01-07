@@ -26,11 +26,12 @@ namespace TagsCloudForm.CloudPainters
         public void Paint()
         {
             using (var graphics = imageHolder.StartDrawing())
+            using (var backgroundBrush = new SolidBrush(palette.SecondaryColor))
+            using (var rectBrush = new Pen(palette.PrimaryColor))
+            using (var backgroundPictureBrush = new SolidBrush(palette.BackgroundColor))
             {
-                graphics.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Width, imageSize.Height);
+                graphics.FillRectangle(backgroundPictureBrush, 0, 0, imageSize.Width, imageSize.Height);
                 var rnd = new Random();
-                var backgroundBrush = new SolidBrush(palette.SecondaryColor);
-                var rectBrush = new Pen(palette.PrimaryColor);
                 for (var i = 0; i < settings.IterationsCount; i++)
                 {
                     var rectangleSize = new Size(rnd.Next(settings.MinSize, settings.MaxSize),
