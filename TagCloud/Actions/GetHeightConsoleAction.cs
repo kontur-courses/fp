@@ -11,17 +11,19 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!TryReadHeight(out var height))
-                return Result.Fail<None>("Введенная высота не является корректной");
-            settings.ImageSettings.Height = height;
-            return Result.Ok();
+            return ReadHeight()
+                .Then(h => settings.ImageSettings.Height = h)
+                .Then(h => Result.Ok())
+                .OnFail(error => Result.Fail<None>(error));
         }
 
-        private static bool TryReadHeight(out int height)
+        private Result<int> ReadHeight()
         {
             Console.WriteLine("Введите высоту изображения");
             Console.Write(">>>");
-            return int.TryParse(Console.ReadLine(), out height) && height > 0;
+            return int.TryParse(Console.ReadLine(), out var height) && height > 0 
+                ? Result.Ok(height)
+                : Result.Fail<int>("Введенная высота не является корректной");
         }
     }
 }

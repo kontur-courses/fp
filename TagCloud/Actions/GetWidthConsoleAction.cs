@@ -11,17 +11,20 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!TryReadWidth(out var width))
-                return Result.Fail<None>("Введенная ширина не является корректной");
-            settings.ImageSettings.Width = width;
-            return Result.Ok();
+            return ReadWidth()
+                .Then(h => settings.ImageSettings.Height = h)
+                .Then(h => Result.Ok())
+                .OnFail(error => Result.Fail<None>(error));
         }
 
-        private static bool TryReadWidth(out int width)
+
+        private Result<int> ReadWidth()
         {
             Console.WriteLine("Введите ширину изображения");
             Console.Write(">>>");
-            return int.TryParse(Console.ReadLine(), out width) && width > 0;
+            return int.TryParse(Console.ReadLine(), out var width) && width > 0
+                ? Result.Ok(width)
+                : Result.Fail<int>("Введенная ширина не является корректной");
         }
     }
 }
