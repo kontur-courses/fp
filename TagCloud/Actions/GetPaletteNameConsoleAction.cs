@@ -16,14 +16,13 @@ namespace TagCloud.Actions
         public string Description { get; } = "Задать палитру";
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!TryReadPaletteName(config.AvailablePaletteNames,settings, out var paletteName))
-                Result.Fail<None>("Введенная палитра не поддерживается");
-            settings.ImageSettings.PaletteName = paletteName;
-            return Result.Ok();
+            return ReadPaletteName(config.AvailablePaletteNames)
+                .Then(palette => settings.ImageSettings.PaletteName = palette)
+                .Then(r => Result.Ok())
+                .OnFail(error => Result.Fail<None>(error));
         }
 
-        private static bool TryReadPaletteName(HashSet<string> availablePaletteNames, UserSettings settings
-            , out string paletteName)
+        private Result<string> ReadPaletteName(HashSet<string> availablePaletteNames)
         {
             var defaultPaletteName = UserSettings.DefaultSettings.ImageSettings.PaletteName;
             Console.WriteLine("Введите название палитры");
@@ -32,11 +31,11 @@ namespace TagCloud.Actions
                 Console.WriteLine(name);
             Console.WriteLine("Оставьте строку пустой, чтоб использовать палитру: " + defaultPaletteName);
             Console.Write(">>>");
-            paletteName = Console.ReadLine();
-            paletteName = paletteName == string.Empty
-                ? defaultPaletteName
-                : paletteName;
-            return availablePaletteNames.Contains(paletteName);
+            return Result.Of(() => Console.ReadLine())
+                .Then(palette => palette == string.Empty ? defaultPaletteName : palette)
+                .Then(palette => availablePaletteNames.Contains(palette)
+                    ? Result.Ok(palette)
+                    : Result.Fail<string>("Введенная палитра не поддерживается"))
         }
     }
 }
