@@ -14,16 +14,20 @@ namespace TagCloud.Actions
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             var defaultPathToRead = UserSettings.DefaultSettings.PathToRead;
-            Console.WriteLine("Укажите путь к файлу с тегами");
-            Console.WriteLine("Оставьте строку пустой, чтоб использовать путь: " + defaultPathToRead);
-            Console.Write(">>>");
-            var pathToRead = Console.ReadLine();
-            settings.PathToRead = pathToRead == string.Empty
-                ? defaultPathToRead
-                : pathToRead;
-            return !File.Exists(settings.PathToRead) 
-                ? Result.Fail<None>($"Файл '{pathToRead}' не существует")
-                : Result.Ok();
+            return Result.OfAction(() =>
+                {
+                    Console.WriteLine("Укажите путь к файлу с тегами");
+                    Console.WriteLine("Оставьте строку пустой, чтоб использовать путь: " + defaultPathToRead);
+                    Console.Write(">>>");
+                })
+                .Then(str => Console.ReadLine())
+                .Then(pathToRead => pathToRead == string.Empty
+                    ? defaultPathToRead
+                    : pathToRead)
+                .Then(pathToRead => File.Exists(pathToRead)
+                    ? settings.PathToRead = pathToRead
+                    : throw new ArgumentException($"Файл '{pathToRead}' не существует"))
+                .Then(str => Result.Ok());
         }
     }
 }
