@@ -39,11 +39,10 @@ namespace TagCloud
             {
                 Console.WriteLine("Введите команду");
                 Console.Write(">>>");
-                var performResult = Result.Of(() => Console.ReadLine().ToLower())
+                Result.Of(() => Console.ReadLine().ToLower())
                     .Then(command => GetCommandResult(command, actionsDictionary))
-                    .Then(commandResult => commandResult.Perform(config, userSettings));
-                if (!performResult.IsSuccess)
-                    Console.WriteLine(performResult.Error);
+                    .Then(commandResult => commandResult.Perform(config, userSettings))
+                    .OnFail(error => Console.WriteLine(error));
             }
         }
 
