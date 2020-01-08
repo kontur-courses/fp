@@ -14,14 +14,14 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (!TryReadFontName(config.AvailableFontNames, out var fontName))
-                return Result.Fail<None>("Введенный шрифт не поддерживается");
-            settings.ImageSettings.FontName = fontName;
-            return Result.Ok();
+            return ReadFontNameResult(config.AvailableFontNames)
+                .Then(font => settings.ImageSettings.FontName = font)
+                .Then(r => Result.Ok())
+                .OnFail(error => Result.Fail<None>(error));
         }
 
 
-        private bool TryReadFontName(HashSet<string> availableFontNames, out string fontName)
+        private Result<string> ReadFontNameResult(HashSet<string> availableFontNames)
         {
             var defaultFontName = UserSettings.DefaultSettings.ImageSettings.FontName;
             Console.WriteLine("Введите шрифт");
@@ -30,11 +30,11 @@ namespace TagCloud.Actions
                 Console.WriteLine(availableFontName);
             Console.WriteLine("Оставьте строку пустой, чтоб использовать шрифт: " + defaultFontName);
             Console.Write(">>>");
-            fontName = Console.ReadLine();
-            fontName = fontName == string.Empty
-                ? defaultFontName
-                : fontName;
-            return availableFontNames.Contains(fontName);
+            return Result.Of(() => Console.ReadLine())
+                .Then(font => font == string.Empty ? defaultFontName : font)
+                .Then(font => availableFontNames.Contains(font)
+                    ? Result.Ok(font)
+                    : Result.Fail<string>("Введенный шрифт не поддерживается"));
         }
     }
 }
