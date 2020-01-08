@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ResultOf;
-using TagCloud.IServices;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
 {
     public class GetFontNameConsoleAction : IConsoleAction
     {
-        public string CommandName { get; }= "-readfontname";
+        public string CommandName { get; } = "-readfontname";
 
         public string Description { get; } = "Задать шрифт";
 

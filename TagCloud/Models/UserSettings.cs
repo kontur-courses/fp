@@ -13,7 +13,13 @@ namespace TagCloud.Models
 
         public ImageSettings ImageSettings { get; set; }
         public string PathToRead { get; set; }
-        public static UserSettings DefaultSettings { get; } = UserSettings.GetDefaultUserSettings();
+        public static UserSettings DefaultSettings { get; } = GetDefaultUserSettings();
+
+        public object Clone()
+        {
+            return new UserSettings(ImageSettings.Clone() as ImageSettings, PathToRead);
+        }
+
         public static UserSettings GetDefaultUserSettings()
         {
             var defaultPath = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.FullName}\\test.txt";
@@ -38,11 +44,6 @@ namespace TagCloud.Models
             return !(obj is null) &&
                    PathToRead == settings.PathToRead &&
                    ImageSettings.Equals(settings.ImageSettings);
-        }
-
-        public object Clone()
-        {
-            return new UserSettings(ImageSettings.Clone() as ImageSettings,PathToRead);
         }
     }
 }

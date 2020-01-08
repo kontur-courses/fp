@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using ResultOf;
 using TagCloud.Models;
 using TagCloud.Services;
@@ -15,6 +12,7 @@ namespace TagCloud.Actions
     {
         private readonly Dictionary<string, ImageFormat> namesFormatsToSave;
         private readonly IFormatReader pictureFormatReader;
+
         public SaveImageConsoleAction(IFormatReader pictureFormatReader)
         {
             namesFormatsToSave = ImageFormatCollectionFactory.GetFormats();
@@ -49,11 +47,11 @@ namespace TagCloud.Actions
         {
             return Result.Of(() => readFormatResult)
                 .Then(result =>
-             {
-                 Console.WriteLine("Введите путь для сохранения картинки");
-                 Console.WriteLine("Оставьте строку пустой, чтоб сохранить в: " + Path.GetTempPath());
-                 Console.Write(">>>");
-             })
+                {
+                    Console.WriteLine("Введите путь для сохранения картинки");
+                    Console.WriteLine("Оставьте строку пустой, чтоб сохранить в: " + Path.GetTempPath());
+                    Console.Write(">>>");
+                })
                 .Then(str => Console.ReadLine())
                 .Then(path => path == string.Empty ? Path.GetTempPath() + "\\image." + readFormatResult : path);
         }

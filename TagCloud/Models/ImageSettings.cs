@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace TagCloud.Models
@@ -37,14 +36,19 @@ namespace TagCloud.Models
         public string PaletteName { get; set; }
         public string FormatName { get; set; }
 
+        public object Clone()
+        {
+            return new ImageSettings(Width, Height, FontName, PaletteName);
+        }
+
         public static ImageSettings GetDefaultSettings()
         {
-            return new ImageSettings(500,500,"Arial","ShadesOfBlue","png");
+            return new ImageSettings(500, 500, "Arial", "ShadesOfBlue", "png");
         }
 
         public override int GetHashCode()
         {
-            return this.GetType().GetProperties().Sum(p => p.GetHashCode());
+            return GetType().GetProperties().Sum(p => p.GetHashCode());
         }
 
         public override bool Equals(object obj)
@@ -54,11 +58,6 @@ namespace TagCloud.Models
                    Width == settings.Width && Height == settings.Height &&
                    FontName == settings.FontName && PaletteName == settings.PaletteName &&
                    FormatName == settings.FormatName;
-        }
-
-        public object Clone()
-        {
-            return new ImageSettings(Width,Height,FontName,PaletteName);
         }
     }
 }

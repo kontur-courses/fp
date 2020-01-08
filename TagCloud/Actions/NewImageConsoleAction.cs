@@ -9,7 +9,7 @@ namespace TagCloud.Actions
         public string CommandName { get; } = "-newimage";
         public string Description { get; } = "обновить пользовательские настройки";
 
-        public Result<None> Perform(ClientConfig config,UserSettings settings)
+        public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             Application.Exit();
             settings.MakeDefault();

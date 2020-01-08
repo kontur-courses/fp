@@ -7,8 +7,8 @@ namespace TagCloud.IServices
     {
         public FontSettings CreateFontSettingsOrThrow(string fontName)
         {
-            return  fontName is null 
-                ? throw new ArgumentException("Параметр FontName не определен") 
+            return fontName is null
+                ? throw new ArgumentException("Параметр FontName не определен")
                 : new FontSettings(fontName);
         }
     }

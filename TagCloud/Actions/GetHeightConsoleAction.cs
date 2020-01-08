@@ -21,7 +21,7 @@ namespace TagCloud.Actions
         {
             Console.WriteLine("Введите высоту изображения");
             Console.Write(">>>");
-            return int.TryParse(Console.ReadLine(), out var height) && height > 0 
+            return int.TryParse(Console.ReadLine(), out var height) && height > 0
                 ? Result.Ok(height)
                 : Result.Fail<int>("Введенная высота не является корректной");
         }

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ResultOf;
-using TagCloud.IServices;
 using TagCloud.Models;
 
 namespace TagCloud.Actions
@@ -14,6 +10,7 @@ namespace TagCloud.Actions
         public string CommandName { get; } = "-readpalettename";
 
         public string Description { get; } = "Задать палитру";
+
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             return ReadPaletteName(config.AvailablePaletteNames)

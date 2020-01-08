@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ResultOf;
 
 namespace TagCloud.Factories
@@ -13,8 +10,8 @@ namespace TagCloud.Factories
         public Result<HashSet<string>> GetFromFile(string fileName)
         {
             return Result.Of(() => File.ReadAllLines(fileName)
-                    .Select(s => s.ToLower().Trim())
-                    .ToHashSet());
+                .Select(s => s.ToLower().Trim())
+                .ToHashSet());
         }
     }
 }

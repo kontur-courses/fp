@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TagCloud.Models
 {
@@ -11,11 +7,11 @@ namespace TagCloud.Models
     {
         public static Dictionary<string, ImageFormat> GetFormats()
         {
-            return new Dictionary<string, ImageFormat>()
+            return new Dictionary<string, ImageFormat>
             {
                 {"jpg", ImageFormat.Jpeg},
-                {"png", ImageFormat.Png },
-                {"bmp", ImageFormat.Bmp }
+                {"png", ImageFormat.Png},
+                {"bmp", ImageFormat.Bmp}
             };
         }
     }

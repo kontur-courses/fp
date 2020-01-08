@@ -9,7 +9,7 @@ namespace TagCloud.Actions
     public class ShowImageConsoleAction : IConsoleAction
     {
         public string CommandName { get; } = "-showimage";
-        
+
         public string Description { get; } = "display image";
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)

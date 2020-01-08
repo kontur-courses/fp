@@ -11,7 +11,7 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            return Result.OfAction(() =>config.ToExit = true);
+            return Result.OfAction(() => config.ToExit = true);
         }
     }
 }

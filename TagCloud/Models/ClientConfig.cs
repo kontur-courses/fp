@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 
 namespace TagCloud
 {
     public class ClientConfig
     {
-        public ClientConfig(HashSet<string> availableFontNames,HashSet<string> availablePaletteNames
-            ,ICloudVisualization visualization)
+        public ClientConfig(HashSet<string> availableFontNames, HashSet<string> availablePaletteNames
+            , ICloudVisualization visualization)
         {
             Visualization = visualization;
             ToCreateNewImage = false;
