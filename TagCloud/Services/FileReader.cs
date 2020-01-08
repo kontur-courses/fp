@@ -14,7 +14,7 @@ namespace TagCloud.Factories
         private readonly Regex regex;
         public FileReader()
         {
-            regex = new Regex(@"\W|_", RegexOptions.IgnoreCase);
+            regex = new Regex(@"\W|_", RegexOptions.Compiled);
         }
         public Result<IEnumerable<string>> ReadWordsFromFile(string pathToFile)
         {
