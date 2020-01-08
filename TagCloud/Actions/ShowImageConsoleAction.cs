@@ -14,21 +14,22 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            var createImageResult =
-                    config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
-                if (!createImageResult.IsSuccess)
-                    return Result.Fail<None>(createImageResult.Error);
+            Application.Exit();
+            return config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead)
+                .Then(image => RunApplication(image, config))
+                .OnFail(error => Result.Fail<None>(error));
+        }
 
-                Application.Exit();
+        private void RunApplication(Bitmap image, ClientConfig config)
+        {
             var thread = new Thread(() =>
             {
                 Application.EnableVisualStyles();
-                var showImageForm = new ShowImageForm(createImageResult.Value);
+                var showImageForm = new ShowImageForm(image);
                 config.IsRunning = true;
                 Application.Run(showImageForm);
             });
             thread.Start();
-            return Result.Ok();
         }
     }
 }
