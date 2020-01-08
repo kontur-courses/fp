@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using ResultOf;
 using TagCloud.Models;
 
@@ -24,29 +26,35 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            if (config.ImageToSave is null || !settings.Equals(lastSettings))
-            {
-                if (!(config.ImageToSave is null))
-                    config.ImageToSave.Dispose();
-                var createImageResult =
-                    config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead);
-                if (!createImageResult.IsSuccess)
-                    return Result.Fail<None>(createImageResult.Error);
-                config.ImageToSave = createImageResult.GetValueOrThrow();
-            }
+            return TryReadFormat()
+                .OnFail(error => Result.Fail<None>(error))
+                .Then(formatResult => ReadPath(formatResult))
+                .Then(path => TryToSaveImage(path, config, settings));
+        }
 
-            Console.WriteLine("Введите путь для сохранения картинки");
-            Console.WriteLine("Оставьте строку пустой, чтоб сохранить в: " + Path.GetTempPath());
-            Console.Write(">>>");
-            var path = Console.ReadLine();
-            var imageFormat = TryReadFormat();
-            if (!imageFormat.IsSuccess)
-                return Result.Fail<None>(imageFormat.Error);
-            path = path == string.Empty ? Path.GetTempPath() + "\\image." + imageFormat.Value : path;
-            config.ImageToSave.Save(path, imageFormat.GetValueOrThrow());
-            Console.WriteLine($"Файл сохранен в {path}");
-            lastSettings = settings.Clone() as UserSettings;
-            return Result.Ok();
+        private Result<None> TryToSaveImage(string path, ClientConfig config, UserSettings settings)
+        {
+            return config.Visualization.GetAndDrawRectangles(settings.ImageSettings, settings.PathToRead)
+                .OnFail(r => Result.Fail<None>(r))
+                .Then(bitmap =>
+                {
+                    bitmap.Save(path);
+                    bitmap.Dispose();
+                    Console.WriteLine($"Файл сохранен в {path}");
+                });
+        }
+
+        private Result<string> ReadPath(ImageFormat readFormatResult)
+        {
+            return Result.Of(() => readFormatResult)
+                .Then(result =>
+             {
+                 Console.WriteLine("Введите путь для сохранения картинки");
+                 Console.WriteLine("Оставьте строку пустой, чтоб сохранить в: " + Path.GetTempPath());
+                 Console.Write(">>>");
+             })
+                .Then(str => Console.ReadLine())
+                .Then(path => path == string.Empty ? Path.GetTempPath() + "\\image." + readFormatResult : path);
         }
 
         private Result<ImageFormat> TryReadFormat()
