@@ -11,9 +11,8 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            Application.Exit();
-            settings.MakeDefault();
-            return Result.Ok();
+            return Result.OfAction(Application.Exit)
+                .Then(result =>settings.MakeDefault());
         }
     }
 }
