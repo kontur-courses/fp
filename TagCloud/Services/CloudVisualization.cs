@@ -39,8 +39,11 @@ namespace TagCloud
                     throw  new Exception(tagRectanglesResult.Error);
                 var rectangles = RectanglesCustomizer.GetRectanglesWithPalette(palette, tagRectanglesResult.Value);
                 foreach (var rectangle in rectangles)
+                {
                     graphics.DrawString(rectangle.Tag.Text, rectangle.Tag.Font, new SolidBrush(rectangle.Color),
                         rectangle.Area.Location);
+                    rectangle.Tag.Font.Dispose();
+                }
             }
 
             return image;
