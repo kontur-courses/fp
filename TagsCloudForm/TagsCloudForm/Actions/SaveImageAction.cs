@@ -28,9 +28,9 @@ namespace TagsCloudForm.Actions
             {
                 CheckFileExists = false,
                 InitialDirectory = Path.GetFullPath(imageDirectoryProvider.ImagesDirectory),
-                DefaultExt = "bmp",
-                FileName = "image.bmp",
-                Filter = "Изображения (*.bmp)|*.bmp" 
+                DefaultExt = "png",
+                FileName = "image.png",
+                Filter = "Изображения (*.png)|*.png" 
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
