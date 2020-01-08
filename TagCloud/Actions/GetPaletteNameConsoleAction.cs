@@ -35,7 +35,7 @@ namespace TagCloud.Actions
                 .Then(palette => palette == string.Empty ? defaultPaletteName : palette)
                 .Then(palette => availablePaletteNames.Contains(palette)
                     ? Result.Ok(palette)
-                    : Result.Fail<string>("Введенная палитра не поддерживается"))
+                    : Result.Fail<string>("Введенная палитра не поддерживается"));
         }
     }
 }
