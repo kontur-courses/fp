@@ -9,25 +9,27 @@ namespace TagsCloudForm.CloudPainters
     {
         private readonly IImageHolder imageHolder;
         private readonly IPalette palette;
-        private readonly Func<Point, ICircularCloudLayouter> circularCloudLayouterFactory;
+        private readonly Func<Point, ICircularCloudLayouter> makeLayouter;
         private readonly CircularCloudLayouterSettings.ICircularCloudLayouterSettings settings;
         public CloudPainterFactory(IImageHolder imageHolder,
             IPalette palette,
             CircularCloudLayouterSettings.ICircularCloudLayouterSettings settings,
-            Func<Point, ICircularCloudLayouter> circularCloudLayouterFactory)
+            Func<Point, ICircularCloudLayouter> makeLayouter)
         {
             
             this.imageHolder = imageHolder;
             this.palette = palette;
-            this.circularCloudLayouterFactory = circularCloudLayouterFactory;
+            this.makeLayouter = makeLayouter;
             this.settings = settings;
         }
 
         public Result<ICloudPainter> Create()
         {
-            var layouter = circularCloudLayouterFactory(new Point(settings.CenterX, settings.CenterY));
-            layouter.SetCompression(settings.XCompression, settings.YCompression);
-            return Result.Ok<ICloudPainter>(new CloudPainter(imageHolder, settings, palette, layouter));
+            return Result
+                .Of(() => makeLayouter(new Point(settings.CenterX, settings.CenterY)))
+                .ThenAct(x=>x.SetCompression(settings.XCompression, settings.YCompression))
+                .Then(x=> new CloudPainter(imageHolder, settings, palette, x))
+                .Then(x=>(ICloudPainter)x);
         }
     }
 }

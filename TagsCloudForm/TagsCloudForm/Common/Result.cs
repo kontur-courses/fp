@@ -122,6 +122,23 @@ namespace TagsCloudForm.Common
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
+        public static Result<TInput> ThenAct<TInput>(
+            this Result<TInput> input,
+            Action<TInput> continuation)
+        {
+            try
+            {
+                continuation(input.Value);
+            }
+            catch(Exception e)
+            {
+                input.AddError(e.Message);
+            }
+
+            return input;
+        }
+
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)

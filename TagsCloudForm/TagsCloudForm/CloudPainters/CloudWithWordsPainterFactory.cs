@@ -14,7 +14,7 @@ namespace TagsCloudForm.CloudPainters
     {
         private readonly IImageHolder imageHolder;
         private readonly IPalette palette;
-        private readonly Func<Point, ICircularCloudLayouter> circularCloudLayouterFactory;
+        private readonly Func<Point, ICircularCloudLayouter> makeLayouter;
         private readonly ICircularCloudLayouterWithWordsSettings settings;
         private readonly IWordsFilter[] filters;
         private readonly IWordsFrequencyParser parser;
@@ -23,11 +23,11 @@ namespace TagsCloudForm.CloudPainters
             IPalette palette,
             ICircularCloudLayouterWithWordsSettings settings,
             ITextReader textReader,
-            Func<Point, ICircularCloudLayouter> circularCloudLayouterFactory, IWordsFilter[] filters, IWordsFrequencyParser parser)
+            Func<Point, ICircularCloudLayouter> makeLayouter, IWordsFilter[] filters, IWordsFrequencyParser parser)
         {
             this.imageHolder = imageHolder;
             this.palette = palette;
-            this.circularCloudLayouterFactory = circularCloudLayouterFactory;
+            this.makeLayouter = makeLayouter;
             this.settings = settings;
             this.filters = filters;
             this.parser = parser;
@@ -36,7 +36,7 @@ namespace TagsCloudForm.CloudPainters
 
         public Result<ICloudPainter> Create()
         {
-            var layouter = circularCloudLayouterFactory(new Point(settings.CenterX, settings.CenterY));
+            var layouter = makeLayouter(new Point(settings.CenterX, settings.CenterY));
             var filterFuncs = CreateFuncsFromFilters(filters);
             return Result
                 .Of(() => textReader.ReadLines(settings.WordsSource), new List<string>())

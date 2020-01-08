@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using CircularCloudLayouter;
-using OpenNLP.Tools.Trees.TRegex.Tsurgeon;
 using TagsCloudForm.CircularCloudLayouterSettings;
 using TagsCloudForm.Common;
 
@@ -11,14 +10,14 @@ namespace TagsCloudForm.CloudPainters
     public class CloudPainter : ICloudPainter
     {
         private readonly IImageHolder imageHolder;
-        private readonly CircularCloudLayouterSettings.ICircularCloudLayouterSettings settings;
+        private readonly ICircularCloudLayouterSettings settings;
         private readonly IPalette palette;
         private Size imageSize;
         private ICircularCloudLayouter layouter;
         private Random rnd;
 
         public CloudPainter(IImageHolder imageHolder,
-            CircularCloudLayouterSettings.ICircularCloudLayouterSettings settings, IPalette palette, ICircularCloudLayouter layouter)
+            ICircularCloudLayouterSettings settings, IPalette palette, ICircularCloudLayouter layouter)
         {
             this.imageHolder = imageHolder;
             this.settings = settings;
