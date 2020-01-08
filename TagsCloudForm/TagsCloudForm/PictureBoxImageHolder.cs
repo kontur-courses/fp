@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -34,6 +35,7 @@ namespace TagsCloudForm
 
         public void RecreateImage(ImageSettings imageSettings)
         {
+            Image?.Dispose();
             Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
         }
 
@@ -41,6 +43,13 @@ namespace TagsCloudForm
         {
             FailIfNotInitialized();
             Image.Save(fileName);
+        }
+
+
+        protected override void Dispose(bool disposing)
+        {
+            Image?.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
