@@ -8,16 +8,10 @@ namespace TagsCloudForm
     {
         public Dictionary<string, int> GetWordsFrequency(IEnumerable<string> lines, LanguageEnum language)
         {
-            var frequencies = new Dictionary<string, int>();
-            foreach (var line in lines)
-            {
-                if (frequencies.ContainsKey(line))
-                    frequencies[line] = frequencies[line] + 1;
-                else
-                    frequencies.Add(line, 1);
-            }
-
-            return frequencies;
+            return lines
+                .GroupBy(x => x)
+                .Select(x=>(x.Key.ToString(), x.Count()))
+                .ToDictionary(x=>x.Item1, x=>x.Item2);
         }
     }
 }
