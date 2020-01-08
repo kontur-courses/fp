@@ -7,28 +7,29 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using ResultOf;
 using TagCloud.Models;
+using TagCloud.Services;
 
 namespace TagCloud.Actions
 {
     public class SaveImageConsoleAction : IConsoleAction
     {
         private readonly Dictionary<string, ImageFormat> namesFormatsToSave;
-
-        public SaveImageConsoleAction()
+        private readonly IFormatReader pictureFormatReader;
+        public SaveImageConsoleAction(IFormatReader pictureFormatReader)
         {
             namesFormatsToSave = ImageFormatCollectionFactory.GetFormats();
+            this.pictureFormatReader = pictureFormatReader;
         }
 
-        private UserSettings lastSettings;
         public string CommandName { get; } = "-saveimage";
 
         public string Description { get; } = "save image";
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            return TryReadFormat()
+            return pictureFormatReader.ReadFormat(namesFormatsToSave)
                 .OnFail(error => Result.Fail<None>(error))
-                .Then(formatResult => ReadPath(formatResult))
+                .Then(formatResult => ReadAndGetPath(formatResult))
                 .Then(path => TryToSaveImage(path, config, settings));
         }
 
@@ -44,7 +45,7 @@ namespace TagCloud.Actions
                 });
         }
 
-        private Result<string> ReadPath(ImageFormat readFormatResult)
+        private Result<string> ReadAndGetPath(ImageFormat readFormatResult)
         {
             return Result.Of(() => readFormatResult)
                 .Then(result =>
@@ -55,25 +56,6 @@ namespace TagCloud.Actions
              })
                 .Then(str => Console.ReadLine())
                 .Then(path => path == string.Empty ? Path.GetTempPath() + "\\image." + readFormatResult : path);
-        }
-
-        private Result<ImageFormat> TryReadFormat()
-        {
-            var defaultFormatName = UserSettings.DefaultSettings.ImageSettings.FontName;
-            Console.WriteLine("Введите формат в котором хотите сохранить");
-            Console.WriteLine("Список доступных форматов :");
-            foreach (var formatName in namesFormatsToSave) Console.WriteLine(formatName.Key);
-            Console.WriteLine("Оставьте строку пустой, чтоб использовать формат : " + defaultFormatName);
-            Console.Write(">>>");
-            var name = Console.ReadLine();
-            name = name == string.Empty
-                ? defaultFormatName
-                : name;
-            return Result.Of(() =>
-            {
-                if (namesFormatsToSave.ContainsKey(name)) return namesFormatsToSave[name];
-                throw new ArgumentException("Введенный формат не поддреживается");
-            });
         }
     }
 }
