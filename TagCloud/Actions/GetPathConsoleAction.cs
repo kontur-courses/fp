@@ -13,7 +13,7 @@ namespace TagCloud.Actions
 
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
-            var defaultPathToRead = UserSettings.GetDefaultUserSettings().PathToRead;
+            var defaultPathToRead = UserSettings.DefaultSettings.PathToRead;
             Console.WriteLine("Укажите путь к файлу с тегами");
             Console.WriteLine("Оставьте строку пустой, чтоб использовать путь: " + defaultPathToRead);
             Console.Write(">>>");

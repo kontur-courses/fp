@@ -23,7 +23,7 @@ namespace TagCloud.Actions
 
         private bool TryReadFontName(HashSet<string> availableFontNames, out string fontName)
         {
-            var defaultFontName = UserSettings.GetDefaultUserSettings().ImageSettings.FontName;
+            var defaultFontName = UserSettings.DefaultSettings.ImageSettings.FontName;
             Console.WriteLine("Введите шрифт");
             Console.WriteLine("Список доступных шрифтов :");
             foreach (var availableFontName in availableFontNames)

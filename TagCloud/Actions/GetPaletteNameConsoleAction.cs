@@ -25,7 +25,7 @@ namespace TagCloud.Actions
         private static bool TryReadPaletteName(HashSet<string> availablePaletteNames, UserSettings settings
             , out string paletteName)
         {
-            var defaultPaletteName = UserSettings.GetDefaultUserSettings().ImageSettings.PaletteName;
+            var defaultPaletteName = UserSettings.DefaultSettings.ImageSettings.PaletteName;
             Console.WriteLine("Введите название палитры");
             Console.WriteLine("Список доступных палитр :");
             foreach (var name in availablePaletteNames)
