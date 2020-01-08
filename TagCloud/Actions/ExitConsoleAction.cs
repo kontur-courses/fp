@@ -12,8 +12,6 @@ namespace TagCloud.Actions
         public Result<None> Perform(ClientConfig config, UserSettings settings)
         {
             config.ToExit = true;
-            if (!(config.ImageToSave is null))
-                config.ImageToSave.Dispose();
             return Result.Ok();
         }
     }

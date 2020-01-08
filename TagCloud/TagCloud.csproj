@@ -67,9 +67,9 @@
     <Compile Include="Actions\NewImageConsoleAction.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Factories\BoringWordsFactory.cs" />
-    <Compile Include="Factories\FileReader.cs" />
+    <Compile Include="Services\FileReader.cs" />
     <Compile Include="Factories\IBoringWordsFactory.cs" />
-    <Compile Include="Factories\IFileReader.cs" />
+    <Compile Include="Services\IFileReader.cs" />
     <Compile Include="Models\ClientConfig.cs" />
     <Compile Include="Factories\FontSettingsFactory.cs" />
     <Compile Include="IClient.cs" />
@@ -77,7 +77,6 @@
     <Compile Include="Factories\IPaletteDictionaryFactory.cs" />
     <Compile Include="Factories\IPaletteNamesFactory.cs" />
     <Compile Include="Factories\ITagCollectionFactory.cs" />
-    <Compile Include="Models\DefaultSettings.cs" />
     <Compile Include="Parsers\IWordsToTagsParser.cs" />
     <Compile Include="Actions\SaveImageConsoleAction.cs" />
     <Compile Include="Actions\ShowImageConsoleAction.cs" />
@@ -91,6 +90,8 @@
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\TagRectangle.cs" />
     <Compile Include="Models\UserSettings.cs" />
+    <Compile Include="Services\IFormatReader.cs" />
+    <Compile Include="Services\PictureFormatReader.cs" />
     <Compile Include="Services\RectanglesCustomizer.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="ShowImageForm.cs">

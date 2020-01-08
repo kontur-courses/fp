@@ -40,13 +40,13 @@ namespace TagCloud
                 Console.WriteLine("Введите команду");
                 Console.Write(">>>");
                 Result.Of(() => Console.ReadLine().ToLower())
-                    .Then(command => GetCommandResult(command, actionsDictionary))
+                    .Then(command => ReadCommandResult(command, actionsDictionary))
                     .Then(commandResult => commandResult.Perform(config, userSettings))
                     .OnFail(error => Console.WriteLine(error));
             }
         }
 
-        private Result<IConsoleAction> GetCommandResult(string commandName,
+        private Result<IConsoleAction> ReadCommandResult(string commandName,
             Dictionary<string, IConsoleAction> availableCommands)
         {
             return availableCommands.TryGetValue(commandName, out var action)

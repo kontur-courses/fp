@@ -5,6 +5,7 @@ using Castle.Windsor;
 using TagCloud.Actions;
 using TagCloud.Factories;
 using TagCloud.IServices;
+using TagCloud.Services;
 
 namespace TagCloud
 {
@@ -38,6 +39,7 @@ namespace TagCloud
             container.Register(Component.For<ICloudVisualization>().ImplementedBy<CloudVisualization>());
             container.Register(Component.For<IPaletteNamesFactory>().ImplementedBy<PaletteNamesFactory>()
                 .LifestyleSingleton());
+            container.Register(Component.For<IFormatReader>().ImplementedBy<PictureFormatReader>().LifestyleSingleton());
             container.Register(Component.For<IConsoleAction>().ImplementedBy<NewImageConsoleAction>().LifestyleSingleton());
             container.Register(Component.For<IConsoleAction>().ImplementedBy<SaveImageConsoleAction>().LifestyleSingleton());
             container.Register(Component.For<IConsoleAction>().ImplementedBy<ShowImageConsoleAction>().LifestyleSingleton());

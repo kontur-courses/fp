@@ -11,7 +11,6 @@ namespace TagCloud
             Visualization = visualization;
             ToCreateNewImage = false;
             ToExit = false;
-            ImageToSave = null;
             IsRunning = false;
             AvailableFontNames = availableFontNames;
             AvailablePaletteNames = availablePaletteNames;
@@ -21,7 +20,6 @@ namespace TagCloud
         public bool IsRunning { get; set; }
         public bool ToExit { get; set; }
         public bool ToCreateNewImage { get; set; }
-        public Bitmap ImageToSave { get; set; }
         public HashSet<string> AvailableFontNames { get; }
         public HashSet<string> AvailablePaletteNames { get; }
     }

@@ -11,16 +11,10 @@ namespace TagCloud.Models
             PathToRead = pathToRead;
         }
 
-        public UserSettings()
-        {
-            ImageSettings = new ImageSettings();
-            PathToRead = null;
-        }
-
         public ImageSettings ImageSettings { get; set; }
         public string PathToRead { get; set; }
         public static UserSettings DefaultSettings { get; } = UserSettings.GetDefaultUserSettings();
-        private static UserSettings GetDefaultUserSettings()
+        public static UserSettings GetDefaultUserSettings()
         {
             var defaultPath = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.FullName}\\test.txt";
             return new UserSettings(ImageSettings.GetDefaultSettings(), defaultPath);
