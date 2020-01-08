@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ResultOf;
 using TagCloud.Models;
 
@@ -25,7 +22,7 @@ namespace TagCloud.Services
                 : name;
             return Result.Of(() =>
             {
-                if (availableFormats.TryGetValue(name,out var format)) return format;
+                if (availableFormats.TryGetValue(name, out var format)) return format;
                 throw new ArgumentException("Введенный формат не поддреживается");
             });
         }

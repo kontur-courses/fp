@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using ResultOf;
 using TagCloud.IServices;
 using TagCloud.Models;
@@ -21,18 +19,19 @@ namespace TagCloud
             this.layouter = layouter;
         }
 
-        public Result<List<TagRectangle>> GetRectangles(Graphics graphics, ImageSettings imageSettings, string path = null)
+        public Result<List<TagRectangle>> GetRectangles(Graphics graphics, ImageSettings imageSettings,
+            string path = null)
         {
             layouter.Clear();
             var tagCollection = tagCollectionFactory.Create(imageSettings, path);
-            if(!tagCollection.IsSuccess)
+            if (!tagCollection.IsSuccess)
                 return Result.Fail<List<TagRectangle>>(tagCollection.Error);
             var center = new Point(imageSettings.Width / 2, imageSettings.Height / 2);
-            var rectangles = Result.Of(()=>tagCollection.Value
-                .Select(t => new TagRectangle(
-                    t,
-                    layouter.PutNextRectangle(GetWordSize(t, graphics), center)))
-                .ToList())
+            var rectangles = Result.Of(() => tagCollection.Value
+                    .Select(t => new TagRectangle(
+                        t,
+                        layouter.PutNextRectangle(GetWordSize(t, graphics), center)))
+                    .ToList())
                 .Then(list =>
                 {
                     if (!list.Any(r => IsRectangleInPolygon(r.Area, imageSettings.Width, imageSettings.Height)))
@@ -44,10 +43,11 @@ namespace TagCloud
 
         private static bool IsRectangleInPolygon(RectangleF rectangle, int width, int height)
         {
-            return rectangle.Top>0 && rectangle.Left>0 && 
-                   rectangle.Bottom < height && rectangle.Top > 0 && 
+            return rectangle.Top > 0 && rectangle.Left > 0 &&
+                   rectangle.Bottom < height && rectangle.Top > 0 &&
                    rectangle.Right < width && rectangle.Left > 0;
         }
+
         private static SizeF GetWordSize(Tag tag, Graphics graphics)
         {
             return graphics.MeasureString(tag.Text, tag.Font);

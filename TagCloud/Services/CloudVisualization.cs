@@ -22,21 +22,21 @@ namespace TagCloud
         public Result<Bitmap> GetAndDrawRectangles(ImageSettings imageSettings, string path = "test.txt")
         {
             return Result.Of(() => GetPaletteOrThrow(imageSettings.PaletteName))
-                .Then(palette => GetImageOrThrow(imageSettings,path,palette));
+                .Then(palette => GetImageOrThrow(imageSettings, path, palette));
         }
 
         private Bitmap GetImageOrThrow(ImageSettings imageSettings, string path, Palette palette)
         {
-            if(imageSettings.Width<=0)
+            if (imageSettings.Width <= 0)
                 throw new ArgumentException("Параметр width не определен");
-            if(imageSettings.Height <= 0)
+            if (imageSettings.Height <= 0)
                 throw new ArgumentException("Параметр heigth не определен");
             var image = new Bitmap(imageSettings.Width, imageSettings.Height);
             using (var graphics = Graphics.FromImage(image))
             {
                 var tagRectanglesResult = cloud.GetRectangles(graphics, imageSettings, path);
                 if (!tagRectanglesResult.IsSuccess)
-                    throw  new Exception(tagRectanglesResult.Error);
+                    throw new Exception(tagRectanglesResult.Error);
                 var rectangles = RectanglesCustomizer.GetRectanglesWithPalette(palette, tagRectanglesResult.Value);
                 foreach (var rectangle in rectangles)
                 {
