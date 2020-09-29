@@ -41,7 +41,7 @@ namespace FileSenderRailway
             PrepareDocument(file, signed, now.AddDays(-daysBeforeNow), format);
 
             fileSender.SendFiles(new[] { file }, certificate)
-                .ShouldBeEquivalentTo(new[] { new FileSendResult(file) });
+                .Should().BeEquivalentTo(new[] { new FileSendResult(file) });
             A.CallTo(() => sender.Send(A<Document>.That.Matches(d => d.Content == signed)))
                 .MustHaveHappened();
         }

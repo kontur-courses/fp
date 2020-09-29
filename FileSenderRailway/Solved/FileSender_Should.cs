@@ -39,11 +39,11 @@ namespace FileSenderRailway.Solved
         {
             var signedContent = SomeByteArray();
             var document = PrepareDocument(file, signedContent, now.AddDays(-daysBeforeNow), format);
-
+            var expectedDocument = document.WithContent(signedContent);
             var result = fileSender.PrepareFileToSend(file, certificate);
 
-            result.ShouldBeEquivalentTo(
-                Result.Ok(document.WithContent(signedContent)));
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeEquivalentTo(expectedDocument);
         }
 
         [Test]
