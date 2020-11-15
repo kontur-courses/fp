@@ -1,17 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <LangVersion>8</LangVersion>
+        <RootNamespace>FP</RootNamespace>
     </PropertyGroup>
+
     <PropertyGroup>
-        <StartupObject>ConwaysGameOfLife.Program</StartupObject>
+        <StartupObject />
     </PropertyGroup>
+
     <ItemGroup>
-      <PackageReference Include="FakeItEasy" Version="6.2.1" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
-      <PackageReference Include="Ninject" Version="3.3.4" />
       <PackageReference Include="NUnit" Version="3.12.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="expected-process-result.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="process-large-file.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 </Project>

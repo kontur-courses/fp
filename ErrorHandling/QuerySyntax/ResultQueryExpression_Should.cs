@@ -14,7 +14,7 @@ namespace ResultOfTask
                 "1358571172".ParseIntResult()
                     .SelectMany(i => Convert.ToString(i, 16).AsResult())
                     .SelectMany(hex => (hex + hex + hex + hex).ParseGuidResult());
-            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace ResultOfTask
                 "1358571172".ParseIntResult()
                     .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new { i, hex })
                     .SelectMany(t => (t.hex + t.hex + t.hex + t.hex).ParseGuidResult());
-            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
@@ -36,21 +36,21 @@ namespace ResultOfTask
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
             res.Should().BeOfType<Result<Guid>>();
-            res.ShouldBeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
         public void SupportQueryExpressions_WithComplexSelect()
         {
-            // Тот сценарий, ради которого стоило делать Query Expressions для Result<T>
-            // Обратите внимание на использование i в select
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Query Expressions пїЅпїЅпїЅ Result<T>
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ i пїЅ select
             var res =
                 from i in "1358571172".ParseIntResult()
                 from hex in Convert.ToString(i, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select i + " -> " + guid;
             res.Should().BeOfType<Result<string>>();
-            res.ShouldBeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+            res.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace ResultOfTask
                 from hex in Convert.ToString(i, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult("error is here")
                 select guid;
-            res.ShouldBeEquivalentTo(Result.Fail<Guid>("error is here"));
+            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace ResultOfTask
                 from hex in Result.Of(() => Convert.ToString(i, 100500), "error is here")
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
-            res.ShouldBeEquivalentTo(Result.Fail<Guid>("error is here"));
+            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace ResultOfTask
                 from hex in Convert.ToString(i, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
-            res.ShouldBeEquivalentTo(Result.Fail<Guid>("error is here"));
+            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
     }
 }
