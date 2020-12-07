@@ -16,8 +16,10 @@ namespace TagCloud.Core.Tests
         [SetUp]
         public void SetUp()
         {
-            executablePath = Path.Combine(TestContext.CurrentContext.WorkDirectory, "mystem.exe");
-            converter = new MyStemWordsConverter(new Lemmatizer(new MyStemBuilder(executablePath)));
+            executablePath = Path.Combine(TestContext.CurrentContext.WorkDirectory, "../../../../dlls/", "mystem.exe");
+            converter = new MyStemWordsConverter(
+                new Lemmatizer(new MyStemBuilder(executablePath)),
+                new StubUserNotifier());
         }
 
         [Test]

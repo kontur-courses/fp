@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using FluentAssertions;
+using FunctionalStuff;
+using FunctionalStuff.TestingExtensions;
 using MyStem.Wrapper.Workers.Grammar;
 using MyStem.Wrapper.Workers.Grammar.Raw;
 using MyStem.Wrapper.Wrapper;
@@ -16,7 +18,7 @@ namespace MyStem.Wrapper.Tests
         public void SetUp()
         {
             analyser = new GrammarAnalyser(new MyStemBuilder(Path.Combine(TestContext.CurrentContext.WorkDirectory,
-                "../../../../bin/", "mystem.exe")));
+                "../../../../dlls/", "mystem.exe")));
         }
 
         [Test]
@@ -76,7 +78,10 @@ namespace MyStem.Wrapper.Tests
 
         private AnalysisResultRaw[] PerformTest(string input)
         {
-            var result = analyser.GetRawResult(input);
+            var result = analyser.GetRawResult(input)
+                .ShouldBeSuccessful()
+                .Which
+                .Value();
             foreach (var entry in result)
                 TestContext.Progress.WriteLine(entry.ToString());
             return result;

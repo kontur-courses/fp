@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using TagCloud.Core.Text;
 
 namespace TagCloud.Gui
 {

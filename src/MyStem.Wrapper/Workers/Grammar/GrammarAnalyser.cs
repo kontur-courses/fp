@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FunctionalStuff;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Workers.Grammar.Raw;
 using MyStem.Wrapper.Wrapper;
@@ -9,7 +10,7 @@ namespace MyStem.Wrapper.Workers.Grammar
 {
     public class GrammarAnalyser : IGrammarAnalyser
     {
-        private readonly IMyStem myStem;
+        private readonly Result<IMyStem> myStem;
 
         public GrammarAnalyser(IMyStemBuilder myStemBuilder)
         {
@@ -19,10 +20,11 @@ namespace MyStem.Wrapper.Workers.Grammar
             );
         }
 
-        public AnalysisResultRaw[] GetRawResult(string text)
-        {
-            var rawResult = myStem.GetResponse(text);
-            return JsonConvert.DeserializeObject<IList<AnalysisResultRaw>>(rawResult).ToArray();
-        }
+        public Result<AnalysisResultRaw[]> GetRawResult(string text) =>
+            Check.StringIsEmpty(text, "Input")
+                .ThenValidate(myStem)
+                .Then(x => x.Item2.GetResponse(x.Item1))
+                .Then(r => Check.StringIsEmpty(r, "Output"))
+                .Then(r => JsonConvert.DeserializeObject<IList<AnalysisResultRaw>>(r).ToArray());
     }
 }

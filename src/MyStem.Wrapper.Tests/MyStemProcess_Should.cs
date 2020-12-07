@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using FluentAssertions;
+using FunctionalStuff;
+using FunctionalStuff.TestingExtensions;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Wrapper;
 using NUnit.Framework;
@@ -22,12 +24,12 @@ namespace MyStem.Wrapper.Tests
             );
 
             File.Copy(
-                Path.Combine(TestContext.CurrentContext.WorkDirectory, "../../../../bin/", "mystem.exe"),
+                Path.Combine(TestContext.CurrentContext.WorkDirectory, "../../../../dlls/", "mystem.exe"),
                 path,
                 overwrite: true
             );
 
-            process = new MyStemBuilder(path).Create(MyStemOutputFormat.Text);
+            process = new MyStemBuilder(path).Create(MyStemOutputFormat.Text).GetValueOrThrow();
         }
 
         [Test]
@@ -35,23 +37,26 @@ namespace MyStem.Wrapper.Tests
         {
             File.Delete(path);
 
-            Action test = () => process.GetResponse("бибочка");
-            test.Should()
-                .Throw<FileNotFoundException>();
+            process.GetResponse("бибочка")
+                .ShouldBeFailed()
+                .Which
+                .Error
+                .Should()
+                .ContainAll(path);
         }
 
         [Test]
         public void FileExists_ShouldNotThrow()
         {
-            Action test = () => process.GetResponse("бибочка");
-            test.Should()
-                .NotThrow();
+            process.GetResponse("бибочка")
+                .ShouldBeSuccessful();
         }
 
         [Test]
         public void ReturnCorrectResponse()
         {
             process.GetResponse("упячки")
+                .Value()
                 .Should()
                 .Be("упячки{упячка?}");
         }

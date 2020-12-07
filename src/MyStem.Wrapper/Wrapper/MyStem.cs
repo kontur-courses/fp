@@ -2,57 +2,56 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using FunctionalStuff;
 
 namespace MyStem.Wrapper.Wrapper
 {
     //ТУДУ переписать чтобы каждый раз не стартовать процесс по новой
     internal sealed class MyStem : IMyStem
     {
-        private readonly Func<Process> processFactory;
+        private readonly Func<Result<Process>> processFactory;
 
         public MyStem(string exePath, string launchArgs)
         {
             processFactory = () => CreateProcess(exePath, launchArgs);
         }
 
-        public string GetResponse(string text)
-        {
-            using var process = processFactory.Invoke();
-            return GetResults(process, text);
-        }
+        public Result<string> GetResponse(string text) =>
+            processFactory.Invoke()
+                .DisposeAfter(result => result
+                    .ThenDo(p => ExecuteRequest(p, text))
+                    .Then(ReadResponse));
 
-        private static string GetResults(Process executingProcess, string text)
-        {
-            var bytes = Encoding.UTF8.GetBytes(text);
+        private static Result<string> ReadResponse(Process executingProcess) =>
+            Result.Of(() => executingProcess.StandardOutput.ReadToEnd())
+                .ThenDo(executingProcess.WaitForExit);
 
-            executingProcess.StandardInput.BaseStream.Write(bytes, 0, bytes.Length);
-            executingProcess.StandardInput.Flush();
-            executingProcess.StandardInput.Close();
+        private static Result<None> ExecuteRequest(Process process, string text) =>
+            Result.Of(() => Encoding.UTF8.GetBytes(text))
+                .RefineError($"Cannot get bytes from string {text}")
+                .Then(bytes => process.StandardInput.BaseStream.Write(bytes, 0, bytes.Length))
+                .Then(process.StandardInput.Flush)
+                .Then(process.StandardInput.Close);
 
-            var result = executingProcess.StandardOutput.ReadToEnd();
-            executingProcess.WaitForExit();
-            return result;
-        }
-
-        private static Process CreateProcess(string exePath, string launchArgs)
+        private static Result<Process> CreateProcess(string exePath, string launchArgs)
         {
             if (!File.Exists(exePath))
-                throw new FileNotFoundException($"MyStem executable cannot be found on path {exePath}");
+                return Result.Fail<Process>($"MyStem file cannot be found on path {exePath}");
 
-            var startedProcess = Process.Start(new ProcessStartInfo
-            {
-                FileName = exePath,
-                Arguments = launchArgs,
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardInputEncoding = Encoding.UTF8,
-            });
-            return startedProcess;
+            return Result.Of(() => Process.Start(new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = launchArgs,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    StandardInputEncoding = Encoding.UTF8,
+                }))
+                .RefineError("Cannot start MyStem process");
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace MyStem.Wrapper.Workers.Lemmas
+﻿using FunctionalStuff;
+
+namespace MyStem.Wrapper.Workers.Lemmas
 {
     public interface ILemmatizer
     {
-        string[] GetWords(string text);
+        Result<string[]> GetWords(string text);
     }
 }

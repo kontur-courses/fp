@@ -1,7 +1,9 @@
-﻿namespace MyStem.Wrapper.Wrapper
+﻿using FunctionalStuff;
+
+namespace MyStem.Wrapper.Wrapper
 {
     public interface IMyStem
     {
-        string GetResponse(string text);
+        Result<string> GetResponse(string text);
     }
 }

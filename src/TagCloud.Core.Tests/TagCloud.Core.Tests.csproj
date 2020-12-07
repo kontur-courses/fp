@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="5.10.3"/>
-        <PackageReference Include="nunit" Version="3.12.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="3.15.1"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0"/>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -18,6 +18,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TagCloud.Core\TagCloud.Core.csproj"/>
+        <ProjectReference Include="..\TagCloud.Core\TagCloud.Core.csproj" />
     </ItemGroup>
 </Project>

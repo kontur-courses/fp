@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="5.10.3"/>
-        <PackageReference Include="nunit" Version="3.12.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="3.15.1"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0"/>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -18,7 +18,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MyStem.Wrapper\MyStem.Wrapper.csproj"/>
+        <ProjectReference Include="..\..\FunctionalStuff.TestingExtensions\FunctionalStuff.TestingExtensions.csproj" />
+        <ProjectReference Include="..\MyStem.Wrapper\MyStem.Wrapper.csproj" />
     </ItemGroup>
 
 </Project>

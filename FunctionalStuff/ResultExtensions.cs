@@ -48,6 +48,13 @@ namespace FunctionalStuff
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
 
+        public static Result<None> Then(
+            this Result<None> input,
+            Action continuation)
+        {
+            return input.Then(_ => continuation());
+        }
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
@@ -55,6 +62,33 @@ namespace FunctionalStuff
             return input.IsSuccess
                 ? continuation(input.Value)
                 : Fail<TOutput>(input.Error);
+        }
+
+        public static Result<TInput> ThenDo<TInput>(this Result<TInput> input, Action<TInput> action)
+        {
+            return input.Then(i =>
+            {
+                action(i);
+                return i;
+            });
+        }
+
+        public static Result<TInput> ThenDo<TInput>(this Result<TInput> input, Action action)
+        {
+            return input.ThenDo(i => action());
+        }
+
+        public static Result<TInput> ThenDo<TInput>(
+            this Result<TInput> input,
+            Func<TInput, Result<None>> continuation)
+        {
+            return input.Then(i =>
+            {
+                var continuationResult = continuation(i);
+                return continuationResult.IsSuccess
+                    ? i
+                    : Fail<TInput>(continuationResult.Error);
+            });
         }
 
         public static Result<TInput> OnFail<TInput>(
@@ -83,7 +117,39 @@ namespace FunctionalStuff
         public static T GetValueOrThrow<T>(this Result<T> input)
         {
             if (input.IsSuccess) return input.Value;
-            throw new InvalidOperationException($"No value. Only Error {input.Error}");
+            throw new InvalidOperationException($"No value. Only Error: {input.Error}");
         }
+
+        public static TInput GetValueOrHandleError<TInput>(
+            this Result<TInput> input,
+            TInput continueWith,
+            Action<string> handleError)
+        {
+            if (input.IsSuccess)
+                return input.Value;
+            handleError(input.Error);
+            return continueWith;
+        }
+
+        public static Result<TOutput> DisposeAfter<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<Result<TInput>, Result<TOutput>> continuation)
+            where TInput : IDisposable
+        {
+            if (input.IsSuccess)
+            {
+                using var disposable = input.Value;
+                return continuation(input);
+            }
+
+            return Fail<TOutput>(input.Error);
+        }
+
+        public static Result<Tuple<TInput, TOutput>> ThenValidate<TInput, TOutput>(
+            this Result<TInput> input,
+            Result<TOutput> toValidate) =>
+            input.Then(i => toValidate.IsSuccess
+                ? new Tuple<TInput, TOutput>(i, toValidate.Value)
+                : Fail<Tuple<TInput, TOutput>>(toValidate.Error));
     }
 }

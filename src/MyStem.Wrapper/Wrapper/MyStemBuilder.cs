@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using FunctionalStuff;
 using MyStem.Wrapper.Enums;
 
 namespace MyStem.Wrapper.Wrapper
@@ -13,15 +13,15 @@ namespace MyStem.Wrapper.Wrapper
             this.path = path;
         }
 
-        public IMyStem Create(MyStemOutputFormat outputFormat, params MyStemOptions[] args)
-        {
-            var argsEnumerable = args.Select(OptionToExecutionArg)
-                .Prepend(OutputFormatToExecutionArg(outputFormat));
-            var launchArgs = string.Join(" ", argsEnumerable);
-            return new MyStem(path, launchArgs);
-        }
+        public Result<IMyStem> Create(MyStemOutputFormat outputFormat, params MyStemOptions[] args) =>
+            args.Select(OptionToExecutionArg)
+                .Prepend(OutputFormatToExecutionArg(outputFormat))
+                .ToResult()
+                .Then(arguments => string.Join(" ", arguments))
+                .Then(launchArgs => (IMyStem) new MyStem(path, launchArgs))
+                .RefineError("Error during MyStem creation");
 
-        private static string OptionToExecutionArg(MyStemOptions option) => option switch
+        private static Result<string> OptionToExecutionArg(MyStemOptions option) => option switch
         {
             MyStemOptions.LinearMode => "-n",
             MyStemOptions.CopyEverything => "-c",
@@ -31,17 +31,15 @@ namespace MyStem.Wrapper.Wrapper
             MyStemOptions.JoinSingleLemmaWordForms => "-g",
             MyStemOptions.PrintEndOfSentenceMarker => "-s",
             MyStemOptions.WithContextualDeHomonymy => "-d",
-            _ => throw new ArgumentOutOfRangeException(nameof(option),
-                $"Unsupported {nameof(MyStemOptions)} {option}")
+            _ => Result.Fail<string>($"Unsupported {nameof(MyStemOptions)} {option}")
         };
 
-        private static string OutputFormatToExecutionArg(MyStemOutputFormat format) => format switch
+        private static Result<string> OutputFormatToExecutionArg(MyStemOutputFormat format) => format switch
         {
             MyStemOutputFormat.Json => "--format json",
             MyStemOutputFormat.Xml => "--format xml",
             MyStemOutputFormat.Text => "--format text",
-            _ => throw new ArgumentOutOfRangeException(nameof(format),
-                $"Unsupported {nameof(MyStemOutputFormat)} {format}")
+            _ => Result.Fail<string>($"Unsupported {nameof(MyStemOutputFormat)} {format}")
         };
     }
 }

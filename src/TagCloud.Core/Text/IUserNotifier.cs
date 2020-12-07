@@ -1,4 +1,4 @@
-﻿namespace TagCloud.Gui
+﻿namespace TagCloud.Core.Text
 {
     public interface IUserNotifier
     {
