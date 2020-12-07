@@ -155,7 +155,7 @@ namespace TagCloud.Gui
                 table.Controls.Add(colorsList, 0, 0);
                 table.SetColumnSpan(colorsList, 2);
 
-                var addColorButton = new Button {Text = "Add", Dock = DockStyle.Fill};
+                var addColorButton = new Button {Text = colorInput.AddButtonLabel, Dock = DockStyle.Fill};
                 addColorButton.Click += (_, __) =>
                 {
                     using var colorDialog = CreateColorDialog();
@@ -174,7 +174,7 @@ namespace TagCloud.Gui
                 };
                 table.Controls.Add(addColorButton, 0, 1);
 
-                var removeColorButton = new Button {Text = "Remove", Dock = DockStyle.Fill};
+                var removeColorButton = new Button {Text = colorInput.RemoveButtonLabel, Dock = DockStyle.Fill};
                 removeColorButton.Click += (_, __) =>
                 {
                     if (colorInput.PickedColors.Count == 0)
@@ -219,15 +219,13 @@ namespace TagCloud.Gui
                     Height = 30
                 };
 
-                var isPoint = sizeInput.ShowAsPoint;
-
                 table.Controls.Add(
-                    new Label {Dock = DockStyle.Fill, AutoSize = true, Text = isPoint ? "X coord" : "Width"}, 0, 0);
+                    new Label {Dock = DockStyle.Fill, AutoSize = true, Text = sizeInput.XInputLabel}, 0, 0);
                 var widthInput = CreateIntInput(sizeInput.Width, i => sizeInput.Width = i, DockStyle.Fill);
                 table.Controls.Add(widthInput, 1, 0);
 
                 table.Controls.Add(
-                    new Label {Dock = DockStyle.Fill, AutoSize = true, Text = isPoint ? "Y coord" : "Height"}, 2, 0);
+                    new Label {Dock = DockStyle.Fill, AutoSize = true, Text = sizeInput.YInputLabel}, 2, 0);
                 var heightInput = CreateIntInput(sizeInput.Height, i => sizeInput.Height = i, DockStyle.Fill);
                 table.Controls.Add(heightInput, 3, 0);
                 return table;

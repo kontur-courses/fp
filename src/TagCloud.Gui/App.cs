@@ -14,6 +14,7 @@ using TagCloud.Core.Text.Formatting;
 using TagCloud.Core.Text.Preprocessing;
 using TagCloud.Gui.ImageResizing;
 using TagCloud.Gui.InputModels;
+using TagCloud.Gui.Localization;
 
 namespace TagCloud.Gui
 {
@@ -27,7 +28,7 @@ namespace TagCloud.Gui
         private readonly UserInputOneOptionChoice<IFileResultWriter> writerPicker;
         private readonly UserInputOneOptionChoice<LayouterType> layouterPicker;
         private readonly UserInputOneOptionChoice<FontSizeSourceType> fontSizeSourcePicker;
-        private readonly UserInputOneOptionChoice<FontFamily> fontFamilyPicker;
+        private readonly UserInputOneOptionChoice<FontFamily> fontPicker;
         private readonly UserInputOneOptionChoice<IImageResizer> imageResizerPicker;
         private readonly UserInputOneOptionChoice<ISpeechPartWordsFilter> speechPartFilterPicker;
         private readonly UserInputField filePathInput;
@@ -39,7 +40,8 @@ namespace TagCloud.Gui
         private readonly UserInputColorPalette colorPalettePicker;
         private readonly UserInputMultipleOptionsChoice<MyStemSpeechPart> speechPartPicker;
 
-        public App(IUi ui,
+        public App(IUi ui, IUserInputBuilder inputBuilder,
+            ILocalizationProvider localizationProvider,
             ITagCloudGenerator cloudGenerator,
             IEnumerable<IFileWordsReader> readers,
             IEnumerable<IWordFilter> filters,
@@ -51,26 +53,41 @@ namespace TagCloud.Gui
             this.ui = ui;
             this.cloudGenerator = cloudGenerator;
 
-            readerPicker = UserInput.SingleChoice(ToDictionaryByName(readers), "Words file reader");
-            filterPicker = UserInput.MultipleChoice(ToDictionaryByName(filters), "Words filtering method");
-            writerPicker = UserInput.SingleChoice(ToDictionaryByName(writers), "Result writing method");
-            normalizerPicker = UserInput.SingleChoice(ToDictionaryByName(normalizers), "Words normalization method");
-            imageResizerPicker = UserInput.SingleChoice(ToDictionaryByName(resizers), "Resizing method");
-            speechPartFilterPicker = UserInput.SingleChoice(ToDictionaryByName(speechFilters), "Speech type filter");
-            layouterPicker = UserInput.SingleChoice(DictionaryFromEnum<LayouterType>(), "Layouting algorithm");
-            fontSizeSourcePicker = UserInput.SingleChoice(DictionaryFromEnum<FontSizeSourceType>(), "Font size source");
+            readerPicker = inputBuilder.ServiceChoice(readers, UiLabel.FileReader);
+            writerPicker = inputBuilder.ServiceChoice(writers, UiLabel.WritingMethod);
+            normalizerPicker = inputBuilder.ServiceChoice(normalizers, UiLabel.NormalizationMethod);
+            imageResizerPicker = inputBuilder.ServiceChoice(resizers, UiLabel.ResizingMethod);
+            speechPartFilterPicker = inputBuilder.ServiceChoice(speechFilters, UiLabel.TypeFilter);
+            layouterPicker = inputBuilder.EnumChoice<LayouterType>(UiLabel.LayoutingAlgorithm);
+            fontSizeSourcePicker = inputBuilder.EnumChoice<FontSizeSourceType>(UiLabel.SizeSource);
 
-            filePathInput = UserInput.Field("Enter source file path");
-            fontFamilyPicker = UserInput.SingleChoice(FontFamily.Families.ToDictionary(x => x.Name), "Font family");
-            centerOffsetPicker = UserInput.Size("Cloud center offset", true);
-            betweenWordsDistancePicker = UserInput.Size("Minimal distance between rectangles");
-            imageSizePicker = UserInput.Size("Result image size");
-            backgroundColorPicker = UserInput.Color(Color.Khaki, "Image background color");
-            colorPalettePicker = UserInput.ColorPalette("Words color palette", Color.DarkRed);
-            speechPartPicker = UserInput.MultipleChoice(DictionaryFromEnum<MyStemSpeechPart>(), "Speech parts rules");
+            backgroundColorPicker = inputBuilder.Color(Color.Khaki, UiLabel.BackgroundColor);
+            colorPalettePicker = inputBuilder.ColorPalette(UiLabel.ColorPalette, Color.DarkRed);
 
-            var formats = new[] {ImageFormat.Gif, ImageFormat.Png, ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Tiff};
-            imageFormatPicker = UserInput.SingleChoice(formats.ToDictionary(x => x.ToString()), "Result image format");
+            filePathInput = inputBuilder.Field(UiLabel.SourceFile);
+            centerOffsetPicker = inputBuilder.Size(UiLabel.LayoutingCenterOffset, true);
+            betweenWordsDistancePicker = inputBuilder.Size(UiLabel.LayoutingRectDistance);
+            imageSizePicker = inputBuilder.Size(UiLabel.ImageSize);
+
+            fontPicker = inputBuilder.SingleChoice(FontFamily.Families.ToDictionary(x => x.Name), UiLabel.FontFamily);
+
+            speechPartPicker = inputBuilder.MultipleChoice(
+                Enum.GetValues(typeof(MyStemSpeechPart))
+                    .Cast<MyStemSpeechPart>()
+                    .ToDictionary(localizationProvider.Get),
+                UiLabel.SpeechPart
+            );
+
+            filterPicker = inputBuilder.MultipleChoice(
+                filters.ToDictionary(x => localizationProvider.Get(x.GetType())),
+                UiLabel.FilteringMethod
+            );
+
+            imageFormatPicker = inputBuilder.SingleChoice(
+                new[] {ImageFormat.Gif, ImageFormat.Png, ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Tiff}
+                    .ToDictionary(x => x.ToString()),
+                UiLabel.ImageFormat
+            );
         }
 
         public void Subscribe()
@@ -87,7 +104,7 @@ namespace TagCloud.Gui
             ui.AddUserInput(backgroundColorPicker);
             ui.AddUserInput(colorPalettePicker);
 
-            AddUserInputOrUseDefault(fontFamilyPicker);
+            AddUserInputOrUseDefault(fontPicker);
             AddUserInputOrUseDefault(fontSizeSourcePicker);
 
             AddUserInputOrUseDefault(speechPartFilterPicker);
@@ -130,7 +147,7 @@ namespace TagCloud.Gui
         {
             var selectedLayouterType = layouterPicker.Selected.Value;
             var selectedSizeSourceType = fontSizeSourcePicker.Selected.Value;
-            var fontFamily = fontFamilyPicker.Selected.Value;
+            var fontFamily = fontPicker.Selected.Value;
 
             var resultImage = await cloudGenerator.DrawWordsAsync(
                 selectedSizeSourceType,
@@ -188,11 +205,5 @@ namespace TagCloud.Gui
             else
                 input.SetSelected(input.Available.Single().Name);
         }
-
-        private static Dictionary<string, TService> ToDictionaryByName<TService>(IEnumerable<TService> source) =>
-            source.Where(x => x != null).ToDictionary(x => VisibleName.Get(x.GetType()));
-
-        private static Dictionary<string, TEnum> DictionaryFromEnum<TEnum>() where TEnum : struct, Enum =>
-            Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToDictionary(VisibleName.Get);
     }
 }
