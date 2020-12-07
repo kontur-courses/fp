@@ -22,7 +22,11 @@ namespace TagCloud.Gui.InputModels
 
         UserInputOneOptionChoice<TService> ServiceChoice<TService>(
             IEnumerable<TService> source, UiLabel key);
+        
+        UserInputMultipleOptionsChoice<TService> SeveralServicesChoice<TService>(
+            IEnumerable<TService> source, UiLabel key);
 
         UserInputOneOptionChoice<TEnum> EnumChoice<TEnum>(UiLabel key) where TEnum : struct, Enum;
+        UserInputMultipleOptionsChoice<TEnum> SeveralEnumValuesChoice<TEnum>(UiLabel key) where TEnum : struct, Enum;
     }
 }

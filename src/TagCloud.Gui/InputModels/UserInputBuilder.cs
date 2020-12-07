@@ -41,10 +41,24 @@ namespace TagCloud.Gui.InputModels
                 provider.GetLabel(UiLabel.ButtonRemove));
 
         public UserInputOneOptionChoice<TService> ServiceChoice<TService>(IEnumerable<TService> source, UiLabel key) =>
-            SingleChoice(source.Where(x => x != null).ToDictionary(x => provider.Get(x.GetType())), key);
+            SingleChoice(ToDictionaryByName(source), key);
+
+        public UserInputMultipleOptionsChoice<TService> SeveralServicesChoice<TService>(IEnumerable<TService> source,
+            UiLabel key) =>
+            MultipleChoice(ToDictionaryByName(source), key);
 
         public UserInputOneOptionChoice<TEnum> EnumChoice<TEnum>(UiLabel key) where TEnum : struct, Enum =>
-            SingleChoice(Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToDictionary(provider.Get), key);
+            SingleChoice(DictionaryFromEnum<TEnum>(), key);
+
+        public UserInputMultipleOptionsChoice<TEnum> SeveralEnumValuesChoice<TEnum>(UiLabel key)
+            where TEnum : struct, Enum =>
+            MultipleChoice(DictionaryFromEnum<TEnum>(), key);
+
+        private Dictionary<string, TEnum> DictionaryFromEnum<TEnum>() where TEnum : struct, Enum =>
+            Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToDictionary(provider.Get);
+
+        private Dictionary<string, TService> ToDictionaryByName<TService>(IEnumerable<TService> source) =>
+            source.Where(x => x != null).ToDictionary(x => provider.Get(x.GetType()));
 
         private UserInputSelectorItem<T>[] SelectorItems<T>(IDictionary<string, T> source) =>
             source.Select(x => new UserInputSelectorItem<T>(x.Key, x.Value))

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -41,7 +40,6 @@ namespace TagCloud.Gui
         private readonly UserInputMultipleOptionsChoice<MyStemSpeechPart> speechPartPicker;
 
         public App(IUi ui, IUserInputBuilder inputBuilder,
-            ILocalizationProvider localizationProvider,
             ITagCloudGenerator cloudGenerator,
             IEnumerable<IFileWordsReader> readers,
             IEnumerable<IWordFilter> filters,
@@ -58,8 +56,10 @@ namespace TagCloud.Gui
             normalizerPicker = inputBuilder.ServiceChoice(normalizers, UiLabel.NormalizationMethod);
             imageResizerPicker = inputBuilder.ServiceChoice(resizers, UiLabel.ResizingMethod);
             speechPartFilterPicker = inputBuilder.ServiceChoice(speechFilters, UiLabel.TypeFilter);
+            filterPicker = inputBuilder.SeveralServicesChoice(filters, UiLabel.FilteringMethod);
             layouterPicker = inputBuilder.EnumChoice<LayouterType>(UiLabel.LayoutingAlgorithm);
             fontSizeSourcePicker = inputBuilder.EnumChoice<FontSizeSourceType>(UiLabel.SizeSource);
+            speechPartPicker = inputBuilder.SeveralEnumValuesChoice<MyStemSpeechPart>(UiLabel.SpeechPart);
 
             backgroundColorPicker = inputBuilder.Color(Color.Khaki, UiLabel.BackgroundColor);
             colorPalettePicker = inputBuilder.ColorPalette(UiLabel.ColorPalette, Color.DarkRed);
@@ -70,19 +70,6 @@ namespace TagCloud.Gui
             imageSizePicker = inputBuilder.Size(UiLabel.ImageSize);
 
             fontPicker = inputBuilder.SingleChoice(FontFamily.Families.ToDictionary(x => x.Name), UiLabel.FontFamily);
-
-            speechPartPicker = inputBuilder.MultipleChoice(
-                Enum.GetValues(typeof(MyStemSpeechPart))
-                    .Cast<MyStemSpeechPart>()
-                    .ToDictionary(localizationProvider.Get),
-                UiLabel.SpeechPart
-            );
-
-            filterPicker = inputBuilder.MultipleChoice(
-                filters.ToDictionary(x => localizationProvider.Get(x.GetType())),
-                UiLabel.FilteringMethod
-            );
-
             imageFormatPicker = inputBuilder.SingleChoice(
                 new[] {ImageFormat.Gif, ImageFormat.Png, ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Tiff}
                     .ToDictionary(x => x.ToString()),
