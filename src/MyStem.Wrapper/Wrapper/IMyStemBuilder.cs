@@ -1,4 +1,4 @@
-﻿using FunctionalStuff;
+﻿using FunctionalStuff.Results;
 using MyStem.Wrapper.Enums;
 
 namespace MyStem.Wrapper.Wrapper

@@ -1,4 +1,4 @@
-﻿namespace FunctionalStuff
+﻿namespace FunctionalStuff.Results
 {
     public class None
     {

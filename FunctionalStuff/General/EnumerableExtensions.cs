@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using FunctionalStuff.Results;
 
-namespace FunctionalStuff
+namespace FunctionalStuff.General
 {
     public static class EnumerableExtensions
     {

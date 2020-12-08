@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using FunctionalStuff.Results;
 
 namespace TagCloud.Core.Text.Preprocessing
 {
     public interface IWordConverter
     {
-        IEnumerable<string> Normalize(IEnumerable<string> words);
+        Result<IEnumerable<string>> Normalize(IEnumerable<string> words);
     }
 }

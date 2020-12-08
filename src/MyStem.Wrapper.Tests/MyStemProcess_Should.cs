@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using FluentAssertions;
-using FunctionalStuff;
+using FunctionalStuff.Results;
 using FunctionalStuff.TestingExtensions;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Wrapper;

@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FunctionalStuff.Actions;
+using FunctionalStuff.Fails;
+using FunctionalStuff.General;
+using FunctionalStuff.Results;
 using MyStem.Wrapper.Workers.Grammar.Parsing.Models;
 using TagCloud.Core;
 using TagCloud.Core.Layouting;
@@ -17,10 +22,11 @@ using TagCloud.Gui.Localization;
 
 namespace TagCloud.Gui
 {
-    public class App : IApp
+    public class App : IApp, IDisposable
     {
         private readonly IUi ui;
         private readonly ITagCloudGenerator cloudGenerator;
+        private readonly IUserNotifier notifier;
         private readonly UserInputOneOptionChoice<IFileWordsReader> readerPicker;
         private readonly UserInputMultipleOptionsChoice<IWordFilter> filterPicker;
         private readonly UserInputOneOptionChoice<IWordConverter> normalizerPicker;
@@ -46,10 +52,12 @@ namespace TagCloud.Gui
             IEnumerable<IWordConverter> normalizers,
             IEnumerable<IFileResultWriter> writers,
             IEnumerable<IImageResizer> resizers,
-            IEnumerable<ISpeechPartWordsFilter> speechFilters)
+            IEnumerable<ISpeechPartWordsFilter> speechFilters, 
+            IUserNotifier notifier)
         {
             this.ui = ui;
             this.cloudGenerator = cloudGenerator;
+            this.notifier = notifier;
 
             readerPicker = inputBuilder.ServiceChoice(readers, UiLabel.FileReader);
             writerPicker = inputBuilder.ServiceChoice(writers, UiLabel.WritingMethod);
@@ -103,7 +111,6 @@ namespace TagCloud.Gui
             ui.AddUserInput(centerOffsetPicker);
             ui.AddUserInput(betweenWordsDistancePicker);
 
-
             AddUserInputOrUseDefault(readerPicker);
             AddUserInputOrUseDefault(writerPicker);
             AddUserInputOrUseDefault(imageFormatPicker);
@@ -111,63 +118,71 @@ namespace TagCloud.Gui
 
         private async void ExecutionRequested()
         {
-            using (var lockingContext = ui.StartLockingOperation())
-            {
-                var words = await ReadWordsAsync(filePathInput.Value, lockingContext.CancellationToken);
-                if (lockingContext.CancellationToken.IsCancellationRequested)
-                    return;
-
-                var image = await CreateImageAsync(words, lockingContext.CancellationToken);
-
-                ui.OnAfterWordDrawn(image, backgroundColorPicker.Picked);
-                if (imageSizePicker.Height > 0 && imageSizePicker.Width > 0)
-                {
-                    var selectedResizer = imageResizerPicker.Selected.Value;
-                    using (var resized = selectedResizer.Resize(image, imageSizePicker.SizeFromCurrent()))
-                        FillBackgroundAndSave(resized, backgroundColorPicker.Picked);
-                }
-                else FillBackgroundAndSave(image, backgroundColorPicker.Picked);
-            }
+            using var uiLock = ui.StartLockingOperation();
+            var cancellationToken = uiLock.CancellationToken;
+            await ReadWordsAsync(filePathInput.Value, cancellationToken)
+                .ContinueWithTask(r => r
+                    .WaitResult()
+                    .FailIf().TokenCancelled(cancellationToken)
+                    .ThenRunAsync(x => CreateImageAsync(x, cancellationToken))
+                    .ContinueWith(x => x
+                        .WaitResult()
+                        .ThenDo(i => ui.OnAfterWordDrawn(i, backgroundColorPicker.Picked))
+                        .ThenDo(UpdateImage)))
+                .ContinueWith(t => t
+                    .WaitResult()
+                    .OnFail(Do.NothingWhen(Tasks.CancellationRequested).Else(notifier.Notify)));
         }
 
-        private async Task<Image> CreateImageAsync(Dictionary<string, int> words, CancellationToken cancellationToken)
+        private void UpdateImage(Image i)
         {
-            var selectedLayouterType = layouterPicker.Selected.Value;
-            var selectedSizeSourceType = fontSizeSourcePicker.Selected.Value;
-            var fontFamily = fontPicker.Selected.Value;
+            if (imageSizePicker.Height > 0 && imageSizePicker.Width > 0)
+            {
+                using var resized = imageResizerPicker.Selected.Value.Resize(i, imageSizePicker.SizeFromCurrent());
+                FillBackgroundAndSave(resized, backgroundColorPicker.Picked);
+            }
+            else FillBackgroundAndSave(i, backgroundColorPicker.Picked);
+        }
 
-            var resultImage = await cloudGenerator.DrawWordsAsync(
-                selectedSizeSourceType,
-                selectedLayouterType,
+        private async Task<Result<Image>> CreateImageAsync(Dictionary<string, int> words, CancellationToken token) =>
+            await cloudGenerator.DrawWordsAsync(
+                fontSizeSourcePicker.Selected.Value,
+                layouterPicker.Selected.Value,
                 colorPalettePicker.PickedColors.ToArray(),
                 words,
-                fontFamily,
+                fontPicker.Selected.Value,
                 centerOffsetPicker.PointFromCurrent(),
                 betweenWordsDistancePicker.SizeFromCurrent(),
-                cancellationToken
+                token
             );
 
-            return resultImage;
-        }
+        private async Task<Result<Dictionary<string, int>>> ReadWordsAsync(string path, CancellationToken token) =>
+            await ResultOfAsync.Task(() => readerPicker.Selected.Value.GetWordsFrom(path), token)
+                .ContinueWith(task => task
+                    .WaitResult()
+                    .Then(w => Fail.If(w, "Words reading result").NullOrEmpty())
+                    .Then(ApplyFilters)
+                    .Then(ApplySpeechPartFilter)
+                    .FailIf().TokenCancelled(token)
+                    .Then(normalizerPicker.Selected.Value.Normalize)
+                    .Then(x => x.ToLookup(y => y))
+                    .Then(x => x.ToDictionary(y => y.Key, y => y.Count())));
 
-        private async Task<Dictionary<string, int>> ReadWordsAsync(string sourcePath,
-            CancellationToken cancellationToken)
-        {
-            return await Task.Run(() =>
-            {
-                var rawWords = readerPicker.Selected.Value.GetWordsFrom(sourcePath).AsEnumerable();
-                var words = filterPicker.Selected
-                    .Aggregate(rawWords, (current, filter) => filter.GetValidWordsOnly(current));
+        private IEnumerable<string> ApplySpeechPartFilter(string[] w) =>
+            !speechPartFilterPicker.Selected.IsEmpty &&
+            speechPartPicker.Selected.Any()
+                ? speechPartFilterPicker.Selected.Value
+                    .OnlyWithSpeechPart(w, speechPartPicker.Selected.ToHashSet())
+                    .GetValueOr(notifier.Notify, w)
+                : w;
 
-                var speechFilter = speechPartFilterPicker.Selected;
-                if (!speechFilter.IsEmpty && speechPartPicker.Selected.Any())
-                    words = speechFilter.Value.OnlyWithSpeechPart(words, speechPartPicker.Selected.ToHashSet());
-
-                return normalizerPicker.Selected.Value.Normalize(words)
-                    .ToLookup(x => x)
-                    .ToDictionary(x => x.Key, x => x.Count());
-            }, cancellationToken);
-        }
+        private string[] ApplyFilters(string[] rw) =>
+            filterPicker.Selected.Aggregate(rw, (current, filter) =>
+                    filter.GetValidWordsOnly(current)
+                        .Then(filtered => filtered.ToArray())
+                        .RefineError($"Failed to apply filter {filter.GetType().Name}")
+                        .GetValueOr(notifier.Notify, current))
+                .ToArray();
 
         private void FillBackgroundAndSave(Image image, Color backgroundColor)
         {
@@ -187,10 +202,13 @@ namespace TagCloud.Gui
 
         private void AddUserInputOrUseDefault<T>(UserInputOneOptionChoice<T> input)
         {
-            if (input.Available.Length > 1)
-                ui.AddUserInput(input);
-            else
-                input.SetSelected(input.Available.Single().Name);
+            if (input.Available.Length > 1) ui.AddUserInput(input);
+            else input.SetSelected(input.Available.Single().Name);
+        }
+
+        public void Dispose()
+        {
+            cloudGenerator.Dispose();
         }
     }
 }

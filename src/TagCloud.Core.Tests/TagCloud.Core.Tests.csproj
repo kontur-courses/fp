@@ -18,6 +18,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\FunctionalStuff.TestingExtensions\FunctionalStuff.TestingExtensions.csproj" />
         <ProjectReference Include="..\TagCloud.Core\TagCloud.Core.csproj" />
     </ItemGroup>
 </Project>

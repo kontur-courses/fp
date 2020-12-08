@@ -1,30 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FunctionalStuff;
+using FunctionalStuff.Fails;
+using FunctionalStuff.Results;
 using MyStem.Wrapper.Workers.Lemmas;
 
 namespace TagCloud.Core.Text.Preprocessing
 {
     public class MyStemWordsConverter : IWordConverter
     {
-        private readonly IUserNotifier notifier;
         private readonly ILemmatizer normalizer;
 
-        public MyStemWordsConverter(ILemmatizer normalizer, IUserNotifier notifier)
+        public MyStemWordsConverter(ILemmatizer normalizer)
         {
             this.normalizer = normalizer;
-            this.notifier = notifier;
         }
 
-        public IEnumerable<string> Normalize(IEnumerable<string> words) =>
-            GetNormalizedOrOriginalWords(words.ToArray());
-
-        private IEnumerable<string> GetNormalizedOrOriginalWords(string[] words) =>
-            normalizer.GetWords(string.Join(" ", words))
-                .Then(r => r
-                    .Where(x => !string.IsNullOrEmpty(x))
+        public Result<IEnumerable<string>> Normalize(IEnumerable<string> words) =>
+            Fail.If(words, $"{nameof(MyStemWordsConverter)} input").NullOrEmpty()
+                .Then(w => normalizer.GetWords(string.Join(" ", w)))
+                .Then(c => Fail.If(c, $"{nameof(ILemmatizer)} output").NullOrEmpty())
+                .Then(r => r.Where(x => !string.IsNullOrEmpty(x))
                     .Select(x => x.TrimEnd('?'))
-                    .ToArray())
-                .GetValueOrHandleError(words, notifier.Notify);
+                    .ToArray()
+                    .AsEnumerable());
     }
 }

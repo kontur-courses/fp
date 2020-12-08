@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using FluentAssertions;
+using FunctionalStuff.TestingExtensions;
 using MyStem.Wrapper.Workers.Lemmas;
 using MyStem.Wrapper.Wrapper;
 using NUnit.Framework;
@@ -18,14 +19,16 @@ namespace TagCloud.Core.Tests
         {
             executablePath = Path.Combine(TestContext.CurrentContext.WorkDirectory, "../../../../dlls/", "mystem.exe");
             converter = new MyStemWordsConverter(
-                new Lemmatizer(new MyStemBuilder(executablePath)),
-                new StubUserNotifier());
+                new Lemmatizer(new MyStemBuilder(executablePath)));
         }
 
         [Test]
         public void SingleWord_Normalize()
         {
             converter.Normalize(new[] {"упячкой"})
+                .ShouldBeSuccessful()
+                .Which
+                .Value()
                 .Should()
                 .BeEquivalentTo("упячка");
         }
@@ -34,6 +37,9 @@ namespace TagCloud.Core.Tests
         public void SeveralWords_NormalizeEach()
         {
             converter.Normalize(new[] {"упячкой", "бошечки", "стирателей"})
+                .ShouldBeSuccessful()
+                .Which
+                .Value()
                 .Should()
                 .BeEquivalentTo("упячка", "бошечка", "стиратель");
         }
@@ -42,6 +48,9 @@ namespace TagCloud.Core.Tests
         public void AlreadyNormalized_DontModify()
         {
             converter.Normalize(new[] {"упячка"})
+                .ShouldBeSuccessful()
+                .Which
+                .Value()
                 .Should()
                 .BeEquivalentTo("упячка");
         }
@@ -50,6 +59,9 @@ namespace TagCloud.Core.Tests
         public void EnglishWords_DontModify()
         {
             converter.Normalize(new[] {"matches"})
+                .ShouldBeSuccessful()
+                .Which
+                .Value()
                 .Should()
                 .BeEquivalentTo("matches");
         }

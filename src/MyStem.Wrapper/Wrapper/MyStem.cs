@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using FunctionalStuff;
+using FunctionalStuff.Results;
 
 namespace MyStem.Wrapper.Wrapper
 {

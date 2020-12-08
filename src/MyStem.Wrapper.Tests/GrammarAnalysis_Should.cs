@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using FluentAssertions;
-using FunctionalStuff;
 using FunctionalStuff.TestingExtensions;
 using MyStem.Wrapper.Workers.Grammar;
 using MyStem.Wrapper.Workers.Grammar.Raw;

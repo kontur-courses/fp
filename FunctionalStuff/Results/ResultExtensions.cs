@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunctionalStuff
+namespace FunctionalStuff.Results
 {
     public static class Result
     {
@@ -120,17 +120,6 @@ namespace FunctionalStuff
             throw new InvalidOperationException($"No value. Only Error: {input.Error}");
         }
 
-        public static TInput GetValueOrHandleError<TInput>(
-            this Result<TInput> input,
-            TInput continueWith,
-            Action<string> handleError)
-        {
-            if (input.IsSuccess)
-                return input.Value;
-            handleError(input.Error);
-            return continueWith;
-        }
-
         public static Result<TOutput> DisposeAfter<TInput, TOutput>(
             this Result<TInput> input,
             Func<Result<TInput>, Result<TOutput>> continuation)
@@ -145,11 +134,24 @@ namespace FunctionalStuff
             return Fail<TOutput>(input.Error);
         }
 
-        public static Result<Tuple<TInput, TOutput>> ThenValidate<TInput, TOutput>(
+        public static Result<TOutput> ThenJoin<TInput, TSecond, TOutput>(
             this Result<TInput> input,
-            Result<TOutput> toValidate) =>
-            input.Then(i => toValidate.IsSuccess
-                ? new Tuple<TInput, TOutput>(i, toValidate.Value)
-                : Fail<Tuple<TInput, TOutput>>(toValidate.Error));
+            Result<TSecond> toValidate,
+            Func<TInput, TSecond, TOutput> combine)
+        {
+            return input.Then(i => toValidate.Then(v => combine(i, v)));
+        }
+
+        public static TInput GetValueOr<TInput>(
+            this Result<TInput> input,
+            Action<string> handleError,
+            TInput defaultValue)
+        {
+            if (input.IsSuccess)
+                return input.Value;
+
+            handleError(input.Error);
+            return defaultValue;
+        }
     }
 }

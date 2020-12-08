@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FunctionalStuff.Results;
 
 namespace TagCloud.Core.Text.Preprocessing
 {
@@ -11,6 +12,7 @@ namespace TagCloud.Core.Text.Preprocessing
             "перед", "при", "с", "между", "как", "что", "где", "не", "ни", "вовсе", "вот", "это"
         };
 
-        public IEnumerable<string> GetValidWordsOnly(IEnumerable<string> words) => words.Except(blacklistedWords);
+        public Result<IEnumerable<string>> GetValidWordsOnly(IEnumerable<string> words) =>
+            words.Except(blacklistedWords).AsResult();
     }
 }

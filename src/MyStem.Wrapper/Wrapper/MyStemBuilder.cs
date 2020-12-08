@@ -1,5 +1,6 @@
 ﻿using System.Linq;
-using FunctionalStuff;
+using FunctionalStuff.General;
+using FunctionalStuff.Results;
 using MyStem.Wrapper.Enums;
 
 namespace MyStem.Wrapper.Wrapper

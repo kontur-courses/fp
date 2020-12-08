@@ -1,5 +1,6 @@
 ﻿using System;
-using FunctionalStuff;
+using FunctionalStuff.Fails;
+using FunctionalStuff.Results;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Wrapper;
 
@@ -16,10 +17,10 @@ namespace MyStem.Wrapper.Workers.Lemmas
         }
 
         public Result<string[]> GetWords(string text) =>
-            Check.StringIsEmpty(text, "Input")
-                .ThenValidate(myStem)
-                .Then(x => x.Item2.GetResponse(x.Item1))
-                .Then(r => Check.StringIsEmpty(r, "Output"))
+            Fail.If(text, "Lemmatizer input").NullOrEmpty()
+                .ThenJoin(myStem, (t, ms) => new {Text = t, MyStem = ms})
+                .Then(x => x.MyStem.GetResponse(x.Text))
+                .Then(r => Fail.If(r, "MyStem output").NullOrEmpty())
                 .Then(r => r.Substring(1, r.Length - 2))
                 .Then(r => r.Split(new[] {"}{"}, StringSplitOptions.RemoveEmptyEntries));
     }

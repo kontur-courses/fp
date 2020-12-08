@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Primitives;
+using FunctionalStuff.Results;
 
 namespace FunctionalStuff.TestingExtensions
 {

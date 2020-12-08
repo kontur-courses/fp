@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FunctionalStuff;
+using FunctionalStuff.Fails;
+using FunctionalStuff.Results;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Workers.Grammar.Raw;
 using MyStem.Wrapper.Wrapper;
@@ -21,10 +22,11 @@ namespace MyStem.Wrapper.Workers.Grammar
         }
 
         public Result<AnalysisResultRaw[]> GetRawResult(string text) =>
-            Check.StringIsEmpty(text, "Input")
-                .ThenValidate(myStem)
-                .Then(x => x.Item2.GetResponse(x.Item1))
-                .Then(r => Check.StringIsEmpty(r, "Output"))
-                .Then(r => JsonConvert.DeserializeObject<IList<AnalysisResultRaw>>(r).ToArray());
+            Fail.If(text, $"{nameof(GrammarAnalyser)} input").NullOrEmpty()
+                .ThenJoin(myStem, (t, ms) => new {Text = t, MyStem = ms})
+                .Then(x => x.MyStem.GetResponse(x.Text))
+                .Then(x => x.FailIf($"{nameof(IMyStem)} output").NullOrEmpty())
+                .Then(r => JsonConvert.DeserializeObject<IList<AnalysisResultRaw>>(r).ToArray())
+                .Then(x => x.FailIf("Deserialized value").NullOrEmpty());
     }
 }

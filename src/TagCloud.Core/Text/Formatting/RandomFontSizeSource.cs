@@ -12,7 +12,7 @@ namespace TagCloud.Core.Text.Formatting
 
         public FontSizeSourceType Type => FontSizeSourceType.Random;
 
-        public IDictionary<string, float> GetFontSizesForAll(Dictionary<string, int > words) =>
+        public IDictionary<string, float> GetFontSizesForAll(IDictionary<string, int> words) =>
             words.ToDictionary(w => w.Key, _ => (float) Randomized.ItemFrom(sizes));
     }
 }

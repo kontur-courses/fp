@@ -15,6 +15,18 @@
       <ProjectReference Include="..\TagCloud.Core\TagCloud.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="samples\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="samples\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="samples\**" />
+    </ItemGroup>
+
     <PropertyGroup>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>

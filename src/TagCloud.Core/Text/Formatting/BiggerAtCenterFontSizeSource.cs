@@ -11,7 +11,7 @@ namespace TagCloud.Core.Text.Formatting
 
         public FontSizeSourceType Type => FontSizeSourceType.FrequentIsBigger;
 
-        public IDictionary<string, float> GetFontSizesForAll(Dictionary<string, int> allWords)
+        public IDictionary<string, float> GetFontSizesForAll(IDictionary<string, int> allWords)
         {
             var log = (int) Math.Floor(Math.Log2(allWords.Count));
             var sizes = ToStack(

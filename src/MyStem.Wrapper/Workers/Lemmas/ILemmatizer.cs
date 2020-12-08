@@ -1,4 +1,4 @@
-﻿using FunctionalStuff;
+﻿using FunctionalStuff.Results;
 
 namespace MyStem.Wrapper.Workers.Lemmas
 {
