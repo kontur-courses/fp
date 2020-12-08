@@ -22,11 +22,12 @@ namespace TagCloud
             
             app.OnExecute(() =>
             {
-                CanvasSize = optionSize.HasValue() ? ArgumentParser.GetSize(optionSize.Value()) : new Size(1000, 800);
-                BackgroundType = optionBackground.HasValue() ? ArgumentParser.GetBackground(optionBackground.Value()) : Background.Empty;
-                FileName = optionInput.HasValue() ? ArgumentParser.CheckFileName(optionInput.Value()) : "input.txt";
-                StringFont = optionFont.HasValue() ? ArgumentParser.GetFont(optionFont.Value()) : new FontFamily("Arial");
-                StringColor = optionStringColor.HasValue() ? ArgumentParser.ParseColor(optionStringColor.Value()) : Color.Black;
+                CanvasSize = optionSize.HasValue() ? ArgumentParser.GetSize(optionSize.Value()).Value : new Size(1000, 800);
+                BackgroundType = optionBackground.HasValue() ? ArgumentParser.GetBackground(optionBackground.Value()).Value : Background.Empty;
+                FileName = optionInput.HasValue() ? ArgumentParser.CheckFileName(optionInput.Value()).Value : "input.txt";
+                StringFont = optionFont.HasValue() ? ArgumentParser.GetFont(optionFont.Value()).Value : new FontFamily("Arial");
+                StringColor = optionStringColor.HasValue() ? ArgumentParser.ParseColor(optionStringColor.Value()).Value : Color.Black;
+                //TODO: remove values
 
                 return 1;
             });

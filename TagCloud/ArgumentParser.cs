@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using ResultOf;
 
 namespace TagCloud
 {
@@ -9,7 +10,7 @@ namespace TagCloud
         private static IPathCreater pathCreater = new PathCreater();
         
         ///<exception cref="ArgumentException">Unknown background type</exception>
-        public static Background GetBackground(string background)
+        public static Result<Background> GetBackground(string background)
         {
             switch (background)
             {
@@ -20,12 +21,12 @@ namespace TagCloud
                 case "rectangles":
                     return Background.Rectangles;
                 default:
-                    throw new ArgumentException("Unknown background type");
+                    return Result.Fail<Background>("Unknown background type");
             }
         }
         
         ///<exception cref="ArgumentException">Incorrect size argument</exception>
-        public static Size GetSize(string size)
+        public static Result<Size> GetSize(string size)
         {
             var arr = size.Split(',');
             if (arr.Length == 2 && int.TryParse(arr[0], out var width) && int.TryParse(arr[1], out var height))
@@ -33,25 +34,25 @@ namespace TagCloud
                 return new Size(width, height);
             }
             
-            throw new ArgumentException("Incorrect size argument");
+            return Result.Fail<Size>("Incorrect size argument");
         }
 
         ///<exception cref="ArgumentException">Input file not found</exception>
-        public static string CheckFileName(string fileName)
+        public static Result<string> CheckFileName(string fileName)
         {
             if (!File.Exists(pathCreater.GetPathToFile(fileName)))
             {
-                throw new ArgumentException("Input file not found");
+                return Result.Fail<string>("Input file not found");
             }
             if (!fileName.EndsWith(".txt") && !fileName.EndsWith(".docx"))
             {
-                throw new ArgumentException(@"Not supported format. Expected: .txt\.docx");
+                return Result.Fail<string>(@"Not supported format. Expected: .txt\.docx");
             }
             return fileName;
         }
 
         ///<exception cref="ArgumentException">Unknown FontFamily</exception>
-        public static FontFamily GetFont(string font)
+        public static Result<FontFamily> GetFont(string font)
         {
             try
             {
@@ -59,22 +60,22 @@ namespace TagCloud
             }
             catch (ArgumentException)
             {
-                throw new ArgumentException("Unknown FontFamily");
+                return Result.Fail<FontFamily>("Unknown FontFamily");
             }
         }
         
         ///<exception cref="ArgumentException">Incorrect color format</exception>
-        public static Color ParseColor(string colorInRGB)
+        public static Result<Color> ParseColor(string colorInRGB)
         {
             var arr = colorInRGB.Split(',');
             if (arr.Length == 3
                 && TryGetColorComponent(arr[0], out var red)
                 && TryGetColorComponent(arr[1], out var green)
-                && TryGetColorComponent(arr[1], out var blue))
+                && TryGetColorComponent(arr[2], out var blue))
             {
                 return Color.FromArgb(red, green, blue);
             }
-            throw new ArgumentException($"Incorrect color format. Given: {colorInRGB}. Expected: 0-255,0-255,0-255");
+            return Result.Fail<Color>($"Incorrect color format. Given: {colorInRGB}. Expected: 0-255,0-255,0-255");
         }
         
         private static bool TryGetColorComponent(string colorComponent, out int value)
