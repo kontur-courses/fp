@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using FunctionalStuff.Results;
+using FunctionalStuff.Results.Fails;
 using TagCloud.Core.Text.Formatting;
 using TagCloud.Core.Utils;
 
@@ -14,15 +16,14 @@ namespace TagCloud.Core.Visualisation
 
         public Image? Current => image;
 
-        public void DrawNextWord(Rectangle position, FormattedWord formattedWord)
-        {
-            ThrowIfDisposed();
-            var wordPosition = GetWordRectangle(graphics, formattedWord, position);
-            var resized = EnsureBitmapSize(image, Rectangle.Ceiling(wordPosition));
-            SetCurrentImage(resized);
-            wordPosition.Location += image!.Size / 2;
-            graphics!.DrawString(formattedWord.Word, formattedWord.Font, formattedWord.Brush, wordPosition);
-        }
+        public Result<None> DrawNextWord(Rectangle position, FormattedWord formattedWord) =>
+            CheckDisposed()
+                .Then(_ => GetWordRectangle(formattedWord, position))
+                .Then(rect => new {Rect = rect, ResizedImage = EnsureBitmapSize(image, Rectangle.Ceiling(rect))})
+                .ThenDo(x => SetCurrentImage(x.ResizedImage))
+                .Then(x => new RectangleF(x.Rect.Location + image!.Size / 2, x.Rect.Size))
+                .Then(pos => graphics!.DrawString(formattedWord.Word, formattedWord.Font, formattedWord.Brush, pos))
+                .RefineError("Cannot draw next word");
 
         private void SetCurrentImage(Image newImage)
         {
@@ -34,31 +35,29 @@ namespace TagCloud.Core.Visualisation
             graphics = Graphics.FromImage(newImage);
         }
 
-        private void ThrowIfDisposed()
+        private Result<None> CheckDisposed()
         {
-            if (disposed)
-                throw new InvalidOperationException($"{nameof(CloudVisualiser)} is already disposed");
+            return disposed
+                ? Result.Fail<None>($"{nameof(CloudVisualiser)} is already disposed")
+                : Result.Ok();
         }
 
-        private static RectangleF GetWordRectangle(Graphics? graphics, FormattedWord toDraw, Rectangle position)
-        {
-            var wordSize = MeasureString(graphics, toDraw.Word, toDraw.Font);
-            if (wordSize.Height > position.Size.Height || wordSize.Width > position.Size.Width)
-                throw new ArgumentException("Actual word size is larger than computed values");
+        private Result<RectangleF> GetWordRectangle(FormattedWord toDraw, Rectangle position) =>
+            Result.Of(() => MeasureString(toDraw.Word, toDraw.Font))
+                .ThenFailIf(x => x.Matches(
+                    sz => sz.Height > position.Size.Height || sz.Width > position.Size.Width,
+                    "Actual word size is larger than computed values"))
+                .Then(sz => new {Offset = (sz - position.Size) / 2, Size = sz})
+                .Then(x => new {x.Size, Point = new PointF(position.X - x.Offset.Width, position.Y - x.Offset.Height)})
+                .Then(x => new RectangleF(x.Point, x.Size));
 
-            var offset = (wordSize - position.Size) / 2;
-            var wordPosition = new PointF(position.X - offset.Width, position.Y - offset.Height);
-            return new RectangleF(wordPosition, wordSize);
-        }
-
-        private static SizeF MeasureString(Graphics? graphics, string? word, Font font)
+        private SizeF MeasureString(string? word, Font font)
         {
             if (graphics != null)
                 return graphics.MeasureString(word, font);
             using var g = Graphics.FromHwnd(IntPtr.Zero);
             return g.MeasureString(word, font);
         }
-
 
         private static Image EnsureBitmapSize(Image? bitmap, Rectangle nextRectangle)
         {

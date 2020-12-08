@@ -1,7 +1,6 @@
 ﻿using System;
-using FunctionalStuff.Results;
 
-namespace FunctionalStuff.Fails
+namespace FunctionalStuff.Results.Fails
 {
     public class FailureAssertionsProvider<T>
     {

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using FunctionalStuff.Results;
 
-namespace FunctionalStuff.Fails
+namespace FunctionalStuff.Results.Fails
 {
     public static class FailureAssertions
     {
@@ -69,7 +67,7 @@ namespace FunctionalStuff.Fails
 
         public static Result<T> Matches<T>(this FailureAssertionsProvider<T> provider, Predicate<T> check, string error)
         {
-            return provider.Validate(check, error);
+            return provider.ValidateWithMessage(check, error);
         }
     }
 }

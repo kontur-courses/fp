@@ -1,6 +1,6 @@
 ﻿using System;
-using FunctionalStuff.Fails;
 using FunctionalStuff.Results;
+using FunctionalStuff.Results.Fails;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Wrapper;
 

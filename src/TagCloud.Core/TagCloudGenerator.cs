@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FunctionalStuff.Fails;
 using FunctionalStuff.General;
 using FunctionalStuff.Results;
+using FunctionalStuff.Results.Fails;
 using TagCloud.Core.Layouting;
 using TagCloud.Core.Text.Formatting;
 using TagCloud.Core.Utils;
@@ -45,14 +45,18 @@ namespace TagCloud.Core
                     .Then(w => GetFontSizesFor(sizeSourceType, w))
                     .Then(s => new {Sizes = s, Layouter = layouterResolver.Get(layouterType)})
                     .Then(x => DrawWords(palette, words, font, center, distance, token, x.Sizes, x.Layouter)), token)
-                .ContinueWith(t => t.WaitResult().RefineError("Error during image generation"))
+                // ReSharper disable once MethodSupportsCancellation because for some reason lazyness will broke
+                .ContinueWith(t => t
+                    .WaitResult()
+                    .Then(image => Fail.If(image).Null())
+                    .RefineError("Error during image generation"))
                 .ConfigureAwait(false);
         }
 
         private IDictionary<string, float> GetFontSizesFor(FontSizeSourceType type, IDictionary<string, int> words) =>
             sizeSourceResolver.Get(type).GetFontSizesForAll(words);
 
-        private Image? DrawWords(Color[] palette,
+        private Result<Image?> DrawWords(Color[] palette,
             Dictionary<string, int> wordsCollection,
             FontFamily fontFamily,
             Point centerPoint,
@@ -81,7 +85,9 @@ namespace TagCloud.Core
             using var cloudVisualiser = new CloudVisualiser();
             foreach (var (formattedWord, placedWord) in formattedWords.Values.Zip(putWords))
             {
-                cloudVisualiser.DrawNextWord(placedWord, formattedWord);
+                var drawResult = cloudVisualiser.DrawNextWord(placedWord, formattedWord);
+                if (!drawResult.IsSuccess)
+                    return Result.Fail<Image>(drawResult.Error);
 
                 formattedWord.Dispose();
                 if (token.IsCancellationRequested)

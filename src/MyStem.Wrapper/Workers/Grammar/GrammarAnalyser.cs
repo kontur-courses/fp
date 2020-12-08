@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FunctionalStuff.Fails;
 using FunctionalStuff.Results;
+using FunctionalStuff.Results.Fails;
 using MyStem.Wrapper.Enums;
 using MyStem.Wrapper.Workers.Grammar.Raw;
 using MyStem.Wrapper.Wrapper;
