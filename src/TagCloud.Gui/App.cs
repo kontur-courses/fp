@@ -5,8 +5,9 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FunctionalStuff;
 using FunctionalStuff.Actions;
-using FunctionalStuff.General;
+using FunctionalStuff.Common;
 using FunctionalStuff.Results;
 using FunctionalStuff.Results.Fails;
 using MyStem.Wrapper.Workers.Grammar.Parsing.Models;
@@ -120,18 +121,17 @@ namespace TagCloud.Gui
         {
             using var uiLock = ui.StartLockingOperation();
             var cancellationToken = uiLock.CancellationToken;
-            await ReadWordsAsync(filePathInput.Value, cancellationToken)
-                .ContinueWithTask(r => r
-                    .WaitResult()
-                    .FailIf().TokenCancelled(cancellationToken)
-                    .ThenRunAsync(x => CreateImageAsync(x, cancellationToken))
-                    .ContinueWith(x => x
-                        .WaitResult()
-                        .ThenDo(i => ui.OnAfterWordDrawn(i, backgroundColorPicker.Picked))
-                        .ThenDo(UpdateImage)))
-                .ContinueWith(t => t
-                    .WaitResult()
-                    .OnFail(Do.NothingWhen(Tasks.CancellationRequested).Else(notifier.Notify)));
+
+            var result = await ReadWordsAsync(filePathInput.Value, cancellationToken);
+
+            var imageCreationResult = await result
+                .FailIf().TokenCanceled(cancellationToken)
+                .Then(x => CreateImageAsync(x, cancellationToken)).Unwrap();
+
+            imageCreationResult
+                .ThenDo(i => ui.OnAfterWordDrawn(i, backgroundColorPicker.Picked))
+                .ThenDo(UpdateImage)
+                .OnFail(Do.NothingWhen(FailMessages.CancellationRequested).Else(notifier.Notify));
         }
 
         private void UpdateImage(Image i)
@@ -163,7 +163,7 @@ namespace TagCloud.Gui
                     .Then(w => Fail.If(w, "Words reading result").NullOrEmpty())
                     .Then(ApplyFilters)
                     .Then(ApplySpeechPartFilter)
-                    .FailIf().TokenCancelled(token)
+                    .FailIf().TokenCanceled(token)
                     .Then(normalizerPicker.Selected.Value.Normalize)
                     .Then(x => x.ToLookup(y => y))
                     .Then(x => x.ToDictionary(y => y.Key, y => y.Count())));

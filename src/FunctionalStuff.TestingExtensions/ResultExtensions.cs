@@ -12,7 +12,7 @@ namespace FunctionalStuff.TestingExtensions
                 .Should()
                 .BeNullOrWhiteSpace();
 
-            input.IsSuccess
+            input.IsSuccessful
                 .Should()
                 .BeTrue();
 
@@ -22,7 +22,7 @@ namespace FunctionalStuff.TestingExtensions
 
         public static AndWhichConstraint<ObjectAssertions, Result<T>> ShouldBeFailed<T>(this Result<T> input)
         {
-            input.IsSuccess
+            input.IsSuccessful
                 .Should()
                 .BeFalse();
 

@@ -59,7 +59,7 @@ namespace FunctionalStuff.Results
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            return input.IsSuccess
+            return input.IsSuccessful
                 ? continuation(input.Value)
                 : Fail<TOutput>(input.Error);
         }
@@ -85,8 +85,8 @@ namespace FunctionalStuff.Results
             return input.Then(i =>
             {
                 var continuationResult = continuation(i);
-                return continuationResult.IsSuccess
-                    ? i
+                return continuationResult.IsSuccessful
+                    ? Ok(i)
                     : Fail<TInput>(continuationResult.Error);
             });
         }
@@ -95,7 +95,7 @@ namespace FunctionalStuff.Results
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess) handleError(input.Error);
+            if (!input.IsSuccessful) handleError(input.Error);
             return input;
         }
 
@@ -103,7 +103,7 @@ namespace FunctionalStuff.Results
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
+            if (input.IsSuccessful) return input;
             return Fail<TInput>(replaceError(input.Error));
         }
 
@@ -116,7 +116,7 @@ namespace FunctionalStuff.Results
 
         public static T GetValueOrThrow<T>(this Result<T> input)
         {
-            if (input.IsSuccess) return input.Value;
+            if (input.IsSuccessful) return input.Value;
             throw new InvalidOperationException($"No value. Only Error: {input.Error}");
         }
 
@@ -125,7 +125,7 @@ namespace FunctionalStuff.Results
             Func<Result<TInput>, Result<TOutput>> continuation)
             where TInput : IDisposable
         {
-            if (input.IsSuccess)
+            if (input.IsSuccessful)
             {
                 using var disposable = input.Value;
                 return continuation(input);
@@ -136,10 +136,10 @@ namespace FunctionalStuff.Results
 
         public static Result<TOutput> ThenJoin<TInput, TSecond, TOutput>(
             this Result<TInput> input,
-            Result<TSecond> toValidate,
+            Result<TSecond> second,
             Func<TInput, TSecond, TOutput> combine)
         {
-            return input.Then(i => toValidate.Then(v => combine(i, v)));
+            return input.Then(i => second.Then(v => combine(i, v)));
         }
 
         public static TInput GetValueOr<TInput>(
@@ -147,7 +147,7 @@ namespace FunctionalStuff.Results
             Action<string> handleError,
             TInput defaultValue)
         {
-            if (input.IsSuccess)
+            if (input.IsSuccessful)
                 return input.Value;
 
             handleError(input.Error);

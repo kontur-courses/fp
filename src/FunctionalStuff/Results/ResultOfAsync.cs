@@ -21,7 +21,7 @@ namespace FunctionalStuff.Results
             return System.Threading.Tasks.Task.Run(continuation, token);
         }
 
-        public static Task<Result<TOutput>> ThenRunAsync<TInput, TOutput>(
+        public static Task<Result<TOutput>> ThenRunTask<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Task<Result<TOutput>>> continuation)
         {
@@ -30,7 +30,7 @@ namespace FunctionalStuff.Results
 
         public static async Task<Result<T>> Unwrap<T>(this Result<Task<Result<T>>> input)
         {
-            return input.IsSuccess
+            return input.IsSuccessful
                 ? await input.Value
                 : Result.Fail<T>(input.Error);
         }

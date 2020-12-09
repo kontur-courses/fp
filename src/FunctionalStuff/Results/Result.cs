@@ -2,7 +2,7 @@
 {
     public readonly struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
@@ -13,6 +13,6 @@
         public string Error { get; }
         internal T Value { get; }
 
-        public bool IsSuccess => Error == null;
+        public bool IsSuccessful => Error == null;
     }
 }

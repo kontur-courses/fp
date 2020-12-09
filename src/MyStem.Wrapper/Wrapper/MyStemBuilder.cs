@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FunctionalStuff.General;
+using FunctionalStuff.Common;
 using FunctionalStuff.Results;
 using MyStem.Wrapper.Enums;
 
@@ -37,9 +37,9 @@ namespace MyStem.Wrapper.Wrapper
 
         private static Result<string> OutputFormatToExecutionArg(MyStemOutputFormat format) => format switch
         {
-            MyStemOutputFormat.Json => "--format json",
-            MyStemOutputFormat.Xml => "--format xml",
-            MyStemOutputFormat.Text => "--format text",
+            MyStemOutputFormat.Json => Result.Ok("--format json"),
+            MyStemOutputFormat.Xml => Result.Ok("--format xml"),
+            MyStemOutputFormat.Text => Result.Ok("--format text"),
             _ => Result.Fail<string>($"Unsupported {nameof(MyStemOutputFormat)} {format}")
         };
     }

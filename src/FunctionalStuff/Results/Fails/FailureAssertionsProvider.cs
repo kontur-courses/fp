@@ -2,31 +2,30 @@
 
 namespace FunctionalStuff.Results.Fails
 {
-    public class FailureAssertionsProvider<T>
+    public class FailureAssertionsProvider<T> : IExtensibleFailureAssertionsProvider<T>
     {
-        internal string Name { get; }
-        internal bool IsInverted { get; }
-        internal T Value { get; }
+        private readonly T value;
+        private readonly bool isInverted;
+        private readonly string name;
 
         public FailureAssertionsProvider(bool isInverted, T value, string name = null)
         {
-            IsInverted = isInverted;
-            Value = value;
-            this.Name = name ?? typeof(T).Name;
+            this.isInverted = isInverted;
+            this.value = value;
+            this.name = name ?? typeof(T).Name;
         }
 
-        public FailureAssertionsProvider<T> Not => new FailureAssertionsProvider<T>(!IsInverted, Value, Name);
+        T IExtensibleFailureAssertionsProvider<T>.Value => value;
+        bool IExtensibleFailureAssertionsProvider<T>.IsInverted => isInverted;
+        string IExtensibleFailureAssertionsProvider<T>.Name => name;
 
-        internal Result<T> Validate(Predicate<T> predicate, string error)
-        {
-            return ValidateWithMessage(predicate, $"{Name} is {(IsInverted ? "" : "not ")}{error}");
-        }
+        public FailureAssertionsProvider<T> Not => new FailureAssertionsProvider<T>(!isInverted, value, name);
 
-        internal Result<T> ValidateWithMessage(Predicate<T> predicate, string message)
+        Result<T> IExtensibleFailureAssertionsProvider<T>.ValidateWithMessage(Predicate<T> predicate, string message)
         {
-            var isMatched = predicate.Invoke(Value);
-            var isValid = IsInverted ? !isMatched : isMatched;
-            return isValid ? Result.Ok(Value) : Result.Fail<T>(message);
+            var isMatched = predicate.Invoke(value);
+            var isValid = isInverted ? !isMatched : isMatched;
+            return isValid ? Result.Ok(value) : Result.Fail<T>(message);
         }
     }
 }

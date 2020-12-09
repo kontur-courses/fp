@@ -4,7 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FunctionalStuff.General;
+using FunctionalStuff;
+using FunctionalStuff.Common;
 using FunctionalStuff.Results;
 using FunctionalStuff.Results.Fails;
 using TagCloud.Core.Layouting;
@@ -56,7 +57,7 @@ namespace TagCloud.Core
         private IDictionary<string, float> GetFontSizesFor(FontSizeSourceType type, IDictionary<string, int> words) =>
             sizeSourceResolver.Get(type).GetFontSizesForAll(words);
 
-        private Result<Image?> DrawWords(Color[] palette,
+        private Result<Image> DrawWords(Color[] palette,
             Dictionary<string, int> wordsCollection,
             FontFamily fontFamily,
             Point centerPoint,
@@ -71,14 +72,14 @@ namespace TagCloud.Core
                 .ToDictionary(fw => fw.Word);
 
             if (token.IsCancellationRequested)
-                return null;
+                return Result.Fail<Image>(FailMessages.CancellationRequested);
 
             var wordSizesEnumerable = formattedWords.Select(x =>
                 Size.Ceiling(stubGraphics.MeasureString(x.Value.Word, x.Value.Font))
             );
 
             if (token.IsCancellationRequested)
-                return null;
+                return Result.Fail<Image>(FailMessages.CancellationRequested);
 
             var putWords = layouter.PutAll(centerPoint, betweenRectanglesDistance, wordSizesEnumerable);
 
@@ -86,12 +87,12 @@ namespace TagCloud.Core
             foreach (var (formattedWord, placedWord) in formattedWords.Values.Zip(putWords))
             {
                 var drawResult = cloudVisualiser.DrawNextWord(placedWord, formattedWord);
-                if (!drawResult.IsSuccess)
+                if (!drawResult.IsSuccessful)
                     return Result.Fail<Image>(drawResult.Error);
 
                 formattedWord.Dispose();
                 if (token.IsCancellationRequested)
-                    break;
+                    break; // Не ретурним Fail чтобы вернуть то что уже успели отрисовать
             }
 
             return (Image) cloudVisualiser.Current?.Clone();

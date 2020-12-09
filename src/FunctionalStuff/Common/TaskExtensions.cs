@@ -2,13 +2,10 @@
 using System.Threading.Tasks;
 using FunctionalStuff.Results;
 
-namespace FunctionalStuff.General
+namespace FunctionalStuff.Common
 {
-    public static class Tasks
+    public static class TaskExtensions
     {
-        public static readonly string CancellationRequested = "Cancellation requested";
-        public static readonly string TaskFailed = "Task failed";
-
         public static Task<TOutput> ContinueWithTask<TInput, TOutput>(
             this Task<TInput> task,
             Func<Task<TInput>, Task<TOutput>> continuation) =>
@@ -34,13 +31,13 @@ namespace FunctionalStuff.General
                 return result(task.Result);
             });
 
-        private static Result<T> HandleTaskCanceled<T>() => Result.Fail<T>(CancellationRequested);
+        private static Result<T> HandleTaskCanceled<T>() => Result.Fail<T>(FailMessages.CancellationRequested);
 
         private static Result<T> HandleTaskFaulted<T>(Task task) =>
             Result.Fail<T>(
                 task.Exception?.InnerExceptions != null
                     ? string.Join(", ", task.Exception.InnerExceptions)
-                    : TaskFailed
+                    : FailMessages.TaskFailed
             );
     }
 }

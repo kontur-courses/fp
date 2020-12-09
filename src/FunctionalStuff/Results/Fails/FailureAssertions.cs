@@ -7,25 +7,23 @@ namespace FunctionalStuff.Results.Fails
 {
     public static class FailureAssertions
     {
-        public static Result<string> NullOrEmpty(
-            this FailureAssertionsProvider<string> provider)
+        public static Result<string> NullOrEmpty(this IExtensibleFailureAssertionsProvider<string> provider)
         {
             return provider.Validate(string.IsNullOrEmpty, "empty");
         }
 
         public static Result<Dictionary<TKey, TValue>> NullOrEmpty<TKey, TValue>(
-            this FailureAssertionsProvider<Dictionary<TKey, TValue>> provider)
+            this IExtensibleFailureAssertionsProvider<Dictionary<TKey, TValue>> provider)
         {
             return provider.Validate(x => x == null || x.Count == 0, "empty");
         }
 
-        public static Result<T[]> NullOrEmpty<T>(
-            this FailureAssertionsProvider<T[]> provider)
+        public static Result<T[]> NullOrEmpty<T>(this IExtensibleFailureAssertionsProvider<T[]> provider)
         {
             return provider.Validate(x => x == null || !x.Any(), "empty");
         }
 
-        public static Result<T[]> NullOrEmpty<T>(this FailureAssertionsProvider<IEnumerable<T>> provider)
+        public static Result<T[]> NullOrEmpty<T>(this IExtensibleFailureAssertionsProvider<IEnumerable<T>> provider)
         {
             return provider.Value
                 .ToArray()
@@ -33,41 +31,53 @@ namespace FunctionalStuff.Results.Fails
                 .NullOrEmpty();
         }
 
-        public static Result<T> Null<T>(this FailureAssertionsProvider<T> provider)
+        public static Result<T> Null<T>(this IExtensibleFailureAssertionsProvider<T> provider)
             where T : class
         {
             return provider.Validate(x => x == null, "null");
         }
 
-        public static Result<T?> Null<T>(this FailureAssertionsProvider<T?> provider)
+        public static Result<T?> Null<T>(this IExtensibleFailureAssertionsProvider<T?> provider)
             where T : struct
         {
             return provider.Validate(x => !x.HasValue, "null");
         }
 
-        public static Result<CancellationToken> Cancelled(this FailureAssertionsProvider<CancellationToken> provider)
+        public static Result<CancellationToken> Canceled(
+            this IExtensibleFailureAssertionsProvider<CancellationToken> provider)
         {
             return provider.ValidateWithMessage(
                 t => t.IsCancellationRequested,
                 provider.IsInverted
-                    ? General.Tasks.CancellationRequested
+                    ? FailMessages.CancellationRequested
                     : "Cancellation not requested");
         }
 
-        public static Result<T> TokenCancelled<T>(this FailureAssertionsProvider<T> provider, CancellationToken token)
-        {
-            return token.FailIf().Cancelled().Then(_ => provider.Value);
-        }
-
-        public static Result<T> TokenCancelled<T>(this FailureAssertionsProvider<Result<T>> provider,
+        public static Result<T> TokenCanceled<T>(this IExtensibleFailureAssertionsProvider<T> provider,
             CancellationToken token)
         {
-            return token.FailIf().Cancelled().Then(_ => provider.Value);
+            return token.FailIf().Canceled().Then(_ => provider.Value);
         }
 
-        public static Result<T> Matches<T>(this FailureAssertionsProvider<T> provider, Predicate<T> check, string error)
+        public static Result<T> TokenCanceled<T>(this IExtensibleFailureAssertionsProvider<Result<T>> provider,
+            CancellationToken token)
+        {
+            return token.FailIf().Canceled().Then(_ => provider.Value);
+        }
+
+        public static Result<T> Matches<T>(this IExtensibleFailureAssertionsProvider<T> provider,
+            Predicate<T> check,
+            string error)
         {
             return provider.ValidateWithMessage(check, error);
+        }
+
+        public static Result<T> Validate<T>(this IExtensibleFailureAssertionsProvider<T> provider,
+            Predicate<T> predicate,
+            string error)
+        {
+            var message = $"{provider.Name} is {(provider.IsInverted ? "" : "not ")}{error}";
+            return provider.ValidateWithMessage(predicate, message);
         }
     }
 }
