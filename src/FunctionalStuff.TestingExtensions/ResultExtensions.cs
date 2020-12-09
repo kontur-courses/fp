@@ -30,6 +30,17 @@ namespace FunctionalStuff.TestingExtensions
                 .BeAssignableTo<Result<T>>();
         }
 
+        public static AndWhichConstraint<ObjectAssertions, Result<T>> WithError<T>(
+            this AndWhichConstraint<ObjectAssertions, Result<T>> input, string expectedValue)
+        {
+            input.Subject
+                .Error
+                .Should()
+                .Be(expectedValue);
+
+            return input;
+        }
+
         public static T Value<T>(this Result<T> input) =>
             input.ShouldBeSuccessful().Which.GetValueOrThrow();
     }
