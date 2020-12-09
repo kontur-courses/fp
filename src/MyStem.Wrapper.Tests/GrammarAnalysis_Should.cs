@@ -52,11 +52,11 @@ namespace MyStem.Wrapper.Tests
         }
 
         [Test]
-        public void DigitsOnly_ReturnNothing()
+        public void DigitsOnly_Fail()
         {
-            PerformTest("1234")
-                .Should()
-                .BeEmpty();
+             analyser.GetRawResult("1234")
+                .ShouldBeFailed()
+                .WithError("Response of MyStem is empty");
         }
 
         [Test]

@@ -27,6 +27,6 @@ namespace MyStem.Wrapper.Workers.Grammar
                 .Then(x => x.MyStem.GetResponse(x.Text))
                 .Then(x => x.FailIf($"{nameof(IMyStem)} output").NullOrEmpty())
                 .Then(r => JsonConvert.DeserializeObject<IList<AnalysisResultRaw>>(r).ToArray())
-                .Then(x => x.FailIf("Deserialized value").NullOrEmpty());
+                .Then(x => x.FailIf("Response of MyStem").NullOrEmpty());
     }
 }
