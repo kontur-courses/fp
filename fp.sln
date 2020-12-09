@@ -1,14 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C1CC8-A8B6-46C6-B35C-8A43B80111A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.ClientGUI", "TagsCloud.ClientGUI\TagsCloud.ClientGUI.csproj", "{19A8E284-E260-4620-A922-B92415E0CE6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.CloudLayouters", "TagsCloud.CloudLayouters\TagsCloud.CloudLayouters.csproj", "{FE587D50-939F-4D3C-A354-39B5FE0C5A92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.Common", "TagsCloud.Common\TagsCloud.Common.csproj", "{DC748908-35DA-4408-BB7F-E43A7F98900A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.Core", "TagsCloud.Core\TagsCloud.Core.csproj", "{594ADB07-FE55-4FF8-BF13-D8924F4C105B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.FileReader", "TagsCloud.FileReader\TagsCloud.FileReader.csproj", "{4F69C916-188C-4DD9-8D47-11A40F931C3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.Spirals", "TagsCloud.Spirals\TagsCloud.Spirals.csproj", "{4B5BBD8D-CAC9-4F92-92D1-225EE6A154BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloud.Visualization", "TagsCloud.Visualization\TagsCloud.Visualization.csproj", "{AD7157D1-98EB-47A1-AA32-B4F3FEFC9962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloud.Tests", "TagsCloud.Tests\TagsCloud.Tests.csproj", "{37FD9731-DEBE-496F-BAEB-4AF3F25D0DAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +51,46 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19A8E284-E260-4620-A922-B92415E0CE6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19A8E284-E260-4620-A922-B92415E0CE6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19A8E284-E260-4620-A922-B92415E0CE6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19A8E284-E260-4620-A922-B92415E0CE6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE587D50-939F-4D3C-A354-39B5FE0C5A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE587D50-939F-4D3C-A354-39B5FE0C5A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE587D50-939F-4D3C-A354-39B5FE0C5A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE587D50-939F-4D3C-A354-39B5FE0C5A92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC748908-35DA-4408-BB7F-E43A7F98900A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC748908-35DA-4408-BB7F-E43A7F98900A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC748908-35DA-4408-BB7F-E43A7F98900A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC748908-35DA-4408-BB7F-E43A7F98900A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{594ADB07-FE55-4FF8-BF13-D8924F4C105B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{594ADB07-FE55-4FF8-BF13-D8924F4C105B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{594ADB07-FE55-4FF8-BF13-D8924F4C105B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{594ADB07-FE55-4FF8-BF13-D8924F4C105B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F69C916-188C-4DD9-8D47-11A40F931C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F69C916-188C-4DD9-8D47-11A40F931C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F69C916-188C-4DD9-8D47-11A40F931C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F69C916-188C-4DD9-8D47-11A40F931C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B5BBD8D-CAC9-4F92-92D1-225EE6A154BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B5BBD8D-CAC9-4F92-92D1-225EE6A154BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B5BBD8D-CAC9-4F92-92D1-225EE6A154BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B5BBD8D-CAC9-4F92-92D1-225EE6A154BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD7157D1-98EB-47A1-AA32-B4F3FEFC9962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD7157D1-98EB-47A1-AA32-B4F3FEFC9962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD7157D1-98EB-47A1-AA32-B4F3FEFC9962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD7157D1-98EB-47A1-AA32-B4F3FEFC9962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37FD9731-DEBE-496F-BAEB-4AF3F25D0DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37FD9731-DEBE-496F-BAEB-4AF3F25D0DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37FD9731-DEBE-496F-BAEB-4AF3F25D0DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37FD9731-DEBE-496F-BAEB-4AF3F25D0DAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0749721-6E24-4ED8-B25E-2388E1A57189}
 	EndGlobalSection
 EndGlobal
