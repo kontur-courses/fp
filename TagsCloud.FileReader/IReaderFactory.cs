@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.FileReader
+﻿using TagsCloud.ResultPattern;
+
+namespace TagsCloud.FileReader
 {
     public interface IReaderFactory
     {
-        IWordsReader GetReader(string extension);
+        Result<IWordsReader> GetReader(string extension);
     }
 }

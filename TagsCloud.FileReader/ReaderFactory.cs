@@ -1,10 +1,10 @@
-﻿using System;
+﻿using TagsCloud.ResultPattern;
 
 namespace TagsCloud.FileReader
 {
     public class ReaderFactory : IReaderFactory
     {
-        public IWordsReader GetReader(string extension)
+        public Result<IWordsReader> GetReader(string extension)
         {
             switch (extension)
             {
@@ -15,7 +15,7 @@ namespace TagsCloud.FileReader
                 case "docx":
                     return new DocxReader();
                 default:
-                    throw new ArgumentException("not valid extension of file");
+                    return Result.Fail<IWordsReader>("not valid extension of file");
             }
         }
     }

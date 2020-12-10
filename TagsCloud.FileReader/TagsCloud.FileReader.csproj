@@ -9,4 +9,8 @@
     <PackageReference Include="RTFToTextConverter" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TagsCloud.ResultPattern\TagsCloud.ResultPattern.csproj" />
+  </ItemGroup>
+
 </Project>

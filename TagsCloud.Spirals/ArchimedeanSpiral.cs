@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using TagsCloud.Common;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Spirals
 {
@@ -16,7 +17,7 @@ namespace TagsCloud.Spirals
             this.center = center;
             this.spiralParameter = spiralParameter;
             if (spiralParameter <= 0)
-                throw new ArgumentException($"{nameof(spiralParameter)} must be a positive number");
+                Result.Fail<double>($"{nameof(spiralParameter)} must be a positive number").GetValueOrThrow();
         }
 
         public Point GetNextPoint()

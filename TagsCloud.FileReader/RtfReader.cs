@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using RTFToTextConverter;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.FileReader
 {
     public class RtfReader : IWordsReader
     {
-        public IEnumerable<string> ReadWords(string path)
+        public Result<string[]> ReadWords(string path)
         {
-            return RTFToText.converting().rtfFromFile(path).Split(new string[0], StringSplitOptions.RemoveEmptyEntries);
+            return path.AsResult()
+                .Then(x => RTFToText.converting().rtfFromFile(x))
+                .Then(x => x.Split(new string[0], StringSplitOptions.RemoveEmptyEntries))
+                .ReplaceError(x => "rtf yeees");
         }
     }
 }

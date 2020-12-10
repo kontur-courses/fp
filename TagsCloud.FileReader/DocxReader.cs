@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.FileReader
 {
     public class DocxReader : IWordsReader
     {
-        public IEnumerable<string> ReadWords(string path)
+        public Result<string[]> ReadWords(string path)
         {
-            var wordDocument = WordprocessingDocument.Open(path, false);
-            return wordDocument.MainDocumentPart.Document.Body.InnerText
-                .Split(new string[0], StringSplitOptions.RemoveEmptyEntries);
+            return path.AsResult()
+                .Then(x => WordprocessingDocument.Open(x, false))
+                .Then(x => x.MainDocumentPart.Document.Body.InnerText)
+                .Then(x => x.Split(new string[0], StringSplitOptions.RemoveEmptyEntries))
+                .RefineError("with path:\n" + path);
         }
     }
 }

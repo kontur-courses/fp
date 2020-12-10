@@ -5,6 +5,7 @@ using System.Linq;
 using NHunspell;
 using TagsCloud.Common;
 using TagsCloud.FileReader;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Core
 {
@@ -13,21 +14,10 @@ namespace TagsCloud.Core
         public static List<(string, int)> GetWords(string pathToFile, string pathToBoringWords,
             string pathToDictionary, string pathToAffix, IReaderFactory readerFactory)
         {
-            IEnumerable<string> mainText;
-            Hunspell hunspell;
-            HashSet<string> boringWords;
-
-            try
-            {
-                mainText = GetTextFromFile(pathToFile, readerFactory);
-                hunspell = new Hunspell(pathToAffix, pathToDictionary);
-                boringWords = TextAnalyzer.GetUniqueWords(GetTextFromFile(pathToBoringWords, readerFactory));
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException("not valid path to file:\n" + e.Message);
-            }
-
+            var mainText = GetTextFromFile(pathToFile, readerFactory).GetValueOrThrow();
+            var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords, readerFactory).GetValueOrThrow());
+            var hunspell = Result.Of(() => new Hunspell(pathToAffix, pathToDictionary)).GetValueOrThrow();
+            
             return TextAnalyzer.GetWordByFrequency(
                 mainText,
                 boringWords,
@@ -37,10 +27,11 @@ namespace TagsCloud.Core
                     .ThenBy(y => y.Key, StringComparer.Ordinal));
         }
 
-        private static IEnumerable<string> GetTextFromFile(string document, IReaderFactory readerFactory)
+        private static Result<string[]> GetTextFromFile(string document, IReaderFactory readerFactory)
         {
             var extension = document.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries).Last();
-            return readerFactory.GetReader(extension).ReadWords(document);
+            return readerFactory.GetReader(extension)
+                .Then(x => x.ReadWords(document));
         }
 
         public static List<Rectangle> GetRectangles(ICircularCloudLayouter cloud, 
