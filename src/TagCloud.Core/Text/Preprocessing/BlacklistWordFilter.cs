@@ -12,7 +12,9 @@ namespace TagCloud.Core.Text.Preprocessing
             "перед", "при", "с", "между", "как", "что", "где", "не", "ни", "вовсе", "вот", "это"
         };
 
-        public Result<IEnumerable<string>> GetValidWordsOnly(IEnumerable<string> words) =>
-            words.Except(blacklistedWords).AsResult();
+        public Result<string[]> GetValidWordsOnly(IEnumerable<string> words) =>
+            words.Except(blacklistedWords)
+                .ToArray()
+                .AsResult();
     }
 }

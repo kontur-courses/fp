@@ -36,7 +36,6 @@ namespace TagCloud.Gui
         private readonly UserInputOneOptionChoice<FontSizeSourceType> fontSizeSourcePicker;
         private readonly UserInputOneOptionChoice<FontFamily> fontPicker;
         private readonly UserInputOneOptionChoice<IImageResizer> imageResizerPicker;
-        private readonly UserInputOneOptionChoice<ISpeechPartWordsFilter> speechPartFilterPicker;
         private readonly UserInputField filePathInput;
         private readonly UserInputSizeField centerOffsetPicker;
         private readonly UserInputSizeField betweenWordsDistancePicker;
@@ -53,8 +52,8 @@ namespace TagCloud.Gui
             IEnumerable<IWordConverter> normalizers,
             IEnumerable<IFileResultWriter> writers,
             IEnumerable<IImageResizer> resizers,
-            IEnumerable<ISpeechPartWordsFilter> speechFilters, 
-            IUserNotifier notifier)
+            IUserNotifier notifier,
+            ISet<MyStemSpeechPart> allowedSpeechPartsHolder)
         {
             this.ui = ui;
             this.cloudGenerator = cloudGenerator;
@@ -64,11 +63,11 @@ namespace TagCloud.Gui
             writerPicker = inputBuilder.ServiceChoice(writers, UiLabel.WritingMethod);
             normalizerPicker = inputBuilder.ServiceChoice(normalizers, UiLabel.NormalizationMethod);
             imageResizerPicker = inputBuilder.ServiceChoice(resizers, UiLabel.ResizingMethod);
-            speechPartFilterPicker = inputBuilder.ServiceChoice(speechFilters, UiLabel.TypeFilter);
             filterPicker = inputBuilder.SeveralServicesChoice(filters, UiLabel.FilteringMethod);
             layouterPicker = inputBuilder.EnumChoice<LayouterType>(UiLabel.LayoutingAlgorithm);
             fontSizeSourcePicker = inputBuilder.EnumChoice<FontSizeSourceType>(UiLabel.SizeSource);
             speechPartPicker = inputBuilder.SeveralEnumValuesChoice<MyStemSpeechPart>(UiLabel.SpeechPart);
+            speechPartPicker.BindSelectionTo(allowedSpeechPartsHolder);
 
             backgroundColorPicker = inputBuilder.Color(Color.Khaki, UiLabel.BackgroundColor);
             colorPalettePicker = inputBuilder.ColorPalette(UiLabel.ColorPalette, Color.DarkRed);
@@ -103,8 +102,7 @@ namespace TagCloud.Gui
             AddUserInputOrUseDefault(fontPicker);
             AddUserInputOrUseDefault(fontSizeSourcePicker);
 
-            AddUserInputOrUseDefault(speechPartFilterPicker);
-            if (speechPartFilterPicker.Available.Any()) ui.AddUserInput(speechPartPicker);
+            ui.AddUserInput(speechPartPicker);
 
             ui.AddUserInput(filterPicker);
             AddUserInputOrUseDefault(normalizerPicker);
@@ -162,24 +160,15 @@ namespace TagCloud.Gui
                     .WaitResult()
                     .Then(w => Fail.If(w, "Words reading result").NullOrEmpty())
                     .Then(ApplyFilters)
-                    .Then(ApplySpeechPartFilter)
                     .FailIf().TokenCanceled(token)
                     .Then(normalizerPicker.Selected.Value.Normalize)
                     .Then(x => x.ToLookup(y => y))
                     .Then(x => x.ToDictionary(y => y.Key, y => y.Count())));
 
-        private IEnumerable<string> ApplySpeechPartFilter(string[] w) =>
-            !speechPartFilterPicker.Selected.IsEmpty &&
-            speechPartPicker.Selected.Any()
-                ? speechPartFilterPicker.Selected.Value
-                    .OnlyWithSpeechPart(w, speechPartPicker.Selected.ToHashSet())
-                    .GetValueOr(notifier.Notify, w)
-                : w;
-
-        private string[] ApplyFilters(string[] rw) =>
+        private string[] ApplyFilters(ICollection<string> rw) =>
             filterPicker.Selected.Aggregate(rw, (current, filter) =>
                     filter.GetValidWordsOnly(current)
-                        .Then(filtered => filtered.ToArray())
+                        .Then(vw => current = vw)
                         .RefineError($"Failed to apply filter {filter.GetType().Name}")
                         .GetValueOr(notifier.Notify, current))
                 .ToArray();

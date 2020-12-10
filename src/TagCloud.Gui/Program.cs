@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
+using MyStem.Wrapper.Workers.Grammar.Parsing.Models;
 using MyStem.Wrapper.Wrapper;
 
 namespace TagCloud.Gui
@@ -32,6 +34,9 @@ namespace TagCloud.Gui
                 .Concat(Directory.EnumerateFiles(Environment.CurrentDirectory, "MyStem*.dll"));
             var assemblies = dlls.Select(Assembly.LoadFrom).ToArray();
             builder.RegisterAssemblyModules(assemblies);
+            builder.Register(_ => new HashSet<MyStemSpeechPart>())
+                .As<ISet<MyStemSpeechPart>>()
+                .SingleInstance();
 
             builder.RegisterType<MyStemBuilder>()
                 .AsImplementedInterfaces()

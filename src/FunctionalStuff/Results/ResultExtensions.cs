@@ -147,11 +147,10 @@ namespace FunctionalStuff.Results
             Action<string> handleError,
             TInput defaultValue)
         {
-            if (input.IsSuccessful)
-                return input.Value;
-
-            handleError(input.Error);
-            return defaultValue;
+            input.OnFail(handleError);
+            return input.IsSuccessful
+                ? input.Value
+                : defaultValue;
         }
     }
 }

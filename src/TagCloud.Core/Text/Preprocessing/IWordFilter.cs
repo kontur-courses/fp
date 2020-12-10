@@ -5,6 +5,6 @@ namespace TagCloud.Core.Text.Preprocessing
 {
     public interface IWordFilter
     {
-        Result<IEnumerable<string>> GetValidWordsOnly(IEnumerable<string> word);
+        Result<string[]> GetValidWordsOnly(IEnumerable<string> word);
     }
 }

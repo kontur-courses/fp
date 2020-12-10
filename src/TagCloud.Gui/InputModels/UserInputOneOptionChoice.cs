@@ -8,9 +8,7 @@ namespace TagCloud.Gui.InputModels
         public UserInputOneOptionChoice(string description, IEnumerable<UserInputSelectorItem<T>> available)
             : base(description, available)
         {
-            Selected = ItemsByNames.Any() 
-                ? ItemsByNames.First().Value 
-                : UserInputSelectorItem<T>.Empty;
+            Selected = ItemsByNames.First().Value;
         }
 
         public UserInputSelectorItem<T> Selected { get; private set; }
