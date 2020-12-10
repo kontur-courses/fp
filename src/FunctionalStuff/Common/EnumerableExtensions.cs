@@ -9,17 +9,14 @@ namespace FunctionalStuff.Common
     {
         public static Result<ICollection<T>> ToResult<T>(this IEnumerable<Result<T>> source)
         {
-            var list = new List<T>();
-            var errors = new List<string>();
-            foreach (var r in source)
-            {
-                if (!r.IsSuccessful) errors.Add(r.Error);
-                else if (errors.Count == 0) list.Add(r.Value);
-            }
+            var arr = source.ToArray();
 
-            return errors.Count == 0
-                ? Result.Ok<ICollection<T>>(list)
-                : Result.Fail<ICollection<T>>(string.Join(", ", errors));
+            var failed = arr.Where(x => !x.IsSuccessful).Select(x => x.Error).ToArray();
+            if (failed.Length > 0)
+                return Result.Fail<ICollection<T>>(failed.JoinStrings(", "));
+
+            ICollection<T> successfulResults = arr.Select(x => x.Value).ToArray();
+            return Result.Ok(successfulResults);
         }
 
         public static string ToStringWith<T>(this IEnumerable<T> source, string separator, Func<T, string> mapper) =>
