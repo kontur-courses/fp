@@ -26,7 +26,11 @@ namespace TagsCloud.ClientGUI
             service.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
 
             service.RegisterType<SpiralSettings>().AsSelf().InstancePerLifetimeScope();
-            service.RegisterType<FontSettings>().AsSelf().InstancePerLifetimeScope();
+            service.RegisterType<FontSettings>()
+                .WithProperty(new TypedParameter(typeof(string), "Times New Roman"))
+                .WithProperty(new TypedParameter(typeof(int), 20))
+                .InstancePerLifetimeScope();
+
             service.RegisterType<PathSettings>().AsSelf().InstancePerLifetimeScope();
             service.RegisterType<Palette>().AsSelf().InstancePerLifetimeScope();
             service.RegisterType<ColorAlgorithm>().AsSelf().InstancePerLifetimeScope();
