@@ -20,9 +20,12 @@ x86/
 build/
 bld/
 [Oo]bj/
-/TagsCloud.ResultPattern/bin/Debug/
-/TagsCloud.Visualization/bin/Debug/
-/TagsCloud.Spirals/bin/Debug/
+/TagsCloud.ResultPattern/bin/
+/TagsCloud.Visualization/bin/
+/TagsCloud.Spirals/bin/
+/TagsCloud.Common/bin/
+/TagsCloud.Core/bin/
+/TagsCloud.CloudLayouters/bin/
 
 # Visual Studo 2015 cache/options directory
 .vs/

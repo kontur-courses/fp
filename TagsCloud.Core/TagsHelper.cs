@@ -47,16 +47,17 @@ namespace TagsCloud.Core
             List<(string, int)> words, Dictionary<int, Font> newFonts, Font font)
         {
             var rectangles = new List<Rectangle>();
-            foreach (var word in words)
+            foreach (var (word, fontSize) in words)
             {
-                var fontSize = word.Item2;
                 if (!newFonts.TryGetValue(fontSize, out var newFont))
                 {
-                    newFont = new Font(font.FontFamily, (int) (font.Size * Math.Log(word.Item2 + 1)), font.Style);
+                    newFont = new Font(font.FontFamily, (int) (font.Size * Math.Log(fontSize + 1)), font.Style);
                     newFonts[fontSize] = newFont;
                 }
 
-                var rect = cloud.PutNextRectangle(new Size((int)newFont.Size * word.Item1.Length, newFont.Height));
+                var rect = cloud
+                    .PutNextRectangle(new Size((int)newFont.Size * word.Length, newFont.Height))
+                    .GetValueOrThrow();
                 rectangles.Add(rect);
             }
             return rectangles;
