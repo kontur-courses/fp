@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.Visualization;
@@ -10,9 +8,9 @@ namespace TagsCloud.Tests
 {
     internal class FontSettings_Tests
     {
+        private readonly int maxFontSize = 50;
+        private readonly int minFontSize = 8;
         private FontSettings settings;
-        private int minFontSize = 8;
-        private int maxFontSize = 50;
 
         [SetUp]
         public void SetUp()

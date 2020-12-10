@@ -2,13 +2,6 @@
 
 namespace TagsCloud.ResultPattern
 {
-    public class None
-    {
-        private None()
-        {
-        }
-    }
-
     public struct Result<T>
     {
         public Result(string error, T value = default)
@@ -89,13 +82,6 @@ namespace TagsCloud.ResultPattern
             return input.Then(inp => Of(() => continuation(inp)));
         }
 
-        public static Result<None> Then<TInput, TOutput>(
-            this Result<TInput> input,
-            Action<TInput> continuation)
-        {
-            return input.Then(inp => OfAction(() => continuation(inp)));
-        }
-
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
             Action<TInput> continuation)
@@ -112,20 +98,13 @@ namespace TagsCloud.ResultPattern
                 : Fail<TOutput>(input.Error);
         }
 
-        public static Result<TInput> OnFail<TInput>(
-            this Result<TInput> input,
-            Action<string> handleError)
-        {
-            if (!input.IsSuccess) handleError(input.Error);
-            return input;
-        }
-
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess 
+                ? input
+                : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(
