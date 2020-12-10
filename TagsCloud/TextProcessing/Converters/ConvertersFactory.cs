@@ -18,7 +18,7 @@ namespace TagsCloud.TextProcessing.Converters
         {
             var converterNames = wordsConfig.ConvertersNames;
             var convertersResult = converterNames
-                                     .Select(name => Result.Of(services[name], $"This converter {name} not supported"))
+                                     .Select(name => Result.Of(() => services[name](), $"This converter {name} not supported"))
                                      .ToArray();
 
             if (convertersResult.Any(result => !result.IsSuccess))

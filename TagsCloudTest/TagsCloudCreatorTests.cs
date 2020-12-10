@@ -76,7 +76,7 @@ namespace TagsCloudTest
         }
 
         [Test]
-        public void CreateCloudTest()
+        public void CreateCloudFunctionalTest()
         {
             tagsCloudCreator.CreateCloud(textPath, imagePath);
 
@@ -84,6 +84,72 @@ namespace TagsCloudTest
             var expected = File.ReadAllBytes(expectedImagePath);
 
             current.Should().Equal(expected);
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidTextPathWhenExtensionNotExist()
+        {
+            var path = textPath.Replace(".txt", ".ff");
+            wordsConfig.Path = path;
+            var result = tagsCloudCreator.CreateCloud(path, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidTextPathWhenFileNotExist()
+        {
+            var path = textPath.Replace("text.txt", "abc.txt");
+            wordsConfig.Path = path;
+            var result = tagsCloudCreator.CreateCloud(path, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidImagePathExtensionNotExist()
+        {
+            var path = imagePath.Replace(".png", ".ff");
+            imageConfig.Path = path;
+            var result = tagsCloudCreator.CreateCloud(textPath, path);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidLayouterName()
+        {
+            wordsConfig.LayouterName = "fffff";
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidTagsGeneratorName()
+        {
+            wordsConfig.TagGeneratorName = "fffff";
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidFilterNames()
+        {
+            wordsConfig.FilersNames = new[] { "fff"};
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidConverterNames()
+        {
+            wordsConfig.ConvertersNames = new[] { "fff" };
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

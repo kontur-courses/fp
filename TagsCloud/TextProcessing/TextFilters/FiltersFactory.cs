@@ -17,9 +17,9 @@ namespace TagsCloud.TextProcessing.TextFilters
         public override Result<ITextFilter> Create()
         {
             var filterNames = wordsConfig.FilersNames;
-            var filtersResult = filterNames.Select(name => Result.Of(services[name], $"This filter {name} not supported")).ToArray();
+            var filtersResult = filterNames.Select(name => Result.Of(() => services[name](), $"This filter {name} not supported")).ToArray();
 
-            if(filtersResult.Any(res => !res.IsSuccess))
+            if (filtersResult.Any(res => !res.IsSuccess))
                 return filtersResult.Aggregate((working, current) => current.RefineError(working.Error));
 
             return new CompositeFilter(filterNames.Select(name => services[name]()).ToArray());
