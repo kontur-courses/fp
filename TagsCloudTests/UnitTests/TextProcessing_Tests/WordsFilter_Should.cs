@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using FluentAssertions;
@@ -8,7 +7,7 @@ using TagsCloud.Settings.SettingsForTextProcessing;
 using TagsCloud.TextProcessing.ParserForWordsAndSpeechParts;
 using TagsCloud.TextProcessing.TextFilters;
 
-namespace TagsCloudTests.UnitTests
+namespace TagsCloudTests.UnitTests.TextProcessing_Tests
 {
     public class WordsFilter_Should
     {
@@ -25,24 +24,17 @@ namespace TagsCloudTests.UnitTests
         }
 
         [Test]
-        public void GetInterestingWords_ThrowException_WhenStringIsNull()
+        public void GetInterestingWords_IsNotSuccess_WhenStringIsNull()
         {
-            var act = new Action(() => _sut.GetInterestingWords(null));
+            var act = _sut.GetInterestingWords(null);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void GetInterestingWords_BeNotCalledParseToPartSpeechAndWords_WhenStringIsNull()
         {
-            try
-            {
-                var _ = new Action(() => _sut.GetInterestingWords(null));
-            }
-            catch
-            {
-                // ignored
-            }
+            _sut.GetInterestingWords(null);
 
             A.CallTo(() => normalizedWordAndSpeechPartParser.ParseToNormalizedWordAndPartSpeech(A<string>.Ignored))
                 .MustNotHaveHappened();
@@ -54,7 +46,7 @@ namespace TagsCloudTests.UnitTests
             var words = new[] {"собака", "кот", "в", "она", "подвал"};
             A.CallTo(() => _textProcessingSettings.BoringWords).Returns(new HashSet<string> {words.Last()});
 
-            var act = _sut.GetInterestingWords(words);
+            var act = _sut.GetInterestingWords(words).GetValueOrThrow();
 
             act.Should().BeEquivalentTo(words[0], words[1], words[2], words[3]);
         }

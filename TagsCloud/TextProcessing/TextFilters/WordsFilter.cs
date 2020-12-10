@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using ResultPattern;
 using TagsCloud.Settings.SettingsForTextProcessing;
 
 namespace TagsCloud.TextProcessing.TextFilters
@@ -13,11 +13,13 @@ namespace TagsCloud.TextProcessing.TextFilters
             _textProcessingSettings = textProcessingSettings;
         }
 
-        public string[] GetInterestingWords(string[] words)
+        public Result<string[]> GetInterestingWords(string[] words)
         {
-            if (words == null)
-                throw new ArgumentException("Array must be not null");
-            return words.Where(word => !_textProcessingSettings.BoringWords.Contains(word)).ToArray();
+            return words == null
+                ? new Result<string[]>("Array words for words filter must be not null")
+                : ResultExtensions.Ok(words
+                    .Where(word => !_textProcessingSettings.BoringWords.Contains(word))
+                    .ToArray());
         }
     }
 }

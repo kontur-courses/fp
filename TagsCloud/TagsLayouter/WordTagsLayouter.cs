@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using RectanglesCloudLayouter.LayouterOfRectangles;
+using ResultPattern;
 using TagsCloud.TextProcessing.FrequencyOfWords;
 using TagsCloud.TextProcessing.Tags;
 using TagsCloud.TextProcessing.WordsMeasurer;
@@ -20,29 +21,32 @@ namespace TagsCloud.TagsLayouter
             IWordMeasurer wordMeasurer, Font font)
         {
             _wordsFrequency = wordsFrequency;
-            this._rectanglesLayouter = rectanglesLayouter;
+            _rectanglesLayouter = rectanglesLayouter;
             _wordMeasurer = wordMeasurer;
             _font = font;
         }
 
-        public (IReadOnlyList<WordTag>, int) GetWordTagsAndCloudRadius(string text)
+        public Result<(IReadOnlyList<WordTag>, int)> GetWordTagsAndCloudRadius(string text)
         {
             if (text == null)
-                throw new Exception("String must be not null");
+                return new Result<(IReadOnlyList<WordTag>, int)>("String for tags layouter must be not null");
             var tags = _wordsFrequency
                 .GetWordsFrequency(text)
+                .GetValueOrThrow()
                 .OrderByDescending(wordAndFrequency => wordAndFrequency.Value)
                 .Select(wordAndFrequency =>
                 {
                     var (word, frequency) = wordAndFrequency;
                     var wordFont = new Font(_font.FontFamily,
                         _font.Size + (float) Math.Log2(frequency) * 7);
-                    var wordSize = _wordMeasurer.GetWordSize(word, wordFont);
+                    var wordSize = _wordMeasurer.GetWordSize(word, wordFont).GetValueOrThrow();
                     var rectangle = _rectanglesLayouter.PutNextRectangle(wordSize);
                     return new WordTag(word, rectangle, wordFont);
                 })
                 .ToList();
-            return (tags, _rectanglesLayouter.CloudRadius);
+            return tags.Count != 0
+                ? new Result<(IReadOnlyList<WordTag>, int)>(null, (tags, _rectanglesLayouter.CloudRadius))
+                : new Result<(IReadOnlyList<WordTag>, int)>("No interesting words for drawing");
         }
     }
 }

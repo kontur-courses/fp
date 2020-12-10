@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.ProcessorOfApp
+﻿using ResultPattern;
+
+namespace TagsCloud.ProcessorOfApp
 {
     public interface IAppProcessor
     {
-        void Run();
+        Result<None> Run();
     }
 }

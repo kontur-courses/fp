@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForFont
 {
     public interface IFontConverter
     {
-        Font ConvertToFont(string[] fontParameters);
+        Result<Font> ConvertToFont(string[] fontParameters);
     }
 }

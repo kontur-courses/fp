@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ResultPattern;
 using TagsCloud.Settings.SettingsForStorage;
 
 namespace TagsCloud.Saver
@@ -13,16 +14,19 @@ namespace TagsCloud.Saver
             _storageSettings = storageSettings;
         }
 
-        public void Save(Image image)
+        public Result<None> Save(Image image)
         {
             try
             {
-                image.Save($"{_storageSettings.PathToSave}.{_storageSettings.ImageFormat.ToString().ToLower()}",
+                var pathToSave = $"{_storageSettings.PathToSave}.{_storageSettings.ImageFormat.ToString().ToLower()}";
+                image.Save(pathToSave,
                     _storageSettings.ImageFormat);
+                Console.WriteLine($@"The image was saved in the specified path: {pathToSave}");
+                return new Result<None>();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception("Failed to save image", e);
+                return new Result<None>("Failed to save image");
             }
         }
     }

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using RectanglesCloudLayouter.LayouterOfRectangles;
+using ResultPattern;
 using TagsCloud.TagsLayouter;
 using TagsCloud.TextProcessing.FrequencyOfWords;
 using TagsCloud.TextProcessing.WordsMeasurer;
 
-namespace TagsCloudTests.UnitTests
+namespace TagsCloudTests.UnitTests.WordTagsLayouter_Tests
 {
     public class WordTagsLayouter_Should
     {
@@ -29,24 +29,17 @@ namespace TagsCloudTests.UnitTests
         }
 
         [Test]
-        public void GetWordTagsAndCloudRadius_ThrowException_WhenStringIsNotNull()
+        public void GetWordTagsAndCloudRadius_IsNotSuccess_WhenStringIsNull()
         {
-            var act = new Action(() => _sut.GetWordTagsAndCloudRadius(null));
+            var act = _sut.GetWordTagsAndCloudRadius(null);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void GetWordTagsAndCloudRadius_BeNotCalledAnyMethodDependencies_WhenStringIsNull()
         {
-            try
-            {
-                _sut.GetWordTagsAndCloudRadius(null);
-            }
-            catch
-            {
-                // ignored
-            }
+            _sut.GetWordTagsAndCloudRadius(null);
 
             A.CallTo(() => _wordsFrequency.GetWordsFrequency(A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _wordMeasurer.GetWordSize(A<string>.Ignored, A<Font>.Ignored)).MustNotHaveHappened();
@@ -57,6 +50,11 @@ namespace TagsCloudTests.UnitTests
         [TestCase("игра")]
         public void GetWordTagsAndCloudRadius_BeCalledGetWordsFrequencyOnce_WhenStringIsNotNull(string text)
         {
+            A.CallTo(() => _wordsFrequency.GetWordsFrequency(A<string>.Ignored))
+                .Returns(ResultExtensions.Ok(new Dictionary<string, int>()));
+            A.CallTo(() => _wordMeasurer.GetWordSize(A<string>.Ignored, A<Font>.Ignored))
+                .Returns(ResultExtensions.Ok(new Size()));
+
             _sut.GetWordTagsAndCloudRadius(text);
 
             A.CallTo(() => _wordsFrequency.GetWordsFrequency(A<string>.Ignored)).MustHaveHappenedOnceExactly();
@@ -67,8 +65,9 @@ namespace TagsCloudTests.UnitTests
         {
             var text = "игра теннис";
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(new Dictionary<string, int>
-                {[words[0]] = 1, [words[1]] = 1});
+            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(ResultExtensions.Ok(
+                new Dictionary<string, int>
+                    {[words[0]] = 1, [words[1]] = 1}));
 
             _sut.GetWordTagsAndCloudRadius(text);
 
@@ -81,8 +80,9 @@ namespace TagsCloudTests.UnitTests
         {
             var text = "игра теннис";
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(new Dictionary<string, int>
-                {[words[0]] = 1, [words[1]] = 1});
+            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(ResultExtensions.Ok(
+                new Dictionary<string, int>
+                    {[words[0]] = 1, [words[1]] = 1}));
 
             _sut.GetWordTagsAndCloudRadius(text);
 
@@ -95,12 +95,13 @@ namespace TagsCloudTests.UnitTests
         {
             var text = "игра теннис";
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(new Dictionary<string, int>
-                {[words[0]] = 1, [words[1]] = 1});
+            A.CallTo(() => _wordsFrequency.GetWordsFrequency(text)).Returns(ResultExtensions.Ok(
+                new Dictionary<string, int>
+                    {[words[0]] = 1, [words[1]] = 1}));
 
             var act = _sut.GetWordTagsAndCloudRadius(text);
 
-            act.Item1.Should().HaveCount(words.Length);
+            act.GetValueOrThrow().Item1.Should().HaveCount(words.Length);
         }
     }
 }

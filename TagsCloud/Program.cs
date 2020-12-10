@@ -6,6 +6,7 @@ using RectanglesCloudLayouter.CalculatorForCloudRadius;
 using RectanglesCloudLayouter.LayouterOfRectangles;
 using RectanglesCloudLayouter.SettingsForSpiral;
 using RectanglesCloudLayouter.SpiralAlgorithm;
+using ResultPattern;
 using TagsCloud.Clients;
 using TagsCloud.ProcessorOfApp;
 using TagsCloud.Reader;
@@ -31,19 +32,20 @@ namespace TagsCloud
             var client = new ConsoleClient();
             if (!client.TryGetUserCommands(args, out var commands))
                 return;
-            var serviceCollection = new ServiceCollection();
-            TemporarySettingsStorage settings;
-            try
-            {
-                settings = TemporarySettingsStorage.From(commands);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return;
-            }
-            InjectDependencies(serviceCollection, settings);
-            serviceCollection.BuildServiceProvider().GetRequiredService<IAppProcessor>().Run();
+
+            TemporarySettingsStorage
+                .From(commands)
+                .Then(settings =>
+                {
+                    var serviceCollection = new ServiceCollection();
+                    InjectDependencies(serviceCollection, settings);
+                    return serviceCollection;
+                })
+                .Then(serviceCollection => serviceCollection
+                    .BuildServiceProvider()
+                    .GetRequiredService<IAppProcessor>()
+                    .Run())
+                .OnFail(Console.WriteLine);
         }
 
         private static void InjectDependencies(IServiceCollection serviceCollection,

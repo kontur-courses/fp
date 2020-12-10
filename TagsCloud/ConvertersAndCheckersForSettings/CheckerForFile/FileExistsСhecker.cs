@@ -1,15 +1,15 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForFile
 {
     public class FileExistsСhecker : IFileExistsСhecker
     {
-        public string GetProvenPath(string pathToFile)
+        public Result<string> GetProvenPath(string pathToFile)
         {
-            if (File.Exists(pathToFile))
-                return pathToFile;
-            throw new Exception("Doesn't contain the text file");
+            return File.Exists(pathToFile)
+                ? new Result<string>(null, pathToFile)
+                : new Result<string>("Doesn't contain the text file");
         }
     }
 }

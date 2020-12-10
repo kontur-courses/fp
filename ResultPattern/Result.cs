@@ -4,13 +4,14 @@ namespace ResultPattern
 {
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
         }
 
         public string Error { get; }
+
         internal T Value { get; }
 
         public T GetValueOrThrow()

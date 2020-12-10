@@ -1,14 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.TextProcessing.FrequencyOfWords;
 using TagsCloud.TextProcessing.TextConverters;
 using TagsCloud.TextProcessing.TextFilters;
 
-namespace TagsCloudTests.UnitTests
+namespace TagsCloudTests.UnitTests.TextProcessing_Tests
 {
     public class WordsFrequency_Should
     {
@@ -27,24 +27,17 @@ namespace TagsCloudTests.UnitTests
         }
 
         [Test]
-        public void GetWordsFrequency_ThrowException_WhenStringIsNull()
+        public void GetWordsFrequency_IsNotSuccess_WhenStringIsNull()
         {
-            var act = new Action(() => _sut.GetWordsFrequency(null));
+            var act = _sut.GetWordsFrequency(null);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void GetWordsFrequency_NotBeCalledGetInterestingWordsForEachFilters_WhenStringIsNull()
         {
-            try
-            {
-                _sut.GetWordsFrequency(null);
-            }
-            catch
-            {
-                // ignored
-            }
+            _sut.GetWordsFrequency(null);
 
             A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored)).MustNotHaveHappened();
@@ -52,17 +45,27 @@ namespace TagsCloudTests.UnitTests
 
         [TestCase("")]
         [TestCase("word")]
-        public void GetWordsFrequency_NotException_WhenStringIsNotNull(string text)
+        public void GetWordsFrequency_IsSuccess_WhenStringIsNotNull(string text)
         {
-            var act = new Action(() => _sut.GetWordsFrequency(text));
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(new string[0]));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(new string[0]));
 
-            act.Should().NotThrow<Exception>();
+            var act = _sut.GetWordsFrequency(text);
+
+            act.IsSuccess.Should().BeTrue();
         }
 
         [TestCase("")]
         [TestCase("words")]
         public void GetWordsFrequency_BeCalledGetInterestingWordsOnceForEachFilters_WhenStringIsNotNull(string text)
         {
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(new string[0]));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(new string[0]));
+
             _sut.GetWordsFrequency(text);
 
             A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).MustHaveHappenedOnceExactly();
@@ -73,10 +76,12 @@ namespace TagsCloudTests.UnitTests
         public void GetWordsFrequency_SameNumberWordKeys_WhenDifferentWords(string text)
         {
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
-            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
 
-            var act = _sut.GetWordsFrequency(text);
+            var act = _sut.GetWordsFrequency(text).GetValueOrThrow();
 
             act.Should().HaveCount(words.Length);
         }
@@ -85,10 +90,12 @@ namespace TagsCloudTests.UnitTests
         public void GetWordsFrequency_LessNumberWordsKeys_WhenExistsSameWords(string text)
         {
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
-            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
 
-            var act = _sut.GetWordsFrequency(text);
+            var act = _sut.GetWordsFrequency(text).GetValueOrThrow();
 
             act.Should().HaveCount(words.Distinct().Count());
         }
@@ -98,10 +105,12 @@ namespace TagsCloudTests.UnitTests
         {
             var text = "кот лодка вода";
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
-            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
 
-            var act = _sut.GetWordsFrequency(text);
+            var act = _sut.GetWordsFrequency(text).GetValueOrThrow();
 
             act.Should().BeEquivalentTo(new Dictionary<string, int> {[words[0]] = 1, [words[1]] = 1, [words[2]] = 1});
         }
@@ -111,10 +120,12 @@ namespace TagsCloudTests.UnitTests
         {
             var text = "кот кот лодка вода";
             var words = text.Split(' ');
-            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
-            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored)).Returns(words);
+            A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
+            A.CallTo(() => _speechPartFilter.GetInterestingWords(A<string[]>.Ignored))
+                .Returns(ResultExtensions.Ok(words));
 
-            var act = _sut.GetWordsFrequency(text);
+            var act = _sut.GetWordsFrequency(text).GetValueOrThrow();
 
             act.Should().BeEquivalentTo(new Dictionary<string, int> {[words[0]] = 2, [words[2]] = 1, [words[3]] = 1});
         }

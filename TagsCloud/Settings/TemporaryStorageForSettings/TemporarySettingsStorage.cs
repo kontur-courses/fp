@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ResultPattern;
 using TagsCloud.ConvertersAndCheckersForSettings.CheckerForDirectory;
 using TagsCloud.ConvertersAndCheckersForSettings.CheckerForFile;
 using TagsCloud.ConvertersAndCheckersForSettings.ConverterForFont;
@@ -19,41 +20,73 @@ namespace TagsCloud.Settings.TemporaryStorageForSettings
         private static readonly IImageFormatConverter _imageFormatConverter = new ImageFormatConverter();
         private static readonly IImageSizeConverter _imageSizeConverter = new ImageSizeConverter();
 
-        public string PathToCustomText { get; }
+        public string PathToCustomText { get; set; }
 
-        public string PathToSave { get; }
+        public string PathToSave { get; set; }
 
-        public ImageFormat ImageFormat { get; }
+        public ImageFormat ImageFormat { get; set; }
 
-        public Font Font { get; }
+        public Font Font { get; set; }
 
-        public Size ImageSize { get; }
+        public Size ImageSize { get; set; }
 
-        public Color TextColor { get; }
+        public Color TextColor { get; set; }
 
-        public Color BackgroundColor { get; }
+        public Color BackgroundColor { get; set; }
 
-        public string[] BoringWords { get; }
+        public string[] BoringWords { get; set; }
 
-        public double AdditionSpiralAngleFromDegrees { get; }
+        public double AdditionSpiralAngleFromDegrees { get; set; }
 
-        public double SpiralStep { get; }
+        public double SpiralStep { get; set; }
 
-
-        private TemporarySettingsStorage(AllUserCommands commands)
+        public static Result<TemporarySettingsStorage> From(AllUserCommands commands)
         {
-            PathToCustomText = _fileExistsСhecker.GetProvenPath(commands.PathToCustomText);
-            PathToSave = _directoryChecker.GetExistingDirectory(commands.PathToSave);
-            ImageFormat = _imageFormatConverter.ConvertToImageFormat(commands.ImageFormat);
-            ImageSize = _imageSizeConverter.ConvertToSize(commands.ImageSize);
-            BackgroundColor = Color.FromKnownColor(commands.BackgroundColor);
-            TextColor = Color.FromKnownColor(commands.TextColor);
-            Font = _fontConverter.ConvertToFont(commands.Font);
-            BoringWords = commands.BoringWords;
-            AdditionSpiralAngleFromDegrees = commands.AdditionSpiralAngleFromDegrees;
-            SpiralStep = commands.SpiralStep;
+            return new TemporarySettingsStorage()
+                .AsResult()
+                .Then(storage =>
+                {
+                    var result = _fileExistsСhecker.GetProvenPath(commands.PathToCustomText);
+                    if (!result.IsSuccess) return ResultExtensions.Fail<TemporarySettingsStorage>(result.Error);
+                    storage.PathToCustomText = result.GetValueOrThrow();
+                    return ResultExtensions.Ok(storage);
+                }).Then(storage =>
+                {
+                    var result = _directoryChecker.GetExistingDirectory(commands.PathToSave);
+                    if (!result.IsSuccess) return ResultExtensions.Fail<TemporarySettingsStorage>(result.Error);
+                    storage.PathToSave = result.GetValueOrThrow();
+                    return ResultExtensions.Ok(storage);
+                }).Then(storage =>
+                {
+                    var result = _imageFormatConverter.ConvertToImageFormat(commands.ImageFormat);
+                    if (!result.IsSuccess) return ResultExtensions.Fail<TemporarySettingsStorage>(result.Error);
+                    storage.ImageFormat = result.GetValueOrThrow();
+                    return ResultExtensions.Ok(storage);
+                }).Then(storage =>
+                {
+                    var result = _imageSizeConverter.ConvertToSize(commands.ImageSize);
+                    if (!result.IsSuccess) return ResultExtensions.Fail<TemporarySettingsStorage>(result.Error);
+                    storage.ImageSize = result.GetValueOrThrow();
+                    return ResultExtensions.Ok(storage);
+                })
+                .Then(storage =>
+                {
+                    var result = _fontConverter.ConvertToFont(commands.Font);
+                    if (!result.IsSuccess) return ResultExtensions.Fail<TemporarySettingsStorage>(result.Error);
+                    storage.Font = result.GetValueOrThrow();
+                    return ResultExtensions.Ok(storage);
+                })
+                .Then(storage =>
+                {
+                    storage.BackgroundColor = Color.FromKnownColor(commands.BackgroundColor);
+                    storage.TextColor = Color.FromKnownColor(commands.TextColor);
+                    storage.BoringWords = commands.BoringWords;
+                    storage.AdditionSpiralAngleFromDegrees = commands.AdditionSpiralAngleFromDegrees != 0
+                        ? commands.AdditionSpiralAngleFromDegrees
+                        : 1;
+                    storage.SpiralStep = commands.SpiralStep != 0 ? commands.SpiralStep : 0.5;
+                    return ResultExtensions.Ok(storage);
+                });
         }
-
-        public static TemporarySettingsStorage From(AllUserCommands commands) => new TemporarySettingsStorage(commands);
     }
 }

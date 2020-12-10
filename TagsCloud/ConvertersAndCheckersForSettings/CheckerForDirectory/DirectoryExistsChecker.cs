@@ -1,16 +1,16 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForDirectory
 {
     public class DirectoryExistsChecker : IDirectoryChecker
     {
-        public string GetExistingDirectory(string path)
+        public Result<string> GetExistingDirectory(string path)
         {
             var directoryLength = path.LastIndexOf(Path.DirectorySeparatorChar);
             if (directoryLength == -1 || Directory.Exists(path.Substring(0, directoryLength)))
-                return path;
-            throw new Exception("Doesn't contain the directory to save file");
+                return new Result<string>(null, path);
+            return new Result<string>("Doesn't contain the directory to save file");
         }
     }
 }

@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\RectanglesCloudLayouter\RectanglesCloudLayouter.csproj" />
+      <ProjectReference Include="..\ResultPattern\ResultPattern.csproj" />
     </ItemGroup>
 
     <ItemGroup>

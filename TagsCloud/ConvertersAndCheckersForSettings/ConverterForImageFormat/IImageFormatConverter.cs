@@ -1,9 +1,10 @@
 ﻿using System.Drawing.Imaging;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageFormat
 {
     public interface IImageFormatConverter
     {
-        ImageFormat ConvertToImageFormat(string imageFormatFromString);
+        Result<ImageFormat> ConvertToImageFormat(string imageFormatFromString);
     }
 }

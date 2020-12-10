@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.Reader
+﻿using ResultPattern;
+
+namespace TagsCloud.Reader
 {
     public interface IFileReader
     {
-        string GetTextFromFile();
+        Result<string> GetTextFromFile();
     }
 }

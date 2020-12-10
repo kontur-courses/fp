@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.TextProcessing.TextFilters
+﻿using ResultPattern;
+
+namespace TagsCloud.TextProcessing.TextFilters
 {
     public interface IWordsFilter
     {
-        string[] GetInterestingWords(string[] words);
+        Result<string[]> GetInterestingWords(string[] words);
     }
 }

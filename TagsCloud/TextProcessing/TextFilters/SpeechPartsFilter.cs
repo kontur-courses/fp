@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ResultPattern;
 using TagsCloud.TextProcessing.ParserForWordsAndSpeechParts;
 
 namespace TagsCloud.TextProcessing.TextFilters
@@ -17,16 +17,18 @@ namespace TagsCloud.TextProcessing.TextFilters
             _boringSpeechParts = boringSpeechPartsByMyStem.ToHashSet();
         }
 
-        public string[] GetInterestingWords(string[] words)
+        public Result<string[]> GetInterestingWords(string[] words)
         {
             if (words == null)
-                throw new ArgumentException("Array must be not null");
-            return words
+                return new Result<string[]>("Array words for speech parts filter must be not null");
+            var interestingWords = words
                 .Select(word => _normalizedWordAndSpeechPartParser.ParseToNormalizedWordAndPartSpeech(word))
                 .Where(wordAndPartSpeech =>
-                    wordAndPartSpeech.Length != 0 && !_boringSpeechParts.Contains(wordAndPartSpeech[1]))
-                .Select(wordAndPartSpeech => wordAndPartSpeech[0])
+                    wordAndPartSpeech.GetValueOrThrow().Length != 0 &&
+                    !_boringSpeechParts.Contains(wordAndPartSpeech.GetValueOrThrow()[1]))
+                .Select(wordAndPartSpeech => wordAndPartSpeech.GetValueOrThrow()[0])
                 .ToArray();
+            return ResultExtensions.Ok(interestingWords);
         }
     }
 }

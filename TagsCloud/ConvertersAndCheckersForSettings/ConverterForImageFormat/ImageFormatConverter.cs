@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageFormat
 {
@@ -15,11 +15,11 @@ namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageFormat
             ["tiff"] = ImageFormat.Tiff
         };
 
-        public ImageFormat ConvertToImageFormat(string imageFormatFromString)
+        public Result<ImageFormat> ConvertToImageFormat(string imageFormatFromString)
         {
-            if (_imageFormats.TryGetValue(imageFormatFromString.ToLower(), out var format))
-                return format;
-            throw new Exception("Doesn't contain this image format");
+            return _imageFormats.TryGetValue(imageFormatFromString.ToLower(), out var format)
+                ? new Result<ImageFormat>(null, format)
+                : new Result<ImageFormat>("Doesn't contain this image format");
         }
     }
 }

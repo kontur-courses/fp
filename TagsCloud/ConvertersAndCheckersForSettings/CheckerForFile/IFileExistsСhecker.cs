@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForFile
+﻿using ResultPattern;
+
+namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForFile
 {
     public interface IFileExistsСhecker
     {
-        string GetProvenPath(string pathToFile);
+        Result<string> GetProvenPath(string pathToFile);
     }
 }

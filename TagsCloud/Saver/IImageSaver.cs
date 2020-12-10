@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultPattern;
 
 namespace TagsCloud.Saver
 {
     public interface IImageSaver
     {
-        void Save(Image image);
+        Result<None> Save(Image image);
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForDirectory
+﻿using ResultPattern;
+
+namespace TagsCloud.ConvertersAndCheckersForSettings.CheckerForDirectory
 {
     public interface IDirectoryChecker
     {
-        string GetExistingDirectory(string path);
+        Result<string> GetExistingDirectory(string path);
     }
 }

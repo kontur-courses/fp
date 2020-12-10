@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.TextProcessing.WordsMeasurer;
 
-namespace TagsCloudTests.UnitTests
+namespace TagsCloudTests.UnitTests.TextProcessing_Tests
 {
     public class WordMeasurer_Should
     {
@@ -19,35 +19,35 @@ namespace TagsCloudTests.UnitTests
         }
 
         [Test]
-        public void GetWordSize_ThrowException_WhenWordIsNull()
+        public void GetWordSize_IsNotSuccess_WhenWordIsNull()
         {
-            var act = new Action(() => _sut.GetWordSize(null, _font));
+            var act = _sut.GetWordSize(null, _font);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
-        public void GetWordSize_ThrowException_WhenFontIsNull()
+        public void GetWordSize_IsNotSuccess_WhenFontIsNull()
         {
-            var act = new Action(() => _sut.GetWordSize(_word, null));
+            var act = _sut.GetWordSize(_word, null);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
-        public void GetWordSize_ThrowException_WhenWordAndFontAreNull()
+        public void GetWordSize_IsNotSuccess_WhenWordAndFontAreNull()
         {
-            var act = new Action(() => _sut.GetWordSize(null, null));
+            var act = _sut.GetWordSize(null, null);
 
-            act.Should().Throw<Exception>();
+            act.IsSuccess.Should().BeFalse();
         }
 
         [Test]
-        public void GetWordSize_NotException_WhenWordAndFontNotNull()
+        public void GetWordSize_IsSuccess_WhenWordAndFontNotNull()
         {
-            var act = new Action(() => _sut.GetWordSize(_word, _font));
+            var act = _sut.GetWordSize(_word, _font);
 
-            act.Should().NotThrow<Exception>();
+            act.IsSuccess.Should().BeTrue();
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace TagsCloudTests.UnitTests
             var sizeF = Graphics.FromHwnd(IntPtr.Zero).MeasureString(_word, _font);
             var expected = new Size((int) Math.Ceiling(sizeF.Width), (int) Math.Ceiling(sizeF.Height));
 
-            var act = _sut.GetWordSize(_word, _font);
+            var act = _sut.GetWordSize(_word, _font).GetValueOrThrow();
 
             act.Should().Be(expected);
         }

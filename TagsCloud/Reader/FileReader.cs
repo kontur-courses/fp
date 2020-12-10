@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ResultPattern;
 using TagsCloud.Settings.SettingsForStorage;
 
 namespace TagsCloud.Reader
@@ -13,16 +14,16 @@ namespace TagsCloud.Reader
             _storageSettings = storageSettings;
         }
 
-        public string GetTextFromFile()
+        public Result<string> GetTextFromFile()
         {
             try
             {
                 using var reader = new StreamReader(_storageSettings.PathToCustomText);
-                return reader.ReadToEnd();
+                return new Result<string>(null, reader.ReadToEnd());
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception("Can't read the file", e);
+                return new Result<string>("Can't read the file");
             }
         }
     }

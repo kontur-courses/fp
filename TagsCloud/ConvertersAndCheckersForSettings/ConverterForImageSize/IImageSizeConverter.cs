@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageSize
 {
     public interface IImageSizeConverter
     {
-        Size ConvertToSize(int[] sizeParameters);
+        Result<Size> ConvertToSize(int[] sizeParameters);
     }
 }

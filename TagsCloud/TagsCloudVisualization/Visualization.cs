@@ -21,8 +21,8 @@ namespace TagsCloud.TagsCloudVisualization
             if (realImageSize.Height <= _visualizationSettings.ImageSize.Height &&
                 realImageSize.Width <= _visualizationSettings.ImageSize.Width)
                 realImageSize = _visualizationSettings.ImageSize;
-            if (!_visualizationSettings.ImageSize.IsEmpty)
-                Console.WriteLine("Real cloud sizes are used, but custom ones don't fit");
+            else if (!_visualizationSettings.ImageSize.IsEmpty)
+                Console.WriteLine(@"Real cloud sizes are used, but custom ones don't fit");
             var bitmap = new Bitmap(realImageSize.Width, realImageSize.Height);
             DrawCloud(bitmap, tags, realImageSize);
             return bitmap;

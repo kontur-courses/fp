@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ResultPattern;
 using TagsCloud.Reader;
 using TagsCloud.Saver;
 using TagsCloud.TagsCloudVisualization;
@@ -24,19 +24,17 @@ namespace TagsCloud.ProcessorOfApp
             _imageSaver = imageSaver;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            var originalText = _fileReader.GetTextFromFile();
-            var (tags, cloudRadius) = _wordTagsLayouter.GetWordTagsAndCloudRadius(originalText);
-            if (tags.Count == 0)
-            {
-                Console.WriteLine("No interesting words for drawing");
-                return;
-            }
-
-            using var cloudImage = _visualization
-                .GetImageCloud(tags, cloudRadius);
-            _imageSaver.Save(cloudImage);
+            return _fileReader
+                .GetTextFromFile()
+                .Then(text => _wordTagsLayouter.GetWordTagsAndCloudRadius(text))
+                .Then(tagsAndCloudRadius =>
+                {
+                    var (tags, cloudRadius) = tagsAndCloudRadius;
+                    return _visualization.GetImageCloud(tags, cloudRadius);
+                })
+                .Then(image => _imageSaver.Save(image));
         }
     }
 }

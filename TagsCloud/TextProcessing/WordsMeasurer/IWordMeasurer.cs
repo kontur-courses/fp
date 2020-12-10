@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultPattern;
 
 namespace TagsCloud.TextProcessing.WordsMeasurer
 {
     public interface IWordMeasurer
     {
-        Size GetWordSize(string word, Font font);
+        Result<Size> GetWordSize(string word, Font font);
     }
 }

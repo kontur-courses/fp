@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using ResultPattern;
 using TagsCloud.TextProcessing.Tags;
 
 namespace TagsCloud.TagsLayouter
 {
     public interface IWordTagsLayouter
     {
-        (IReadOnlyList<WordTag>, int) GetWordTagsAndCloudRadius(string text);
+        Result<(IReadOnlyList<WordTag>, int)> GetWordTagsAndCloudRadius(string text);
     }
 }

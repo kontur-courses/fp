@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.TextProcessing.ParserForWordsAndSpeechParts
+﻿using ResultPattern;
+
+namespace TagsCloud.TextProcessing.ParserForWordsAndSpeechParts
 {
     public interface INormalizedWordAndSpeechPartParser
     {
-        string[] ParseToNormalizedWordAndPartSpeech(string text);
+        Result<string[]> ParseToNormalizedWordAndPartSpeech(string text);
     }
 }

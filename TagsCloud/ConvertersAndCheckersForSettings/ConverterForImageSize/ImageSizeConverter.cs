@@ -1,15 +1,15 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultPattern;
 
 namespace TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageSize
 {
     public class ImageSizeConverter : IImageSizeConverter
     {
-        public Size ConvertToSize(int[] sizeParameters)
+        public Result<Size> ConvertToSize(int[] sizeParameters)
         {
-            if (sizeParameters.Length != 2)
-                throw new Exception("Invalid number of size parameters");
-            return new Size(sizeParameters[0], sizeParameters[1]);
+            if (sizeParameters.Length != 2 || sizeParameters[0] <= 0 || sizeParameters[1] <= 0)
+                return new Result<Size>("Invalid number of size parameters or not positive parameters");
+            return new Result<Size>(null, new Size(sizeParameters[0], sizeParameters[1]));
         }
     }
 }

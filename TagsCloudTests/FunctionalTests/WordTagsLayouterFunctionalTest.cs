@@ -57,8 +57,8 @@ namespace TagsCloudTests.FunctionalTests
 
             var act = _sut.GetWordTagsAndCloudRadius(text);
 
-            act.Item1.Should().BeEquivalentTo(expectedResult);
-            act.Item2.Should().BeGreaterThan(expectedSize.Width / 2);
+            act.GetValueOrThrow().Item1.Should().BeEquivalentTo(expectedResult);
+            act.GetValueOrThrow().Item2.Should().BeGreaterThan(expectedSize.Width / 2);
         }
     }
 }

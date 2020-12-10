@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using ResultPattern;
 
 namespace TagsCloud.TextProcessing.ParserForWordsAndSpeechParts
 {
@@ -7,12 +7,13 @@ namespace TagsCloud.TextProcessing.ParserForWordsAndSpeechParts
     {
         private static Regex _regex = new Regex(@"\w+{(\w+=\w+).*}");
 
-        public string[] ParseToNormalizedWordAndPartSpeech(string word)
+        public Result<string[]> ParseToNormalizedWordAndPartSpeech(string word)
         {
             if (word == null)
-                throw new ArgumentException("String must be not null");
+                return new Result<string[]>("String for parse to word and part of speech must be not null");
             var match = _regex.Match(word);
-            return !match.Success ? new string[0] : match.Groups[1].Value.Split('=');
+            var normalizedWordsAndPartSpeech = !match.Success ? new string[0] : match.Groups[1].Value.Split('=');
+            return ResultExtensions.Ok(normalizedWordsAndPartSpeech);
         }
     }
 }
