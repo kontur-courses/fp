@@ -7,9 +7,11 @@ namespace TagCloud.Core.FileReaders
     {
         public FileExtension Extension => FileExtension.Txt;
 
-        public IEnumerable<string> ReadAllWords(string filePath)
+        public Result<IEnumerable<string>> ReadAllWords(string filePath)
         {
-            return File.ReadAllText(filePath).Split();
+            return File.Exists(filePath)
+                ? File.ReadAllText(filePath).Split()
+                : Result.Fail<IEnumerable<string>>($"File {filePath} not found");
         }
     }
 }

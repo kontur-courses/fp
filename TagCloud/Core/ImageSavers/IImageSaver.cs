@@ -4,6 +4,6 @@ namespace TagCloud.Core.ImageSavers
 {
     public interface IImageSaver
     {
-        string Save(Bitmap bitmap, string fullPath, string format);
+        Result<string> Save(Bitmap bitmap, string fullPath, string format);
     }
 }

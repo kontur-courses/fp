@@ -1,9 +1,10 @@
-﻿using TagCloud.Core.LayoutAlgorithms;
+﻿using TagCloud.Core;
+using TagCloud.Core.LayoutAlgorithms;
 
 namespace TagCloudUI.Infrastructure.Selectors
 {
     public interface ILayoutAlgorithmSelector
     {
-        bool TryGetAlgorithm(LayoutAlgorithmType type, out ILayoutAlgorithm algorithm);
+        Result<ILayoutAlgorithm> GetAlgorithm(LayoutAlgorithmType type);
     }
 }

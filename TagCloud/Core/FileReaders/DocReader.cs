@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Xceed.Words.NET;
 
 namespace TagCloud.Core.FileReaders
@@ -7,9 +8,11 @@ namespace TagCloud.Core.FileReaders
     {
         public FileExtension Extension => FileExtension.Doc;
 
-        public IEnumerable<string> ReadAllWords(string path)
+        public Result<IEnumerable<string>> ReadAllWords(string filePath)
         {
-            return DocX.Load(path).Text.Split();
+            return File.Exists(filePath)
+                ? DocX.Load(filePath).Text.Split()
+                : Result.Fail<IEnumerable<string>>($"File {filePath} not found");
         }
     }
 }

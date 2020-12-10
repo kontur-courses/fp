@@ -42,71 +42,78 @@ namespace TagCloudUI.UI
 
         public void Run(IAppSettings settings)
         {
-            using var bitmap = GetCloudImage(settings);
-            var savedPath = imageSaver.Save(bitmap, settings.OutputPath, settings.ImageFormat);
-            Console.WriteLine($"Tag cloud visualization saved to: {savedPath}");
+            GetCloudImage(settings)
+                .Then(bitmap => imageSaver.Save(bitmap, settings.OutputPath, settings.ImageFormat))
+                .Then(savedPath => Console.WriteLine($"Tag cloud visualization saved to: {savedPath}"))
+                .OnFail(PrintErrorAndExit);
         }
 
-        private Bitmap GetCloudImage(IAppSettings settings)
+        private static void PrintErrorAndExit(string errorMessage)
         {
-            var allWords = GetWordsFromFile(settings.InputPath);
-            var processedWords = GetProcessedWords(allWords, settings.WordsCount);
-            var layoutInfo = CreateLayout(processedWords, settings.LayoutAlgorithmType, settings.FontName);
-
-            ThrowIfSmallSizeForLayout(settings.ImageWidth, settings.ImageHeight, layoutInfo.Size);
-
-            return CreateImage(layoutInfo, settings.ColoringTheme, settings.FontName);
+            Console.WriteLine(errorMessage);
+            Environment.Exit(1);
         }
 
-        private Bitmap CreateImage(LayoutInfo layoutInfo,
+        private Result<Bitmap> GetCloudImage(IAppSettings settings)
+        {
+            return GetWordsFromFile(settings.InputPath)
+                .Then(words => ProcessWords(words, settings.WordsCount))
+                .Then(processedWords => CreateLayout(processedWords, settings.LayoutAlgorithmType, settings.FontName))
+                .FailIf(layoutInfo => IsSmallSizeForLayout(settings.ImageWidth, settings.ImageHeight, layoutInfo.Size),
+                    $"Unable to place TagCloud to this image size: {settings.ImageWidth}x{settings.ImageHeight}")
+                .Then(layoutInfo => CreateImage(layoutInfo, settings.ColoringTheme, settings.FontName));
+        }
+
+        private Result<Bitmap> CreateImage(LayoutInfo layoutInfo,
             ColoringTheme theme, string fontName)
         {
-            if (!coloringAlgorithmSelector.TryGetAlgorithm(theme, out var algorithm))
-                throw new ArgumentException(
-                    $"There is no such coloring theme: {theme}");
-
-            return imageCreator.Create(algorithm, layoutInfo.Tags, fontName, layoutInfo.Size);
+            return coloringAlgorithmSelector.GetAlgorithm(theme)
+                .Then(algorithm => imageCreator.Create(algorithm, layoutInfo.Tags, fontName, layoutInfo.Size));
         }
 
-
-        private static void ThrowIfSmallSizeForLayout(int width, int height, Size layoutSize)
+        private static bool IsSmallSizeForLayout(int width, int height, Size layoutSize)
         {
-            if (width < layoutSize.Width || height < layoutSize.Height)
-                throw new ArgumentException(
-                    $"Unable to place TagCloud to this image size: {width}x{height}");
+            return width < layoutSize.Width || height < layoutSize.Height;
         }
 
-        private IEnumerable<string> GetWordsFromFile(string inputPath)
+        private Result<IEnumerable<string>> GetWordsFromFile(string inputPath)
         {
-            var actualExtension = Path.GetExtension(inputPath).TrimStart('.');
-            if (!Enum.TryParse(actualExtension, true, out FileExtension extension) ||
-                !readersSelector.TryGetReader(extension, out var reader))
-                throw new ArgumentException(
-                    $"Unable to read file with this extension: {actualExtension}");
-
-            return reader.ReadAllWords(inputPath);
+            return Path.GetExtension(inputPath).TrimStart('.').AsResult()
+                .Then(ParseFileExtension)
+                .Then(extension => readersSelector.GetReader(extension))
+                .Then(reader => reader.ReadAllWords(inputPath));
         }
 
-        private List<string> GetProcessedWords(IEnumerable<string> words,
+        private static Result<FileExtension> ParseFileExtension(string extension)
+        {
+            return Enum.TryParse(extension, true, out FileExtension result)
+                ? result.AsResult()
+                : Result.Fail<FileExtension>($"Unable to read file with this extension: {extension}");
+        }
+
+        private Result<List<string>> ProcessWords(IEnumerable<string> words,
             int wordsCount)
         {
-            return wordsProcessor.Process(words, wordsCount).ToList();
+            return wordsProcessor.Process(words, wordsCount)
+                .ToList()
+                .AsResult();
         }
 
-        private LayoutInfo CreateLayout(IReadOnlyCollection<string> words,
+        private Result<LayoutInfo> CreateLayout(IReadOnlyCollection<string> words,
             LayoutAlgorithmType algorithmType, string fontName)
         {
-            if (!layoutAlgorithmSelector.TryGetAlgorithm(algorithmType, out var algorithm))
-                throw new ArgumentException($"There is no such algorithm: {algorithmType}");
-
-            var tags = words.Select((word, index) =>
-                CreateTag(algorithm, word, index, words.Count, fontName)).ToList();
-
-            return new LayoutInfo(tags, algorithm.GetLayoutSize());
+            return layoutAlgorithmSelector.GetAlgorithm(algorithmType)
+                .Then(algorithm =>
+                {
+                    return words.Select((word, index) => CreateTag(algorithm, word, index, words.Count, fontName))
+                        .ToList()
+                        .AsResult()
+                        .Then(tags => new LayoutInfo(tags, algorithm.GetLayoutSize()));
+                });
         }
 
-        private static Tag CreateTag(ILayoutAlgorithm algorithm,
-            string word, int index, int wordsCount, string fontName)
+        private static Tag CreateTag(
+            ILayoutAlgorithm algorithm, string word, int index, int wordsCount, string fontName)
         {
             var fontSize = wordsCount + 10 - index;
             using var font = new Font(fontName, fontSize);

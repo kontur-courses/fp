@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.Core;
 using TagCloud.Core.ColoringAlgorithms;
 
 namespace TagCloudUI.Infrastructure.Selectors
@@ -13,9 +14,11 @@ namespace TagCloudUI.Infrastructure.Selectors
             themeToAlgorithm = algorithms.ToDictionary(algorithm => algorithm.Theme);
         }
 
-        public bool TryGetAlgorithm(ColoringTheme theme, out IColoringAlgorithm algorithm)
+        public Result<IColoringAlgorithm> GetAlgorithm(ColoringTheme theme)
         {
-            return themeToAlgorithm.TryGetValue(theme, out algorithm);
+            return themeToAlgorithm.TryGetValue(theme, out var algorithm)
+                ? algorithm.AsResult()
+                : Result.Fail<IColoringAlgorithm>($"There is no such coloring theme: {theme}");
         }
     }
 }

@@ -5,6 +5,6 @@ namespace TagCloud.Core.FileReaders
     public interface IFileReader
     {
         FileExtension Extension { get; }
-        IEnumerable<string> ReadAllWords(string filePath);
+        Result<IEnumerable<string>> ReadAllWords(string filePath);
     }
 }

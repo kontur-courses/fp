@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.Core;
 using TagCloud.Core.FileReaders;
 
 namespace TagCloudUI.Infrastructure.Selectors
@@ -13,9 +14,11 @@ namespace TagCloudUI.Infrastructure.Selectors
             extensionToReader = readers.ToDictionary(reader => reader.Extension);
         }
 
-        public bool TryGetReader(FileExtension extension, out IFileReader reader)
+        public Result<IFileReader> GetReader(FileExtension extension)
         {
-            return extensionToReader.TryGetValue(extension, out reader);
+            return extensionToReader.TryGetValue(extension, out var reader)
+                ? reader.AsResult()
+                : Result.Fail<IFileReader>($"Unable to read file with this extension: {extension}");
         }
     }
 }
