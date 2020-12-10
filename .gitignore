@@ -20,6 +20,9 @@ x86/
 build/
 bld/
 [Oo]bj/
+/TagsCloud.ResultPattern/bin/Debug/
+/TagsCloud.Visualization/bin/Debug/
+/TagsCloud.Spirals/bin/Debug/
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -543,3 +546,4 @@ FakesAssemblies/
 /TagsCloud.Tests/bin/Debug/netcoreapp3.1/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 /TagsCloud.Tests/bin/Debug/netcoreapp3.1/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll
 /TagsCloud.Tests/bin/Debug/netcoreapp3.1/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+/TagsCloud.ClientGUI/bin/Debug/netcoreapp3.1/TagsCloud.ResultPattern.dll

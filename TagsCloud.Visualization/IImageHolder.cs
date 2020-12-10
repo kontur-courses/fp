@@ -1,12 +1,13 @@
 ﻿using System.Drawing;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Visualization
 {
     public interface IImageHolder
     {
-        Size GetImageSize();
-        Graphics StartDrawing();
+        Result<Size> GetImageSize();
+        Result<Graphics> StartDrawing();
         void RecreateImage(ImageSettings settings);
-        void SaveImage(string fileName);
+        Result<None> SaveImage(string fileName);
     }
 }

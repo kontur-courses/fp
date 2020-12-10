@@ -30,9 +30,9 @@ namespace TagsCloud.Visualization
             var newFonts = new Dictionary<int, Font>();
             var rectangles = TagsHelper.GetRectangles(cloud, words, newFonts, fontSettings.MainFont);
 
-            using (var graphics = imageHolder.StartDrawing())
+            using (var graphics = imageHolder.StartDrawing().GetValueOrThrow())
             {
-                var imageSize = imageHolder.GetImageSize();
+                var imageSize = imageHolder.GetImageSize().GetValueOrThrow();
 
                 using (var brush = new SolidBrush(palette.BackgroundColor))
                     graphics.FillRectangle(brush, 0, 0, imageSize.Width, imageSize.Height);

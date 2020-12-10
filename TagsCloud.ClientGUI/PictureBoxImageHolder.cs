@@ -1,42 +1,37 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing;
 using System.Windows.Forms;
+using TagsCloud.ResultPattern;
 using TagsCloud.Visualization;
 
 namespace TagsCloud.ClientGUI
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-        public Size GetImageSize()
+        public Result<Size> GetImageSize()
         {
-            FailIfNotInitialized();
-            return Image.Size;
+            return Image.AsResult()
+                .Then(x => x.Size)
+                .ReplaceError(x => "Call PictureBoxImageHolder.RecreateImage before other method call!");
         }
 
-        public Graphics StartDrawing()
+        public Result<Graphics> StartDrawing()
         {
-            FailIfNotInitialized();
-            return Graphics.FromImage(Image);
+            return Image.AsResult()
+                .Then(Graphics.FromImage)
+                .ReplaceError(x => "Call PictureBoxImageHolder.RecreateImage before other method call!");
         }
 
         public void RecreateImage(ImageSettings imageSettings)
         {
             Image?.Dispose();
-            Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
+            Image = new Bitmap(imageSettings.Width, imageSettings.Height);
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            FailIfNotInitialized();
-            Image.Save(fileName);
-        }
-
-        private void FailIfNotInitialized()
-        {
-            if (Image == null)
-                throw new InvalidOperationException(
-                    "Call PictureBoxImageHolder.RecreateImage before other method call!");
+            return Image.AsResult()
+                .Then(x => x.Save(fileName))
+                .ReplaceError(x => "Call PictureBoxImageHolder.RecreateImage before other method call!");
         }
     }
 }

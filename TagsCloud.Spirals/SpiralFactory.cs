@@ -17,7 +17,7 @@ namespace TagsCloud.Spirals
 
         public ISpiral Create()
         {
-            var size = imageHolder.GetImageSize();
+            var size = imageHolder.GetImageSize().GetValueOrThrow();
             return new ArchimedeanSpiral(new Point(size.Width / 2, size.Height / 2), settings.SpiralParameter);
         }
     }
