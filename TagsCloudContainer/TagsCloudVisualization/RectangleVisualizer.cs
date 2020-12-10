@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudVisualization
@@ -12,8 +13,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
             var imageSize = GetImageSize(rectangles);
             var pen = new Pen(Color.MediumVioletRed, 4);
 
-            var bitmap = new Bitmap(imageSize.Width + (int) pen.Width,
-                imageSize.Height + (int) pen.Width);
+            var bitmap = new Bitmap(imageSize.Width + (int) pen.Width, imageSize.Height + (int) pen.Width);
             using var graphics = Graphics.FromImage(bitmap);
 
             if (rectangles.Count != 0) graphics.DrawRectangles(pen, rectangles.ToArray());
@@ -28,14 +28,22 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
             foreach (var rectangle in rectangles)
             {
-                if (rectangle.Left < 0 || rectangle.Top < 0)
-                    throw new ArgumentException("rectangle out of image boundaries");
+                Result.Ok(rectangle)
+                    .Then(ValidateRectangleBorders)
+                    .OnFail(e => throw new ArgumentException(e));
 
                 if (width < rectangle.Right) width = rectangle.Right;
                 if (height < rectangle.Bottom) height = rectangle.Bottom;
             }
 
             return new Size(width, height);
+        }
+
+        private Result<Rectangle> ValidateRectangleBorders(Rectangle rectangle)
+        {
+            return rectangle.Left < 0 || rectangle.Top < 0
+                ? Result.Fail<Rectangle>("Rectangle out of image boundaries")
+                : Result.Ok(rectangle);
         }
     }
 }

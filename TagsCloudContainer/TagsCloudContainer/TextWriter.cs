@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ResultOf;
 using TagsCloudContainer.TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudContainer
@@ -18,20 +19,22 @@ namespace TagsCloudContainer.TagsCloudContainer
                     .Select(x => x.Value)
                     .Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
 
-            if (!PathInRightFormat(savePath))
-                throw new ArgumentException("wrong path format");
-
-            File.WriteAllText(savePath, newText);
+            Result.Ok(savePath)
+                .Then(PathInRightFormat)
+                .OnFail(e => throw new ArgumentException(e))
+                .Then(x => File.WriteAllText(savePath, newText));
         }
 
-        private static bool PathInRightFormat(string path)
+        private static Result<string> PathInRightFormat(string path)
         {
             var separator = Path.DirectorySeparatorChar;
             var pattern = $@"((?:[^\{separator}]*\{separator})*)(.*[.].+)";
             var match = Regex.Match(path, pattern);
             var directoryPath = match.Groups[1].ToString();
 
-            return Directory.Exists(directoryPath) && match.Groups[2].Success;
+            return Directory.Exists(directoryPath) && match.Groups[2].Success
+                ? Result.Ok(path)
+                : Result.Fail<string>("wrong path format");
         }
     }
 }

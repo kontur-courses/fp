@@ -41,5 +41,14 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
 
             sut.Should().Throw<ArgumentException>();
         }
+
+        [TestCase(0, 0, 1, 1, TestName = "Positive parameters")]
+        public void NotThrowException_When(int centerX, int centerY, double distanceBetweenLoops, double angleDelta)
+        {
+            var center = new Point(centerX, centerY);
+            Func<ArchimedeanSpiral> sut = () => new ArchimedeanSpiral(center, distanceBetweenLoops, angleDelta);
+
+            sut.Should().NotThrow();
+        }
     }
 }

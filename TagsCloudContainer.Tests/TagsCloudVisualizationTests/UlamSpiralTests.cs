@@ -25,15 +25,24 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
             Spiral.GetNextPoint().Should().Be(Center);
         }
 
-        [TestCase(-1, 0, 1, 1, TestName = "Center X coordinate is negative")]
-        [TestCase(0, -1, 1, 1, TestName = "Center Y coordinate is negative")]
-        public void ThrowException_When(
-            int centerX, int centerY, double distanceBetweenLoops, double angleDelta)
+        [TestCase(-1, 0, TestName = "Center X coordinate is negative")]
+        [TestCase(0, -1, TestName = "Center Y coordinate is negative")]
+        public void ThrowException_When(int centerX, int centerY)
         {
             var center = new Point(centerX, centerY);
-            Func<ArchimedeanSpiral> sut = () => new ArchimedeanSpiral(center, distanceBetweenLoops, angleDelta);
+            Func<UlamSpiral> spiral = () => new UlamSpiral(center);
 
-            sut.Should().Throw<ArgumentException>();
+            spiral.Should().Throw<ArgumentException>();
+        }
+
+        [TestCase(1, 0, TestName = "Center X coordinate is positive and Y is zero")]
+        [TestCase(0, 1, TestName = "Center Y coordinate is positive and X is zero")]
+        public void NotThrowException_When(int centerX, int centerY)
+        {
+            var center = new Point(centerX, centerY);
+            Func<UlamSpiral> spiral = () => new UlamSpiral(center);
+
+            spiral.Should().NotThrow();
         }
     }
 }

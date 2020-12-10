@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudVisualization
@@ -12,12 +13,22 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
         public ArchimedeanSpiral(Point center, double distanceBetweenLoops, double angleDelta)
         {
-            angle = 0;
             Center = center;
             this.angleDelta = angleDelta;
             this.distanceBetweenLoops = distanceBetweenLoops;
             Type = SpiralType.Archimedean;
-            ValidateSpiralParameters();
+
+            Result.Ok(distanceBetweenLoops)
+                .Then(DistanceBetweenLoopsIsPositive)
+                .OnFail(e => throw new ArgumentException(e));
+
+            Result.Ok(angleDelta)
+                .Then(AngleDeltaIsPositive)
+                .OnFail(e => throw new ArgumentException(e));
+
+            Result.Ok(center)
+                .Then(ValidateCenterPoint)
+                .OnFail(e => throw new ArgumentException(e));
         }
 
         public SpiralType Type { get; }
@@ -33,16 +44,27 @@ namespace TagsCloudContainer.TagsCloudVisualization
             return new Point(x, y);
         }
 
-        private void ValidateSpiralParameters()
+        private Result<Point> ValidateCenterPoint(Point center)
         {
-            if (Center.X < 0 || Center.Y < 0)
-                throw new ArgumentException("Center coordinates should not be negative numbers");
+            return Validate(center, x => Center.X < 0 || Center.Y < 0,
+                "Center coordinates should not be negative numbers");
+        }
 
-            if (angleDelta <= 0)
-                throw new ArgumentException("angleDelta should not be negative or zero");
+        private Result<double> AngleDeltaIsPositive(double delta)
+        {
+            return Validate(delta, x => delta <= 0, "Angle delta should be positive");
+        }
 
-            if (distanceBetweenLoops <= 0)
-                throw new ArgumentException("distanceBetweenLoops should not be negative or zero");
+        private Result<double> DistanceBetweenLoopsIsPositive(double distance)
+        {
+            return Validate(distance, x => distance <= 0, "Distance between loops should be positive");
+        }
+
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)
+        {
+            return predicate(obj)
+                ? Result.Fail<T>(exception)
+                : Result.Ok(obj);
         }
     }
 }

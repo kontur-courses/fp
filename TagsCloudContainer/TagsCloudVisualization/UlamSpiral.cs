@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudVisualization
@@ -12,8 +13,10 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
         public UlamSpiral(Point center)
         {
-            Center = center;
-            ValidateParameters();
+            Result.Ok(center)
+                .Then(ValidateCenterIsNotNegative)
+                .OnFail(e => throw new ArgumentException(e));
+
             currentPoint = center;
             points = GetPoints().GetEnumerator();
             Type = SpiralType.UlamSpiral;
@@ -51,10 +54,11 @@ namespace TagsCloudContainer.TagsCloudVisualization
             }
         }
 
-        private void ValidateParameters()
+        private Result<Point> ValidateCenterIsNotNegative(Point center)
         {
-            if (Center.X < 0 || Center.Y < 0)
-                throw new ArgumentException("Center coordinates should not be negative numbers");
+            return center.X < 0 || center.Y < 0
+                ? Result.Fail<Point>("Center coordinates should not be negative numbers")
+                : Result.Ok(center);
         }
     }
 }
