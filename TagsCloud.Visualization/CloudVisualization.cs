@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagsCloud.Common;
 using TagsCloud.Core;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Visualization
 {
@@ -33,6 +35,8 @@ namespace TagsCloud.Visualization
             using (var graphics = imageHolder.StartDrawing().GetValueOrThrow())
             {
                 var imageSize = imageHolder.GetImageSize().GetValueOrThrow();
+                if (!RectanglesFitIntoSize(rectangles, imageSize))
+                    Result.Fail<Size>("cloud does not fit into image size").GetValueOrThrow();
 
                 using (var brush = new SolidBrush(palette.BackgroundColor))
                     graphics.FillRectangle(brush, 0, 0, imageSize.Width, imageSize.Height);
@@ -74,6 +78,19 @@ namespace TagsCloud.Visualization
                 default:
                     return palette.ForeColor;
             }
+        }
+
+        private bool RectanglesFitIntoSize(List<Rectangle> rectangles, Size size)
+        {
+            var maxRight = rectangles.Max(x => x.Right);
+            var minLeft = rectangles.Min(x => x.Left);
+            var maxBottom = rectangles.Max(x => x.Bottom);
+            var minTop = rectangles.Min(x => x.Top);
+
+            return maxRight < size.Width
+                   && minLeft > 0
+                   && maxBottom < size.Height
+                   && minTop > 0;
         }
     }
 }
