@@ -10,8 +10,7 @@ namespace TagsCloud.FileReader
         {
             return path.AsResult()
                 .Then(x => RTFToText.converting().rtfFromFile(x))
-                .Then(x => x.Split(new string[0], StringSplitOptions.RemoveEmptyEntries))
-                .ReplaceError(x => "rtf yeees");
+                .Then(x => x.Split(new string[0], StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }

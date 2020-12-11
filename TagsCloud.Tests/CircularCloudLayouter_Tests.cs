@@ -34,7 +34,8 @@ namespace TagsCloud.Tests
         [TestCase(1, -1, TestName = "WhenNotPositiveHeight")]
         public void PutNextRectangle_ThrowException(int width, int height)
         {
-            Assert.Throws<ArgumentException>(() => cloud.PutNextRectangle(new Size(width, height)));
+            Assert.Throws<InvalidOperationException>(() 
+                => cloud.PutNextRectangle(new Size(width, height)).GetValueOrThrow());
         }
 
         [TestCase(1, TestName = "WhenAdd1Rectangle")]
@@ -42,7 +43,8 @@ namespace TagsCloud.Tests
         [TestCase(100, TestName = "WhenAdd100Rectangle")]
         public void PutNextRectangle_CorrectCountOfRectangles(int count)
         {
-            rectangles = generator.GenerateSize(count).Select(cloud.PutNextRectangle).ToList();
+            rectangles = generator.GenerateSize(count)
+                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
 
             rectangles.Should().HaveCount(count);
         }
@@ -54,7 +56,7 @@ namespace TagsCloud.Tests
             spiral = new ArchimedeanSpiral(center, 0.005);
             cloud = new CircularCloudLayouter(spiral);
 
-            var rect = cloud.PutNextRectangle(new Size(10, 10));
+            var rect = cloud.PutNextRectangle(new Size(10, 10)).GetValueOrThrow();
             var rectCenter = new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
 
             rectCenter.Should().Be(center);
@@ -64,7 +66,8 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_RectanglesDoesNotIntersect(int count)
         {
-            rectangles = generator.GenerateSize(count).Select(cloud.PutNextRectangle).ToList();
+            rectangles = generator.GenerateSize(count)
+                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
 
             foreach (var rect in rectangles)
                 rect.IntersectsWith(rectangles.Where(x => x != rect)).Should().BeFalse();
@@ -74,7 +77,8 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_PlacedRectanglesHasNearlyCircleShape(int count)
         {
-            rectangles = generator.GenerateSize(count).Select(cloud.PutNextRectangle).ToList();
+            rectangles = generator.GenerateSize(count)
+                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
 
             var top = center.Y - rectangles.Min(rect => rect.Top);
             var left = center.X - rectangles.Min(rect => rect.Left);
@@ -91,7 +95,9 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_RectanglesPlacedTightly(int count)
         {
-            rectangles = generator.GenerateSize(count).Select(cloud.PutNextRectangle).ToList();
+            rectangles = generator.GenerateSize(count)
+                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
+
             var allRectanglesArea = rectangles.Select(x => x.Width * x.Height).Sum();
             var radius = rectangles.Max(x => GetDistanceFromPointToCenter(x.Location));
             var circleArea = Math.PI * radius * radius;
@@ -105,7 +111,7 @@ namespace TagsCloud.Tests
         {
             if (TestContext.CurrentContext.Result.Outcome.Status != TestStatus.Failed)
                 return;
-            var path = $"../../../Images/{TestContext.CurrentContext.Test.FullName}.png";
+            var path = $"{TestContext.CurrentContext.Test.FullName}.png";
             Console.WriteLine($"Tag cloud visualization saved to file {path}");
             CreateImage().Save(path);
         }

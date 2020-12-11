@@ -30,7 +30,7 @@ namespace TagsCloud.Visualization
         public void Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
         {
             var newFonts = new Dictionary<int, Font>();
-            var rectangles = TagsHelper.GetRectangles(cloud, words, newFonts, fontSettings.MainFont);
+            var rectangles = TagsHelper.GetRectangles(cloud, words, newFonts, fontSettings.Font.GetValueOrThrow());
 
             using (var graphics = imageHolder.StartDrawing().GetValueOrThrow())
             {

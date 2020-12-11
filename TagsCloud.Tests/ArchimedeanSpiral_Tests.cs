@@ -20,7 +20,7 @@ namespace TagsCloud.Tests
         [Test]
         public void InitializeSpiral_ThrowException_WhenNotPositiveSpiralParameter()
         {
-            Assert.Throws<ArgumentException>(() => spiral = new ArchimedeanSpiral(new Point(), -1));
+            Assert.Throws<InvalidOperationException>(() => spiral = new ArchimedeanSpiral(new Point(), -1));
         }
 
         [Test]
