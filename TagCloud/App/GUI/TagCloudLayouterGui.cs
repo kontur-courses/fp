@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Gdk;
 using Gtk;
@@ -101,33 +102,57 @@ namespace TagCloud.App.GUI
             settings.PackStart(new VSeparator(), false, false, padding);
             if (manager is IOptionsManager optionsManager)
             {
-                var dropdown = new ComboBoxText();
-                foreach (var (option, id) in Enumerable.Select(optionsManager.GetOptions(), (s, i) => (s, i)))
-                {
-                    dropdown.Append(id.ToString(), option);   
-                }
-                settings.PackStart(dropdown, true, true, padding);
-                optionsManager.GetOptions();
+                AddManger(optionsManager, settings, padding);
             }
             else
             {
-                var table = new TextTagTable();
-                var buffer = new TextBuffer(table);
-                var textBox = new TextView(buffer);
-                settings.PackStart(textBox, true, true, padding);
-                textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
-                textBox.FocusOutEvent += (sender, args) =>
-                {
-                    var result = manager.TrySet(buffer.Text);
-                    if (!result.IsSuccess)
-                    {
-                        ShowInfoWindow(ErrorLevel.Warning, result.Error);
-                    }
-
-                    buffer.Text = manager.Get();
-                };
+                AddManger(manager, settings, padding);
             }
             return settings;
+        }
+
+        private void AddManger(IOptionsManager manager, Box settings, uint padding)
+        {
+            var dropdown = new ComboBoxText();
+            settings.PackStart(dropdown, true, true, padding);
+            foreach (var (option, id) in manager
+                .GetOptions()
+                .Select((s, i) => (s, i)))
+            {
+                dropdown.Append(option, option);
+            }
+
+            dropdown.SetActiveId(settingsFactory().Format.ToString());
+            dropdown.Changed += (o, args) => OnValueSet(
+                manager,
+                () => dropdown.ActiveText,
+                value => dropdown.SetActiveId(value))(o, args);
+        }
+        
+        private void AddManger(IInputManager manager, Box settings, uint padding)
+        {
+            var table = new TextTagTable();
+            var buffer = new TextBuffer(table);
+            var textBox = new TextView(buffer);
+            settings.PackStart(textBox, true, true, padding);
+            textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
+            textBox.FocusOutEvent += (o, args) => OnValueSet(
+                manager, 
+                () => buffer.Text, 
+                value => buffer.Text = value)(o, args);
+        }
+
+
+        private EventHandler OnValueSet(IInputManager manager, Func<string> getInput, Action<string> setValue)
+        {
+            return (o, args) =>  {
+                var result = manager.TrySet(getInput());
+                if (!result.IsSuccess)
+                {
+                    ShowInfoWindow(ErrorLevel.Warning, result.Error);
+                }
+                setValue(manager.Get());
+            };
         }
 
         private void ShowInfoWindow(ErrorLevel level, string info)
