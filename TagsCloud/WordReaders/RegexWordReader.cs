@@ -17,20 +17,11 @@ namespace TagsCloud.WordReaders
             this.selector = selector;
         }
 
-        //Через Regex удобно тестировать разные тексты.
         public IEnumerable<string> ReadWords()
         {
-            try
-            {
-                using var reader = new StreamReader(filePath);
-                var words = Regex.Split(reader.ReadToEnd(), "\\W+");
-                return selector.TakeSelectedWords(words);
-            }
-            catch
-            {
-                Console.WriteLine($"Failed to read {filePath}");
-                return null;
-            }
+            using var reader = new StreamReader(filePath);
+            var words = Regex.Split(reader.ReadToEnd(), "\\W+");
+            return selector.TakeSelectedWords(words);
         }
     }
 }

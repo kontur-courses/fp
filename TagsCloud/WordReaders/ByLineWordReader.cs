@@ -19,17 +19,9 @@ namespace TagsCloud.WordReaders
 
         public IEnumerable<string> ReadWords()
         {
-            try
-            {
-                using var reader = new StreamReader(filePath);
-                var words = reader.ReadToEnd().Split(separator, StringSplitOptions.None);
-                return selector.TakeSelectedWords(words);
-            }
-            catch
-            {
-                Console.WriteLine($"Failed to read {filePath}");
-                return null;
-            }
+            using var reader = new StreamReader(filePath);
+            var words = reader.ReadToEnd().Split(separator, StringSplitOptions.None);
+            return selector.TakeSelectedWords(words);
         }
     }
 }
