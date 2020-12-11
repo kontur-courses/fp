@@ -22,7 +22,7 @@ namespace WordCloudGenerator
             filter = s => true;
         }
 
-        public IEnumerable<WordFrequency> CreateWordFreqList(string inputText, int maxWordCount = 100)
+        public WordFrequency[] CreateWordFreqList(string inputText, int maxWordCount = 100)
         {
             var text = inputText.ToLower();
             var wordsInText = Regex.Matches(text, @"\w+")
@@ -34,7 +34,8 @@ namespace WordCloudGenerator
                 .Select(word => new WordFrequency(word,
                     (float) wordsInText.Count(el => el == word) / wordsInText.Length))
                 .OrderByDescending(word => word.Frequency)
-                .Take(maxWordCount);
+                .Take(maxWordCount)
+                .ToArray();
         }
     }
 }

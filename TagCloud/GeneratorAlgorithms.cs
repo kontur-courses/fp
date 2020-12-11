@@ -24,15 +24,16 @@ namespace WordCloudGenerator
 
         private static IEnumerable<GraphicString> ProportionalAlgorithm(IEnumerable<WordFrequency> wordFrequencies)
         {
+            const int maxFontSize = 250;
             var frequencies = wordFrequencies.ToArray();
             var freqSum = frequencies.Sum(word => word.Frequency);
             var recalculatedFrequencies =
-                frequencies.Select(word => new WordFrequency(word.Word, word.Frequency * 2 / freqSum));
+                frequencies.Select(word => new WordFrequency(word.Word, word.Frequency / freqSum)).ToArray();
 
-            var maxFontSize = 1500;
+            var multiplier = maxFontSize / recalculatedFrequencies.First().Frequency;
 
             foreach (var word in recalculatedFrequencies)
-                yield return new GraphicString(word.Word, Math.Max(40, word.Frequency * maxFontSize));
+                yield return new GraphicString(word.Word, Math.Max(40, word.Frequency * multiplier));
         }
     }
 }
