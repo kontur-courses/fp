@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Extensions;
 
@@ -39,6 +40,17 @@ namespace TagsCloud.Layouter.Base
                 rectangle = newRectangle;
             }
             return rectangle;
+        }
+
+        public Size GetLayoutSize()
+        {
+            var size = new Size();
+            foreach (var rect in rectangles)
+            {
+                size.Width = Math.Max(rect.X + rect.Width, size.Width);
+                size.Height = Math.Max(rect.Y + rect.Height, size.Height);
+            }
+            return size;
         }
 
         protected abstract IEnumerable<Point> GetPoints();

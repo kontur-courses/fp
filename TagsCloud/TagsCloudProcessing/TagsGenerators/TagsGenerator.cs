@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TagsCloud.Factory;
+using TagsCloud.ImageProcessing.Config;
 using TagsCloud.Layouter;
 using TagsCloud.ResultOf;
 using TagsCloud.TextProcessing;
@@ -14,11 +15,14 @@ namespace TagsCloud.TagsCloudProcessing.TagsGenerators
     {
         private readonly IServiceFactory<IRectanglesLayouter> layouterFactory;
         private readonly WordConfig wordsConfig;
+        private readonly ImageConfig imageConfig;
 
-        public TagsGenerator(IServiceFactory<IRectanglesLayouter> layouterFactory, WordConfig wordsConfig)
+        public TagsGenerator(IServiceFactory<IRectanglesLayouter> layouterFactory, WordConfig wordsConfig,
+            ImageConfig imageConfig)
         {
             this.layouterFactory = layouterFactory;
             this.wordsConfig = wordsConfig;
+            this.imageConfig = imageConfig;
         }
 
         public Result<IEnumerable<Tag>> CreateTags(IEnumerable<WordInfo> words)
@@ -28,17 +32,29 @@ namespace TagsCloud.TagsCloudProcessing.TagsGenerators
                 .Then(layouter => GetTagsFormWords(layouter, words));
         }
 
-        private IEnumerable<Tag> GetTagsFormWords(IRectanglesLayouter layouter, IEnumerable<WordInfo> words)
+        private Result<IEnumerable<Tag>> GetTagsFormWords(IRectanglesLayouter layouter, IEnumerable<WordInfo> words)
         {
             var count = 30;
-            return words.OrderByDescending(info => info.Frequence)
-                 .Take(count)
-                 .Select((wordInfo, index) =>
-                 {
-                     var font = new Font(wordsConfig.Font.FontFamily, count - index / 2);
-                     var size = TextRenderer.MeasureText(wordInfo.Word, font);
-                     return new Tag(wordInfo.Word, layouter.PutNextRectangle(size), font);
-                 });
+            return Result.Ok(words.OrderByDescending(info => info.Frequence)
+                        .Take(count)
+                        .Select((wordInfo, index) =>
+                        {
+                            var font = new Font(wordsConfig.Font.FontFamily, count - index / 2);
+                            var size = TextRenderer.MeasureText(wordInfo.Word, font);
+                            return new Tag(wordInfo.Word, layouter.PutNextRectangle(size), font);
+                        }))
+                .Then(tags => CheckTagsFitOnImage(layouter, tags));
+        }
+
+        private Result<IEnumerable<Tag>> CheckTagsFitOnImage(IRectanglesLayouter layouter, IEnumerable<Tag> tags)
+        {
+            tags = tags.ToList();
+            var layoutSize = layouter.GetLayoutSize();
+            var subtraction = imageConfig.ImageSize - layoutSize;
+            if (subtraction.Width < 0 || subtraction.Height < 0)
+                return Result.Fail<IEnumerable<Tag>>(
+                    $"Cloud out of size image:\n Cloud size: {layoutSize}\n Image size: {imageConfig.ImageSize}");
+            return Result.Ok(tags);
         }
     }
 }

@@ -5,5 +5,6 @@ namespace TagsCloud.Layouter
     public interface IRectanglesLayouter
     {
         Rectangle PutNextRectangle(Size rectangleSize);
+        public Size GetLayoutSize();
     }
 }

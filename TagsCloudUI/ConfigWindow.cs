@@ -29,6 +29,7 @@ namespace TagsCloudUI
         private GroupBox convertBox;
         private GroupBox tagGeneratorsBox;
         private GroupBox layouterBox;
+        private bool IsSettingsAccept;
 
         private readonly WordConfig wordsConfig;
         private readonly ImageConfig imageConfig;
@@ -56,6 +57,7 @@ namespace TagsCloudUI
 
             colorDialog = new ColorDialog();
             fontDialog = new FontDialog();
+            fontDialog.FontMustExist = true;
             saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Изображение (*.png)||Изображение (*.jpg)||Изображение (*.bmp)|";
             openFileDialog = new OpenFileDialog();
@@ -166,6 +168,8 @@ namespace TagsCloudUI
 
             imageConfig.ImageSize = imageSize;
             imageConfig.Path = saveFileDialog.FileName;
+
+            IsSettingsAccept = true;
         }
 
         private string[] BindGroupBoxControls(GroupBox box)
@@ -186,9 +190,12 @@ namespace TagsCloudUI
         private void ShowImage(object sender, EventArgs eventArgs)
         {
             tableLayoutPanel.Hide();
-            tagsCloudProcessor.CreateCloud(wordsConfig.Path, imageConfig.Path)
-                .Then(value => DrawCloud())
-                .OnFail(ShowErrorBox);
+            if (!IsSettingsAccept)
+                ShowErrorBox("settings were not applied");
+            else
+                tagsCloudProcessor.CreateCloud(wordsConfig.Path, imageConfig.Path)
+                    .Then(value => DrawCloud())
+                    .OnFail(ShowErrorBox);
         }
 
         private void DrawCloud()
