@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using TagsCloud.Factory;
 using TagsCloud.ImageProcessing.Config;
 using TagsCloud.ImageProcessing.SaverImage.ImageSavers;

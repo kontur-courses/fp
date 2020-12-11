@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using TagsCloud.Factory;
+﻿using TagsCloud.Factory;
 using TagsCloud.ResultOf;
 using TagsCloud.TagsCloudProcessing.TagsGenerators;
 using TagsCloud.TextProcessing.WordsConfig;
@@ -19,7 +16,7 @@ namespace TagsCloud.TagsCloudProcessing.TagsGeneratorFactory
 
         public override Result<ITagsGenerator> Create()
         {
-            if (wordsConfig.Font.OriginalFontName != null 
+            if (wordsConfig.Font.OriginalFontName != null
                 && wordsConfig.Font.Name != wordsConfig.Font.OriginalFontName)
                 return Result.Fail<ITagsGenerator>($"This font {wordsConfig.Font.OriginalFontName} not supported");
             return Result.Of(() => services[wordsConfig.TagGeneratorName](),
