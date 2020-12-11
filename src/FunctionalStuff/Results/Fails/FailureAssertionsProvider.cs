@@ -2,7 +2,7 @@
 
 namespace FunctionalStuff.Results.Fails
 {
-    public class FailureAssertionsProvider<T> : IExtensibleFailureAssertionsProvider<T>
+    public class FailureAssertionsProvider<T> : IFailureAssertionsProvider<T>
     {
         private readonly T value;
         private readonly bool isInverted;
@@ -15,13 +15,13 @@ namespace FunctionalStuff.Results.Fails
             this.name = name ?? typeof(T).Name;
         }
 
-        T IExtensibleFailureAssertionsProvider<T>.Value => value;
-        bool IExtensibleFailureAssertionsProvider<T>.IsInverted => isInverted;
-        string IExtensibleFailureAssertionsProvider<T>.Name => name;
+        T IFailureAssertionsProvider<T>.Value => value;
+        bool IFailureAssertionsProvider<T>.IsInverted => isInverted;
+        string IFailureAssertionsProvider<T>.Name => name;
 
         public FailureAssertionsProvider<T> Not => new FailureAssertionsProvider<T>(!isInverted, value, name);
 
-        Result<T> IExtensibleFailureAssertionsProvider<T>.ValidateWithMessage(Predicate<T> predicate, string message)
+        Result<T> IFailureAssertionsProvider<T>.ValidateWithMessage(Predicate<T> predicate, string message)
         {
             var isMatched = predicate.Invoke(value);
             var isValid = isInverted ? !isMatched : isMatched;

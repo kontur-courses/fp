@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FunctionalStuff.Results;
+using FunctionalStuff.Results.Fails;
 
 namespace FunctionalStuff.Common
 {
@@ -13,16 +14,20 @@ namespace FunctionalStuff.Common
 
             var failed = arr.Where(x => !x.IsSuccessful).Select(x => x.Error).ToArray();
             if (failed.Length > 0)
-                return Result.Fail<ICollection<T>>(failed.JoinStrings(", "));
+                return Result.Fail<ICollection<T>>(failed.JoinStrings());
 
             ICollection<T> successfulResults = arr.Select(x => x.Value).ToArray();
             return Result.Ok(successfulResults);
         }
 
-        public static string ToStringWith<T>(this IEnumerable<T> source, string separator, Func<T, string> mapper) =>
-            source.Select(mapper).JoinStrings(separator);
+        public static string JoinStrings<T>(this IEnumerable<T> source, string separator = ", ",
+            Func<T, string> mapper = null)
+        {
+            var strings = mapper == null
+                ? source.Select(x => x.ToString())
+                : source.Select(mapper);
 
-        public static string JoinStrings(this IEnumerable<string> source, string separator) =>
-            string.Join(separator, source);
+            return string.Join(separator, strings);
+        }
     }
 }

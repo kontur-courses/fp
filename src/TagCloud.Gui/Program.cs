@@ -34,7 +34,7 @@ namespace TagCloud.Gui
                 .Concat(Directory.EnumerateFiles(Environment.CurrentDirectory, "MyStem*.dll"));
             var assemblies = dlls.Select(Assembly.LoadFrom).ToArray();
             builder.RegisterAssemblyModules(assemblies);
-            builder.Register(_ => new HashSet<MyStemSpeechPart>())
+            builder.RegisterInstance(new HashSet<MyStemSpeechPart>())
                 .As<ISet<MyStemSpeechPart>>()
                 .SingleInstance();
 

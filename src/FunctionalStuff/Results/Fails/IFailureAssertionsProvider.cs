@@ -2,7 +2,7 @@
 
 namespace FunctionalStuff.Results.Fails
 {
-    public interface IExtensibleFailureAssertionsProvider<T>
+    public interface IFailureAssertionsProvider<T>
     {
         string Name { get; }
         bool IsInverted { get; }
