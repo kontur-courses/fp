@@ -1,0 +1,54 @@
+﻿using TagsCloudContainer.Infrastructure.DataReader;
+using TagsCloudContainer.App.Settings;
+using System;
+using System.IO;
+using FluentAssertions;
+using NUnit.Framework;
+using TagsCloudContainer.App.DataReader;
+
+namespace TagsCloudContainerTests
+{
+    internal class DataReaderFactoryTests
+    {
+        private readonly string txtFilePath = Path.Combine(Directory.GetCurrentDirectory(),
+            "files", "input.txt");
+        private readonly string docxFilePath = Path.Combine(Directory.GetCurrentDirectory(),
+            "files", "input.docx");
+        private readonly IDataReaderFactory dataReaderFactory;
+        private readonly InputSettings inputSettings;
+
+        public DataReaderFactoryTests()
+        {
+            dataReaderFactory = new DataReaderFactory(InputSettings.Instance);
+            inputSettings = InputSettings.Instance;
+        }
+
+        [Test]
+        public void DataReaderFactory_ShouldCreateTxtReader()
+        {
+            DataReaderFactory_ShouldCreateReaderForFile(txtFilePath);
+        }
+
+        [Test]
+        public void DataReaderFactory_ShouldCreateDocxReader()
+        {
+            DataReaderFactory_ShouldCreateReaderForFile(docxFilePath);
+        }
+
+        [Test]
+        public void DataReaderFactory_ShouldThrowNotImplementedException_IfInputFileIsWithInvalidExtension()
+        {
+            inputSettings.InputFileName = "file.png";
+            Func<IDataReader> func = () => dataReaderFactory.CreateDataReader();
+            func.Should().Throw<NotImplementedException>();
+        }
+
+        private void DataReaderFactory_ShouldCreateReaderForFile(string filePath)
+        {
+            inputSettings.InputFileName = filePath;
+            Func<IDataReader> func = () => dataReaderFactory.CreateDataReader();
+            func.Should().NotThrow();
+            func.Invoke().Should().NotBeNull();
+        }
+    }
+}
