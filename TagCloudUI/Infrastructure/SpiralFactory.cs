@@ -5,9 +5,9 @@ namespace TagCloudUI.Infrastructure
 {
     public class SpiralFactory : ISpiralFactory
     {
-        private readonly IAppSettings settings;
+        private readonly ITagCloudSettings settings;
 
-        public SpiralFactory(IAppSettings settings)
+        public SpiralFactory(ITagCloudSettings settings)
         {
             this.settings = settings;
         }

@@ -36,7 +36,7 @@ namespace TagCloudUI.Infrastructure
             this.coloringAlgorithmSelector = coloringAlgorithmSelector;
         }
 
-        public Result<Bitmap> Run(IAppSettings settings)
+        public Result<Bitmap> Run(ITagCloudSettings settings)
         {
             return GetWordsFromFile(settings.InputPath)
                 .Then(words => ProcessWords(words, settings.WordsCount))

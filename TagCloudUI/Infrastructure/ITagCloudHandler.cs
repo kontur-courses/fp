@@ -5,6 +5,6 @@ namespace TagCloudUI.Infrastructure
 {
     public interface ITagCloudHandler
     {
-        Result<Bitmap> Run(IAppSettings settings);
+        Result<Bitmap> Run(ITagCloudSettings settings);
     }
 }
