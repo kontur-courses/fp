@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagCloud.BackgroundPainter;
 
 namespace TagCloud
@@ -21,12 +22,17 @@ namespace TagCloud
             this.backgroundPainter = backgroundPainter;
         }
 
-        public string Visualize(string filename, FontFamily fontFamily, Color stringColor)
+        public Result<string> Visualize(string filename, FontFamily fontFamily, Color stringColor)
         {
             var bitmap = new Bitmap(canvas.Width, canvas.Height);
             var graphics = Graphics.FromImage(bitmap);
-            var tags = tagsCreater.GetTags(filename, canvas.Height);
-            
+            var getTagsResult = tagsCreater.GetTags(filename, canvas.Height);
+            if (!getTagsResult.IsSuccess)
+            {
+                return Result.Fail<string>(getTagsResult.Error);
+            }
+
+            var tags = getTagsResult.Value;
             backgroundPainter.Draw(tags, canvas, graphics);
             DrawAllStrings(tags, fontFamily, stringColor, graphics);
             

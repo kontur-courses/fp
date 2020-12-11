@@ -38,11 +38,18 @@ namespace TagCloud.Tests
         [TestCase("123", TestName = "OnlyOneInteger")]
         [TestCase("123,", TestName = "OneIntegerWithComma")]
         [TestCase(",123", TestName = "OneIntegerAfterComma")]
-        //TODO: add zero check
-        public void GetSize_ShouldReturnFailureWithCorrectErrorMessage(string stringSize)
+        public void GetSize_ShouldReturnFailureWithCorrectErrorMessage_OnNotFullData(string stringSize)
         {
             ArgumentParser.GetSize(stringSize).Should()
                 .BeEquivalentTo(Result.Fail<Size>("Incorrect size argument"));
+        }
+        
+        [TestCase("0,100", TestName = "ZeroHeight")]
+        [TestCase("100,0", TestName = "ZeroWidth")]
+        public void GetSize_ShouldReturnFailureWithCorrectErrorMessage(string stringSize)
+        {
+            ArgumentParser.GetSize(stringSize).Should()
+                .BeEquivalentTo(Result.Fail<Size>("Width and height must be more then zero"));
         }
 
         [Test]

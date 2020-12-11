@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagCloud.Layout;
 using TagCloud.TextProcessing;
 
@@ -20,9 +21,14 @@ namespace TagCloud
             this.layouter = layouter;
         }
         
-        public List<Tuple<string, Rectangle>> GetTags(string filename, int canvasHeight)
+        public Result<List<Tuple<string, Rectangle>>> GetTags(string filename, int canvasHeight)
         {
-            var frequencies = frequencyAnalyzer.GetFrequencyDictionary(filename);
+            var frequenciesResult = frequencyAnalyzer.GetFrequencyDictionary(filename);
+            if (!frequenciesResult.IsSuccess)
+            {
+                return Result.Fail<List<Tuple<string, Rectangle>>>(frequenciesResult.Error);
+            }
+            var frequencies = frequenciesResult.Value;
             var tagsCount = frequencies.Count;
             return frequencies
                 .OrderByDescending(pair => pair.Value)

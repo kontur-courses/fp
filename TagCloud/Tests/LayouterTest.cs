@@ -53,9 +53,9 @@ namespace TagCloud.Tests
         public void PutNextRectangles_LayoutRectanglesInCircle()
         {
             var random = new Random();
-            var width = random.Next(300);
-            var height = random.Next(200);
-            var count = random.Next(100);
+            var width = random.Next(1, 300);
+            var height = random.Next(1, 200);
+            var count = random.Next(1, 100);
             var size = new Size(width, height);
             for (var i = 0; i < count; i++)
             {

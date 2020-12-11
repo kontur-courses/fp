@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.TextProcessing;
@@ -7,29 +7,70 @@ namespace TagCloud.Tests
 {
     public class TextReaderTests
     {
-        private PathCreater creator = new PathCreater();
+        private PathCreater pathCreater = new PathCreater();
+        private TxtTextReader txtReader = new TxtTextReader();
+        private DocxTextReader docxReader = new DocxTextReader();
         
         [Test]
-        public void TxtReaderTest()
+        public void TxtTextReader_ReadStrings_OnCorrectFile()
         {
-            var txtReader = new TxtTextReader();
-            txtReader.ReadStrings(creator.GetPathToFile("input.txt"))
-                .Should().HaveCount(24)
-                .And.Contain("cat")
+            var readingResult = txtReader.ReadStrings(pathCreater.GetPathToFile("input.txt"));
+            readingResult.IsSuccess.Should().BeTrue();
+            readingResult.Value.Should().HaveCount(24)
                 .And.Contain("кошка")
+                .And.Contain("Кошка")
+                .And.Contain("cat")
+                .And.Contain("Андрей")
                 .And.Contain("крокодил");
+        }
+        [Test]
+        public void TxtTextReader_ReadStrings_ReturnCorrectFail_OnDirectory()
+        {
+            var path = pathCreater.GetCurrentPath();
+            var readingResult = txtReader.ReadStrings(path);
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().Contain(path).And.Contain("Is directory");
         }
 
         [Test]
-        public void DocxReaderTest()
+        public void TxtTextReader_ReadStrings_ReturnCorrectFail_OnWrongDirectory()
         {
-            var docxReader = new DocxTextReader();
-            docxReader.ReadStrings(creator.GetPathToFile("input.docx"))
-                .Where(word => word != "")
-                .Should().HaveCount(24)
-                .And.Contain("cat")
+            var path = pathCreater.GetCurrentPath();
+            var readingResult = txtReader.ReadStrings(path + "asdf\\input.txt");
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().Contain(path).And.Contain("Directory not found");
+        }
+        
+        [Test]
+        public void DocxTextReader_ReadStrings_OnCorrectFile()
+        {
+            var readingResult = docxReader.ReadStrings(pathCreater.GetPathToFile("input.docx"));
+            Console.WriteLine(readingResult.Error);
+            readingResult.IsSuccess.Should().BeTrue();
+            readingResult.Value.Should().HaveCount(25)
                 .And.Contain("кошка")
+                .And.Contain("Кошка")
+                .And.Contain("cat")
+                .And.Contain("Андрей")
                 .And.Contain("крокодил");
+        }
+        
+        [Test]
+        public void DocxTextReader_ReadStrings_ReturnCorrectFail_OnDirectory()
+        {
+            var path = pathCreater.GetCurrentPath();
+            var readingResult = docxReader.ReadStrings(path);
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().Contain(path).And.Contain("Is directory");
+        }
+
+        [Test]
+        public void DocxTextReader_ReadStrings_ReturnCorrectFail_OnWrongDirectory()
+        {
+            var path = pathCreater.GetCurrentPath();
+            var readingResult = docxReader.ReadStrings(path + "asdf\\input.docx");
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().Contain(path).And.Contain("Directory not found");
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagCloud
 {
     public interface IVisualizer
     {
-        string Visualize(string filename, FontFamily fontFamily, Color stringColor);
+        Result<string> Visualize(string filename, FontFamily fontFamily, Color stringColor);
     }
 }

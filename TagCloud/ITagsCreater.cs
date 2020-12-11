@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 
 namespace TagCloud
 {
     public interface ITagsCreater
     {
-        List<Tuple<String, Rectangle>> GetTags(string filename, int canvasHeight);
+        Result<List<Tuple<string, Rectangle>>> GetTags(string filename, int canvasHeight);
     }
 }

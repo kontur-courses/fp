@@ -1,7 +1,9 @@
-﻿namespace TagCloud.TextProcessing
+﻿using ResultOf;
+
+namespace TagCloud.TextProcessing
 {
     public interface IWordParser
     {
-        string[] GetWords(string fileName);
+        Result<string[]> GetWords(string fileName);
     }
 }

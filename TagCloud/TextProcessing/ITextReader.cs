@@ -1,7 +1,9 @@
-﻿namespace TagCloud.TextProcessing
+﻿using ResultOf;
+
+namespace TagCloud.TextProcessing
 {
     public interface ITextReader
     {
-        string[] ReadStrings(string pathToFile);
+        Result<string[]> ReadStrings(string pathToFile);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
@@ -12,13 +13,16 @@ namespace TagCloud.TextProcessing
             parser = wordParser;
         }
         
-        public Dictionary<string, double> GetFrequencyDictionary(string fileName)
+        public Result<Dictionary<string, double>> GetFrequencyDictionary(string fileName)
         {
-            var words = parser.GetWords(fileName);
-            return words
+            var wordsResult = parser.GetWords(fileName);
+            if (!wordsResult.IsSuccess)
+                return Result.Fail<Dictionary<string, double>>(wordsResult.Error);
+            return wordsResult
+                .Value
                 .GroupBy(str => str)
                 .ToDictionary(group => group.Key,
-                    group => group.Count() / (double) words.Length);
+                    group => group.Count() / (double) wordsResult.Value.Length);
         }
     }
 }

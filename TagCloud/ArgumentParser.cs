@@ -9,7 +9,6 @@ namespace TagCloud
     {
         private static IPathCreater pathCreater = new PathCreater();
         
-        ///<exception cref="ArgumentException">Unknown background type</exception>
         public static Result<Background> GetBackground(string background)
         {
             switch (background)
@@ -25,19 +24,21 @@ namespace TagCloud
             }
         }
         
-        ///<exception cref="ArgumentException">Incorrect size argument</exception>
         public static Result<Size> GetSize(string size)
         {
             var arr = size.Split(',');
             if (arr.Length == 2 && int.TryParse(arr[0], out var width) && int.TryParse(arr[1], out var height))
             {
+                if (width <= 0 || height <= 0)
+                {
+                    return Result.Fail<Size>("Width and height must be more then zero");
+                }
                 return new Size(width, height);
             }
             
             return Result.Fail<Size>("Incorrect size argument");
         }
 
-        ///<exception cref="ArgumentException">Input file not found</exception>
         public static Result<string> CheckFileName(string fileName)
         {
             if (!File.Exists(pathCreater.GetPathToFile(fileName)))
@@ -51,7 +52,6 @@ namespace TagCloud
             return fileName;
         }
 
-        ///<exception cref="ArgumentException">Unknown FontFamily</exception>
         public static Result<FontFamily> GetFont(string font)
         {
             try
@@ -64,7 +64,6 @@ namespace TagCloud
             }
         }
         
-        ///<exception cref="ArgumentException">Incorrect color format</exception>
         public static Result<Color> ParseColor(string colorInRGB)
         {
             var arr = colorInRGB.Split(',');
