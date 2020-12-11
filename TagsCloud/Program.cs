@@ -5,6 +5,7 @@ using TagsCloud.ContainerConfigurators;
 using TagsCloud.StatisticProviders;
 using TagsCloud.WordLayouters;
 using TagsCloud.WordReaders;
+using static TagsCloud.Result;
 using IContainer = Autofac.IContainer;
 
 namespace TagsCloud
@@ -22,22 +23,19 @@ namespace TagsCloud
         public static void MakeCloud(IContainer container = null)
         {
             container ??= new ConsoleContainerConfigurator().Configure();
-            
-            var words = container.Resolve<IWordReader>().ReadWords();
-            if (words == null) return;
-            
-            var statistic = container.Resolve<IStatisticProvider>().GetWordStatistics(words);
-            
-            var layouter = container.Resolve<IWordLayouter>();
-            layouter.AddWords(statistic);
-            
-            var path = container.Resolve<ICloudRenderer>().RenderCloud();
-            Console.WriteLine($"Cloud saved in {path}");
+
+            Of(() => container.Resolve<IWordReader>())
+                .Then(r => r.ReadWords())
+                .Then(words => container.Resolve<IStatisticProvider>().GetWordStatistics(words))
+                .Then(statistic => container.Resolve<IWordLayouter>().AddWords(statistic))
+                .Then(none => container.Resolve<ICloudRenderer>().RenderCloud())
+                .Then(path => Console.WriteLine($"Cloud saved in {path}"))
+                .OnFail(Console.WriteLine);
         }
-        
-        public static void MakeCloud(IContainerConfigurator configurator)
-        {
-            MakeCloud(configurator.Configure());
-        }
+
+        public static void MakeCloud(IContainerConfigurator configurator) => 
+            Of(configurator.Configure)
+                .Then(MakeCloud)
+                .OnFail(Console.WriteLine);
     }
 }
