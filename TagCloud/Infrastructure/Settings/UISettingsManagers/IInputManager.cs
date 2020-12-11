@@ -1,6 +1,6 @@
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public interface ISettingsManager
+    public interface IInputManager
     {
         public string Title { get; }
         public string Help { get; }

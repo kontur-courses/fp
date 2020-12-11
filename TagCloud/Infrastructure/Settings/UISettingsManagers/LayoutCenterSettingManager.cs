@@ -5,7 +5,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class LayoutCenterSettingManager : ISettingsManager
+    public class LayoutCenterSettingManager : IInputManager
     {
         private readonly Func<ISpiralSettingsProvider> settingsProvider;
         private readonly Regex regex;

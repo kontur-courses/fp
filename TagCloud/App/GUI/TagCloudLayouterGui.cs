@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,6 +11,7 @@ using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using Application = Gtk.Application;
 using Button = Gtk.Button;
+using Enumerable = System.Linq.Enumerable;
 using Image = System.Drawing.Image;
 using Label = Gtk.Label;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
@@ -20,11 +22,11 @@ namespace TagCloud.App.GUI
     internal class TagCloudLayouterGui : IApp
     {
         private readonly Func<Settings> settingsFactory;
-        private readonly IEnumerable<ISettingsManager> settingsManagers;
+        private readonly IEnumerable<IInputManager> settingsManagers;
         private readonly IImageGenerator imageGenerator;
         private readonly ImageSaver imageSaver;
 
-        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver)
+        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
@@ -90,27 +92,41 @@ namespace TagCloud.App.GUI
             window.ShowAll();
         }
 
-        private Widget GetWidget(ISettingsManager manager)
+        private Widget GetWidget(IInputManager manager)
         {
             const int padding = 10;
             var settings = new HBox();
             settings.PackStart(new Label(manager.Help), false, false, padding);
             settings.PackStart(new Label(manager.Title), false, false, padding);
             settings.PackStart(new VSeparator(), false, false, padding);
-            var table = new TextTagTable();
-            var buffer = new TextBuffer(table);
-            var textBox = new TextView(buffer);
-            settings.PackStart(textBox, true, true, padding);
-            textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
-            textBox.FocusOutEvent += (sender, args) =>
+            if (manager is IOptionsManager optionsManager)
             {
-                var result = manager.TrySet(buffer.Text);
-                if (!result.IsSuccess)
+                var dropdown = new ComboBoxText();
+                foreach (var (option, id) in Enumerable.Select(optionsManager.GetOptions(), (s, i) => (s, i)))
                 {
-                    ShowInfoWindow(ErrorLevel.Warning, result.Error);
+                    dropdown.Append(id.ToString(), option);   
                 }
-                buffer.Text = manager.Get();
-            };
+                settings.PackStart(dropdown, true, true, padding);
+                optionsManager.GetOptions();
+            }
+            else
+            {
+                var table = new TextTagTable();
+                var buffer = new TextBuffer(table);
+                var textBox = new TextView(buffer);
+                settings.PackStart(textBox, true, true, padding);
+                textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
+                textBox.FocusOutEvent += (sender, args) =>
+                {
+                    var result = manager.TrySet(buffer.Text);
+                    if (!result.IsSuccess)
+                    {
+                        ShowInfoWindow(ErrorLevel.Warning, result.Error);
+                    }
+
+                    buffer.Text = manager.Get();
+                };
+            }
             return settings;
         }
 

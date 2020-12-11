@@ -11,11 +11,11 @@ namespace TagCloud.App.CLI
     public class TagCloudLayouterCli : IApp
     {
         private readonly Func<Settings> settingsFactory;
-        private readonly IEnumerable<ISettingsManager> settingsManagers;
+        private readonly IEnumerable<IInputManager> settingsManagers;
         private readonly IImageGenerator generator;
         private readonly ImageSaver imageSaver;
 
-        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver)
+        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
@@ -88,7 +88,7 @@ namespace TagCloud.App.CLI
             }
         }
 
-        private IEnumerable<State> GetSettingsManagersStates(IEnumerable<ISettingsManager> managers)
+        private IEnumerable<State> GetSettingsManagersStates(IEnumerable<IInputManager> managers)
         {
             foreach (var manager in managers)
             {

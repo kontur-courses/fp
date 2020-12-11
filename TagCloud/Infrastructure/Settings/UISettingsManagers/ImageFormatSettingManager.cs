@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class ImageFormatSettingManager : ISettingsManager
+    public class ImageFormatSettingManager : IInputManager, IOptionsManager
     {
         private readonly Func<IImageFormatSettingProvider> settingsProvider;
 
@@ -14,8 +16,13 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             this.settingsProvider = settingsProvider;
         }
 
+        public IEnumerable<string> GetOptions() =>
+            typeof(ImageFormat)
+                .GetProperties()
+                .Select(info => info.Name);
+
         public string Title => "Image Format";
-        public string Help => "Choose format: Bmp, Emf, Exif, Gif, Icon, Jpeg, Png, Tiff, Wmf";
+        public string Help => $"Choose format";
         public Result<string> TrySet(string extension)
         {
             var propertyInfos = typeof(ImageFormat)

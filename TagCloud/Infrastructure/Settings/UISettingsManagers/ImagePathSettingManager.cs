@@ -4,7 +4,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class ImagePathSettingManager : ISettingsManager
+    public class ImagePathSettingManager : IInputManager
     {
         private readonly Func<IImageSettingsProvider> imageSettingsProvider;
         private readonly Func<IImageFormatSettingProvider> imageFormatSettingsProvider;

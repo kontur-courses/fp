@@ -4,7 +4,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class FontSettingManager : ISettingsManager
+    public class FontSettingManager : IInputManager
     {
         private readonly Func<IFontSettingProvider> settingProvider;
 

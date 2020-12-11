@@ -25,7 +25,7 @@ namespace TagCloudTests
 
             builder.RegisterType<ImageSizeSettingsManager>().AsImplementedInterfaces();
             container = builder.Build();
-            sizeSettingManager = container.Resolve<ISettingsManager>() as ImageSizeSettingsManager;
+            sizeSettingManager = container.Resolve<IInputManager>() as ImageSizeSettingsManager;
         }
 
         [Test]

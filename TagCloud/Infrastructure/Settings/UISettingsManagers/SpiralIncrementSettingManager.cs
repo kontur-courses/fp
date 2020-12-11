@@ -3,7 +3,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class SpiralIncrementSettingManager : ISettingsManager
+    public class SpiralIncrementSettingManager : IInputManager
     {
         private readonly Func<ISpiralSettingsProvider> settingProvider;
 

@@ -4,7 +4,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class FileSettingManager : ISettingsManager
+    public class FileSettingManager : IInputManager
     {
         private readonly Func<IFileSettingsProvider> fileSettingsProvider;
 

@@ -4,7 +4,7 @@ using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class ImageSizeSettingsManager : ISettingsManager
+    public class ImageSizeSettingsManager : IInputManager
     {
         private readonly Func<IImageSettingsProvider> imageSettingsProvider;
         private readonly Regex regex;

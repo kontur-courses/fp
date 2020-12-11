@@ -29,7 +29,7 @@ namespace TagCloudTests
 
             builder.RegisterType<FileSettingManager>().AsImplementedInterfaces();
             container = builder.Build();
-            fileSettingManager = container.Resolve<ISettingsManager>() as FileSettingManager;
+            fileSettingManager = container.Resolve<IInputManager>() as FileSettingManager;
             
             validPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TagCloudTests.dll");
             Assert.True(IsExistingFile(validPath), $"Tests are incorrect! file not found: {validPath}");
