@@ -12,10 +12,11 @@ namespace TagsCloudContainerTests
             "files", "input.docx");
 
         [Test]
-        public void TxtReader_ShouldReadLines()
+        public void WordReader_ShouldReadLines()
         {
             new WordFileReader(docxFilePath)
                 .ReadLines()
+                .GetValueOrThrow()
                 .ToArray()
                 .Should()
                 .BeEquivalentTo("Это", "Docx", "Файл", "");

@@ -18,6 +18,7 @@ namespace TagsCloudContainerTests
         {
             new TxtFileReader(txtFilePath)
                 .ReadLines()
+                .GetValueOrThrow()
                 .ToArray()
                 .Should()
                 .BeEquivalentTo("Это", "Txt", "Файл");

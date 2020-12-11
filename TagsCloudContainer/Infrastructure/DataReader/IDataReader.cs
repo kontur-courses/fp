@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.Infrastructure.DataReader
 {
     public interface IDataReader
     {
-        public IEnumerable<string> ReadLines();
+        public Result<IEnumerable<string>> ReadLines();
     }
 }

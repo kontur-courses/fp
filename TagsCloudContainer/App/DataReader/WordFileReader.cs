@@ -1,6 +1,8 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using DocumentFormat.OpenXml.Packaging;
+using ResultOf;
 using TagsCloudContainer.Infrastructure.DataReader;
 
 namespace TagsCloudContainer.App.DataReader
@@ -14,13 +16,17 @@ namespace TagsCloudContainer.App.DataReader
             this.filename = filename;
         }
 
-        public IEnumerable<string> ReadLines()
+        public Result<IEnumerable<string>> ReadLines()
         {
-            return WordprocessingDocument
-                .Open(filename, false)
-                .MainDocumentPart
-                .Document
-                .Body.Select(item => item.InnerText);
+            if (!File.Exists(filename))
+                return Result.Fail<IEnumerable<string>>("Input file is not found");
+            return Result.Of(() => WordprocessingDocument
+                    .Open(filename, false)
+                    .MainDocumentPart
+                    .Document
+                    .Body.Select(item => item.InnerText))
+                .RefineError("Can't read input file");
+            ;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Infrastructure.CloudGenerator;
 using TagsCloudContainer.Infrastructure.CloudVisualizer;
@@ -28,7 +29,7 @@ namespace TagsCloudContainer.App.CloudVisualizer
 
         public void Visualize()
         {
-            var lines = inputDataReaderFactory.CreateDataReader().GetValueOrThrow().ReadLines();
+            var lines = inputDataReaderFactory.CreateDataReader().Then(reader => reader.ReadLines()).GetValueOrThrow();
             var frequencyDictionary = textParserToFrequencyDictionary.GenerateFrequencyDictionary(lines);
             var cloud = cloudGenerator.GenerateCloud(frequencyDictionary);
             painter.Paint(cloud, imageHolder.Value.StartDrawing());

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using ResultOf;
 using TagsCloudContainer.Infrastructure.DataReader;
 
 namespace TagsCloudContainer.App.DataReader
@@ -11,9 +12,11 @@ namespace TagsCloudContainer.App.DataReader
         {
             this.filename = filename;
         }
-        public IEnumerable<string> ReadLines()
+        public Result<IEnumerable<string>> ReadLines()
         {
-            return File.ReadLines(filename);
+            if (!File.Exists(filename))
+                return Result.Fail<IEnumerable<string>>("Input file is not found");
+            return Result.Of(() => File.ReadLines(filename)).RefineError("Can't read input file");
         }
     }
 }
