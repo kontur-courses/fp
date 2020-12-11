@@ -1,0 +1,41 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+using TagsCloud.Result;
+
+namespace TagsCloud.WordsParser
+{
+    public class FileReader : IWordReader
+    {
+        private static readonly Regex ExtensionRegex = new Regex(@".*?(?<extension>\.[^.]*?)$");
+        private readonly string path;
+
+        private delegate Result<IEnumerable<string>> ReadWordsMethod();
+
+        public FileReader(string filePath)
+        {
+            path = filePath;
+        }
+
+        public Result<IEnumerable<string>> ReadWords() =>
+            GetFileExtension(path).Then(GetReadFileMethod).Then(readWords => readWords.Invoke());
+
+        private Result<IEnumerable<string>> ReadWordsFromTxt() =>
+            Result.Result.Of(CheckFileExisting).Then(_ => File.ReadLines(path));
+
+        private Result<bool> CheckFileExisting()
+            => File.Exists(path) ? true : Result.Result.Fail<bool>($"File {path} not found.");
+
+        private Result<ReadWordsMethod> GetReadFileMethod(string extension)
+        {
+            return extension switch
+            {
+                ".txt" => Result.Result.Ok<ReadWordsMethod>(ReadWordsFromTxt),
+                _ => Result.Result.Fail<ReadWordsMethod>($"Can't read {extension} file")
+            };
+        }
+
+        private static Result<string> GetFileExtension(string filePath) =>
+            ExtensionRegex.Match(filePath).Groups["extension"].Value;
+    }
+}
