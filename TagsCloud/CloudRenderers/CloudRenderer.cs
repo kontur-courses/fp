@@ -15,13 +15,13 @@ namespace TagsCloud.CloudRenderers
 
         public CloudRenderer(IWordLayouter layouter, int width, int height)
         {
-            if (layouter == null || width <= 0 || height <= 0) throw new ArgumentException();
-            this.layouter = layouter;
+            if (width <= 0 || height <= 0) throw new ArgumentException("Not positive width or height");
+            this.layouter = layouter ?? throw new ArgumentException("Layouter is null");
             this.width = width;
             this.height = height;
 
             var directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent;
-            if (directoryInfo == null) throw new DirectoryNotFoundException();
+            if (directoryInfo == null) throw new DirectoryNotFoundException("Parent directory not found");
             path = $"{directoryInfo.FullName}\\{SamplesDirectory}";
             if(!Directory.Exists(path))
                 directoryInfo.CreateSubdirectory(SamplesDirectory);
