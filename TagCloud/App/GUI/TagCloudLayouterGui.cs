@@ -143,7 +143,7 @@ namespace TagCloud.App.GUI
                 image.Save(stream, format);
                 stream.Position = 0;
                 return stream;
-            }).RefineError($"Displaying of format {format} is not supported");
+            }).ReplaceError(_ => $"Displaying of format {format} is not supported");
         }
 
         private void OnGenerateButtonClicked(object sender, EventArgs args)
