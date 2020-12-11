@@ -1,17 +1,18 @@
-﻿﻿using System;
+﻿using System;
 using System.Drawing;
 
 namespace WordCloudGenerator
 {
     public class Spiral
     {
-        public Point Center { get; }
         private double angle;
 
         public Spiral(Point center)
         {
             Center = center;
         }
+
+        public Point Center { get; }
 
         public Point GetNextPoint()
         {

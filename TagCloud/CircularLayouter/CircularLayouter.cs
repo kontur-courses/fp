@@ -10,12 +10,18 @@ namespace WordCloudGenerator
         private readonly List<RectangleF> rectangles = new List<RectangleF>();
         private readonly Spiral spiral;
 
-        public CircularLayouter(Point center)
+        private CircularLayouter(Point center, IEnumerable<RectangleF> rectangles)
         {
             spiral = new Spiral(center);
+            this.rectangles = rectangles.ToList();
         }
 
-        public RectangleF PutNextRectangle(SizeF rectangleSize)
+        public CircularLayouter(Size imageSize)
+        {
+            spiral = new Spiral(new Point(imageSize.Width / 2, imageSize.Height / 2));
+        }
+
+        public void PutNextRectangle(SizeF rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
                 throw new ArgumentException(
@@ -32,33 +38,39 @@ namespace WordCloudGenerator
                 rectangleToAdd = Fit(rectangleToAdd, rectangles, spiral.Center);
 
             rectangles.Add(rectangleToAdd);
-            return rectangleToAdd;
         }
 
-        public RectangleF[] GetRectangles()
+        public ILayouter Shift(Point shiftVector)
         {
-            return rectangles.ToArray();
+            return new CircularLayouter(new Point(spiral.Center.X + shiftVector.X, spiral.Center.Y + shiftVector.Y),
+                rectangles.Select(rect => rect.Shift(shiftVector)));
+        }
+
+        public IEnumerable<RectangleF> GetRectangles()
+        {
+            return rectangles;
         }
 
         private RectangleF Fit(RectangleF rectToFit, IEnumerable<RectangleF> others, Point center)
         {
             var iterationCount = 0;
+            var othersArr = others.ToArray();
             while (rectToFit.Location != center)
             {
-                rectToFit = ShiftHorizontal(rectToFit, others, center);
-                rectToFit = ShiftVertical(rectToFit, others, center);
+                rectToFit = FitHorizontal(rectToFit, othersArr, center);
+                rectToFit = FitVertical(rectToFit, othersArr, center);
 
                 iterationCount++;
 
-                if (others.Any(rect => rectToFit.IntersectsVerticallyWith(rect)) &&
-                    others.Any(rect => rectToFit.IntersectsHorizontallyWith(rect)) || iterationCount > 10)
+                if (othersArr.Any(rect => rectToFit.IntersectsVerticallyWith(rect)) &&
+                    othersArr.Any(rect => rectToFit.IntersectsHorizontallyWith(rect)) || iterationCount > 10)
                     break;
             }
 
             return rectToFit;
         }
 
-        private RectangleF ShiftVertical(RectangleF rectToShift, IEnumerable<RectangleF> others, Point center)
+        private RectangleF FitVertical(RectangleF rectToShift, IEnumerable<RectangleF> others, Point center)
         {
             var dir = center.Y > rectToShift.Y ? 1 : -1;
             while (Math.Abs(rectToShift.Y - center.Y) > 0.5)
@@ -72,7 +84,7 @@ namespace WordCloudGenerator
             return rectToShift;
         }
 
-        private RectangleF ShiftHorizontal(RectangleF rectToShift, IEnumerable<RectangleF> others, Point center)
+        private RectangleF FitHorizontal(RectangleF rectToShift, IEnumerable<RectangleF> others, Point center)
         {
             var dir = center.X > rectToShift.X ? 1 : -1;
             while (Math.Abs(rectToShift.X - center.X) > 0.5)
