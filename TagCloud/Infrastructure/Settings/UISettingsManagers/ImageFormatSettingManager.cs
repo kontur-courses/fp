@@ -17,19 +17,19 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 
         public string Title => "Image Format";
         public string Help => "Choose format: Bmp, Emf, Exif, Gif, Icon, Jpeg, Png, Tiff, Wmf";
-        public Result<string> TrySet(string path)
+        public Result<string> TrySet(string extension)
         {
             var propertyInfos = typeof(ImageFormat)
                 .GetProperties();
      
             var newFormat = propertyInfos
-                .Where(info => info.Name == path)
+                .Where(info => info.Name.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
                 .Select(info => info.GetValue(settingsProvider().Format))
                 .Cast<ImageFormat>()
                 .SingleOrDefault();
             
             if (newFormat == null)
-                return Result.Fail<string>("Incorrect Format");
+                return Result.Fail<string>($"{extension} is not supported extension");
             settingsProvider().Format = newFormat;
             return Get();
         }

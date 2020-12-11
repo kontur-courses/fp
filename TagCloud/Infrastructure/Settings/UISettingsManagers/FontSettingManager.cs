@@ -17,13 +17,13 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Font";
         public string Help => "Choose font family name to write tags";
 
-        public Result<string> TrySet(string path)
+        public Result<string> TrySet(string name)
         {
-            var fontFamily = new FontFamily(path);
-            if (fontFamily.Name == path)
+            var fontFamily = new FontFamily(name);
+            if (fontFamily.Name == name)
                 settingProvider().FontFamily = fontFamily;
             else
-                return Result.Fail<string>($"FontFamily {path} was not found!");
+                return Result.Fail<string>($"FontFamily {name} was not found!");
             return Get();
         }
 

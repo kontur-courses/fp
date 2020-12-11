@@ -20,9 +20,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Layout Center";
         public string Help => "Choose where you want to see a layout. Point is counting from top left corner";
 
-        public Result<string> TrySet(string path)
+        public Result<string> TrySet(string input)
         {
-            var match = regex.Match(path);
+            var match = regex.Match(input);
             if (!match.Success)
                 return Result.Fail<string>("Incorrect input format ([x], [y])");
             settingsProvider().Center = new Point(

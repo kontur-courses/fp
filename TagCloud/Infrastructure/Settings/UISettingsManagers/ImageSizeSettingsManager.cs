@@ -19,9 +19,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Size";
         public string Help => "Input image width and height separated by space";
 
-        public Result<string> TrySet(string path)
+        public Result<string> TrySet(string input)
         {
-            var match = regex.Match(path);
+            var match = regex.Match(input);
             if (!match.Success)
                 return Result.Fail<string>("Incorrect input format ([width], [height])");
             imageSettingsProvider().Width = int.Parse(match.Groups["width"].Value);

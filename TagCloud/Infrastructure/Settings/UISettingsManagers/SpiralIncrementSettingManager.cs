@@ -16,9 +16,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Spiral increment";
         public string Help => "Choose increment to change placing strategy";
 
-        public Result<string> TrySet(string path)
+        public Result<string> TrySet(string input)
         {
-            if (!int.TryParse(path, out var number))
+            if (!int.TryParse(input, out var number))
                 return Result.Fail<string>("Incorrect input. Type integer number!");
             settingProvider().Increment = number;
             return Get();
