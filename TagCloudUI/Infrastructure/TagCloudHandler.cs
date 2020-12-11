@@ -22,7 +22,8 @@ namespace TagCloudUI.Infrastructure
         private readonly IImageCreator imageCreator;
         private readonly IColoringAlgorithmSelector coloringAlgorithmSelector;
 
-        public TagCloudHandler(IReaderSelector readersSelector,
+        public TagCloudHandler(
+            IReaderSelector readersSelector,
             IWordsProcessor wordsProcessor,
             ILayoutAlgorithmSelector layoutAlgorithmSelector,
             IImageCreator imageCreator,
@@ -45,8 +46,10 @@ namespace TagCloudUI.Infrastructure
                 .Then(layoutInfo => CreateImage(layoutInfo, settings.ColoringTheme, settings.FontName));
         }
 
-        private Result<Bitmap> CreateImage(LayoutInfo layoutInfo,
-            ColoringTheme theme, string fontName)
+        private Result<Bitmap> CreateImage(
+            LayoutInfo layoutInfo,
+            ColoringTheme theme,
+            string fontName)
         {
             return coloringAlgorithmSelector.GetAlgorithm(theme)
                 .Then(algorithm => imageCreator.Create(algorithm, layoutInfo.Tags, fontName, layoutInfo.Size));
@@ -80,8 +83,10 @@ namespace TagCloudUI.Infrastructure
                 .AsResult();
         }
 
-        private Result<LayoutInfo> CreateLayout(IReadOnlyCollection<string> words,
-            LayoutAlgorithmType algorithmType, string fontName)
+        private Result<LayoutInfo> CreateLayout(
+            IReadOnlyCollection<string> words,
+            LayoutAlgorithmType algorithmType,
+            string fontName)
         {
             return layoutAlgorithmSelector.GetAlgorithm(algorithmType)
                 .Then(algorithm =>
@@ -94,7 +99,11 @@ namespace TagCloudUI.Infrastructure
         }
 
         private static Tag CreateTag(
-            ILayoutAlgorithm algorithm, string word, int index, int wordsCount, string fontName)
+            ILayoutAlgorithm algorithm,
+            string word,
+            int index,
+            int wordsCount,
+            string fontName)
         {
             var fontSize = wordsCount + 10 - index;
             using var font = new Font(fontName, fontSize);

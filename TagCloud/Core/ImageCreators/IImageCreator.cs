@@ -6,7 +6,6 @@ namespace TagCloud.Core.ImageCreators
 {
     public interface IImageCreator
     {
-        Bitmap Create(IColoringAlgorithm algorithm, IEnumerable<Tag> tags,
-            string fontName, Size size);
+        Bitmap Create(IColoringAlgorithm algorithm, IEnumerable<Tag> tags, string fontName, Size size);
     }
 }

@@ -8,8 +8,11 @@ namespace TagCloud.Core.ImageCreators
     {
         private readonly Color backgroundColor = Color.Azure;
 
-        public Bitmap Create(IColoringAlgorithm coloringAlgorithm,
-            IEnumerable<Tag> tags, string fontName, Size size)
+        public Bitmap Create(
+            IColoringAlgorithm coloringAlgorithm,
+            IEnumerable<Tag> tags,
+            string fontName,
+            Size size)
         {
             var bitmap = new Bitmap(size.Width, size.Height);
             var graphics = Graphics.FromImage(bitmap);

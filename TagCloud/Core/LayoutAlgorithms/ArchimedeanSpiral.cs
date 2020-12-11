@@ -10,8 +10,10 @@ namespace TagCloud.Core.LayoutAlgorithms
         private readonly double deltaAngle;
         private readonly double spiralOffset;
 
-        public ArchimedeanSpiral(Point start,
-            int step = 5, double deltaAngle = Math.PI / 360)
+        public ArchimedeanSpiral(
+            Point start,
+            int step = 5,
+            double deltaAngle = Math.PI / 360)
         {
             Start = start;
             this.deltaAngle = deltaAngle;

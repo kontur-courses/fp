@@ -11,7 +11,8 @@ namespace TagCloudUI.UI
         private readonly IAppSettings settings;
         private readonly IImageSaver imageSaver;
 
-        public ConsoleUI(ITagCloudHandler tagCloudHandler,
+        public ConsoleUI(
+            ITagCloudHandler tagCloudHandler,
             IAppSettings settings,
             IImageSaver imageSaver)
         {

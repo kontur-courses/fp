@@ -127,7 +127,9 @@ namespace TagCloud.Core
             return input.ReplaceError(err => errorMessage + ". " + err);
         }
 
-        public static Result<TInput> FailIf<TInput>(this Result<TInput> input, Func<TInput, bool> condition,
+        public static Result<TInput> FailIf<TInput>(
+            this Result<TInput> input,
+            Func<TInput, bool> condition,
             string errorMessage)
         {
             return input.Then(x => condition(input.Value) ? Fail<TInput>(errorMessage) : input);
