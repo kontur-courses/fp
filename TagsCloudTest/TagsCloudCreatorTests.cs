@@ -87,13 +87,14 @@ namespace TagsCloudTest
         }
 
         [Test]
-        public void CreateCloudShouldHandleInvalidTextPathWhenExtensionNotExist()
+        public void CreateCloudShouldHandleInvalidTextPathWhenExtensionNotSupported()
         {
-            var path = textPath.Replace(".txt", ".ff");
+            var path = imagePath;
             wordsConfig.Path = path;
             var result = tagsCloudCreator.CreateCloud(path, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("file type png is not supported");
         }
 
         [Test]
@@ -104,6 +105,7 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(path, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("Path: " + path + " don't exists");
         }
 
         [Test]
@@ -114,6 +116,7 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(textPath, path);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("image type ff is not supported");
         }
 
         [Test]
@@ -123,6 +126,7 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("layouter fffff not supported");
         }
 
         [Test]
@@ -132,15 +136,17 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("tags generator fffff not supported");
         }
 
         [Test]
         public void CreateCloudShouldHandleInvalidFilterNames()
         {
-            wordsConfig.FilersNames = new[] { "fff"};
+            wordsConfig.FilersNames = new[] { "fff" };
             var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("filter fff not supported");
         }
 
         [Test]
@@ -150,6 +156,27 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("converter fff not supported");
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleInvalidFontName()
+        {
+            wordsConfig.Font = new Font("123ac", 15f);
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("font 123ac not supported");
+        }
+
+        [Test]
+        public void CreateCloudShouldHandleCloudOutOfImage()
+        {
+            imageConfig.ImageSize = new Size(10, 10);
+            var result = tagsCloudCreator.CreateCloud(textPath, imagePath);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("Cloud out of size image");
         }
     }
 }
