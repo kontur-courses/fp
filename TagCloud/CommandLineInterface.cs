@@ -11,6 +11,16 @@ namespace TagCloud
         public Size CanvasSize { get; private set; }
         public Background BackgroundType { get; private set; }
 
+        public CommandLineInterface()
+        {
+            CanvasSize = new Size(1000, 800);
+            BackgroundType = Background.Empty;
+            FileName = "input.txt";
+            StringFont = new FontFamily("Arial");
+            StringColor = Color.Black;
+
+        }
+
         public void ConfigureCLI(CommandLineApplication app)
         {
             app.HelpOption();
@@ -22,12 +32,40 @@ namespace TagCloud
             
             app.OnExecute(() =>
             {
-                CanvasSize = optionSize.HasValue() ? ArgumentParser.GetSize(optionSize.Value()).Value : new Size(1000, 800);
-                BackgroundType = optionBackground.HasValue() ? ArgumentParser.GetBackground(optionBackground.Value()).Value : Background.Empty;
-                FileName = optionInput.HasValue() ? ArgumentParser.CheckFileName(optionInput.Value()).Value : "input.txt";
-                StringFont = optionFont.HasValue() ? ArgumentParser.GetFont(optionFont.Value()).Value : new FontFamily("Arial");
-                StringColor = optionStringColor.HasValue() ? ArgumentParser.ParseColor(optionStringColor.Value()).Value : Color.Black;
-                //TODO: remove values
+                if (optionSize.HasValue())
+                {
+                    var sizeResult = ArgumentParser.GetSize(optionSize.Value());
+                    if (sizeResult.IsSuccess)
+                        CanvasSize = sizeResult.Value;
+                }
+
+                if (optionBackground.HasValue())
+                {
+                    var backgroundResult = ArgumentParser.GetBackground(optionBackground.Value());
+                    if (backgroundResult.IsSuccess)
+                        BackgroundType = backgroundResult.Value;
+                }
+
+                if (optionInput.HasValue() )
+                {
+                    var filenameResult = ArgumentParser.CheckFileName(optionInput.Value());
+                    if (filenameResult.IsSuccess)
+                        FileName = filenameResult.Value;
+                }
+
+                if (optionFont.HasValue())
+                {
+                    var fontResult = ArgumentParser.GetFont(optionFont.Value());
+                    if (fontResult.IsSuccess)
+                        StringFont = fontResult.Value;
+                }
+
+                if (optionStringColor.HasValue())
+                {
+                    var colorResult = ArgumentParser.ParseColor(optionStringColor.Value());
+                    if (colorResult.IsSuccess)
+                        StringColor = colorResult.Value;
+                }
 
                 return 1;
             });

@@ -25,10 +25,14 @@ namespace TagCloud
             ConfigureServices(CLI.CanvasSize, CLI.BackgroundType, CLI.FileName);
             
             var visualizer = serviceProvider.GetService<IVisualizer>();
-            var pathToPng = visualizer.Visualize(CLI.FileName, CLI.StringFont, CLI.StringColor);
+            var visualizeResult = visualizer.Visualize(CLI.FileName, CLI.StringFont, CLI.StringColor);
+            if (!visualizeResult.IsSuccess)
+            {
+                Console.WriteLine(visualizeResult.Error);
+                return 1;
+            }
             
-            Console.WriteLine("Result saved to:\n" + pathToPng);
-
+            Console.WriteLine("Result saved to:\n" + visualizeResult.Value);
             return 0;
         }
         

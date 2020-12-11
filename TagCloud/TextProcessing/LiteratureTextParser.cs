@@ -58,9 +58,13 @@ namespace TagCloud.TextProcessing
             {
                 return WordList.CreateFromFiles(path + "ru_RU.dic", path + "ru_RU.aff");
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return Result.Fail<WordList>("Not found dictionaries (ru_RU.dic/ru_RU.aff) by path " + path);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<WordList>("Unhandled exception: " + e);
             }
         }
     }
