@@ -26,12 +26,14 @@ namespace TagCloud.Core.ImageSavers
         public Result<string> Save(Bitmap bitmap, string fullPath, string format)
         {
             return formats.ContainsKey(format)
-                ? Result.Of(() =>
-                {
-                    var path = $"{fullPath}.{format}";
-                    bitmap.Save(path, formats[format]);
-                    return path;
-                }).RefineError("An error occured while saving file")
+                ? Result
+                    .Of(() =>
+                    {
+                        var path = $"{fullPath}.{format}";
+                        bitmap.Save(path, formats[format]);
+                        return path;
+                    })
+                    .RefineError("An error occured while saving file")
                 : Result.Fail<string>(
                     $"Unsupported format {format}\nPlease use: {string.Join(", ", formats.Keys)}");
         }

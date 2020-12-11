@@ -18,6 +18,6 @@ optional arguments:
     -e, --extension    (Default: png) Image format
     -c, --count        (Default: 40) Words count
 
-If you are using an unsupported font, or if the font is not installed on the computer,
-an application is running on the computer, the Microsoft Sans Serif font will be replaced.
+If you are using an unsupported font, or if the font is not installed on your computer, 
+the Microsoft Sans Serif font will be used.
 ```
