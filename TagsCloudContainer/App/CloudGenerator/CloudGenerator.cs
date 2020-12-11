@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Infrastructure.CloudGenerator;
 
 namespace TagsCloudContainer.App.CloudGenerator
@@ -17,9 +18,16 @@ namespace TagsCloudContainer.App.CloudGenerator
             this.layouterFactory = layouterFactory;
         }
 
-        public IEnumerable<Tag> GenerateCloud(Dictionary<string, double> frequencyDictionary)
+        public Result<IEnumerable<Tag>> GenerateCloud(Dictionary<string, double> frequencyDictionary)
         {
-            var layouter = layouterFactory.CreateCloudLayouter();
+            return layouterFactory
+                .CreateCloudLayouter()
+                .Then(layouter => GenerateTags(layouter, frequencyDictionary));
+        }
+
+        private IEnumerable<Tag> GenerateTags(ICloudLayouter layouter, 
+            Dictionary<string, double> frequencyDictionary)
+        {
             foreach (var pair in frequencyDictionary.OrderByDescending(pair => pair.Value))
             {
                 var (word, frequency) = (pair.Key, pair.Value);

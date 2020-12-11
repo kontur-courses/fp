@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Infrastructure.CloudGenerator
+﻿using ResultOf;
+
+namespace TagsCloudContainer.Infrastructure.CloudGenerator
 {
     internal interface ICloudLayouterFactory
     {
-        public ICloudLayouter CreateCloudLayouter();
+        public Result<ICloudLayouter> CreateCloudLayouter();
     }
 }

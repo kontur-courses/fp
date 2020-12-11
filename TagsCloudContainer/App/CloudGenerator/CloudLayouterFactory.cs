@@ -1,5 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultOf;
 using TagsCloudContainer.Infrastructure.CloudGenerator;
 using TagsCloudContainer.Infrastructure.Settings;
 
@@ -16,7 +16,7 @@ namespace TagsCloudContainer.App.CloudGenerator
             this.layouterSettings = layouterSettings;
             this.sizeSettings = sizeSettings;
         }
-        public ICloudLayouter CreateCloudLayouter()
+        public Result<ICloudLayouter> CreateCloudLayouter()
         {
             switch (layouterSettings.LayouterAlgorithm)
             {
@@ -25,7 +25,7 @@ namespace TagsCloudContainer.App.CloudGenerator
                         sizeSettings.Height / 2));
             }
 
-            throw new NotImplementedException("No found this algorithm");
+            return Result.Fail<ICloudLayouter>("No found this layouter algorithm");
         }
     }
 }
