@@ -27,4 +27,8 @@
     <PackageReference Include="YandexMystem.Wrapper" Version="1.0.0.18234" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ResultOf\ResultOf.csproj" />
+  </ItemGroup>
+
 </Project>
