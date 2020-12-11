@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using ResultOf;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
@@ -8,10 +7,12 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
     public class ImagePathSettingManager : ISettingsManager
     {
         private readonly Func<IImageSettingsProvider> imageSettingsProvider;
+        private readonly Func<IImageFormatSettingProvider> imageFormatSettingsProvider;
 
-        public ImagePathSettingManager(Func<IImageSettingsProvider> imageSettingsProvider)
+        public ImagePathSettingManager(Func<IImageSettingsProvider> imageSettingsProvider, Func<IImageFormatSettingProvider> imageFormatSettingsProvider)
         {
             this.imageSettingsProvider = imageSettingsProvider;
+            this.imageFormatSettingsProvider = imageFormatSettingsProvider;
         }
 
         public string Title => "Image path";
@@ -21,9 +22,12 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         {
             path = Path.GetFullPath(path);
             imageSettingsProvider().ImagePath = path;
-            return File.Exists(path)
-                ? Result.Fail<string>($"File {path} already exists and will be overwritten!")
-                : Get();
+            if (Path.HasExtension(path))
+                return Result.Fail<string>($"Specify filename only .{imageFormatSettingsProvider().Format} will be added");
+            var convertedPath = Path.ChangeExtension(path, imageFormatSettingsProvider().Format.ToString()); 
+            if (File.Exists(convertedPath))
+                return Result.Fail<string>($"File {convertedPath} already exists and will be overwritten!");
+            return Get();
         }
 
         public string Get()

@@ -26,6 +26,7 @@ namespace TagCloud
             var builder = new ContainerBuilder();
             builder.RegisterType<TxtReader>().As<IReader<string>>();
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
+            builder.RegisterType<ImageSaver>();
 
             builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
             var myStemPath = GetReleasePath("mystem");

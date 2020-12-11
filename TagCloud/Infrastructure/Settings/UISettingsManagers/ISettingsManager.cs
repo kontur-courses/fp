@@ -1,5 +1,3 @@
-using ResultOf;
-
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
     public interface ISettingsManager

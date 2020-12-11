@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using Gdk;
 using Gtk;
+using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using Application = Gtk.Application;
@@ -21,12 +22,14 @@ namespace TagCloud.App.GUI
         private readonly Func<Settings> settingsFactory;
         private readonly IEnumerable<ISettingsManager> settingsManagers;
         private readonly IImageGenerator imageGenerator;
+        private readonly ImageSaver imageSaver;
 
-        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator imageGenerator)
+        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
             this.imageGenerator = imageGenerator;
+            this.imageSaver = imageSaver;
         }
 
         public void Run()
@@ -104,34 +107,43 @@ namespace TagCloud.App.GUI
                 var result = manager.TrySet(buffer.Text);
                 if (!result.IsSuccess)
                 {
-                    var window = new Window("Warning");
-                    window.BorderWidth = 30;
-                    window.SetPosition(WindowPosition.Mouse);
-                    window.Resizable = true;
-                    var box = new VBox();
-                    box.PackStart(new Label(result.Error), false, false, 10);
-                    box.PackStart(new VSeparator(), false, false, 10);
-                    
-                    var okBox = new HBox();
-                    var okButton = new Button("ok");
-                    okButton.Pressed += (o, eventArgs) => { window.Close(); };
-                    okBox.PackStart(okButton, false, false, 0);
-                    box.PackStart(okBox, true, true, 0);
-
-                    window.Add(box);
-                    window.ShowAll();
+                    ShowInfoWindow(ErrorLevel.Warning, result.Error);
                 }
                 buffer.Text = manager.Get();
             };
             return settings;
         }
 
-        private static Stream ToStream(Image image, ImageFormat format)
+        private void ShowInfoWindow(ErrorLevel level, string info)
         {
-            var stream = new MemoryStream();
-            image.Save(stream, format);
-            stream.Position = 0;
-            return stream;
+            var window = new Window(level.ToString());
+            window.BorderWidth = 30;
+            window.SetPosition(WindowPosition.Mouse);
+            window.Resizable = true;
+            var box = new VBox();
+            box.PackStart(new Label(info), false, false, 10);
+            box.PackStart(new VSeparator(), false, false, 10);
+                    
+            var okBox = new HBox();
+            var okButton = new Button("ok");
+            okButton.Pressed += (o, eventArgs) => { window.Close(); };
+            okBox.PackStart(okButton, false, false, 0);
+            box.PackStart(okBox, true, true, 0);
+
+            window.Add(box);
+            window.ShowAll();
+        }
+
+
+        private static Result<MemoryStream> ToStream(Image image, ImageFormat format)
+        {
+            return Result.Of(() =>
+            {
+                var stream = new MemoryStream();
+                image.Save(stream, format);
+                stream.Position = 0;
+                return stream;
+            }).RefineError($"Displaying of format {format} is not supported");
         }
 
         private void OnGenerateButtonClicked(object sender, EventArgs args)
@@ -143,8 +155,14 @@ namespace TagCloud.App.GUI
             var box = new VBox();
 
             var image = imageGenerator.Generate();
-            var stream = ToStream(image, settingsFactory().Format);
-            var buf = new Pixbuf(stream);
+            var result = ToStream(image, settingsFactory().Format);
+            if (!result.IsSuccess)
+            {
+                ShowInfoWindow(ErrorLevel.Error, result.Error);
+                return;
+            }
+
+            var buf = new Pixbuf(result.Value);
 
             buf = buf.ScaleSimple(500, 500, InterpType.Bilinear);
             var img = new Gtk.Image(buf);
@@ -161,9 +179,15 @@ namespace TagCloud.App.GUI
             var saveButton = new Button("save");
             saveButton.Pressed += (o, eventArgs) =>
             {
-                var imagePath = settingsFactory().ImagePath;
-                Console.WriteLine($"Saving into {Path.GetFullPath(imagePath)}");
-                image.Save(imagePath, settingsFactory().Format);
+                var result = imageSaver.Save(image);
+                if (result.IsSuccess)
+                {
+                    ShowInfoWindow(ErrorLevel.Info, result.Value);
+                }
+                else
+                {
+                    ShowInfoWindow(ErrorLevel.Error, result.Error);
+                }
                 image.Dispose();
                 window.Close();
             };

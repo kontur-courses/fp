@@ -13,12 +13,14 @@ namespace TagCloud.App.CLI
         private readonly Func<Settings> settingsFactory;
         private readonly IEnumerable<ISettingsManager> settingsManagers;
         private readonly IImageGenerator generator;
+        private readonly ImageSaver imageSaver;
 
-        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator generator)
+        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<ISettingsManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
             this.generator = generator;
+            this.imageSaver = imageSaver;
         }
 
         public void Run()
@@ -73,10 +75,8 @@ namespace TagCloud.App.CLI
         {
             using var image = generator.Generate();
             Console.WriteLine("Layout ready");
-            var imagePath = settingsFactory().ImagePath;
-            Console.WriteLine($"Image will be saved into {Path.GetFullPath(imagePath)}");
-            image.Save(imagePath, settingsFactory().Format);
-            Console.WriteLine("Image saved");
+            var result = imageSaver.Save(image);
+            Console.WriteLine(result.IsSuccess ? result.Value : result.Error);
         }
 
         private void AddSettingsManagersTransitions(Automata automata, State from, IEnumerable<State> states)

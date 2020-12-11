@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using ResultOf;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers

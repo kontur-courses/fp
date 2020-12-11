@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using ResultOf;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
