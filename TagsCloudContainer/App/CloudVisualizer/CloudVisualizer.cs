@@ -28,7 +28,7 @@ namespace TagsCloudContainer.App.CloudVisualizer
 
         public void Visualize()
         {
-            var lines = inputDataReaderFactory.CreateDataReader().ReadLines();
+            var lines = inputDataReaderFactory.CreateDataReader().GetValueOrThrow().ReadLines();
             var frequencyDictionary = textParserToFrequencyDictionary.GenerateFrequencyDictionary(lines);
             var cloud = cloudGenerator.GenerateCloud(frequencyDictionary);
             painter.Paint(cloud, imageHolder.Value.StartDrawing());

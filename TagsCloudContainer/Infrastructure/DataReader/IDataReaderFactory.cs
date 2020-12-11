@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Infrastructure.DataReader
+﻿using ResultOf;
+
+namespace TagsCloudContainer.Infrastructure.DataReader
 {
     public interface IDataReaderFactory
     {
-        public IDataReader CreateDataReader();
+        public Result<IDataReader> CreateDataReader();
     }
 }

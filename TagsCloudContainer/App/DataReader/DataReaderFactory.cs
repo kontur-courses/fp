@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using ResultOf;
 using TagsCloudContainer.App.Settings;
 using TagsCloudContainer.Infrastructure.DataReader;
 
@@ -14,7 +14,7 @@ namespace TagsCloudContainer.App.DataReader
             this.settings = settings;
         }
 
-        public IDataReader CreateDataReader()
+        public Result<IDataReader> CreateDataReader()
         {
             switch (Path.GetExtension(settings.InputFileName))
             {
@@ -23,7 +23,8 @@ namespace TagsCloudContainer.App.DataReader
                 case ".docx":
                     return new WordFileReader(settings.InputFileName);
             }
-            throw new NotImplementedException("Unknown input file format");
+
+            return Result.Fail<IDataReader>("Unknown input file format");
         }
     }
 }

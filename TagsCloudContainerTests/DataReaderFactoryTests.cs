@@ -1,6 +1,5 @@
 ﻿using TagsCloudContainer.Infrastructure.DataReader;
 using TagsCloudContainer.App.Settings;
-using System;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -36,19 +35,18 @@ namespace TagsCloudContainerTests
         }
 
         [Test]
-        public void DataReaderFactory_ShouldThrowNotImplementedException_IfInputFileIsWithInvalidExtension()
+        public void DataReaderFactory_ShouldNotCreateReaderForFile_IfInputFileIsWithInvalidExtension()
         {
             inputSettings.InputFileName = "file.png";
-            Func<IDataReader> func = () => dataReaderFactory.CreateDataReader();
-            func.Should().Throw<NotImplementedException>();
+            var result = dataReaderFactory.CreateDataReader();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().BeEquivalentTo("Unknown input file format");
         }
 
         private void DataReaderFactory_ShouldCreateReaderForFile(string filePath)
         {
             inputSettings.InputFileName = filePath;
-            Func<IDataReader> func = () => dataReaderFactory.CreateDataReader();
-            func.Should().NotThrow();
-            func.Invoke().Should().NotBeNull();
+            dataReaderFactory.CreateDataReader().IsSuccess.Should().BeTrue();
         }
     }
 }
