@@ -16,10 +16,10 @@ namespace TagsCloud.WordLayouters
         private readonly FontFamily family;
         private readonly List<Rectangle> rectangles = new List<Rectangle>();
 
-        private int Top;
-        private int Left;
-        private int Bottom;
-        private int Right;
+        private int top;
+        private int left;
+        private int bottom;
+        private int right;
 
         public WordLayouter(FontFamily family, IPointsLayout pointsLayout, IColorSelector colorSelector)
         {
@@ -40,7 +40,7 @@ namespace TagsCloud.WordLayouters
             }
         }
         
-        public Rectangle GetCloudRectangle() => new Rectangle(Left, Top, Right - Left, Bottom - Top);
+        public Rectangle GetCloudRectangle() => new Rectangle(left, top, right - left, bottom - top);
 
         private Rectangle PutNextRectangle(Size size)
         {
@@ -54,10 +54,10 @@ namespace TagsCloud.WordLayouters
 
         private void FitImageBorders(Rectangle rectangle)
         {
-            if (rectangle.Top < Top) Top = rectangle.Top;
-            if (rectangle.Left < Left) Left = rectangle.Left;
-            if (rectangle.Bottom > Bottom) Bottom = rectangle.Bottom;
-            if (rectangle.Right > Right) Right = rectangle.Right;
+            if (rectangle.Top < top) top = rectangle.Top;
+            if (rectangle.Left < left) left = rectangle.Left;
+            if (rectangle.Bottom > bottom) bottom = rectangle.Bottom;
+            if (rectangle.Right > right) right = rectangle.Right;
         }
         
         private Rectangle GetNextRectangle(Size rectangleSize)
