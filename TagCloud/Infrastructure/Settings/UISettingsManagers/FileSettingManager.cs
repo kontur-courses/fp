@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -15,16 +17,15 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Input file";
         public string Help => "Type path to file to analyze";
 
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
-            if (!File.Exists(value))
+            if (!File.Exists(path))
             {
-                Console.WriteLine($"{value} not found");
-                return false;
+                return Result.Fail<string>($"{path} not found");
             }
 
-            fileSettingsProvider().Path = value;
-            return true;
+            fileSettingsProvider().Path = path;
+            return Get();
         }
 
         public string Get()

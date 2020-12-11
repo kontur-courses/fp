@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TagCloud.Infrastructure.Settings;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors

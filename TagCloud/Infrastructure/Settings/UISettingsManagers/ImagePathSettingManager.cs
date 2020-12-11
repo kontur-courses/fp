@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -14,10 +17,13 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Image path";
         public string Help => "Type image file location to save";
 
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
-            imageSettingsProvider().ImagePath = value;
-            return true;
+            path = Path.GetFullPath(path);
+            imageSettingsProvider().ImagePath = path;
+            return File.Exists(path)
+                ? Result.Fail<string>($"File {path} already exists and will be overwritten!")
+                : Get();
         }
 
         public string Get()

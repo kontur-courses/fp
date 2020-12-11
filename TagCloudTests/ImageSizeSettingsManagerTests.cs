@@ -48,7 +48,7 @@ namespace TagCloudTests
         {
             var actual = sizeSettingManager.TrySet(input);
 
-            Assert.That(actual, Is.EqualTo(expected));
+            Assert.That(actual.IsSuccess, Is.EqualTo(expected));
         }
         
         [Test]
@@ -63,10 +63,10 @@ namespace TagCloudTests
         [TestCase("1000\n200", "1000 200", TestName = "new line")]
         public void Get_AfterSet(string input, string expected)
         {
-            var isSuccess = sizeSettingManager.TrySet(input);
+            var result = sizeSettingManager.TrySet(input);
             var got = sizeSettingManager.Get();
             
-            Assert.True(isSuccess);
+            Assert.True(result.IsSuccess);
             Assert.That(got, Is.EqualTo(expected));
         }
         

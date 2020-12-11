@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Forms;
 using Gdk;
 using Gtk;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using Application = Gtk.Application;
+using Button = Gtk.Button;
 using Image = System.Drawing.Image;
+using Label = Gtk.Label;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
 using Window = Gtk.Window;
 
@@ -71,8 +75,7 @@ namespace TagCloud.App.GUI
                 box.Add(GetWidget(manager));
                 box.PackStart(new VSeparator(), false, false, 10);
             }
-
-
+            
             var okBox = new HBox();
             okBox.PackStart(new Arrow(ArrowType.Right, ShadowType.Out), true, true, 10);
             var okButton = new Button("ok");
@@ -98,8 +101,26 @@ namespace TagCloud.App.GUI
             textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
             textBox.FocusOutEvent += (sender, args) =>
             {
-                // todo show some info about wrong input
-                var isSuccess = manager.TrySet(buffer.Text);
+                var result = manager.TrySet(buffer.Text);
+                if (!result.IsSuccess)
+                {
+                    var window = new Window("Warning");
+                    window.BorderWidth = 30;
+                    window.SetPosition(WindowPosition.Mouse);
+                    window.Resizable = true;
+                    var box = new VBox();
+                    box.PackStart(new Label(result.Error), false, false, 10);
+                    box.PackStart(new VSeparator(), false, false, 10);
+                    
+                    var okBox = new HBox();
+                    var okButton = new Button("ok");
+                    okButton.Pressed += (o, eventArgs) => { window.Close(); };
+                    okBox.PackStart(okButton, false, false, 0);
+                    box.PackStart(okBox, true, true, 0);
+
+                    window.Add(box);
+                    window.ShowAll();
+                }
                 buffer.Text = manager.Get();
             };
             return settings;

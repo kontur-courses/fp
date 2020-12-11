@@ -1,4 +1,6 @@
 using System;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -14,12 +16,12 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Spiral increment";
         public string Help => "Choose increment to change placing strategy";
 
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
-            if (!int.TryParse(value, out var number))
-                return false;
+            if (!int.TryParse(path, out var number))
+                return Result.Fail<string>("Incorrect input. Type integer number!");
             settingProvider().Increment = number;
-            return true;
+            return Get();
         }
 
         public string Get()

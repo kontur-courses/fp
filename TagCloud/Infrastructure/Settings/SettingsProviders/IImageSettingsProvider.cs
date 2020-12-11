@@ -1,4 +1,4 @@
-namespace TagCloud.Infrastructure.Settings
+namespace TagCloud.Infrastructure.Settings.SettingsProviders
 {
     public interface IImageSettingsProvider : IFontSettingProvider
     {

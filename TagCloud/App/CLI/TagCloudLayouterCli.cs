@@ -100,9 +100,11 @@ namespace TagCloud.App.CLI
                 };
                 state.Act += (sender, args) =>
                 {
-                    Console.WriteLine(!manager.TrySet(args.Input)
-                        ? $"Incorrect input: {args.Input}"
-                        : $"{manager.Title} was changed to '{manager.Get()}'");
+                    // todo TextWriter instead console
+                    var result = manager.TrySet(args.Input);
+                    Console.WriteLine(!result.IsSuccess
+                        ? result.Error
+                        : $"{manager.Title} was changed to '{result.Value}'");
                 };
                 yield return state;
             }

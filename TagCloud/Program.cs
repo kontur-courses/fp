@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using Autofac;
 using TagCloud.App;
+using TagCloud.App.CLI;
 using TagCloud.App.GUI;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Layout;
@@ -36,6 +37,7 @@ namespace TagCloud
             builder.RegisterType<InterestingWordsConveyor>().As<IConveyor<string>>();
             builder.RegisterType<WordFontSizeConveyor>().As<IConveyor<string>>();
             builder.RegisterType<WordSizeConveyor>().As<IConveyor<string>>();
+            builder.RegisterType<OrderConveyor>().As<IConveyor<string>>();
 
             builder.RegisterType<Settings>()
                 .AsSelf()
@@ -61,8 +63,8 @@ namespace TagCloud
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
 
             //todo use compile options
-            // builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
-            builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
+            builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
+            // builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
 
             var container = builder.Build();
             var app = container.Resolve<IApp>();

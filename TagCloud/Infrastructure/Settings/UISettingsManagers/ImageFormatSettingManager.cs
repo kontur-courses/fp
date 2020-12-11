@@ -1,6 +1,8 @@
 using System;
 using System.Drawing.Imaging;
 using System.Linq;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -15,21 +17,21 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 
         public string Title => "Image Format";
         public string Help => "Choose format: Bmp, Emf, Exif, Gif, Icon, Jpeg, Png, Tiff, Wmf";
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
             var propertyInfos = typeof(ImageFormat)
                 .GetProperties();
      
             var newFormat = propertyInfos
-                .Where(info => info.Name == value)
+                .Where(info => info.Name == path)
                 .Select(info => info.GetValue(settingsProvider().Format))
                 .Cast<ImageFormat>()
                 .SingleOrDefault();
             
             if (newFormat == null)
-                return false;
+                return Result.Fail<string>("Incorrect Format");
             settingsProvider().Format = newFormat;
-            return true;
+            return Get();
         }
 
         public string Get()

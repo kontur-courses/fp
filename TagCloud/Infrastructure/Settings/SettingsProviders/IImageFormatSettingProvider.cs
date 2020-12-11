@@ -1,6 +1,6 @@
 using System.Drawing.Imaging;
 
-namespace TagCloud.Infrastructure.Settings
+namespace TagCloud.Infrastructure.Settings.SettingsProviders
 {
     public interface IImageFormatSettingProvider
     {

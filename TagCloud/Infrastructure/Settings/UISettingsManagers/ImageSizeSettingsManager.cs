@@ -1,5 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -17,14 +19,14 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Size";
         public string Help => "Input image width and height separated by space";
 
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
-            var match = regex.Match(value);
+            var match = regex.Match(path);
             if (!match.Success)
-                return false;
+                return Result.Fail<string>("Incorrect input format ([width], [height])");
             imageSettingsProvider().Width = int.Parse(match.Groups["width"].Value);
             imageSettingsProvider().Height = int.Parse(match.Groups["height"].Value);
-            return true;
+            return Get();
         }
 
         public string Get()

@@ -43,7 +43,7 @@ namespace TagCloudTests
         {
             var actual = fileSettingManager.TrySet(path);
             
-            Assert.That(actual, Is.EqualTo(expected));
+            Assert.That(actual.IsSuccess, Is.EqualTo(expected));
         }
 
         private bool IsExistingFile(string path)
@@ -58,7 +58,7 @@ namespace TagCloudTests
 
             var actual = fileSettingManager.TrySet(path);
             
-            Assert.That(actual, Is.True, $"{Path.GetFullPath(path)} not found");
+            Assert.IsTrue(actual.IsSuccess, $"{Path.GetFullPath(path)} not found");
         }
 
         [Test]
@@ -75,11 +75,11 @@ namespace TagCloudTests
         public void Get_AfterSet()
         {
             var expected = validPath;
-            var isSuccess = fileSettingManager.TrySet(expected);
+            var result = fileSettingManager.TrySet(expected);
 
             var actual = fileSettingManager.Get();
             
-            Assert.True(isSuccess, $"Path {expected} was not set!");
+            Assert.True(result.IsSuccess, $"Path {expected} was not set!");
             Assert.That(actual, Is.EqualTo(expected));
         }
     }

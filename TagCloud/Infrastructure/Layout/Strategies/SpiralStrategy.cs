@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using TagCloud.Infrastructure.Settings;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Layout.Strategies
 {

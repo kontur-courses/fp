@@ -1,5 +1,7 @@
 using System;
 using System.Drawing;
+using ResultOf;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
@@ -15,19 +17,14 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public string Title => "Font";
         public string Help => "Choose font family name to write tags";
 
-        public bool TrySet(string value)
+        public Result<string> TrySet(string path)
         {
-            try
-            {
-                settingProvider().FontFamily = new FontFamily(value);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-
-            return true;
+            var fontFamily = new FontFamily(path);
+            if (fontFamily.Name == path)
+                settingProvider().FontFamily = fontFamily;
+            else
+                return Result.Fail<string>($"FontFamily {path} was not found!");
+            return Get();
         }
 
         public string Get()

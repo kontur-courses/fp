@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TagCloud.Infrastructure.Settings;
+using TagCloud.Infrastructure.Settings.SettingsProviders;
 using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
