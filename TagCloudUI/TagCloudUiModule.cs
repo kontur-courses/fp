@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using TagCloudUI.Infrastructure;
+using TagCloudUI.UI;
 
 namespace TagCloudUI
 {
@@ -9,6 +10,9 @@ namespace TagCloudUI
         {
             builder.RegisterAssemblyTypes(ThisAssembly).Except<AppSettings>()
                 .AsImplementedInterfaces();
+
+            builder.RegisterType<ConsoleUI>().AsSelf()
+                .SingleInstance();
 
             builder.Register(context => context.Resolve<ISpiralFactory>().Create())
                 .AsImplementedInterfaces().SingleInstance();

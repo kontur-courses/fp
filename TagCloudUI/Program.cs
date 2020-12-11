@@ -14,8 +14,7 @@ namespace TagCloudUI
         public static void Main(string[] args)
         {
             var container = BuildContainer(args);
-            var ui = container.Resolve<IUserInterface>();
-            ui.Run(container.Resolve<IAppSettings>());
+            container.Resolve<ConsoleUI>().Run();
         }
 
         private static IContainer BuildContainer(IEnumerable<string> args)
