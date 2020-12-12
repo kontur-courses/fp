@@ -8,16 +8,19 @@ namespace TagsCloudContainer
     {
         private const float maxFontSize = 25;
         private const float minFontSize = 10;
-        public IEnumerable<WordWithFont> CalculateFontSize(IEnumerable<string> words, FontFamily fontFamily)
+        public Result<IEnumerable<WordWithFont>> CalculateFontSize(IEnumerable<string> words, FontFamily fontFamily)
         {
             var wordCounts = CountWords(words);
             var maxCount = wordCounts.Values.Max();
             var minCount = wordCounts.Values.Min();
+            var wordsWithFont = new List<WordWithFont>();
             foreach (var wordCount in wordCounts)
             {
                 var fontSize = maxFontSize * (wordCount.Value - minCount) / (maxCount - minCount) + minFontSize;
-                yield return new WordWithFont(wordCount.Key, new Font(fontFamily, fontSize));
+                wordsWithFont.Add(new WordWithFont(wordCount.Key, new Font(fontFamily, fontSize)));
             }
+
+            return Result.Ok((IEnumerable<WordWithFont>)wordsWithFont);
         }
 
         private Dictionary<string, int> CountWords(IEnumerable<string> words)

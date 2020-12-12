@@ -50,7 +50,7 @@ namespace TagsCloudContainer
                 .RefineError("Некорректный путь до исходного файла")
                 .Then(x => fileReaders[x])
                 .RefineError("Данный тип текстового файла не поддерживается")
-                .Then(reader => reader.ReadAllLines(filePath).ToList())
+                .Then(reader => reader.ReadAllLines(filePath).Value.ToList())
                 .Then(FilterWords)
                 .Then(words => fontSizeCalculator.CalculateFontSize(words, fontFamily))
                 .Then(sizedWords => sizedWords.OrderByDescending(word => word.Font.Size).ToList())
