@@ -99,7 +99,7 @@ namespace TagsCloudContainer
             return Result.OfAction(() => cloudDrawer.ChangeImageSize(imageSize));
         }
 
-        public Result<None> TrySetImageFormat(string imageFormat)
+        public Result<None> SetImageFormat(string imageFormat)
         {
             return Result.OfAction(() => cloudDrawer.ImageSaver = imageSavers[imageFormat],
                 "Такой фрмат изображения не поддерживается");
