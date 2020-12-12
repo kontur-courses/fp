@@ -29,7 +29,7 @@ namespace TagsCloudContainer.App
         public void GenerateImage()
         {
             mainForm.Value.SetEnabled(false);
-            var thread = new Thread(cloudVisualizer.Visualize);
+            var thread = new Thread(Visualize);
             thread.Start();
         }
 
@@ -72,6 +72,22 @@ namespace TagsCloudContainer.App
             if (Image == null)
                 throw new InvalidOperationException(
                     "Call PictureBoxImageHolder.RecreateImage before other method call!");
+        }
+
+        private void Visualize()
+        {
+            try
+            {
+                cloudVisualizer.Visualize();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                UpdateUi();
+            }
         }
     }
 }

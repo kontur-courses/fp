@@ -34,7 +34,7 @@ namespace TagsCloudContainer.App.CloudGenerator
                 var font = fontGetter.GetFont(word, frequency);
                 var rectangleSize = GetRectangleSize(word, font);
                 var nextRectangle = layouter.PutNextRectangle(rectangleSize);
-                yield return new Tag(word, font.Size, nextRectangle.Location);
+                yield return new Tag(word, font.Size, nextRectangle);
             }
         }
 
