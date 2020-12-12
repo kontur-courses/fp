@@ -76,18 +76,10 @@ namespace TagsCloudContainer.App
 
         private void Visualize()
         {
-            try
-            {
-                cloudVisualizer.Visualize();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            finally
-            {
-                UpdateUi();
-            }
+            var result = cloudVisualizer.Visualize();
+            if (!result.IsSuccess)
+                MessageBox.Show(result.Error);
+            UpdateUi();
         }
     }
 }

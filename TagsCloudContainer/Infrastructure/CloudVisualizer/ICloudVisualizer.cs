@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Infrastructure.CloudVisualizer
+﻿using ResultOf;
+
+namespace TagsCloudContainer.Infrastructure.CloudVisualizer
 {
     internal interface ICloudVisualizer
     {
-        public void Visualize();
+        public Result<None> Visualize();
     }
 }

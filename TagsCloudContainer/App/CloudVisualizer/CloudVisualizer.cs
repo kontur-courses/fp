@@ -27,9 +27,9 @@ namespace TagsCloudContainer.App.CloudVisualizer
             this.imageHolder = imageHolder;
         }
 
-        public void Visualize()
+        public Result<None> Visualize()
         {
-            inputDataReaderFactory
+            return inputDataReaderFactory
                 .CreateDataReader()
                 .Then(reader => reader.ReadLines())
                 .Then(lines => textParserToFrequencyDictionary.GenerateFrequencyDictionary(lines))
