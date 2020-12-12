@@ -12,7 +12,7 @@ namespace TagsCloudContainer
             var scope = Configurator.GetContainer().BeginLifetimeScope();
             var creator = scope.Resolve<TagsCloudCreator>();
             creator.SetFontRandomColor();
-            creator.TrySetImageFormat("png");
+            creator.SetImageFormat("png");
             creator.SetFontFamily("Comic Sans MS");
             creator.SetImageSize(500);
             creator.Create(Path.Combine(path, "input.txt"), path, "Cloud");

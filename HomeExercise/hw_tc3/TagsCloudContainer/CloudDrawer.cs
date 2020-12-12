@@ -20,29 +20,33 @@ namespace TagsCloudContainer
             ColorProvider = colorProvider;
         }
 
-        public void DrawCloud(List<WordWithFont> words, string targetPath, string imageName)
+        public Result<None> DrawCloud(List<WordWithFont> words, string targetPath, string imageName)
         {
             using var bitmap = new Bitmap(ImageSize, ImageSize);
             using var graphics = Graphics.FromImage(bitmap);
-            var layout = MakeLayout(words, graphics); 
+            var layout = MakeLayout(words, graphics);
+            if (!layout.IsSuccess)
+                return Result.Fail<None>(layout.Error);
             graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, ImageSize, ImageSize));
             for (var i = 0; i < words.Count; i++)
             {
                 graphics.DrawString(words[i].Word, words[i].Font, new SolidBrush(ColorProvider.GetNextColor()),
-                    layout[i].Location);
+                    layout.Value[i].Location);
             }
 
-            ImageSaver.Save(targetPath, imageName, bitmap);
+            return ImageSaver.Save(targetPath, imageName, bitmap);
         }
 
-        private List<Rectangle> MakeLayout(IEnumerable<WordWithFont> words, Graphics graphics)
+        private Result<List<Rectangle>> MakeLayout(IEnumerable<WordWithFont> words, Graphics graphics)
         {
             cloudLayouter.Reset();
             cloudLayouter.ChangeCenter(new Point(ImageSize / 2, ImageSize / 2));
             foreach (var word in words)
             {
                 var wordSize = graphics.MeasureString(word.Word, word.Font);
-                cloudLayouter.PutNextRectangle(wordSize.ToSize());
+                var putResult = cloudLayouter.PutNextRectangle(wordSize.ToSize());
+                if (!putResult.IsSuccess)
+                    return Result.Fail<List<Rectangle>>(putResult.Error);
             }
 
             return (List<Rectangle>)cloudLayouter.Rectangles;

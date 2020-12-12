@@ -6,7 +6,7 @@ namespace TagsCloudContainer
     {
         IColorProvider ColorProvider { get; set; }
         IImageSaver ImageSaver { get; set; }
-        void DrawCloud(List<WordWithFont> words, string targetPath, string imageName);
+        Result<None> DrawCloud(List<WordWithFont> words, string targetPath, string imageName);
         void ChangeImageSize(int newSize);
     }
 }
