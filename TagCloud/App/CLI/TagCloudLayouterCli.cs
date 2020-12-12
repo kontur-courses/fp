@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings;
@@ -14,13 +13,16 @@ namespace TagCloud.App.CLI
         private readonly IEnumerable<IInputManager> settingsManagers;
         private readonly IImageGenerator generator;
         private readonly ImageSaver imageSaver;
+        
+        private readonly IIOBridge bridge;
 
-        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver)
+        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver, IIOBridge bridge)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
             this.generator = generator;
             this.imageSaver = imageSaver;
+            this.bridge = bridge;
         }
 
         public void Run()
@@ -64,9 +66,9 @@ namespace TagCloud.App.CLI
 
             while (automata.Show())
             {
-                Console.Write("> ");
-                var inp = Console.ReadLine();
-                Console.Clear();
+                bridge.Write("> ");
+                var inp = bridge.Read();
+                bridge.Next();
                 automata.Move(inp);
             }
         }
@@ -74,9 +76,9 @@ namespace TagCloud.App.CLI
         private void OnGenerateState(State sender, EventArgs args)
         {
             using var image = generator.Generate();
-            Console.WriteLine("Layout ready");
+            bridge.WriteLine("Layout ready");
             var result = imageSaver.Save(image);
-            Console.WriteLine(result.IsSuccess ? result.Value : result.Error);
+            bridge.WriteLine(result.IsSuccess ? result.Value : result.Error);
         }
 
         private void AddSettingsManagersTransitions(Automata automata, State from, IEnumerable<State> states)
@@ -95,14 +97,14 @@ namespace TagCloud.App.CLI
                 var state = new State(manager.Title);
                 state.Show += (sender, args) =>
                 {
-                    Console.WriteLine(
+                    bridge.WriteLine(
                         $"CHANGING\n\t{manager.Title}\ninfo\t{manager.Help}\nvalue\t{manager.Get()}\ninput new value");
                 };
                 state.Act += (sender, args) =>
                 {
                     // todo TextWriter instead console
                     var result = manager.TrySet(args.Input);
-                    Console.WriteLine(!result.IsSuccess
+                    bridge.WriteLine(!result.IsSuccess
                         ? result.Error
                         : $"{manager.Title} was changed to '{result.Value}'");
                 };
@@ -113,39 +115,39 @@ namespace TagCloud.App.CLI
         private void OnSettingsState(State sender, EventArgs args)
         {
             foreach (var (manager, i) in settingsManagers.Select((manager, i) => (manager, i)))
-                Console.WriteLine($"{i})\t{manager.Title}\ninfo\t{manager.Help}\nvalue\t{manager.Get()}\n");
-            Console.WriteLine("Choose setting number ");
+                bridge.WriteLine($"{i})\t{manager.Title}\ninfo\t{manager.Help}\nvalue\t{manager.Get()}\n");
+            bridge.WriteLine("Choose setting number ");
         }
 
         private void OnAbout(State sender, EventArgs args)
         {
-            Console.WriteLine("I\nAM\nRUS\nLAND");
+            bridge.WriteLine("I\nAM\nRUS\nLAND");
         }
 
         private void OnHelp(object sender, EventArgs args)
         {
-            Console.WriteLine("Available commands in main");
-            Console.WriteLine("\thelp");
-            Console.WriteLine("\texit");
-            Console.WriteLine("\tsettings");
-            Console.WriteLine("\tgenerate");
-            Console.WriteLine("press Enter key to go back");
+            bridge.WriteLine("Available commands in main");
+            bridge.WriteLine("\thelp");
+            bridge.WriteLine("\texit");
+            bridge.WriteLine("\tsettings");
+            bridge.WriteLine("\tgenerate");
+            bridge.WriteLine("press Enter key to go back");
         }
 
         private void OnExit(State state, EventArgs eventArgs)
         {
-            Console.WriteLine("Bye bye");
+            bridge.WriteLine("Bye bye");
         }
 
         private void DisplayState(State sender, EventArgs args)
         {
-            Console.WriteLine($"$ {sender.Name}:");
+            bridge.WriteLine($"$ {sender.Name}:");
         }
 
         private void OnMainInput(object sender, ConsoleInputEventArgs args)
         {
             if (!args.IsTransfer)
-                Console.WriteLine($"'{args.Input}' not found. Type help for help");
+                bridge.WriteLine($"'{args.Input}' not found. Type help for help");
         }
     }
 }

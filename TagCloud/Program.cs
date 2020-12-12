@@ -27,6 +27,11 @@ namespace TagCloud
             builder.RegisterType<TxtReader>().As<IReader<string>>();
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
             builder.RegisterType<ImageSaver>();
+            
+            builder.Register(context => Console.Out).As<TextWriter>();
+            builder.Register(context => Console.In).As<TextReader>();
+            builder.Register<TextBridge.BridgeClearer>(context => Console.Clear).As<TextBridge.BridgeClearer>();
+            builder.RegisterType<TextBridge>().As<IIOBridge>();
 
             builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
             var myStemPath = GetReleasePath("mystem");
@@ -64,8 +69,8 @@ namespace TagCloud
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
 
             //todo use compile options
-            // builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
-            builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
+            builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
+            // builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
 
             var container = builder.Build();
             var app = container.Resolve<IApp>();
