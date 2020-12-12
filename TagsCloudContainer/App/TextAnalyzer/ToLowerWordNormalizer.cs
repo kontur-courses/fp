@@ -3,7 +3,7 @@ using TagsCloudContainer.Infrastructure.TextAnalyzer;
 
 namespace TagsCloudContainer.App.TextAnalyzer
 {
-    internal class ToLowerWordNormalizer : IWordNormalizer
+    public class ToLowerWordNormalizer : IWordNormalizer
     {
         public Result<string> NormalizeWord(string word)
         {

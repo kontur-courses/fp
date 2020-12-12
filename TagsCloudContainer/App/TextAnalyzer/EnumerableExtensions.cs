@@ -5,7 +5,7 @@ using TagsCloudContainer.Infrastructure.TextAnalyzer;
 
 namespace TagsCloudContainer.App.TextAnalyzer
 {
-    internal static class EnumerableExtensions
+    public static class EnumerableExtensions
     {
         public static Result<IEnumerable<string>> FilterOutBoringWords(this IEnumerable<string> words,
             IEnumerable<IWordFilter> filters)
