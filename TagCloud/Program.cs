@@ -58,6 +58,7 @@ namespace TagCloud
             builder.RegisterType<WordPainter>().As<IPainter<string>>();
             builder.RegisterType<Random>().SingleInstance();
             builder.RegisterType<ColorPicker>();
+            builder.RegisterType<ColorConverter>();
 
             builder.RegisterType<FileSettingManager>().AsImplementedInterfaces();
             builder.RegisterType<ImagePathSettingManager>().AsImplementedInterfaces();
