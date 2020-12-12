@@ -6,8 +6,8 @@ namespace TagsCloudContainer
     public interface ICloudLayouter
     {
         IReadOnlyCollection<Rectangle> Rectangles { get; set; }
-        Rectangle PutNextRectangle(Size rectangleSize);
-        void ChangeCenter(Point newCenter);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
+        Result<None> ChangeCenter(Point newCenter);
         void Reset();
     }
 }
