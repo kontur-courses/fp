@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.Infrastructure.Settings
 {
-    interface IPaletteSettingsHolder
+    public interface IPaletteSettingsHolder
     {
         public Color TextColor { get; }
         public Color BackgroundColor { get; }

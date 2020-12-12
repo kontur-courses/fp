@@ -7,7 +7,7 @@ using TagsCloudContainer.Infrastructure.Settings;
 
 namespace TagsCloudContainer.App.CloudVisualizer
 {
-    internal class CloudPainter : ICloudPainter
+    public class CloudPainter : ICloudPainter
     {
         private readonly IPaletteSettingsHolder palette;
         private readonly IFontSettingsHolder fontSettings;

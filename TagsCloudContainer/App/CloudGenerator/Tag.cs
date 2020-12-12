@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.App.CloudGenerator
 {
-    internal class Tag
+    public class Tag
     {
         public readonly double FontSize;
         public readonly Rectangle Rectangle;

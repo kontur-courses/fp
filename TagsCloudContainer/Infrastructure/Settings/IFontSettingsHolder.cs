@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.Infrastructure.Settings
 {
-    internal interface IFontSettingsHolder
+    public interface IFontSettingsHolder
     {
         public Font Font { get; }
     }
