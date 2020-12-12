@@ -102,7 +102,7 @@ namespace TagCloud.App.GUI
             settings.PackStart(new VSeparator(), false, false, padding);
             if (manager is IOptionsManager optionsManager)
             {
-                AddManger(optionsManager, settings, padding);
+                AddManger(optionsManager, settings, padding, manager.Get());
             }
             else
             {
@@ -111,7 +111,7 @@ namespace TagCloud.App.GUI
             return settings;
         }
 
-        private void AddManger(IOptionsManager manager, Box settings, uint padding)
+        private void AddManger(IOptionsManager manager, Box settings, uint padding, string selected)
         {
             var dropdown = new ComboBoxText();
             settings.PackStart(dropdown, true, true, padding);
@@ -122,7 +122,8 @@ namespace TagCloud.App.GUI
                 dropdown.Append(option, option);
             }
 
-            dropdown.SetActiveId(settingsFactory().Format.ToString());
+            dropdown.SetActiveId(selected);
+            
             dropdown.Changed += (o, args) => OnValueSet(
                 manager,
                 () => dropdown.ActiveText,

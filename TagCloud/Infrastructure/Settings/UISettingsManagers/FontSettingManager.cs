@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class FontSettingManager : IInputManager
+    public class FontSettingManager : IOptionsManager
     {
         private readonly Func<IFontSettingProvider> settingProvider;
 
@@ -30,5 +32,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         {
             return settingProvider().FontFamily.Name;
         }
+
+        public IEnumerable<string> GetOptions() => FontFamily.Families.Select(font => font.Name);
     }
 }
