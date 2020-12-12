@@ -4,6 +4,6 @@ namespace TagCloud.WordsAnalyzer
 {
     public interface IWordsAnalyzer
     {
-        public HashSet<TagInfo> GetTags(IReadOnlyCollection <string> words);
+        public Result<HashSet<TagInfo>> GetTags(IReadOnlyCollection <string> words);
     }
 }

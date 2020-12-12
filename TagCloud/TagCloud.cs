@@ -1,4 +1,5 @@
-﻿using TagCloud.Drawers;
+﻿using System;
+using TagCloud.Drawers;
 using TagCloud.TextReaders;
 using TagCloud.WordsAnalyzer;
 using TagCloud.ImageSavers;
@@ -23,8 +24,8 @@ namespace TagCloud
         public void MakeTagCloud()
         {
             var words = textReader.ReadWords();
-            var tags = wordsAnalyzer.GetTags(words);
-            var result = drawer.DrawTagCloud(tags);
+            var tags = wordsAnalyzer.GetTags(words.Value);
+            var result = drawer.DrawTagCloud(tags.Value);
             imageSaver.Save(result);
         }
     }

@@ -31,7 +31,7 @@ namespace TagsCloud_Tests.Layouter
         public void PutNextRectangle_ShouldReturnRectangleWithSameSize_WhenSomeSizesAdded()
         {
             foreach (var size in SizesGenerator.GenerateSizes(5, minSize, maxSize, seed:128))
-                layouter.PutNextRectangle(size).Size.Should().BeEquivalentTo(size);
+                layouter.PutNextRectangle(size).GetValueOrThrow().Size.Should().BeEquivalentTo(size);
         }
         
         [Test]
@@ -110,7 +110,7 @@ namespace TagsCloud_Tests.Layouter
         {
             var result = new List<Rectangle>();
             foreach (var size in rectangleSizes)
-                result.Add(layouter.PutNextRectangle(size));
+                result.Add(layouter.PutNextRectangle(size).GetValueOrThrow());
             return result;
         }
 

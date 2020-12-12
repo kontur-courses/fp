@@ -2,6 +2,6 @@
 {
     public interface IWordNormalizer
     {
-        public string Normalize(string word);
+        public Result<string> Normalize(string word);
     }
 }

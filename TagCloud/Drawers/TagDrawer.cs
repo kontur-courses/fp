@@ -40,7 +40,7 @@ namespace TagCloud.Drawers
         private void DrawTag(TagInfo tag)
         {
             var font = GetFont(tag);
-            var occupiedRectangle = layouter.PutNextRectangle(MeasureStringSize(tag.Value, font));
+            var occupiedRectangle = layouter.PutNextRectangle(MeasureStringSize(tag.Value, font)).Value;
             FillRectangle(occupiedRectangle, settings.ForegroundColor);
             DrawString(tag.Value, font, occupiedRectangle.Location, GetFontColor());
         }

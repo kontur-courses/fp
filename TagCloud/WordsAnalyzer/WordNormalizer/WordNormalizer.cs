@@ -2,9 +2,9 @@
 {
     public class WordNormalizer : IWordNormalizer
     {
-        public string Normalize(string word)
+        public Result<string> Normalize(string word)
         {
-            return word.ToLower();
+            return Result.Ok(word.ToLower());
         }
     }
 }

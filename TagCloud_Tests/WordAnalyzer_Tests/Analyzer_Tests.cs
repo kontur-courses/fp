@@ -29,23 +29,23 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         public void AnalyzerResult_ShouldContainAllowedWords()
         {
             var tags = analyzer.GetTags(text.Split());
-            tags.Should().Contain(tag => tag.Value == "мост");
-            tags.Should().Contain(tag => tag.Value == "середина");
+            tags.GetValueOrThrow().Should().Contain(tag => tag.Value == "мост");
+            tags.GetValueOrThrow().Should().Contain(tag => tag.Value == "середина");
         }
         
         [Test]
         public void AnalyzerResult_ShouldNotContainBoringWords()
         {
             var tags = analyzer.GetTags(text.Split());
-            tags.Should().NotContain(tag => tag.Value == "медведь");
+            tags.GetValueOrThrow().Should().NotContain(tag => tag.Value == "медведь");
         }
         
         [Test]
         public void AnalyzerResult_ShouldNotContainWordsWithWrongGramPart()
         {
             var tags = analyzer.GetTags(text.Split());
-            tags.Should().NotContain(tag => tag.Value == "на");
-            tags.Should().NotContain(tag => tag.Value == "стоит");
+            tags.GetValueOrThrow().Should().NotContain(tag => tag.Value == "на");
+            tags.GetValueOrThrow().Should().NotContain(tag => tag.Value == "стоит");
         }
     }
 }

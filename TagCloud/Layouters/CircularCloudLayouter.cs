@@ -16,15 +16,17 @@ namespace TagCloud.Layouters
             spiral = new Spiral(settings.Center, settings.SpiralPitch, settings.SpiralStep);
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
+            if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
+                return Result.Fail<Rectangle>("Rectangle size must be positive");
             Rectangle rectangle;
             do
             {
                 rectangle = GetNextRectangle(rectangleSize);
             } while (IsRectangleIntersectOther(rectangle));
             rectangles.Add(rectangle);
-            return rectangle;
+            return Result.Ok(rectangle);
         }
 
         private Rectangle GetNextRectangle(Size rectangleSize)

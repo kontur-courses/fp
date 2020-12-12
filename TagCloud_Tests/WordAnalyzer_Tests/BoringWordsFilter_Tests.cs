@@ -20,13 +20,13 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         [Test]
         public void MethodShouldExclude_ShouldReturnFalse_WhenWordNotInBoringWords()
         {
-            filter.ShouldExclude("bar").Should().BeFalse();
+            filter.ShouldExclude("bar").GetValueOrThrow().Should().BeFalse();
         }
         
         [Test]
         public void MethodShouldExclude_ShouldReturnTrue_WhenWordInBoringWords()
         {
-            filter.ShouldExclude("foo").Should().BeTrue();
+            filter.ShouldExclude("foo").GetValueOrThrow().Should().BeTrue();
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TagCloud.WordsAnalyzer.WordFilters
 {
-    public class BoringWordFilter : IWordFilter
+    public class  BoringWordFilter : IWordFilter
     {
         private HashSet<string> boringWords;
         
@@ -12,9 +12,9 @@ namespace TagCloud.WordsAnalyzer.WordFilters
             this.boringWords = boringWords.ToHashSet();
         }
 
-        public bool ShouldExclude(string word)
+        public Result<bool> ShouldExclude(string word)
         {
-            return boringWords.Contains(word);
+            return Result.Ok(boringWords.Contains(word));
         }
     }
 }

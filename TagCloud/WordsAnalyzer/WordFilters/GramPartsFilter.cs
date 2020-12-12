@@ -18,19 +18,30 @@ namespace TagCloud.WordsAnalyzer.WordFilters
         {
             this.allowedGramParts = allowedGramParts.ToHashSet();
             cyrillicRegex = new Regex("\\p{IsCyrillic}");
-            mystem = new Mysteam();
+            try
+            {
+                mystem = new Mysteam();
+            }
+            catch
+            {
+                mystem = null;
+            }
         }
         
-        public bool ShouldExclude(string word)
+        public Result<bool> ShouldExclude(string word)
         {
+            if (mystem == null)
+                return Result.Fail<bool>("Failed to load external library \"Mystem\"");
+            
             if (!IsCyrillicWord(word))
-                return false;
+                return Result.Ok(false);
+            
             var models = mystem.GetWords(word);
             if (models.Count != 1)
-                return false;
+                return Result.Ok(false);
 
             var model = models[0];
-            return !allowedGramParts.Contains(model.Lexems[0].GramPart);
+            return Result.Ok(!allowedGramParts.Contains(model.Lexems[0].GramPart));
         }
 
         private bool IsCyrillicWord(string word)

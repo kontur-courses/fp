@@ -26,7 +26,7 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         [TestCase("сливки")]
         public void NounFilter_ShouldNotExclude_WhenNounWord(string word)
         {
-            nounFilter.ShouldExclude(word).Should().BeFalse();
+            nounFilter.ShouldExclude(word).GetValueOrThrow().Should().BeFalse();
         }
         
         [TestCase("готовить")]
@@ -34,7 +34,7 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         [TestCase("приехал")]
         public void VerbFilter_ShouldNotExclude_WhenVerbWord(string word)
         {
-            verbFilter.ShouldExclude(word).Should().BeFalse();
+            verbFilter.ShouldExclude(word).GetValueOrThrow().Should().BeFalse();
         }
         
         [TestCase("торт")]
@@ -45,14 +45,14 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         [TestCase("приехал")]
         public void NounVerbFilter_ShouldNotExclude_WhenNounOrVerbWord(string word)
         {
-            nounAndVerbFilter.ShouldExclude(word).Should().BeFalse();
+            nounAndVerbFilter.ShouldExclude(word).GetValueOrThrow().Should().BeFalse();
         }
         
         [TestCase("красивый")]
         [TestCase("много")]
         public void Filter_ShouldExclude_WhenNotNounOrVerbWord(string word)
         {
-            nounAndVerbFilter.ShouldExclude(word).Should().BeTrue();
+            nounAndVerbFilter.ShouldExclude(word).GetValueOrThrow().Should().BeTrue();
         }
         
         [TestCase("вы")]
@@ -62,7 +62,7 @@ namespace TagCloud_Tests.WordAnalyzer_Tests
         [TestCase("мною")]
         public void Filter_ShouldExclude_WhenBoringGramPart(string word)
         {
-            nounAndVerbFilter.ShouldExclude(word).Should().BeTrue();
+            nounAndVerbFilter.ShouldExclude(word).GetValueOrThrow().Should().BeTrue();
         }
     }
 }

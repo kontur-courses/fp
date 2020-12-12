@@ -15,11 +15,11 @@ namespace TagCloud.TextReaders
             filePath = settings.FilePath;
         }
         
-        public List<string> ReadWords()
+        public Result<List<string>> ReadWords()
         {
-            return File.ReadAllLines(filePath)
+            return Result.Of(() => File.ReadAllLines(filePath)
                 .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                .ToList();
+                .ToList(), "Cannot read file");
         }
     }
 }
