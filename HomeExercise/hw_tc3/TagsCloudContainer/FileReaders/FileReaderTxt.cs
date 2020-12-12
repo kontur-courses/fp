@@ -12,9 +12,10 @@ namespace TagsCloudContainer
             Format = "txt";
         }
 
-        public IEnumerable<string> ReadAllLines(string filePath)
+        public Result<IEnumerable<string>> ReadAllLines(string filePath)
         {
-            return File.ReadAllLines(filePath);
+            return Result.Of(() => (IEnumerable<string>)File.ReadAllLines(filePath), typeof(FileReaderTxt).Name)
+                    .RefineError("Не удалось прочитать слова из файла");
         }
     }
 }

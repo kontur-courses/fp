@@ -5,6 +5,6 @@ namespace TagsCloudContainer
     public interface IFileReader
     {
         string Format { get; set; }
-        IEnumerable<string> ReadAllLines(string filePath);
+        Result<IEnumerable<string>> ReadAllLines(string filePath);
     }
 }
