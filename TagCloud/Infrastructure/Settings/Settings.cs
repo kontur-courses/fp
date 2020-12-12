@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
@@ -11,7 +12,8 @@ namespace TagCloud.Infrastructure.Settings
         ISpiralSettingsProvider,
         IImageSettingsProvider,
         IWordCountThresholdSettingProvider,
-        IImageFormatSettingProvider
+        IImageFormatSettingProvider,
+        IColorPickerSettingProvider
     {
         public WordType[] ExcludedTypes { get; set; }
         public string Path { get; set; }
@@ -40,6 +42,9 @@ namespace TagCloud.Infrastructure.Settings
             ImagePath = settings.ImagePath;
             FontFamily = settings.FontFamily;
             Format = settings.Format;
+            ColorMap = settings.ColorMap;
         }
+
+        public Dictionary<WordType, Color> ColorMap { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -65,12 +66,13 @@ namespace TagCloud
             builder.RegisterType<SpiralIncrementSettingManager>().AsImplementedInterfaces();
             builder.RegisterType<FontSettingManager>().AsImplementedInterfaces();
             builder.RegisterType<ImageFormatSettingManager>().AsImplementedInterfaces();
+            builder.RegisterType<ColorPickerSettingsManager>().AsImplementedInterfaces();
 
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
 
             //todo use compile options
-            builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
-            // builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
+            // builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
+            builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
 
             var container = builder.Build();
             var app = container.Resolve<IApp>();
@@ -94,6 +96,7 @@ namespace TagCloud
                 ImagePath = Path.Combine(".", "drawing.bmp"),
                 FontFamily = new FontFamily("Arial"),
                 Format = ImageFormat.Bmp,
+                ColorMap = new Dictionary<WordType, Color>()
             };
         }
 
