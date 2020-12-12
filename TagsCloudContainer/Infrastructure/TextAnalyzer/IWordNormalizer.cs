@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Infrastructure.TextAnalyzer
+﻿using ResultOf;
+
+namespace TagsCloudContainer.Infrastructure.TextAnalyzer
 {
     public interface IWordNormalizer
     {
-        public string NormalizeWord(string word);
+        public Result<string> NormalizeWord(string word);
     }
 }

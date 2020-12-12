@@ -1,12 +1,13 @@
-﻿using TagsCloudContainer.Infrastructure.TextAnalyzer;
+﻿using ResultOf;
+using TagsCloudContainer.Infrastructure.TextAnalyzer;
 
 namespace TagsCloudContainer.App.TextAnalyzer
 {
     internal class ToLowerWordNormalizer : IWordNormalizer
     {
-        public string NormalizeWord(string word)
+        public Result<string> NormalizeWord(string word)
         {
-            return word.ToLower();
+            return Result.Of(() => word.ToLower());
         }
     }
 }

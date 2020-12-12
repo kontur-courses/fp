@@ -1,4 +1,5 @@
-﻿using TagsCloudContainer.Infrastructure.TextAnalyzer;
+﻿using ResultOf;
+using TagsCloudContainer.Infrastructure.TextAnalyzer;
 using YandexMystem.Wrapper;
 
 namespace TagsCloudContainer.App.TextAnalyzer
@@ -12,9 +13,12 @@ namespace TagsCloudContainer.App.TextAnalyzer
             this.mysteam = mysteam;
         }
 
-        public string NormalizeWord(string word)
+        public Result<string> NormalizeWord(string word)
         {
-            return mysteam.GetWords(word)[0].Lexems[0].Lexeme;
+            return Result
+                .Of(() => mysteam.GetWords(word))
+                .Then(words => words[0].Lexems[0].Lexeme)
+                .ReplaceError(str => $"Can't normalize word {word} to initial form");
         }
     }
 }

@@ -28,7 +28,7 @@ namespace TagsCloudContainerTests
         public void PartOfSpeechFilter_ShouldFilterPOS_IfPOSAreBoring(GramPartsEnum gramPart, string word)
         {
             filteringSettings.BoringGramParts = new[] {gramPart}.ToImmutableHashSet();
-            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).Should().BeTrue();
+            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).GetValueOrThrow().Should().BeTrue();
         }
 
         [TestCase(GramPartsEnum.Conjunction, "и")]
@@ -37,7 +37,7 @@ namespace TagsCloudContainerTests
         public void PartOfSpeechFilter_ShouldNotFilterPOS_IfPOSAreNotBoring(GramPartsEnum gramPart, string word)
         {
             filteringSettings.BoringGramParts = filteringSettings.BoringGramParts.Except(new[] {gramPart});
-            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).Should().BeFalse();
+            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).GetValueOrThrow().Should().BeFalse();
         }
     }
 }

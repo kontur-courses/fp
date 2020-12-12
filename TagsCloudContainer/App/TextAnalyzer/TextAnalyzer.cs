@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.Infrastructure.TextAnalyzer;
 
 namespace TagsCloudContainer.App.TextAnalyzer
@@ -18,16 +19,17 @@ namespace TagsCloudContainer.App.TextAnalyzer
             this.wordFilters = wordFilters;
         }
 
-        public Dictionary<string, double> GenerateFrequencyDictionary(IEnumerable<string> lines)
+        public Result<Dictionary<string, double>> GenerateFrequencyDictionary(IEnumerable<string> lines)
         {
-            var notBoringWords = textParser.GetWords(lines)
-                .NormalizeWords(wordNormalizers)
-                .FilterOutBoringWords(wordFilters)
-                .ToArray();
-            return notBoringWords
-                .GroupBy(word => word)
-                .ToDictionary(group => group.Key,
-                    group => (double) group.Count() / notBoringWords.Length);
+            return Result.Of(() => textParser.GetWords(lines))
+                .Then(words => words.NormalizeWords(wordNormalizers))
+                .Then(words => words.FilterOutBoringWords(wordFilters))
+                .Then(words => words.ToArray())
+                .Then(words => words
+                    .GroupBy(word => word)
+                    .ToDictionary(group => group.Key,
+                        group => (double)group.Count() / words.Length));
+
         }
     }
 }

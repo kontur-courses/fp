@@ -23,7 +23,7 @@ namespace TagsCloudContainerTests
         [TestCase("словам", "слово")]
         public void ToInitialFormNormalizer_ShouldReturnInitialFormOfWord(string word, string initialForm)
         {
-            new ToInitialFormNormalizer(mysteam).NormalizeWord(word).Should().BeEquivalentTo(initialForm);
+            new ToInitialFormNormalizer(mysteam).NormalizeWord(word).GetValueOrThrow().Should().BeEquivalentTo(initialForm);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace TagsCloudContainerTests
             var text = new[] {"слова", "слово", "количество"};
             textAnalyzer
                 .GenerateFrequencyDictionary(text)
+                .GetValueOrThrow()
                 .Should()
                 .HaveCount(2)
                 .And.ContainKeys("слово", "количество").And.ContainValues(2.0 / 3, 1.0 / 3);

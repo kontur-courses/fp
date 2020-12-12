@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Infrastructure.TextAnalyzer
+﻿using ResultOf;
+
+namespace TagsCloudContainer.Infrastructure.TextAnalyzer
 {
     public interface IWordFilter
     {
-        public bool IsBoring(string word);
+        public Result<bool> IsBoring(string word);
     }
 }

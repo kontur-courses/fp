@@ -1,6 +1,8 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
+﻿using ResultOf;
+using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.TextAnalyzer;
 using YandexMystem.Wrapper;
+using YandexMystem.Wrapper.Enums;
 
 namespace TagsCloudContainer.App.TextAnalyzer
 {
@@ -15,9 +17,17 @@ namespace TagsCloudContainer.App.TextAnalyzer
             this.mysteam = mysteam;
         }
 
-        public bool IsBoring(string word)
+        public Result<bool> IsBoring(string word)
         {
-            return settings.BoringGramParts.Contains(mysteam.GetWords(word)[0].Lexems[0].GramPart);
+            return GetGramPart(word).Then(gramPart => settings.BoringGramParts.Contains(gramPart));
+        }
+
+        private Result<GramPartsEnum> GetGramPart(string word)
+        {
+            return Result
+                .Of(() => mysteam.GetWords(word))
+                .Then(words => words[0].Lexems[0].GramPart)
+                .ReplaceError(str => $"Can't identify part of speech of word: {word}");
         }
     }
 }

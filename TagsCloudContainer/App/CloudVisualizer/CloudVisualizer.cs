@@ -29,10 +29,12 @@ namespace TagsCloudContainer.App.CloudVisualizer
 
         public void Visualize()
         {
-            var lines = inputDataReaderFactory.CreateDataReader().Then(reader => reader.ReadLines()).GetValueOrThrow();
-            var frequencyDictionary = textParserToFrequencyDictionary.GenerateFrequencyDictionary(lines);
-            var cloud = cloudGenerator.GenerateCloud(frequencyDictionary).GetValueOrThrow();
-            var result = painter.Paint(cloud, imageHolder.Value.StartDrawing()).GetValueOrThrow();
+            inputDataReaderFactory
+                .CreateDataReader()
+                .Then(reader => reader.ReadLines())
+                .Then(lines => textParserToFrequencyDictionary.GenerateFrequencyDictionary(lines))
+                .Then(frequencyDictionary => cloudGenerator.GenerateCloud(frequencyDictionary))
+                .Then(cloud => painter.Paint(cloud, imageHolder.Value.StartDrawing()));
         }
     }
 }
