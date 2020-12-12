@@ -8,6 +8,6 @@ namespace TagsCloudContainer
         string FormatName { get; set; }
         ImageFormat Format { get; set; }
 
-        void Save(string path, string name, Bitmap bitmap);
+        Result<None> Save(string path, string name, Bitmap bitmap);
     }
 }

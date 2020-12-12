@@ -8,9 +8,9 @@ namespace TagsCloudContainer
         public string FormatName { get; set; }
         public ImageFormat Format { get; set; }
 
-        public void Save(string path, string name, Bitmap bitmap)
+        public Result<None> Save(string path, string name, Bitmap bitmap)
         {
-            bitmap.Save(path + "\\" + name + "." + FormatName, Format);
+            return Result.OfAction(() => bitmap.Save(path + "\\" + name + "." + FormatName, Format));
         }
     }
 }
