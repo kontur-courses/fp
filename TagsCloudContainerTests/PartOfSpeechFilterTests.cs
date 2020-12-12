@@ -39,5 +39,16 @@ namespace TagsCloudContainerTests
             filteringSettings.BoringGramParts = filteringSettings.BoringGramParts.Except(new[] {gramPart});
             new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).GetValueOrThrow().Should().BeFalse();
         }
+
+        [Test]
+        public void PartOfSpeechFilter_ShouldReturnResultWithError_IfWordIsNotValid()
+        {
+            var notValidWord = "ngvnvgc";
+            new PartOfSpeechFilter(filteringSettings, mysteam)
+                .IsBoring(notValidWord)
+                .Error
+                .Should()
+                .BeEquivalentTo($"Can't identify part of speech of word: {notValidWord}");
+        }
     }
 }

@@ -25,5 +25,16 @@ namespace TagsCloudContainerTests
         {
             new ToInitialFormNormalizer(mysteam).NormalizeWord(word).GetValueOrThrow().Should().BeEquivalentTo(initialForm);
         }
+
+        [Test]
+        public void ToInitialFormNormalizer_ShouldReturnResultWithError_IfWordIsNotValid()
+        {
+            var notValidWord = "ngvnvgc";
+            new ToInitialFormNormalizer(mysteam)
+                .NormalizeWord(notValidWord)
+                .Error
+                .Should()
+                .BeEquivalentTo($"Can't normalize word {notValidWord} to initial form");
+        }
     }
 }
