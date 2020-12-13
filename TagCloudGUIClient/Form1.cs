@@ -4,27 +4,29 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
+using ResultOf;
 using TagCloudCreator;
 
 namespace TagCloudGUIClient
 {
     public partial class Form1 : Form
     {
-        private readonly CloudPrinter cloudPrinter;
-        private readonly List<IColorSelectorFabric> colorSelectors;
-        private readonly List<IBaseCloudLayouterFabric> layouters;
+        private CloudPrinter cloudPrinter;
+        private List<IColorSelectorFabric> colorSelectors;
+        private List<IBaseCloudLayouterFabric> layouters;
 
 
         public Form1(CloudPrinter cloudPrinter, IEnumerable<IColorSelectorFabric> colorSelectors,
             IEnumerable<IBaseCloudLayouterFabric> layouters)
         {
-            InitializeComponent();
-            fontSelector.Items.AddRange(FontFamily.Families.Select(x => x.Name).ToArray());
-            this.colorSelectors = colorSelectors.ToList();
-            this.layouters = layouters.ToList();
-            layouterSelector.Items.AddRange(this.layouters.Select(x => x.Name).ToArray());
-            colorSelectorSelector.Items.AddRange(this.colorSelectors.Select(x => x.Name).ToArray());
-            this.cloudPrinter = cloudPrinter;
+            Result.OfAction(InitializeComponent).Then(_ =>
+                    fontSelector.Items.AddRange(FontFamily.Families.Select(x => x.Name).ToArray()))
+                .Then(_ => this.colorSelectors = colorSelectors.ToList())
+                .Then(_ => this.layouters = layouters.ToList())
+                .Then(_ => layouterSelector.Items.AddRange(this.layouters.Select(x => x.Name).ToArray()))
+                .Then(_ => colorSelectorSelector.Items.AddRange(this.colorSelectors.Select(x => x.Name).ToArray()))
+                .Then(_ => this.cloudPrinter = cloudPrinter)
+                .OnFail(x => MessageBox.Show(x));
         }
 
         private Size ImageSize { get; set; }
@@ -36,7 +38,7 @@ namespace TagCloudGUIClient
 
         private void drawButton_Click(object sender, EventArgs e)
         {
-            RedrawImage();
+            Result.OfAction(RedrawImage).OnFail(x => MessageBox.Show("Draw Error"));
         }
 
 
@@ -49,12 +51,15 @@ namespace TagCloudGUIClient
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            using SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = @"png files (*.png)|*.png";
-            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
-            var stream = saveFileDialog.OpenFile();
-            pictureBox1.Image.Save(stream, ImageFormat.Png);
-            stream.Close();
+            Result.OfAction(() =>
+            {
+                using SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = @"png files (*.png)|*.png";
+                if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+                var stream = saveFileDialog.OpenFile();
+                pictureBox1.Image.Save(stream, ImageFormat.Png);
+                stream.Close();
+            }).OnFail(x => MessageBox.Show(x));
         }
 
         private void RedrawImage()
@@ -62,16 +67,20 @@ namespace TagCloudGUIClient
             if (!AllSelected())
                 return;
             var fontFamily = FontFamily.Families[fontSelector.SelectedIndex];
-            var colorSelector = colorSelectors.First(x => x.Name == (string) colorSelectorSelector.SelectedItem)
-                .Create();
-            var layouter = layouters.First(x => x.Name == (string) layouterSelector.SelectedItem)
-                .Create(new Point(ImageSize / 2));
+            var colorSelector = Result
+                .Of(() => colorSelectors.First(x => x.Name == (string) colorSelectorSelector.SelectedItem))
+                .Then(x => x.Create());
+
             var path = textBox1.Text;
-            pictureBox1.Image = cloudPrinter.DrawCloud(path,
-                layouter,
-                ImageSize,
-                fontFamily,
-                colorSelector);
+            colorSelector.Then(i =>
+                    layouters.First(x => x.Name == (string) layouterSelector.SelectedItem)
+                        .Create(new Point(ImageSize / 2)))
+                .Then(layouter =>
+                    pictureBox1.Image = cloudPrinter.DrawCloud(path,
+                        layouter,
+                        ImageSize,
+                        fontFamily,
+                        colorSelector.GetValueOrThrow()));
         }
 
         private bool AllSelected()

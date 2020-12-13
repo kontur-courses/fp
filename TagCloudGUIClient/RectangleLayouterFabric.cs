@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using CloudLayouters;
+using ResultOf;
 
 namespace TagCloudGUIClient
 {
@@ -8,7 +9,7 @@ namespace TagCloudGUIClient
         public string Name => "Квадратное облако";
 
 
-        public BaseCloudLayouter Create(Point center)
+        public Result<BaseCloudLayouter> Create(Point center)
         {
             return new RectangleLayouter(center);
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Autofac;
+using ResultOf;
 using TagCloudCreator;
 
 namespace TagCloudGUIClient
@@ -16,8 +17,7 @@ namespace TagCloudGUIClient
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var container = InitializeContainer();
-            Application.Run(container.Resolve<Form>());
+            Result.Of(InitializeContainer).Then(x => Application.Run(x.Resolve<Form>()));
         }
 
         private static IContainer InitializeContainer()

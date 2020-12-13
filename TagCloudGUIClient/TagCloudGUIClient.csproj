@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj" />
       <ProjectReference Include="..\TagCloudCreator\TagCloudCreator.csproj" />
     </ItemGroup>
 

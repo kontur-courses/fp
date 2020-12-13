@@ -1,11 +1,12 @@
 ﻿using System.Drawing;
 using CloudLayouters;
+using ResultOf;
 
 namespace TagCloudGUIClient
 {
     public interface IBaseCloudLayouterFabric
     {
         string Name { get; }
-        BaseCloudLayouter Create(Point center);
+        Result<BaseCloudLayouter> Create(Point center);
     }
 }
