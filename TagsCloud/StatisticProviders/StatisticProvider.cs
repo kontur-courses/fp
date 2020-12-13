@@ -13,21 +13,10 @@ namespace TagsCloud.StatisticProviders
             this.boringWordsDetector = boringWordsDetector;
         }
 
-        public Dictionary<string, int> GetWordStatistics(IEnumerable<string> words)
-        {
-            var result = new Dictionary<string, int>();
-            
-            foreach (var word in PrepareWords(words))
-            {
-                if (!result.ContainsKey(word))
-                    result[word] = 0;
-                result[word]++;
-            }
-
-            return result;
-        }
-
-        private IEnumerable<string> PrepareWords(IEnumerable<string> words) =>
-            words.Select(w => w.ToLower()).Where(w => !boringWordsDetector.IsBoring(w));
+        public Dictionary<string, int> GetWordStatistics(IEnumerable<string> words) => words
+            .Where(w => !boringWordsDetector.IsBoring(w))
+            .Select(w => w.ToLower())
+            .GroupBy(w => w)
+            .ToDictionary(pair => pair.Key, pair => pair.Count());
     }
 }
