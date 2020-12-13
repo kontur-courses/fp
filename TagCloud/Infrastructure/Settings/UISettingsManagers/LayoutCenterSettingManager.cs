@@ -1,20 +1,92 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
-    public class LayoutCenterSettingManager : IInputManager
+    public class LayoutCenterSettingManager : IMultiInputModifierManager
     {
         private readonly Func<ISpiralSettingsProvider> settingsProvider;
         private readonly Regex regex;
+        private Dictionary<string, Dictionary<string, Func<Result<string>>>> modifiers;
 
         public LayoutCenterSettingManager(Func<ISpiralSettingsProvider> settingsProvider)
         {
             this.settingsProvider = settingsProvider;
             regex = new Regex(@"^(?<x>\d+)\s+(?<y>\d+)$");
+            modifiers = new Dictionary<string, Dictionary<string, Func<Result<string>>>>()
+            {
+                {
+                    "X", new Dictionary<string, Func<Result<string>>>()
+                    {
+                        {
+                            "-10", () =>
+                            {
+                                settingsProvider().Center += new Size(+10, 0);
+                                return "";
+                            }
+                        },
+                        {
+                            "-1", () =>
+                            {
+                                settingsProvider().Center += new Size(+1, 0);
+                                return "";
+                            }
+                        },
+                        {
+                            "+1", () =>
+                            {
+                                settingsProvider().Center += new Size(1, 0);
+                                return "";
+                            }
+                        },
+                        {
+                            "+10", () =>
+                            {
+                                settingsProvider().Center += new Size(10, 0);
+                                return "";
+                            }
+                        },
+                    }
+                },
+                {
+                    "Y", new Dictionary<string, Func<Result<string>>>()
+                    {
+                        {
+                            "-10", () =>
+                            {
+                                settingsProvider().Center += new Size(0, -10);
+                                return "";
+                            }
+                        },
+                        {
+                            "-1", () =>
+                            {
+                                settingsProvider().Center += new Size(0, -1);
+                                return "";
+                            }
+                        },
+                        {
+                            "+1", () =>
+                            {
+                                settingsProvider().Center += new Size(0, +1);
+                                return "";
+                            }
+                        },
+                        {
+                            "+10", () =>
+                            {
+                                settingsProvider().Center += new Size(0, +10);
+                                return "";
+                            }
+                        },
+                    }
+                },
+            };
         }
 
         public string Title => "Layout Center";
@@ -35,6 +107,23 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         {
             var settings = settingsProvider();
             return $"{settings.Center.X} {settings.Center.Y}";
+        }
+
+        public Dictionary<string, IEnumerable<string>> GetModifiers()
+        {
+            return modifiers.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value.Select(pair => pair.Key)
+            );
+        }
+
+        public Result<string> ApplyModifier(string type, string modifier)
+        {
+            return Result.Of(() =>
+            {
+                modifiers[type][modifier]();
+                return "";
+            }).ReplaceError(s => "Cannot apply modifier");
         }
     }
 }
