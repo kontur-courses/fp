@@ -4,6 +4,6 @@ namespace TagsCloudContainer
 {
     public interface IColorProvider
     {
-        Color GetNextColor();
+        Result<Color> GetNextColor();
     }
 }

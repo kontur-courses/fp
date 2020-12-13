@@ -10,12 +10,12 @@ namespace TagsCloudContainer
         {
             random = new Random();
         }
-        public Color GetNextColor()
+        public Result<Color> GetNextColor()
         {
             var r = random.Next(0, 255);
             var g = random.Next(0, 255);
             var b = random.Next(0, 255);
-            return Color.FromArgb(r, g, b);
+            return Result.Of(() => Color.FromArgb(r, g, b));
         }
     }
 }

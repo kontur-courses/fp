@@ -13,9 +13,9 @@ namespace TagsCloudContainer
         {
             this.color = color;
         }
-        public Color GetNextColor()
+        public Result<Color> GetNextColor()
         {
-            return color;
+            return Result.Ok(color);
         }
     }
 }
