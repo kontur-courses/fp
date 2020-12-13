@@ -32,6 +32,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             var newFormat = propertyInfos
                 .Where(info => info.Name.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
                 .Select(info => info.GetValue(settingsProvider().Format))
+                .Where(f => f is ImageFormat)
                 .Cast<ImageFormat>()
                 .SingleOrDefault();
             
