@@ -10,20 +10,18 @@ namespace TagsCloudContainer.App.CloudGenerator
         private readonly ILayouterAlgorithmSettingsHolder layouterSettings;
         private readonly IImageSizeSettingsHolder sizeSettings;
 
-        public CloudLayouterFactory(ILayouterAlgorithmSettingsHolder layouterSettings, 
+        public CloudLayouterFactory(ILayouterAlgorithmSettingsHolder layouterSettings,
             IImageSizeSettingsHolder sizeSettings)
         {
             this.layouterSettings = layouterSettings;
             this.sizeSettings = sizeSettings;
         }
+
         public Result<ICloudLayouter> CreateCloudLayouter()
         {
-            switch (layouterSettings.LayouterAlgorithm)
-            {
-                case CloudLayouterAlgorithm.CircularCloudLayouter:
-                    return new CircularCloudLayouter(new Point(sizeSettings.Width / 2,
-                        sizeSettings.Height / 2));
-            }
+            if (layouterSettings.LayouterAlgorithm == CloudLayouterAlgorithm.CircularCloudLayouter)
+                return new CircularCloudLayouter(new Point(sizeSettings.Width / 2,
+                    sizeSettings.Height / 2));
 
             return Result.Fail<ICloudLayouter>("No found this layouter algorithm");
         }
