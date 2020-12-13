@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -8,6 +7,8 @@ namespace TagsCloud.WordReaders
 {
     public class RegexWordReader : IWordReader
     {
+        private const string SplitPattern = "\\W+";
+        
         private readonly string filePath;
         private readonly IWordSelector selector;
 
@@ -19,8 +20,8 @@ namespace TagsCloud.WordReaders
 
         public IEnumerable<string> ReadWords()
         {
-            using var reader = new StreamReader(filePath);
-            var words = Regex.Split(reader.ReadToEnd(), "\\W+");
+            var file = File.ReadAllText(filePath);
+            var words = Regex.Split(file, SplitPattern);
             return selector.TakeSelectedWords(words);
         }
     }

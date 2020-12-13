@@ -19,8 +19,7 @@ namespace TagsCloud.WordReaders
 
         public IEnumerable<string> ReadWords()
         {
-            using var reader = new StreamReader(filePath);
-            var words = reader.ReadToEnd().Split(separator, StringSplitOptions.None);
+            var words = File.ReadAllLines(filePath);
             return selector.TakeSelectedWords(words);
         }
     }
