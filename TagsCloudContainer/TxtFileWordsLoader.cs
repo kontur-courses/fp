@@ -2,15 +2,16 @@
 
 namespace TagsCloudContainer
 {
-    public class TxtFileWordsLoader : FileWordsLoader
+    public class TxtFileWordsLoader : IWordsLoader
     {
-        protected override string[] SupportedFormats { get; } = {".txt"};
+        protected readonly string pathToFile;
 
-        public TxtFileWordsLoader(string pathToFile) : base(pathToFile)
+        public TxtFileWordsLoader(string pathToFile)
         {
+            this.pathToFile = pathToFile;
         }
 
-        public override string[] GetWords()
+        public string[] GetWords()
         {
             return File.ReadAllLines(pathToFile);
         }

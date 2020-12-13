@@ -9,20 +9,6 @@ namespace TagsCloudContainerTests
     public class TxtFileWordsLoaderTests
     {
         [Test]
-        public void Ctor_IfFileFromPathDoesNotExist_ThrowArgumentException()
-        {
-            Action act = () => new TxtFileWordsLoader("doesn't exist");
-            act.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
-        public void Ctor_IfFileExtensionIsNotSupported_ThrowArgumentException()
-        {
-            Action act = () => new TxtFileWordsLoader("../../../TestFiles/test.rtf");
-            act.Should().Throw<ArgumentException>();
-        }
-        
-        [Test]
         public void GetWords_CorrectWorkWithTxt()
         {
             var loader = new TxtFileWordsLoader("../../../TestFiles/test.txt");

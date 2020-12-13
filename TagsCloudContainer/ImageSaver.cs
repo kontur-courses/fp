@@ -1,37 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace TagsCloudContainer
 {
     public class ImageSaver : IImageSaver
     {
         private readonly string imagePath;
-        private ImageFormat format;
+
+        private static readonly Dictionary<string, ImageFormat> formats = new Dictionary<string, ImageFormat>
+        {
+            {".jpeg", ImageFormat.Jpeg},
+            {".jpg", ImageFormat.Jpeg},
+            {".tiff", ImageFormat.Tiff},
+            {".tif", ImageFormat.Tiff},
+            {".png", ImageFormat.Png},
+            {".gif", ImageFormat.Gif},
+            {".bmp", ImageFormat.Bmp}
+        };
+
+        public static string[] SupportedFormats => formats.Keys.ToArray();
 
         public ImageSaver(string imagePath)
         {
             this.imagePath = imagePath;
-            format = GetImageFormat(Path.GetExtension(imagePath));
-        }
-        
-        public void Save(Bitmap image)
-        {
-            image.Save(imagePath, format);
         }
 
-        private static ImageFormat GetImageFormat(string fileExt)
+        public void Save(Bitmap image)
         {
-            return fileExt switch
-            {
-                var ext when ext == ".jpeg" || ext == ".jpg" => ImageFormat.Jpeg,
-                var ext when ext == ".tiff" || ext == ".tif" => ImageFormat.Tiff,
-                ".png" => ImageFormat.Png,
-                ".gif" => ImageFormat.Gif,
-                ".bmp" => ImageFormat.Bmp,
-                _ => throw new ArgumentException($"This format of image is not supported {fileExt}")
-            };
+            var format = formats[Path.GetExtension(imagePath)];
+            image.Save(imagePath, format);
         }
     }
 }

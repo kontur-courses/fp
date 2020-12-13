@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
 
@@ -8,20 +7,6 @@ namespace TagsCloudContainerTests
     [TestFixture]
     public class DocxFileWordsLoaderTests
     {
-        [Test]
-        public void Ctor_IfFileFromPathDoesNotExist_ThrowArgumentException()
-        {
-            Action act = () => new DocxFileWordsLoader("doesn't exist");
-            act.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
-        public void Ctor_IfFileExtensionIsNotSupported_ThrowArgumentException()
-        {
-            Action act = () => new DocxFileWordsLoader("../../../TestFiles/test.rtf");
-            act.Should().Throw<ArgumentException>();
-        }
-        
         [Test]
         public void GetWords_CorrectWorkWithDocx()
         {

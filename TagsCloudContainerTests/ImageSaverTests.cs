@@ -16,14 +16,6 @@ namespace TagsCloudContainerTests
     [TestFixture]
     public class ImageSaverTests
     {
-        [Test]
-        public void Ctor_IfImageFormatIsNotSupported_ThrowArgumentException()
-        {
-            Action act = () => new ImageSaver("image.blabla");
-
-            act.Should().Throw<ArgumentException>();
-        }
-
         [TestCase("image.png", TestName = "WithPng")]
         [TestCase("image.gif", TestName = "WithGif")]
         [TestCase("image.bmp", TestName = "WithBmp")]

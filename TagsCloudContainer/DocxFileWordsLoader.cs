@@ -5,16 +5,16 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace TagsCloudContainer
 {
-    public class DocxFileWordsLoader : FileWordsLoader
+    public class DocxFileWordsLoader : IWordsLoader
     {
-        protected override string[] SupportedFormats { get; } = {".docx"};
+        private readonly string pathToFile;
 
         public DocxFileWordsLoader(string pathToFile)
-            : base(pathToFile)
         {
+            this.pathToFile = pathToFile;
         }
 
-        public override string[] GetWords()
+        public string[] GetWords()
         {
             var words = new List<string>();
             using (var wordDocument = WordprocessingDocument.Open(pathToFile, false))
