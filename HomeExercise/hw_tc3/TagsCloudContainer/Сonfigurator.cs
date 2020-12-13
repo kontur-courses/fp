@@ -16,7 +16,8 @@ namespace TagsCloudContainer
                 .Then(r => containerBuilder.RegisterType<StopWordsFilter>().AsSelf())
                 .Then(r => containerBuilder.RegisterType<TagsCloudCreator>().AsSelf())
                 .Then(r => containerBuilder.RegisterType<FixedColorProvider>().AsImplementedInterfaces())
-                .Then(r => containerBuilder.Build());
+                .Then(r => containerBuilder.Build())
+                .RefineError("Конфигуратор не смог построить дерево зависимостей");
         }
     }
 }

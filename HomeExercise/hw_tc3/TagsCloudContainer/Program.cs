@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Autofac;
 
 namespace TagsCloudContainer
@@ -9,15 +10,18 @@ namespace TagsCloudContainer
         {
             var path = Path.GetDirectoryName(
                 Path.GetDirectoryName(Directory.GetCurrentDirectory()));
-            var scope = Configurator.GetContainer().Value.BeginLifetimeScope();
-            var creator = scope.Resolve<TagsCloudCreator>();
-            creator.SetFontRandomColor();
-            creator.SetImageFormat("png");
-            creator.SetFontFamily("Comic Sans MS");
-            creator.SetImageSize(500);
-            creator.Create(Path.Combine(path, "input.txt"), path, "Cloud");
-            creator.AddStopWord("aba");
-            creator.Create(Path.Combine(path, "input.txt"), path, "Cloud2");
+            var creator = Configurator.GetContainer()
+                .Then(cont => cont.BeginLifetimeScope())
+                .Then(scope => scope.Resolve<TagsCloudCreator>())
+                .OnFail(err => throw new Exception(err))
+                .Value;
+            Result.Of(() => creator.SetFontRandomColor())
+                .Then(res => creator.SetImageFormat("png"))
+                .Then(res => creator.SetFontFamily("Comic Sans MS"))
+                .Then(res => creator.SetImageSize(500))
+                .Then(res => creator.AddStopWord("aba"))
+                .Then(res => creator.Create(Path.Combine(path, "input.txt"), path, "Cloud2"))
+                .OnFail(err => throw new Exception(err));
         }
     }
 }
