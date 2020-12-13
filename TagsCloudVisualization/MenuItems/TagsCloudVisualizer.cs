@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using TagsCloudCreating.Contracts;
+using TagsCloudCreating.Core.WordProcessors;
+using TagsCloudCreating.Infrastructure;
 using TagsCloudVisualization.App;
 using TagsCloudVisualization.Contracts;
+using TagsCloudVisualization.Infrastructure.Common;
 
 namespace TagsCloudVisualization.MenuItems
 {
@@ -25,28 +30,48 @@ namespace TagsCloudVisualization.MenuItems
             PictureHolder = pictureHolder;
         }
 
-        public DialogResult Execute() => CreateImage();
-
-        private DialogResult CreateImage()
+        public DialogResult Execute()
         {
-            var fileName = GetUserFile();
-            if (string.IsNullOrEmpty(fileName))
-                return DialogResult.Abort;
+            CreateImage();
+            return DialogResult.OK;
+        }
 
-            var words = Reader.GetAllData(fileName);
-            var tags = CloudCreator.CreateTagsCloud(words);
+        private void CreateImage() => GetUserFile().AsResult()
+            .Then(Reader.GetAllData)
+            .Then(CloudCreator.CreateTagsCloud)
+            .Then(DrawTags)
+            .OnFail(InformationMessageHelper.ShowExceptionMessage);
+
+        private Result<None> DrawTags(IEnumerable<Tag> tags)
+        {
+            var listTags = tags.ToList();
+
+            var realImageSize = GetRealImageSize(listTags);
+            if (PictureHolder.Image.Size.Width < realImageSize.Width ||
+                PictureHolder.Image.Size.Height < realImageSize.Height)
+                return Result.Fail<None>("Tag's Cloud is very big! Please, resize your image or tag's font.");
+
             var graphics = Graphics.FromImage(PictureHolder.Image);
+            var imageBackground = new Rectangle(0, 0, PictureHolder.Image.Width, PictureHolder.Image.Height);
 
-            graphics.FillRectangle(new SolidBrush(PictureHolder.BackColor),
-                new Rectangle(0, 0, PictureHolder.Image.Width, PictureHolder.Image.Height));
-
-            foreach (var tag in tags)
+            graphics.FillRectangle(new SolidBrush(PictureHolder.BackColor), imageBackground);
+            foreach (var tag in listTags)
             {
                 graphics.DrawString(tag.Word, tag.Font, new SolidBrush(tag.Color), tag.Frame);
                 PictureHolder.UpdateUi();
             }
 
-            return DialogResult.OK;
+            return Result.Ok();
+        }
+
+        private static Size GetRealImageSize(List<Tag> listTags)
+        {
+            var leftBorder = listTags.Min(t => t.Frame.Left);
+            var rightBorder = listTags.Max(t => t.Frame.Right);
+            var topBorder = listTags.Min(t => t.Frame.Top);
+            var bottomBorder = listTags.Max(t => t.Frame.Bottom);
+
+            return new Size(rightBorder - leftBorder, bottomBorder - topBorder);
         }
 
         private static string GetUserFile()
