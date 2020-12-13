@@ -15,24 +15,20 @@ using TagsCloud.WordSelectors;
 
 namespace TagsCloudTests
 {
-    [TestFixture]
     public class TagsCloudTests
     {
         [Test]
         public void CreateCloud_FromTxt()
         {
-            var directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent;
-            if(directoryInfo == null) throw new DirectoryNotFoundException();
-            if (!new DirectoryInfo($"{directoryInfo.FullName}\\Samples").Exists)
-                directoryInfo.CreateSubdirectory("Samples");
-            var samplePath = $"{directoryInfo.FullName}\\Samples\\sample.png";
+            var directoryInfo = Directory.GetCurrentDirectory();
+            var samplePath = $"{directoryInfo}\\sample.png";
             new FileInfo(samplePath).Delete();
             
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance($"{directoryInfo.FullName}\\example.txt");
             builder.RegisterType<AllWordSelector>().As<IWordSelector>();
-            builder.RegisterType<RegexWordReader>().As<IWordReader>();
+            builder.RegisterType<RegexWordReader>().As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
 
             builder.RegisterType<ByCollectionBoringWordsDetector>().As<IBoringWordsDetector>();
             builder.RegisterType<StatisticProvider>().As<IStatisticProvider>();
@@ -51,6 +47,7 @@ namespace TagsCloudTests
                 {
                     new NamedParameter("width", 3000),
                     new NamedParameter("height", 3000), 
+                    new NamedParameter("filePath", samplePath)
                 });
             
             Program.MakeCloud(builder.Build());
