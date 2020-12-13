@@ -32,7 +32,11 @@ namespace TagCloud
         private string DrawAndSaveTags(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color stringColor)
         {
             var bitmap = new Bitmap(canvas.Width, canvas.Height);
+            bitmap.Dispose();
+            
             var graphics = Graphics.FromImage(bitmap);
+            graphics.Dispose();
+            
             backgroundPainter.Draw(tags, canvas, graphics);
             DrawAllStrings(tags, fontFamily, stringColor, graphics);
             
