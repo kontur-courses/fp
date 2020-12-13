@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using CommandLine;
 using LightInject;
+using ResultOf;
 using TagsCloudVisualization;
 using WeCantSpell.Hunspell;
 
@@ -12,91 +14,98 @@ namespace TagsCloudContainer
 {
     class Program
     {
-        private static AppSettings _appSettings;
         private static readonly string _pathToDict = "Dictionaries/English (American).dic";
         private static readonly string _pathToAffixFile = "Dictionaries/English (American).aff";
+        private static readonly string[] _supportedTextFormats = { ".txt", ".docx" };
 
         static void Main(string[] args)
         {
-            try
-            {
-                var settings = Parser.Default.ParseArguments<AppSettings>(args);  //todo validate all arguments at one place
-                if (settings.Tag == ParserResultType.NotParsed)
-                    throw new ArgumentException("Incorrect commandline arguments");
-
-                _appSettings = ((Parsed<AppSettings>) settings).Value;
-                
-                var loader = GetWordsLoader();
-                var words = loader.GetWords();
-                
-                var countedWords = CountWords(words);
-                
-                using var drawer = GetDrawer();
-                var image = drawer.Draw(countedWords);
-                SaveImage(image);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine();
-                Console.WriteLine(e.Message);
-            }
+            ParseArguments(args)
+                .Then(ValidateSettings)
+                .Then(DrawImage)
+                .OnFail(Console.WriteLine);
         }
 
-        private static IWordsLoader GetWordsLoader()
+        private static Result<AppSettings> ParseArguments(string[] args)
         {
-            return Path.GetExtension(_appSettings.PathToFile) switch
+            return Result
+                .Of(() => Parser.Default.ParseArguments<AppSettings>(args))
+                .Validate(
+                    settings => settings.Tag == ParserResultType.Parsed,
+                    "Incorrect commandline arguments")
+                .Then(settings => ((Parsed<AppSettings>) settings).Value);
+        }
+
+        private static AppSettings ValidateSettings(AppSettings settings)
+        {
+            return new AppSettingsValidator(settings)
+                .ValidateTextFilePath(_supportedTextFormats)
+                .ValidatePartsOfSpeech()
+                .ValidateColors()
+                .ValidateFont()
+                .ValidateImagePath(ImageSaver.SupportedFormats)
+                .Settings;
+        }
+
+        private static Result<None> DrawImage(AppSettings settings)
+        {
+            return Result.Of(() => GetWordsLoader(settings.PathToFile))
+                .Then(loader => loader.GetWords())
+                .Then(words => 
+                    GetWordsCounter(settings.ExcludedPartsOfSpeechNames).CountWords(words))
+                .Then(countedWords =>
+                    GetDrawer(settings).Draw(countedWords))
+                .Then(image => SaveImage(image, settings.ImagePath));
+        }
+
+        private static IWordsLoader GetWordsLoader(string pathToFile)
+        {
+            return Path.GetExtension(pathToFile) switch
             {
-                ".docx" => new DocxFileWordsLoader(_appSettings.PathToFile),  //todo use supported formats
-                ".txt" => new TxtFileWordsLoader(_appSettings.PathToFile),
-                var format => throw new ArgumentException($"Not supported format: {format}")
+                ".docx" => new DocxFileWordsLoader(pathToFile),
+                ".txt" => new TxtFileWordsLoader(pathToFile),
             };
         }
 
-        private static Dictionary<string, int> CountWords(string[] words)
+        private static IWordsCounter GetWordsCounter(IEnumerable<string> excludedPartsOfSpeechNames)
         {
-            var excludedPartsOfSpeech = new List<PartOfSpeech>();
-            foreach (var name in _appSettings.ExcludedPartsOfSpeechNames)
-            {
-                if (Enum.TryParse<PartOfSpeech>(name, true, out var partOfSpeech))
-                    excludedPartsOfSpeech.Add(partOfSpeech);
-                else
-                    throw new ArgumentException($"Incorrect name of part of speech: {name}");
-            }
+            var excludedPartsOfSpeech = excludedPartsOfSpeechNames.Select(
+                partOfSpeech => Enum.Parse<PartOfSpeech>(partOfSpeech, true));
 
             var appDirectory = Path.GetDirectoryName(
                 Assembly.GetExecutingAssembly().Location);
             var wordList = WordList.CreateFromFiles( 
                 Path.GetFullPath(_pathToDict, appDirectory),
                 Path.GetFullPath(_pathToAffixFile, appDirectory));
-            
-            return new MorphologicalWordsCounter(wordList, excludedPartsOfSpeech).CountWords(words);
+
+            return new MorphologicalWordsCounter(wordList, excludedPartsOfSpeech);
         }
 
-        private static ITagsCloudDrawer GetDrawer()
+        private static ITagsCloudDrawer GetDrawer(AppSettings appSettings)
         {
             var container = new ServiceContainer();
 
             container.Register<IFontColorCreator>(factory =>
-                new FontColorCreator(_appSettings.FontColor));
+                new FontColorCreator(appSettings.FontColor));
 
             container.Register<IFontDetailsCreator>(factory =>
-                new FontDetailsCreator(_appSettings.FontName));
+                new FontDetailsCreator(appSettings.FontName));
             
-            var center = new Point(_appSettings.ImageWidth/2, _appSettings.ImageHeight/2);
-            var angleInRadians = _appSettings.AngleStepInDegrees * Math.PI / 180;
+            var center = new Point(appSettings.ImageWidth/2, appSettings.ImageHeight/2);
+            var angleInRadians = appSettings.AngleStepInDegrees * Math.PI / 180;
             container.Register<ICloudLayouter>(factory =>
-                new CircularCloudLayouter(center, new Spiral(angleInRadians, _appSettings.ShiftFactor)));
+                new CircularCloudLayouter(center, new Spiral(angleInRadians, appSettings.ShiftFactor)));
             
-            container.Register<IDrawSettings>(factory => _appSettings);
+            container.Register<IDrawSettings>(factory => appSettings);
             
             container.Register<ITagsCloudDrawer, TagsCloudDrawer>();
 
             return container.GetInstance<ITagsCloudDrawer>();
         }
 
-        private static void SaveImage(Bitmap image)
+        private static void SaveImage(Bitmap image, string imagePath)
         {
-            new ImageSaver(_appSettings.ImagePath).Save(image);
+            new ImageSaver(imagePath).Save(image);
         }
     }
 }
