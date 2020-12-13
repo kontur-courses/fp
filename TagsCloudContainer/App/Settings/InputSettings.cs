@@ -5,14 +5,22 @@ namespace TagsCloudContainer.App.Settings
 {
     public class InputSettings : IInputSettingsHolder
     {
+        public static readonly string DefaultInputFileName = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "text.txt");
+
         public static readonly InputSettings Instance = new InputSettings();
 
         private InputSettings()
         {
-            InputFileName = Path.Combine(Directory.GetCurrentDirectory(),
-                "text.txt");
+            SetDefault();
         }
 
         public string InputFileName { get; set; }
+
+        public void SetDefault()
+        {
+            InputFileName = DefaultInputFileName;
+        }
     }
 }

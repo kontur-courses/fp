@@ -5,13 +5,20 @@ namespace TagsCloudContainer.App.Settings
 {
     public class LayouterAlgorithmSettings : ILayouterAlgorithmSettingsHolder
     {
+        public static readonly CloudLayouterAlgorithm DefaultAlgorithm = CloudLayouterAlgorithm.CircularCloudLayouter;
+
         public static readonly LayouterAlgorithmSettings Instance = new LayouterAlgorithmSettings();
 
         private LayouterAlgorithmSettings()
         {
-            LayouterAlgorithm = CloudLayouterAlgorithm.CircularCloudLayouter;
+            SetDefault();
         }
 
         public CloudLayouterAlgorithm LayouterAlgorithm { get; set; }
+
+        public void SetDefault()
+        {
+            LayouterAlgorithm = DefaultAlgorithm;
+        }
     }
 }
