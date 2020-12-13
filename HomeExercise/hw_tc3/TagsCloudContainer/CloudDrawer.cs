@@ -30,7 +30,7 @@ namespace TagsCloudContainer
             graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, ImageSize, ImageSize));
             for (var i = 0; i < words.Count; i++)
             {
-                graphics.DrawString(words[i].Word, words[i].Font, new SolidBrush(ColorProvider.GetNextColor()),
+                graphics.DrawString(words[i].Word, words[i].Font, new SolidBrush(ColorProvider.GetNextColor().Value),
                     layout.Value[i].Location);
             }
 
