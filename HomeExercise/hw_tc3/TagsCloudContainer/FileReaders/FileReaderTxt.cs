@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace TagsCloudContainer
 {
@@ -14,7 +15,7 @@ namespace TagsCloudContainer
 
         public Result<IEnumerable<string>> ReadAllLines(string filePath)
         {
-            return Result.Of(() => (IEnumerable<string>)File.ReadAllLines(filePath), typeof(FileReaderTxt).Name)
+            return Result.Of(() => File.ReadAllLines(filePath).Where(word => word != ""), typeof(FileReaderTxt).Name)
                     .RefineError("Не удалось прочитать слова из файла");
         }
     }

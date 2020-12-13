@@ -13,6 +13,11 @@ namespace TagsCloudContainer
             var wordCounts = CountWords(words);
             var maxCount = wordCounts.Values.Max();
             var minCount = wordCounts.Values.Min();
+
+            if (maxCount == minCount)
+                return Result.Ok(words.Select(word =>
+                    new WordWithFont(word, new Font(fontFamily, (maxFontSize + minFontSize) / 2))));
+
             var wordsWithFont = new List<WordWithFont>();
             foreach (var wordCount in wordCounts)
             {
@@ -31,7 +36,7 @@ namespace TagsCloudContainer
                 if (wordCounts.ContainsKey(word))
                     wordCounts[word]++;
                 else
-                    wordCounts[word] = 0;
+                    wordCounts[word] = 1;
             }
 
             return wordCounts;
