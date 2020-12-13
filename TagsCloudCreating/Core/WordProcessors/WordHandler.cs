@@ -7,23 +7,24 @@ namespace TagsCloudCreating.Core.WordProcessors
 {
     public class WordHandler : IWordHandler
     {
+        private HashSet<string> BoringTypes { get; }
         private WordHandlerSettings WordHandlerSettings { get; }
 
-        public WordHandler(WordHandlerSettings wordHandlerSettings) => WordHandlerSettings = wordHandlerSettings;
-
-        public IEnumerable<string> NormalizeAndExcludeBoringWords(IEnumerable<string> words)
+        public WordHandler(WordHandlerSettings wordHandlerSettings)
         {
-            var boringTypes = WordHandlerSettings.SpeechPartsStatuses
+            WordHandlerSettings = wordHandlerSettings;
+            BoringTypes = WordHandlerSettings.SpeechPartsStatuses
                 .Where(part => !part.Value)
                 .Select(part => MyStemHandler.BoringWords[part.Key])
                 .ToHashSet();
-
-            return MyStemHandler.GetWordsWithPartsOfSpeech(words)
-                .Where(pair => !string.IsNullOrEmpty(pair.word)
-                               && !boringTypes.Contains(pair.speechPart)
-                               && pair.word.Length > 1
-                )
-                .Select(pair => pair.word);
         }
+
+        public IEnumerable<string> NormalizeAndExcludeBoringWords(IEnumerable<string> words) =>
+            MyStemHandler.GetWordsWithPartsOfSpeech(words)
+                .Where(ExcludeBoringWords)
+                .Select(pair => pair.word);
+
+        private bool ExcludeBoringWords((string word, string speechPart) pair) =>
+            !string.IsNullOrEmpty(pair.word) && !BoringTypes.Contains(pair.speechPart) && pair.word.Length > 1;
     }
 }

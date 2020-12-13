@@ -23,7 +23,8 @@ namespace TagsCloudTests
                 new WordConverter(new TagsSettings())
             );
 
-            var tags = tagsCloudCreator.CreateTagsCloud(new FileWordsReader().GetAllData("FileForTest.txt"));
+            var data = new FileWordsReader().GetAllData("FileForTest.txt").GetValueOrThrow();
+            var tags = tagsCloudCreator.CreateTagsCloud(data).GetValueOrThrow();
             Approvals.VerifyAll(
                 tags,
                 tag =>
