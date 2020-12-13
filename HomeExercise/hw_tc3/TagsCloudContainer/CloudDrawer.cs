@@ -46,7 +46,8 @@ namespace TagsCloudContainer
                 var wordSize = graphics.MeasureString(word.Word, word.Font);
                 var putResult = cloudLayouter.PutNextRectangle(wordSize.ToSize());
                 if (!putResult.IsSuccess)
-                    return Result.Fail<List<Rectangle>>(putResult.Error);
+                    return Result.Fail<List<Rectangle>>(putResult.Error)
+                        .RefineError("Возникла ошибка на слове " + word.Word);
             }
 
             return (List<Rectangle>)cloudLayouter.Rectangles;

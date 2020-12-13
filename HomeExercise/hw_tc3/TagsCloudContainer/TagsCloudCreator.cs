@@ -54,9 +54,7 @@ namespace TagsCloudContainer
                 .Then(FilterWords)
                 .Then(words => fontSizeCalculator.CalculateFontSize(words, fontFamily))
                 .Then(sizedWords => sizedWords.OrderByDescending(word => word.Font.Size).ToList())
-                .Then(sortedWords => cloudDrawer.DrawCloud(sortedWords, targetPath, imageName))
-                .OnFail(err => throw new Exception(err));
-
+                .Then(sortedWords => cloudDrawer.DrawCloud(sortedWords, targetPath, imageName));
         }
 
         public Result<None> AddStopWord(string stopWord)
@@ -113,7 +111,8 @@ namespace TagsCloudContainer
         private Result<List<string>> FilterWords(List<string> words)
         {
             return wordsFilters.Aggregate(Result.Ok(words), 
-                (notFilteredWords, nextFilter) => notFilteredWords.Then(words => nextFilter.Filter(words)));
+                (notFilteredWords, nextFilter) => notFilteredWords.Then(words => nextFilter.Filter(words)))
+                .RefineError("Произошла ошибка при фильтрации слов");
         }
     }
 }
