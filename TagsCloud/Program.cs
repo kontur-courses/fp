@@ -19,11 +19,11 @@ namespace TagsCloud
             }
         }
 
-        public static void MakeCloud(IContainer container = null)
+        public static Result<None> MakeCloud(IContainer container = null)
         {
             container ??= new ConsoleContainerConfigurator().Configure();
 
-            Result.Of(() => container.Resolve<IWordReader>().ReadWords())
+            return Result.Of(() => container.Resolve<IWordReader>().ReadWords())
                 .Then(words => container.Resolve<IStatisticProvider>().GetWordStatistics(words))
                 .Then(statistic => container.Resolve<IWordLayouter>().AddWords(statistic))
                 .Then(none => container.Resolve<ICloudRenderer>().RenderCloud())

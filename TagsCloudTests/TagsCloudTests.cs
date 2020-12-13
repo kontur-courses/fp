@@ -2,6 +2,7 @@ using System.Drawing;
 using System.IO;
 using Autofac;
 using Autofac.Core;
+using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud;
 using TagsCloud.BoringWordsDetectors;
@@ -17,29 +18,35 @@ namespace TagsCloudTests
 {
     public class TagsCloudTests
     {
-        [Test]
-        public void CreateCloud_FromTxt()
+        private ContainerBuilder builder;
+        private string directoryInfo;
+        private string samplePath;
+        
+        [SetUp]
+        public void SetUp()
         {
-            var directoryInfo = Directory.GetCurrentDirectory();
-            var samplePath = $"{directoryInfo}\\sample.png";
-            new FileInfo(samplePath).Delete();
+            builder = new ContainerBuilder();
             
-            var builder = new ContainerBuilder();
-
             builder.RegisterType<AllWordSelector>().As<IWordSelector>();
-            builder.RegisterType<RegexWordReader>().As<IWordReader>()
-                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
-
             builder.RegisterType<ByCollectionBoringWordsDetector>().As<IBoringWordsDetector>();
             builder.RegisterType<StatisticProvider>().As<IStatisticProvider>();
-
             builder.RegisterInstance(new FontFamily("Arial"));
             builder.RegisterType<SpiralPoints>().As<IPointsLayout>();
             builder.RegisterType<WordLayouter>().SingleInstance().As<IWordLayouter>();
-
             builder.RegisterInstance(new[]
                 {Color.Black, Color.Red, Color.Blue, Color.Green, Color.Yellow});
             builder.RegisterType<RandomColorSelector>().SingleInstance().As<IColorSelector>();
+            
+            directoryInfo = Directory.GetCurrentDirectory();
+            samplePath = $"{directoryInfo}\\sample.png";
+            new FileInfo(samplePath).Delete();
+        }
+        
+        [Test]
+        public void CreateCloud_FromTxt()
+        {
+            builder.RegisterType<RegexWordReader>().As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
             
             builder.RegisterType<CloudRenderer>()
                 .As<ICloudRenderer>()
@@ -53,6 +60,33 @@ namespace TagsCloudTests
             Program.MakeCloud(builder.Build());
             var actual = new FileInfo(samplePath);
             Assert.True(actual.Exists);
+        }
+
+        [Test]
+        public void WriteError_WhenFileNotFound()
+        {
+            builder.RegisterType<RegexWordReader>().As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\none.txt"));
+
+            Program.MakeCloud(builder.Build()).Error.Should().ContainAll("Файл", "none.txt", "не найден");
+        }
+
+        [Test]
+        public void WriteError_WhenNotPositiveWidthOrHeight()
+        {
+            builder.RegisterType<RegexWordReader>().As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
+            
+            builder.RegisterType<CloudRenderer>()
+                .As<ICloudRenderer>()
+                .WithParameters(new Parameter[]
+                {
+                    new NamedParameter("width", 0),
+                    new NamedParameter("height", 3000), 
+                    new NamedParameter("filePath", samplePath)
+                });
+            
+            Program.MakeCloud(builder.Build()).Error.Should().Contain("CloudRenderer");
         }
     }
 }
