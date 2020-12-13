@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using Gtk;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using TagCloud.Infrastructure.Text.Information;
 using Application = Gtk.Application;
 using Button = Gtk.Button;
 using Enumerable = System.Linq.Enumerable;
@@ -26,13 +28,15 @@ namespace TagCloud.App.GUI
         private readonly IEnumerable<IInputManager> settingsManagers;
         private readonly IImageGenerator imageGenerator;
         private readonly ImageSaver imageSaver;
+        private readonly ColorConverter colorConverter;
 
-        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver)
+        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver, ColorConverter colorConverter)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
             this.imageGenerator = imageGenerator;
             this.imageSaver = imageSaver;
+            this.colorConverter = colorConverter;
         }
 
         public void Run()
@@ -73,6 +77,7 @@ namespace TagCloud.App.GUI
         {
             var window = new Window("Settings");
             window.BorderWidth = 30;
+            window.SetDefaultSize(900, 900);
             window.SetPosition(WindowPosition.Mouse);
             window.Resizable = true;
             var box = new VBox();
@@ -88,33 +93,43 @@ namespace TagCloud.App.GUI
             okButton.Pressed += (o, eventArgs) => { window.Close(); };
             okBox.PackStart(okButton, false, false, 0);
             box.PackStart(okBox, true, true, 0);
-
-            window.Add(box);
+            var scrolledWindow = new ScrolledWindow();
+            scrolledWindow.Add(box);
+            window.Add(scrolledWindow);
             window.ShowAll();
         }
 
         private Widget GetWidget(IInputManager manager)
         {
             const int padding = 10;
-            var settings = new HBox();
-            settings.PackStart(new Label(manager.Help), false, false, padding);
-            settings.PackStart(new Label(manager.Title), false, false, padding);
-            settings.PackStart(new VSeparator(), false, false, padding);
-            if (manager is IOptionsManager optionsManager)
+            var settings = new VBox();
+            var inputBox = new VBox();
+            var infoBox = new HBox();
+            infoBox.PackStart(new Label(manager.Title), false, false, 0);
+            infoBox.PackStart(new VSeparator(), true, false, 0);
+            infoBox.PackStart(new Label(manager.Help), false, false, 0);
+            settings.PackStart(infoBox, false, false, 0);
+            settings.PackStart(inputBox, false, false, 0);
+            switch (manager)
             {
-                AddManger(optionsManager, settings, padding, manager.Get());
+                case IOptionsManager optionsManager:
+                    AddManger(optionsManager, inputBox, padding, manager.Get());
+                    break;
+                case IMultiOptionsManager multiOptionsManager:
+                    AddManger(multiOptionsManager, inputBox, padding);
+                    break;
+                default:
+                    AddManger(manager, inputBox, padding);
+                    break;
             }
-            else
-            {
-                AddManger(manager, settings, padding);
-            }
+            // settings.PackStart(new VSeparator(), false, false, padding);
             return settings;
         }
 
-        private void AddManger(IOptionsManager manager, Box settings, uint padding, string selected)
+        private void AddManger(IOptionsManager manager, Box containerBox, uint padding, string selected)
         {
             var dropdown = new ComboBoxText();
-            settings.PackStart(dropdown, true, true, padding);
+            containerBox.PackStart(dropdown, true, true, padding);
             foreach (var (option, id) in manager
                 .GetOptions()
                 .Select((s, i) => (s, i)))
@@ -130,17 +145,54 @@ namespace TagCloud.App.GUI
                 value => dropdown.SetActiveId(value))(o, args);
         }
         
-        private void AddManger(IInputManager manager, Box settings, uint padding)
+        private void AddManger(IInputManager manager, Box containerBox, uint padding)
         {
             var table = new TextTagTable();
             var buffer = new TextBuffer(table);
             var textBox = new TextView(buffer);
-            settings.PackStart(textBox, true, true, padding);
+            containerBox.PackStart(textBox, true, true, padding);
             textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
             textBox.FocusOutEvent += (o, args) => OnValueSet(
                 manager, 
                 () => buffer.Text, 
                 value => buffer.Text = value)(o, args);
+        }
+
+        private void AddManger(IMultiOptionsManager manager, Box containerBox, uint padding)
+        {
+            var options = new List<Widget>();
+            var managerOptions = manager.GetOptions();
+            foreach (var element in managerOptions.Keys)
+            {
+                var hBox = new HBox(); 
+                var dropdown = BuildDropdown(manager, managerOptions[element]);
+                var wordType = (WordType) Enum.Parse(typeof(WordType), element);
+                if (settingsFactory().ColorMap.TryGetValue(wordType, out var chosenColor))
+                {
+                    var colorName = colorConverter.ConvertToString(chosenColor);
+                    dropdown.SetActiveId(colorName);
+                }
+                
+                hBox.PackStart(dropdown, true, true, 0);
+                hBox.PackStart(new Label(element), true, true, 0);
+                containerBox.PackStart(hBox, true, true, padding);
+            }
+        }
+
+        private ComboBoxText BuildDropdown(IMultiOptionsManager manager, IEnumerable<string> options)
+        {
+            var dropdown = new ComboBoxText();
+            foreach (var option in options)
+            {
+                dropdown.Append(option, option);
+            }
+            
+            dropdown.Changed += (o, args) => OnValueSet(
+                manager,
+                () => dropdown.ActiveText,
+                value => dropdown.SetActiveId(value))(o, args);
+
+            return dropdown;
         }
 
 
