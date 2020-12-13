@@ -6,7 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.Layouter;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudTests
 {
     [TestFixture]
     public class CircularCloudLayouterTests
@@ -47,15 +47,6 @@ namespace TagsCloudContainerTests
                 for (var j = i + 1; j < rectangles.Count; j++)
                     rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
             }
-        }
-
-        [Test]
-        [TestCase(-1, -1)]
-        [TestCase(0, 0)]
-        public void ShouldThrowOnIncorrectRectangle(int width, int height)
-        {
-            var a = layouter.PutNextRectangle(new Size(width, height));
-            a.Should();
         }
 
         [Test]

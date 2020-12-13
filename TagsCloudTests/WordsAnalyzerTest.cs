@@ -6,7 +6,7 @@ using TagsCloud.Options;
 using TagsCloud.ResultOf;
 using TagsCloud.WordsParser;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudrTests
 {
     public class WordsAnalyzerTest
     {
