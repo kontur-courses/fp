@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {

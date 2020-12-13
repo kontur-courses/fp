@@ -2,6 +2,7 @@ using Autofac;
 using NUnit.Framework;
 using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 using TagCloud.Infrastructure.Text;
 
 namespace TagCloudTests

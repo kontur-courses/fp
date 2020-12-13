@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {

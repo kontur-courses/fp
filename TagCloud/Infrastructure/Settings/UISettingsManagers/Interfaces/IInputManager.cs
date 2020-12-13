@@ -1,4 +1,4 @@
-namespace TagCloud.Infrastructure.Settings.UISettingsManagers
+namespace TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces
 {
     public interface IInputManager
     {

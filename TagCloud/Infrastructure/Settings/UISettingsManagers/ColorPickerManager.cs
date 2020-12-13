@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Settings.UISettingsManagers

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TagCloud.Infrastructure.Settings.UISettingsManagers
+namespace TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces
 {
     public interface IMultiOptionsManager : IInputManager
     {

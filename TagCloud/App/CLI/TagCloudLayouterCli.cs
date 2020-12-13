@@ -4,6 +4,7 @@ using System.Linq;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
 namespace TagCloud.App.CLI
 {

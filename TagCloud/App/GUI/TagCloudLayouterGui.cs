@@ -9,6 +9,7 @@ using Gtk;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 using TagCloud.Infrastructure.Text.Information;
 using Application = Gtk.Application;
 using Button = Gtk.Button;
@@ -196,7 +197,7 @@ namespace TagCloud.App.GUI
                             ShowInfoWindow(ErrorLevel.Warning, result.Error);
                         buffer.Text = manager.Get();
                     };
-                    hBox.PackStart(button, true, true, 0);
+                    hBox.PackStart(button, false, false, 0);
                 }
                 vbox.PackStart(hBox, true, true, 0);
             }

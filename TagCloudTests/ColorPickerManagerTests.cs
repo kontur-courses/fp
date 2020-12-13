@@ -9,6 +9,7 @@ using TagCloud.Infrastructure.Layout.Environment;
 using TagCloud.Infrastructure.Layout.Strategies;
 using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
+using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloudTests
