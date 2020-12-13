@@ -1,30 +1,24 @@
 using System;
 using System.Drawing;
-using System.IO;
 using TagsCloud.WordLayouters;
 
 namespace TagsCloud.CloudRenderers
 {
     public class CloudRenderer : ICloudRenderer
     {
-        private const string SamplesDirectory = "Samples";
         private readonly string path;
         private readonly IWordLayouter layouter;
         private readonly int width;
         private readonly int height;
+        private readonly string filePath;
 
-        public CloudRenderer(IWordLayouter layouter, int width, int height)
+        public CloudRenderer(IWordLayouter layouter, int width, int height, string filePath)
         {
             if (width <= 0 || height <= 0) throw new ArgumentException("Not positive width or height");
             this.layouter = layouter ?? throw new ArgumentException("Layouter is null");
             this.width = width;
             this.height = height;
-
-            var directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent;
-            if (directoryInfo == null) throw new DirectoryNotFoundException("Parent directory not found");
-            path = $"{directoryInfo.FullName}\\{SamplesDirectory}";
-            if(!Directory.Exists(path))
-                directoryInfo.CreateSubdirectory(SamplesDirectory);
+            this.filePath = filePath;
         }
         
         public string RenderCloud()
@@ -32,8 +26,8 @@ namespace TagsCloud.CloudRenderers
             var wordsRectangle = layouter.GetCloudRectangle();
             var words = layouter.CloudWords;
             
-            var bitmap = new Bitmap(width, height);
-            var graphics = Graphics.FromImage(bitmap);
+            using var bitmap = new Bitmap(width, height);
+            using var graphics = Graphics.FromImage(bitmap);
             graphics.ScaleTransform((float) width / wordsRectangle.Width, (float) height / wordsRectangle.Height);
             graphics.TranslateTransform(-wordsRectangle.X, -wordsRectangle.Y);
             foreach (var word in words)
@@ -41,10 +35,8 @@ namespace TagsCloud.CloudRenderers
                 graphics.DrawString(word.Value, word.Font, new SolidBrush(word.Color), word.Rectangle.Location);
             }
             
-            graphics.Save();
-            var imagePath = $"{path}\\sample.png";
-            bitmap.Save(imagePath);
-            return imagePath;
+            bitmap.Save(filePath);
+            return filePath;
         }
     }
 }

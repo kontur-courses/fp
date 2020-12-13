@@ -51,8 +51,9 @@ namespace TagsCloud.ContainerConfigurators
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(ReadType<string>("File path"));
-            builder.RegisterType(ReadInterface("Word reader", wordReaders)).As<IWordReader>();
+            builder.RegisterType(ReadInterface("Word reader", wordReaders))
+                .As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", ReadType<string>("File path")));
             builder.RegisterInstance(ReadInterface("Words selector", wordSelectors)).As<IWordSelector>();
 
             builder.RegisterInstance(ReadInterface("Boring words detector", boringWordsDetectors))
@@ -66,14 +67,13 @@ namespace TagsCloud.ContainerConfigurators
             builder.RegisterInstance(ReadColors());
             builder.RegisterType(ReadInterface("Color selector", colorSelectors)).SingleInstance().As<IColorSelector>();
             
-            var width = ReadType<int>("Image width");
-            var height = ReadType<int>("Image height");
             builder.RegisterType<CloudRenderer>()
                 .As<ICloudRenderer>()
                 .WithParameters(new Parameter[]
                 {
-                    new NamedParameter("width", width),
-                    new NamedParameter("height", height), 
+                    new NamedParameter("width", ReadType<int>("Image width")),
+                    new NamedParameter("height", ReadType<int>("Image height")), 
+                    new NamedParameter("filePath", ReadType<string>("Path to save")), 
                 });
             
             return builder.Build();
