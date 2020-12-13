@@ -124,6 +124,9 @@ namespace TagCloud.App.GUI
                 case IInputModifierManager inputModifierManager:
                     AddManger(inputModifierManager, inputBox, padding);
                     break;
+                case IMultiInputModifierManager multiInputModifierManager:
+                    AddManger(multiInputModifierManager, inputBox, padding);
+                    break;
                 default:
                     AddManger(manager, inputBox, padding);
                     break;
@@ -161,6 +164,45 @@ namespace TagCloud.App.GUI
                 manager, 
                 () => buffer.Text, 
                 value => buffer.Text = value)(o, args);
+        }
+        
+        private void AddManger(IMultiInputModifierManager manager, Box containerBox, uint padding)
+        {
+            var hbox = new HBox();
+            var table = new TextTagTable();
+            var buffer = new TextBuffer(table);
+            var textBox = new TextView(buffer);
+            textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
+            textBox.FocusOutEvent += (o, args) => OnValueSet(
+                manager, 
+                () => buffer.Text, 
+                value => buffer.Text = value)(o, args);
+            hbox.PackStart(textBox, true, true, padding);
+            var vbox = new VBox();
+
+            foreach (var selector in manager.GetModifiers())
+            {
+                var title = new Label(selector.Key);
+                var hBox = new HBox();
+                hBox.PackStart(title, true, true, 0);
+
+                foreach (var modifier in selector.Value)
+                {
+                    var button = new Button(modifier);
+                    button.Clicked += (c, a) =>
+                    {
+                        var result = manager.ApplyModifier(selector.Key, modifier);
+                        if (!result.IsSuccess)
+                            ShowInfoWindow(ErrorLevel.Warning, result.Error);
+                        buffer.Text = manager.Get();
+                    };
+                    hBox.PackStart(button, true, true, 0);
+                }
+                vbox.PackStart(hBox, true, true, 0);
+            }
+            
+            hbox.PackStart(vbox, true, true, padding);
+            containerBox.PackStart(hbox, true, true, padding);
         }
         
         private void AddManger(IInputModifierManager manager, Box containerBox, uint padding)
