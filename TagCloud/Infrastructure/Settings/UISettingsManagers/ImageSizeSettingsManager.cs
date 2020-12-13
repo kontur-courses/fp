@@ -12,77 +12,45 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         private readonly Func<IImageSettingsProvider> imageSettingsProvider;
         private readonly Regex regex;
 
-        private readonly Dictionary<string, Dictionary<string, Func<Result<string>>>> modifiers;
+        private readonly Dictionary<string, Dictionary<string, Action>> modifiers;
 
         public ImageSizeSettingsManager(Func<IImageSettingsProvider> imageSettingsProvider)
         {
             this.imageSettingsProvider = imageSettingsProvider;
             regex = new Regex(@"^(?<width>\d+)\s+(?<height>\d+)$");
-            modifiers = new Dictionary<string, Dictionary<string, Func<Result<string>>>>()
+            modifiers = new Dictionary<string, Dictionary<string, Action>>()
             {
                 {
-                    "Width", new Dictionary<string, Func<Result<string>>>()
+                    "Width", new Dictionary<string, Action>()
                     {
                         {
-                            "-10", () =>
-                            {
-                                imageSettingsProvider().Width -= 10;
-                                return "";
-                            }
+                            "-10", () => imageSettingsProvider().Width -= 10
                         },
                         {
-                            "-1", () =>
-                            {
-                                imageSettingsProvider().Width--;
-                                return "";
-                            }
+                            "-1", () => imageSettingsProvider().Width--
                         },
                         {
-                            "+1", () =>
-                            {
-                                imageSettingsProvider().Width++;
-                                return "";
-                            }
+                            "+1", () => imageSettingsProvider().Width++
                         },
                         {
-                            "+10", () =>
-                            {
-                                imageSettingsProvider().Width += 10;
-                                return "";
-                            }
+                            "+10", () => imageSettingsProvider().Width += 10
                         },
                     }
                 },
                 {
-                    "Height", new Dictionary<string, Func<Result<string>>>()
+                    "Height", new Dictionary<string, Action>()
                     {
                         {
-                            "-10", () =>
-                            {
-                                imageSettingsProvider().Height -= 10;
-                                return "";
-                            }
+                            "-10", () => imageSettingsProvider().Height -= 10
                         },
                         {
-                            "-1", () =>
-                            {
-                                imageSettingsProvider().Height--;
-                                return "";
-                            }
+                            "-1", () => imageSettingsProvider().Height--
                         },
                         {
-                            "+1", () =>
-                            {
-                                imageSettingsProvider().Height++;
-                                return "";
-                            }
+                            "+1", () => imageSettingsProvider().Height++
                         },
                         {
-                            "+10", () =>
-                            {
-                                imageSettingsProvider().Height += 10;
-                                return "";
-                            }
+                            "+10", () => imageSettingsProvider().Height += 10
                         },
                     }
                 },

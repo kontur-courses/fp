@@ -12,77 +12,45 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
     {
         private readonly Func<ISpiralSettingsProvider> settingsProvider;
         private readonly Regex regex;
-        private Dictionary<string, Dictionary<string, Func<Result<string>>>> modifiers;
+        private Dictionary<string, Dictionary<string, Action>> modifiers;
 
         public LayoutCenterSettingManager(Func<ISpiralSettingsProvider> settingsProvider)
         {
             this.settingsProvider = settingsProvider;
             regex = new Regex(@"^(?<x>\d+)\s+(?<y>\d+)$");
-            modifiers = new Dictionary<string, Dictionary<string, Func<Result<string>>>>()
+            modifiers = new Dictionary<string, Dictionary<string, Action>>()
             {
                 {
-                    "X", new Dictionary<string, Func<Result<string>>>()
+                    "X", new Dictionary<string, Action>()
                     {
                         {
-                            "-10", () =>
-                            {
-                                settingsProvider().Center += new Size(+10, 0);
-                                return "";
-                            }
+                            "-10", () => settingsProvider().Center += new Size(-10, 0)
                         },
                         {
-                            "-1", () =>
-                            {
-                                settingsProvider().Center += new Size(+1, 0);
-                                return "";
-                            }
+                            "-1", () => settingsProvider().Center += new Size(-1, 0)
                         },
                         {
-                            "+1", () =>
-                            {
-                                settingsProvider().Center += new Size(1, 0);
-                                return "";
-                            }
+                            "+1", () => settingsProvider().Center += new Size(1, 0)
                         },
                         {
-                            "+10", () =>
-                            {
-                                settingsProvider().Center += new Size(10, 0);
-                                return "";
-                            }
+                            "+10", () => settingsProvider().Center += new Size(10, 0)
                         },
                     }
                 },
                 {
-                    "Y", new Dictionary<string, Func<Result<string>>>()
+                    "Y", new Dictionary<string, Action>()
                     {
                         {
-                            "-10", () =>
-                            {
-                                settingsProvider().Center += new Size(0, -10);
-                                return "";
-                            }
+                            "-10", () => settingsProvider().Center += new Size(0, -10)
                         },
                         {
-                            "-1", () =>
-                            {
-                                settingsProvider().Center += new Size(0, -1);
-                                return "";
-                            }
+                            "-1", () => settingsProvider().Center += new Size(0, -1)
                         },
                         {
-                            "+1", () =>
-                            {
-                                settingsProvider().Center += new Size(0, +1);
-                                return "";
-                            }
+                            "+1", () => settingsProvider().Center += new Size(0, +1)
                         },
                         {
-                            "+10", () =>
-                            {
-                                settingsProvider().Center += new Size(0, +10);
-                                return "";
-                            }
+                            "+10", () => settingsProvider().Center += new Size(0, +10)
                         },
                     }
                 },
