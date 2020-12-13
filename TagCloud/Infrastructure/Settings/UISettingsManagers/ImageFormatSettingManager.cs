@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -20,6 +19,11 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             typeof(ImageFormat)
                 .GetProperties()
                 .Select(info => info.Name);
+
+        public string GetSelectedOption()
+        {
+            return settingsProvider().Format.ToString();
+        }
 
         public string Title => "Image Format";
         public string Help => $"Choose format";

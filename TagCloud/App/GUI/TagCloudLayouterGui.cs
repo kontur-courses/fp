@@ -120,7 +120,7 @@ namespace TagCloud.App.GUI
             switch (manager)
             {
                 case IOptionsManager optionsManager:
-                    AddManger(optionsManager, inputBox, padding, manager.Get());
+                    AddManger(optionsManager, inputBox, padding);
                     break;
                 case IMultiOptionsManager multiOptionsManager:
                     AddManger(multiOptionsManager, inputBox, padding);
@@ -132,7 +132,7 @@ namespace TagCloud.App.GUI
             return settings;
         }
 
-        private void AddManger(IOptionsManager manager, Box containerBox, uint padding, string selected)
+        private void AddManger(IOptionsManager manager, Box containerBox, uint padding)
         {
             var dropdown = new ComboBoxText();
             containerBox.PackStart(dropdown, true, true, padding);
@@ -143,12 +143,12 @@ namespace TagCloud.App.GUI
                 dropdown.Append(option, option);
             }
 
-            dropdown.SetActiveId(selected);
+            dropdown.SetActiveId(manager.GetSelectedOption());
             
             dropdown.Changed += (o, args) => OnValueSet(
                 manager,
                 () => dropdown.ActiveText,
-                value => dropdown.SetActiveId(value))(o, args);
+                value => dropdown.SetActiveId(manager.GetSelectedOption()))(o, args);
         }
         
         private void AddManger(IInputManager manager, Box containerBox, uint padding)
