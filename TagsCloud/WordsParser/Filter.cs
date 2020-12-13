@@ -32,11 +32,8 @@ namespace TagsCloud.WordsParser
 
         private static bool IsWordBoringPartOfSpeech(string word, IEnumerable<string> wordsInfo)
         {
-            var boringWordInfos = wordsInfo
-                .Where(wordInfo => wordInfo.Contains(word))
-                .Where(wordInfo => BoringPartsOfSpeech.Any(wordInfo.Contains))
-                .ToList();
-            return boringWordInfos.Count != 0;
+            return wordsInfo.Where(wordInfo => wordInfo.Contains(word))
+                .Any(wordInfo => BoringPartsOfSpeech.Any(wordInfo.Contains));
         }
 
         private static IEnumerable<string> GetWordsInfo(IEnumerable<string> words, string mystemLocation)

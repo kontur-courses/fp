@@ -8,10 +8,10 @@
         public string ImageName { get; }
         public string ImageExtension { get; }
 
-        public ImageOptions(string width, string height, string imageOutputDirectory, string imageName, string imageExtension)
+        public ImageOptions(int width, int height, string imageOutputDirectory, string imageName, string imageExtension)
         {
-            Width = int.Parse(width);
-            Height = int.Parse(height);
+            Width = width;
+            Height = height;
             ImageOutputDirectory = imageOutputDirectory;
             ImageName = imageName;
             ImageExtension = imageExtension;

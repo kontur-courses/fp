@@ -1,6 +1,6 @@
 ﻿namespace TagsCloud.Layouter
 {
-    public enum Direction
+    internal enum Direction
     {
         Top,
         Right,

@@ -13,6 +13,18 @@ namespace TagsCloud
 {
     public static class Program
     {
+        public static void Main(string[] args)
+        {
+            ITagCloud cloud = null;
+
+            MakeProgramOptions(args)
+                .Then(BuildProgram)
+                .Then(container => cloud = container.Resolve<ITagCloud>())
+                .Then(_ => cloud.MakeTagCloud())
+                .Then(_ => cloud.SaveTagCloud())
+                .OnFail(Console.WriteLine);
+        }
+
         private static IContainer BuildProgram(IProgramOptions programOptions)
         {
             var builder = new ContainerBuilder();
@@ -34,9 +46,11 @@ namespace TagsCloud
         private static Result<ProgramOptions> MakeProgramOptions(IEnumerable<string> args)
         {
             var options = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
-            var imageOptions = options.ToImageOptions();
-            var fontOptions = options.ToFontOptions();
-            var filterOptions = options.ToFilterOptions();
+            if (options == null)
+                Result.Fail<ProgramOptions>("");
+            var imageOptions = OptionsValidator.ValidateImageOptions(options);
+            var fontOptions = OptionsValidator.ValidateFontOptions(options);
+            var filterOptions = OptionsValidator.ValidateFilterOptions(options);
 
             return options is null
                 ? Result.Fail<ProgramOptions>("")
@@ -45,18 +59,6 @@ namespace TagsCloud
                     .Then(_ => filterOptions)
                     .Then(_ => new ProgramOptions(imageOptions.Value, fontOptions.Value, filterOptions.Value,
                         options.FilePath));
-        }
-
-        public static void Main(string[] args)
-        {
-            ITagCloud cloud = null;
-
-            MakeProgramOptions(args)   
-                .Then(BuildProgram)
-                .Then(container => cloud = container.Resolve<ITagCloud>())
-                .Then(_ => cloud.MakeTagCloud())
-                .Then(_ => cloud.SaveTagCloud())
-                .OnFail(Console.WriteLine);
         }
     }
 }

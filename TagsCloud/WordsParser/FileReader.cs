@@ -18,7 +18,9 @@ namespace TagsCloud.WordsParser
         }
 
         public Result<IEnumerable<string>> ReadWords() =>
-            GetFileExtension(path).Then(GetReadFileMethod).Then(readWords => readWords.Invoke());
+            GetFileExtension(path)
+                .Then(GetReadFileMethod)
+                .Then(readWords => readWords.Invoke());
 
         private Result<IEnumerable<string>> ReadWordsFromTxt() =>
             Result.Of(CheckFileExisting).Then(_ => File.ReadLines(path));
@@ -31,12 +33,13 @@ namespace TagsCloud.WordsParser
             return extension switch
             {
                 ".txt" => Result.Ok<ReadWordsMethod>(ReadWordsFromTxt),
-                "" => Result.Fail<ReadWordsMethod>($"Set file extension."),
+                "" => Result.Fail<ReadWordsMethod>("Set file extension."),
                 _ => Result.Fail<ReadWordsMethod>($"Can't read {extension} file")
             };
         }
 
         private static Result<string> GetFileExtension(string filePath) =>
-            ExtensionRegex.Match(filePath).Groups["extension"].Value;
+            Result.Of(() => ExtensionRegex.Match(filePath).Groups["extension"].Value)
+                .ReplaceError(e => $"Incorrect extension on file {filePath}");
     }
 }

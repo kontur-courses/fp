@@ -82,8 +82,7 @@ namespace TagsCloud.Layouter
                 Direction.Top => new Point(0, previous.Height),
                 Direction.Right => new Point(previous.Width, previous.Height - rectangleSize.Height),
                 Direction.Bottom => new Point(previous.Width - rectangleSize.Width, -rectangleSize.Height),
-                Direction.Left => new Point(-rectangleSize.Width, 0),
-                _ => throw new ArgumentOutOfRangeException()
+                Direction.Left => new Point(-rectangleSize.Width, 0)
             };
         }
 
