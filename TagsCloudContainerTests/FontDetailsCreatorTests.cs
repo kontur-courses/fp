@@ -5,7 +5,7 @@ using TagsCloudContainer;
 namespace TagsCloudContainerTests
 {
     [TestFixture]
-    public class FontCreatorTests
+    public class FontDetailsCreatorTests
     {
         private FontDetailsCreator detailsCreator;
 

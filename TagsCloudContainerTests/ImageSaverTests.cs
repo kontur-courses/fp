@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq.Expressions;
-using System.Text;
-using System.Timers;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
