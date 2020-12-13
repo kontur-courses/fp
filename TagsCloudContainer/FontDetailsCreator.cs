@@ -6,7 +6,7 @@
         public readonly int MinFontSize = 8;
         public readonly int MaxFontSize = 35;
 
-        public FontDetailsCreator(string fontName) //todo add validate for fontName
+        public FontDetailsCreator(string fontName)
         {
             this.fontName = fontName;
         }

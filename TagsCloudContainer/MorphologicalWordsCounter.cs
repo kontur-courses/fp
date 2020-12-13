@@ -58,8 +58,8 @@ namespace TagsCloudContainer
 
         private static PartOfSpeech GetPartOfSpeech(MorphSet morphs)
         {
-            var poParameter = morphs.First(arg => arg.StartsWith("po:"));  //todo FirstOrDefault and throw exception?
-            return Enum.Parse<PartOfSpeech>(poParameter.Substring(3), true);  //todo throw exception with TryParse?
+            var poParameter = morphs.First(arg => arg.StartsWith("po:"));
+            return Enum.Parse<PartOfSpeech>(poParameter.Substring(3), true);
         }
     }
 }
