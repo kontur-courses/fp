@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using Gdk;
 using Gtk;
-using Pango;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
@@ -16,7 +13,6 @@ using TagCloud.Infrastructure.Text.Information;
 using Application = Gtk.Application;
 using Button = Gtk.Button;
 using Color = System.Drawing.Color;
-using Enumerable = System.Linq.Enumerable;
 using Image = System.Drawing.Image;
 using Label = Gtk.Label;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
@@ -210,15 +206,8 @@ namespace TagCloud.App.GUI
         {
             return (o, args) =>  {
                 var result = manager.TrySet(getInput());
-                if (result.IsSuccess)
-                {
-                    if (result.Value.Any()) 
-                        ShowInfoWindow(ErrorLevel.Info, result.Value);
-                }
-                else
-                {
+                if (!result.IsSuccess) 
                     ShowInfoWindow(ErrorLevel.Warning, result.Error);
-                }
 
                 setValue(manager.Get());
             };
