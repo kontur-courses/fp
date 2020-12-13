@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.Infrastructure.CloudVisualizer
 {
-    internal interface ICloudVisualizer
+    public interface ICloudVisualizer
     {
         public Result<None> Visualize();
     }

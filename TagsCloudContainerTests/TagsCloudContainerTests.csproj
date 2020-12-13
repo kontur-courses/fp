@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Remove="files\input.docx" />
     <None Remove="files\input.txt" />
+    <None Remove="files\notDocxFileWithDocxExtension.docx" />
+    <None Remove="files\textWithNonExistentWord.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +21,12 @@
 
   <ItemGroup>
     <Content Include="files\input.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\notDocxFileWithDocxExtension.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\textWithNonExistentWord.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
