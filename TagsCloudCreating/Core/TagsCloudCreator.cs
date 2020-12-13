@@ -2,6 +2,7 @@
 using System.Linq;
 using TagsCloudCreating.Contracts;
 using TagsCloudCreating.Core.WordProcessors;
+using TagsCloudCreating.Infrastructure;
 
 namespace TagsCloudCreating.Core
 {
@@ -18,20 +19,27 @@ namespace TagsCloudCreating.Core
             WordConverter = wordConverter;
         }
 
-        public IEnumerable<Tag> CreateTagsCloud(IEnumerable<string> words)
+        public Result<IEnumerable<Tag>> CreateTagsCloud(IEnumerable<string> words)
         {
-            var interestingWords = WordHandler.NormalizeAndExcludeBoringWords(words);
-            var readyTags = WordConverter.ConvertToTags(interestingWords)
-                .Select(InsertTagInFrame)
-                .OrderByDescending(t => t.Frequency);
+            var readyTags = words.AsResult()
+                .Then(WordHandler.NormalizeAndExcludeBoringWords)
+                .Then(WordConverter.ConvertToTags)
+                .ReplaceError(err => "MyStem.exe not found! " +
+                                     "Please, go to: http://download.cdn.yandex.net/mystem/mystem-3.0-win7-32bit.zip"
+                )
+                .Then(InsertTagsInFrames)
+                .Then(tags => tags.OrderByDescending(t => t.Frequency).AsEnumerable());
             Layouter.Recreate();
             return readyTags;
         }
 
-        private Tag InsertTagInFrame(Tag tag)
+        private IEnumerable<Tag> InsertTagsInFrames(IEnumerable<Tag> tags)
         {
-            var frame = Layouter.PutNextRectangle(tag.GetCeilingSize());
-            return tag.InsertTagInFrame(frame);
+            foreach (var tag in tags)
+            {
+                var frame = Layouter.PutNextRectangle(tag.GetCeilingSize());
+                yield return tag.InsertTagInFrame(frame);
+            }
         }
     }
 }
