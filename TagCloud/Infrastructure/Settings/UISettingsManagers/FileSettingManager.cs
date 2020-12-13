@@ -24,7 +24,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             }
 
             fileSettingsProvider().Path = path;
-            return Get();
+            return Result.Ok("");
         }
 
         public string Get()

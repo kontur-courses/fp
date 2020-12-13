@@ -8,12 +8,14 @@ using System.Linq;
 using System.Windows.Forms;
 using Gdk;
 using Gtk;
+using Pango;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using TagCloud.Infrastructure.Text.Information;
 using Application = Gtk.Application;
 using Button = Gtk.Button;
+using Color = System.Drawing.Color;
 using Enumerable = System.Linq.Enumerable;
 using Image = System.Drawing.Image;
 using Label = Gtk.Label;
@@ -42,7 +44,6 @@ namespace TagCloud.App.GUI
         public void Run()
         {
             settingsFactory().Import(Program.GetDefaultSettings());
-            Console.WriteLine("Default settings imported");
 
             Application.Init();
 
@@ -105,10 +106,16 @@ namespace TagCloud.App.GUI
             var settings = new VBox();
             var inputBox = new VBox();
             var infoBox = new HBox();
-            infoBox.PackStart(new Label(manager.Title), false, false, 0);
+            var title = new Label
+            {
+                UseMarkup = true, 
+                Markup = $"<span font='large' weight='bold'>{manager.Title}</span>"
+            };
+
+            infoBox.PackStart(title, false, false, 0);
             infoBox.PackStart(new VSeparator(), true, false, 0);
             infoBox.PackStart(new Label(manager.Help), false, false, 0);
-            settings.PackStart(infoBox, false, false, 0);
+            settings.PackStart(infoBox, false, false, padding);
             settings.PackStart(inputBox, false, false, 0);
             switch (manager)
             {
@@ -122,7 +129,6 @@ namespace TagCloud.App.GUI
                     AddManger(manager, inputBox, padding);
                     break;
             }
-            // settings.PackStart(new VSeparator(), false, false, padding);
             return settings;
         }
 
@@ -162,22 +168,31 @@ namespace TagCloud.App.GUI
         {
             var options = new List<Widget>();
             var managerOptions = manager.GetOptions();
-            foreach (var element in managerOptions.Keys)
+            foreach (var optionName in managerOptions.Keys)
             {
                 var hBox = new HBox(); 
-                var dropdown = BuildDropdown(manager, managerOptions[element]);
-                var wordType = (WordType) Enum.Parse(typeof(WordType), element);
+                var dropdown = BuildDropdown(manager, managerOptions[optionName]);
+                var wordType = (WordType) Enum.Parse(typeof(WordType), optionName);
                 if (settingsFactory().ColorMap.TryGetValue(wordType, out var chosenColor))
                 {
-                    var colorName = colorConverter.ConvertToString(chosenColor);
-                    dropdown.SetActiveId(colorName);
+                    dropdown.SetActiveId(GetColorName(chosenColor));
                 }
+                dropdown.Changed += (o, args) => OnValueSet(
+                    manager,
+                    () => $"{optionName} = {dropdown.ActiveText}",
+                    value =>
+                    {
+                        if (manager.GetSelectedOptions().TryGetValue(optionName, out var selectedValue))
+                            dropdown.SetActiveId(selectedValue);
+                    })(o, args);
                 
                 hBox.PackStart(dropdown, true, true, 0);
-                hBox.PackStart(new Label(element), true, true, 0);
-                containerBox.PackStart(hBox, true, true, padding);
+                hBox.PackStart(new Label(optionName), true, true, 0);
+                containerBox.PackStart(hBox, true, true, 1);
             }
         }
+
+        private string GetColorName(Color color) => colorConverter.ConvertToString(color.Name);
 
         private ComboBoxText BuildDropdown(IMultiOptionsManager manager, IEnumerable<string> options)
         {
@@ -186,11 +201,6 @@ namespace TagCloud.App.GUI
             {
                 dropdown.Append(option, option);
             }
-            
-            dropdown.Changed += (o, args) => OnValueSet(
-                manager,
-                () => dropdown.ActiveText,
-                value => dropdown.SetActiveId(value))(o, args);
 
             return dropdown;
         }
@@ -200,10 +210,16 @@ namespace TagCloud.App.GUI
         {
             return (o, args) =>  {
                 var result = manager.TrySet(getInput());
-                if (!result.IsSuccess)
+                if (result.IsSuccess)
+                {
+                    if (result.Value.Any()) 
+                        ShowInfoWindow(ErrorLevel.Info, result.Value);
+                }
+                else
                 {
                     ShowInfoWindow(ErrorLevel.Warning, result.Error);
                 }
+
                 setValue(manager.Get());
             };
         }

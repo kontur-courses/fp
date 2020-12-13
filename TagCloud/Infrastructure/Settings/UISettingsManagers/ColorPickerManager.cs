@@ -33,11 +33,14 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 
         public Result<string> TrySet(string input)
         {
-            var inputDictionary = regex.Matches(input)
-                .OfType<Match>()
-                .ToDictionary(m => m.Groups["type"].Value, m => m.Groups["color"].Value);
+            var inputDictionary = ParseInput(input);
             return ProcessInput(inputDictionary);
         }
+
+        private Dictionary<string, string> ParseInput(string input) =>
+            regex.Matches(input)
+                .OfType<Match>()
+                .ToDictionary(m => m.Groups["type"].Value, m => m.Groups["color"].Value);
 
         private Result<string> ProcessInput(Dictionary<string, string> inputDictionary) =>
             Result.Of(() =>
@@ -46,7 +49,6 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                     foreach (var typeName in inputDictionary.Keys)
                         Result.Of(() => ProcessPair(typeName, inputDictionary).GetValueOrThrow())
                             .OnFail(s => failed.Add(s));
-                    
                     return failed;
                 }
             ).Then(failed => failed.Any()
@@ -66,7 +68,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                 .Then(pair =>
                 {
                     var (type, color) = pair;
+                    // Console.Out.WriteLine("colorSettings() = {0}", colorSettings().ColorMap[type]);
                     colorSettings().ColorMap[type] = color;
+                    // Console.Out.WriteLine("colorSettings() = {0}", colorSettings().ColorMap[type]);
                     return Result.Ok("");
                 });
 
@@ -76,6 +80,13 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public Dictionary<string, IEnumerable<string>> GetOptions() =>
             SupportedWordTypes.ToDictionary(
                 type => type.ToString(),
-                type => SupportedColors.Select(color => color.ToString()));
+                type => SupportedColors.Select(color => colorConverter.ConvertToString(color.Name)));
+
+        public Dictionary<string, string> GetSelectedOptions()
+        {
+            return colorSettings().ColorMap.ToDictionary(
+                kv => kv.Key.ToString(),
+                pair => colorConverter.ConvertToString(pair.Value.Name));
+        }
     }
 }
