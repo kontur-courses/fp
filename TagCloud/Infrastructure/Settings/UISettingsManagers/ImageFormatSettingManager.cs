@@ -20,10 +20,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                 .GetProperties()
                 .Select(info => info.Name);
 
-        public string GetSelectedOption()
-        {
-            return settingsProvider().Format.ToString();
-        }
+        public string GetSelectedOption() => settingsProvider().Format.ToString();
 
         public string Title => "Image Format";
         public string Help => $"Choose format";

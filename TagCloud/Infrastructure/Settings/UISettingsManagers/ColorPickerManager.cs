@@ -40,7 +40,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         private Dictionary<string, string> ParseInput(string input) =>
             regex.Matches(input)
                 .OfType<Match>()
-                .ToDictionary(m => m.Groups["type"].Value, m => m.Groups["color"].Value);
+                .Select(m => (m.Groups["type"].Value, m.Groups["color"].Value))
+                .GroupBy(pair => pair.Item1, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(group => group.Key, group => group.Last().Item2);
 
         private Result<string> ProcessInput(Dictionary<string, string> inputDictionary) =>
             Result.Of(() =>
