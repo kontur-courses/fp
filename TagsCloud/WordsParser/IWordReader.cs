@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TagsCloud.Result;
+using TagsCloud.ResultOf;
 
 namespace TagsCloud.WordsParser
 {

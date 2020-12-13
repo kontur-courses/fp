@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TagsCloud.Result
+namespace TagsCloud.ResultOf
 {
     public class None
     {

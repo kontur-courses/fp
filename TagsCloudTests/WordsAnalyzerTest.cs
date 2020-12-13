@@ -2,8 +2,8 @@
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloud.Result;
-using TagsCloud.ProgramOptions;
+using TagsCloud.Options;
+using TagsCloud.ResultOf;
 using TagsCloud.WordsParser;
 
 namespace TagsCloudContainerTests

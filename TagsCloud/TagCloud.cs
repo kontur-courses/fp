@@ -1,5 +1,5 @@
 ﻿using TagsCloud.Drawer;
-using TagsCloud.Result;
+using TagsCloud.ResultOf;
 using TagsCloud.WordsParser;
 
 namespace TagsCloud
@@ -20,6 +20,6 @@ namespace TagsCloud
                 .Then(rectangleLayout.PlaceWords)
                 .Then(_ => rectangleLayout.DrawLayout());
 
-        public Result<None> SaveTagCloud() => Result.Result.OfAction(() => rectangleLayout.SaveLayout());
+        public Result<None> SaveTagCloud() => Result.OfAction(() => rectangleLayout.SaveLayout());
     }
 }

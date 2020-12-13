@@ -1,4 +1,4 @@
-﻿using TagsCloud.Result;
+﻿using TagsCloud.ResultOf;
 
 namespace TagsCloud
 {

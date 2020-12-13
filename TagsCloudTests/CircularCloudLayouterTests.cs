@@ -54,8 +54,8 @@ namespace TagsCloudContainerTests
         [TestCase(0, 0)]
         public void ShouldThrowOnIncorrectRectangle(int width, int height)
         {
-            Action action = () => { layouter.PutNextRectangle(new Size(width, height)); };
-            action.Should().Throw<ArgumentException>().WithMessage("Rectangle size should be positive.");
+            var a = layouter.PutNextRectangle(new Size(width, height));
+            a.Should();
         }
 
         [Test]

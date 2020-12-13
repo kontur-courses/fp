@@ -8,9 +8,9 @@ namespace TagsCloud.Layouter
         public string Text { get; }
         public int FontSize { get; }
         public string FontFamily { get; }
-        public string FontColor { get; }
+        public Color FontColor { get; }
 
-        public Tag(string text, int fontSize, string fontFamily, string fontColor)
+        public Tag(string text, int fontSize, string fontFamily, Color fontColor)
         {
             Text = text;
             FontSize = fontSize;

@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TagsCloud.ProgramOptions;
-using TagsCloud.Result;
+using TagsCloud.Options;
+using TagsCloud.ResultOf;
 
 namespace TagsCloud.WordsParser
 {
@@ -24,7 +24,7 @@ namespace TagsCloud.WordsParser
         }
 
         public Result<IEnumerable<string>> RemoveBoringWords(IEnumerable<string> words) =>
-            Result.Result.Of(() => GetWordsInfo(words.ToHashSet(), mystemLocation))
+            Result.Of(() => GetWordsInfo(words.ToHashSet(), mystemLocation))
                 .Then(wordsInfo => words.Where(word => !IsBoringWord(word, wordsInfo)));
 
         private bool IsBoringWord(string word, IEnumerable<string> wordsInfo)
@@ -48,7 +48,7 @@ namespace TagsCloud.WordsParser
             {
                 StartInfo =
                 {
-                    FileName = Path.Combine(mystemLocation, "mystem.exe"),
+                    FileName = Path.Combine(mystemLocation),
                     Arguments = "-i -n -e cp866",
                     UseShellExecute = false,
                     RedirectStandardInput = true,

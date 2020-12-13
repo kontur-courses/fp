@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TagsCloud.Result;
+using TagsCloud.ResultOf;
 
 namespace TagsCloud.WordsParser
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using TagsCloud.Result;
+using TagsCloud.ResultOf;
 
 namespace TagsCloud.WordsParser
 {
@@ -21,17 +21,18 @@ namespace TagsCloud.WordsParser
             GetFileExtension(path).Then(GetReadFileMethod).Then(readWords => readWords.Invoke());
 
         private Result<IEnumerable<string>> ReadWordsFromTxt() =>
-            Result.Result.Of(CheckFileExisting).Then(_ => File.ReadLines(path));
+            Result.Of(CheckFileExisting).Then(_ => File.ReadLines(path));
 
         private Result<bool> CheckFileExisting()
-            => File.Exists(path) ? true : Result.Result.Fail<bool>($"File {path} not found.");
+            => File.Exists(path) ? true : Result.Fail<bool>($"File {path} not found.");
 
         private Result<ReadWordsMethod> GetReadFileMethod(string extension)
         {
             return extension switch
             {
-                ".txt" => Result.Result.Ok<ReadWordsMethod>(ReadWordsFromTxt),
-                _ => Result.Result.Fail<ReadWordsMethod>($"Can't read {extension} file")
+                ".txt" => Result.Ok<ReadWordsMethod>(ReadWordsFromTxt),
+                "" => Result.Fail<ReadWordsMethod>($"Set file extension."),
+                _ => Result.Fail<ReadWordsMethod>($"Can't read {extension} file")
             };
         }
 

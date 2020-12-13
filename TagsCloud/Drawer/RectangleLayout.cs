@@ -4,8 +4,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using TagsCloud.Layouter;
-using TagsCloud.ProgramOptions;
-using TagsCloud.Result;
+using TagsCloud.Options;
+using TagsCloud.ResultOf;
 
 namespace TagsCloud.Drawer
 {
@@ -30,7 +30,7 @@ namespace TagsCloud.Drawer
         }
 
         public Result<None> PlaceWords(Dictionary<string, int> words) =>
-            Result.Result.Of(() => MakeTags(words))
+            Result.Of(() => MakeTags(words))
                 .Then(PlaceTags)
                 .Then(TagsInsideImage)
                 .Then(tags => drawer.AddTags(tags));
@@ -55,20 +55,12 @@ namespace TagsCloud.Drawer
             return tags;
         }
 
-        private Size GetTagSize(Tag tag)
-        {
-            return graphics.MeasureString(tag.Text, new Font(tag.FontFamily, tag.FontSize)).ToSize();
-        }
+        private Size GetTagSize(Tag tag) =>
+            graphics.MeasureString(tag.Text, new Font(tag.FontFamily, tag.FontSize)).ToSize();
 
-        private static int CalculateFontSize(int wordCount)
-        {
-            return (int) (Math.Log(Math.Max(wordCount, 6), 6) * 10);
-        }
+        private static int CalculateFontSize(int wordCount) => (int) (Math.Log(Math.Max(wordCount, 6), 6) * 10);
 
-        public void DrawLayout()
-        {
-            drawer.Draw(graphics);
-        }
+        public void DrawLayout() => drawer.Draw(graphics);
 
         public void SaveLayout()
         {
@@ -80,8 +72,8 @@ namespace TagsCloud.Drawer
 
         private Result<IEnumerable<Tag>> TagsInsideImage(IEnumerable<Tag> tags) =>
             tags.Any(tag => RectangleInsideImage(tag.Rectangle))
-                ? Result.Result.Fail<IEnumerable<Tag>>("Some tags are outside of the image. Change image size.")
-                : Result.Result.Ok(tags);
+                ? Result.Fail<IEnumerable<Tag>>("Some tags are outside of the image. Change image size.")
+                : Result.Ok(tags);
 
         private bool RectangleInsideImage(Rectangle rectangle) =>
             imageOptions.Width < rectangle.Right || 0 > rectangle.Left ||

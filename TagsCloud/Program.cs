@@ -1,42 +1,61 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Autofac;
 using CommandLine;
 using TagsCloud.Drawer;
 using TagsCloud.Layouter;
-using TagsCloud.ProgramOptions;
-using TagsCloud.Result;
+using TagsCloud.Options;
+using TagsCloud.ResultOf;
 using TagsCloud.WordsParser;
 
 namespace TagsCloud
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        private static IContainer BuildProgram(IProgramOptions programOptions)
         {
-            var options = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
-            var imageOptions = new ImageOptions(options.Width, options.Height, options.OutputDirectory,
-                options.OutputFileName, options.OutputFileExtension);
-            var fontOptions = new FontOptions(options.FontFamily, options.FontColor);
-            var filterOptions = new FilterOptions(options.MystemLocation, options.BoringWords);
             var builder = new ContainerBuilder();
-
-            builder.RegisterInstance(imageOptions).As<IImageOptions>();
-            builder.RegisterInstance(fontOptions).As<IFontOptions>();
-            builder.RegisterInstance(filterOptions).As<IFilterOptions>();
+            builder.RegisterInstance(programOptions.ImageOptions).As<IImageOptions>();
+            builder.RegisterInstance(programOptions.FontOptions).As<IFontOptions>();
+            builder.RegisterInstance(programOptions.FilterOptions).As<IFilterOptions>();
             builder.RegisterType<WordsAnalyzer>().As<IWordsAnalyzer>();
-            builder.RegisterType<FileReader>().As<IWordReader>().WithParameter("filePath", options.FilePath);
+            builder.RegisterType<FileReader>().As<IWordReader>().WithParameter("filePath", programOptions.FilePath);
             builder.RegisterType<Filter>().As<IFilter>();
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>()
-                .WithParameter("center", new Point(options.Width / 2, options.Height / 2));
+                .WithParameter("center",
+                    new Point(programOptions.ImageOptions.Width / 2, programOptions.ImageOptions.Height / 2));
             builder.RegisterType<LayoutDrawer>().As<ILayoutDrawer>();
             builder.RegisterType<RectangleLayout>().As<IRectangleLayout>();
             builder.RegisterType<TagCloud>().As<ITagCloud>();
-            var container = builder.Build();
+            return builder.Build();
+        }
 
-            var tagCloudContainer = container.Resolve<ITagCloud>();
-            tagCloudContainer.MakeTagCloud()
-                .Then(_ => tagCloudContainer.SaveTagCloud())
+        private static Result<ProgramOptions> MakeProgramOptions(IEnumerable<string> args)
+        {
+            var options = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
+            var imageOptions = options.ToImageOptions();
+            var fontOptions = options.ToFontOptions();
+            var filterOptions = options.ToFilterOptions();
+
+            return options is null
+                ? Result.Fail<ProgramOptions>("")
+                : imageOptions
+                    .Then(_ => fontOptions)
+                    .Then(_ => filterOptions)
+                    .Then(_ => new ProgramOptions(imageOptions.Value, fontOptions.Value, filterOptions.Value,
+                        options.FilePath));
+        }
+
+        public static void Main(string[] args)
+        {
+            ITagCloud cloud = null;
+
+            MakeProgramOptions(args)   
+                .Then(BuildProgram)
+                .Then(container => cloud = container.Resolve<ITagCloud>())
+                .Then(_ => cloud.MakeTagCloud())
+                .Then(_ => cloud.SaveTagCloud())
                 .OnFail(Console.WriteLine);
         }
     }
