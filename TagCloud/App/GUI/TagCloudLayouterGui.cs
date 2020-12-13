@@ -162,12 +162,11 @@ namespace TagCloud.App.GUI
 
         private void AddManger(IMultiOptionsManager manager, Box containerBox, uint padding)
         {
-            var options = new List<Widget>();
             var managerOptions = manager.GetOptions();
             foreach (var optionName in managerOptions.Keys)
             {
                 var hBox = new HBox(); 
-                var dropdown = BuildDropdown(manager, managerOptions[optionName]);
+                var dropdown = BuildDropdown(managerOptions[optionName]);
                 var wordType = (WordType) Enum.Parse(typeof(WordType), optionName);
                 if (settingsFactory().ColorMap.TryGetValue(wordType, out var chosenColor))
                 {
@@ -190,7 +189,7 @@ namespace TagCloud.App.GUI
 
         private string GetColorName(Color color) => colorConverter.ConvertToString(color.Name);
 
-        private ComboBoxText BuildDropdown(IMultiOptionsManager manager, IEnumerable<string> options)
+        private ComboBoxText BuildDropdown(IEnumerable<string> options)
         {
             var dropdown = new ComboBoxText();
             foreach (var option in options)

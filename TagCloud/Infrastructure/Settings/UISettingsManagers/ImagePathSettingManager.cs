@@ -21,6 +21,8 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
         public Result<string> TrySet(string path)
         {
             path = Path.GetFullPath(path);
+            if (Directory.Exists(path))
+                return Result.Fail<string>("Path cannot be a directory");
             imageSettingsProvider().ImagePath = path;
             if (Path.HasExtension(path))
                 return Result.Fail<string>($"Specify filename only .{imageFormatSettingsProvider().Format} will be added");
