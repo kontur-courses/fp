@@ -9,8 +9,7 @@ namespace TagsCloudContainer
         {
             var assembly = Assembly.GetExecutingAssembly();
             var containerBuilder = new ContainerBuilder();
-            return Result.Ok()
-                .Then(r => containerBuilder.RegisterAssemblyTypes(assembly).Except<StopWordsFilter>()
+            return Result.Of(() => containerBuilder.RegisterAssemblyTypes(assembly).Except<StopWordsFilter>()
                     .AsImplementedInterfaces())
                 .Then(r => containerBuilder.RegisterType<StopWords>().AsSelf())
                 .Then(r => containerBuilder.RegisterType<StopWordsFilter>().AsSelf())
