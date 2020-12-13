@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommandLine;
 
-namespace TagsCloud.Options
+namespace TagsCloud
 {
     public class CommandLineOptions
     {
