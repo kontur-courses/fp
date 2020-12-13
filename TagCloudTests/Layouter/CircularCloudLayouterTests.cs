@@ -6,12 +6,12 @@ using NUnit.Framework;
 using FluentAssertions;
 using TagCloud.Layouters;
 using TagCloud.Settings;
-using TagCloud_Tests.Layouter;
+using TagCloudTests.Layouter;
 
-namespace TagsCloud_Tests.Layouter
+namespace TagsCloudTests.Layouter
 {
     [TestFixture]
-    public class CircularCloudLayouter_Tests
+    public class CircularCloudLayouterTests
     {
         private IRectangleLayouter layouter;
         private Size minSize;
@@ -32,6 +32,18 @@ namespace TagsCloud_Tests.Layouter
         {
             foreach (var size in SizesGenerator.GenerateSizes(5, minSize, maxSize, seed:128))
                 layouter.PutNextRectangle(size).GetValueOrThrow().Size.Should().BeEquivalentTo(size);
+        }
+        
+        [TestCase(-1, -1)]
+        [TestCase(-1, 1)]
+        [TestCase(1, -1)]
+        [TestCase(0, 0)]
+        [TestCase(1, 0)]
+        [TestCase(0, 1)]
+        public void PutNextRectangle_ShouldFail_NonPositiveSizesAdded(int width, int height)
+        {
+            var size = new Size(width, height);
+            layouter.PutNextRectangle(size).IsSuccess.Should().BeFalse();
         }
         
         [Test]

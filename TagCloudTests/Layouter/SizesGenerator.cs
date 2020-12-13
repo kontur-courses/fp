@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace TagCloud_Tests.Layouter
+namespace TagCloudTests.Layouter
 {
     public class SizesGenerator
     {

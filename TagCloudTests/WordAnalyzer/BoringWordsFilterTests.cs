@@ -3,10 +3,10 @@ using NUnit.Framework;
 using FluentAssertions;
 using TagCloud.WordsAnalyzer.WordFilters;
 
-namespace TagCloud_Tests.WordAnalyzer_Tests
+namespace TagCloudTests.WordAnalyzer
 {
     [TestFixture]
-    public class BoringWordsFilter_Tests
+    public class BoringWordsFilterTests
     {
         private BoringWordFilter filter;
         

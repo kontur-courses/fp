@@ -4,10 +4,10 @@ using NUnit.Framework;
 using FluentAssertions;
 using TagCloud.Layouters;
 
-namespace TagsCloud_Tests.Layouter
+namespace TagsCloudTests.Layouter
 {
     [TestFixture]
-    public class Spiral_Tests
+    public class SpiralTests
     {
         [Test]
         public void Spiral_ShouldStartInCenter()

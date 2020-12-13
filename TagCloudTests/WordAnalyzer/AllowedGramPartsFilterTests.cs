@@ -4,10 +4,10 @@ using FluentAssertions;
 using TagCloud.WordsAnalyzer.WordFilters;
 using YandexMystem.Wrapper.Enums;
 
-namespace TagCloud_Tests.WordAnalyzer_Tests
+namespace TagCloudTests.WordAnalyzer
 {
     [TestFixture]
-    public class AllowedGramPartsFilter_Tests
+    public class AllowedGramPartsFilterTests
     {
         private GramPartsFilter nounFilter;
         private GramPartsFilter verbFilter;

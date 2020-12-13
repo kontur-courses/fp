@@ -6,10 +6,10 @@ using TagCloud.WordsAnalyzer.WordFilters;
 using TagCloud.WordsAnalyzer.WordNormalizer;
 using YandexMystem.Wrapper.Enums;
 
-namespace TagCloud_Tests.WordAnalyzer_Tests
+namespace TagCloudTests.WordAnalyzer
 {
     [TestFixture]
-    public class Analyzer_Tests
+    public class AnalyzerTests
     {
         private string text;
         private WordsAnalyzer analyzer;
