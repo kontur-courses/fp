@@ -16,7 +16,7 @@ namespace TagsCloud.ColorSelectors
 
         public Color Next()
         {
-            return colors[random.Next(colors.Length - 1)];
+            return colors[random.Next(colors.Length)];
         }
     }
 }

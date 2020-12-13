@@ -6,7 +6,7 @@ namespace TagsCloud.ColorSelectors
     public class CyclicColorSelector : IColorSelector
     {
         private readonly Color[] colors;
-        private int current = -1;
+        private int current;
         
         public CyclicColorSelector(Color[] colors)
         {
@@ -16,9 +16,7 @@ namespace TagsCloud.ColorSelectors
         
         public Color Next()
         {
-            current++;
-            if (current == colors.Length) current = 0;
-            return colors[current];
+            return colors[current++ % colors.Length];
         }
     }
 }
