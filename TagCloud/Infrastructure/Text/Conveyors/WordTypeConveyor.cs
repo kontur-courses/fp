@@ -9,8 +9,8 @@ namespace TagCloud.Infrastructure.Text.Conveyors
 {
     public class WordTypeConveyor : IConveyor<string>
     {
-        private readonly Regex wordWithTypeRegex;
         private readonly MyStem analyzer;
+        private readonly Regex wordWithTypeRegex;
 
         public WordTypeConveyor(string myStemPath)
         {

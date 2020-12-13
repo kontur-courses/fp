@@ -10,9 +10,6 @@ namespace TagCloudTests
     [TestFixture]
     public class ImageSizeSettingsManagerTests
     {
-        private IContainer container;
-        private ImageSizeSettingsManager sizeSettingManager;
-
         [SetUp]
         public void SetUp()
         {
@@ -27,6 +24,28 @@ namespace TagCloudTests
             builder.RegisterType<ImageSizeSettingsManager>().AsImplementedInterfaces();
             container = builder.Build();
             sizeSettingManager = container.Resolve<IInputManager>() as ImageSizeSettingsManager;
+        }
+
+        private IContainer container;
+        private ImageSizeSettingsManager sizeSettingManager;
+
+        [Test]
+        [TestCase("0 0", "0 0")]
+        [TestCase("1 1", "1 1")]
+        [TestCase("01 1", "1 1", TestName = "fix zero prefix width")]
+        [TestCase("1 01", "1 1", TestName = "fix zero prefix height")]
+        [TestCase("01 01", "1 1", TestName = "fix zero prefix width weight")]
+        [TestCase("1000 200", "1000 200", TestName = "normal")]
+        [TestCase("1000    200", "1000 200", TestName = "whitespace")]
+        [TestCase("1000\t200", "1000 200", TestName = "tab")]
+        [TestCase("1000\n200", "1000 200", TestName = "new line")]
+        public void Get_AfterSet(string input, string expected)
+        {
+            var result = sizeSettingManager.TrySet(input);
+            var got = sizeSettingManager.Get();
+
+            Assert.True(result.IsSuccess);
+            Assert.That(got, Is.EqualTo(expected));
         }
 
         [Test]
@@ -51,26 +70,5 @@ namespace TagCloudTests
 
             Assert.That(actual.IsSuccess, Is.EqualTo(expected));
         }
-        
-        [Test]
-        [TestCase("0 0", "0 0")]
-        [TestCase("1 1", "1 1")]
-        [TestCase("01 1", "1 1", TestName = "fix zero prefix width")]
-        [TestCase("1 01", "1 1", TestName = "fix zero prefix height")]
-        [TestCase("01 01","1 1", TestName = "fix zero prefix width weight")]
-        [TestCase("1000 200","1000 200", TestName = "normal")]
-        [TestCase("1000    200", "1000 200", TestName = "whitespace")]
-        [TestCase("1000\t200","1000 200", TestName = "tab")]
-        [TestCase("1000\n200", "1000 200", TestName = "new line")]
-        public void Get_AfterSet(string input, string expected)
-        {
-            var result = sizeSettingManager.TrySet(input);
-            var got = sizeSettingManager.Get();
-            
-            Assert.True(result.IsSuccess);
-            Assert.That(got, Is.EqualTo(expected));
-        }
-        
-        
     }
 }

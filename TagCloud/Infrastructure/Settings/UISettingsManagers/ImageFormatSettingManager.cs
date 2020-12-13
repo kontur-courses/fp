@@ -16,27 +16,33 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             this.settingsProvider = settingsProvider;
         }
 
-        public IEnumerable<string> GetOptions() =>
-            typeof(ImageFormat)
+        public IEnumerable<string> GetOptions()
+        {
+            return typeof(ImageFormat)
                 .GetProperties()
                 .Select(info => info.Name);
+        }
 
-        public string GetSelectedOption() => settingsProvider().Format.ToString();
+        public string GetSelectedOption()
+        {
+            return settingsProvider().Format.ToString();
+        }
 
         public string Title => "Image Format";
-        public string Help => $"Choose format";
+        public string Help => "Choose format";
+
         public Result<string> TrySet(string extension)
         {
             var propertyInfos = typeof(ImageFormat)
                 .GetProperties();
-     
+
             var newFormat = propertyInfos
                 .Where(info => info.Name.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
                 .Select(info => info.GetValue(settingsProvider().Format))
                 .Where(f => f is ImageFormat)
                 .Cast<ImageFormat>()
                 .SingleOrDefault();
-            
+
             if (newFormat == null)
                 return Result.Fail<string>($"{extension} is not supported extension");
             settingsProvider().Format = newFormat;

@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings;
-using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
 namespace TagCloud.App.CLI
 {
     public class TagCloudLayouterCli : IApp
     {
-        private readonly Func<Settings> settingsFactory;
-        private readonly IEnumerable<IInputManager> settingsManagers;
+        private readonly IIOBridge bridge;
         private readonly IImageGenerator generator;
         private readonly ImageSaver imageSaver;
-        
-        private readonly IIOBridge bridge;
+        private readonly Func<Settings> settingsFactory;
+        private readonly IEnumerable<IInputManager> settingsManagers;
 
-        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator generator, ImageSaver imageSaver, IIOBridge bridge)
+        public TagCloudLayouterCli(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers,
+            IImageGenerator generator, ImageSaver imageSaver, IIOBridge bridge)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
@@ -82,6 +81,7 @@ namespace TagCloud.App.CLI
                 bridge.WriteLine(imageResult.Error);
                 return;
             }
+
             bridge.WriteLine("Layout ready");
             var result = imageSaver.Save(imageResult.Value);
             bridge.WriteLine(result.IsSuccess ? result.Value : result.Error);

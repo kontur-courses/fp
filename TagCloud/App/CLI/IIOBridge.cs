@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace TagCloud.App.CLI
 {
     public interface IIOBridge

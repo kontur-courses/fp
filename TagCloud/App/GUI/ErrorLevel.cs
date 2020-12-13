@@ -5,6 +5,6 @@ namespace TagCloud.App.GUI
         Info,
         Warning,
         Error,
-        Fatal,
+        Fatal
     }
 }

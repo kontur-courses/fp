@@ -15,8 +15,10 @@ namespace TagCloud.Infrastructure.Settings
         IImageFormatSettingProvider,
         IColorPickerSettingProvider
     {
+        public Dictionary<WordType, Color> ColorMap { get; set; }
         public WordType[] ExcludedTypes { get; set; }
         public string Path { get; set; }
+        public ImageFormat Format { get; set; }
         public FontFamily FontFamily { get; set; }
         public int MinFontSize { get; set; }
         public int MaxFontSize { get; set; }
@@ -26,7 +28,6 @@ namespace TagCloud.Infrastructure.Settings
         public Point Center { get; set; }
         public int Increment { get; set; }
         public int WordCountThreshold { get; set; }
-        public ImageFormat Format { get; set; }
 
         public void Import(Settings settings)
         {
@@ -44,7 +45,5 @@ namespace TagCloud.Infrastructure.Settings
             Format = settings.Format;
             ColorMap = settings.ColorMap;
         }
-
-        public Dictionary<WordType, Color> ColorMap { get; set; }
     }
 }

@@ -19,10 +19,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 
         public Result<string> TrySet(string path)
         {
-            if (!File.Exists(path))
-            {
-                return Result.Fail<string>($"{path} not found");
-            }
+            if (!File.Exists(path)) return Result.Fail<string>($"{path} not found");
 
             fileSettingsProvider().Path = path;
             return Result.Ok("");

@@ -16,9 +16,6 @@ namespace TagCloudTests
     [TestFixture]
     public class ColorPickerTests
     {
-        private ColorPicker colorPicker;
-        private IContainer container;
-
         [SetUp]
         public void SetUp()
         {
@@ -32,14 +29,17 @@ namespace TagCloudTests
             builder.RegisterType<PlainEnvironment>().AsImplementedInterfaces();
             builder.RegisterType<SpiralStrategy>().As<ILayoutStrategy>();
             builder.RegisterType<TagCloudLayouter>().As<ILayouter<Size, Rectangle>>();
-            
+
             builder.RegisterType<Random>().SingleInstance();
             builder.RegisterType<ColorPicker>();
 
             container = builder.Build();
-            
+
             colorPicker = container.Resolve<ColorPicker>();
         }
+
+        private ColorPicker colorPicker;
+        private IContainer container;
 
         [Test]
         public void GetColor_PickRandomColors_ForDifferentWordTypes()
@@ -55,18 +55,19 @@ namespace TagCloudTests
                 Assert.True(isAdded, $"already contains color {color}");
             }
         }
-        
+
         [Test]
         public void GetColor_SameColor_ForWordOfSameType()
         {
             var typesFirstRun = new Dictionary<WordType, Color>();
             var typesSecondRun = new Dictionary<WordType, Color>();
-            
+
             for (var type = WordType.UNKNOWN; type < WordType.V; type++)
             {
                 var tokenInfo = new TokenInfo(type);
                 typesFirstRun.Add(tokenInfo.WordType, colorPicker.GetColor(tokenInfo));
             }
+
             for (var type = WordType.UNKNOWN; type < WordType.V; type++)
             {
                 var tokenInfo = new TokenInfo(type);

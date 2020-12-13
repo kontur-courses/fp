@@ -1,15 +1,14 @@
-using System;
 using System.IO;
 
 namespace TagCloud.App.CLI
 {
     public class TextBridge : IIOBridge
     {
-        private readonly TextWriter writer;
-        private readonly TextReader reader;
-        private readonly BridgeClearer clear;
-        
         public delegate void BridgeClearer();
+
+        private readonly BridgeClearer clear;
+        private readonly TextReader reader;
+        private readonly TextWriter writer;
 
         public TextBridge(TextWriter writer, TextReader reader, BridgeClearer clear)
         {
@@ -17,13 +16,25 @@ namespace TagCloud.App.CLI
             this.reader = reader;
             this.clear = clear;
         }
-        
-        public void Write(string line) => writer.Write(line);
 
-        public void WriteLine(string line) => writer.WriteLine(line);
+        public void Write(string line)
+        {
+            writer.Write(line);
+        }
 
-        public string Read() => reader.ReadLine();
+        public void WriteLine(string line)
+        {
+            writer.WriteLine(line);
+        }
 
-        public void Next() => clear();
+        public string Read()
+        {
+            return reader.ReadLine();
+        }
+
+        public void Next()
+        {
+            clear();
+        }
     }
 }

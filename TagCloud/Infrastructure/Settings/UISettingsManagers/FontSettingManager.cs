@@ -34,7 +34,11 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             return settingProvider().FontFamily.Name;
         }
 
-        public IEnumerable<string> GetOptions() => FontFamily.Families.Select(font => font.Name);
+        public IEnumerable<string> GetOptions()
+        {
+            return FontFamily.Families.Select(font => font.Name);
+        }
+
         public string GetSelectedOption()
         {
             return settingProvider().FontFamily.Name;

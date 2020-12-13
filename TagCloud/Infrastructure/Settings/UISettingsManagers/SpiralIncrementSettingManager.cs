@@ -7,6 +7,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
     public class SpiralIncrementSettingManager : IInputModifierManager
     {
+        private readonly Dictionary<string, Func<Result<string>>> modifiers;
         private readonly Func<ISpiralSettingsProvider> settingProvider;
 
         public SpiralIncrementSettingManager(Func<ISpiralSettingsProvider> settingProvider)
@@ -47,9 +48,10 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             return settingProvider().Increment.ToString();
         }
 
-        public IEnumerable<string> GetModifiers() => modifiers.Keys;
-
-        private readonly Dictionary<string, Func<Result<string>>> modifiers;
+        public IEnumerable<string> GetModifiers()
+        {
+            return modifiers.Keys;
+        }
 
         public Result<string> ApplyModifier(string modifier)
         {

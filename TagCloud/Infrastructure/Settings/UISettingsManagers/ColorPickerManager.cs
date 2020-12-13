@@ -11,11 +11,12 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
     public class ColorPickerSettingsManager : IMultiOptionsManager
     {
-        private readonly Regex regex;
-        private readonly Func<IColorPickerSettingProvider> colorSettings;
         private readonly ColorConverter colorConverter;
+        private readonly Func<IColorPickerSettingProvider> colorSettings;
+        private readonly Regex regex;
 
-        public ColorPickerSettingsManager(Func<IColorPickerSettingProvider> colorSettings, ColorConverter colorConverter)
+        public ColorPickerSettingsManager(Func<IColorPickerSettingProvider> colorSettings,
+            ColorConverter colorConverter)
         {
             this.colorSettings = colorSettings;
             this.colorConverter = colorConverter;
@@ -29,6 +30,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             Enum.GetValues(typeof(KnownColor))
                 .Cast<KnownColor>()
                 .Select(Color.FromKnownColor);
+
         public string Title => "Color";
         public string Help => $"Choose color for word types {string.Join(" ", SupportedWordTypes)}";
 
@@ -38,15 +40,39 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             return ProcessInput(inputDictionary);
         }
 
-        private Dictionary<string, string> ParseInput(string input) =>
-            regex.Matches(input)
+        public string Get()
+        {
+            return string.Join("; ",
+                colorSettings().ColorMap
+                    .Select(pair => $"{pair.Key} = {colorConverter.ConvertToString(pair.Value.Name)}"));
+        }
+
+        public Dictionary<string, IEnumerable<string>> GetOptions()
+        {
+            return SupportedWordTypes.ToDictionary(
+                type => type.ToString(),
+                type => SupportedColors.Select(color => colorConverter.ConvertToString(color.Name)));
+        }
+
+        public Dictionary<string, string> GetSelectedOptions()
+        {
+            return colorSettings().ColorMap.ToDictionary(
+                kv => kv.Key.ToString(),
+                pair => colorConverter.ConvertToString(pair.Value.Name));
+        }
+
+        private Dictionary<string, string> ParseInput(string input)
+        {
+            return regex.Matches(input)
                 .OfType<Match>()
                 .Select(m => (m.Groups["type"].Value, m.Groups["color"].Value))
                 .GroupBy(pair => pair.Item1, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(group => group.Key, group => group.Last().Item2);
+        }
 
-        private Result<string> ProcessInput(Dictionary<string, string> inputDictionary) =>
-            Result.Of(() =>
+        private Result<string> ProcessInput(Dictionary<string, string> inputDictionary)
+        {
+            return Result.Of(() =>
                 {
                     var failed = new List<string>();
                     foreach (var typeName in inputDictionary.Keys)
@@ -57,10 +83,12 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
             ).Then(failed => failed.Any()
                 ? Result.Fail<string>(string.Join("\n", failed))
                 : Result.Ok(""));
+        }
 
-        private Result<string> ProcessPair(string typeName, Dictionary<string, string> inputDictionary) =>
-            Result.Of(() => (WordType) Enum.Parse(typeof(WordType), typeName))
-                .ReplaceError(s=>$"Unknown WordType {typeName}")
+        private Result<string> ProcessPair(string typeName, Dictionary<string, string> inputDictionary)
+        {
+            return Result.Of(() => (WordType) Enum.Parse(typeof(WordType), typeName))
+                .ReplaceError(s => $"Unknown WordType {typeName}")
                 .Then(typeResult =>
                 {
                     var inputColor = inputDictionary[typeName];
@@ -76,20 +104,6 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                     // Console.Out.WriteLine("colorSettings() = {0}", colorSettings().ColorMap[type]);
                     return Result.Ok("");
                 });
-
-        public string Get() =>
-            string.Join("; ", colorSettings().ColorMap.Select(pair => $"{pair.Key} = {colorConverter.ConvertToString(pair.Value.Name)}"));
-
-        public Dictionary<string, IEnumerable<string>> GetOptions() =>
-            SupportedWordTypes.ToDictionary(
-                type => type.ToString(),
-                type => SupportedColors.Select(color => colorConverter.ConvertToString(color.Name)));
-
-        public Dictionary<string, string> GetSelectedOptions()
-        {
-            return colorSettings().ColorMap.ToDictionary(
-                kv => kv.Key.ToString(),
-                pair => colorConverter.ConvertToString(pair.Value.Name));
         }
     }
 }

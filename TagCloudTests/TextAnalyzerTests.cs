@@ -15,6 +15,7 @@ namespace TagCloudTests
     {
         private ContainerBuilder builder;
         private string myStemPath;
+
         [SetUp]
         public void Setup()
         {
@@ -25,33 +26,33 @@ namespace TagCloudTests
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
-            
+
             var fileName = "mystem";
             myStemPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "Release", fileName);
         }
-        
+
         [TestCase(@"привет
 я
 дом
 ",
-            new[] {"привет", "дом"}, 
+            new[] {"привет", "дом"},
             TestName = "Filter SPRO")]
         [TestCase(@"машины
 и
 машина
 ",
-            new[] {"машина", "машина"}, 
+            new[] {"машина", "машина"},
             TestName = "Filter CONJ")]
         [TestCase(@"в
 машина
 ",
-            new[] {"машина"}, 
+            new[] {"машина"},
             TestName = "Filter PR")]
         [TestCase(@"брошу
 бросил
 бросить
 ",
-            new[] {"бросать", "бросать", "бросать"}, 
+            new[] {"бросать", "бросать", "бросать"},
             TestName = "Filter base form")]
         public void Parse_Interesting(string text, string[] expected)
         {
@@ -61,12 +62,12 @@ namespace TagCloudTests
             builder.RegisterType<InterestingWordsConveyor>().As<IConveyor<string>>();
             Run(text, expected);
         }
-        
+
         [TestCase(@"СЛОВО
 Слово
 слово
 ",
-            new[] {"слово", "слово", "слово"}, 
+            new[] {"слово", "слово", "слово"},
             TestName = "To Lower")]
         public void Parse_ToLower(string text, string[] expected)
         {
@@ -80,7 +81,7 @@ namespace TagCloudTests
             var parser = container.Resolve<IReader<string>>();
             var settingsFactory = container.Resolve<Func<Settings>>();
             var path = Path.GetTempFileName();
-            settingsFactory().ExcludedTypes = new [] {WordType.CONJ, WordType.SPRO, WordType.PR};
+            settingsFactory().ExcludedTypes = new[] {WordType.CONJ, WordType.SPRO, WordType.PR};
             settingsFactory().Path = path;
             File.WriteAllText(path, text);
             var tokens = parser.ReadTokens();
@@ -90,7 +91,8 @@ namespace TagCloudTests
             CollectionAssert.AreEquivalent(expected, actual);
         }
 
-        private IEnumerable<(string, TokenInfo)> Analyze(IEnumerable<IConveyor<String>> conveyors, IEnumerable<String> tokens)
+        private IEnumerable<(string, TokenInfo)> Analyze(IEnumerable<IConveyor<string>> conveyors,
+            IEnumerable<string> tokens)
         {
             return conveyors.Aggregate(
                 tokens.Select(line => (line, new TokenInfo())),

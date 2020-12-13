@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.Infrastructure.Layout;
-using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.SettingsProviders;
 using TagCloud.Infrastructure.Text.Information;
 

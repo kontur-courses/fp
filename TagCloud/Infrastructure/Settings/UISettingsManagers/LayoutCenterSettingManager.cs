@@ -10,18 +10,18 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
 {
     public class LayoutCenterSettingManager : IMultiInputModifierManager
     {
-        private readonly Func<ISpiralSettingsProvider> settingsProvider;
         private readonly Regex regex;
-        private Dictionary<string, Dictionary<string, Action>> modifiers;
+        private readonly Func<ISpiralSettingsProvider> settingsProvider;
+        private readonly Dictionary<string, Dictionary<string, Action>> modifiers;
 
         public LayoutCenterSettingManager(Func<ISpiralSettingsProvider> settingsProvider)
         {
             this.settingsProvider = settingsProvider;
             regex = new Regex(@"^(?<x>\d+)\s+(?<y>\d+)$");
-            modifiers = new Dictionary<string, Dictionary<string, Action>>()
+            modifiers = new Dictionary<string, Dictionary<string, Action>>
             {
                 {
-                    "X", new Dictionary<string, Action>()
+                    "X", new Dictionary<string, Action>
                     {
                         {
                             "-10", () => settingsProvider().Center += new Size(-10, 0)
@@ -34,11 +34,11 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                         },
                         {
                             "+10", () => settingsProvider().Center += new Size(10, 0)
-                        },
+                        }
                     }
                 },
                 {
-                    "Y", new Dictionary<string, Action>()
+                    "Y", new Dictionary<string, Action>
                     {
                         {
                             "-10", () => settingsProvider().Center += new Size(0, -10)
@@ -51,9 +51,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                         },
                         {
                             "+10", () => settingsProvider().Center += new Size(0, +10)
-                        },
+                        }
                     }
-                },
+                }
             };
         }
 

@@ -8,14 +8,10 @@ using Gdk;
 using Gtk;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
-using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 using TagCloud.Infrastructure.Text.Information;
-using Application = Gtk.Application;
-using Button = Gtk.Button;
 using Color = System.Drawing.Color;
 using Image = System.Drawing.Image;
-using Label = Gtk.Label;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
 using Window = Gtk.Window;
 
@@ -23,13 +19,14 @@ namespace TagCloud.App.GUI
 {
     internal class TagCloudLayouterGui : IApp
     {
-        private readonly Func<Settings> settingsFactory;
-        private readonly IEnumerable<IInputManager> settingsManagers;
+        private readonly ColorConverter colorConverter;
         private readonly IImageGenerator imageGenerator;
         private readonly ImageSaver imageSaver;
-        private readonly ColorConverter colorConverter;
+        private readonly Func<Settings> settingsFactory;
+        private readonly IEnumerable<IInputManager> settingsManagers;
 
-        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers, IImageGenerator imageGenerator, ImageSaver imageSaver, ColorConverter colorConverter)
+        public TagCloudLayouterGui(Func<Settings> settingsFactory, IEnumerable<IInputManager> settingsManagers,
+            IImageGenerator imageGenerator, ImageSaver imageSaver, ColorConverter colorConverter)
         {
             this.settingsFactory = settingsFactory;
             this.settingsManagers = settingsManagers;
@@ -84,7 +81,7 @@ namespace TagCloud.App.GUI
                 box.Add(GetWidget(manager));
                 box.PackStart(new VSeparator(), false, false, 10);
             }
-            
+
             var okBox = new HBox();
             okBox.PackStart(new Arrow(ArrowType.Right, ShadowType.Out), true, true, 10);
             var okButton = new Button("ok");
@@ -105,7 +102,7 @@ namespace TagCloud.App.GUI
             var infoBox = new HBox();
             var title = new Label
             {
-                UseMarkup = true, 
+                UseMarkup = true,
                 Markup = $"<span font='large' weight='bold'>{manager.Title}</span>"
             };
 
@@ -132,6 +129,7 @@ namespace TagCloud.App.GUI
                     AddManger(manager, inputBox, padding);
                     break;
             }
+
             return settings;
         }
 
@@ -139,21 +137,19 @@ namespace TagCloud.App.GUI
         {
             var dropdown = new ComboBoxText();
             containerBox.PackStart(dropdown, true, true, padding);
-            foreach (var (option, id) in manager
+            foreach (var (option, _) in manager
                 .GetOptions()
                 .Select((s, i) => (s, i)))
-            {
                 dropdown.Append(option, option);
-            }
 
             dropdown.SetActiveId(manager.GetSelectedOption());
-            
+
             dropdown.Changed += (o, args) => OnValueSet(
                 manager,
                 () => dropdown.ActiveText,
                 value => dropdown.SetActiveId(manager.GetSelectedOption()))(o, args);
         }
-        
+
         private void AddManger(IInputManager manager, Box containerBox, uint padding)
         {
             var table = new TextTagTable();
@@ -162,11 +158,11 @@ namespace TagCloud.App.GUI
             containerBox.PackStart(textBox, true, true, padding);
             textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
             textBox.FocusOutEvent += (o, args) => OnValueSet(
-                manager, 
-                () => buffer.Text, 
+                manager,
+                () => buffer.Text,
                 value => buffer.Text = value)(o, args);
         }
-        
+
         private void AddManger(IMultiInputModifierManager manager, Box containerBox, uint padding)
         {
             var hbox = new HBox();
@@ -175,8 +171,8 @@ namespace TagCloud.App.GUI
             var textBox = new TextView(buffer);
             textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
             textBox.FocusOutEvent += (o, args) => OnValueSet(
-                manager, 
-                () => buffer.Text, 
+                manager,
+                () => buffer.Text,
                 value => buffer.Text = value)(o, args);
             hbox.PackStart(textBox, true, true, padding);
             var vbox = new VBox();
@@ -199,13 +195,14 @@ namespace TagCloud.App.GUI
                     };
                     hBox.PackStart(button, false, false, 0);
                 }
+
                 vbox.PackStart(hBox, true, true, 0);
             }
-            
+
             hbox.PackStart(vbox, true, true, padding);
             containerBox.PackStart(hbox, true, true, padding);
         }
-        
+
         private void AddManger(IInputModifierManager manager, Box containerBox, uint padding)
         {
             var hbox = new HBox();
@@ -214,8 +211,8 @@ namespace TagCloud.App.GUI
             var textBox = new TextView(buffer);
             textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
             textBox.FocusOutEvent += (o, args) => OnValueSet(
-                manager, 
-                () => buffer.Text, 
+                manager,
+                () => buffer.Text,
                 value => buffer.Text = value)(o, args);
             hbox.PackStart(textBox, true, true, padding);
 
@@ -230,8 +227,8 @@ namespace TagCloud.App.GUI
                     buffer.Text = manager.Get();
                 };
                 hbox.PackStart(button, true, true, padding);
-                
             }
+
             containerBox.PackStart(hbox, true, true, padding);
         }
 
@@ -240,13 +237,11 @@ namespace TagCloud.App.GUI
             var managerOptions = manager.GetOptions();
             foreach (var optionName in managerOptions.Keys)
             {
-                var hBox = new HBox(); 
+                var hBox = new HBox();
                 var dropdown = BuildDropdown(managerOptions[optionName]);
                 var wordType = (WordType) Enum.Parse(typeof(WordType), optionName);
                 if (settingsFactory().ColorMap.TryGetValue(wordType, out var chosenColor))
-                {
                     dropdown.SetActiveId(GetColorName(chosenColor));
-                }
                 dropdown.Changed += (o, args) => OnValueSet(
                     manager,
                     () => $"{optionName} = {dropdown.ActiveText}",
@@ -255,22 +250,22 @@ namespace TagCloud.App.GUI
                         if (manager.GetSelectedOptions().TryGetValue(optionName, out var selectedValue))
                             dropdown.SetActiveId(selectedValue);
                     })(o, args);
-                
+
                 hBox.PackStart(dropdown, true, true, 0);
                 hBox.PackStart(new Label(optionName), true, true, 0);
                 containerBox.PackStart(hBox, true, true, 1);
             }
         }
 
-        private string GetColorName(Color color) => colorConverter.ConvertToString(color.Name);
+        private string GetColorName(Color color)
+        {
+            return colorConverter.ConvertToString(color.Name);
+        }
 
         private ComboBoxText BuildDropdown(IEnumerable<string> options)
         {
             var dropdown = new ComboBoxText();
-            foreach (var option in options)
-            {
-                dropdown.Append(option, option);
-            }
+            foreach (var option in options) dropdown.Append(option, option);
 
             return dropdown;
         }
@@ -296,7 +291,7 @@ namespace TagCloud.App.GUI
             var box = new VBox();
             box.PackStart(new Label(info), false, false, 10);
             box.PackStart(new VSeparator(), false, false, 10);
-                    
+
             var okBox = new HBox();
             var okButton = new Button("ok");
             okButton.Pressed += (o, eventArgs) => { window.Close(); };

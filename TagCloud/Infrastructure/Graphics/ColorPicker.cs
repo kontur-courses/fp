@@ -9,9 +9,9 @@ namespace TagCloud.Infrastructure.Graphics
     public class ColorPicker
     {
         private const int MaxColorValue = 256;
+        private readonly Func<IColorPickerSettingProvider> colorMapProvider;
         private readonly Random random;
         private readonly Dictionary<WordType, Color> wordTypeColorMap;
-        private readonly Func<IColorPickerSettingProvider> colorMapProvider;
 
         public ColorPicker(Random random, Func<IColorPickerSettingProvider> colorMapProvider)
         {
@@ -28,7 +28,7 @@ namespace TagCloud.Infrastructure.Graphics
             foreach (var pair in wordTypeColorMap)
                 colorMapProvider().ColorMap[pair.Key] = pair.Value;
         }
-        
+
         public Color GetColor(TokenInfo info)
         {
             UpdateColors();

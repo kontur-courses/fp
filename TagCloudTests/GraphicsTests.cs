@@ -16,7 +16,7 @@ using TagCloud.Infrastructure.Text.Conveyors;
 
 namespace TagCloudTests
 {
-    public class MockReader: IReader<string>
+    public class MockReader : IReader<string>
     {
         private readonly IEnumerable<string> words;
 
@@ -30,13 +30,10 @@ namespace TagCloudTests
             return words;
         }
     }
+
     [TestFixture]
     public class GraphicsTests
     {
-        private ContainerBuilder builder;
-        private Image image1;
-        private Image image2;
-
         [SetUp]
         public void SetUp()
         {
@@ -71,39 +68,6 @@ namespace TagCloudTests
             builder.RegisterType<ImageSizeSettingsManager>().AsImplementedInterfaces();
         }
 
-
-        [Test]
-        public void GenerationOnSameSettings_ImagesAreEqual()
-        {
-            var words = new[]
-            {
-                "компьютер", "компьютер", "компьютер",
-                "компьютер", "компьютер", "компьютер", 
-                "компьютер", "компьютер", "компьютер", 
-                "компьютер", "компьютер", "компьютер",
-                
-                "компьютер", "компьютер", "компьютер",
-                "компьютер", "компьютер", "компьютер", 
-                "компьютер", "компьютер", "компьютер", 
-                "компьютер", "компьютер", "компьютер",
-                "слон", "слон", "слон", "слон", "слон",
-                "слон", "слон", "слон", "слон", "слон",
-                "слон", "слон", "слон", "слон", "слон",
-                "слон", "слон", "слон", "слон", "слон",
-                "слон", "слон", "слон", "слон", "слон",
-            };
-            builder.RegisterType<MockReader>().WithParameter("words", words).As<IReader<string>>();
-            var container = builder.Build();
-            var settingsFactory = container.Resolve<Func<Settings>>();
-            var generator = container.Resolve<IImageGenerator>();
-            settingsFactory().Import(Program.GetDefaultSettings());
-            
-            image1 = generator.Generate().GetValueOrThrow();
-            image2 = generator.Generate().GetValueOrThrow();
-            
-            ImageAssert.AreEqual((Bitmap) image1, (Bitmap) image2);
-        }
-
         [TearDown]
         public void TearDown()
         {
@@ -119,23 +83,60 @@ namespace TagCloudTests
             Directory.CreateDirectory(path);
             path = Path.Combine(path, TestContext.CurrentContext.Test.Name);
             Directory.CreateDirectory(path);
-            
+
             image1.Save(Path.Combine(path, GetName(image1)));
             image2.Save(Path.Combine(path, GetName(image1)));
-            
+
             using (var outputFile = new StreamWriter(Path.Combine(path, "StackTrace.txt")))
             {
                 outputFile.WriteLine(TestContext.CurrentContext.Result.Message);
                 outputFile.WriteLine(TestContext.CurrentContext.Result.StackTrace);
             }
-            
+
             image1.Dispose();
             image2.Dispose();
         }
 
+        private ContainerBuilder builder;
+        private Image image1;
+        private Image image2;
+
         private string GetName(Image image)
         {
             return $"({image.Width}x{image.Height})[{Guid.NewGuid()}].bmp";
+        }
+
+
+        [Test]
+        public void GenerationOnSameSettings_ImagesAreEqual()
+        {
+            var words = new[]
+            {
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+                "компьютер", "компьютер", "компьютер",
+                "слон", "слон", "слон", "слон", "слон",
+                "слон", "слон", "слон", "слон", "слон",
+                "слон", "слон", "слон", "слон", "слон",
+                "слон", "слон", "слон", "слон", "слон",
+                "слон", "слон", "слон", "слон", "слон"
+            };
+            builder.RegisterType<MockReader>().WithParameter("words", words).As<IReader<string>>();
+            var container = builder.Build();
+            var settingsFactory = container.Resolve<Func<Settings>>();
+            var generator = container.Resolve<IImageGenerator>();
+            settingsFactory().Import(Program.GetDefaultSettings());
+
+            image1 = generator.Generate().GetValueOrThrow();
+            image2 = generator.Generate().GetValueOrThrow();
+
+            ImageAssert.AreEqual((Bitmap) image1, (Bitmap) image2);
         }
     }
 }

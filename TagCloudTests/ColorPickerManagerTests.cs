@@ -17,9 +17,6 @@ namespace TagCloudTests
     [TestFixture]
     public class ColorPickerManagerTests
     {
-        private IMultiOptionsManager colorPicker;
-        private IContainer container;
-
         [SetUp]
         public void SetUp()
         {
@@ -33,21 +30,24 @@ namespace TagCloudTests
             builder.RegisterType<PlainEnvironment>().AsImplementedInterfaces();
             builder.RegisterType<SpiralStrategy>().As<ILayoutStrategy>();
             builder.RegisterType<TagCloudLayouter>().As<ILayouter<Size, Rectangle>>();
-            
+
             builder.RegisterType<Random>().SingleInstance();
             builder.RegisterType<ColorPicker>();
             builder.RegisterType<ColorConverter>();
             builder.RegisterType<ColorPickerSettingsManager>().AsImplementedInterfaces();
-            
+
             container = builder.Build();
-            
-            
+
+
             var settings = container.Resolve<Settings>();
             settings.Import(new Settings {ColorMap = new Dictionary<WordType, Color>()});
-            
+
             colorPicker = container.Resolve<IMultiOptionsManager>();
         }
-        
+
+        private IMultiOptionsManager colorPicker;
+        private IContainer container;
+
         [TestCase("A=White", true, TestName = "Correct pair")]
         [TestCase("A=asdasdasd", false, TestName = "Correct wordType, incorrect color")]
         [TestCase("asdasdasd=White", false, TestName = "Incorrect wordType, correct color")]
@@ -56,8 +56,21 @@ namespace TagCloudTests
         public void TrySet_CheckIsSuccess_OnUserInput(string input, bool expected)
         {
             var result = colorPicker.TrySet(input);
-            
+
             Assert.That(result.IsSuccess, Is.EqualTo(expected));
+        }
+
+        [TestCase("A", "White")]
+        [TestCase("V", "Black")]
+        public void GetSelectedOptions_AfterSet(string type, string expectedColor)
+        {
+            colorPicker.TrySet($"{type}={expectedColor}");
+
+            var actual = colorPicker.GetSelectedOptions();
+
+            CollectionAssert.IsNotEmpty(actual);
+            Assert.That(actual.TryGetValue(type, out var actualColor), Is.True);
+            Assert.That(actualColor, Is.EqualTo(expectedColor));
         }
 
         [Test]
@@ -67,19 +80,6 @@ namespace TagCloudTests
 
             CollectionAssert.IsNotEmpty(result);
         }
-        
-        [TestCase("A", "White")]
-        [TestCase("V", "Black")]
-        public void GetSelectedOptions_AfterSet(string type, string expectedColor)
-        {
-            colorPicker.TrySet($"{type}={expectedColor}");
-
-            var actual = colorPicker.GetSelectedOptions();
-            
-            CollectionAssert.IsNotEmpty(actual);
-            Assert.That(actual.TryGetValue(type, out var actualColor), Is.True);
-            Assert.That(actualColor, Is.EqualTo(expectedColor));
-        }
 
         [Test]
         public void TrySet_KeepsValidOnly()
@@ -88,7 +88,7 @@ namespace TagCloudTests
             colorPicker.TrySet(input);
 
             var actual = colorPicker.GetSelectedOptions();
-            
+
             CollectionAssert.IsNotEmpty(actual);
             Assert.That(actual.TryGetValue("A", out var actualColor), Is.True);
             Assert.That(actualColor, Is.EqualTo("White"));
@@ -96,7 +96,7 @@ namespace TagCloudTests
             Assert.That(actualColor, Is.EqualTo("Black"));
             Assert.That(actual.TryGetValue("ADV", out actualColor), Is.False);
         }
-        
+
         [Test]
         public void TrySet_SameKeyIgnoreCase_KeepsLast()
         {
@@ -104,7 +104,7 @@ namespace TagCloudTests
             colorPicker.TrySet(input);
 
             var actual = colorPicker.GetSelectedOptions();
-            
+
             CollectionAssert.IsNotEmpty(actual);
             Assert.That(actual.Count, Is.EqualTo(1));
             Assert.That(actual.TryGetValue("A", out var actualColor), Is.True);

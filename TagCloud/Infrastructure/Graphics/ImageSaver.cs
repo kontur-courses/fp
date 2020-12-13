@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security;
 
 namespace TagCloud.Infrastructure.Graphics
@@ -9,6 +8,7 @@ namespace TagCloud.Infrastructure.Graphics
     public class ImageSaver
     {
         private readonly Func<Settings.Settings> settingsFactory;
+
         public ImageSaver(Func<Settings.Settings> settingsFactory)
         {
             this.settingsFactory = settingsFactory;
@@ -30,21 +30,24 @@ namespace TagCloud.Infrastructure.Graphics
             }
             catch (NotSupportedException)
             {
-                return Result.Fail<string>($"Colon (:) in path is not allowed ");
+                return Result.Fail<string>("Colon (:) in path is not allowed ");
             }
             catch (PathTooLongException)
             {
-                return Result.Fail<string>($"Path is too long");
+                return Result.Fail<string>("Path is too long");
             }
             catch
             {
                 // todo Logger.fatal();
                 return Result.Fail<string>("Something went wrong");
             }
-            
+
             return $"Image saved into {path}";
         }
 
-        private static string SetExtension(string filename, string extension) => Path.ChangeExtension(filename, extension);
+        private static string SetExtension(string filename, string extension)
+        {
+            return Path.ChangeExtension(filename, extension);
+        }
     }
 }

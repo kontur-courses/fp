@@ -10,18 +10,18 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
     public class ImageSizeSettingsManager : IMultiInputModifierManager
     {
         private readonly Func<IImageSettingsProvider> imageSettingsProvider;
-        private readonly Regex regex;
 
         private readonly Dictionary<string, Dictionary<string, Action>> modifiers;
+        private readonly Regex regex;
 
         public ImageSizeSettingsManager(Func<IImageSettingsProvider> imageSettingsProvider)
         {
             this.imageSettingsProvider = imageSettingsProvider;
             regex = new Regex(@"^(?<width>\d+)\s+(?<height>\d+)$");
-            modifiers = new Dictionary<string, Dictionary<string, Action>>()
+            modifiers = new Dictionary<string, Dictionary<string, Action>>
             {
                 {
-                    "Width", new Dictionary<string, Action>()
+                    "Width", new Dictionary<string, Action>
                     {
                         {
                             "-10", () => imageSettingsProvider().Width -= 10
@@ -34,11 +34,11 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                         },
                         {
                             "+10", () => imageSettingsProvider().Width += 10
-                        },
+                        }
                     }
                 },
                 {
-                    "Height", new Dictionary<string, Action>()
+                    "Height", new Dictionary<string, Action>
                     {
                         {
                             "-10", () => imageSettingsProvider().Height -= 10
@@ -51,9 +51,9 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                         },
                         {
                             "+10", () => imageSettingsProvider().Height += 10
-                        },
+                        }
                     }
-                },
+                }
             };
         }
 
