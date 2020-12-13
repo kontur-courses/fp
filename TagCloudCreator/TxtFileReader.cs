@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ResultOf;
 
 namespace TagCloudCreator
 {
@@ -6,7 +7,7 @@ namespace TagCloudCreator
     {
         public string[] Types { get; } = {".txt"};
 
-        public string[] ReadAllLinesFromFile(string path)
+        public Result<string[]> ReadAllLinesFromFile(string path)
         {
             return File.ReadAllLines(path);
         }

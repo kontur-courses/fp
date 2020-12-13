@@ -76,11 +76,12 @@ namespace TagCloudGUIClient
                     layouters.First(x => x.Name == (string) layouterSelector.SelectedItem)
                         .Create(new Point(ImageSize / 2)))
                 .Then(layouter =>
-                    pictureBox1.Image = cloudPrinter.DrawCloud(path,
+                    cloudPrinter.DrawCloud(path,
                         layouter,
                         ImageSize,
                         fontFamily,
-                        colorSelector.GetValueOrThrow()));
+                        colorSelector.GetValueOrThrow()))
+                .Then(bitmap => pictureBox1.Image = bitmap);
         }
 
         private bool AllSelected()

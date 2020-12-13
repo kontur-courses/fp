@@ -1,8 +1,10 @@
-﻿namespace TagCloudCreator
+﻿using ResultOf;
+
+namespace TagCloudCreator
 {
     public interface IFileReader
     {
         string[] Types { get; }
-        public string[] ReadAllLinesFromFile(string path);
+        public Result<string[]> ReadAllLinesFromFile(string path);
     }
 }

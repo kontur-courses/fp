@@ -3,6 +3,7 @@ using System.Linq;
 using CloudLayouters;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 using TagCloudCreator;
 
 namespace TagCloudTests
@@ -14,10 +15,10 @@ namespace TagCloudTests
         {
             var imageSize = new Size(1920, 1080);
             var cloudPrinter = new CloudPrinter(new[] {new TxtFileReader()});
-            var bitmap = cloudPrinter.DrawCloud("test.txt", new RectangleLayouter(new Point(imageSize / 2)), imageSize,
-                FontFamily.Families.First(x => x.Name == "Arial"), new SingleColorSelector(Color.Black));
             var correctResult = (Bitmap) Image.FromFile("test.png");
-            Comparison(bitmap, correctResult).Should().BeTrue();
+            cloudPrinter.DrawCloud("test.txt", new RectangleLayouter(new Point(imageSize / 2)), imageSize,
+                    FontFamily.Families.First(x => x.Name == "Arial"), new SingleColorSelector(Color.Black))
+                .Then(bitmap => Comparison(bitmap, correctResult).Should().BeTrue());
         }
 
         private bool Comparison(Bitmap first, Bitmap second)

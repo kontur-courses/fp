@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using CloudLayouters;
+using ResultOf;
 
 namespace TagCloudCreator
 {
@@ -16,7 +17,8 @@ namespace TagCloudCreator
             this.readers = readers;
         }
 
-        private static Bitmap DrawCloud(IEnumerable<DrawingWord> words, Size imageSize, IColorSelector colorSelector,
+        private static Result<Bitmap> DrawCloud(IEnumerable<DrawingWord> words, Size imageSize,
+            IColorSelector colorSelector,
             IWordPainter wordPainter)
         {
             var cloud = new Bitmap(imageSize.Width, imageSize.Height);
@@ -28,20 +30,30 @@ namespace TagCloudCreator
             return cloud;
         }
 
-        public Bitmap DrawCloud(string pathToWordsFile, BaseCloudLayouter layouter, Size imageSize,
+        public Result<Bitmap> DrawCloud(string pathToWordsFile, BaseCloudLayouter layouter, Size imageSize,
             FontFamily fontFamily, IColorSelector colorSelector, IWordPainter? wordPainter = null)
         {
             wordPainter ??= new SimpleWordPainter();
             layouter.ClearLayout();
             if (!File.Exists(pathToWordsFile))
-                throw new FileNotFoundException();
-            var ext = Path.GetExtension(pathToWordsFile);
-            var reader = readers.First(x => x.Types.Contains(ext));
-            var interestingWords = WordPreparer.GetInterestingWords(reader.ReadAllLinesFromFile(pathToWordsFile));
-            var statistic = WordPreparer.GetWordsStatistic(interestingWords);
-            return DrawCloud(RectanglesForWordsCreator.GetReadyWords(statistic, layouter, fontFamily, wordPainter),
-                imageSize,
-                colorSelector, wordPainter);
+                return Result.Fail<Bitmap>($"File {pathToWordsFile} not found");
+            var interestingWords =
+                Result.Of(() => Path.GetExtension(pathToWordsFile))
+                    .Then(ext => readers.First(x => x.Types.Contains(ext)))
+                    .Then(reader => reader.ReadAllLinesFromFile(pathToWordsFile))
+                    .Then(WordPreparer.GetInterestingWords);
+            var statistic = interestingWords.Then(words => WordPreparer.GetWordsStatistic(words));
+            return statistic.Then(_ =>
+                    DrawCloud(
+                        RectanglesForWordsCreator.GetReadyWords(
+                            statistic.GetValueOrThrow(),
+                            layouter,
+                            fontFamily,
+                            wordPainter),
+                        imageSize,
+                        colorSelector,
+                        wordPainter))
+                .GetValueOrThrow();
         }
     }
 }

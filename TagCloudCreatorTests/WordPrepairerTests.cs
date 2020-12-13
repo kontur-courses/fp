@@ -12,7 +12,8 @@ namespace TagCloudTests
         public void GetInterestingWords_NounsInDifferentForm_NounsInDefaultForm()
         {
             var returnedWords =
-                WordPreparer.GetInterestingWords(new[] {"инженеры", "коты", "ИнЖеНЕров", "Кота", "о коте"});
+                WordPreparer.GetInterestingWords(new[] {"инженеры", "коты", "ИнЖеНЕров", "Кота", "о коте"})
+                    .GetValueOrThrow();
             returnedWords.All(x => x == "инженер" || x == "кот").Should().BeTrue();
             returnedWords.Length.Should().Be(5);
         }
@@ -20,7 +21,8 @@ namespace TagCloudTests
         [Test]
         public void GetInterestingWords_BoringWords_EmptyArray()
         {
-            WordPreparer.GetInterestingWords("а но ты я оно нет да это то для когда и".Split(' ')).Length.Should()
+            WordPreparer.GetInterestingWords("а но ты я оно нет да это то для когда и".Split(' ')).GetValueOrThrow()
+                .Length.Should()
                 .Be(0);
         }
 

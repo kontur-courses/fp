@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CloudLayouters\CloudLayouters.csproj" />
+      <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj" />
     </ItemGroup>
 
     <ItemGroup>
