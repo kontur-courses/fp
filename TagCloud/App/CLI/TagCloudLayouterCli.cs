@@ -75,10 +75,16 @@ namespace TagCloud.App.CLI
 
         private void OnGenerateState(State sender, EventArgs args)
         {
-            using var image = generator.Generate();
+            var imageResult = generator.Generate();
+            if (!imageResult.IsSuccess)
+            {
+                bridge.WriteLine(imageResult.Error);
+                return;
+            }
             bridge.WriteLine("Layout ready");
-            var result = imageSaver.Save(image);
+            var result = imageSaver.Save(imageResult.Value);
             bridge.WriteLine(result.IsSuccess ? result.Value : result.Error);
+            imageResult.Value.Dispose();
         }
 
         private void AddSettingsManagersTransitions(Automata automata, State from, IEnumerable<State> states)

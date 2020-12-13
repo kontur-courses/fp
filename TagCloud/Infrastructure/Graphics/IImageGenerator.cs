@@ -4,6 +4,6 @@ namespace TagCloud.Infrastructure.Graphics
 {
     public interface IImageGenerator
     {
-        public Image Generate();
+        public Result<Image> Generate();
     }
 }

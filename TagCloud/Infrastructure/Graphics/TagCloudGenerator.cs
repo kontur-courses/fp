@@ -20,7 +20,7 @@ namespace TagCloud.Infrastructure.Graphics
             this.painter = painter;
         }
 
-        public Image Generate()
+        public Result<Image> Generate()
         {
             var tokens = reader.ReadTokens();
             var analyzedTokens = conveyors.Aggregate(

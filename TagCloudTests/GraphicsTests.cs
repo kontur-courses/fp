@@ -98,8 +98,8 @@ namespace TagCloudTests
             var generator = container.Resolve<IImageGenerator>();
             settingsFactory().Import(Program.GetDefaultSettings());
             
-            image1 = generator.Generate();
-            image2 = generator.Generate();
+            image1 = generator.Generate().GetValueOrThrow();
+            image2 = generator.Generate().GetValueOrThrow();
             
             ImageAssert.AreEqual((Bitmap) image1, (Bitmap) image2);
         }

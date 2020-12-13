@@ -204,13 +204,13 @@ namespace TagCloud.App.GUI
 
         private EventHandler OnValueSet(IInputManager manager, Func<string> getInput, Action<string> setValue)
         {
-            return (o, args) =>  {
-                var result = manager.TrySet(getInput());
-                if (!result.IsSuccess) 
-                    ShowInfoWindow(ErrorLevel.Warning, result.Error);
-
-                setValue(manager.Get());
-            };
+            return (o, args) =>
+                Result.OfAction(() =>
+                    {
+                        var _ = manager.TrySet(getInput()).GetValueOrThrow();
+                        setValue(manager.Get());
+                    })
+                    .OnFail(s => ShowInfoWindow(ErrorLevel.Warning, s));
         }
 
         private void ShowInfoWindow(ErrorLevel level, string info)
@@ -247,55 +247,52 @@ namespace TagCloud.App.GUI
 
         private void OnGenerateButtonClicked(object sender, EventArgs args)
         {
-            var window = new Window("Settings");
-            window.BorderWidth = 30;
-            window.SetPosition(WindowPosition.Mouse);
-            window.Resizable = true;
-            var box = new VBox();
-
-            var image = imageGenerator.Generate();
-            var result = ToStream(image, settingsFactory().Format);
-            if (!result.IsSuccess)
-            {
-                ShowInfoWindow(ErrorLevel.Error, result.Error);
-                return;
-            }
-
-            var buf = new Pixbuf(result.Value);
-
-            buf = buf.ScaleSimple(500, 500, InterpType.Bilinear);
-            var img = new Gtk.Image(buf);
-            box.PackStart(img, false, false, 0);
-
-            var okBox = new HBox();
-            okBox.PackStart(new Arrow(ArrowType.None, ShadowType.None), true, true, 10);
-            var closeButton = new Button("discard");
-            closeButton.Pressed += (o, eventArgs) =>
-            {
-                image.Dispose();
-                window.Close();
-            };
-            var saveButton = new Button("save");
-            saveButton.Pressed += (o, eventArgs) =>
-            {
-                var result = imageSaver.Save(image);
-                if (result.IsSuccess)
+            Result.OfAction(() =>
                 {
-                    ShowInfoWindow(ErrorLevel.Info, result.Value);
-                }
-                else
-                {
-                    ShowInfoWindow(ErrorLevel.Error, result.Error);
-                }
-                image.Dispose();
-                window.Close();
-            };
-            okBox.PackStart(closeButton, false, false, 0);
-            okBox.PackStart(saveButton, false, false, 0);
-            box.PackStart(okBox, true, true, 0);
+                    var window = new Window("Settings");
+                    window.BorderWidth = 30;
+                    window.SetPosition(WindowPosition.Mouse);
+                    window.Resizable = true;
+                    var box = new VBox();
 
-            window.Add(box);
-            window.ShowAll();
+                    var image = imageGenerator.Generate().GetValueOrThrow();
+
+                    var stream = ToStream(image, settingsFactory().Format).GetValueOrThrow();
+
+                    var buf = new Pixbuf(stream);
+
+                    buf = buf.ScaleSimple(500, 500, InterpType.Bilinear);
+                    var img = new Gtk.Image(buf);
+                    box.PackStart(img, false, false, 0);
+
+                    var okBox = new HBox();
+                    okBox.PackStart(new Arrow(ArrowType.None, ShadowType.None), true, true, 10);
+                    var closeButton = new Button("discard");
+                    closeButton.Pressed += (o, eventArgs) =>
+                    {
+                        image.Dispose();
+                        window.Close();
+                    };
+                    var saveButton = new Button("save");
+                    saveButton.Pressed += (o, eventArgs) =>
+                    {
+                        var result = imageSaver.Save(image);
+                        if (result.IsSuccess)
+                            ShowInfoWindow(ErrorLevel.Info, result.Value);
+                        else
+                            ShowInfoWindow(ErrorLevel.Error, result.Error);
+
+                        image.Dispose();
+                        window.Close();
+                    };
+                    okBox.PackStart(closeButton, false, false, 0);
+                    okBox.PackStart(saveButton, false, false, 0);
+                    box.PackStart(okBox, true, true, 0);
+
+                    window.Add(box);
+                    window.ShowAll();
+                })
+                .OnFail(s => ShowInfoWindow(ErrorLevel.Error, s));
         }
 
         private static void Close(object obj, DeleteEventArgs e)
