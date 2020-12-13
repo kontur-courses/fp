@@ -7,14 +7,14 @@ namespace TagCloud.Tests
 {
     public class TextReaderTests
     {
-        private PathCreater pathCreater = new PathCreater();
+        private PathCreator pathCreator = new PathCreator();
         private TxtTextReader txtReader = new TxtTextReader();
         private DocxTextReader docxReader = new DocxTextReader();
         
         [Test]
         public void TxtTextReader_ReadStrings_OnCorrectFile()
         {
-            var readingResult = txtReader.ReadStrings(pathCreater.GetPathToFile("input.txt"));
+            var readingResult = txtReader.ReadStrings(pathCreator.GetPathToFile("input.txt"));
             readingResult.IsSuccess.Should().BeTrue();
             readingResult.Value.Should().HaveCount(24)
                 .And.Contain("кошка")
@@ -26,7 +26,7 @@ namespace TagCloud.Tests
         [Test]
         public void TxtTextReader_ReadStrings_ReturnCorrectFail_OnDirectory()
         {
-            var path = pathCreater.GetCurrentPath();
+            var path = pathCreator.GetCurrentPath();
             var readingResult = txtReader.ReadStrings(path);
             readingResult.IsSuccess.Should().BeFalse();
             readingResult.Error.Should().Contain(path).And.Contain("Is directory");
@@ -35,7 +35,7 @@ namespace TagCloud.Tests
         [Test]
         public void TxtTextReader_ReadStrings_ReturnCorrectFail_OnWrongDirectory()
         {
-            var path = pathCreater.GetCurrentPath();
+            var path = pathCreator.GetCurrentPath();
             var readingResult = txtReader.ReadStrings(path + "asdf\\input.txt");
             readingResult.IsSuccess.Should().BeFalse();
             readingResult.Error.Should().Contain(path).And.Contain("Directory not found");
@@ -44,7 +44,7 @@ namespace TagCloud.Tests
         [Test]
         public void DocxTextReader_ReadStrings_OnCorrectFile()
         {
-            var readingResult = docxReader.ReadStrings(pathCreater.GetPathToFile("input.docx"));
+            var readingResult = docxReader.ReadStrings(pathCreator.GetPathToFile("input.docx"));
             Console.WriteLine(readingResult.Error);
             readingResult.IsSuccess.Should().BeTrue();
             readingResult.Value.Should().HaveCount(25)
@@ -58,7 +58,7 @@ namespace TagCloud.Tests
         [Test]
         public void DocxTextReader_ReadStrings_ReturnCorrectFail_OnDirectory()
         {
-            var path = pathCreater.GetCurrentPath();
+            var path = pathCreator.GetCurrentPath();
             var readingResult = docxReader.ReadStrings(path);
             readingResult.IsSuccess.Should().BeFalse();
             readingResult.Error.Should().Contain(path).And.Contain("Is directory");
@@ -67,7 +67,7 @@ namespace TagCloud.Tests
         [Test]
         public void DocxTextReader_ReadStrings_ReturnCorrectFail_OnWrongDirectory()
         {
-            var path = pathCreater.GetCurrentPath();
+            var path = pathCreator.GetCurrentPath();
             var readingResult = docxReader.ReadStrings(path + "asdf\\input.docx");
             readingResult.IsSuccess.Should().BeFalse();
             readingResult.Error.Should().Contain(path).And.Contain("Directory not found");

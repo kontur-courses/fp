@@ -9,39 +9,39 @@ namespace TagCloud
     public class Visualizer: IVisualizer
     {
         private readonly ICanvas canvas;
-        private readonly IPathCreater creater;
-        private readonly ITagsCreater tagsCreater;
+        private readonly IPathCreator creator;
+        private readonly ITagsCreator tagsCreator;
         private readonly IBackgroundPainter backgroundPainter;
         private const double fontCoefficient = 0.6;
         
-        public Visualizer(ICanvas canvas, IPathCreater pathCreator, ITagsCreater tagsCreater, IBackgroundPainter backgroundPainter)
+        public Visualizer(ICanvas canvas, IPathCreator pathCreator, ITagsCreator tagsCreator, IBackgroundPainter backgroundPainter)
         {
             this.canvas = canvas;
-            creater = pathCreator;
-            this.tagsCreater = tagsCreater;
+            creator = pathCreator;
+            this.tagsCreator = tagsCreator;
             this.backgroundPainter = backgroundPainter;
         }
 
         public Result<string> Visualize(string filename, FontFamily fontFamily, Color stringColor)
         {
+            var getTagsResult = tagsCreator.GetTags(filename, canvas.Height);
+
+            return getTagsResult.Then(tags => DrawAndSaveTags(tags, fontFamily, stringColor));
+        }
+
+        private string DrawAndSaveTags(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color stringColor)
+        {
             var bitmap = new Bitmap(canvas.Width, canvas.Height);
             var graphics = Graphics.FromImage(bitmap);
-            var getTagsResult = tagsCreater.GetTags(filename, canvas.Height);
-            if (!getTagsResult.IsSuccess)
-            {
-                return Result.Fail<string>(getTagsResult.Error);
-            }
-
-            var tags = getTagsResult.Value;
             backgroundPainter.Draw(tags, canvas, graphics);
             DrawAllStrings(tags, fontFamily, stringColor, graphics);
             
-            var path = creater.GetNewPngPath();
+            var path = creator.GetNewPngPath();
             bitmap.Save(path);
             return path;
         }
         
-        private void DrawAllStrings(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color color, Graphics graphics)
+        private static void DrawAllStrings(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color color, Graphics graphics)
         {
             var textBrush = new SolidBrush(color);
             foreach (var (str, rectangle) in tags)
@@ -50,7 +50,7 @@ namespace TagCloud
             }
         }
 
-        private void DrawString(string str, Rectangle rectangle, FontFamily fontFamily, Brush textBrush, Graphics graphics)
+        private static void DrawString(string str, Rectangle rectangle, FontFamily fontFamily, Brush textBrush, Graphics graphics)
         {
             var x = rectangle.X;
             var y = rectangle.Y;

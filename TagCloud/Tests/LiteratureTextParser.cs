@@ -15,13 +15,13 @@ namespace TagCloud.Tests
         public void SetUp()
         {
             textReader = A.Fake<ITextReader>();
-            parser = new TextProcessing.LiteratureTextParser(new PathCreater(), textReader);
+            parser = new TextProcessing.LiteratureTextParser(new PathCreator(), textReader);
         }
         
         [Test]
         public void GetWords_ReturnFail_OnUncorrectPatCreator()
         {
-            var pathCreater = A.Fake<IPathCreater>();
+            var pathCreater = A.Fake<IPathCreator>();
             A.CallTo(() => pathCreater.GetCurrentPath()).Returns("Incorrect path");
             A.CallTo(() => textReader.ReadStrings(null))
                 .WithAnyArguments().Returns(new string[] {"asdf"});

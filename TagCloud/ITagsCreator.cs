@@ -5,7 +5,7 @@ using ResultOf;
 
 namespace TagCloud
 {
-    public interface ITagsCreater
+    public interface ITagsCreator
     {
         Result<List<Tuple<string, Rectangle>>> GetTags(string filename, int canvasHeight);
     }

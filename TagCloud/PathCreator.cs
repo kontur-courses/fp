@@ -3,7 +3,7 @@ using System.IO;
 
 namespace TagCloud
 {
-    public class PathCreater : IPathCreater
+    public class PathCreator : IPathCreator
     {
         public string GetCurrentPath()
         {

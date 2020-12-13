@@ -8,7 +8,7 @@ namespace TagCloud.TextProcessing
 {
     public class LiteratureTextParser : IWordParser
     {
-        private readonly IPathCreater creater;
+        private readonly IPathCreator creator;
         private readonly ITextReader reader;
         private static readonly char[] separators = {' ', '.', ',', ':', '!', '?'};
         private const int minWordLength = 3;
@@ -17,30 +17,31 @@ namespace TagCloud.TextProcessing
                 "очень", "более", "ничто", "кто", "он", "такой", "однако", "либо", "оный", "такой", "него"};
         
             
-        public LiteratureTextParser(IPathCreater creater, ITextReader reader)
+        public LiteratureTextParser(IPathCreator creator, ITextReader reader)
         {
-            this.creater = creater;
+            this.creator = creator;
             this.reader = reader;
         }
         
         public Result<string[]> GetWords(string inputFileName)
         {
-            var path = creater.GetCurrentPath();
+            var path = creator.GetCurrentPath();
             var dictionaryResult = GetDictionary(path);
             if (!dictionaryResult.IsSuccess)
             {
                 return Result.Fail<string[]>(dictionaryResult.Error);
             }
-            var readStringsResult = reader.ReadStrings(path + inputFileName);
-            if (!readStringsResult.IsSuccess)
-            {
-                return Result.Fail<string[]>(readStringsResult.Error);
-            }
             
-            return readStringsResult.Value
+            return reader.ReadStrings(path + inputFileName)
+                .Then(lines => NormalizeWords(lines, dictionaryResult.Value));
+        }
+
+        private static string[] NormalizeWords(string[] lines, WordList dictionary)
+        {
+            return lines
                 .SelectMany(line => line.Split(separators, StringSplitOptions.RemoveEmptyEntries))
                 .Select(word => word.ToLower())
-                .Select(word => GetRootForWord(word, dictionaryResult.Value))
+                .Select(word => GetRootForWord(word, dictionary))
                 .Where(word => !(word is null))
                 .Where(word => word.Length > minWordLength)
                 .Where(word => !unneccesaryWords.Contains(word))
@@ -54,18 +55,11 @@ namespace TagCloud.TextProcessing
 
         private static Result<WordList> GetDictionary(string path)
         {
-            try
+            if (File.Exists(path + "ru_RU.dic") && File.Exists(path + "ru_RU.aff"))
             {
                 return WordList.CreateFromFiles(path + "ru_RU.dic", path + "ru_RU.aff");
             }
-            catch (FileNotFoundException)
-            {
-                return Result.Fail<WordList>("Not found dictionaries (ru_RU.dic/ru_RU.aff) by path " + path);
-            }
-            catch (Exception e)
-            {
-                return Result.Fail<WordList>("Unhandled exception: " + e);
-            }
+            return Result.Fail<WordList>("Not found dictionaries (ru_RU.dic/ru_RU.aff) by path " + path);
         }
     }
 }

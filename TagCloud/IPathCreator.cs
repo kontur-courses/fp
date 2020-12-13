@@ -1,6 +1,6 @@
 ﻿namespace TagCloud
 {
-    public interface IPathCreater
+    public interface IPathCreator
     {
         string GetCurrentPath();
 

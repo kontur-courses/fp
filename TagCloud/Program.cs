@@ -2,6 +2,7 @@
 using System.Drawing;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
+using ResultOf;
 using TagCloud.BackgroundPainter;
 using TagCloud.Layout;
 using TagCloud.TextProcessing;
@@ -26,13 +27,10 @@ namespace TagCloud
             
             var visualizer = serviceProvider.GetService<IVisualizer>();
             var visualizeResult = visualizer.Visualize(CLI.FileName, CLI.StringFont, CLI.StringColor);
-            if (!visualizeResult.IsSuccess)
-            {
-                Console.WriteLine(visualizeResult.Error);
-                return 1;
-            }
+            visualizeResult
+                .OnFail(str => Console.WriteLine(visualizeResult.Error))
+                .Then(result => Console.WriteLine("Result saved to:\n" + visualizeResult.Value));
             
-            Console.WriteLine("Result saved to:\n" + visualizeResult.Value);
             return 0;
         }
         
@@ -40,14 +38,14 @@ namespace TagCloud
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<IPathCreater, PathCreater>();
+            services.AddSingleton<IPathCreator, PathCreator>();
             ConfigureTextReader(services, filename);
             services.AddSingleton<IWordParser, LiteratureTextParser>();
             services.AddSingleton<IFrequencyAnalyzer, FrequencyAnalyzer>();
             services.AddSingleton<ICanvas>(_ => new Canvas(size.Width, size.Height));
             services.AddSingleton<ISpiral, Spiral>();
             services.AddSingleton<ILayouter, Layouter>();
-            services.AddSingleton<ITagsCreater, TagsCreater>();
+            services.AddSingleton<ITagsCreator, TagsCreator>();
             ConfigureBackgroundPainterService(services, background);
             services.AddSingleton<IVisualizer, Visualizer>();
 

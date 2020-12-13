@@ -7,7 +7,7 @@ namespace TagCloud
 {
     public class ArgumentParser
     {
-        private static IPathCreater pathCreater = new PathCreater();
+        private static IPathCreator pathCreator = new PathCreator();
         
         public static Result<Background> GetBackground(string background)
         {
@@ -41,7 +41,7 @@ namespace TagCloud
 
         public static Result<string> CheckFileName(string fileName)
         {
-            if (!File.Exists(pathCreater.GetPathToFile(fileName)))
+            if (!File.Exists(pathCreator.GetPathToFile(fileName)))
             {
                 return Result.Fail<string>("Input file not found");
             }

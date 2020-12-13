@@ -8,14 +8,14 @@ using TagCloud.TextProcessing;
 
 namespace TagCloud
 {
-    public class TagsCreater: ITagsCreater
+    public class TagsCreator: ITagsCreator
     {
         private readonly IFrequencyAnalyzer frequencyAnalyzer;
         private readonly ILayouter layouter;
         private const double heightCoefficient = 8;
         private const double widthCoefficient = 0.7;
         
-        public TagsCreater(IFrequencyAnalyzer frequencyAnalyzer, ILayouter layouter)
+        public TagsCreator(IFrequencyAnalyzer frequencyAnalyzer, ILayouter layouter)
         {
             this.frequencyAnalyzer = frequencyAnalyzer;
             this.layouter = layouter;
@@ -24,19 +24,14 @@ namespace TagCloud
         public Result<List<Tuple<string, Rectangle>>> GetTags(string filename, int canvasHeight)
         {
             var frequenciesResult = frequencyAnalyzer.GetFrequencyDictionary(filename);
-            if (!frequenciesResult.IsSuccess)
-            {
-                return Result.Fail<List<Tuple<string, Rectangle>>>(frequenciesResult.Error);
-            }
-            var frequencies = frequenciesResult.Value;
-            var tagsCount = frequencies.Count;
-            return frequencies
-                .OrderByDescending(pair => pair.Value)
-                .Select(pair => GetTag(pair, canvasHeight, tagsCount))
-                .ToList();
+            return frequenciesResult.Then(frequencies =>
+                frequencies
+                    .OrderByDescending(pair => pair.Value)
+                    .Select(pair => GetTag(pair, canvasHeight))
+                    .ToList());
         }
 
-        private Tuple<string, Rectangle> GetTag(KeyValuePair<string, double> pair, int canvasHeight, int tagsCount)
+        private Tuple<string, Rectangle> GetTag(KeyValuePair<string, double> pair, int canvasHeight)
         {
             var frequency = pair.Value;
             var tagString = pair.Key;

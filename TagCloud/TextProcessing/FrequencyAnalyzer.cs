@@ -16,13 +16,11 @@ namespace TagCloud.TextProcessing
         public Result<Dictionary<string, double>> GetFrequencyDictionary(string fileName)
         {
             var wordsResult = parser.GetWords(fileName);
-            if (!wordsResult.IsSuccess)
-                return Result.Fail<Dictionary<string, double>>(wordsResult.Error);
-            return wordsResult
-                .Value
+
+            return wordsResult.Then(lines => lines
                 .GroupBy(str => str)
                 .ToDictionary(group => group.Key,
-                    group => group.Count() / (double) wordsResult.Value.Length);
+                    group => group.Count() / (double) wordsResult.Value.Length));
         }
     }
 }
