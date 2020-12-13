@@ -102,7 +102,6 @@ namespace TagCloud.App.CLI
                 };
                 state.Act += (sender, args) =>
                 {
-                    // todo TextWriter instead console
                     var result = manager.TrySet(args.Input);
                     bridge.WriteLine(!result.IsSuccess
                         ? result.Error

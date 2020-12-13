@@ -6,7 +6,6 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Graphics
 {
-    // todo settings with gui
     public class ColorPicker
     {
         private const int MaxColorValue = 256;
