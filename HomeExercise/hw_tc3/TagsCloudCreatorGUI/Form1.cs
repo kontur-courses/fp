@@ -13,7 +13,7 @@ namespace TagsCloudCreatorGUI
         public Form1()
         {
             InitializeComponent();
-            var scope = Configurator.GetContainer().BeginLifetimeScope();
+            var scope = Configurator.GetContainer().Value.BeginLifetimeScope();
             creator = scope.Resolve<TagsCloudCreator>();
         }
 

@@ -9,7 +9,7 @@ namespace TagsCloudContainer
         {
             var path = Path.GetDirectoryName(
                 Path.GetDirectoryName(Directory.GetCurrentDirectory()));
-            var scope = Configurator.GetContainer().BeginLifetimeScope();
+            var scope = Configurator.GetContainer().Value.BeginLifetimeScope();
             var creator = scope.Resolve<TagsCloudCreator>();
             creator.SetFontRandomColor();
             creator.SetImageFormat("png");
