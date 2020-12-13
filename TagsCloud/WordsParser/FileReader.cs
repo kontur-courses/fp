@@ -23,7 +23,7 @@ namespace TagsCloud.WordsParser
                 .Then(readWords => readWords.Invoke());
 
         private Result<IEnumerable<string>> ReadWordsFromTxt() =>
-            Result.Of(CheckFileExisting).Then(_ => File.ReadLines(path));
+            CheckFileExisting().Then(_ => File.ReadLines(path));
 
         private Result<bool> CheckFileExisting()
             => File.Exists(path) ? true : Result.Fail<bool>($"File {path} not found.");

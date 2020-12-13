@@ -6,7 +6,7 @@ using TagsCloud.Options;
 using TagsCloud.ResultOf;
 using TagsCloud.WordsParser;
 
-namespace TagsCloudrTests
+namespace TagsCloudTests
 {
     public class WordsAnalyzerTest
     {
@@ -60,6 +60,17 @@ namespace TagsCloudrTests
             var words = wordsAnalyzer.AnalyzeWords();
 
             words.Value.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void AnalyzeWordsShouldntBeSuccess_WenMystemLocationIncorrect()
+        {
+            options.MystemLocation = "incorrect";
+            wordsAnalyzer = new WordsAnalyzer(new Filter(options), wordReader);
+            wordReader.AddWords(new[] {"first", "second"});
+            var words = wordsAnalyzer.AnalyzeWords();
+
+            words.IsSuccess.Should().BeFalse();
         }
     }
 
