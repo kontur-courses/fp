@@ -23,7 +23,7 @@ namespace TagCloud.Drawers
             this.settings = settings;
         }
 
-        public Bitmap DrawTagCloud(IReadOnlyCollection<TagInfo> tags)
+        public Result<Bitmap> DrawTagCloud(IReadOnlyCollection<TagInfo> tags)
         {
             bitmap = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height);
             graphics = Graphics.FromImage(bitmap);
@@ -31,24 +31,48 @@ namespace TagCloud.Drawers
             
             if (settings.OrderByWeight)
                 tags = tags.OrderByDescending(t => t.Weight).ToArray();
-            foreach (var tag in tags)
-                DrawTag(tag);
-            
-            return bitmap;
+
+            var drawingResult = Result.Ok();
+            drawingResult = tags.Aggregate(drawingResult, (current, tag) => current.Then(_ => DrawTag(tag)));
+
+            return drawingResult.Then(_ => bitmap);
         }
 
-        private void DrawTag(TagInfo tag)
+        private Result<None> DrawTag(TagInfo tag)
         {
-            var font = GetFont(tag);
-            var occupiedRectangle = layouter.PutNextRectangle(MeasureStringSize(tag.Value, font)).Value;
-            FillRectangle(occupiedRectangle, settings.ForegroundColor);
-            DrawString(tag.Value, font, occupiedRectangle.Location, GetFontColor());
+            return GetFont(tag).Then(font => PlaceAndDrawTag(tag, font));
+        }
+
+        private Result<None> PlaceAndDrawTag(TagInfo tag, Font font)
+        {
+            return layouter
+                .PutNextRectangle(MeasureStringSize(tag.Value, font))
+                .Then(FitRectangleInBorders)
+                .Then(rectangle => 
+                {
+                    FillRectangle(rectangle, settings.ForegroundColor);
+                    DrawString(tag.Value, font, rectangle.Location, GetFontColor());
+                });
+        }
+
+        private Result<Rectangle> FitRectangleInBorders(Rectangle rectangle)
+        {
+            if (rectangle.X < 0 
+                || rectangle.Y < 0 
+                || rectangle.X + rectangle.Width >= settings.ImageSize.Width 
+                || rectangle.Y + rectangle.Height >= settings.ImageSize.Height)
+                return Result.Fail<Rectangle>("Tag cloud didn't fit on the image.\n" +
+                                              "Try increasing the image size or decreasing the font size");
+            return Result.Ok(rectangle);
         }
         
-        private Font GetFont(TagInfo tag)
+        private Result<Font> GetFont(TagInfo tag)
         {
             var fontSize = (int)((settings.MaxFontSize - settings.MinFontSize) * tag.Weight + settings.MinFontSize);
-            return new Font(settings.FontFamily, fontSize);
+            var font = new Font(settings.FontFamily, fontSize);
+            return font.FontFamily.Name != settings.FontFamily 
+                ? Result.Fail<Font>("Font wasn't found on the system.") 
+                : font;
         }
 
         private Size MeasureStringSize(string text, Font font)

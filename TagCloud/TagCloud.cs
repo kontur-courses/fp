@@ -8,10 +8,10 @@ namespace TagCloud
 {
     public class TagCloud
     {
-        private ITagDrawer drawer;
-        private ITextReader textReader;
-        private IWordsAnalyzer wordsAnalyzer;
-        private IImageSaver imageSaver;
+        private readonly ITagDrawer drawer;
+        private readonly ITextReader textReader;
+        private readonly IWordsAnalyzer wordsAnalyzer;
+        private readonly IImageSaver imageSaver;
         
         public TagCloud(ITagDrawer drawer, ITextReader textReader, IWordsAnalyzer wordsAnalyzer, IImageSaver imageSaver)
         {
@@ -23,10 +23,11 @@ namespace TagCloud
 
         public void MakeTagCloud()
         {
-            var words = textReader.ReadWords();
-            var tags = wordsAnalyzer.GetTags(words.Value);
-            var result = drawer.DrawTagCloud(tags.Value);
-            imageSaver.Save(result);
+            textReader.ReadWords()
+                .Then(words => wordsAnalyzer.GetTags(words))
+                .Then(tags => drawer.DrawTagCloud(tags))
+                .Then(bitmap => imageSaver.Save(bitmap))
+                .OnFail(Console.WriteLine);
         }
     }
 }

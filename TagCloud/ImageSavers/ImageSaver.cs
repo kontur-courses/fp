@@ -18,11 +18,11 @@ namespace TagCloud.ImageSavers
             extension = settings.Extension;
         }
 
-        public void Save(Bitmap bitmap)
+        public Result<None> Save(Bitmap bitmap) => Result.OfAction(() =>
         {
             var fullPath = $"{path}/{fileName}.{extension}";
             bitmap.Save(fullPath);
-            Console.WriteLine($"Tag cloud visualization saved to file {fullPath}");
-        }
+            Console.WriteLine($"Tag cloud visualization saved to file {fullPath}"); 
+        });
     }
 }

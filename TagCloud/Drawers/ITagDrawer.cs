@@ -6,6 +6,6 @@ namespace TagCloud.Drawers
 {
     public interface ITagDrawer
     {
-        public Bitmap DrawTagCloud(IReadOnlyCollection<TagInfo> tags);
+        public Result<Bitmap> DrawTagCloud(IReadOnlyCollection<TagInfo> tags);
     }
 }

@@ -20,6 +20,7 @@ namespace TagCloud.Layouters
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
                 return Result.Fail<Rectangle>("Rectangle size must be positive");
+            
             Rectangle rectangle;
             do
             {
