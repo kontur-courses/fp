@@ -121,6 +121,9 @@ namespace TagCloud.App.GUI
                 case IMultiOptionsManager multiOptionsManager:
                     AddManger(multiOptionsManager, inputBox, padding);
                     break;
+                case IInputModifierManager inputModifierManager:
+                    AddManger(inputModifierManager, inputBox, padding);
+                    break;
                 default:
                     AddManger(manager, inputBox, padding);
                     break;
@@ -158,6 +161,35 @@ namespace TagCloud.App.GUI
                 manager, 
                 () => buffer.Text, 
                 value => buffer.Text = value)(o, args);
+        }
+        
+        private void AddManger(IInputModifierManager manager, Box containerBox, uint padding)
+        {
+            var hbox = new HBox();
+            var table = new TextTagTable();
+            var buffer = new TextBuffer(table);
+            var textBox = new TextView(buffer);
+            textBox.Shown += (o, args) => { buffer.Text = manager.Get(); };
+            textBox.FocusOutEvent += (o, args) => OnValueSet(
+                manager, 
+                () => buffer.Text, 
+                value => buffer.Text = value)(o, args);
+            hbox.PackStart(textBox, true, true, padding);
+
+            foreach (var modifier in manager.GetModifiers())
+            {
+                var button = new Button(modifier);
+                button.Clicked += (c, a) =>
+                {
+                    var result = manager.ApplyModifier(modifier);
+                    if (!result.IsSuccess)
+                        ShowInfoWindow(ErrorLevel.Warning, result.Error);
+                    buffer.Text = manager.Get();
+                };
+                hbox.PackStart(button, true, true, padding);
+                
+            }
+            containerBox.PackStart(hbox, true, true, padding);
         }
 
         private void AddManger(IMultiOptionsManager manager, Box containerBox, uint padding)
