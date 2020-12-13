@@ -8,6 +8,8 @@ namespace TagsCloudContainerTests
 {
     internal class WordFileReaderTests
     {
+        private readonly string[] docxFileContent = {"Это", "Docx", "Файл", ""};
+
         private readonly string docxFilePath = Path.Combine(Directory.GetCurrentDirectory(),
             "files", "input.docx");
 
@@ -17,32 +19,40 @@ namespace TagsCloudContainerTests
         [Test]
         public void WordReader_ShouldReadLines_IfFileExists()
         {
-            var result = new WordFileReader(docxFilePath).ReadLines();
-            result.IsSuccess.Should().BeTrue();
-            result.GetValueOrThrow()
+            var wordFileReader = new WordFileReader(docxFilePath);
+
+            var readingResult = wordFileReader.ReadLines();
+
+            readingResult.IsSuccess.Should().BeTrue();
+            readingResult
+                .GetValueOrThrow()
                 .ToArray()
                 .Should()
-                .BeEquivalentTo("Это", "Docx", "Файл", "");
+                .BeEquivalentTo(docxFileContent);
         }
 
         [Test]
         public void DocxReader_ShouldReturnResultWithError_IfFileDoesNotExist()
         {
-            new WordFileReader("notExistedPath.docx")
-                .ReadLines()
-                .Error
-                .Should()
-                .BeEquivalentTo("Input file is not found");
+            var wordFileReader = new WordFileReader("notExistedPath.docx");
+            var expectedError = "Input file is not found";
+
+            var readingResult = wordFileReader.ReadLines();
+
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().BeEquivalentTo(expectedError);
         }
 
         [Test]
         public void DocxReader_ShouldReturnResultWithError_IfCannotReadFile()
         {
-            new WordFileReader(txtFilePath)
-                .ReadLines()
-                .Error
-                .Should()
-                .Contain("Can't read input file");
+            var wordFileReader = new WordFileReader(txtFilePath);
+            var expectedError = "Can't read input file";
+
+            var readingResult = wordFileReader.ReadLines();
+
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().Contain(expectedError);
         }
     }
 }

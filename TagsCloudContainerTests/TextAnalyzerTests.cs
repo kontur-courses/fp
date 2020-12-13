@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TagsCloudContainer.App;
@@ -20,12 +21,19 @@ namespace TagsCloudContainerTests
         public void TextAnalyzer_ShouldReturnCorrectFrequencyDictionary()
         {
             var text = new[] {"слова", "слово", "количество"};
-            textAnalyzer
-                .GenerateFrequencyDictionary(text)
+            var expectedFrequencyDictionary = new Dictionary<string, double>()
+            {
+                ["слово"] = 2.0 / 3,
+                ["количество"] = 1.0 / 3
+            };
+
+            var analyzingResult = textAnalyzer.GenerateFrequencyDictionary(text);
+
+            analyzingResult.IsSuccess.Should().BeTrue();
+            analyzingResult
                 .GetValueOrThrow()
                 .Should()
-                .HaveCount(2)
-                .And.ContainKeys("слово", "количество").And.ContainValues(2.0 / 3, 1.0 / 3);
+                .BeEquivalentTo(expectedFrequencyDictionary);
         }
 
         [Test]
@@ -33,11 +41,12 @@ namespace TagsCloudContainerTests
         {
             var invalidWord = "рпмсппимпсапсвръъъъъ";
             var text = new[] { "слова", invalidWord };
-            textAnalyzer
-                .GenerateFrequencyDictionary(text)
-                .Error
-                .Should()
-                .BeEquivalentTo($"Can't normalize word {invalidWord} to initial form");
+            var expectedError = $"Can't normalize word {invalidWord} to initial form";
+
+            var analyzingResult = textAnalyzer.GenerateFrequencyDictionary(text);
+
+            analyzingResult.IsSuccess.Should().BeFalse();
+            analyzingResult.Error.Should().BeEquivalentTo(expectedError);
         }
     }
 }

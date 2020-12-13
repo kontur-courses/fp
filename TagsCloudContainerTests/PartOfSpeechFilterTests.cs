@@ -12,14 +12,15 @@ namespace TagsCloudContainerTests
 {
     internal class PartOfSpeechFilterTests
     {
-        private readonly Mysteam mysteam;
+        private readonly PartOfSpeechFilter filter;
         private readonly FilteringWordsSettings filteringSettings;
 
         public PartOfSpeechFilterTests()
         {
             var serviceProvider = Program.GetAppServiceProvider();
-            mysteam = serviceProvider.GetRequiredService<Mysteam>();
+            var mysteam = serviceProvider.GetRequiredService<Mysteam>();
             filteringSettings = FilteringWordsSettings.Instance;
+            filter = new PartOfSpeechFilter(filteringSettings, mysteam);
         }
 
         [TestCase(GramPartsEnum.Conjunction, "и")]
@@ -28,7 +29,11 @@ namespace TagsCloudContainerTests
         public void PartOfSpeechFilter_ShouldFilterPOS_IfPOSAreBoring(GramPartsEnum gramPart, string word)
         {
             filteringSettings.BoringGramParts = new[] {gramPart}.ToImmutableHashSet();
-            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).GetValueOrThrow().Should().BeTrue();
+
+            var filteringResult = filter.IsBoring(word);
+
+            filteringResult.IsSuccess.Should().BeTrue();
+            filteringResult.GetValueOrThrow().Should().BeTrue();
         }
 
         [TestCase(GramPartsEnum.Conjunction, "и")]
@@ -37,18 +42,23 @@ namespace TagsCloudContainerTests
         public void PartOfSpeechFilter_ShouldNotFilterPOS_IfPOSAreNotBoring(GramPartsEnum gramPart, string word)
         {
             filteringSettings.BoringGramParts = filteringSettings.BoringGramParts.Except(new[] {gramPart});
-            new PartOfSpeechFilter(filteringSettings, mysteam).IsBoring(word).GetValueOrThrow().Should().BeFalse();
+
+            var filteringResult = filter.IsBoring(word);
+
+            filteringResult.IsSuccess.Should().BeTrue();
+            filteringResult.GetValueOrThrow().Should().BeFalse();
         }
 
         [Test]
         public void PartOfSpeechFilter_ShouldReturnResultWithError_IfWordIsNotValid()
         {
-            var notValidWord = "ngvnvgc";
-            new PartOfSpeechFilter(filteringSettings, mysteam)
-                .IsBoring(notValidWord)
-                .Error
-                .Should()
-                .BeEquivalentTo($"Can't identify part of speech of word: {notValidWord}");
+            var invalidWord = "ngvnvgc";
+            var expectedError = $"Can't identify part of speech of word: {invalidWord}";
+
+            var filteringResult = filter.IsBoring(invalidWord);
+
+            filteringResult.IsSuccess.Should().BeFalse();
+            filteringResult.Error.Should().BeEquivalentTo(expectedError);
         }
     }
 }

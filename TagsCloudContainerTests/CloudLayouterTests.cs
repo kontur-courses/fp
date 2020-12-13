@@ -57,10 +57,12 @@ namespace TagsCloudContainerTests
         public void PutNextRectangle_ShouldFormCircularCloud()
         {
             SetRandomRectangles(20);
+
             var cloudHorizontalDiameter = GetCloudHorizontalDiameter();
             var cloudVerticalDiameter = GetCloudVerticalDiameter();
             var square = rectangles.Select(rectangle => rectangle.GetArea()).Sum();
             var diameter = Math.Sqrt(square / Math.PI) * 2;
+
             (Math.Abs(cloudHorizontalDiameter - diameter) <= GetMaxRectangleWidthInCloud()).Should().BeTrue();
             (Math.Abs(cloudVerticalDiameter - diameter) <= GetMaxRectangleHeightInCloud()).Should().BeTrue();
         }

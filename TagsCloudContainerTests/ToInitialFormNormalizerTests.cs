@@ -9,12 +9,13 @@ namespace TagsCloudContainerTests
 {
     internal class ToInitialFormNormalizerTests
     {
-        private readonly Mysteam mysteam;
+        private readonly ToInitialFormNormalizer normalizer;
 
         public ToInitialFormNormalizerTests()
         {
             var serviceProvider = Program.GetAppServiceProvider();
-            mysteam = serviceProvider.GetRequiredService<Mysteam>();
+            var mysteam = serviceProvider.GetRequiredService<Mysteam>();
+            normalizer = new ToInitialFormNormalizer(mysteam);
         }
 
         [TestCase("слова", "слово")]
@@ -23,18 +24,22 @@ namespace TagsCloudContainerTests
         [TestCase("словам", "слово")]
         public void ToInitialFormNormalizer_ShouldReturnInitialFormOfWord(string word, string initialForm)
         {
-            new ToInitialFormNormalizer(mysteam).NormalizeWord(word).GetValueOrThrow().Should().BeEquivalentTo(initialForm);
+            var normalizingResult = normalizer.NormalizeWord(word);
+
+            normalizingResult.IsSuccess.Should().BeTrue();
+            normalizingResult.GetValueOrThrow().Should().BeEquivalentTo(initialForm);
         }
 
         [Test]
         public void ToInitialFormNormalizer_ShouldReturnResultWithError_IfWordIsNotValid()
         {
-            var notValidWord = "ngvnvgc";
-            new ToInitialFormNormalizer(mysteam)
-                .NormalizeWord(notValidWord)
-                .Error
-                .Should()
-                .BeEquivalentTo($"Can't normalize word {notValidWord} to initial form");
+            var invalidWord = "ngvnvgc";
+            var expectedError = $"Can't normalize word {invalidWord} to initial form";
+
+            var normalizingResult = normalizer.NormalizeWord(invalidWord);
+
+            normalizingResult.IsSuccess.Should().BeFalse();
+            normalizingResult.Error.Should().BeEquivalentTo(expectedError);
         }
     }
 }

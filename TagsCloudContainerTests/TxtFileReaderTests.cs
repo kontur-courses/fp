@@ -10,26 +10,33 @@ namespace TagsCloudContainerTests
     { 
         private readonly string txtFilePath = Path.Combine(Directory.GetCurrentDirectory(),
             "files", "input.txt");
+        private readonly string[] txtFileContent = {"Это", "Txt", "Файл"};
 
         [Test]
         public void TxtReader_ReadLinesWithoutError_IfFileExists()
         {
-            var result = new TxtFileReader(txtFilePath).ReadLines();
-            result.IsSuccess.Should().BeTrue();
-            result.GetValueOrThrow()
+            var txtReader = new TxtFileReader(txtFilePath);
+
+            var readingResult = txtReader.ReadLines();
+
+            readingResult.IsSuccess.Should().BeTrue();
+            readingResult
+                .GetValueOrThrow()
                 .ToArray()
                 .Should()
-                .BeEquivalentTo("Это", "Txt", "Файл");
+                .BeEquivalentTo(txtFileContent);
         }
 
         [Test]
         public void TxtReader_ShouldReturnResultWithError_IfFileDoesNotExist()
         {
-            new TxtFileReader("notExistedPath.txt")
-                .ReadLines()
-                .Error
-                .Should()
-                .BeEquivalentTo("Input file is not found");
+            var txtReader = new TxtFileReader("notExistedPath.txt");
+            var expectedError = "Input file is not found";
+
+            var readingResult = txtReader.ReadLines();
+
+            readingResult.IsSuccess.Should().BeFalse();
+            readingResult.Error.Should().BeEquivalentTo(expectedError);
         }
     }
 }

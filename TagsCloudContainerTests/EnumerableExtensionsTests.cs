@@ -3,66 +3,71 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TagsCloudContainer.App;
-using TagsCloudContainer.App.Settings;
 using TagsCloudContainer.App.TextAnalyzer;
 using TagsCloudContainer.Infrastructure.TextAnalyzer;
-using YandexMystem.Wrapper;
 
 namespace TagsCloudContainerTests
 {
     internal class EnumerableExtensionsTests
     {
-        private readonly Mysteam mysteam;
-        private readonly FilteringWordsSettings filteringSettings;
+        private readonly IEnumerable<IWordFilter> filters;
+        private readonly IEnumerable<IWordNormalizer> normalizers;
 
         public EnumerableExtensionsTests()
         {
             var serviceProvider = Program.GetAppServiceProvider();
-            mysteam = serviceProvider.GetRequiredService<Mysteam>();
-            filteringSettings = FilteringWordsSettings.Instance;
+            filters = serviceProvider.GetServices<IWordFilter>();
+            normalizers = serviceProvider.GetServices<IWordNormalizer>();
         }
 
         [Test]
         public void FilterOutBoringWords_ShouldFilterSuccessfully_IfAllWordsAreValid()
         {
-            new[] {"слова", "и", "да", "по"}
-                .FilterOutBoringWords(new[] {new PartOfSpeechFilter(filteringSettings, mysteam)})
-                .GetValueOrThrow()
-                .Should()
-                .BeEquivalentTo("слова");
+            var words = new[] {"слова", "и", "да", "по"};
+            var notFilteredWords = new[] {"слова"};
+
+            var filteringResult = words.FilterOutBoringWords(filters);
+
+            filteringResult.IsSuccess.Should().BeTrue();
+            filteringResult.GetValueOrThrow().Should().BeEquivalentTo(notFilteredWords);
         }
 
         [Test]
         public void FilterOutBoringWords_ShouldReturnResultWithError_IfSomeWordIsInvalid()
         {
             var invalidWord = "jhghg";
-            new[] {"слова", invalidWord}
-                .FilterOutBoringWords(new[] {new PartOfSpeechFilter(filteringSettings, mysteam)})
-                .Error
-                .Should()
-                .BeEquivalentTo($"Can't identify part of speech of word: {invalidWord}");
+            var words = new[] {"слова", invalidWord};
+            var expectedError = $"Can't identify part of speech of word: {invalidWord}";
+
+            var filteringResult = words.FilterOutBoringWords(filters);
+
+            filteringResult.IsSuccess.Should().BeFalse();
+            filteringResult.Error.Should().BeEquivalentTo(expectedError);
         }
 
         [Test]
         public void NormalizeWords_ShouldNormalizeSuccessfully_IfAllWordsAreValid()
         {
-            new[] { "слова", "формы" }
-                .NormalizeWords(new[] { new ToInitialFormNormalizer(mysteam) })
-                .GetValueOrThrow()
-                .Should()
-                .BeEquivalentTo("слово", "форма");
+            var words = new[] {"слова", "формы"};
+            var normalizedWords = new[] {"слово", "форма"};
+
+            var normalizingResult = words.NormalizeWords(normalizers);
+
+            normalizingResult.IsSuccess.Should().BeTrue();
+            normalizingResult.GetValueOrThrow().Should().BeEquivalentTo(normalizedWords);
         }
 
         [Test]
         public void NormalizeWords_ShouldReturnResultWithError_IfSomeWordIsInvalid()
         {
             var invalidWord = "jhghg";
-            new[] { "слова", invalidWord }
-                .NormalizeWords(new IWordNormalizer[] { new ToLowerWordNormalizer(), 
-                    new ToInitialFormNormalizer(mysteam) })
-                .Error
-                .Should()
-                .BeEquivalentTo($"Can't normalize word {invalidWord} to initial form");
+            var words = new[] {"слова", invalidWord};
+            var expectedError = $"Can't normalize word {invalidWord} to initial form";
+
+            var normalizingResult = words.NormalizeWords(normalizers);
+
+            normalizingResult.IsSuccess.Should().BeFalse();
+            normalizingResult.Error.Should().BeEquivalentTo(expectedError);
         }
     }
 }
