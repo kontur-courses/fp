@@ -26,14 +26,14 @@ namespace TagCloud.TextProcessing
         public Result<string[]> GetWords(string inputFileName)
         {
             var path = creator.GetCurrentPath();
-            var dictionaryResult = GetDictionary(path);
-            if (!dictionaryResult.IsSuccess)
-            {
-                return Result.Fail<string[]>(dictionaryResult.Error);
-            }
-            
-            return reader.ReadStrings(path + inputFileName)
-                .Then(lines => NormalizeWords(lines, dictionaryResult.Value));
+            return GetDictionary(path)
+                .Then(dict => GetNormalizeWords(dict, path + inputFileName));
+        }
+
+        private Result<string[]> GetNormalizeWords(WordList dictionary, string pathToFile)
+        {
+            return reader.ReadStrings(pathToFile)
+                .Then(lines => NormalizeWords(lines, dictionary));
         }
 
         private static string[] NormalizeWords(string[] lines, WordList dictionary)

@@ -31,26 +31,29 @@ namespace TagCloud
 
         private string DrawAndSaveTags(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color stringColor)
         {
-            var bitmap = new Bitmap(canvas.Width, canvas.Height);
-            bitmap.Dispose();
-            
-            var graphics = Graphics.FromImage(bitmap);
-            graphics.Dispose();
-            
-            backgroundPainter.Draw(tags, canvas, graphics);
-            DrawAllStrings(tags, fontFamily, stringColor, graphics);
-            
             var path = creator.GetNewPngPath();
-            bitmap.Save(path);
+            using (var bitmap = new Bitmap(canvas.Width, canvas.Height))
+            {
+                using (var graphics = Graphics.FromImage(bitmap))
+                {
+                    backgroundPainter.Draw(tags, canvas, graphics);
+                    DrawAllStrings(tags, fontFamily, stringColor, graphics);
+                    
+                    bitmap.Save(path);
+                }
+            }
+
             return path;
         }
         
         private static void DrawAllStrings(List<Tuple<string, Rectangle>> tags, FontFamily fontFamily, Color color, Graphics graphics)
         {
-            var textBrush = new SolidBrush(color);
-            foreach (var (str, rectangle) in tags)
+            using (var textBrush = new SolidBrush(color))
             {
-                DrawString(str, rectangle, fontFamily, textBrush, graphics);
+                foreach (var (str, rectangle) in tags)
+                {
+                    DrawString(str, rectangle, fontFamily, textBrush, graphics);
+                }
             }
         }
 

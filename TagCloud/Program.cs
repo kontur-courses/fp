@@ -28,8 +28,8 @@ namespace TagCloud
             var visualizer = serviceProvider.GetService<IVisualizer>();
             var visualizeResult = visualizer.Visualize(CLI.FileName, CLI.StringFont, CLI.StringColor);
             visualizeResult
-                .OnFail(str => Console.WriteLine(visualizeResult.Error))
-                .Then(result => Console.WriteLine("Result saved to:\n" + visualizeResult.Value));
+                .Then(result => Console.WriteLine("Result saved to:\n" + visualizeResult.Value))
+                .OnFail(str => Console.WriteLine(visualizeResult.Error));
             
             return 0;
         }
