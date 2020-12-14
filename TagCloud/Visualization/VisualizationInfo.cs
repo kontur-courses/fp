@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Linq;
 using TagCloud.Visualization.WordsColorings;
+using ResultOf;
+using System;
 
 namespace TagCloud.Visualization
 {
@@ -17,20 +19,25 @@ namespace TagCloud.Visualization
             wordsColoring = coloring;
         }
 
-        internal static Size? ReadSize(string sizeStr)
+        internal static Result<Size?> ReadSize(string sizeStr)
         {
+            var error = new Result<Size?>("Was incorrect size, must be two numbers like \"2000 1500\"");
+            if (sizeStr == string.Empty)
+            {
+                return new Result<Size?>(null, null);
+            }
             try
             {
                 var result = ParseString(sizeStr);
                 if (result.Length != 2)
-                    return null;
+                    return error;
                 if (result.Any(i => i < 0))
-                    return null;
-                return new Size(result[0], result[1]);
+                    return error;
+                return new Result<Size?>(null, new Size(result[0], result[1]));
             }
             catch
             {
-                return null;
+                return error;
             }
         }
 

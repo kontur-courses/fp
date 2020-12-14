@@ -106,7 +106,13 @@ namespace TagCloud.Clients
 
         private void SetVisualizateInfo(OptionsVisualizate info)
         {
-            var size = VisualizationInfo.ReadSize(info.Size);
+            var sizeResult = VisualizationInfo.ReadSize(info.Size);
+            if (!sizeResult.IsSuccess)
+            {
+                Console.WriteLine(sizeResult.Error);
+                Console.WriteLine("Was using dynamic size");
+            }
+            var size = sizeResult.IsSuccess ? sizeResult.GetValueOrThrow() : null;
             var coloringResult = WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring));
             if (!coloringResult.IsSuccess)
             {
@@ -129,7 +135,7 @@ namespace TagCloud.Clients
 
         internal class OptionsTagInfo
         {
-            [Option('m', "metric", Required = true, HelpText = "Name of metric. Write count")]
+            [Option('m', "metric", Required = true, HelpText = "Name of metric. Write \"count\"")]
             public string Metric { get; set; }
 
             [Option('p', "processor", Required = true, 
