@@ -35,6 +35,8 @@ namespace TagsCloud.UI
             fontStyles = settings.FontSettings.FontStyles.ToDictionary(style => style.ToString());
             layouters = rectanglesLayouters.ToDictionary(c => c.Name);
             InitializeComponent();
+            WidthTextBox.Text = settings.ImageSize.Width.ToString();
+            HeightTextBox.Text = settings.ImageSize.Height.ToString();
             FontFamilyChoice.DataSource = settings.FontSettings.FontFamilies.Select(f => f.Name).ToList();
             FontStyleChoice.DataSource = settings.FontSettings.FontStyles.Select(f => f.ToString()).ToList();
             AlgorithmChoice.DataSource = rectanglesLayouters.Select(c => c.Name).ToList();
@@ -97,6 +99,22 @@ namespace TagsCloud.UI
         private void MaxWordsCountSetting_ValueChanged(object sender, EventArgs e)
         {
             settings.MaxWordsCount = (int) MaxWordsCountSetting.Value;
+        }
+
+        private void WidthTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(WidthTextBox.Text, out var number))
+                settings.ImageSize.Width = number;
+            else if (string.IsNullOrEmpty(WidthTextBox.Text))
+                MessageBox.Show("Размер должен быть целым положительным числом");
+        }
+
+        private void HeightTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(HeightTextBox.Text, out var number))
+                settings.ImageSize.Height = number;
+            else if (string.IsNullOrEmpty(WidthTextBox.Text))
+                MessageBox.Show("Размер должен быть целым положительным числом");
         }
     }
 }
