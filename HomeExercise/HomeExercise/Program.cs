@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
 using Autofac;
 using ResultOf;
 
