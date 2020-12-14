@@ -22,7 +22,6 @@ namespace TagsCloudContainer.App
             mainMenu = new MenuStrip();
             mainMenu.Items.AddRange(actions.ToArray().ToMenuItems());
             Controls.Add(mainMenu);
-            pictureBox.RecreateImage();
             pictureBox.Dock = DockStyle.Fill;
             Controls.Add(pictureBox);
         }

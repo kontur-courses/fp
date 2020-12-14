@@ -24,6 +24,7 @@ namespace TagsCloudContainer.App
             this.outputSettings = outputSettings;
             this.mainForm = mainForm;
             this.cloudVisualizer = cloudVisualizer;
+            RecreateImage();
         }
 
         public void GenerateImage()
@@ -35,7 +36,6 @@ namespace TagsCloudContainer.App
 
         public Graphics StartDrawing()
         {
-            FailIfNotInitialized();
             return Graphics.FromImage(Image);
         }
 
@@ -63,15 +63,7 @@ namespace TagsCloudContainer.App
 
         public void SaveImage()
         {
-            FailIfNotInitialized();
             Image.Save(outputSettings.OutputFilePath, outputSettings.ImageFormat);
-        }
-
-        private void FailIfNotInitialized()
-        {
-            if (Image == null)
-                throw new InvalidOperationException(
-                    "Call PictureBoxImageHolder.RecreateImage before other method call!");
         }
 
         private void Visualize()
