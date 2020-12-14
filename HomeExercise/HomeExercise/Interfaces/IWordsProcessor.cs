@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace HomeExercise
 {
     public interface IWordsProcessor
     {
-        public List<IWord> HandleWords(); 
+        public Result<List<IWord>> HandleWords(); 
     }
 }

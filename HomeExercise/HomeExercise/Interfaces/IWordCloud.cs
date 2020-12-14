@@ -7,6 +7,7 @@ namespace HomeExercise
     {
         List<ISizedWord> SizedWords { get; }
         Point Center { get; }
+        Size Size { get; }
 
         public void BuildCloud();
     }

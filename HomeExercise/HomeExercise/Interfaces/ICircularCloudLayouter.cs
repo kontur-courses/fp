@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace HomeExercise
 {
     public interface ICircularCloudLayouter
     {
         public Point Center { get; }
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }
