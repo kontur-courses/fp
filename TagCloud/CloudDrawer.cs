@@ -27,7 +27,7 @@ namespace TagCloud
                 }
 
                 return bitmap;
-            });
+            }).RefineError("Can't draw cloud");
         }
     }
 }

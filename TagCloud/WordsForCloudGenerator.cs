@@ -28,7 +28,7 @@ namespace TagCloud
             return wordsResult.Then((words) => GetWordsFrequency(words)
                                                .OrderBy(x => x.Value)
                                                .Reverse()
-                                               .ToList())
+                                               .ToList()).RefineError("Can't get words frequency")
                               .Then(frequency
                                         => frequency.Select(x =>
                                                                 GetWordForCloud(fontName,
@@ -36,7 +36,7 @@ namespace TagCloud
                                                                                 colorGenerator.GetNextColor(),
                                                                                 x.Key,
                                                                                 x.Value,
-                                                                                maxFrequency: frequency.FirstOrDefault().Value)));
+                                                                                maxFrequency: frequency.FirstOrDefault().Value))).RefineError("Can't get words for cloud");
         }
 
         private static Dictionary<string, int> GetWordsFrequency(List<string> words) =>

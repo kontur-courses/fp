@@ -103,7 +103,8 @@ namespace TagCloud
                                        tagCloudSettings.InputFile,
                                        tagCloudSettings.BoringWordsFile);
 
-            var result = bitmap.Then(b => b.Save(tagCloudSettings.OutputFile));
+            var result = bitmap.Then(b => b.Save(tagCloudSettings.OutputFile))
+                               .RefineError($"Can't save file {tagCloudSettings.OutputFile}");
             if (!result.IsSuccess)
             {
                 Console.WriteLine(result.Error);

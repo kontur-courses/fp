@@ -11,7 +11,8 @@ namespace TagCloud
             return !boringWords.IsSuccess
                 ? Result.Fail<List<string>>(boringWords.Error)
                 : wordsResult
-                    .Then(word => word.Where(x => !boringWords.Value.Contains(x)).Select(x => x.ToLower()).ToList());
+                  .Then(word => word.Where(x => !boringWords.Value.Contains(x)).Select(x => x.ToLower()).ToList())
+                  .RefineError("Can't normalize words");
         }
     }
 }

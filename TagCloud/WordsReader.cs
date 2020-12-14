@@ -11,13 +11,11 @@ namespace TagCloud
         {
             return Result.Of(() =>
             {
-                if (!File.Exists(path))
-                    return new List<string>();
                 using (var fileStream = new StreamReader(path))
                 {
                     return fileStream.ReadToEnd().Split('\n').ToList();
                 }
-            });
+            }).RefineError($"Can't open file: {path}");
         }
     }
 }
