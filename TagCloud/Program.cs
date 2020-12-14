@@ -86,7 +86,7 @@ namespace TagCloud
             return new Settings
             {
                 ExcludedTypes = new[] {WordType.CONJ, WordType.SPRO, WordType.PR},
-                Path = GetReleasePath("input.txt"),
+                Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "examples", "input.txt"),
                 WordCountThreshold = 2,
                 Increment = 1,
                 Width = size.Width,

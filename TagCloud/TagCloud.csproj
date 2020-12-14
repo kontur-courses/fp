@@ -21,5 +21,11 @@
     <ItemGroup>
       <Reference Include="System.Windows.Forms" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Include="examples\input.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
 
 </Project>
