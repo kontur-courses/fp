@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TagsCloud.Infrastructure;
 
 namespace TagsCloud.App
 {
@@ -8,9 +9,9 @@ namespace TagsCloud.App
     {
         public override HashSet<string> AvailableFileTypes { get; } = new HashSet<string> {"txt"};
 
-        protected override IEnumerable<string> ReadWordsInternal(string fileName)
+        protected override Result<string[]> ReadWordsInternal(string fileName)
         {
-            return File.ReadAllLines(fileName).SelectMany(line => splitRegex.Split(line));
+            return File.ReadAllLines(fileName).SelectMany(line => splitRegex.Split(line)).ToArray();
         }
     }
 }

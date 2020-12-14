@@ -65,7 +65,7 @@ namespace TagsCloud.UI
                 var fileReader = fileReaders.First(reader => reader.AvailableFileTypes.Contains(fileType));
                 if (fileReader == null)
                     throw new InvalidOperationException("Invalid file");
-                PictureBox.Image = tagsCloudHandler.GetNewTagcloud(fileReader.ReadWords(fileName));
+                PictureBox.Image = tagsCloudHandler.GetNewTagcloud(fileReader.ReadWords(fileName).Value).Value;
             }
         }
 

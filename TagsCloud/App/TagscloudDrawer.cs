@@ -18,28 +18,31 @@ namespace TagsCloud.App
             this.tagsCloudSettings = tagsCloudSettings;
         }
 
-        public Image GetTagsCloud(IEnumerable<Word> words)
+        public Result<Image> GetTagsCloud(IEnumerable<Word> words)
         {
-            if (words == null)
-                throw new NullReferenceException("Words collection should not be null");
-            var image = new Bitmap(tagsCloudSettings.ImageSize.Width, tagsCloudSettings.ImageSize.Height);
-            var graphics = Graphics.FromImage(image);
-            var tags = GetTagsFromWords(
-                words
-                    .OrderBy(word => -word.Weight)
-                    .Take(tagsCloudSettings.MaxWordsCount),
-                graphics).ToArray();
-            var cloudBounds = CalculateTagsCloudBounds(tags.Select(tag => tag.Rectangle));
-            var cloudExpectedSize = tagsCloudSettings.ImageSize * tagsCloudSettings.CloudToImageScaleRatio;
-            var cloudSizeRatio = CalculateRatio(cloudBounds.Size, cloudExpectedSize);
-            tags = tags.Select(tag => tag.RescaleTag(cloudSizeRatio)).ToArray();
-            var layouterCenterDelta = new Size(cloudBounds.X + cloudBounds.Width / 2,
-                cloudBounds.Y + cloudBounds.Height / 2) * cloudSizeRatio;
-            var imageCenter = new PointF(
-                (float) tagsCloudSettings.ImageSize.Width / 2,
-                (float) tagsCloudSettings.ImageSize.Height / 2);
-            DrawTagsCloud(tags, imageCenter - layouterCenterDelta, graphics);
-            return image;
+            return Result.Of(() =>
+            {
+                if (words == null)
+                    throw new NullReferenceException("Words collection should not be null");
+                var image = new Bitmap(tagsCloudSettings.ImageSize.Width, tagsCloudSettings.ImageSize.Height);
+                var graphics = Graphics.FromImage(image);
+                var tags = GetTagsFromWords(
+                    words
+                        .OrderBy(word => -word.Weight)
+                        .Take(tagsCloudSettings.MaxWordsCount),
+                    graphics).ToArray();
+                var cloudBounds = CalculateTagsCloudBounds(tags.Select(tag => tag.Rectangle));
+                var cloudExpectedSize = tagsCloudSettings.ImageSize * tagsCloudSettings.CloudToImageScaleRatio;
+                var cloudSizeRatio = CalculateRatio(cloudBounds.Size, cloudExpectedSize);
+                tags = tags.Select(tag => tag.RescaleTag(cloudSizeRatio)).ToArray();
+                var layouterCenterDelta = new Size(cloudBounds.X + cloudBounds.Width / 2,
+                    cloudBounds.Y + cloudBounds.Height / 2) * cloudSizeRatio;
+                var imageCenter = new PointF(
+                    (float) tagsCloudSettings.ImageSize.Width / 2,
+                    (float) tagsCloudSettings.ImageSize.Height / 2);
+                DrawTagsCloud(tags, imageCenter - layouterCenterDelta, graphics);
+                return (Image) image;
+            });
         }
 
 
@@ -59,7 +62,7 @@ namespace TagsCloud.App
                     wordFontSize,
                     tagsCloudSettings.CurrentFontStyle);
                 var newRectangle = layouter.PutNextRectangle(CalculateWordsSize(word.Value, wordFont, graphics));
-                yield return new Tag(word.Value, wordFont, newRectangle);
+                yield return new Tag(word.Value, wordFont, newRectangle.Value);
             }
 
             layouter.Reset();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloud.Infrastructure;
 using MicrosoftWord = Microsoft.Office.Interop.Word;
 
 namespace TagsCloud.App
@@ -8,7 +9,7 @@ namespace TagsCloud.App
     {
         public override HashSet<string> AvailableFileTypes { get; } = new HashSet<string> {"doc", "docx"};
 
-        protected override IEnumerable<string> ReadWordsInternal(string fileName)
+        protected override Result<string[]> ReadWordsInternal(string fileName)
         {
             var app = new MicrosoftWord.Application();
             var objFileName = (object) fileName;

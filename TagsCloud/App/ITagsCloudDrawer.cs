@@ -6,7 +6,7 @@ namespace TagsCloud.App
 {
     public interface ITagsCloudDrawer
     {
-        Image GetTagsCloud(IEnumerable<Word> words);
+        Result<Image> GetTagsCloud(IEnumerable<Word> words);
         void SetNewLayouter(IRectanglesLayouter newLayouter);
     }
 }

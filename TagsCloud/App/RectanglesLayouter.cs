@@ -41,19 +41,18 @@ namespace TagsCloud.App
 
         public string Name { get; } = "По умолчанию";
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (Rectangles.Count == 0)
+            return Result.Of(() =>
             {
+                if (Rectangles.Count != 0) return AddNewRectangle(rectangleSize);
                 var firstRectangle = new Rectangle(center.X - rectangleSize.Width / 2,
                     center.Y - rectangleSize.Height / 2,
                     rectangleSize.Width, rectangleSize.Height);
                 Rectangles.Add(firstRectangle);
                 AddAngles(Rectangles[0]);
                 return firstRectangle;
-            }
-
-            return AddNewRectangle(rectangleSize);
+            });
         }
 
         public void Reset()

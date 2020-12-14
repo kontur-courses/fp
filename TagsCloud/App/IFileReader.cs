@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using TagsCloud.Infrastructure;
 
 namespace TagsCloud.App
 {
     public interface IFileReader
     {
         HashSet<string> AvailableFileTypes { get; }
-        IEnumerable<string> ReadWords(string fileName);
+        Result<string[]> ReadWords(string fileName);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagsCloud.Infrastructure;
 
 namespace TagsCloud.App
 {
@@ -20,7 +21,12 @@ namespace TagsCloud.App
             return !BlackList.Contains(normalizer.Normalize(word));
         }
 
-        public void UpdateBlackList(IEnumerable<string> words)
+        public Result<None> UpdateBlackList(IEnumerable<string> words)
+        {
+            return Result.OfAction(() => TryUpdateBlackList(words));
+        }
+
+        private void TryUpdateBlackList(IEnumerable<string> words)
         {
             if (words == null)
                 throw new NullReferenceException("Words collection should not be null");

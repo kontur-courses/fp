@@ -1,11 +1,12 @@
 ﻿using System.Drawing;
+using TagsCloud.Infrastructure;
 
 namespace TagsCloud.App
 {
     public interface IRectanglesLayouter
     {
         string Name { get; }
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
         void Reset();
     }
 }

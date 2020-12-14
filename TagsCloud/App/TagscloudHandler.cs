@@ -21,7 +21,7 @@ namespace TagsCloud.App
             this.drawer = drawer;
         }
 
-        public Image GetNewTagcloud(IEnumerable<string> words)
+        public Result<Image> GetNewTagcloud(IEnumerable<string> words)
         {
             var neededWords = words
                 .Where(word => wordsFilters.All(filter => filter.Validate(word)))

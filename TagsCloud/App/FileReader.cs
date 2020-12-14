@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using TagsCloud.Infrastructure;
 
 namespace TagsCloud.App
 {
@@ -9,15 +10,14 @@ namespace TagsCloud.App
         protected Regex splitRegex = new Regex("\\W+");
         public virtual HashSet<string> AvailableFileTypes { get; }
 
-        public IEnumerable<string> ReadWords(string fileName)
+        public Result<string[]> ReadWords(string fileName)
         {
             var fileType = fileName.Split('.')[^1];
             if (!AvailableFileTypes.Contains(fileType))
-                throw new ArgumentException($"Incorrect type {fileType}");
-
-            return ReadWordsInternal(fileName);
+                return Result.Fail<string[]>($"Incorrect type {fileType}");
+            return ReadWordsInternal(fileName);;
         }
 
-        protected abstract IEnumerable<string> ReadWordsInternal(string fileName);
+        protected abstract Result<string[]> ReadWordsInternal(string fileName);
     }
 }
