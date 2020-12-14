@@ -4,7 +4,6 @@ using TagsCloud.BoringWordsDetectors;
 
 namespace TagsCloudTests
 {
-    [TestFixture]
     public class ByCollectionBoringWordsDetector_Should
     {
         private readonly ByCollectionBoringWordsDetector detector = new ByCollectionBoringWordsDetector();

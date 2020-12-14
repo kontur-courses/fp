@@ -1,13 +1,11 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloud;
 using TagsCloud.BoringWordsDetectors;
 using TagsCloud.StatisticProviders;
 
 namespace TagsCloudTests
 {
-    [TestFixture]
     public class StatisticProvider_Should
     {
         private readonly StatisticProvider provider = new StatisticProvider(new ByCollectionBoringWordsDetector());

@@ -36,8 +36,8 @@ namespace TagsCloudTests
             builder.RegisterInstance(new[]
                 {Color.Black, Color.Red, Color.Blue, Color.Green, Color.Yellow});
             builder.RegisterType<RandomColorSelector>().SingleInstance().As<IColorSelector>();
-            
-            directoryInfo = Directory.GetCurrentDirectory();
+
+            directoryInfo = TestContext.CurrentContext.TestDirectory;
             samplePath = $"{directoryInfo}\\sample.png";
             new FileInfo(samplePath).Delete();
         }
@@ -85,8 +85,8 @@ namespace TagsCloudTests
                     new NamedParameter("height", 3000), 
                     new NamedParameter("filePath", samplePath)
                 });
-            
-            Program.MakeCloud(builder.Build()).Error.Should().Contain("CloudRenderer");
+
+            Program.MakeCloud(builder.Build()).Error.Should().Be("Not positive width or height");
         }
     }
 }
