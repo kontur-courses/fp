@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using HomeExercise.settings;
+using HomeExercise.Settings;
 
 
 namespace HomeExercise
@@ -23,15 +24,15 @@ namespace HomeExercise
 
         public CircularCloudRectanglesPainter(List<Rectangle> rectangles,PainterSettings settings)
         {
-            offsetX = settings.Width/2;
-            offsetY = settings.Height/2;
+            offsetX = settings.Size.Width/2;
+            offsetY = settings.Size.Height/2;
             format = settings.Format;
             fileName = settings.FileName;
             this.rectangles = rectangles;
             randomazer= new Random();
-            color = new Color();//??????
-            bitmap = new Bitmap(settings.Width, settings.Height);//???????
-            graphics = Graphics.FromImage(bitmap);//???????
+            color = new Color();
+            bitmap = new Bitmap(settings.Size.Width, settings.Size.Height);
+            graphics = Graphics.FromImage(bitmap);
         }
 
         public void DrawFigures()

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using HomeExercise.settings;
+using HomeExercise.Settings;
+using ResultOf;
 
 namespace HomeExercise
 {
@@ -20,26 +21,36 @@ namespace HomeExercise
             this.wordCloud = wordCloud;
             this.settings = settings;
 
-            offsetX = settings.Width/2;
-            offsetY = settings.Height/2;
+            offsetX = settings.Size.Width/2;
+            offsetY = settings.Size.Height/2;
 
-            bitmap = new Bitmap(settings.Width, settings.Height);
+            bitmap = new Bitmap(settings.Size.Width, settings.Size.Height);
             graphics = Graphics.FromImage(bitmap);
         }
 
         public void DrawFigures()
         {
-            var center = wordCloud.Center;
-            
-            foreach (var word in wordCloud.SizedWords)
-            {
-                DrawWord(word, center);
-            }
+            Result.Ok(this)
+                .Then(p => DrawWords())
+                .Then(p => SaveImage())
+                .Then(p => CheckSize())
+                .OnFail(Console.WriteLine); 
+        }
 
+        private void SaveImage()
+        {
             var fileName = $"{settings.FileName}.{settings.Format}";
             bitmap.Save(fileName, settings.Format);
         }
-
+        
+        private void DrawWords()
+        {
+            foreach (var word in wordCloud.SizedWords)
+            {
+                DrawWord(word, wordCloud.Center);
+            }
+        }
+        
         private void DrawWord(ISizedWord word, Point center)
         {
             var newX= word.Rectangle.X + offsetX - center.X;
@@ -51,6 +62,13 @@ namespace HomeExercise
             var brush = new SolidBrush(settings.Color);
                 
             graphics.DrawString(word.Text, wordFont, brush, newRectangle.Location);
+        }
+
+        private Result<None> CheckSize()
+        {
+            return settings.Size.Height < wordCloud.Size.Height || settings.Size.Width < wordCloud.Size.Width
+                ? Result.Fail<None>("Image size is smaller than cloud size")
+                : Result.Ok();
         }
     }
 }

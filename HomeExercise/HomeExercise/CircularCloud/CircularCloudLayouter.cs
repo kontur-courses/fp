@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 
 namespace HomeExercise
 {
@@ -22,10 +23,17 @@ namespace HomeExercise
             return rectanglesInCloud.Any(currentRectangle.IntersectsWith);
         }
         
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (!IsSizeValidity(rectangleSize))
-                throw new ArgumentException();
+            var sizeValidity = CheckSizeValidity(rectangleSize).OnFail(Console.WriteLine);
+            
+            return sizeValidity.IsSuccess
+                ? Result.Of(() => GetRectangle(rectangleSize)).OnFail(Console.WriteLine)
+                : Result.Fail<Rectangle>(sizeValidity.Error);
+        }
+
+        private Rectangle GetRectangle(Size rectangleSize)
+        {
             while (true)
             {
                 var rectangleLocation = spiral.GetNextPoint();
@@ -36,9 +44,11 @@ namespace HomeExercise
             }
         }
 
-        private bool IsSizeValidity(Size size)
+        private Result<None> CheckSizeValidity(Size size)
         {
-            return size.Height >= 0 && size.Width >= 0;
+            return size.Height >= 0 && size.Width >= 0 
+                ? Result.Ok() 
+                : Result.Fail<None>("Incorrect rectangle size");
         }
     }
 }
