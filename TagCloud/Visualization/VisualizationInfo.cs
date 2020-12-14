@@ -20,8 +20,8 @@ namespace TagCloud.Visualization
 
         internal static Result<Size?> ReadSize(string sizeStr)
         {
-            var error = new Result<Size?>("Was incorrect size, must be two numbers like \"2000 1500\"");
-            if (sizeStr == string.Empty)
+            var error = new Result<Size?>("Was incorrect size, must be two numbers like \"2000 1500\" or \"dynamic\"");
+            if (sizeStr == "dynamic")
             {
                 return new Result<Size?>(null, null);
             }

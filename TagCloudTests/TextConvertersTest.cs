@@ -19,7 +19,7 @@ namespace TagCloudTests
             var textReader = new TextReaderTxt();
             var textProcessor = new ParagraphTextProcessor();
             var wordsMetric = new CountWordMetric();
-            var result = wordsMetric.GetMetric(textProcessor.GetLiterals(textReader.ReadText(path)));
+            var result = wordsMetric.GetMetric(textProcessor.GetLiterals(textReader.ReadText(path).GetValueOrThrow()));
             File.Delete(path);
             var expected = new Dictionary<string, double>();
             expected["am"] = 1;

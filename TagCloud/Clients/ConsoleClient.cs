@@ -27,6 +27,7 @@ namespace TagCloud.Clients
             Console.WriteLine("Hello, I'm your personal visualization client");
             while (true)
             {
+                vizInfo = null;
                 Console.WriteLine("Write path to file with text or \"exit\" to exit");
                 var answear = Console.ReadLine();
                 if (answear == "exit")
@@ -49,53 +50,65 @@ namespace TagCloud.Clients
                     Console.WriteLine("something was wrong, please, try again");
                     continue;
                 }
-                Console.WriteLine("write params cloud configuration");
-                var answears = new List<string>() 
-                { 
-                    Console.ReadLine(), 
-                    Console.ReadLine(), 
-                    Console.ReadLine(), 
-                    Console.ReadLine() 
-                };
-                Parser.Default.ParseArguments<OptionsTagInfo>(answears)
-                    .WithParsed(SetTagInfo);
-                if(!processor.IsSuccess)
-                {
-                    Console.WriteLine(processor.Error);
+                if (!ReadTagInfoIsSuccess())
                     continue;
-                }
-                if (!metric.IsSuccess)
-                {
-                    Console.WriteLine(metric.Error);
+                if (!ReadVisualizationInfoIsSuccess())
                     continue;
-                }
-                if (!pointGetter.IsSuccess)
-                {
-                    Console.WriteLine(pointGetter.Error);
-                    continue;
-                }
-                if (!layoter.IsSuccess)
-                {
-                    Console.WriteLine(layoter.Error);
-                    continue;
-                }
-                layoter.GetValueOrThrow().SetPointGetterIfNull(pointGetter.GetValueOrThrow());
-                Console.WriteLine("write Visualizate configuration or 'end' if you finish write");
-                answears.Clear();
-                while (true)
-                {
-                    answear = Console.ReadLine();
-                    if (answear == "end")
-                        break;
-                    answears.Add(answear);
-                }
-                Parser.Default.ParseArguments<OptionsVisualizate>(answears)
-                    .WithParsed(SetVisualizateInfo);
                 Console.WriteLine("write path file to save");
                 answear = Console.ReadLine();
                 Visualize(text, answear);
                 Console.WriteLine("file save");
             }
+        }
+
+        private bool ReadTagInfoIsSuccess()
+        {
+            Console.WriteLine("write params cloud configuration");
+            var answears = new List<string>()
+                {
+                    Console.ReadLine(),
+                    Console.ReadLine(),
+                    Console.ReadLine(),
+                    Console.ReadLine()
+                };
+            Parser.Default.ParseArguments<OptionsTagInfo>(answears)
+                .WithParsed(SetTagInfo);
+            if (!processor.IsSuccess)
+            {
+                Console.WriteLine(processor.Error);
+                return false;
+            }
+            if (!metric.IsSuccess)
+            {
+                Console.WriteLine(metric.Error);
+                return false;
+            }
+            if (!pointGetter.IsSuccess)
+            {
+                Console.WriteLine(pointGetter.Error);
+                return false;
+            }
+            if (!layoter.IsSuccess)
+            {
+                Console.WriteLine(layoter.Error);
+                return false;
+            }
+            layoter.GetValueOrThrow().SetPointGetterIfNull(pointGetter.GetValueOrThrow());
+            return true;
+        }
+
+        private bool ReadVisualizationInfoIsSuccess()
+        {
+            Console.WriteLine("write Visualizate configuration (3 parametrs - size, coloring and font)");
+            var answears = new List<string>()
+            {
+                Console.ReadLine(),
+                Console.ReadLine(),
+                Console.ReadLine()
+            };
+            Parser.Default.ParseArguments<OptionsVisualizate>(answears)
+                .WithParsed(SetVisualizateInfo);
+            return vizInfo != null;
         }
 
         private void SetTagInfo(OptionsTagInfo info)
@@ -112,28 +125,29 @@ namespace TagCloud.Clients
 
         private void SetVisualizateInfo(OptionsVisualizate info)
         {
-            var sizeResult = VisualizationInfo.ReadSize(info.Size);
-            if (!sizeResult.IsSuccess)
-            {
-                Console.WriteLine(sizeResult.Error);
-                Console.WriteLine("Was using dynamic size");
-            }
-            var size = sizeResult.IsSuccess ? sizeResult.GetValueOrThrow() : null;
-            var coloringResult = WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring));
-            if (!coloringResult.IsSuccess)
-            {
-                Console.WriteLine(coloringResult.Error);
-                Console.WriteLine("Was using coloring \"random\"");
-            }
-            var coloring = coloringResult.IsSuccess ? coloringResult.GetValueOrThrow() :  
-                WordsColoringAssosiation.GetColoring("random").GetValueOrThrow();
+            if(!TryGetValueOrWriteError(VisualizationInfo.ReadSize(SkipSpaces(info.Size)), out var size))
+                return;
+            if (TryGetValueOrWriteError(WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring)), out var coloring))
+                return;
             string font = SkipSpaces(info.Font);
             if (!VisualizationInfo.FontIsCorrect(font))
             {
-                Console.WriteLine("Not correct font, was using fong \"Arial\"");
-                font = "Arial";
+                Console.WriteLine("Not correct font");
+                return;
             }
             vizInfo = new VisualizationInfo(coloring, size, font);
+        }
+
+        private bool TryGetValueOrWriteError<T>(Result<T> result, out T value)
+        {
+            if (!result.IsSuccess)
+            {
+                Console.WriteLine(result.Error);
+                value = default;
+            }
+            else
+                value = result.GetValueOrThrow();
+            return result.IsSuccess;
         }
 
         private string SkipSpaces(string str) => string.Join("", str.SkipWhile(c => c == ' '));
@@ -166,7 +180,7 @@ namespace TagCloud.Clients
         internal class OptionsVisualizate
         {
             [Option('s', "size", Required = false, Default = "", 
-                HelpText = "size tu cut picture, write two numbers")]
+                HelpText = "size to cut picture, write two numbers or \"dynamic\" for dynamic size")]
             public string Size { get; set; }
 
             [Option('f', "font", Required = false, Default = "Arial",

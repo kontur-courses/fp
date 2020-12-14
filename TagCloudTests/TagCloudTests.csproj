@@ -13,4 +13,9 @@
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FileSenderRailway\FileSenderRailway.csproj" />
+    <ProjectReference Include="..\TagCloud\TagCloud.csproj" />
+  </ItemGroup>
+
 </Project>

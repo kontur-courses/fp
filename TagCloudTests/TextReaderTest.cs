@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using TagCloud.TextConverters.TextReaders;
+using FluentAssertions;
 
 namespace TagCloudTests
 {
@@ -18,7 +19,7 @@ namespace TagCloudTests
         {
             File.WriteAllText(path, text);
             var result = reader.ReadText(path);
-            Assert.AreEqual(text, result);
+            Assert.AreEqual(text, result.GetValueOrThrow());
             File.Delete(path);
         }
 
@@ -26,7 +27,7 @@ namespace TagCloudTests
         public void ReadTextFromFileDoesntExist_ShouldBeNull()
         {
             var result = reader.ReadText(path);
-            Assert.IsNull(result);
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }
