@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HomeExercise.settings;
+using ResultOf;
 
 namespace HomeExercise
 {
@@ -8,18 +9,20 @@ namespace HomeExercise
     {
         private readonly IFileProcessor fileProcessor;
         private readonly WordSettings settings;
+        
         public WordsProcessor(IFileProcessor fileProcessor, WordSettings settings)
         {
             this.fileProcessor = fileProcessor;
             this.settings = settings;
         }
-        
-        public  List<IWord> HandleWords()
+
+        public Result<List<IWord>> HandleWords()
         {
-            var words = fileProcessor.GetWords();
-            return words
-                .Select(w => WordHandle(w.Key, w.Value))
-                .ToList();
+            var resultWords = fileProcessor.GetWords();
+
+            return !resultWords.IsSuccess 
+                ? Result.Fail<List<IWord>>(resultWords.Error) 
+                : Result.Of(() => resultWords.Value.Select(w => WordHandle(w.Key, w.Value)).ToList());
         }
    
         private IWord WordHandle(string text, int frequency)
