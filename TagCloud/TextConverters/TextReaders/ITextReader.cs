@@ -1,9 +1,11 @@
-﻿namespace TagCloud.TextConverters.TextReaders
+﻿using ResultOf;
+
+namespace TagCloud.TextConverters.TextReaders
 {
     public interface ITextReader
     {
         public string Extension { get; }
 
-        public string ReadText(string path);
+        public Result<string> ReadText(string path);
     }
 }

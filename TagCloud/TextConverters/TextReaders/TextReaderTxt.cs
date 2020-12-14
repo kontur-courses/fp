@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using ResultOf;
 
 namespace TagCloud.TextConverters.TextReaders
 {
@@ -6,27 +8,17 @@ namespace TagCloud.TextConverters.TextReaders
     {
        public string Extension { get => ".txt"; }
 
-        public string ReadText(string path)
-        {
-            if (TryReadFile(path, out var result))
-                return result;
-            return result;
-        }
-
-        private bool TryReadFile(string path, out string result)
+        public Result<string> ReadText(string path)
         {
             try
             {
-                using (var sr = File.OpenText(path))
-                {
-                    result = sr.ReadToEnd();
-                }
+                using var sr = File.OpenText(path);
+                return new Result<string>(null, sr.ReadToEnd());
             }
-            catch
+            catch(Exception e)
             {
-                result = null;
+                return new Result<string>($"Can't read file, error: {e.Message}");
             }
-            return result != null;
         }
     }
 }

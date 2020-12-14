@@ -37,7 +37,13 @@ namespace TagCloud.Clients
                     Console.WriteLine(reader.Error);
                     continue;
                 }
-                var text = reader.GetValueOrThrow().ReadText(answear);
+                var textResut = reader.GetValueOrThrow().ReadText(answear);
+                if (!textResut.IsSuccess)
+                {
+                    Console.WriteLine(textResut.Error);
+                    continue;
+                }
+                var text = textResut.GetValueOrThrow();
                 if (text == null)
                 {
                     Console.WriteLine("something was wrong, please, try again");
