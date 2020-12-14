@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace TagCloud
+namespace TagCloudGraphicInterface.Infrastructure
 {
     public class Options
     {

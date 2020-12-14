@@ -4,9 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Autofac;
-using Autofac.Features.Indexed;
-using CommandLine;
-using TagCloud.App;
 using TagCloud.App.CLI;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Layout;
@@ -23,7 +20,7 @@ namespace TagCloud
     // ReSharper disable once ClassNeverInstantiated.Global
     public class Program
     {
-        public static void Main(string[] args)
+        public static ContainerBuilder GetDefaultContainer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<TxtReader>().As<IReader<string>>();
@@ -71,20 +68,8 @@ namespace TagCloud
             builder.RegisterType<ColorPickerSettingsManager>().AsImplementedInterfaces();
 
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
-
-            //todo use compile options
-            builder.RegisterType<TagCloudLayouterCli>().Keyed<IApp>(UiType.Cli);
-            builder.RegisterType<TagCloudLayouterGui>().Keyed<IApp>(UiType.Gui);
-
-            var container = builder.Build();
-            var index = container.Resolve<IIndex<UiType,IApp>>();
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(o =>
-                    {
-                        var app = index[o.UserInterfaceType];
-                        app.Run();
-                    }
-                );
+            
+            return builder;
         }
 
         public static Settings GetDefaultSettings()
