@@ -1,5 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 using Autofac;
+using ResultOf;
 
 namespace HomeExercise
 {
@@ -7,19 +12,17 @@ namespace HomeExercise
     {
         static void Main(string[] args)
         {
-            var wordPath = @"word3.txt";
-            
-            var boringPath = @"boringWord.txt";
-            args = new[] {"options", "--words", wordPath, "--boring", boringPath, "--format", "bmp", "--color", "110", "-c", "24", "--imageName", "any"};
-            //args = new[] {"options", "--words", wordPath};
-            
-            
-            var console = BuildConsole();
-            var builder = new ContainerBuilder();
-            console.HandleSettingsFromConsole(args, builder);
-            var painter = BuildPainter(builder);
+            var wordsPath = @"aaa.txt";
+            var boringWordsPath = @"bw.txt";
 
-            painter.DrawFigures();
+            //args = new[] {"options", "--words", wordsPath, "--format", "bp", "--color", "7000", "-c", "24", "--imageName", "aa"};
+            args = new[] {"options", "--words", wordsPath, "--font", "Comic Sans MS", "-h", "-2222", "-w", "-2000"};
+            //args = new[] {"options", "--words", wordsPath, "--boring", boringWordsPath, "--format", "bmpjjj", "--color", "70", "-c", "29", "--imageName", "ff"};
+            //args = new[] {"options", "--words", wordsPath};
+
+            var builder = new ContainerBuilder();
+            Result.Of(BuildConsole).Then(c => c.HandleSettingsFromConsole(args, builder)).OnFail(Console.WriteLine);
+            Result.Of(() => BuildPainter(builder)).Then(p => p.DrawFigures()).OnFail(Console.WriteLine);
         }
 
         private static IConsoleCloudClient BuildConsole()
@@ -30,7 +33,6 @@ namespace HomeExercise
             return consoleContainer.Resolve<IConsoleCloudClient>();
         }
         
-        [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Func`2[System.Drawing.Rectangle,System.Boolean]")]
         private static IPainter BuildPainter(ContainerBuilder builder)
         {
             builder.RegisterType<WordsProcessor>().As<IWordsProcessor>();
