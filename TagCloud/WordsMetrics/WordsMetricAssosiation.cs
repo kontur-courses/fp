@@ -20,8 +20,8 @@ namespace TagCloud.WordsMetrics
         {
             if (!metrics.ContainsKey(name))
             {
-                return new Result<IWordsMetric>($"doesn't have processor with name {name}\n" +
-                    $"List of text processor names:\n{string.Join('\n', metricsName)}");
+                return new Result<IWordsMetric>($"doesn't have metric with name {name}\n" +
+                    $"List of metric names:\n{string.Join('\n', metricsName)}");
             }
             IWordsMetric metric;
             try

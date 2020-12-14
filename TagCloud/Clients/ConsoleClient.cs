@@ -18,6 +18,7 @@ namespace TagCloud.Clients
         private Result<ITextProcessor> processor;
         private Result<IWordsMetric> metric;
         private Result<ICloudLayoter> layoter;
+        private Result<IPointGetter> pointGetter;
 
         private VisualizationInfo vizInfo;
 

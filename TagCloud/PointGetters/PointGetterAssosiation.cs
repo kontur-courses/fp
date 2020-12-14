@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+using ResultOf;
 
 namespace TagCloud.PointGetters
 {
@@ -12,10 +15,25 @@ namespace TagCloud.PointGetters
                 [circle] = new CirclePointGetter(),
                 [spiral] = new SpiralPointGetter()
             };
+        public static readonly HashSet<string> getters = pointGetters.Keys.ToHashSet();
 
-        public static IPointGetter GetPointGetter(string name)
+        public static Result<IPointGetter> GetPointGetter(string name)
         {
-            return pointGetters.TryGetValue(name, out var getter) ? getter : null;
+            if (!pointGetters.ContainsKey(name))
+            {
+                return new Result<IPointGetter>($"doesn't have point getter with name {name}\n" +
+                    $"List of text point getter names:\n{string.Join('\n', getters)}");
+            }
+            IPointGetter getter;
+            try
+            {
+                getter = pointGetters[name];
+            }
+            catch (Exception e)
+            {
+                return new Result<IPointGetter>($"something was wrong: {e.Message}");
+            }
+            return new Result<IPointGetter>(null, getter);
         }
     }
 }
