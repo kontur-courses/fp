@@ -4,6 +4,6 @@ namespace TagsCloud.WordReaders
 {
     public interface IWordReader
     {
-        IEnumerable<string> ReadWords();
+        Result<IEnumerable<string>> ReadWords();
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using TagsCloud.WordLayouters;
 
@@ -14,15 +13,17 @@ namespace TagsCloud.CloudRenderers
 
         public CloudRenderer(IWordLayouter layouter, int width, int height, string filePath)
         {
-            if (width <= 0 || height <= 0) throw new ArgumentException("Not positive width or height");
-            this.layouter = layouter ?? throw new ArgumentException("Layouter is null");
+            this.layouter = layouter;
             this.width = width;
             this.height = height;
             this.filePath = filePath;
         }
         
-        public string RenderCloud()
+        public Result<string> RenderCloud()
         {
+            if (width <= 0 || height <= 0) return Result.Fail<string>("Not positive width or height");
+            if(layouter == null) return Result.Fail<string>("Layouter is null");
+            
             var wordsRectangle = layouter.GetCloudRectangle();
             var words = layouter.CloudWords;
             

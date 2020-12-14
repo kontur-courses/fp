@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using TagsCloud.WordSelectors;
@@ -9,7 +8,6 @@ namespace TagsCloud.WordReaders
     {
         private readonly string filePath;
         private readonly IWordSelector selector;
-        private readonly string[] separator = {Environment.NewLine};
 
         public ByLineWordReader(string filePath, IWordSelector selector)
         {
@@ -17,10 +15,8 @@ namespace TagsCloud.WordReaders
             this.selector = selector;
         }
 
-        public IEnumerable<string> ReadWords()
-        {
-            var words = File.ReadAllLines(filePath);
-            return selector.TakeSelectedWords(words);
-        }
+        public Result<IEnumerable<string>> ReadWords() => Result
+            .Of<IEnumerable<string>>(() => File.ReadAllLines(filePath))
+            .Then(words => selector.TakeSelectedWords(words));
     }
 }

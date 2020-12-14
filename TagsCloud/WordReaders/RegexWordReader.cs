@@ -7,7 +7,7 @@ namespace TagsCloud.WordReaders
 {
     public class RegexWordReader : IWordReader
     {
-        private const string SplitPattern = "\\W+";
+        private static readonly Regex RegexReader = new Regex("\\W+", RegexOptions.Compiled);
         
         private readonly string filePath;
         private readonly IWordSelector selector;
@@ -18,11 +18,9 @@ namespace TagsCloud.WordReaders
             this.selector = selector;
         }
 
-        public IEnumerable<string> ReadWords()
-        {
-            var file = File.ReadAllText(filePath);
-            var words = Regex.Split(file, SplitPattern);
-            return selector.TakeSelectedWords(words);
-        }
+        public Result<IEnumerable<string>> ReadWords() => Result
+            .Of(() => File.ReadAllText(filePath))
+            .Then(text => RegexReader.Split(text))
+            .Then(words => selector.TakeSelectedWords(words));
     }
 }
