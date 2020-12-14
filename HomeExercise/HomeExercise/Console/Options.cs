@@ -28,14 +28,14 @@ namespace HomeExercise.Options
         public string ImageName { get; set; }
         
         [Option("color", Default = 22,Required = false, HelpText = "Input color enum.")]
-        public KnownColor Color { get; set; }
+        public int Color { get; set; }
         
         [Option('c',"coefficient",Default = 40, Required = false, HelpText = "Input coefficient.")]
         public int Coefficient { get; set; }
         
         [Option("centerX",Default = 0,Required = false, HelpText = "Input center point.")]
         public int CenterX { get; set; }
-        [Option("centerX",Required = false, HelpText = "Input center point.")]
+        [Option("centerY",Required = false, HelpText = "Input center point.")]
         public int CenterY { get; set; }
     }
 }
