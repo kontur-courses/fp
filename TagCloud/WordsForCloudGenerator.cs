@@ -23,23 +23,20 @@ namespace TagCloud
             this.colorGenerator = colorGenerator;
         }
 
-        public List<WordForCloud> Generate(List<string> words)
+        public Result<IEnumerable<WordForCloud>> Generate(Result<List<string>> wordsResult)
         {
-            var wordFrequency = GetWordsFrequency(words)
-                                .OrderBy(x => x.Value)
-                                .Reverse()
-                                .ToList();
-
-            var maxFrequency = wordFrequency.FirstOrDefault().Value;
-            return wordFrequency
-                   .Select(x =>
-                               GetWordForCloud(fontName,
-                                               maxFontSize,
-                                               colorGenerator.GetNextColor(),
-                                               x.Key,
-                                               x.Value,
-                                               maxFrequency))
-                   .ToList();
+            return wordsResult.Then((words) => GetWordsFrequency(words)
+                                               .OrderBy(x => x.Value)
+                                               .Reverse()
+                                               .ToList())
+                              .Then(frequency
+                                        => frequency.Select(x =>
+                                                                GetWordForCloud(fontName,
+                                                                                maxFontSize,
+                                                                                colorGenerator.GetNextColor(),
+                                                                                x.Key,
+                                                                                x.Value,
+                                                                                maxFrequency: frequency.FirstOrDefault().Value)));
         }
 
         private static Dictionary<string, int> GetWordsFrequency(List<string> words) =>

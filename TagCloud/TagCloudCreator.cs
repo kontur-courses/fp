@@ -14,11 +14,11 @@ namespace TagCloud
         private readonly string boringWordsFile;
 
         public TagCloudCreator(IWordsForCloudGenerator wordsForCloudGenerator,
-            IWordsReader wordsReader,
-            IWordsNormalizer wordsNormalizer,
-            ICloudDrawer cloudDrawer,
-            string inputFile,
-            string boringWordsFile)
+                               IWordsReader wordsReader,
+                               IWordsNormalizer wordsNormalizer,
+                               ICloudDrawer cloudDrawer,
+                               string inputFile,
+                               string boringWordsFile)
         {
             this.wordsNormalizer = wordsNormalizer;
             this.cloudDrawer = cloudDrawer;
@@ -28,10 +28,12 @@ namespace TagCloud
             this.boringWordsFile = boringWordsFile;
         }
 
-        public Bitmap GetCloud()
+        public Result<Bitmap> GetCloud()
         {
             var words = wordsReader.Get(inputFile);
-            var normalizedWords = wordsNormalizer.NormalizeWords(words, wordsReader.Get(boringWordsFile).ToHashSet());
+            var normalizedWords = wordsNormalizer.NormalizeWords(words,
+                                                                 wordsReader.Get(boringWordsFile)
+                                                                            .Then(boringWords => boringWords.ToHashSet()));
             var wordsForCloud = wordsForCloudGenerator.Generate(normalizedWords);
             return cloudDrawer.DrawCloud(wordsForCloud);
         }

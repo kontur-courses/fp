@@ -4,6 +4,6 @@ namespace TagCloud.Interfaces
 {
     public interface ITagCloudCreator
     {
-        Bitmap GetCloud();
+        Result<Bitmap> GetCloud();
     }
 }

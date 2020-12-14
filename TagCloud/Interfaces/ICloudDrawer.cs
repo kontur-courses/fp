@@ -5,6 +5,6 @@ namespace TagCloud.Interfaces
 {
     public interface ICloudDrawer
     {
-        Bitmap DrawCloud(IEnumerable<WordForCloud> wordsForCloud);
+        Result<Bitmap> DrawCloud(Result<IEnumerable<WordForCloud>> wordsForCloud);
     }
 }

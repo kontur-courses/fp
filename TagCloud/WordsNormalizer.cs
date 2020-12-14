@@ -6,7 +6,12 @@ namespace TagCloud
 {
     public class WordsNormalizer : IWordsNormalizer
     {
-        public List<string> NormalizeWords(List<string> words, HashSet<string> boringWords) =>
-            words.Where(x => !boringWords.Contains(x)).Select(x => x.ToLower()).ToList();
+        public Result<List<string>> NormalizeWords(Result<List<string>> wordsResult, Result<HashSet<string>> boringWords)
+        {
+            return !boringWords.IsSuccess
+                ? Result.Fail<List<string>>(boringWords.Error)
+                : wordsResult
+                    .Then(word => word.Where(x => !boringWords.Value.Contains(x)).Select(x => x.ToLower()).ToList());
+        }
     }
 }

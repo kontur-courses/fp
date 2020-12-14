@@ -103,12 +103,16 @@ namespace TagCloud
                                        tagCloudSettings.InputFile,
                                        tagCloudSettings.BoringWordsFile);
 
-            bitmap.Save(tagCloudSettings.OutputFile);
+            var result = bitmap.Then(b => b.Save(tagCloudSettings.OutputFile));
+            if (!result.IsSuccess)
+            {
+                Console.WriteLine(result.Error);
+            }
         }
 
-        private static Bitmap GetCloudImage(ITagCloudCreatorFactory tagCloudCreatorFactory, Size pictureSize,
-                                            Point cloudCenter, Color[] colors, string fontName,
-                                            int maxFontSize, string inputFile, string boringWordsFile)
+        private static Result<Bitmap> GetCloudImage(ITagCloudCreatorFactory tagCloudCreatorFactory, Size pictureSize,
+                                                    Point cloudCenter, Color[] colors, string fontName,
+                                                    int maxFontSize, string inputFile, string boringWordsFile)
         {
             var tagCloudCreator = tagCloudCreatorFactory
                 .Get(pictureSize,

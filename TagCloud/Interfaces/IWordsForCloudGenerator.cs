@@ -4,6 +4,6 @@ namespace TagCloud.Interfaces
 {
     public interface IWordsForCloudGenerator
     {
-        List<WordForCloud> Generate(List<string> words);
+        Result<IEnumerable<WordForCloud>> Generate(Result<List<string>> words);
     }
 }

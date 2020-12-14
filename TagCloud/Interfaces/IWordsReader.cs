@@ -4,6 +4,6 @@ namespace TagCloud.Interfaces
 {
     public interface IWordsReader
     {
-        List<string> Get(string path);
+        Result<List<string>> Get(string path);
     }
 }

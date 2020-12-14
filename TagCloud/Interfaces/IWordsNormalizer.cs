@@ -4,6 +4,6 @@ namespace TagCloud.Interfaces
 {
     public interface IWordsNormalizer
     {
-        List<string> NormalizeWords(List<string> words, HashSet<string> boringWords);
+        Result<List<string>> NormalizeWords(Result<List<string>> words, Result<HashSet<string>> boringWords);
     }
 }
