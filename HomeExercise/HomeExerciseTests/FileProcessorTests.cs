@@ -22,7 +22,7 @@ namespace TestProject1
             }
             
             var resultWords = fileProcessor.GetWords();
-            resultWords.First().Key.Should().BeEquivalentTo("word");
+            resultWords.GetValueOrThrow().First().Key.Should().BeEquivalentTo("word");
         }
         
         [Test]
@@ -40,7 +40,7 @@ namespace TestProject1
             
             var resultWords = fileProcessor.GetWords();
             var expected = new Dictionary<string, int> {{"word", 100}};
-            resultWords.Should().BeEquivalentTo(expected);
+            resultWords.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
         
         [Test]
@@ -56,7 +56,7 @@ namespace TestProject1
             
             var resultWords = fileProcessor.GetWords();
             var expected = new Dictionary<string, int> {{"word", 2}};
-            resultWords.Should().BeEquivalentTo(expected);
+            resultWords.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         private string GetWordsPath(string path)

@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using FluentAssertions;
 using HomeExercise;
 using HomeExercise.settings;
+using HomeExercise.Settings;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -65,13 +66,13 @@ namespace TestProject1
         }
         
         [Test]
-        public void PutNextRectangle_ReturnArgumentException_WhenInvalidSize()
+        public void PutNextRectangle_ReturnResultWithArgumentException_WhenInvalidSize()
         {
             var invalidSize = new Size(-2,0);
             
-            Action act = () =>layouter.PutNextRectangle(invalidSize);
+            var rectangle = layouter.PutNextRectangle(invalidSize);
 
-            act.Should().Throw<ArgumentException>();
+            rectangle.Error.Should().BeEquivalentTo("Incorrect rectangle size");
         }
         
         [Test]
@@ -81,7 +82,7 @@ namespace TestProject1
             
             for (var i = 0; i < 1000; i++)
             {
-                var newRectangle = layouter.PutNextRectangle(new Size(20,23));
+                var newRectangle = layouter.PutNextRectangle(new Size(20,23)).GetValueOrThrow();
                 foreach (var rectangle in rectanglesInCloud)
                 {
                     isIntersect = newRectangle.IntersectsWith(rectangle);
@@ -110,7 +111,8 @@ namespace TestProject1
                 var indent = 20;
                 var imageSize = cloudDiameter + indent; 
                 var format = ImageFormat.Png;
-                var settings = new PainterSettings(imageSize, imageSize,$"{testName}.{format}",format, Color.Aqua);
+                var size = new Size(imageSize, imageSize);
+                var settings = new PainterSettings(size,$"{testName}.{format}",format, Color.Aqua);
                 var painter = new CircularCloudRectanglesPainter(rectanglesInCloud,settings);
                 painter.DrawFigures();
                 TestContext.Error.WriteLine($"Tag cloud visualization saved to file {testDir}\\{testName}.png");
@@ -145,7 +147,7 @@ namespace TestProject1
         private Rectangle MakeNewRectangle(int width, int height)
         {
             var size = new Size(width, height);
-            var newRectangle = layouter.PutNextRectangle(size);
+            var newRectangle = layouter.PutNextRectangle(size).GetValueOrThrow();
             rectanglesInCloud.Add(newRectangle);
             
             return newRectangle;
