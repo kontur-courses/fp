@@ -2,7 +2,6 @@
 using System.Linq;
 using TagCloud.Visualization.WordsColorings;
 using ResultOf;
-using System;
 
 namespace TagCloud.Visualization
 {
@@ -42,6 +41,8 @@ namespace TagCloud.Visualization
                 return error;
             }
         }
+
+        public static bool FontIsCorrect(string font) => FontFamily.Families.Select(f => f.Name).Contains(font);
 
         private static int[] ParseString(string str) =>
             str.Split(' ')

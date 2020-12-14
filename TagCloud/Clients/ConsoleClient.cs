@@ -121,7 +121,13 @@ namespace TagCloud.Clients
             }
             var coloring = coloringResult.IsSuccess ? coloringResult.GetValueOrThrow() :  
                 WordsColoringAssosiation.GetColoring("random").GetValueOrThrow();
-            vizInfo = new VisualizationInfo(coloring, size, SkipSpaces(info.Font));
+            string font = SkipSpaces(info.Font);
+            if (!VisualizationInfo.FontIsCorrect(font))
+            {
+                Console.WriteLine("Not correct font, was using fong \"Arial\"");
+                font = "Arial";
+            }
+            vizInfo = new VisualizationInfo(coloring, size, font);
         }
 
         private string SkipSpaces(string str) => string.Join("", str.SkipWhile(c => c == ' '));
