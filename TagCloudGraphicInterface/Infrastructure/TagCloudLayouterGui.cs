@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Gdk;
 using Gtk;
+using TagCloud.App;
 using TagCloud.Infrastructure;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
@@ -15,7 +16,7 @@ using Image = System.Drawing.Image;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
 using Window = Gtk.Window;
 
-namespace TagCloud.App.GUI
+namespace TagCloudGraphicInterface.GUI
 {
     internal class TagCloudLayouterGui : IApp
     {
@@ -37,7 +38,7 @@ namespace TagCloud.App.GUI
 
         public void Run()
         {
-            settingsFactory().Import(Program.GetDefaultSettings());
+            settingsFactory().Import(TagCloud.Program.GetDefaultSettings());
 
             Application.Init();
 
@@ -137,9 +138,8 @@ namespace TagCloud.App.GUI
         {
             var dropdown = new ComboBoxText();
             containerBox.PackStart(dropdown, true, true, padding);
-            foreach (var (option, _) in manager
-                .GetOptions()
-                .Select((s, i) => (s, i)))
+            foreach (var (option, _) in Enumerable.Select<string, (string s, int i)>(manager
+                    .GetOptions(), (s, i) => (s, i)))
                 dropdown.Append(option, option);
 
             dropdown.SetActiveId(manager.GetSelectedOption());

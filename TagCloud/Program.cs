@@ -4,9 +4,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Autofac;
+using Autofac.Features.Indexed;
+using CommandLine;
 using TagCloud.App;
 using TagCloud.App.CLI;
-using TagCloud.App.GUI;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Layout;
 using TagCloud.Infrastructure.Layout.Environment;
@@ -72,12 +73,18 @@ namespace TagCloud
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
 
             //todo use compile options
-            // builder.RegisterType<TagCloudLayouterCli>().As<IApp>();
-            builder.RegisterType<TagCloudLayouterGui>().As<IApp>();
+            builder.RegisterType<TagCloudLayouterCli>().Keyed<IApp>(UiType.Cli);
+            builder.RegisterType<TagCloudLayouterGui>().Keyed<IApp>(UiType.Gui);
 
             var container = builder.Build();
-            var app = container.Resolve<IApp>();
-            app.Run();
+            var index = container.Resolve<IIndex<UiType,IApp>>();
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(o =>
+                    {
+                        var app = index[o.UserInterfaceType];
+                        app.Run();
+                    }
+                );
         }
 
         public static Settings GetDefaultSettings()

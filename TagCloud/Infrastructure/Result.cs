@@ -23,7 +23,7 @@ namespace TagCloud.Infrastructure
         }
 
         public string Error { get; }
-        internal T Value { get; }
+        public T Value { get; }
 
         public T GetValueOrThrow()
         {
