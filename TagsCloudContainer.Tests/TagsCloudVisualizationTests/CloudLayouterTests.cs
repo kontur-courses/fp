@@ -13,7 +13,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
     {
         private Point Center { get; set; }
         private RectangleVisualizer RectangleVisualizer { get; set; }
-        private CloudLayouter Sut { get; set; }
+        private CloudLayouter Layouter { get; set; }
 
         [SetUp]
         public void SetUp()
@@ -23,7 +23,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
 
             RectangleVisualizer = new RectangleVisualizer();
             Center = new Point(300, 300);
-            Sut = new CloudLayouter(new ArchimedeanSpiral(Center, distanceBetweenLoops, angleDelta));
+            Layouter = new CloudLayouter(new ArchimedeanSpiral(Center, distanceBetweenLoops, angleDelta));
         }
 
         [TearDown]
@@ -31,8 +31,8 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
         {
             if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
             {
-                var path = new PathGenerator(new DateTimeProvider()).GetNewFilePath();
-                new BitmapSaver().SaveBitmapToDirectory(RectangleVisualizer.GetBitmap(Sut.Rectangles), path);
+                var path = new ImageFilePathGenerator(new DateTimeProvider()).GetNewFilePath();
+                new BitmapSaver().SaveBitmapToDirectory(RectangleVisualizer.GetBitmap(Layouter.Rectangles), path);
 
                 Console.WriteLine($"Tag cloud visualization saved to file {path}");
             }
@@ -45,17 +45,17 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
         public void PutNextRectangle_ThrowException_When(int width, int height)
         {
             var size = new Size(width, height);
-            Action putRectangle = () => Sut.PutNextRectangle(size);
+            Action putRectangle = () => Layouter.PutNextRectangle(size);
 
             putRectangle.Should().Throw<ArgumentException>();
-            Assert.Throws<ArgumentException>(() => Sut.PutNextRectangle(size));
+            Assert.Throws<ArgumentException>(() => Layouter.PutNextRectangle(size));
         }
 
         [Test]
         public void PutNextRectangle_ReturnExpectedSize_WhenSizeIsPositive()
         {
             var expectedSize = new Size(13, 11);
-            var rectangle = Sut.PutNextRectangle(expectedSize);
+            var rectangle = Layouter.PutNextRectangle(expectedSize);
 
             rectangle.Size.Should().Be(expectedSize);
         }
@@ -68,7 +68,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
 
             for (var i = 0; i < rectanglesCount; i++)
             {
-                var newRectangle = Sut.PutNextRectangle(new Size(50, 50));
+                var newRectangle = Layouter.PutNextRectangle(new Size(50, 50));
 
                 rectangles.Any(rectangle => rectangle.IntersectsWith(newRectangle)).Should().BeFalse();
                 rectangles.Add(newRectangle);

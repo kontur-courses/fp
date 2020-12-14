@@ -25,13 +25,13 @@ namespace TagsCloudContainer.TagsCloudContainer
             var graphics = Graphics.FromImage(new Bitmap(1, 1));
             var layouter = factory.GetLayouter(type);
 
-            foreach (var word in wordEntry.Keys.ToList())
+            foreach (var (key, value) in wordEntry)
             {
-                var wordFont = new Font("Arial", wordEntry[word] + 10);
-                var wordSize = graphics.MeasureString(word, wordFont).ToSize();
+                var wordFont = new Font("Arial", value + 10);
+                var wordSize = graphics.MeasureString(key, wordFont).ToSize();
                 var rectangle = layouter.PutNextRectangle(wordSize);
 
-                tags.Add(new Tag(word, rectangle, wordFont, Brushes.Black));
+                tags.Add(new Tag(key, rectangle, wordFont, Brushes.Black));
             }
 
             return tags;

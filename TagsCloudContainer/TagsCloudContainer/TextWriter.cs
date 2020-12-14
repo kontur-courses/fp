@@ -18,6 +18,7 @@ namespace TagsCloudContainer.TagsCloudContainer
             var match = Regex.Match(savePath, pattern);
 
             Result.Ok(match)
+                .Then(ValidateMatch)
                 .Then(ValidateDirectoryPath)
                 .Then(ValidateFileName)
                 .OnFail(e => throw new ArgumentException(e))
@@ -34,6 +35,11 @@ namespace TagsCloudContainer.TagsCloudContainer
             return matches
                 .Select(x => x.Value)
                 .Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
+        }
+
+        private Result<Match> ValidateMatch(Match match)
+        {
+            return Validate(match, x => !match.Success, $"Wrong path format: {match.Value}");
         }
 
         private Result<Match> ValidateDirectoryPath(Match match)

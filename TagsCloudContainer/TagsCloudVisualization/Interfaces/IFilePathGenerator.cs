@@ -1,6 +1,6 @@
 ﻿namespace TagsCloudContainer.TagsCloudVisualization.Interfaces
 {
-    public interface IPathGenerator
+    public interface IFilePathGenerator
     {
         string GetNewFilePath();
     }

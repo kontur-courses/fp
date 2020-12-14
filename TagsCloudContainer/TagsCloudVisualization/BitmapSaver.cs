@@ -17,6 +17,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
             var match = Regex.Match(savePath, pattern);
 
             Result.Ok(match)
+                .Then(ValidateMatch)
                 .Then(ValidateDirectoryPath)
                 .Then(ValidateFileName)
                 .OnFail(e => throw new ArgumentException(e));
@@ -31,6 +32,11 @@ namespace TagsCloudContainer.TagsCloudVisualization
                         x.Save(savePath, ImageFormat.Png);
                     }
                 });
+        }
+
+        private Result<Match> ValidateMatch(Match match)
+        {
+            return Validate(match, x => !match.Success, $"Wrong path format: {match.Value}");
         }
 
         private Result<Bitmap> ValidateBitmap(Bitmap bitmap)

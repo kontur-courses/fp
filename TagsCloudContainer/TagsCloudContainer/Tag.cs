@@ -8,8 +8,6 @@ namespace TagsCloudContainer.TagsCloudContainer
     {
         public Tag(string text, Rectangle rectangle, Font font, Brush textColor)
         {
-            Text = text;
-
             Result.Ok(rectangle)
                 .Then(ValidateRectangleCoordinateX)
                 .Then(ValidateRectangleCoordinateY)
@@ -25,6 +23,7 @@ namespace TagsCloudContainer.TagsCloudContainer
                 .Then(ValidateBrushIsNotNull)
                 .OnFail(e => throw new ArgumentException(e));
 
+            Text = text;
             Rectangle = rectangle;
             Font = font;
             TextColor = textColor;
@@ -37,7 +36,8 @@ namespace TagsCloudContainer.TagsCloudContainer
 
         public Tag ChangeFontFamily(string fontFamily)
         {
-            return new Tag(Text, Rectangle, new Font(fontFamily, Font.Size), TextColor);
+            using var font = new Font(fontFamily, Font.Size);
+            return new Tag(Text, Rectangle, font, TextColor);
         }
 
         public Tag ChangeTextColor(Brush color)

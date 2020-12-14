@@ -28,12 +28,12 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
         }
 
         [Test]
-        public void DoesntThrowException_When()
+        public void DoesntThrowException_WhenPathIsOk()
         {
             var path = $"..{Path.DirectorySeparatorChar}image.png";
             Action writeText = () => Writer.WriteText("text", path);
 
-            writeText.Should().NotThrow<ArgumentException>();
+            writeText.Should().NotThrow();
             File.Delete(path);
         }
 

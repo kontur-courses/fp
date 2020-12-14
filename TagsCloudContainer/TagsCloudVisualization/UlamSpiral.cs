@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
@@ -8,8 +7,9 @@ namespace TagsCloudContainer.TagsCloudVisualization
 {
     public class UlamSpiral : ISpiral
     {
-        private readonly IEnumerator<Point> points;
+        private int count;
         private Point currentPoint;
+        private Point currentVertexPoint;
 
         public UlamSpiral(Point center)
         {
@@ -17,8 +17,9 @@ namespace TagsCloudContainer.TagsCloudVisualization
                 .Then(ValidateCenterIsNotNegative)
                 .OnFail(e => throw new ArgumentException(e));
 
+            Center = center;
             currentPoint = center;
-            points = GetPoints().GetEnumerator();
+            currentVertexPoint = center;
             Type = SpiralType.UlamSpiral;
         }
 
@@ -27,31 +28,21 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
         public Point GetNextPoint()
         {
-            points.MoveNext();
-            return points.Current;
-        }
-
-        private IEnumerable<Point> GetPoints()
-        {
-            var count = 0;
-            yield return currentPoint;
-
-            while (true)
+            if (currentPoint.X != currentVertexPoint.X + count)
             {
-                for (var i = 0; i < count; i++)
-                {
-                    currentPoint.X += count % 2 == 0 ? 1 : -1;
-                    yield return currentPoint;
-                }
-
-                for (var i = 0; i < count; i++)
-                {
-                    currentPoint.Y += count % 2 == 0 ? 1 : -1;
-                    yield return currentPoint;
-                }
-
-                count++;
+                currentPoint.X += count % 2 == 0 ? -1 : 1;
+                return currentPoint;
             }
+
+            if (currentPoint.Y != currentVertexPoint.Y + count)
+            {
+                currentPoint.Y += count % 2 == 0 ? -1 : 1;
+                return currentPoint;
+            }
+
+            count = (int) Math.Pow(-1, Math.Abs(count)) * (Math.Abs(count) + 1);
+            currentVertexPoint = currentPoint;
+            return currentPoint;
         }
 
         private Result<Point> ValidateCenterIsNotNegative(Point center)

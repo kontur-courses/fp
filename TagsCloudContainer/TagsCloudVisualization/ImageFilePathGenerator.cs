@@ -3,9 +3,9 @@ using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudVisualization
 {
-    public class PathGenerator : IPathGenerator
+    public class ImageFilePathGenerator : IFilePathGenerator
     {
-        public PathGenerator(IDateTimeProvider dateTimeProvider)
+        public ImageFilePathGenerator(IDateTimeProvider dateTimeProvider)
         {
             Root = Directory.GetCurrentDirectory();
             DateTimeProvider = dateTimeProvider;

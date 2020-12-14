@@ -7,12 +7,12 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
 {
     public class PathGeneratorTests
     {
-        private PathGenerator Generator { get; set; }
+        private ImageFilePathGenerator Generator { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            Generator = new PathGenerator(new DateTimeProvider());
+            Generator = new ImageFilePathGenerator(new DateTimeProvider());
         }
 
         [Test]
