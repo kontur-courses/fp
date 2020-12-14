@@ -57,7 +57,8 @@ namespace TagsCloudContainer.TagsCloudVisualization
         private Result<Point> ValidateCenterIsNotNegative(Point center)
         {
             return center.X < 0 || center.Y < 0
-                ? Result.Fail<Point>("Center coordinates should not be negative numbers")
+                ? Result.Fail<Point>(
+                    $"Center coordinates should not be negative numbers, but was: ({center.X}, {center.Y})")
                 : Result.Ok(center);
         }
     }

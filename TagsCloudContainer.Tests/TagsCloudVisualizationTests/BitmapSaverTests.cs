@@ -22,10 +22,11 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
             BitmapSaver = new BitmapSaver();
         }
 
-        [TestCaseSource(nameof(PathTestCases))]
-        public void SaveBitmapToDirectory_ThrowException_When(string path)
+        [Test]
+        public void SaveBitmapToDirectory_ThrowException_WhenBitmapIsNull()
         {
-            Action saveImage = () => BitmapSaver.SaveBitmapToDirectory(ImageBitmap, path);
+            var path = $"..{Path.DirectorySeparatorChar}image.png";
+            Action saveImage = () => BitmapSaver.SaveBitmapToDirectory(null, path);
 
             saveImage.Should().Throw<ArgumentException>();
         }
@@ -36,7 +37,15 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
             var path = $"..{Path.DirectorySeparatorChar}image.png";
             Action saveImage = () => BitmapSaver.SaveBitmapToDirectory(ImageBitmap, path);
 
-            saveImage.Should().NotThrow<ArgumentException>();
+            saveImage.Should().NotThrow();
+        }
+
+        [TestCaseSource(nameof(PathTestCases))]
+        public void SaveBitmapToDirectory_ThrowException_When(string path)
+        {
+            Action saveImage = () => BitmapSaver.SaveBitmapToDirectory(ImageBitmap, path);
+
+            saveImage.Should().Throw<ArgumentException>();
         }
 
         private static IEnumerable<TestCaseData> PathTestCases()

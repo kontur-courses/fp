@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudVisualization
@@ -15,7 +17,18 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
         public ILayouter GetLayouter(SpiralType type)
         {
-            return new CloudLayouter(spirals.First(x => x.Type == type));
+            return Result.Ok(type)
+                .Then(ValidateSpiralType)
+                .OnFail(e => throw new ArgumentException(e))
+                .SelectMany(x => Result.Ok(new CloudLayouter(spirals.First(y => y.Type == type))))
+                .GetValueOrThrow();
+        }
+
+        private Result<SpiralType> ValidateSpiralType(SpiralType type)
+        {
+            return spirals.Select(x => x.Type).Any(x => x == type)
+                ? Result.Ok(type)
+                : Result.Fail<SpiralType>($"Factory doest contain spiral type: {type}");
         }
     }
 }

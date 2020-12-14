@@ -29,7 +29,8 @@ namespace TagsCloudContainer.TagsCloudVisualization
             foreach (var rectangle in rectangles)
             {
                 Result.Ok(rectangle)
-                    .Then(ValidateRectangleBorders)
+                    .Then(ValidateRectangleLeft)
+                    .Then(ValidateRectangleTop)
                     .OnFail(e => throw new ArgumentException(e));
 
                 if (width < rectangle.Right) width = rectangle.Right;
@@ -39,11 +40,23 @@ namespace TagsCloudContainer.TagsCloudVisualization
             return new Size(width, height);
         }
 
-        private Result<Rectangle> ValidateRectangleBorders(Rectangle rectangle)
+        private Result<Rectangle> ValidateRectangleTop(Rectangle rectangle)
         {
-            return rectangle.Left < 0 || rectangle.Top < 0
-                ? Result.Fail<Rectangle>("Rectangle out of image boundaries")
-                : Result.Ok(rectangle);
+            return Validate(rectangle, x => x.Top < 0,
+                $"Rectangle top coordinate out of image boundaries, and was: {rectangle.Top}");
+        }
+
+        private Result<Rectangle> ValidateRectangleLeft(Rectangle rectangle)
+        {
+            return Validate(rectangle, x => x.Left < 0,
+                $"Rectangle left coordinate out of image boundaries, and was: {rectangle.Left}");
+        }
+
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)
+        {
+            return predicate(obj)
+                ? Result.Fail<T>(exception)
+                : Result.Ok(obj);
         }
     }
 }

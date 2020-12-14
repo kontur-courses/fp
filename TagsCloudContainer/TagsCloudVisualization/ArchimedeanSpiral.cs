@@ -47,17 +47,18 @@ namespace TagsCloudContainer.TagsCloudVisualization
         private Result<Point> ValidateCenterPoint(Point center)
         {
             return Validate(center, x => Center.X < 0 || Center.Y < 0,
-                "Center coordinates should not be negative numbers");
+                $"Center coordinates should not be negative numbers, but was: ({center.X}, {center.Y})");
         }
 
         private Result<double> AngleDeltaIsPositive(double delta)
         {
-            return Validate(delta, x => delta <= 0, "Angle delta should be positive");
+            return Validate(delta, x => delta <= 0, $"Angle delta should be positive, but was: {delta}");
         }
 
         private Result<double> DistanceBetweenLoopsIsPositive(double distance)
         {
-            return Validate(distance, x => distance <= 0, "Distance between loops should be positive");
+            return Validate(distance, x => distance <= 0,
+                $"Distance between loops should be positive, but was: {distance}");
         }
 
         private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)

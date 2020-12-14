@@ -24,7 +24,6 @@ namespace TagsCloudContainer.TagsCloudVisualization
         {
             return Result.Ok(rectangleSize)
                 .Then(ValidateRectangleHeight)
-                .OnFail(e => throw new ArgumentException(e))
                 .Then(ValidateRectangleWidth)
                 .OnFail(e => throw new ArgumentException(e))
                 .SelectMany(x => Result.Ok(GetNewRectangle(x)))
@@ -73,12 +72,12 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
         private Result<Size> ValidateRectangleHeight(Size size)
         {
-            return Validate(size, x => x.Height <= 0, "Rectangle height should be positive");
+            return Validate(size, x => x.Height <= 0, $"Rectangle height should be positive, but was: {size.Height}");
         }
 
         private Result<Size> ValidateRectangleWidth(Size size)
         {
-            return Validate(size, x => x.Width <= 0, "Rectangle width should be positive");
+            return Validate(size, x => x.Width <= 0, $"Rectangle width should be positive, but was: {size.Width}");
         }
 
         private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)

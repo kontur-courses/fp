@@ -12,26 +12,49 @@ namespace TagsCloudContainer.TagsCloudVisualization
     {
         public void SaveBitmapToDirectory(Bitmap imageBitmap, string savePath)
         {
-            Result.Ok(savePath)
-                .Then(PathInRightFormat)
-                .OnFail(e => throw new ArgumentException(e));
-
-            using (imageBitmap)
-            {
-                imageBitmap.Save(savePath, ImageFormat.Png);
-            }
-        }
-
-        private static Result<string> PathInRightFormat(string path)
-        {
             var separator = Path.DirectorySeparatorChar;
             var pattern = $@"((?:[^\{separator}]*\{separator})*)(.*[.].+)";
-            var match = Regex.Match(path, pattern);
-            var directoryPath = match.Groups[1].ToString();
+            var match = Regex.Match(savePath, pattern);
 
-            return Directory.Exists(directoryPath) && match.Groups[2].Success
-                ? Result.Ok(path)
-                : Result.Fail<string>("wrong path format");
+            Result.Ok(match)
+                .Then(ValidateDirectoryPath)
+                .Then(ValidateFileName)
+                .OnFail(e => throw new ArgumentException(e));
+
+            Result.Ok(imageBitmap)
+                .Then(ValidateBitmap)
+                .OnFail(e => throw new ArgumentException(e))
+                .Then(x =>
+                {
+                    using (x)
+                    {
+                        x.Save(savePath, ImageFormat.Png);
+                    }
+                });
+        }
+
+        private Result<Bitmap> ValidateBitmap(Bitmap bitmap)
+        {
+            return Validate(bitmap, x => x == null, "Bitmap is null");
+        }
+
+        private Result<Match> ValidateDirectoryPath(Match match)
+        {
+            var path = match.Groups[1].ToString();
+            return Validate(match, x => !Directory.Exists(path), $"Directory {path} doesnt exists");
+        }
+
+        private Result<Match> ValidateFileName(Match match)
+        {
+            var fileName = match.Groups[2].ToString();
+            return Validate(match, x => !match.Groups[2].Success, $"Wrong file name: {fileName}");
+        }
+
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)
+        {
+            return predicate(obj)
+                ? Result.Fail<T>(exception)
+                : Result.Ok(obj);
         }
     }
 }
