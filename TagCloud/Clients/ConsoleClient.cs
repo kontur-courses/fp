@@ -63,11 +63,17 @@ namespace TagCloud.Clients
                     Console.WriteLine(metric.Error);
                     continue;
                 }
+                if (!pointGetter.IsSuccess)
+                {
+                    Console.WriteLine(pointGetter.Error);
+                    continue;
+                }
                 if (!layoter.IsSuccess)
                 {
                     Console.WriteLine(layoter.Error);
                     continue;
                 }
+                layoter.GetValueOrThrow().SetPointGetterIfNull(pointGetter.GetValueOrThrow());
                 Console.WriteLine("write Visualizate configuration or 'end' if you finish write");
                 answears.Clear();
                 while (true)
@@ -92,8 +98,10 @@ namespace TagCloud.Clients
                 .GetProcessor(SkipSpaces(info.Processor));
             metric = WordsMetricAssosiation
                 .GetMetric(SkipSpaces(info.Metric));
+            pointGetter = PointGetterAssosiation
+                .GetPointGetter(SkipSpaces(info.PointGetter));
             layoter = CloudLayoterAssosiation
-                .GetCloudLayoter(SkipSpaces(info.Layoter), SkipSpaces(info.PointGetter));
+                .GetCloudLayoter(SkipSpaces(info.Layoter));
         }
 
         private void SetVisualizateInfo(OptionsVisualizate info)

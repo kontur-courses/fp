@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+using ResultOf;
 using TagCloud.PointGetters;
 
 namespace TagCloud.CloudLayoters
@@ -13,16 +16,25 @@ namespace TagCloud.CloudLayoters
                 [density] = new DensityCloudLayouter(),
                 [identity] = new IdentityCloudLayoter()
             };
+        public static readonly HashSet<string> layoters = cloudLayoters.Keys.ToHashSet();
 
-        public static ICloudLayoter GetCloudLayoter(string nameLayoter, string namePointGetter)
+        public static Result<ICloudLayoter> GetCloudLayoter(string nameLayoter)
         {
-            var pointGetter = PointGetterAssosiation.GetPointGetter(namePointGetter);
-            if (pointGetter == null)
-                return null;
-            if (!cloudLayoters.TryGetValue(nameLayoter, out var layoter))
-                return null;
-            layoter.SetPointGetterIfNull(pointGetter);
-            return layoter;
+            if (!cloudLayoters.ContainsKey(nameLayoter))
+            {
+                return new Result<ICloudLayoter>($"doesn't have processor with name {nameLayoter}\n" +
+                    $"List of layoter names:\n{string.Join('\n', layoters)}");
+            }
+            ICloudLayoter layoter;
+            try
+            {
+                layoter = cloudLayoters[nameLayoter];
+            }
+            catch (Exception e)
+            {
+                return new Result<ICloudLayoter>($"something was wrong: {e.Message}");
+            }
+            return new Result<ICloudLayoter>(null, layoter);
         } 
     }
 }
