@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+using ResultOf;
 
 namespace TagCloud.WordsMetrics
 {
@@ -11,7 +14,25 @@ namespace TagCloud.WordsMetrics
                 [count] = new CountWordMetric()
             };
 
-        public static IWordsMetric GetMetric(string name) => 
-            metrics.TryGetValue(name, out var metric) ? metric : null;
+        public static readonly HashSet<string> metricsName = metrics.Keys.ToHashSet();
+
+        public static Result<IWordsMetric> GetMetric(string name)
+        {
+            if (!metrics.ContainsKey(name))
+            {
+                return new Result<IWordsMetric>($"doesn't have processor with name {name}\n" +
+                    $"List of text processor names:\n{string.Join('\n', metricsName)}");
+            }
+            IWordsMetric metric;
+            try
+            {
+                metric = metrics[name];
+            }
+            catch (Exception e)
+            {
+                return new Result<IWordsMetric>($"something was wrong: {e.Message}");
+            }
+            return new Result<IWordsMetric>(null, metric);
+        }
     }
 }
