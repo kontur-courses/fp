@@ -1,11 +1,10 @@
-﻿using ResultOf;
-using TagCloudCreator;
+﻿using TagCloudCreator;
 
 namespace TagCloudGUIClient
 {
     public interface IColorSelectorFabric
     {
         string Name { get; }
-        Result<IColorSelector> Create();
+        IColorSelector Create();
     }
 }

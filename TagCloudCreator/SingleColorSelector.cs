@@ -11,8 +11,6 @@ namespace TagCloudCreator
             this.color = color;
         }
 
-        public string Name => color.Name + " color";
-
         public Color GetColor(DrawingWord word)
         {
             return Color.Black;

@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using ResultOf;
 using TagCloudCreator;
 
 namespace TagCloudGUIClient
@@ -8,7 +7,7 @@ namespace TagCloudGUIClient
     {
         public string Name => "Черный";
 
-        public Result<IColorSelector> Create()
+        public IColorSelector Create()
         {
             return new SingleColorSelector(Color.Black);
         }

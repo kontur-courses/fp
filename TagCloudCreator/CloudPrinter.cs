@@ -24,8 +24,8 @@ namespace TagCloudCreator
             var cloud = new Bitmap(imageSize.Width, imageSize.Height);
             var graphics = Graphics.FromImage(cloud);
             foreach (var word in words)
-                graphics.DrawString(word.Word, word.Font,
-                    new SolidBrush(colorSelector.GetColor(word)),
+                wordPainter.DrawWord(word.Word, word.Font,
+                    new SolidBrush(colorSelector.GetColor(word)), graphics,
                     word.Location);
             return cloud;
         }
@@ -44,16 +44,15 @@ namespace TagCloudCreator
                     .Then(WordPreparer.GetInterestingWords);
             var statistic = interestingWords.Then(words => WordPreparer.GetWordsStatistic(words));
             return statistic.Then(_ =>
-                    DrawCloud(
-                        RectanglesForWordsCreator.GetReadyWords(
-                            statistic.GetValueOrThrow(),
-                            layouter,
-                            fontFamily,
-                            wordPainter),
-                        imageSize,
-                        colorSelector,
-                        wordPainter))
-                .GetValueOrThrow();
+                DrawCloud(
+                    RectanglesForWordsCreator.GetReadyWords(
+                        statistic.GetValueOrThrow(),
+                        layouter,
+                        fontFamily,
+                        wordPainter),
+                    imageSize,
+                    colorSelector,
+                    wordPainter));
         }
     }
 }

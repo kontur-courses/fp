@@ -9,7 +9,7 @@ namespace TagCloudCreator
 
         public Result<string[]> ReadAllLinesFromFile(string path)
         {
-            return File.ReadAllLines(path);
+            return Result.Of(() => File.ReadAllLines(path));
         }
     }
 }

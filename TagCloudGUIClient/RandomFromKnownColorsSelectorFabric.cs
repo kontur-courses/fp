@@ -1,5 +1,4 @@
-﻿using ResultOf;
-using TagCloudCreator;
+﻿using TagCloudCreator;
 
 namespace TagCloudGUIClient
 {
@@ -7,7 +6,7 @@ namespace TagCloudGUIClient
     {
         public string Name => "Случайный из известных цветов";
 
-        public Result<IColorSelector> Create()
+        public IColorSelector Create()
         {
             return new RandomFromColorsColorSelector();
         }

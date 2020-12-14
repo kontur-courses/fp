@@ -11,8 +11,9 @@ namespace TagCloudCreator
 
         public Result<string[]> ReadAllLinesFromFile(string path)
         {
-            return Extractor.ExtractTextFromFile(path, File.ReadAllBytes(path)).Split(new[] {'\n', '\r', ' ', '\t'},
-                StringSplitOptions.RemoveEmptyEntries);
+            return Result.Of(() => Extractor.ExtractTextFromFile(path, File.ReadAllBytes(path)).Split(
+                new[] {'\n', '\r', ' ', '\t'},
+                StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }

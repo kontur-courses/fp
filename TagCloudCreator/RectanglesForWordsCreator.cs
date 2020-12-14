@@ -18,7 +18,6 @@ namespace TagCloudCreator
                 yield break;
             var maxCount = statistics.Max(x => x.Count);
             var fonts = new Font[MaximalFontSize - MininalFontSize + 1];
-            var graphics = Graphics.FromImage(new Bitmap(1, 1));
             foreach (var statistic in statistics)
             {
                 var fontSize = (int) ((MaximalFontSize - MininalFontSize) * ((double) statistic.Count / maxCount) +
