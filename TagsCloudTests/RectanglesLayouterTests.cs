@@ -37,7 +37,7 @@ namespace TagsCloudTests
         [Test]
         public void RectanglesLayouter_ShouldPlaceFirstRectangle_AtCenter()
         {
-            var firstRectangle = layouter.PutNextRectangle(new Size(100, 70));
+            var firstRectangle = layouter.PutNextRectangle(new Size(100, 70)).Value;
             firstRectangle
                 .Should()
                 .BeEquivalentTo(new Rectangle(
@@ -50,8 +50,8 @@ namespace TagsCloudTests
         [Test]
         public void RectanglesLayouter_ShouldPlaceSecondRectangle_NearFirst()
         {
-            var firstRect = layouter.PutNextRectangle(new Size(100, 70));
-            var secondRect = layouter.PutNextRectangle(new Size(70, 50));
+            var firstRect = layouter.PutNextRectangle(new Size(100, 70)).Value;
+            var secondRect = layouter.PutNextRectangle(new Size(70, 50)).Value;
             var firstRectCenterY = firstRect.Y + firstRect.Height / 2;
             var secondRectCenterY = secondRect.Y + secondRect.Height / 2;
             Math.Abs(firstRectCenterY - secondRectCenterY)
@@ -67,7 +67,7 @@ namespace TagsCloudTests
             layouter.PutNextRectangle(new Size(50, 50));
             layouter.PutNextRectangle(new Size(50, 50));
 
-            var rectangle = layouter.PutNextRectangle(new Size(50, 50));
+            var rectangle = layouter.PutNextRectangle(new Size(50, 50)).Value;
             var distanceToCenter =
                 RectanglesLayouter.CalculateDistance(imageCenter,
                     RectanglesLayouter.CalculateCenterPosition(rectangle));
@@ -85,7 +85,7 @@ namespace TagsCloudTests
             {
                 var wordSize = new Size(rand.Next(1, 100), rand.Next(1, 100));
                 rectanglesArea += wordSize.Width * wordSize.Height;
-                var newRect = layouter.PutNextRectangle(wordSize);
+                var newRect = layouter.PutNextRectangle(wordSize).Value;
                 maxRadius = Math.Max(maxRadius,
                     RectanglesLayouter.CalculateDistance(imageCenter,
                         RectanglesLayouter.CalculateCenterPosition(newRect)));

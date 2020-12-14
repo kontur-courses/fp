@@ -16,15 +16,15 @@ namespace TagsCloudTests
         public void DocFileReader_ShouldThrow_WithWrongFileType()
         {
             var fileName = @"C:\Users\da\Desktop\abc.hguit";
-            Action action = () => reader.ReadWords(fileName).ToArray();
-            action.Should().Throw<ArgumentException>();
+            var result =  reader.ReadWords(fileName);
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void DocFileReader_ShouldReadLines_FromDocTypeFile()
         {
             var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\DocFileReaderTestFile.docx";
-            var words = reader.ReadWords(fileName);
+            var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo("Abc", "Aa", "Abcg", "Def", "Gf");
         }
 
@@ -32,7 +32,7 @@ namespace TagsCloudTests
         public void DocFileReader_ShouldReturnEmptyCollection_FromEmptyDocFile()
         {
             var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\EmptyDocFile.docx";
-            var words = reader.ReadWords(fileName);
+            var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo();
         }
     }

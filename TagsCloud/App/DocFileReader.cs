@@ -11,22 +11,25 @@ namespace TagsCloud.App
 
         protected override Result<string[]> ReadWordsInternal(string fileName)
         {
-            var app = new MicrosoftWord.Application();
-            var objFileName = (object) fileName;
-            app.Documents.Open(ref objFileName);
-            var doc = app.ActiveDocument;
-            if (doc.Paragraphs.Count == 1 && doc.Paragraphs.First.Range.Text == "\r")
+            return Result.Of(() =>
             {
-                app.Quit();
-                return new string[0];
-            }
+                var app = new MicrosoftWord.Application();
+                var objFileName = (object) fileName;
+                app.Documents.Open(ref objFileName);
+                var doc = app.ActiveDocument;
+                if (doc.Paragraphs.Count == 1 && doc.Paragraphs.First.Range.Text == "\r")
+                {
+                    app.Quit();
+                    return new string[0];
+                }
 
-            var paragraphs = doc.Paragraphs;
-            app.Quit();
-            return paragraphs
-                .Cast<MicrosoftWord.Paragraph>()
-                .SelectMany(p => splitRegex.Split(p.Range.Text.Trim('\r')))
-                .ToArray();
+                var paragraphs = doc.Paragraphs
+                    .Cast<MicrosoftWord.Paragraph>()
+                    .SelectMany(p => splitRegex.Split(p.Range.Text.Trim('\r')))
+                    .ToArray();
+                app.Quit();
+                return paragraphs;
+            });
         }
     }
 }

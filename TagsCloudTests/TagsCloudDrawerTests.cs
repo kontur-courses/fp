@@ -26,15 +26,15 @@ namespace TagsCloudTests
         public void GetTagsCloud_ShouldThrow_IfCollectionIsNull()
         {
             var drawer = new TagsCloudDrawer(new RectanglesLayouter(Point.Empty), TagsCloudSettings.DefaultSettings);
-            Action action = () => drawer.GetTagsCloud(null);
-            action.Should().Throw<NullReferenceException>();
+            var result = drawer.GetTagsCloud(null);
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void GetTagsCloud_ShouldFormImage_WithSetSize()
         {
             var drawer = new TagsCloudDrawer(new RectanglesLayouter(Point.Empty), TagsCloudSettings.DefaultSettings);
-            var tagsCloud = drawer.GetTagsCloud(new Word[0]);
+            var tagsCloud = drawer.GetTagsCloud(new Word[0]).Value;
             tagsCloud.Height.Should().Be(defaultSettings.ImageSize.Height);
             tagsCloud.Width.Should().Be(defaultSettings.ImageSize.Width);
         }

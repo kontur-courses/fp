@@ -16,25 +16,25 @@ namespace TagsCloudTests
         public void TxtFileReader_ShouldThrow_WithWrongFileType()
         {
             var fileName = @"C:\Users\da\Desktop\abc.jpeg";
-            Action action = () => reader.ReadWords(fileName).ToArray();
-            action.Should().Throw<ArgumentException>();
+            var resultOfReading = reader.ReadWords(fileName);
+            resultOfReading.IsSuccess.Should().BeFalse();
         }
 
         [Test]
-        public void DocFileReader_ShouldReadLines_FromDocTypeFile()
+        public void TxtFileReader_ShouldReadLines_FromDocTypeFile()
         {
             var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\TxtFileReaderTestFile.txt";
             TestContext.WriteLine(fileName);
-            var words = reader.ReadWords(fileName);
+            var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo("Abc", "Aa", "Abcg", "Def", "Gf");
         }
 
         [Test]
-        public void DocFileReader_ShouldReturnEmptyCollection_FromEmptyDocFile()
+        public void TxtFileReader_ShouldReturnEmptyCollection_FromEmptyDocFile()
         {
             var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\EmptyTxtFile.txt";
             TestContext.WriteLine(fileName);
-            var words = reader.ReadWords(fileName);
+            var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo();
         }
     }

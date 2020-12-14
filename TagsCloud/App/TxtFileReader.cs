@@ -11,7 +11,8 @@ namespace TagsCloud.App
 
         protected override Result<string[]> ReadWordsInternal(string fileName)
         {
-            return File.ReadAllLines(fileName).SelectMany(line => splitRegex.Split(line)).ToArray();
+            return Result
+                .Of(() => File.ReadAllLines(fileName).SelectMany(line => splitRegex.Split(line)).ToArray());
         }
     }
 }
