@@ -5,6 +5,6 @@ namespace TagsCloudContainer.TagsCloudVisualization.Interfaces
 {
     public interface IVisualizer
     {
-        public Bitmap GetBitmap(List<Rectangle> rectangles);
+        Bitmap GetBitmap(List<Rectangle> rectangles);
     }
 }

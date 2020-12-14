@@ -5,6 +5,6 @@ namespace TagsCloudContainer.TagsCloudContainer.Interfaces
 {
     public interface ITagsContainer
     {
-        public List<Tag> GetTags(string text, SpiralType type);
+        List<Tag> GetTags(string text, SpiralType type);
     }
 }

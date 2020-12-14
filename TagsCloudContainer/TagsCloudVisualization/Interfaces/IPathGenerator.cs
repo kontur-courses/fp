@@ -2,6 +2,6 @@
 {
     public interface IPathGenerator
     {
-        public string GetNewFilePath();
+        string GetNewFilePath();
     }
 }

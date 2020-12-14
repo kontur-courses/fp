@@ -2,6 +2,6 @@
 {
     public interface ILayouterFactory
     {
-        public ILayouter GetLayouter(SpiralType type);
+        ILayouter GetLayouter(SpiralType type);
     }
 }
