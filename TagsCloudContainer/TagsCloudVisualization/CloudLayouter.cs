@@ -25,7 +25,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
             return Result.Ok(rectangleSize)
                 .Then(ValidateRectangleHeight)
                 .Then(ValidateRectangleWidth)
-                .OnFail(e => throw new ArgumentException(e))
+                .OnFail(e => throw new ArgumentException(e, nameof(rectangleSize)))
                 .SelectMany(x => Result.Ok(GetNewRectangle(x)))
                 .GetValueOrThrow();
         }

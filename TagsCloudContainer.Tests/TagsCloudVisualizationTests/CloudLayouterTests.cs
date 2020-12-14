@@ -45,9 +45,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
         public void PutNextRectangle_ThrowException_When(int width, int height)
         {
             var size = new Size(width, height);
-            Action putRectangle = () => Layouter.PutNextRectangle(size);
 
-            putRectangle.Should().Throw<ArgumentException>();
             Assert.Throws<ArgumentException>(() => Layouter.PutNextRectangle(size));
         }
 

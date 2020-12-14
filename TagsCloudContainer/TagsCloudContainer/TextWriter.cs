@@ -21,7 +21,7 @@ namespace TagsCloudContainer.TagsCloudContainer
                 .Then(ValidateMatch)
                 .Then(ValidateDirectoryPath)
                 .Then(ValidateFileName)
-                .OnFail(e => throw new ArgumentException(e))
+                .OnFail(e => throw new ArgumentException(e, nameof(savePath)))
                 .Then(x => File.WriteAllText(savePath, newText));
         }
 

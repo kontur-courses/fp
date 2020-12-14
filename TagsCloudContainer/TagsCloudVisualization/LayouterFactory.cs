@@ -19,7 +19,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
         {
             return Result.Ok(type)
                 .Then(ValidateSpiralType)
-                .OnFail(e => throw new ArgumentException(e))
+                .OnFail(e => throw new ArgumentException(e, nameof(type)))
                 .SelectMany(x => Result.Ok(new CloudLayouter(spirals.First(y => y.Type == type))))
                 .GetValueOrThrow();
         }

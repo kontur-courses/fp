@@ -20,11 +20,11 @@ namespace TagsCloudContainer.TagsCloudVisualization
                 .Then(ValidateMatch)
                 .Then(ValidateDirectoryPath)
                 .Then(ValidateFileName)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(savePath)));
 
             Result.Ok(imageBitmap)
                 .Then(ValidateBitmap)
-                .OnFail(e => throw new ArgumentException(e))
+                .OnFail(e => throw new ArgumentException(e, nameof(imageBitmap)))
                 .Then(x =>
                 {
                     using (x)

@@ -31,7 +31,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
                 Result.Ok(rectangle)
                     .Then(ValidateRectangleLeft)
                     .Then(ValidateRectangleTop)
-                    .OnFail(e => throw new ArgumentException(e));
+                    .OnFail(e => throw new ArgumentException(e, nameof(rectangle)));
 
                 if (width < rectangle.Right) width = rectangle.Right;
                 if (height < rectangle.Bottom) height = rectangle.Bottom;

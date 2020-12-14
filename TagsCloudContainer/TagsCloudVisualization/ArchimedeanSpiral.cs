@@ -20,15 +20,15 @@ namespace TagsCloudContainer.TagsCloudVisualization
 
             Result.Ok(distanceBetweenLoops)
                 .Then(DistanceBetweenLoopsIsPositive)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(distanceBetweenLoops)));
 
             Result.Ok(angleDelta)
                 .Then(AngleDeltaIsPositive)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(angleDelta)));
 
             Result.Ok(center)
                 .Then(ValidateCenterPoint)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(center)));
         }
 
         public SpiralType Type { get; }

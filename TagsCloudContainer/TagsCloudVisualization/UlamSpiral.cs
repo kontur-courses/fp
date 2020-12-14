@@ -15,7 +15,7 @@ namespace TagsCloudContainer.TagsCloudVisualization
         {
             Result.Ok(center)
                 .Then(ValidateCenterIsNotNegative)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(center)));
 
             Center = center;
             currentPoint = center;

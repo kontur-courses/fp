@@ -13,15 +13,15 @@ namespace TagsCloudContainer.TagsCloudContainer
                 .Then(ValidateRectangleCoordinateY)
                 .Then(ValidateRectangleHeight)
                 .Then(ValidateRectangleWidth)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(rectangle)));
 
             Result.Ok(font)
                 .Then(ValidateFontIsNotNull)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(font)));
 
             Result.Ok(textColor)
                 .Then(ValidateBrushIsNotNull)
-                .OnFail(e => throw new ArgumentException(e));
+                .OnFail(e => throw new ArgumentException(e, nameof(textColor)));
 
             Text = text;
             Rectangle = rectangle;
