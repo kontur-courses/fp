@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagCloud.App;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
 
-namespace TagCloud.App.CLI
+namespace TagCloudLineInterface.CLI
 {
     public class TagCloudLayouterCli : IApp
     {
@@ -62,7 +63,7 @@ namespace TagCloud.App.CLI
             automata.Add(new Transition(mainState, "generate", generateState));
             automata.Add(new Transition(generateState, ".*", mainState));
 
-            settingsFactory().Import(Program.GetDefaultSettings());
+            settingsFactory().Import(TagCloud.Program.GetDefaultSettings());
 
             while (automata.Show())
             {

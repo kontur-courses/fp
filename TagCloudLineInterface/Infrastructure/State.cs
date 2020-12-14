@@ -1,6 +1,6 @@
 using System;
 
-namespace TagCloud.App.CLI
+namespace TagCloudLineInterface.CLI
 {
     public class State
     {

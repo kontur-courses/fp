@@ -1,4 +1,4 @@
-namespace TagCloud.App.CLI
+namespace TagCloudLineInterface.CLI
 {
     public interface IIOBridge
     {

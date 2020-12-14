@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace TagCloud.App.CLI
+namespace TagCloudLineInterface.CLI
 {
     public class Transition
     {

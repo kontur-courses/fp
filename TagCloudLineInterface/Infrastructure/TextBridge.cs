@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace TagCloud.App.CLI
+namespace TagCloudLineInterface.CLI
 {
     public class TextBridge : IIOBridge
     {
