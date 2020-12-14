@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ResultOf;
@@ -27,9 +28,14 @@ namespace TagCloud.TextConverters.TextReaders
                 return new Result<ITextReader>($"can't read file with extension {extension} \n" +
                     $"list of extensions to read: \n {string.Join('\n', extension)}");
             }
-            if(!textReaders.TryGetValue(extension, out var reader))
+            ITextReader reader;
+            try
             {
-                return new Result<ITextReader>("Something was wrong");
+                reader = textReaders[extension];
+            }
+            catch (Exception e)
+            {
+                return new Result<ITextReader>($"something was wrong: {e.Message}");
             }
             return new Result<ITextReader>(null, reader);
         }

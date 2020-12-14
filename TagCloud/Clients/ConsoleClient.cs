@@ -9,14 +9,15 @@ using TagCloud.Visualization;
 using TagCloud.Visualization.WordsColorings;
 using TagCloud.CloudLayoters;
 using TagCloud.PointGetters;
+using ResultOf;
 
 namespace TagCloud.Clients
 {
     internal class ConsoleClient : IClient
     {
-        private ITextProcessor processor;
-        private IWordsMetric metric;
-        private ICloudLayoter layoter;
+        private Result<ITextProcessor> processor;
+        private Result<IWordsMetric> metric;
+        private Result<ICloudLayoter> layoter;
 
         private VisualizationInfo vizInfo;
 
@@ -51,19 +52,19 @@ namespace TagCloud.Clients
                 };
                 Parser.Default.ParseArguments<OptionsTagInfo>(answears)
                     .WithParsed(SetTagInfo);
-                if(processor == null)
+                if(!processor.IsSuccess)
                 {
-                    Console.WriteLine("Text Processod didn't set");
+                    Console.WriteLine(processor.Error);
                     continue;
                 }
-                if (metric == null)
+                if (!metric.IsSuccess)
                 {
-                    Console.WriteLine("Words Metric didn't set");
+                    Console.WriteLine(metric.Error);
                     continue;
                 }
-                if (layoter == null)
+                if (!layoter.IsSuccess)
                 {
-                    Console.WriteLine("Cloud Layoter didn't set");
+                    Console.WriteLine(layoter.Error);
                     continue;
                 }
                 Console.WriteLine("write Visualizate configuration or 'end' if you finish write");
@@ -106,7 +107,8 @@ namespace TagCloud.Clients
 
         public void Visualize(string text, string picturePath)
         {
-            var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter, processor, metric);
+            var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter.GetValueOrThrow(), 
+                processor.GetValueOrThrow(), metric.GetValueOrThrow());
             TagCloudVisualization.Visualize(tagCloud, picturePath, vizInfo);
         }
 
