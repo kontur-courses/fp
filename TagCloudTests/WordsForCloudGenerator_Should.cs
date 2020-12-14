@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloud;
@@ -29,19 +30,19 @@ namespace TagCloudTests
         [Test]
         public void NotRepeated_OnRepeatedWords()
         {
-            wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e"}).Count.Should().Be(2);
+            wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e"}).Value.Count().Should().Be(2);
         }
 
         [Test]
         public void MostCommonWord_OnFirstPlace()
         {
-            wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e", "e", "e", "c"})[0].Word.Should().Be("e");
+            wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e", "e", "e", "c"}).Value.ToList()[0].Word.Should().Be("e");
         }
 
         [Test]
         public void FirstWord_OnCenter()
         {
-            var wordForCloud = wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e", "e", "e", "c"})[0];
+            var wordForCloud = wordsForCloudGenerator.Generate(new List<string> {"w", "w", "e", "e", "e", "c"}).Value.ToList()[0];
             wordForCloud.WordSize.Location.Should()
                         .Be(new Point(Center.X - wordForCloud.WordSize.Width / 2,
                                       Center.Y - wordForCloud.WordSize.Height / 2));
@@ -50,7 +51,7 @@ namespace TagCloudTests
         [Test]
         public void HaveDescendingOrder()
         {
-            var wordsForCloud = wordsForCloudGenerator.Generate(new List<string> {"e", "w", "w"});
+            var wordsForCloud = wordsForCloudGenerator.Generate(new List<string> {"e", "w", "w"}).Value.ToList();
             wordsForCloud[0].Font.Size.Should().BeGreaterThan(wordsForCloud[1].Font.Size);
         }
     }
