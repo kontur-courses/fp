@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ResultOf;
 
 namespace HomeExercise
 {
@@ -17,25 +18,33 @@ namespace HomeExercise
             this.pathWords = pathWords;
             this.pathBoringWords = pathBoringWords;
         }
-        
-        public Dictionary<string, int> GetWords()
+
+        public Result<Dictionary<string, int>> GetWords()
         {
-            var words = ExtractTextFromFile(pathWords);
-            if(pathBoringWords!=null)
-                exludedWords = ExtractTextFromFile(pathBoringWords);
-            
-            var formattedWords = FilterWords(words);
-            
-            return GetFrequencyWords(formattedWords);
+            var resultWords = Result.Of(() => ExtractTextFromFile(pathWords)).OnFail(Console.WriteLine);
+            if (!resultWords.IsSuccess)
+                return Result.Fail<Dictionary<string, int>>(resultWords.Error).RefineError(ToString());
+
+            if (pathBoringWords != null)
+            {
+                var resultExludedWords = Result.Of(() => ExtractTextFromFile(pathBoringWords)).OnFail(Console.WriteLine);
+                if(!resultExludedWords.IsSuccess)
+                    return Result.Fail<Dictionary<string, int>>(resultExludedWords.Error);
+                exludedWords = resultExludedWords.Value;
+            }
+
+            return resultWords.Then(FilterWords).Then(GetFrequencyWords).OnFail(Console.WriteLine);
         }
 
-        private string[] FilterWords(List<string> words)
+        private Result<string[]> FilterWords(List<string> words)
         {
-            if (words == null) throw new ArgumentNullException(nameof(words));
-            return words
-                .Where(w=>!exludedWords.Contains(w))
+            if (words == null) 
+                Result.Fail<string[]>("Words not implemented");
+            
+            return Result.Of((() => words
+                .Where(w => !exludedWords.Contains(w))
                 .Select(w => w.ToLower())
-                .ToArray();
+                .ToArray()));
         }
 
         private Dictionary<string, int> GetFrequencyWords(IEnumerable<string> formattedWords)
