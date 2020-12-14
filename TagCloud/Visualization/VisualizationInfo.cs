@@ -33,6 +33,8 @@ namespace TagCloud.Visualization
                     return error;
                 if (result.Any(i => i < 0))
                     return error;
+                if (result[0] == 0 || result[1] == 0)
+                    return new Result<Size?>("must be two positive number, but was negative");
                 return new Result<Size?>(null, new Size(result[0], result[1]));
             }
             catch
