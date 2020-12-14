@@ -29,7 +29,13 @@ namespace TagCloud.Clients
                 var answear = Console.ReadLine();
                 if (answear == "exit")
                     break;
-                var text = TextReaderAssosiation.GetTextReader(answear).ReadText(answear);
+                var reader = TextReaderAssosiation.GetTextReader(answear);
+                if(!reader.IsSuccess)
+                {
+                    Console.WriteLine(reader.Error);
+                    continue;
+                }
+                var text = reader.GetValueOrThrow().ReadText(answear);
                 if (text == null)
                 {
                     Console.WriteLine("something was wrong, please, try again");
