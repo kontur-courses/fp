@@ -107,8 +107,14 @@ namespace TagCloud.Clients
         private void SetVisualizateInfo(OptionsVisualizate info)
         {
             var size = VisualizationInfo.ReadSize(info.Size);
-            var coloring = WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring)) ?? 
-                WordsColoringAssosiation.GetColoring("random");
+            var coloringResult = WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring));
+            if (!coloringResult.IsSuccess)
+            {
+                Console.WriteLine(coloringResult.Error);
+                Console.WriteLine("Was using coloring \"random\"");
+            }
+            var coloring = coloringResult.IsSuccess ? coloringResult.GetValueOrThrow() :  
+                WordsColoringAssosiation.GetColoring("random").GetValueOrThrow();
             vizInfo = new VisualizationInfo(coloring, size, SkipSpaces(info.Font));
         }
 

@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
+using System.Linq;
 using System;
+using ResultOf;
 
 namespace TagCloud.Visualization.WordsColorings
 {
@@ -26,8 +28,27 @@ namespace TagCloud.Visualization.WordsColorings
                 ["line random"] = new WordsColoringLineBringhtness(GetRandomColor())
             };
 
+        public static readonly HashSet<string> coloringNames = colorings.Keys.ToHashSet();
+
         private static Color GetRandomColor() => Color.FromArgb(255, random.Next(255), random.Next(255), random.Next(255));
 
-        internal static IWordsColoring GetColoring(string name) => colorings.TryGetValue(name, out var coloring) ? coloring : null;
+        internal static Result<IWordsColoring> GetColoring(string name) 
+        {
+            if (!colorings.ContainsKey(name))
+            {
+                return new Result<IWordsColoring>($"doesn't have coloring with name {name}\n" +
+                    $"List of coloring names:\n{string.Join('\n', coloringNames)}");
+            }
+            IWordsColoring coloring;
+            try
+            {
+                coloring = colorings[name];
+            }
+            catch (Exception e)
+            {
+                return new Result<IWordsColoring>($"something was wrong: {e.Message}");
+            }
+            return new Result<IWordsColoring>(null, coloring);
+        }
     }
 }
