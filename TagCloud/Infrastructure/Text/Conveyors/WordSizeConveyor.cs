@@ -23,7 +23,7 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             foreach (var (word, info) in tokens)
             {
                 var fontSize = info.FontSize;
-                var font = new Font(fontSettingProvider().FontFamily, fontSize);
+                using var font = new Font(fontSettingProvider().FontFamily, fontSize);
                 info.Size = TextRenderer.MeasureText(word, font);
                 result[word] = info;
             }

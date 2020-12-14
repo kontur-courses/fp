@@ -16,7 +16,7 @@ namespace TagCloud.Infrastructure.Settings
         IColorPickerSettingProvider
     {
         public Dictionary<WordType, Color> ColorMap { get; set; }
-        public WordType[] ExcludedTypes { get; set; }
+        public IEnumerable<WordType> ExcludedTypes { get; set; }
         public string Path { get; set; }
         public ImageFormat Format { get; set; }
         public FontFamily FontFamily { get; set; }

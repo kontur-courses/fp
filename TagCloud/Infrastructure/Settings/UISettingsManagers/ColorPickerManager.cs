@@ -99,9 +99,7 @@ namespace TagCloud.Infrastructure.Settings.UISettingsManagers
                 .Then(pair =>
                 {
                     var (type, color) = pair;
-                    // Console.Out.WriteLine("colorSettings() = {0}", colorSettings().ColorMap[type]);
                     colorSettings().ColorMap[type] = color;
-                    // Console.Out.WriteLine("colorSettings() = {0}", colorSettings().ColorMap[type]);
                     return Result.Ok("");
                 });
         }

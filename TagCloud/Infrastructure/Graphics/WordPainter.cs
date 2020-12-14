@@ -35,7 +35,7 @@ namespace TagCloud.Infrastructure.Graphics
                 {
                     var hitbox = layouter.GetPlace(info.Size);
                     using var font = new Font(settings.FontFamily, info.FontSize);
-                    var brush = new SolidBrush(colorPicker.GetColor(info));
+                    using var brush = new SolidBrush(colorPicker.GetColor(info));
                     imageGraphics.DrawString(word, font, brush, hitbox.Location);
                 }
             }

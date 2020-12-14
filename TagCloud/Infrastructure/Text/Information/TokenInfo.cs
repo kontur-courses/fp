@@ -13,7 +13,7 @@ namespace TagCloud.Infrastructure.Text.Information
             Size = size;
         }
 
-        public WordType WordType { get; set; }
+        public WordType WordType { get; }
         public int Frequency { get; set; }
         public int FontSize { get; set; }
         public Size Size { get; set; }

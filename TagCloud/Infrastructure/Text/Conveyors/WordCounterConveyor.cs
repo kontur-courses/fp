@@ -18,16 +18,10 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             }
         }
 
-        private Dictionary<string, int> GetCount(IEnumerable<string> tokens)
-        {
-            var count = new Dictionary<string, int>();
-            foreach (var token in tokens)
-                if (count.ContainsKey(token))
-                    count[token]++;
-                else
-                    count.Add(token, 1);
-
-            return count;
-        }
+        private static Dictionary<string, int> GetCount(IEnumerable<string> tokens) => tokens
+            .GroupBy(token => token)
+            .ToDictionary(
+                x => x.Key,
+                x => x.Count());
     }
 }
