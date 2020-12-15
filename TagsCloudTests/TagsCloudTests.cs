@@ -39,7 +39,7 @@ namespace TagsCloudTests
 
             directoryInfo = TestContext.CurrentContext.TestDirectory;
             samplePath = $"{directoryInfo}\\sample.png";
-            new FileInfo(samplePath).Delete();
+            File.Delete(samplePath);
         }
         
         [Test]
@@ -71,8 +71,10 @@ namespace TagsCloudTests
             Program.MakeCloud(builder.Build()).Error.Should().ContainAll("Файл", "none.txt", "не найден");
         }
 
-        [Test]
-        public void WriteError_WhenNotPositiveWidthOrHeight()
+        [TestCase(-100, -100)]
+        [TestCase(0, 1000)]
+        [TestCase(1000, 0)]
+        public void WriteError_WhenNotPositiveWidthOrHeight(int width, int height)
         {
             builder.RegisterType<RegexWordReader>().As<IWordReader>()
                 .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
@@ -81,12 +83,32 @@ namespace TagsCloudTests
                 .As<ICloudRenderer>()
                 .WithParameters(new Parameter[]
                 {
-                    new NamedParameter("width", 0),
-                    new NamedParameter("height", 3000), 
+                    new NamedParameter("width", width),
+                    new NamedParameter("height", height), 
                     new NamedParameter("filePath", samplePath)
                 });
 
             Program.MakeCloud(builder.Build()).Error.Should().Be("Not positive width or height");
+        }
+
+        [TestCase(32000, 32000)]
+        [TestCase(24000, 24000)]
+        public void WriteError_WhenSizeGreater550MillionPixels(int width, int height)
+        {
+            builder.RegisterType<RegexWordReader>().As<IWordReader>()
+                .WithParameter(new NamedParameter("filePath", $"{directoryInfo}\\example.txt"));
+            
+            builder.RegisterType<CloudRenderer>()
+                .As<ICloudRenderer>()
+                .WithParameters(new Parameter[]
+                {
+                    new NamedParameter("width", width),
+                    new NamedParameter("height", height), 
+                    new NamedParameter("filePath", samplePath)
+                });
+
+            Program.MakeCloud(builder.Build()).Error.Should()
+                .Be($"Failed to create image with width={width}, height={height}");
         }
     }
 }
