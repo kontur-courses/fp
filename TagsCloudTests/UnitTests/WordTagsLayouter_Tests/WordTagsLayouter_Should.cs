@@ -7,6 +7,7 @@ using RectanglesCloudLayouter.LayouterOfRectangles;
 using ResultPattern;
 using TagsCloud.TagsLayouter;
 using TagsCloud.TextProcessing.FrequencyOfWords;
+using TagsCloud.TextProcessing.Tags;
 using TagsCloud.TextProcessing.WordsMeasurer;
 
 namespace TagsCloudTests.UnitTests.WordTagsLayouter_Tests
@@ -29,11 +30,13 @@ namespace TagsCloudTests.UnitTests.WordTagsLayouter_Tests
         }
 
         [Test]
-        public void GetWordTagsAndCloudRadius_IsNotSuccess_WhenStringIsNull()
+        public void GetWordTagsAndCloudRadius_TagsAndRadiusFailResult_WhenStringIsNull()
         {
             var act = _sut.GetWordTagsAndCloudRadius(null);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should()
+                .BeEquivalentTo(
+                    ResultExtensions.Fail<(IReadOnlyList<WordTag>, int)>("String for tags layouter must be not null"));
         }
 
         [Test]

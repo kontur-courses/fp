@@ -1,6 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageFormat;
 
 namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
@@ -16,27 +17,19 @@ namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
         }
 
         [Test]
-        public void ConvertToImageFormat_IsNotSuccess_WhenUnknownFormatFromString()
+        public void ConvertToImageFormat_ImageFormatFailResult_WhenUnknownFormatFromString()
         {
             var act = _sut.ConvertToImageFormat("fff");
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<ImageFormat>("Doesn't contain this image format"));
         }
 
         [Test]
-        public void ConvertToImageFormat_IsSuccess_WhenKnownFormatFromString()
+        public void ConvertToImageFormat_ImageFormatResult_WhenKnownFormatFromString()
         {
             var act = _sut.ConvertToImageFormat("bmp");
 
-            act.IsSuccess.Should().BeTrue();
-        }
-
-        [Test]
-        public void ConvertToImageFormat_ImageFormat_WhenKnownFormatFromString()
-        {
-            var act = _sut.ConvertToImageFormat("bmp").GetValueOrThrow();
-
-            act.Should().Be(ImageFormat.Bmp);
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(ImageFormat.Bmp));
         }
     }
 }

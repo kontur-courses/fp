@@ -27,11 +27,13 @@ namespace TagsCloudTests.UnitTests.TextProcessing_Tests
         }
 
         [Test]
-        public void GetWordsFrequency_IsNotSuccess_WhenStringIsNull()
+        public void GetWordsFrequency_WordsFrequencyFailResult_WhenStringIsNull()
         {
             var act = _sut.GetWordsFrequency(null);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should()
+                .BeEquivalentTo(
+                    ResultExtensions.Fail<Dictionary<string, int>>("String for words frequency must be not null"));
         }
 
         [Test]
@@ -45,7 +47,7 @@ namespace TagsCloudTests.UnitTests.TextProcessing_Tests
 
         [TestCase("")]
         [TestCase("word")]
-        public void GetWordsFrequency_IsSuccess_WhenStringIsNotNull(string text)
+        public void GetWordsFrequency_WordsFrequencyResult_WhenStringIsNotNull(string text)
         {
             A.CallTo(() => _wordsFilter.GetInterestingWords(A<string[]>.Ignored))
                 .Returns(ResultExtensions.Ok(new string[0]));
@@ -55,6 +57,7 @@ namespace TagsCloudTests.UnitTests.TextProcessing_Tests
             var act = _sut.GetWordsFrequency(text);
 
             act.IsSuccess.Should().BeTrue();
+            act.GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase("")]

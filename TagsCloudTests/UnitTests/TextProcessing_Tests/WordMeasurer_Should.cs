@@ -2,6 +2,7 @@
 using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.TextProcessing.WordsMeasurer;
 
 namespace TagsCloudTests.UnitTests.TextProcessing_Tests
@@ -19,46 +20,38 @@ namespace TagsCloudTests.UnitTests.TextProcessing_Tests
         }
 
         [Test]
-        public void GetWordSize_IsNotSuccess_WhenWordIsNull()
+        public void GetWordSize_SizeFailResult_WhenWordIsNull()
         {
             var act = _sut.GetWordSize(null, _font);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<Size>("String and font for measurer must be not null"));
         }
 
         [Test]
-        public void GetWordSize_IsNotSuccess_WhenFontIsNull()
+        public void GetWordSize_SizeFailResult_WhenFontIsNull()
         {
             var act = _sut.GetWordSize(_word, null);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<Size>("String and font for measurer must be not null"));
         }
 
         [Test]
-        public void GetWordSize_IsNotSuccess_WhenWordAndFontAreNull()
+        public void GetWordSize_SizeFailResult_WhenWordAndFontAreNull()
         {
             var act = _sut.GetWordSize(null, null);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<Size>("String and font for measurer must be not null"));
         }
 
         [Test]
-        public void GetWordSize_IsSuccess_WhenWordAndFontNotNull()
-        {
-            var act = _sut.GetWordSize(_word, _font);
-
-            act.IsSuccess.Should().BeTrue();
-        }
-
-        [Test]
-        public void GetWordSize_Size_WhenWordAndFontNotNull()
+        public void GetWordSize_SizeResult_WhenWordAndFontNotNull()
         {
             var sizeF = Graphics.FromHwnd(IntPtr.Zero).MeasureString(_word, _font);
             var expected = new Size((int) Math.Ceiling(sizeF.Width), (int) Math.Ceiling(sizeF.Height));
 
-            var act = _sut.GetWordSize(_word, _font).GetValueOrThrow();
+            var act = _sut.GetWordSize(_word, _font);
 
-            act.Should().Be(expected);
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(expected));
         }
     }
 }

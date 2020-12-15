@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.ConvertersAndCheckersForSettings.ConverterForImageSize;
 
 namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
@@ -16,43 +17,37 @@ namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
         }
 
         [Test]
-        public void ConvertToSize_IsNotSuccess_WhenInvalidNumberParameters()
+        public void ConvertToSize_SizeFailResult_WhenInvalidNumberParameters()
         {
             var parameters = new[] {1, 1, 5};
 
             var act = _sut.ConvertToSize(parameters);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should()
+                .BeEquivalentTo(
+                    ResultExtensions.Fail<Size>("Invalid number of size parameters or not positive parameters"));
         }
 
         [Test]
-        public void ConvertToSize_IsNotSuccess_WhenSizeParametersNotPositive()
+        public void ConvertToSize_SizeFailResult_WhenSizeParametersNotPositive()
         {
             var parameters = new[] {0, -1};
 
             var act = _sut.ConvertToSize(parameters);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should()
+                .BeEquivalentTo(
+                    ResultExtensions.Fail<Size>("Invalid number of size parameters or not positive parameters"));
         }
 
         [Test]
-        public void ConvertToSize_IsSuccess_WhenSimplePositiveParameters()
+        public void ConvertToSize_SizeResult_WhenSimplePositiveParameters()
         {
             var parameters = new[] {1, 5};
 
             var act = _sut.ConvertToSize(parameters);
 
-            act.IsSuccess.Should().BeTrue();
-        }
-
-        [Test]
-        public void ConvertToSize_Size_WhenSimplePositiveParameters()
-        {
-            var parameters = new[] {1, 5};
-
-            var act = _sut.ConvertToSize(parameters).GetValueOrThrow();
-
-            act.Should().Be(new Size(1, 5));
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(new Size(1, 5)));
         }
     }
 }

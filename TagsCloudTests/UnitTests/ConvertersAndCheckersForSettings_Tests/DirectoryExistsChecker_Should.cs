@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.ConvertersAndCheckersForSettings.CheckerForDirectory;
 
 namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
@@ -16,27 +17,27 @@ namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
         }
 
         [Test]
-        public void GetProvenDirectory_IsSuccess_WhenExistDirectory()
+        public void GetProvenDirectory_StringResult_WhenExistDirectory()
         {
             var act = _sut.GetExistingDirectory(Directory.GetCurrentDirectory());
 
-            act.IsSuccess.Should().BeTrue();
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(Directory.GetCurrentDirectory()));
         }
 
         [Test]
-        public void GetProvenDirectory_IsSuccess_WhenCurrentDirectory()
+        public void GetProvenDirectory_StringResult_WhenCurrentDirectory()
         {
             var act = _sut.GetExistingDirectory("file name");
 
-            act.IsSuccess.Should().BeTrue();
+            act.Should().BeEquivalentTo(ResultExtensions.Ok("file name"));
         }
 
         [Test]
-        public void GetProvenDirectory_IsNotSuccess_WhenNotExistDirectory()
+        public void GetProvenDirectory_StringFailResult_WhenNotExistDirectory()
         {
             var act = _sut.GetExistingDirectory($@"directory{Path.DirectorySeparatorChar}random directory");
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<string>("Doesn't contain the directory to save file"));
         }
     }
 }

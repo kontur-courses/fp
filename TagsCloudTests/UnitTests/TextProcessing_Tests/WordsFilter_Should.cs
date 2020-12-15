@@ -3,6 +3,7 @@ using System.Linq;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.Settings.SettingsForTextProcessing;
 using TagsCloud.TextProcessing.ParserForWordsAndSpeechParts;
 using TagsCloud.TextProcessing.TextFilters;
@@ -24,11 +25,12 @@ namespace TagsCloudTests.UnitTests.TextProcessing_Tests
         }
 
         [Test]
-        public void GetInterestingWords_IsNotSuccess_WhenStringIsNull()
+        public void GetInterestingWords_WordsFailResult_WhenStringIsNull()
         {
             var act = _sut.GetInterestingWords(null);
 
-            act.IsSuccess.Should().BeFalse();
+            act.Should()
+                .BeEquivalentTo(ResultExtensions.Fail<string[]>("Array words for words filter must be not null"));
         }
 
         [Test]

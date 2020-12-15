@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultPattern;
 using TagsCloud.ConvertersAndCheckersForSettings.CheckerForFile;
 
 namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
@@ -16,27 +17,33 @@ namespace TagsCloudTests.UnitTests.ConvertersAndCheckersForSettings_Tests
         }
 
         [Test]
-        public void GetProvenPath_IsSuccess_WhenExistFile()
+        public void GetProvenPath_StringResult_WhenExistFile()
         {
-            var act = _sut.GetProvenPath(Path.Combine(Directory.GetCurrentDirectory(), "mystem.exe"));
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "mystem.exe");
 
-            act.IsSuccess.Should().BeTrue();
+            var act = _sut.GetProvenPath(path);
+
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(path));
         }
 
         [Test]
-        public void GetProvenPath_IsSuccess_WhenFileInCurrentDirectory()
+        public void GetProvenPath_StringResult_WhenFileInCurrentDirectory()
         {
-            var act = _sut.GetProvenPath("mystem.exe");
+            var path = "mystem.exe";
 
-            act.IsSuccess.Should().BeTrue();
+            var act = _sut.GetProvenPath(path);
+
+            act.Should().BeEquivalentTo(ResultExtensions.Ok(path));
         }
 
         [Test]
-        public void GetProvenPath_IsNotSuccess_WhenNotExistFile()
+        public void GetProvenPath_StringFailResult_WhenNotExistFile()
         {
-            var act = _sut.GetProvenPath($@"directory{Path.DirectorySeparatorChar}random file.txt");
+            var path = $@"directory{Path.DirectorySeparatorChar}random file.txt";
 
-            act.IsSuccess.Should().BeFalse();
+            var act = _sut.GetProvenPath(path);
+
+            act.Should().BeEquivalentTo(ResultExtensions.Fail<string>("Doesn't contain the text file"));
         }
     }
 }
