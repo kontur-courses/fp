@@ -44,7 +44,7 @@ namespace TagsCloudContainer.TagsCloudContainer
                 .Then(ValidateFontFamily)
                 .OnFail(e => throw new ArgumentException(e, nameof(fontFamily)));
 
-            using var font = new Font(fontFamily, Font.Size);
+            var font = new Font(fontFamily, Font.Size);
             return new Tag(Text, Rectangle, font, TextColor);
         }
 
