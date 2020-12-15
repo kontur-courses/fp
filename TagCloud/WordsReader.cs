@@ -15,7 +15,7 @@ namespace TagCloud
                 {
                     return fileStream.ReadToEnd().Split('\n').ToList();
                 }
-            }).RefineError($"Can't open file: {path}");
+            }).ReplaceError(x => $"Can't open file: {path}");
         }
     }
 }

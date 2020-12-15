@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TagCloud
 {
@@ -6,7 +7,6 @@ namespace TagCloud
     {
         private None()
         {
-            
         }
     }
 
@@ -17,6 +17,7 @@ namespace TagCloud
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -24,11 +25,13 @@ namespace TagCloud
 
         public string Error { get; }
         public T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -43,6 +46,7 @@ namespace TagCloud
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -122,6 +126,13 @@ namespace TagCloud
         {
             if (input.IsSuccess) return input;
             return Fail<TInput>(replaceError(input.Error));
+        }
+
+        public static Result<TInput> ReplaceErrorIfEmpty<TInput>(
+            this Result<TInput> input,
+            string error)
+        {
+            return input.ReplaceError(err => input.IsSuccess ? error : input.Error);
         }
 
         public static Result<TInput> RefineError<TInput>(

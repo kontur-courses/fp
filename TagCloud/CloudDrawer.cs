@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.Interfaces;
 
@@ -15,7 +16,9 @@ namespace TagCloud
 
         public Result<Bitmap> DrawCloud(Result<IEnumerable<WordForCloud>> wordsForCloud)
         {
-            return Result.Of<Bitmap>(() =>
+            if (!wordsForCloud.IsSuccess)
+                return wordsForCloud.Then(x => new Bitmap(0, 0));
+            return Result.Of(() =>
             {
                 var bitmap = new Bitmap(pictureSize.Width, pictureSize.Height);
                 var gr = Graphics.FromImage(bitmap);
@@ -27,7 +30,7 @@ namespace TagCloud
                 }
 
                 return bitmap;
-            }).RefineError("Can't draw cloud");
+            }).ReplaceErrorIfEmpty("Can't draw cloud");
         }
     }
 }

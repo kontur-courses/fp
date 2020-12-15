@@ -114,7 +114,7 @@ namespace TagCloud
                                        tagCloudSettings.BoringWordsFile);
 
             return bitmap.Then(b => b.Save(tagCloudSettings.OutputFile))
-                         .RefineError($"Can't save file {tagCloudSettings.OutputFile}");
+                         .ReplaceErrorIfEmpty($"Can't save file {tagCloudSettings.OutputFile}");
         }
 
         private static Result<Bitmap> GetCloudImage(ITagCloudCreatorFactory tagCloudCreatorFactory, Size pictureSize,

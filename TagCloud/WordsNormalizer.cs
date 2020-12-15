@@ -12,7 +12,7 @@ namespace TagCloud
                 ? Result.Fail<List<string>>(boringWords.Error)
                 : wordsResult
                   .Then(word => word.Where(x => !boringWords.Value.Contains(x)).Select(x => x.ToLower()).ToList())
-                  .RefineError("Can't normalize words");
+                  .ReplaceErrorIfEmpty( "Can't normalize words");
         }
     }
 }

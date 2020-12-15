@@ -65,6 +65,12 @@
     <ItemGroup>
       <None Include="packages.config" />
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="testFiles\boringWords.txt" />
+      <Content Include="testFiles\in.txt" />
+      <Content Include="testFiles\WithBoringWords.bmp" />
+      <Content Include="testFiles\WithoutBoringWords.bmp" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
