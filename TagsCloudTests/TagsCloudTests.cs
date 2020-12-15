@@ -108,7 +108,7 @@ namespace TagsCloudTests
                 });
 
             Program.MakeCloud(builder.Build()).Error.Should()
-                .Be($"Failed to create image with width={width}, height={height}");
+                .Contain($"Failed to create image with width={width}, height={height}");
         }
     }
 }
