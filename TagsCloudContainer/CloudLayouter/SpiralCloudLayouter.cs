@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Common;
@@ -28,13 +27,13 @@ namespace TagsCloudContainer.CloudLayouter
             Rectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             var center = new Point(imageSettings.Width / 2, imageSettings.Height / 2);
             if (spiral.Center != center)
                 spiral = new Spiral(center);
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException();
+                return new Result<Rectangle>("Размеры прямогульника должны быть положительными");
 
             var rectangle = Rectangles.Count == 0
                 ? new Rectangle(GetCoordinatesOfRectangle(rectangleSize), rectangleSize)
@@ -46,7 +45,7 @@ namespace TagsCloudContainer.CloudLayouter
             }
 
             Rectangles.Add(rectangle);
-            return rectangle;
+            return new Result<Rectangle>(null, rectangle);
         }
 
         private Point GetCoordinatesOfRectangle(Size rectangleSize)

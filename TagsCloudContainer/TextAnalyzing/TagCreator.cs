@@ -37,14 +37,17 @@ namespace TagsCloudContainer.TextAnalyzing
                     if (fontSize < fontSettings.MinFontSize)
                         continue;
                     var font = new Font(fontSettings.FontName, fontSize);
-                    using (var graphics = imageHolder.StartDrawing())
-                    {
-                        var textSizeF = graphics.MeasureString(wordWithFrequency.Key, font);
-                        var rectangleSize = new Size((int) Math.Ceiling(textSizeF.Width),
-                            (int) Math.Ceiling(textSizeF.Height));
-                        yield return new Tag(cloudLayouter.PutNextRectangle(rectangleSize), wordWithFrequency.Key,
-                            font);
-                    }
+                    var startDrawingResult = imageHolder.StartDrawing();
+                    if (startDrawingResult.IsSuccess)
+                        using (var graphics = startDrawingResult.Value)
+                        {
+                            var textSizeF = graphics.MeasureString(wordWithFrequency.Key, font);
+                            var rectangleSize = new Size((int) Math.Ceiling(textSizeF.Width),
+                                (int) Math.Ceiling(textSizeF.Height));
+                            var putRectangleResult = cloudLayouter.PutNextRectangle(rectangleSize);
+                            if (putRectangleResult.IsSuccess)
+                                yield return new Tag(putRectangleResult.Value, wordWithFrequency.Key, font);
+                        }
                 }
             }
         }

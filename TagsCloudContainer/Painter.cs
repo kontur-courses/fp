@@ -19,7 +19,10 @@ namespace TagsCloudContainer
 
         public Result<Graphics> PaintTag(Tag tag, Graphics graphics)
         {
-            if (!RectangleIsInsideImage(tag.Rectangle))
+            var rectangleIsInsideImageResult = RectangleIsInsideImage(tag.Rectangle);
+            if (!rectangleIsInsideImageResult.IsSuccess)
+                return new Result<Graphics>(rectangleIsInsideImageResult.Error);
+            if (!rectangleIsInsideImageResult.Value)
                 return new Result<Graphics>("Облако тегов не вошло на изображение данного размера." +
                                             " Попробуйте уменьшить шрифт или увеличить размеры изображения");
             graphics.DrawString(tag.Text, tag.Font, new SolidBrush(colorSettingsProvider.ColorSettings.GetNextColor()),
@@ -31,7 +34,10 @@ namespace TagsCloudContainer
         public Result<Graphics> PaintTags()
         {
             var tags = tagCreator.GetTagsForVisualization();
-            using (var graphics = imageHolder.StartDrawing())
+            var startDrawingResult = imageHolder.StartDrawing();
+            if (!startDrawingResult.IsSuccess)
+                return startDrawingResult;
+            using (var graphics = startDrawingResult.Value)
             {
                 graphics.Clear(colorSettingsProvider.ColorSettings.BackgroundColor);
                 var result = new Result<Graphics>(null, graphics);
@@ -47,11 +53,15 @@ namespace TagsCloudContainer
             }
         }
 
-        private bool RectangleIsInsideImage(Rectangle rectangle)
+        private Result<bool> RectangleIsInsideImage(Rectangle rectangle)
         {
-            var imageSize = imageHolder.GetImageSize();
-            return rectangle.Left >= 0 && rectangle.Right <= imageSize.Width && rectangle.Top >= 0 &&
-                   rectangle.Bottom <= imageSize.Height;
+            var getImageSizeResult = imageHolder.GetImageSize();
+            if (!getImageSizeResult.IsSuccess)
+                return new Result<bool>(getImageSizeResult.Error);
+            var imageSize = getImageSizeResult.Value;
+            return new Result<bool>(null, rectangle.Left >= 0 && rectangle.Right <= imageSize.Width &&
+                                          rectangle.Top >= 0 &&
+                                          rectangle.Bottom <= imageSize.Height);
         }
     }
 }

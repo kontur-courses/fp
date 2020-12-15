@@ -4,10 +4,10 @@ namespace TagsCloudContainer.Common
 {
     public interface IImageHolder
     {
-        Size GetImageSize();
-        Graphics StartDrawing();
+        Result<Size> GetImageSize();
+        Result<Graphics> StartDrawing();
         void UpdateUi();
         void RecreateImage(ImageSettings settings);
-        void SaveImage(string fileName);
+        Result<None> SaveImage(string fileName);
     }
 }

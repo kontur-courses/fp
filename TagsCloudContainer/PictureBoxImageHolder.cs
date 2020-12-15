@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -8,16 +7,18 @@ namespace TagsCloudContainer
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-        public Size GetImageSize()
+        public Result<Size> GetImageSize()
         {
-            FailIfNotInitialized();
-            return Image.Size;
+            if (!FailIfNotInitialized().IsSuccess)
+                return new Result<Size>("ImageHolder не инициализирован");
+            return new Result<Size>(null, Image.Size);
         }
 
-        public Graphics StartDrawing()
+        public Result<Graphics> StartDrawing()
         {
-            FailIfNotInitialized();
-            return Graphics.FromImage(Image);
+            if (!FailIfNotInitialized().IsSuccess)
+                return new Result<Graphics>("ImageHolder не инициализирован");
+            return new Result<Graphics>(null, Graphics.FromImage(Image));
         }
 
         public void UpdateUi()
@@ -31,17 +32,21 @@ namespace TagsCloudContainer
             Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            FailIfNotInitialized();
+            if (!FailIfNotInitialized().IsSuccess)
+                return new Result<None>("ImageHolder не инициализирован");
+
             Image.Save(fileName);
+            return new Result<None>(null);
         }
 
-        private void FailIfNotInitialized()
+        private Result<None> FailIfNotInitialized()
         {
             if (Image == null)
-                throw new InvalidOperationException(
+                return new Result<None>(
                     "Call PictureBoxImageHolder.RecreateImage before other method call!");
+            return new Result<None>(null);
         }
     }
 }

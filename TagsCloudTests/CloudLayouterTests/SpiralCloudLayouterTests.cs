@@ -40,14 +40,14 @@ namespace TagsCloudTests.CloudLayouterTests
         {
             var rectangle = new SpiralCloudLayouter(imageSettings)
                 .PutNextRectangle(MakeRandomSize());
-            rectangle.X.Should().Be(imageSettings.Width / 2);
-            rectangle.Y.Should().Be(imageSettings.Height / 2);
+            rectangle.GetValueOrThrow().X.Should().Be(imageSettings.Width / 2);
+            rectangle.GetValueOrThrow().Y.Should().Be(imageSettings.Height / 2);
         }
 
         [Test]
-        public void PutNextRectangle_ThrowsException_RectangleSizeLessOrEqualZero()
+        public void PutNextRectangle_ResultWithError_RectangleSizeLessOrEqualZero()
         {
-            Assert.Throws<ArgumentException>(() => spiralCloudLayouter.PutNextRectangle(new Size(0, 0)));
+            spiralCloudLayouter.PutNextRectangle(new Size(0, 0)).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -102,8 +102,8 @@ namespace TagsCloudTests.CloudLayouterTests
             foreach (var pointOnSpiral in coordinates)
             {
                 var rectangle = circularCloudLayouter.PutNextRectangle(new Size(1, 1));
-                rectangle.Location.GetDistanceTo(pointOnSpiral).Should()
-                    .BeLessOrEqualTo(1.05 * rectangle.GetDiagonal());
+                rectangle.GetValueOrThrow().Location.GetDistanceTo(pointOnSpiral).Should()
+                    .BeLessOrEqualTo(1.05 * rectangle.GetValueOrThrow().GetDiagonal());
             }
         }
 
