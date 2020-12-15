@@ -20,4 +20,13 @@
     <ProjectReference Include="..\TagsCloud.Spirals\TagsCloud.Spirals.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Texts\ru_RU.aff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\ru_RU.dic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -18,4 +18,25 @@
     <ProjectReference Include="..\TagsCloud.Visualization\TagsCloud.Visualization.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Texts\BoringWords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\ru_RU.aff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\ru_RU.dic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\SourceText2.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\SourceText2.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Texts\SourceText2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
