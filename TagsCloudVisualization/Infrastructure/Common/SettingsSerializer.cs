@@ -11,7 +11,8 @@ namespace TagsCloudVisualization.Infrastructure.Common
 
         public static SettingsManager Deserialize()
         {
-            var settingsManager = ReadAllText(PathToSettings)
+            var settingsManager = PathToSettings.AsResult()
+                .Then(File.ReadAllText)
                 .Then(JsonConvert.DeserializeObject<SettingsManager>)
                 .OnFail(_ => ShowMessage());
 
@@ -21,11 +22,6 @@ namespace TagsCloudVisualization.Infrastructure.Common
 
         private static void ShowMessage() =>
             InformationMessageHelper.ShowExceptionMessage($"{PathToSettings} not found! Default settings applied.");
-
-        private static Result<string> ReadAllText(string path) =>
-            File.Exists(path)
-                ? File.ReadAllText(PathToSettings)
-                : Result.Fail<string>("File is not found!");
 
         public static void Serialize() =>
             File.WriteAllText(PathToSettings, JsonConvert.SerializeObject(SettingsManager));
