@@ -22,22 +22,26 @@ namespace TagsCloud.CloudRenderers
         public Result<string> RenderCloud()
         {
             if (width <= 0 || height <= 0) return Result.Fail<string>("Not positive width or height");
-            if(layouter == null) return Result.Fail<string>("Layouter is null");
             
             var wordsRectangle = layouter.GetCloudRectangle();
             var words = layouter.CloudWords;
-            
-            using var bitmap = new Bitmap(width, height);
-            using var graphics = Graphics.FromImage(bitmap);
-            graphics.ScaleTransform((float) width / wordsRectangle.Width, (float) height / wordsRectangle.Height);
-            graphics.TranslateTransform(-wordsRectangle.X, -wordsRectangle.Y);
-            foreach (var word in words)
-            {
-                graphics.DrawString(word.Value, word.Font, new SolidBrush(word.Color), word.Rectangle.Location);
-            }
-            
-            bitmap.Save(filePath);
-            return filePath;
+
+            return Result.Of(() => new Bitmap(width, height))
+                .ReplaceError(e => $"Failed to create image with width={width}, height={height}")
+                .Then(bitmap =>
+                {
+                    using var graphics = Graphics.FromImage(bitmap);
+                    graphics.ScaleTransform((float) width / wordsRectangle.Width,
+                        (float) height / wordsRectangle.Height);
+                    graphics.TranslateTransform(-wordsRectangle.X, -wordsRectangle.Y);
+                    foreach (var word in words)
+                    {
+                        graphics.DrawString(word.Value, word.Font, new SolidBrush(word.Color), word.Rectangle.Location);
+                    }
+
+                    bitmap.Save(filePath);
+                    return filePath;
+                });
         }
     }
 }
