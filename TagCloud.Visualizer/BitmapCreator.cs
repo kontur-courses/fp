@@ -6,7 +6,8 @@ namespace TagCloud.Visualizer
 {
     public static class BitmapCreator
     {
-        internal static Result<Bitmap> DrawBitmap(Result<List<RectangleWithWord>> rectanglesWithWordsResult, ImageOptions opts)
+        internal static Result<Bitmap> DrawBitmap(Result<List<RectangleWithWord>> rectanglesWithWordsResult,
+            ImageOptions opts)
         {
             var bitmap = new Bitmap(opts.ImageWidth, opts.ImageHeight);
             using var graph = Graphics.FromImage(bitmap);
@@ -16,6 +17,7 @@ namespace TagCloud.Visualizer
             {
                 return Result.Fail<Bitmap>(rectanglesWithWordsResult.Error);
             }
+
             foreach (var rectangleWithWord in rectanglesWithWordsResult.GetValueOrThrow())
             {
                 using var font = new Font(opts.FontName, opts.FontSize * (float) rectangleWithWord.Word.Weight);

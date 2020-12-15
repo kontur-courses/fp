@@ -36,6 +36,10 @@ namespace TagCloud.Visualizer.Console
                 {
                     System.Console.WriteLine("Некорректная команда");
                 }
+                else if (exitCode == -1)
+                {
+                    System.Console.WriteLine("Возникла ошибка при печати");
+                }
             } while (args?[0] != "exit");
         }
 
@@ -44,7 +48,7 @@ namespace TagCloud.Visualizer.Console
             var exitCode = Parser.Default.ParseArguments<PrintCommand, ImageOptions>(args)
                 .MapResult(
                     (PrintCommand command) =>
-                        PrintCommand.PrintCloudAndReturnExitCode(cloudLayouterBuilder.Resolve<ICloudLayouter>(),
+                        command.PrintCloudAndReturnExitCode(cloudLayouterBuilder.Resolve<ICloudLayouter>(),
                             TextReader.GetWords(InputOptions,
                                 cloudLayouterBuilder.Resolve<ITextFileParser>(),
                                 cloudLayouterBuilder.Resolve<IWordsHandler>()),

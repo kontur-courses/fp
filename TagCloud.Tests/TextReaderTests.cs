@@ -33,7 +33,7 @@ namespace TagCloud.Tests
                 TxtFileParser,
                 ToLowerCaseProcessor);
 
-            words.Should().NotContain("это");
+            words.GetValueOrThrow().Should().NotContain("это");
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace TagCloud.Tests
             var words = TextReader.GetWords(new InputOptions("test.txt"),
                     SourcePath,
                     TxtFileParser,
-                    ToLowerCaseProcessor)
+                    ToLowerCaseProcessor).GetValueOrThrow()
                 .ToArray();
 
             words.Should().Contain(new[] {"большой", "средний", "маленький"});
@@ -55,7 +55,7 @@ namespace TagCloud.Tests
             var words = TextReader.GetWords(new InputOptions("test.docx"),
                     SourcePath,
                     WordDocumentParser,
-                    ToLowerCaseProcessor)
+                    ToLowerCaseProcessor).GetValueOrThrow()
                 .ToArray();
 
             words.Should().Contain(new[] {"большой", "средний", "маленький"});

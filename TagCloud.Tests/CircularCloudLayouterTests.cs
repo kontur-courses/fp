@@ -21,14 +21,15 @@ namespace TagCloud.Tests
         public void SetUp()
         {
             cloudLayouter = new CircularCloudLayouter(new CenterOptions(center.X, center.Y));
-            sizes = SizesCreator.CreateSizesArray(new[] {"abc", "bca", "cab"}, 12f, "Times New Roman");
+            sizes = SizesCreator.CreateSizesArray(new[] {"abc", "bca", "cab"}, 12f, "Times New Roman")
+                .GetValueOrThrow();
         }
 
         [Test]
         public void CircularCloudLayouter_IsFirstRectInCenter()
         {
             var size = new SizeWithWord(new Size(5, 5), new Word(default, default));
-            resultRectsWithWord = cloudLayouter.GetRectangles(new[] {size});
+            resultRectsWithWord = cloudLayouter.GetRectangles(new[] {size}).GetValueOrThrow();
 
             resultRectsWithWord[0].Rectangle.Location.Should().Be(center);
         }
@@ -36,7 +37,7 @@ namespace TagCloud.Tests
         [Test]
         public void PutNextRectangle_RectanglesDoNotIntersect_AfterAddition()
         {
-            resultRectsWithWord = cloudLayouter.GetRectangles(sizes);
+            resultRectsWithWord = cloudLayouter.GetRectangles(sizes).GetValueOrThrow();
 
             cloudLayouter.Rectangles.Any(r => r.IntersectsWith(cloudLayouter.Rectangles.Except(new[] {r}))).Should()
                 .BeFalse();
@@ -76,7 +77,8 @@ namespace TagCloud.Tests
                 "..",
                 "crash-reports");
             var bitmap = BitmapCreator.DrawBitmap(resultRectsWithWord, new ImageOptions());
-            bitmap.Save(Path.Combine(path, $"crash-report {TestContext.CurrentContext.Test.FullName}.bmp"));
+            bitmap.GetValueOrThrow()
+                .Save(Path.Combine(path, $"crash-report {TestContext.CurrentContext.Test.FullName}.bmp"));
             Console.WriteLine($"Tag cloud visualization saved to file {path}");
         }
     }

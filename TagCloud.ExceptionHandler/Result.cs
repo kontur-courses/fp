@@ -2,8 +2,20 @@
 
 namespace TagCloud.ExceptionHandler
 {
+    public class None
+    {
+        private None()
+        {
+        }
+    }
+
     public struct Result<T>
     {
+        public string Error { get; }
+        internal T Value { get; }
+
+        public bool IsSuccess => Error == null;
+
         public Result(string error, T value = default)
         {
             Error = error;
@@ -15,16 +27,15 @@ namespace TagCloud.ExceptionHandler
             return Result.Ok(v);
         }
 
-        public string Error { get; }
-        internal T Value { get; }
-
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
+            if (IsSuccess)
+            {
+                return Value;
+            }
+
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
-
-        public bool IsSuccess => Error == null;
     }
 
     public static class Result
@@ -76,7 +87,11 @@ namespace TagCloud.ExceptionHandler
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess) handleError(input.Error);
+            if (!input.IsSuccess)
+            {
+                handleError(input.Error);
+            }
+
             return input;
         }
 
@@ -84,7 +99,11 @@ namespace TagCloud.ExceptionHandler
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
+            if (input.IsSuccess)
+            {
+                return input;
+            }
+
             return Fail<TInput>(replaceError(input.Error));
         }
 

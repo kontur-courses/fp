@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using TagCloud.ExceptionHandler;
 
 namespace TagCloud.TextFileParser
 {
     public interface ITextFileParser
     {
-        public bool TryGetWords(string fileName, string sourceFolderPath, out IEnumerable<string> result);
+        public Result<string[]> GetWords(string fileName, string sourceFolderPath);
     }
 }

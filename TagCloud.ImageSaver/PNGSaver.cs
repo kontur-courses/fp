@@ -1,20 +1,21 @@
 ﻿using System.Drawing;
 using System.IO;
+using TagCloud.ExceptionHandler;
 using TagCloud.Visualizer;
 
 namespace TagCloud.ImageSaver
 {
     public class PngSaver : IImageSaver
     {
-        public bool TrySaveImage(Bitmap bitmap, string savePath, ImageOptions imageOptions)
+        public Result<None> SaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions)
         {
             if (Path.GetExtension(imageOptions.ImageSaveName) != ".png")
             {
-                return false;
+                return Result.Fail<None>("Расширение файла для сохранения не является поддерживаемым");
             }
 
-            bitmap.Save(Path.Combine(savePath, $"{imageOptions.ImageSaveName}"));
-            return true;
+            bitmapResult.GetValueOrThrow().Save(Path.Combine(savePath, $"{imageOptions.ImageSaveName}"));
+            return new Result<None>(null);
         }
     }
 }

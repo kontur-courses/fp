@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagCloud.ExceptionHandler;
 using TagCloud.Visualizer;
 
 namespace TagCloud.ImageSaver
@@ -14,9 +15,14 @@ namespace TagCloud.ImageSaver
             this.implementations = implementations;
         }
 
-        public bool TrySaveImage(Bitmap bitmap, string savePath, ImageOptions imageOptions)
+        public Result<None> SaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions)
         {
-            return implementations.Any(imageSaver => imageSaver.TrySaveImage(bitmap, savePath, imageOptions));
+            var isImplementationFound = implementations.Any(imageSaver =>
+                imageSaver.SaveImage(bitmapResult.GetValueOrThrow(), savePath, imageOptions).IsSuccess);
+            bitmapResult.GetValueOrThrow().Dispose();
+            return isImplementationFound
+                ? new Result<None>(null)
+                : Result.Fail<None>("Расширение файла для сохранения не является поддерживаемым");
         }
     }
 }

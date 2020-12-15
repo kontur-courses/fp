@@ -6,6 +6,6 @@ namespace TagCloud.ImageSaver
 {
     public interface IImageSaver
     {
-        public Result<bool> TrySaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions);
+        public Result<None> SaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions);
     }
 }

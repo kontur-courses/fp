@@ -7,15 +7,15 @@ namespace TagCloud.ImageSaver
 {
     public class BitmapSaver : IImageSaver
     {
-        public Result<bool> TrySaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions)
+        public Result<None> SaveImage(Result<Bitmap> bitmapResult, string savePath, ImageOptions imageOptions)
         {
             if (Path.GetExtension(imageOptions.ImageSaveName) != ".bmp")
             {
-                return false;
+                return Result.Fail<None>("Расширение файла для сохранения не является поддерживаемым");
             }
 
-            bitmapResult.Save(Path.Combine(savePath, $"{imageOptions.ImageSaveName}"));
-            return true;
+            bitmapResult.GetValueOrThrow().Save(Path.Combine(savePath, $"{imageOptions.ImageSaveName}"));
+            return new Result<None>(null);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.ExceptionHandler;
 
 namespace TagCloud.TextFileParser
 {
     public class ToLowerCaseProcessor : IWordsHandler
     {
-        public IEnumerable<string> ProcessWords(IEnumerable<string> words)
+        public Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words)
         {
-            return words.Select(word => word.ToLower());
+            return Result.Of(() => words.Select(word => word.ToLower()));
         }
     }
 }

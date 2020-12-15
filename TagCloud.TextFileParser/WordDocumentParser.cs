@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using GemBox.Document;
+using TagCloud.ExceptionHandler;
 
 namespace TagCloud.TextFileParser
 {
@@ -9,19 +9,17 @@ namespace TagCloud.TextFileParser
     {
         private const string LineSplitter = "\r\n";
 
-        public bool TryGetWords(string fileName, string sourceFolderPath, out IEnumerable<string> result)
+        public Result<string[]> GetWords(string fileName, string sourceFolderPath)
         {
-            result = null;
             if (Path.GetExtension(fileName) != ".docx" && Path.GetExtension(fileName) != ".doc")
             {
-                return false;
+                return Result.Fail<string[]>("Некорректный формат файлы с входными данными");
             }
 
-            var document = DocumentModel.Load(Path.Combine(sourceFolderPath,
-                $"{fileName}"));
-            var text = document.Content.ToString();
-            result = text.Split(LineSplitter, StringSplitOptions.RemoveEmptyEntries);
-            return true;
+            return Result.Of(() => DocumentModel.Load(Path.Combine(sourceFolderPath,
+                    $"{fileName}")))
+                .Then(document => document.Content.ToString())
+                .Then(text => text.Split(LineSplitter, StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }

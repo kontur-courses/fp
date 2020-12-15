@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using TagCloud.ExceptionHandler;
 
 namespace TagCloud.TextFileParser
 {
     public class TxtFileParser : ITextFileParser
     {
-        public bool TryGetWords(string fileName, string sourceFolderPath, out IEnumerable<string> result)
+        public Result<string[]> GetWords(string fileName, string sourceFolderPath)
         {
-            result = null;
             if (Path.GetExtension(fileName) != ".txt")
             {
-                return false;
+                return Result.Fail<string[]>("Некорректный формат файлы с входными данными");
             }
 
-            result = File.ReadAllLines(Path.Combine(sourceFolderPath,
-                $"{fileName}"));
-            return true;
+            return Result.Of(() => File.ReadAllLines(Path.Combine(sourceFolderPath,
+                $"{fileName}")));
         }
     }
 }

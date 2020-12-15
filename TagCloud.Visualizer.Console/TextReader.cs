@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TagCloud.ExceptionHandler;
 using TagCloud.TextFileParser;
 
 namespace TagCloud.Visualizer.Console
@@ -102,16 +103,15 @@ namespace TagCloud.Visualizer.Console
             "таки"
         };
 
-        public static IEnumerable<string> GetWords(InputOptions inputOptions, string sourceFolderPath,
+        public static Result<IEnumerable<string>> GetWords(InputOptions inputOptions, string sourceFolderPath,
             ITextFileParser fileParser, IWordsHandler wordsHandler)
         {
-            return fileParser.TryGetWords(inputOptions.FileName, sourceFolderPath, out var words)
-                ? wordsHandler.ProcessWords(words)
-                    .Where(word => !WordsToExclude.Contains(word))
-                : null;
+            return fileParser.GetWords(inputOptions.FileName, sourceFolderPath)
+                .Then(wordsHandler.ProcessWords)
+                .Then(words => words.Where(word => !WordsToExclude.Contains(word)));
         }
 
-        public static IEnumerable<string> GetWords(InputOptions inputOption, ITextFileParser fileParser,
+        public static Result<IEnumerable<string>> GetWords(InputOptions inputOption, ITextFileParser fileParser,
             IWordsHandler wordsHandler)
         {
             return GetWords(inputOption,

@@ -8,4 +8,8 @@
       <PackageReference Include="GemBox.Document" Version="33.0.1049" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TagCloud.ExceptionHandler\TagCloud.ExceptionHandler.csproj" />
+    </ItemGroup>
+
 </Project>
