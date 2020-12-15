@@ -18,10 +18,21 @@ namespace TagCloud
         public void Run(string[] args)
         {
             var tagCloudSettings = ParseArguments(args);
-            CreateTagCloud(tagCloudCreatorFactory, tagCloudSettings);
+            if (!tagCloudSettings.IsSuccess)
+            {
+                Console.WriteLine(tagCloudSettings.Error);
+                return;
+            }
+
+            if (tagCloudSettings.Value == null)
+                return;
+
+            var result = CreateTagCloud(tagCloudCreatorFactory, tagCloudSettings.Value);
+            if (!result.IsSuccess)
+                Console.WriteLine(result.Error);
         }
 
-        private static TagCloudSettings ParseArguments(string[] args)
+        private static Result<TagCloudSettings> ParseArguments(string[] args)
         {
             var app = new CommandLineApplication();
             app.HelpOption();
@@ -87,12 +98,11 @@ namespace TagCloud
                                                         boringWordsFile,
                                                         outputFile);
             });
-            app.Execute(args);
 
-            return tagCloudSettings;
+            return Result.OfAction(() => app.Execute(args)).Then(q => tagCloudSettings);
         }
 
-        private static void CreateTagCloud(ITagCloudCreatorFactory tagCloudCreatorFactory, TagCloudSettings tagCloudSettings)
+        private static Result<None> CreateTagCloud(ITagCloudCreatorFactory tagCloudCreatorFactory, TagCloudSettings tagCloudSettings)
         {
             var bitmap = GetCloudImage(tagCloudCreatorFactory,
                                        tagCloudSettings.PictureSize,
@@ -103,12 +113,8 @@ namespace TagCloud
                                        tagCloudSettings.InputFile,
                                        tagCloudSettings.BoringWordsFile);
 
-            var result = bitmap.Then(b => b.Save(tagCloudSettings.OutputFile))
-                               .RefineError($"Can't save file {tagCloudSettings.OutputFile}");
-            if (!result.IsSuccess)
-            {
-                Console.WriteLine(result.Error);
-            }
+            return bitmap.Then(b => b.Save(tagCloudSettings.OutputFile))
+                         .RefineError($"Can't save file {tagCloudSettings.OutputFile}");
         }
 
         private static Result<Bitmap> GetCloudImage(ITagCloudCreatorFactory tagCloudCreatorFactory, Size pictureSize,
