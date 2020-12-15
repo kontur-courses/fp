@@ -16,6 +16,12 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
             Parser = new TextParser(new WordValidator());
         }
 
+        [Test]
+        public void GetAllWords_ThroeException_WhenTextIsNull()
+        {
+            Assert.Throws<ArgumentException>(() => Parser.GetAllWords(null));
+        }
+
         [TestCaseSource(nameof(TestCases))]
         public void ShouldReturnExpectedResult_When(string text, List<string> expectedResult)
         {

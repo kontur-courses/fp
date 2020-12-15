@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text.RegularExpressions;
 using ResultOf;
 using TagsCloudContainer.TagsCloudVisualization.Interfaces;
 
@@ -43,10 +42,8 @@ namespace TagsCloudContainer.TagsCloudVisualization
         private Result<string> ValidateFileName(string path)
         {
             var fileName = Path.GetFileName(path);
-            var containsBadCharacter =
-                Regex.Match(fileName, "[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]");
             var extension = Path.GetExtension(fileName);
-            return Validate(path, x => containsBadCharacter.Success || extension == "", $"Wrong file name: {fileName}");
+            return Validate(path, x => extension == "", $"Wrong file name: {fileName}");
         }
 
         private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string exception)

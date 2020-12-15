@@ -9,20 +9,26 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
 {
     public class TextWriterTests
     {
-        private TextWriter Writer { get; set; }
+        private ITextSaver saver;
+        private TextWriter writer;
 
         [SetUp]
         public void SetUp()
         {
-            Writer = new TextWriter();
+            writer = new TextWriter();
+            saver = A.Fake<ITextSaver>();
+        }
+
+        [Test]
+        public void ThroeException_WhenTextIsNull()
+        {
+            Assert.Throws<ArgumentException>(() => writer.WriteText(null, saver));
         }
 
         [Test]
         public void SaveFileOnce_WhenCalled()
         {
-            var saver = A.Fake<ITextSaver>();
-
-            Writer.WriteText("text", saver);
+            writer.WriteText("text", saver);
 
             A.CallTo(() => saver.Save("text")).MustHaveHappenedOnceExactly();
         }
@@ -30,10 +36,8 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
         [Test]
         public void SaveFileOnce_WhenManyCalls()
         {
-            var saver = A.Fake<ITextSaver>();
-
-            Writer.WriteText("text1", saver);
-            Writer.WriteText("text2", saver);
+            writer.WriteText("text1", saver);
+            writer.WriteText("text2", saver);
 
             A.CallTo(() => saver.Save("text1")).MustHaveHappenedOnceExactly();
         }
@@ -41,11 +45,9 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
         [Test]
         public void SaveFileMoreThanOnce_WhenManyCalls()
         {
-            var saver = A.Fake<ITextSaver>();
-
-            Writer.WriteText("text1", saver);
-            Writer.WriteText("text1", saver);
-            Writer.WriteText("text1", saver);
+            writer.WriteText("text1", saver);
+            writer.WriteText("text1", saver);
+            writer.WriteText("text1", saver);
 
             A.CallTo(() => saver.Save("text1")).MustHaveHappened(3, Times.Exactly);
         }
@@ -53,9 +55,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
         [Test]
         public void SaveMustNotHaveHappened_WhenWrongText()
         {
-            var saver = A.Fake<ITextSaver>();
-
-            Writer.WriteText("text", saver);
+            writer.WriteText("text", saver);
 
             A.CallTo(() => saver.Save("wow")).MustNotHaveHappened();
         }
@@ -63,9 +63,7 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
         [TestCaseSource(nameof(TestCases))]
         public void ParseTextRight_When(string text, string expectedResult)
         {
-            var saver = A.Fake<ITextSaver>();
-
-            Writer.WriteText(text, saver);
+            writer.WriteText(text, saver);
 
             A.CallTo(() => saver.Save(expectedResult)).MustHaveHappened();
         }

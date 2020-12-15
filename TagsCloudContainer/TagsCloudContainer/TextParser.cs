@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ResultOf;
 using TagsCloudContainer.TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagsCloudContainer
@@ -16,6 +18,10 @@ namespace TagsCloudContainer.TagsCloudContainer
 
         public List<string> GetAllWords(string text)
         {
+            Result.Ok(text)
+                .Then(ValidateText)
+                .OnFail(e => throw new ArgumentException(e, nameof(text)));
+
             var matches = Regex.Matches(text, @"\b\w+\b");
             var wordsEntry = matches
                 .Select(x => x.Value.ToLower())
@@ -23,6 +29,13 @@ namespace TagsCloudContainer.TagsCloudContainer
                 .ToList();
 
             return wordsEntry;
+        }
+
+        private Result<string> ValidateText(string text)
+        {
+            return text is null
+                ? Result.Fail<string>("Text is null")
+                : Result.Ok(text);
         }
     }
 }
