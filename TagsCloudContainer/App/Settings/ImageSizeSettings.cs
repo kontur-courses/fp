@@ -1,4 +1,5 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
+﻿using System.ComponentModel;
+using TagsCloudContainer.Infrastructure.Settings;
 
 namespace TagsCloudContainer.App.Settings
 {
@@ -14,7 +15,10 @@ namespace TagsCloudContainer.App.Settings
             SetDefault();
         }
 
+        [TypeConverter(typeof(CustomSizeConverter))]
         public int Width { get; set; }
+
+        [TypeConverter(typeof(CustomSizeConverter))]
         public int Height { get; set; }
 
         public void SetDefault()
