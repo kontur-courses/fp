@@ -20,6 +20,10 @@ namespace TagsCloud.GUI
             FormBorderStyle = FormBorderStyle.FixedDialog;
             AutoSize = true;
 
+            holder.Error += (sender, args) =>
+                MessageBox.Show(holder.SettingsErrorMessage, "Не удалось корректно применить настройку");
+
+
             var propGrid = new PropertyGrid {SelectedObject = settings, Dock = DockStyle.Fill};
             Controls.Add(propGrid);
 

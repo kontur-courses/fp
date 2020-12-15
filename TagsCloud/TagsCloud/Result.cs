@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace TagsCloud
 {
     public class None
     {

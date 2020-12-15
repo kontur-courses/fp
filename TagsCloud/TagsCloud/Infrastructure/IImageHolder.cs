@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Layouters;
 
@@ -6,11 +7,14 @@ namespace TagsCloud.Infrastructure
 {
     public interface IImageHolder
     {
+        event EventHandler Error;
+        void OnError();
+        string SettingsErrorMessage { get; }
         ImageSettings Settings { get; }
-        void ChangeLayouter(ICloudLayouter layouter);
+        Result<None> ChangeLayouter(ICloudLayouter layouter);
         void RecreateCanvas(ImageSettings settings);
-        void SaveImage(string fileName);
-        void RenderWordsFromFile(string fileName);
-        void RedrawCurrentImage();
+        Result<None> SaveImage(string fileName);
+        Result<None> RenderWordsFromFile(string fileName);
+        Result<None> RedrawCurrentImage();
     }
 }

@@ -13,6 +13,7 @@ namespace TagsCloud.Infrastructure
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
         public ImageSettings Settings { get; }
+        public string SettingsErrorMessage { get; private set; }
         private ICloudLayouter layouter;
         private Dictionary<string, int> wordsFreuqencies;
         private IWordsFrequencyParser parser;
@@ -28,63 +29,49 @@ namespace TagsCloud.Infrastructure
 
             ImageSettings.SettingsIsChanged += (sender, args) =>
             {
-                RedrawCurrentImage();
+                RedrawCurrentImage()
+                    .OnFail(_ => OnError());
                 Size = new Size(settings.Width, settings.Height);
             };
         }
 
-        public void ChangeLayouter(ICloudLayouter layouter)
+        void IImageHolder.OnError() => OnError();
+
+        public static event EventHandler Error;
+
+        event EventHandler IImageHolder.Error
         {
-            this.layouter = layouter;
-            RedrawCurrentImage();
+            add => Error += value;
+            remove => Error -= value;
         }
 
-        public void RenderWordsFromFile(string fileName)
+        public Result<None> RenderWordsFromFile(string fileName)
         {
-            if (string.IsNullOrEmpty(previousFileName) && !string.IsNullOrEmpty(fileName))
-            {
-                if (previousFileName != fileName)
-                {
-                    RecreateCanvas(Settings);
-                    layouter.ClearLayouter();
-                }
+            return Result.OfAction(() => ProcessFile(fileName))
+                .Then(_ => layouter.ClearLayouter())
+                .Then(_ => PlaceWords())
+                .OnFail(error => SettingsErrorMessage = error);
+        }
 
-                if (!File.Exists(fileName))
-                    throw new FileNotFoundException("Запрошенный файл не найден");
-                wordsFreuqencies = parser.ParseWordsFrequencyFromFile(fileName);
-                previousFileName = fileName;
-            }
+        public static void OnError() =>
+            Error.Invoke(null, EventArgs.Empty);
 
-            if(wordsFreuqencies is null)
-                return;
+        public Result<None> ChangeLayouter(ICloudLayouter layouter)
+        {
+            this.layouter = layouter;
+            return RedrawCurrentImage();
+        }
 
-            layouter.ClearLayouter();
-            var totalWords = wordsFreuqencies.Sum(x => x.Value);
-            var graphics = StartDrawing();
+        public Result<None> RedrawCurrentImage()
+        {
+            RecreateCanvas(Settings);
+            return RenderWordsFromFile(previousFileName);
+        }
 
-            foreach (var pair in wordsFreuqencies.OrderByDescending(x => x.Value))
-            {
-                var fontSize = FontSizeProvider.GetFontSize(Settings.Font.Size, 100 / (double)totalWords * pair.Value / 100);
-
-                var label = new Label {AutoSize = true};
-                label.Font = new Font(Settings.Font.FontFamily, fontSize, Settings.Font.Style);
-                label.Text = pair.Key;
-                var size = label.GetPreferredSize(label.GetPreferredSize(Size));
-
-                Rectangle rect;
-                try
-                {
-                    rect = layouter.PutNextRectangle(size);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message, "Ошибка", MessageBoxButtons.OK);
-                    return;
-                }
-                
-                graphics.DrawString(pair.Key, label.Font, new SolidBrush(Settings.Palette.TextColor), rect);
-                UpdateUi();
-            }
+        public Result<None> SaveImage(string fileName)
+        {
+            return CheckFormat(fileName)
+                .Then(format => Image.Save(fileName, format));
         }
 
         public void UpdateUi()
@@ -100,24 +87,63 @@ namespace TagsCloud.Infrastructure
             DrawBaseCanvas();
         }
 
-        public void RedrawCurrentImage()
-        {
-            RecreateCanvas(Settings);
-            RenderWordsFromFile(previousFileName);
-        }
-
-        public void SaveImage(string fileName)
+        private Result<ImageFormat> CheckFormat(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            var format = extension switch
+            return extension switch
             {
                 ".jpeg" => ImageFormat.Jpeg,
                 ".png" => ImageFormat.Png,
                 ".tiff" => ImageFormat.Tiff,
                 _ => throw new BadImageFormatException("Неподдерживаемое расширение файла")
             };
+        }
 
-            Image.Save(fileName, format);
+
+        private void ProcessFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(previousFileName) && !string.IsNullOrEmpty(fileName))
+            {
+                if (previousFileName != fileName)
+                {
+                    RecreateCanvas(Settings);
+                    layouter.ClearLayouter();
+                }
+
+                if (!File.Exists(fileName))
+                    throw new FileNotFoundException("Запрошенный файл не найден");
+                wordsFreuqencies = parser.ParseWordsFrequencyFromFile(fileName);
+                previousFileName = fileName;
+            }
+        }
+
+        private Result<None> PlaceWords()
+        {
+            if (wordsFreuqencies is null)
+                return Result.Ok();
+
+            var totalWords = wordsFreuqencies.Sum(x => x.Value);
+            var graphics = StartDrawing();
+
+            foreach (var pair in wordsFreuqencies.OrderByDescending(x => x.Value))
+            {
+                var fontSize = FontSizeProvider.GetFontSize(Settings.Font.Size, 100 / (double)totalWords * pair.Value / 100);
+
+                var label = new Label { AutoSize = true };
+                label.Font = new Font(Settings.Font.FontFamily, fontSize, Settings.Font.Style);
+                label.Text = pair.Key;
+                var size = label.GetPreferredSize(label.GetPreferredSize(Size));
+
+                var placingResult = Result.Of(() => layouter.PutNextRectangle(size));
+                if (!placingResult.IsSuccess)
+                    return Result.Fail<None>(placingResult.Error);
+                var rect = placingResult.Value;
+
+                graphics.DrawString(pair.Key, label.Font, new SolidBrush(Settings.Palette.TextColor), rect);
+                UpdateUi();
+            }
+
+            return Result.Ok();
         }
 
         private Graphics StartDrawing() => Graphics.FromImage(Image);

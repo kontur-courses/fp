@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Infrastructure;
 
@@ -44,6 +45,10 @@ namespace TagsCloud.Layouters
                     rectangles.Add(newRectangle);
                     return newRectangle;
                 }
+
+                if (!InBoundsOfImage(newRectangle))
+                    throw new BadImageFormatException(
+                        "Недостаточно места для размещения слова, увеличьте размер изображения, или уменьшите размер шрифта");
             }
         }
 

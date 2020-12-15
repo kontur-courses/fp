@@ -28,7 +28,8 @@ namespace TagsCloud.UiActions
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
-                imageHolder.SaveImage(dialog.FileName);
+                imageHolder.SaveImage(dialog.FileName)
+                    .OnFail(error => MessageBox.Show(error, "Не удалось сохранить изображение"));
         }
     }
 }

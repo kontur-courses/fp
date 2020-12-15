@@ -14,8 +14,8 @@ namespace TagsCloud.Infrastructure
             var builder = new ContainerBuilder();
 
             builder.RegisterType<PictureBoxImageHolder>().AsSelf().As<IImageHolder>().SingleInstance();
-            builder.RegisterType<CircularCloudLayouter>().AsSelf().As<ICloudLayouter>().SingleInstance();
             builder.RegisterType<SpiralCloudLayouter>().AsSelf().As<ICloudLayouter>().SingleInstance();
+            builder.RegisterType<CircularCloudLayouter>().AsSelf().As<ICloudLayouter>().SingleInstance();
             builder.Register(_ => imageSettings).SingleInstance();
             builder.Register(_ => new WordsFilter(wordsToExclude)).AsSelf().As<IWordsFilter>().SingleInstance();
             builder.RegisterType<WordsFrequencyParser>().As<IWordsFrequencyParser>();

@@ -1,4 +1,5 @@
-﻿using TagsCloud.Infrastructure;
+﻿using System.Windows.Forms;
+using TagsCloud.Infrastructure;
 using TagsCloud.Layouters;
 
 namespace TagsCloud.UiActions
@@ -18,7 +19,8 @@ namespace TagsCloud.UiActions
 
         public void Perform()
         {
-            holder.ChangeLayouter(newLayouter);
+            holder.ChangeLayouter(newLayouter)
+                .OnFail(error => MessageBox.Show(error, "Не удалось корректно перестроить облако"));
         }
     }
 }

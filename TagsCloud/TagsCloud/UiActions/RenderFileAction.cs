@@ -38,14 +38,9 @@ namespace TagsCloud.UiActions
 
             if (res != DialogResult.OK) 
                 return;
-            try
-            {
-                holder.RenderWordsFromFile(dialog.FileName);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message, "Неправильный формат файла");
-            }
+
+            holder.RenderWordsFromFile(dialog.FileName)
+                .OnFail(error => MessageBox.Show(error, "Не удалось построить облако"));
         }
     }
 }
