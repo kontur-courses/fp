@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using ResultOf;
 
 namespace TagsCloudContainer.TagsCloudContainer
 {
     public class Tag
     {
+        private readonly HashSet<string> fontFamiliesNames = FontFamily.Families.Select(x => x.Name).ToHashSet();
+
         public Tag(string text, Rectangle rectangle, Font font, Brush textColor)
         {
             Result.Ok(rectangle)
@@ -36,6 +40,10 @@ namespace TagsCloudContainer.TagsCloudContainer
 
         public Tag ChangeFontFamily(string fontFamily)
         {
+            Result.Ok(fontFamily)
+                .Then(ValidateFontFamily)
+                .OnFail(e => throw new ArgumentException(e, nameof(fontFamily)));
+
             using var font = new Font(fontFamily, Font.Size);
             return new Tag(Text, Rectangle, font, TextColor);
         }
@@ -43,6 +51,11 @@ namespace TagsCloudContainer.TagsCloudContainer
         public Tag ChangeTextColor(Brush color)
         {
             return new Tag(Text, Rectangle, Font, color);
+        }
+
+        private Result<string> ValidateFontFamily(string fontFamily)
+        {
+            return Validate(fontFamily, x => !fontFamiliesNames.Contains(x), $"Wrong font family: {fontFamily}");
         }
 
         private Result<Rectangle> ValidateRectangleWidth(Rectangle rectangle)

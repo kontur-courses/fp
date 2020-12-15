@@ -56,5 +56,14 @@ namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
 
             createTag.Should().Throw<ArgumentException>();
         }
+
+        [Test]
+        public void ShouldThrowException_WhenFontFamilyDontExist()
+        {
+            var tag = new Tag(Text, Rectangle, Font, Brush);
+            Func<Tag> changeFontFamily = () => tag.ChangeFontFamily("wrong");
+
+            changeFontFamily.Should().Throw<ArgumentException>();
+        }
     }
 }
