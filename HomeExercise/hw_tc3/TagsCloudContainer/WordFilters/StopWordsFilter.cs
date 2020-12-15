@@ -16,7 +16,7 @@ namespace TagsCloudContainer
         {
             return Result.Of(
                 () => words.Select(word => word.ToLower()).Where(word => !StopWords.Contains(word)).ToList(),
-                typeof(StopWordsFilter).Name);
+                $"Произошла ошибка на фильтре {nameof(StopWordsFilter)}");
         }
     }
 }

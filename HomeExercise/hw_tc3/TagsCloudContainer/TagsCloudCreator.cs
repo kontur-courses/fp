@@ -60,26 +60,26 @@ namespace TagsCloudContainer
         public Result<None> AddStopWord(string stopWord)
         {
             return Result.OfAction(() => stopWords.Add(stopWord),
-                "Возникла ошибка при добавлении стопслова");
+                $"Возникла ошибка при удалении стопслова {stopWord}");
         }
 
         public Result<None> RemoveStopWord(string stopWord)
         {
             return Result.OfAction(() => stopWords.Remove(stopWord),
-                "Возникла ошибка при удалении стопслова");
+                $"Возникла ошибка при удалении стопслова {stopWord}");
         }
 
         public Result<None> SetFontFamily(string fontFamilyName)
         {
             return Result.OfAction(() => fontFamily = new FontFamily(fontFamilyName),
-                "Шрифт с таким именем не найден в системе");
+                $"Шрифт с именем {fontFamilyName} не найден в системе");
         }
 
         public Result<None> SetFontColor(string colorName)
         {
             var color = Color.FromName(colorName);
             if (color.R == 0 && color.G == 0 && color.B == 0 && color.Name != "Black")
-                return Result.Fail<None>("Такой цвет не поддерживается");
+                return Result.Fail<None>($"Цвет {colorName} не поддерживается");
             cloudDrawer.ColorProvider = new FixedColorProvider(color);
             return Result.Ok();
         }
@@ -99,8 +99,8 @@ namespace TagsCloudContainer
 
         public Result<None> SetImageFormat(string imageFormat)
         {
-            return Result.OfAction(() => cloudDrawer.ImageSaver = imageSavers[imageFormat],
-                "Такой фрмат изображения не поддерживается");
+            return Result.OfAction(() => cloudDrawer.ImageSaver = imageSavers[imageFormat.ToLower()],
+                $"Фрмат изображения {imageFormat.ToLower()} не поддерживается");
         }
 
         public string GetImageFormat()

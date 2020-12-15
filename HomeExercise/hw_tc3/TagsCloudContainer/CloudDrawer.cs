@@ -47,7 +47,7 @@ namespace TagsCloudContainer
                 var putResult = cloudLayouter.PutNextRectangle(wordSize.ToSize());
                 if (!putResult.IsSuccess)
                     return Result.Fail<List<Rectangle>>(putResult.Error)
-                        .RefineError("Возникла ошибка на слове " + word.Word);
+                        .RefineError($"Возникла ошибка на слове {word.Word}");
             }
 
             return (List<Rectangle>)cloudLayouter.Rectangles;

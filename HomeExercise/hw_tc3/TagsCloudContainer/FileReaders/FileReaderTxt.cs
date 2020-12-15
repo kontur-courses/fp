@@ -15,7 +15,7 @@ namespace TagsCloudContainer
 
         public Result<IEnumerable<string>> ReadAllLines(string filePath)
         {
-            return Result.Of(() => File.ReadAllLines(filePath).Where(word => word != ""), typeof(FileReaderTxt).Name)
+            return Result.Of(() => File.ReadAllLines(filePath).Where(word => word != ""), nameof(FileReaderTxt))
                     .RefineError("Не удалось прочитать слова из файла");
         }
     }
