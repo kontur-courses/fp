@@ -1,61 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using FluentAssertions;
+using FakeItEasy;
 using NUnit.Framework;
-using TextWriter = TagsCloudContainer.TagsCloudContainer.TextWriter;
+using TagsCloudContainer.TagsCloudContainer;
+using TagsCloudContainer.TagsCloudContainer.Interfaces;
 
 namespace TagsCloudVisualization.Tests.TagsCloudContainerTests
 {
     public class TextWriterTests
     {
         private TextWriter Writer { get; set; }
-        private string Root { get; set; }
 
         [SetUp]
         public void SetUp()
         {
             Writer = new TextWriter();
-            Root = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
-        }
-
-        [TestCaseSource(nameof(PathTestCases))]
-        public void ThrowException_When(string path)
-        {
-            Action writeText = () => Writer.WriteText("text", path);
-
-            writeText.Should().Throw<ArgumentException>();
         }
 
         [Test]
-        public void DoesntThrowException_WhenPathIsOk()
+        public void SaveFileOnce_WhenCalled()
         {
-            var path = $"..{Path.DirectorySeparatorChar}image.png";
-            Action writeText = () => Writer.WriteText("text", path);
+            var saver = A.Fake<ITextSaver>();
 
-            writeText.Should().NotThrow();
-            File.Delete(path);
+            Writer.WriteText("text", saver);
+
+            A.CallTo(() => saver.Save("text")).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SaveFileOnce_WhenManyCalls()
+        {
+            var saver = A.Fake<ITextSaver>();
+
+            Writer.WriteText("text1", saver);
+            Writer.WriteText("text2", saver);
+
+            A.CallTo(() => saver.Save("text1")).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SaveFileMoreThanOnce_WhenManyCalls()
+        {
+            var saver = A.Fake<ITextSaver>();
+
+            Writer.WriteText("text1", saver);
+            Writer.WriteText("text1", saver);
+            Writer.WriteText("text1", saver);
+
+            A.CallTo(() => saver.Save("text1")).MustHaveHappened(3, Times.Exactly);
+        }
+
+        [Test]
+        public void SaveMustNotHaveHappened_WhenWrongText()
+        {
+            var saver = A.Fake<ITextSaver>();
+
+            Writer.WriteText("text", saver);
+
+            A.CallTo(() => saver.Save("wow")).MustNotHaveHappened();
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public void SaveFileInRightFormat_When(string text, string expectedResult)
+        public void ParseTextRight_When(string text, string expectedResult)
         {
-            var path = Path.Join(Root, "TagsCloudContainer", "Texts", "test.txt");
-            Writer.WriteText(text, path);
+            var saver = A.Fake<ITextSaver>();
 
-            File.Exists(path).Should().BeTrue();
-            File.ReadAllText(path).Should().Be(expectedResult);
-            File.Delete(path);
-        }
+            Writer.WriteText(text, saver);
 
-        private static IEnumerable<TestCaseData> PathTestCases()
-        {
-            yield return new TestCaseData("<html></html>").SetName("Directory dont exist");
-            yield return new TestCaseData(".. Dir text.txt").SetName("Not platform separator");
-            yield return new TestCaseData($@"..{Path.DirectorySeparatorChar}text txt").SetName(
-                "Doesnt have dot separator");
-            yield return new TestCaseData($@"..{Path.DirectorySeparatorChar}text.").SetName(
-                "Doesnt have filename extension");
+            A.CallTo(() => saver.Save(expectedResult)).MustHaveHappened();
         }
 
         private static IEnumerable<TestCaseData> TestCases()

@@ -4,9 +4,11 @@ namespace TagsCloudContainer.TagsCloudContainer
 {
     public class WordValidator : IWordValidator
     {
+        private const int MinWordLength = 2;
+
         public bool IsValidWord(string word)
         {
-            return word.Length > 2;
+            return word.Length > MinWordLength;
         }
     }
 }

@@ -18,7 +18,8 @@ namespace TagsCloudVisualization.Tests.TagsCloudVisualizationTests
         {
             const int height = 10;
             const int width = 10;
-            ImageBitmap = new Bitmap(width, height);
+            using var bitmap = new Bitmap(width, height);
+            ImageBitmap = bitmap;
             BitmapSaver = new BitmapSaver();
         }
 

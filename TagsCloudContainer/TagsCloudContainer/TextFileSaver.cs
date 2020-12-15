@@ -1,37 +1,28 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using ResultOf;
-using TagsCloudContainer.TagsCloudVisualization.Interfaces;
+using TagsCloudContainer.TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer.TagsCloudVisualization
+namespace TagsCloudContainer.TagsCloudContainer
 {
-    public class BitmapSaver : IBitmapSaver
+    public class TextFileSaver : ITextSaver
     {
-        public void SaveBitmapToDirectory(Bitmap imageBitmap, string savePath)
+        private readonly string filePath;
+
+        public TextFileSaver(string filePath)
         {
-            Result.Ok(savePath)
+            Result.Ok(filePath)
                 .Then(ValidateDirectoryPath)
                 .Then(ValidateFileName)
-                .OnFail(e => throw new ArgumentException(e, nameof(savePath)));
+                .OnFail(e => throw new ArgumentException(e, nameof(filePath)));
 
-            Result.Ok(imageBitmap)
-                .Then(ValidateBitmap)
-                .OnFail(e => throw new ArgumentException(e, nameof(imageBitmap)))
-                .Then(x =>
-                {
-                    using (x)
-                    {
-                        x.Save(savePath, ImageFormat.Png);
-                    }
-                });
+            this.filePath = filePath;
         }
 
-        private Result<Bitmap> ValidateBitmap(Bitmap bitmap)
+        public void Save(string text)
         {
-            return Validate(bitmap, x => x == null, "Bitmap is null");
+            File.WriteAllText(filePath, text);
         }
 
         private Result<string> ValidateDirectoryPath(string path)
