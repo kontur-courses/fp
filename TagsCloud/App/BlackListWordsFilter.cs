@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TagsCloud.Infrastructure;
 
@@ -26,13 +25,16 @@ namespace TagsCloud.App
             return Result.OfAction(() => TryUpdateBlackList(words));
         }
 
-        private void TryUpdateBlackList(IEnumerable<string> words)
+        private Result<None> TryUpdateBlackList(IEnumerable<string> words)
         {
             if (words == null)
-                throw new NullReferenceException("Words collection should not be null");
-            BlackList.Clear();
-            foreach (var word in words)
-                BlackList.Add(normalizer.Normalize(word));
+                return Result.Fail<None>("Words collection should not be null");
+            return Result.OfAction(() =>
+            {
+                BlackList.Clear();
+                foreach (var word in words)
+                    BlackList.Add(normalizer.Normalize(word));
+            });
         }
     }
 }

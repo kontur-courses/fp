@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using TagsCloud.Infrastructure;
 
@@ -30,7 +31,7 @@ namespace TagsCloud.UI
 
         private void PropertyGridOnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (propertyGrid.SelectedObject is ImageSize && (int)e.ChangedItem.Value < 0)
+            if (propertyGrid.SelectedObject is ImageSize && (int) e.ChangedItem.Value < 0)
                 e.ChangedItem.PropertyDescriptor.SetValue(propertyGrid.SelectedObject, e.ChangedItem.Value);
         }
 
@@ -42,14 +43,13 @@ namespace TagsCloud.UI
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // SettingsForm
             // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "SettingsForm";
-            this.ResumeLayout(false);
-
+            ClientSize = new Size(284, 261);
+            Name = "SettingsForm";
+            ResumeLayout(false);
         }
     }
 }

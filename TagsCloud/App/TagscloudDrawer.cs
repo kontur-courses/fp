@@ -20,10 +20,10 @@ namespace TagsCloud.App
 
         public Result<Image> GetTagsCloud(IEnumerable<Word> words)
         {
+            if (words == null)
+                return Result.Fail<Image>("Words collection should not be null");
             return Result.Of(() =>
             {
-                if (words == null)
-                    throw new NullReferenceException("Words collection should not be null");
                 var image = new Bitmap(tagsCloudSettings.ImageSize.Width, tagsCloudSettings.ImageSize.Height);
                 var graphics = Graphics.FromImage(image);
                 var tags = GetTagsFromWords(
@@ -54,7 +54,7 @@ namespace TagsCloud.App
         private IEnumerable<Tag> GetTagsFromWords(IEnumerable<Word> words, Graphics graphics)
         {
             if (words == null)
-                throw new NullReferenceException("Words collection should not be null");
+                throw new ArgumentException("Words collection should not be null.");
             foreach (var word in words)
             {
                 var wordFontSize = Math.Max((int) (word.Weight * MaxFontSize), 1);
@@ -78,7 +78,7 @@ namespace TagsCloud.App
         public void DrawTagsCloud(IEnumerable<Tag> tags, PointF center, Graphics graphics)
         {
             if (tags == null)
-                throw new NullReferenceException("Tags collection should not be null");
+                throw new ArgumentException("Tags collection should not be null.");
             graphics.TranslateTransform(center.X, center.Y);
             graphics.Clear(tagsCloudSettings.Palette.BackgroundColor);
             var brush = new SolidBrush(tagsCloudSettings.Palette.PrimaryColor);

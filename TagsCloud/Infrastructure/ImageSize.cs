@@ -18,7 +18,7 @@ namespace TagsCloud.Infrastructure
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException($"Value {value} is less than 0");
+                    throw new ArgumentException($"Value must be greater than 0, but found {value}");
                 width = value;
             }
         }
@@ -29,7 +29,7 @@ namespace TagsCloud.Infrastructure
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException($"Value {value} is less than 0");
+                    throw new ArgumentException($"Value must be greater than 0, but found {value}");
                 height = value;
             }
         }

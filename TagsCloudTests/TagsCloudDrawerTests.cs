@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.App;
@@ -18,8 +17,8 @@ namespace TagsCloudTests
             var drawer = new TagsCloudDrawer(new RectanglesLayouter(Point.Empty), TagsCloudSettings.DefaultSettings);
             var graphics =
                 Graphics.FromImage(new Bitmap(defaultSettings.ImageSize.Width, defaultSettings.ImageSize.Height));
-            Action action = () => drawer.DrawTagsCloud(null, PointF.Empty, graphics);
-            action.Should().Throw<NullReferenceException>();
+            var result = Result.OfAction(() => drawer.DrawTagsCloud(null, PointF.Empty, graphics));
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]

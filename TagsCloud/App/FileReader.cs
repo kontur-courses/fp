@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TagsCloud.Infrastructure;
 
@@ -15,7 +14,7 @@ namespace TagsCloud.App
             var fileType = fileName.Split('.')[^1];
             if (!AvailableFileTypes.Contains(fileType))
                 return Result.Fail<string[]>($"Incorrect type {fileType}");
-            return ReadWordsInternal(fileName);;
+            return ReadWordsInternal(fileName);
         }
 
         protected abstract Result<string[]> ReadWordsInternal(string fileName);

@@ -34,7 +34,9 @@ namespace TagsCloud.UI
             fontFamilies = settings.FontSettings.FontFamilies.ToDictionary(family => family.Name);
             fontStyles = settings.FontSettings.FontStyles.ToDictionary(style => style.ToString());
             layouters = rectanglesLayouters.ToDictionary(c => c.Name);
+
             InitializeComponent();
+
             WidthTextBox.Text = settings.ImageSize.Width.ToString();
             HeightTextBox.Text = settings.ImageSize.Height.ToString();
             FontFamilyChoice.DataSource = settings.FontSettings.FontFamilies.Select(f => f.Name).ToList();
@@ -47,11 +49,6 @@ namespace TagsCloud.UI
             new SettingsForm<Palette>(settings.Palette).ShowDialog();
         }
 
-        private void SetImageSizeButton_Click(object sender, EventArgs e)
-        {
-            new SettingsForm<ImageSize>(settings.ImageSize).ShowDialog();
-        }
-
         private void ImageSaveButton_Click(object sender, EventArgs e)
         {
             if (PictureBox.Image != null && SaveFileDialog.ShowDialog() == DialogResult.OK)
@@ -60,14 +57,29 @@ namespace TagsCloud.UI
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            if (OpenFileDialog.ShowDialog() == DialogResult.OK)
+            var result = OpenFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
             {
                 var fileName = OpenFileDialog.FileName;
                 var fileType = fileName.Split('.')[^1];
                 var fileReader = fileReaders.First(reader => reader.AvailableFileTypes.Contains(fileType));
                 if (fileReader == null)
                     throw new InvalidOperationException("Invalid file");
-                PictureBox.Image = tagsCloudHandler.GetNewTagcloud(fileReader.ReadWords(fileName).Value).Value;
+                var resultOfReading = fileReader
+                    .ReadWords(fileName)
+                    .OnFail(error => MessageBox.Show($"Не удалось прочитать файл. {error}"));
+                if (resultOfReading.IsSuccess)
+                {
+                    var tagsCloudDrawingResult = tagsCloudHandler
+                        .GetNewTagcloud(resultOfReading.Value)
+                        .OnFail(error => MessageBox.Show($"Не удалось создать облако тегов. {error}"));
+                    if (tagsCloudDrawingResult.IsSuccess)
+                        PictureBox.Image = tagsCloudDrawingResult.Value;
+                }
+            }
+            else if (result != DialogResult.Cancel)
+            {
+                MessageBox.Show("Не удалось открыть файл");
             }
         }
 
@@ -101,20 +113,20 @@ namespace TagsCloud.UI
             settings.MaxWordsCount = (int) MaxWordsCountSetting.Value;
         }
 
-        private void WidthTextBox_TextChanged(object sender, EventArgs e)
+        private void ImageSizeSetButton_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(WidthTextBox.Text, out var number))
-                settings.ImageSize.Width = number;
-            else if (string.IsNullOrEmpty(WidthTextBox.Text))
-                MessageBox.Show("Размер должен быть целым положительным числом");
-        }
-
-        private void HeightTextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(HeightTextBox.Text, out var number))
-                settings.ImageSize.Height = number;
-            else if (string.IsNullOrEmpty(WidthTextBox.Text))
-                MessageBox.Show("Размер должен быть целым положительным числом");
+            if (int.TryParse(WidthTextBox.Text, out var width)
+                && int.TryParse(HeightTextBox.Text, out var height)
+                && width > 0
+                && height > 0)
+            {
+                settings.ImageSize.Width = width;
+                settings.ImageSize.Height = height;
+            }
+            else
+            {
+                MessageBox.Show($"Некорректный размер {WidthTextBox.Text}:{HeightTextBox.Text}");
+            }
         }
     }
 }

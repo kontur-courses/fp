@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.App;
@@ -16,7 +14,7 @@ namespace TagsCloudTests
         public void DocFileReader_ShouldThrow_WithWrongFileType()
         {
             var fileName = @"C:\Users\da\Desktop\abc.hguit";
-            var result =  reader.ReadWords(fileName);
+            var result = reader.ReadWords(fileName);
             result.IsSuccess.Should().BeFalse();
         }
 
