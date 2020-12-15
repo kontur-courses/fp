@@ -9,13 +9,20 @@ using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Core
 {
-    public static class TagsHelper
+    public class TagsHelper
     {
-        public static List<(string, int)> GetWords(string pathToFile, string pathToBoringWords,
-            string pathToDictionary, string pathToAffix, IReaderFactory readerFactory)
+        private readonly IReaderFactory readerFactory;
+
+        public TagsHelper(IReaderFactory readerFactory)
         {
-            var mainText = GetTextFromFile(pathToFile, readerFactory).GetValueOrThrow();
-            var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords, readerFactory).GetValueOrThrow());
+            this.readerFactory = readerFactory;
+        }
+
+        public List<(string, int)> GetWords(string pathToFile, string pathToBoringWords,
+            string pathToDictionary, string pathToAffix)
+        {
+            var mainText = GetTextFromFile(pathToFile).GetValueOrThrow();
+            var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords).GetValueOrThrow());
             var hunspell = Result.Of(() => new Hunspell(pathToAffix, pathToDictionary)).GetValueOrThrow();
             
             return TextAnalyzer.GetWordByFrequency(
@@ -27,14 +34,14 @@ namespace TagsCloud.Core
                     .ThenBy(y => y.Key, StringComparer.Ordinal));
         }
 
-        private static Result<string[]> GetTextFromFile(string document, IReaderFactory readerFactory)
+        private Result<string[]> GetTextFromFile(string document)
         {
             var extension = document.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries).Last();
             return readerFactory.GetReader(extension)
                 .Then(x => x.ReadWords(document));
         }
 
-        public static List<Rectangle> GetRectangles(ICircularCloudLayouter cloud, 
+        public List<Rectangle> GetRectangles(ICircularCloudLayouter cloud, 
             List<(string, int)> words, Dictionary<int, Font> newFonts, Font font)
         {
             var rectangles = new List<Rectangle>();

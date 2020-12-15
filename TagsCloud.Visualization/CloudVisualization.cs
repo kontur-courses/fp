@@ -17,20 +17,22 @@ namespace TagsCloud.Visualization
         private readonly Palette palette;
         private readonly IImageHolder imageHolder;
         private readonly ColorAlgorithm colorAlgorithm;
+        private readonly TagsHelper tagsHelper;
 
         public CloudVisualization(IImageHolder imageHolder, Palette palette, FontSettings fontSettings,
-            ColorAlgorithm colorAlgorithm)
+            ColorAlgorithm colorAlgorithm, TagsHelper tagsHelper)
         {
             this.colorAlgorithm = colorAlgorithm;
             this.palette = palette;
             this.imageHolder = imageHolder;
             this.fontSettings = fontSettings;
+            this.tagsHelper = tagsHelper;
         }
 
         public void Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
         {
             var newFonts = new Dictionary<int, Font>();
-            var rectangles = TagsHelper.GetRectangles(cloud, words, newFonts, fontSettings.Font.GetValueOrThrow());
+            var rectangles = tagsHelper.GetRectangles(cloud, words, newFonts, fontSettings.Font.GetValueOrThrow());
 
             using (var graphics = imageHolder.StartDrawing().GetValueOrThrow())
             {

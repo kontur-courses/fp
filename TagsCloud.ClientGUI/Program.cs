@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Autofac;
 using TagsCloud.ClientGUI.Infrastructure;
 using TagsCloud.CloudLayouters;
+using TagsCloud.Core;
 using TagsCloud.FileReader;
 using TagsCloud.Spirals;
 using TagsCloud.Visualization;
@@ -44,6 +45,7 @@ namespace TagsCloud.ClientGUI
 
             service.RegisterType<CloudVisualization>().InstancePerLifetimeScope();
             service.RegisterType<TagsCloudPainter>().InstancePerLifetimeScope();
+            service.RegisterType<TagsHelper>().InstancePerLifetimeScope();
 
             service.RegisterType<MainForm>();
             return service.Build();

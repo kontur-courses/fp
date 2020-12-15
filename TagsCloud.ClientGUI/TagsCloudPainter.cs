@@ -2,7 +2,6 @@
 using TagsCloud.ClientGUI.Infrastructure;
 using TagsCloud.Common;
 using TagsCloud.Core;
-using TagsCloud.FileReader;
 using TagsCloud.Visualization;
 
 namespace TagsCloud.ClientGUI
@@ -11,23 +10,23 @@ namespace TagsCloud.ClientGUI
     {
         private readonly PathSettings pathSettings;
         private readonly CloudVisualization visualizer;
-        private readonly IReaderFactory readerFactory;
+        private readonly TagsHelper tagsHelper;
 
         public TagsCloudPainter(PictureBoxImageHolder pictureBox, PathSettings pathSettings,
-            CloudVisualization visualizer, IReaderFactory readerFactory)
+            CloudVisualization visualizer, TagsHelper tagsHelper)
         {
             PictureBox = pictureBox;
             this.pathSettings = pathSettings;
             this.visualizer = visualizer;
-            this.readerFactory = readerFactory;
+            this.tagsHelper = tagsHelper;
         }
 
         public PictureBoxImageHolder PictureBox { get; }
 
         public void Paint(ICircularCloudLayouter cloud)
         {
-            var words = TagsHelper.GetWords(pathSettings.PathToText, pathSettings.PathToBoringWords,
-                pathSettings.PathToDictionary, pathSettings.PathToAffix, readerFactory);
+            var words = tagsHelper.GetWords(pathSettings.PathToText, pathSettings.PathToBoringWords,
+                pathSettings.PathToDictionary, pathSettings.PathToAffix);
 
             visualizer.Paint(cloud, words);
 

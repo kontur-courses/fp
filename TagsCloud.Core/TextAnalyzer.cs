@@ -11,25 +11,17 @@ namespace TagsCloud.Core
             Hunspell hunspell, Func<Dictionary<string, int>, IEnumerable<KeyValuePair<string, int>>> sort)
         {
             var wordsFrequency = new Dictionary<string, int>();
-            foreach (var word in text)
-            {
-                var correctWord = NormalizeWord(word.ToLower(), hunspell);
-                if (boringWords.Contains(correctWord))
-                    continue;
-                if (!wordsFrequency.ContainsKey(correctWord))
-                    wordsFrequency[correctWord] = 1;
-                else wordsFrequency[correctWord]++;
-            }
+
+            text.Select(x => x.ToLower().Normalize(hunspell))
+                .Where(x => !boringWords.Contains(x))
+                .Select(x => wordsFrequency.ContainsKey(x)
+                    ? wordsFrequency[x]++
+                    : wordsFrequency[x] = 1)
+                .ToList();
 
             return sort(wordsFrequency)
                 .Select(x => (x.Key, x.Value))
                 .ToList();
-        }
-
-        private static string NormalizeWord(string word, Hunspell hunspell)
-        {
-            var stems = hunspell.Stem(word);
-            return stems.Count > 0 ? stems.FirstOrDefault() : word;
         }
     }
 }
