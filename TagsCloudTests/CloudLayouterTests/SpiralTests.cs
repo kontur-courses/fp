@@ -16,34 +16,12 @@ namespace TagsCloudTests.CloudLayouterTests
             spiral = new Spiral(new Point(0, 0));
         }
 
-        [Test]
-        public void Ctor_ThrowsArgumentException_WhenCoefOfSpiralEquationNotPositive()
-        {
-            Assert.Throws<ArgumentException>(() => new Spiral(new Point(0, 0), 0, 1));
-        }
-
-        [Test]
-        public void Ctor_ThrowsArgumentException_WhenDeltaOfAnglePhiNotPositive()
-        {
-            Assert.Throws<ArgumentException>(() => new Spiral(new Point(0, 0), 1, 0));
-        }
-
-        [Test]
-        public void Ctor_Correct_WithAllCorrectParameters()
-        {
-            var spiral = new Spiral(new Point(0, 0), 1, 1);
-            spiral.Center.Should().BeEquivalentTo(new Point(0, 0));
-            spiral.CoefOfSpiralEquation.Should().Be(1);
-            spiral.DeltaOfAnglePhi.Should().Be(1);
-        }
 
         [Test]
         public void Ctor_Correct_WithOnlyParameterCenter()
         {
             var spiral = new Spiral(new Point(0, 0));
             spiral.Center.Should().BeEquivalentTo(new Point(0, 0));
-            spiral.CoefOfSpiralEquation.Should().Be(0.5);
-            spiral.DeltaOfAnglePhi.Should().Be(Math.PI / 90);
         }
 
         [Test]

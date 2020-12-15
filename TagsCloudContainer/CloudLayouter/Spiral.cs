@@ -5,18 +5,12 @@ namespace TagsCloudContainer.CloudLayouter
 {
     public class Spiral
     {
+        public const double CoefOfSpiralEquation = 0.5;
+        public const double DeltaOfAnglePhi = Math.PI / 90;
         public readonly Point Center;
-        public readonly double CoefOfSpiralEquation;
-        public readonly double DeltaOfAnglePhi;
 
-        public Spiral(Point center, double coefOfSpiralEquation = 0.5, double deltaOfAnglePhi = Math.PI / 90)
+        public Spiral(Point center)
         {
-            if (coefOfSpiralEquation <= 0)
-                throw new ArgumentException("Коэфициент в уравнении спирали должен быть положительным");
-            if (deltaOfAnglePhi <= 0)
-                throw new ArgumentException("Изменение угла должно быть положительным");
-            CoefOfSpiralEquation = coefOfSpiralEquation;
-            DeltaOfAnglePhi = deltaOfAnglePhi;
             Center = center;
         }
 
