@@ -10,9 +10,9 @@ namespace WordCloudGenerator
             Value = value;
         }
 
-        public static implicit operator Result<T>(T v)
+        public static implicit operator Result<T>(T value)
         {
-            return Result.Ok(v);
+            return Result.Ok(value);
         }
 
         public string Error { get; }
@@ -29,12 +29,12 @@ namespace WordCloudGenerator
 
     public static class Result
     {
-        public static Result<T> RepeatUntilOk<T>(Func<T> f, Action<string> errorHandler)
+        public static Result<T> RepeatUntilOk<T>(Func<T> func, Action<string> errorHandler)
         {
             Result<T> result;
             do
             {
-                result = Of(f);
+                result = Of(func);
                 result.OnFail(errorHandler);
             } while (!result.IsSuccess);
 
@@ -46,11 +46,11 @@ namespace WordCloudGenerator
             return new Result<T>(null, value);
         }
 
-        public static Result<T> Of<T>(Func<T> f, string error = null)
+        public static Result<T> Of<T>(Func<T> func, string error = null)
         {
             try
             {
-                return Ok(f());
+                return Ok(func());
             }
             catch (Exception e)
             {
@@ -66,9 +66,9 @@ namespace WordCloudGenerator
             return input;
         }
 
-        private static Result<T> Fail<T>(string e)
+        private static Result<T> Fail<T>(string err)
         {
-            return new Result<T>(e);
+            return new Result<T>(err);
         }
     }
 }
