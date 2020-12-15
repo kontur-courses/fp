@@ -22,14 +22,12 @@ namespace TagCloud
         }
         
         public Result<List<Tuple<string, Rectangle>>> GetTags(string filename, int canvasHeight)
-        {
-            var frequenciesResult = frequencyAnalyzer.GetFrequencyDictionary(filename);
-            return frequenciesResult.Then(frequencies =>
+            => frequencyAnalyzer.GetFrequencyDictionary(filename)
+                .Then(frequencies =>
                 frequencies
                     .OrderByDescending(pair => pair.Value)
                     .Select(pair => GetTag(pair, canvasHeight))
                     .ToList());
-        }
 
         private Tuple<string, Rectangle> GetTag(KeyValuePair<string, double> pair, int canvasHeight)
         {

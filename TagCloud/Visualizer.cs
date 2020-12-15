@@ -33,16 +33,13 @@ namespace TagCloud
         {
             var path = creator.GetNewPngPath();
             using (var bitmap = new Bitmap(canvas.Width, canvas.Height))
+            using (var graphics = Graphics.FromImage(bitmap))
             {
-                using (var graphics = Graphics.FromImage(bitmap))
-                {
-                    backgroundPainter.Draw(tags, canvas, graphics);
-                    DrawAllStrings(tags, fontFamily, stringColor, graphics);
-                    
-                    bitmap.Save(path);
-                }
+                backgroundPainter.Draw(tags, canvas, graphics);
+                DrawAllStrings(tags, fontFamily, stringColor, graphics);
+                
+                bitmap.Save(path);
             }
-
             return path;
         }
         
@@ -64,7 +61,10 @@ namespace TagCloud
             var fontSize = (int)Math.Round(rectangle.Height * fontCoefficient);
             if (rectangle.Height < 2)
                 return;
-            graphics.DrawString(str, new Font(fontFamily, fontSize), textBrush, x, y);
+            using (var font = new Font(fontFamily, fontSize))
+            {
+                graphics.DrawString(str, font, textBrush, x, y);
+            }
         }
     }
 }

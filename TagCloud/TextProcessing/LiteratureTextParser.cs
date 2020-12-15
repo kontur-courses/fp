@@ -26,8 +26,15 @@ namespace TagCloud.TextProcessing
         public Result<string[]> GetWords(string inputFileName)
         {
             var path = creator.GetCurrentPath();
-            return GetDictionary(path)
-                .Then(dict => GetNormalizeWords(dict, path + inputFileName));
+            try
+            {
+                return GetDictionary(path)
+                    .Then(dict => GetNormalizeWords(dict, path + inputFileName));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<string[]>("Unhandled exception: " + e);
+            }
         }
 
         private Result<string[]> GetNormalizeWords(WordList dictionary, string pathToFile)
