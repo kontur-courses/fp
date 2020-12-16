@@ -2,6 +2,7 @@
 using Autofac.Features.Indexed;
 using TagCloud.App;
 using CommandLine;
+using TagCloud;
 using TagCloudGraphicInterface.GUI;
 using TagCloudGraphicInterface.Infrastructure;
 
@@ -11,8 +12,9 @@ namespace TagCloudGraphicInterface
     {
         public static void Main(string[] args)
         {
-            var builder = TagCloud.Program.GetDefaultContainer();
-            
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new TagCloudModule());
+
             builder.RegisterType<TagCloudLayouterGui>().Keyed<IApp>(UiType.Gui);
             builder.RegisterType<TagCloudLayouterGui2>().Keyed<IApp>(UiType.Gui2);
 

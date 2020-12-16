@@ -40,7 +40,7 @@ namespace TagCloudTests
             builder = new ContainerBuilder();
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
             builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
-            var myStemPath = Program.GetReleasePath("mystem");
+            var myStemPath = TagCloudModule.GetReleasePath("mystem");
             builder.RegisterType<WordTypeConveyor>()
                 .As<IConveyor<string>>()
                 .WithParameter(new TypedParameter(typeof(string), myStemPath));
@@ -131,7 +131,7 @@ namespace TagCloudTests
             var container = builder.Build();
             var settingsFactory = container.Resolve<Func<Settings>>();
             var generator = container.Resolve<IImageGenerator>();
-            settingsFactory().Import(Program.GetDefaultSettings());
+            settingsFactory().Import(TagCloudModule.GetDefaultSettings());
 
             image1 = generator.Generate().GetValueOrThrow();
             image2 = generator.Generate().GetValueOrThrow();

@@ -63,7 +63,7 @@ namespace TagCloudLineInterface.CLI
             automata.Add(new Transition(mainState, "generate", generateState));
             automata.Add(new Transition(generateState, ".*", mainState));
 
-            settingsFactory().Import(TagCloud.Program.GetDefaultSettings());
+            settingsFactory().Import(TagCloud.TagCloudModule.GetDefaultSettings());
 
             while (automata.Show())
             {

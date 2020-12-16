@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Autofac;
+using TagCloud;
 using TagCloud.App;
 using TagCloudLineInterface.CLI;
 
@@ -10,7 +11,8 @@ namespace TagCloudLineInterface
     {
         public static void Main(string[] args)
         {
-            var builder = TagCloud.Program.GetDefaultContainer();
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new TagCloudModule());
             
             builder.Register(context => Console.Out).As<TextWriter>();
             builder.Register(context => Console.In).As<TextReader>();

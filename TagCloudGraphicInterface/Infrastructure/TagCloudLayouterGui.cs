@@ -38,7 +38,7 @@ namespace TagCloudGraphicInterface.GUI
 
         public void Run()
         {
-            settingsFactory().Import(TagCloud.Program.GetDefaultSettings());
+            settingsFactory().Import(TagCloud.TagCloudModule.GetDefaultSettings());
 
             Application.Init();
 

@@ -16,12 +16,10 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class Program
+    public class TagCloudModule : Module
     {
-        public static ContainerBuilder GetDefaultContainer()
+        protected override void Load(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
             builder.RegisterType<TxtReader>().As<IReader<string>>();
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
             builder.RegisterType<ImageSaver>();
@@ -62,8 +60,6 @@ namespace TagCloud
             builder.RegisterType<ColorPickerSettingsManager>().AsImplementedInterfaces();
 
             builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
-            
-            return builder;
         }
 
         public static Settings GetDefaultSettings()
