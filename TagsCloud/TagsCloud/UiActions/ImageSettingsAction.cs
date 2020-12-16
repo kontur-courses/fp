@@ -5,11 +5,9 @@ namespace TagsCloud.UiActions
 {
     public class ImageSettingsAction : IUiAction
     {
-        private ImageSettings settings;
-        private IImageHolder holder;
-        public ImageSettingsAction(ImageSettings settings, IImageHolder holder)
+        private readonly IImageHolder holder;
+        public ImageSettingsAction(IImageHolder holder)
         {
-            this.settings = settings;
             this.holder = holder;
         }
 
@@ -19,8 +17,7 @@ namespace TagsCloud.UiActions
 
         public void Perform()
         {
-            var dialog = new SettingsForm(holder);
-            dialog.ShowDialog();
+            new SettingsForm(holder).ShowDialog();
         }
     }
 }

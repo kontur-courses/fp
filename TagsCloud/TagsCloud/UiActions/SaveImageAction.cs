@@ -5,7 +5,7 @@ namespace TagsCloud.UiActions
 {
     public class SaveImageAction : IUiAction
     {
-        private IImageHolder imageHolder;
+        private readonly IImageHolder imageHolder;
         public SaveImageAction(IImageHolder holder)
         {
             imageHolder = holder;
@@ -14,6 +14,7 @@ namespace TagsCloud.UiActions
         public string Category => "Файл";
         public string Name => "Сохранить как...";
         public string Description => "Сохранить изображение в файл";
+
         public void Perform()
         {
             var dialog = new SaveFileDialog
@@ -26,7 +27,9 @@ namespace TagsCloud.UiActions
                          "Jpeg (*.jpeg)|*.jpeg|" +
                          "TIFF (*.tiff)|*.tiff"
             };
+
             var res = dialog.ShowDialog();
+
             if (res == DialogResult.OK)
                 imageHolder.SaveImage(dialog.FileName)
                     .OnFail(error => MessageBox.Show(error, "Не удалось сохранить изображение"));

@@ -20,6 +20,7 @@ namespace TagsCloud
             var menuItems = items.Select(a => a.ToMenuItem()).ToArray();
             return new ToolStripMenuItem(name, null, menuItems);
         }
+
         public static ToolStripItem ToMenuItem(this IUiAction action)
         {
             return new ToolStripMenuItem(action.Name, null, (sender, args) => action.Perform())

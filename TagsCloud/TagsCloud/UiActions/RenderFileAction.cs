@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using TagsCloud.Infrastructure;
-using TagsCloud.Layouters;
-using TagsCloud.WordsProcessing;
 
 namespace TagsCloud.UiActions
 {
     public class RenderFileAction : IUiAction
     {
-        public RenderFileAction(IImageHolder holder, ICloudLayouter layouter)
+        private readonly IImageHolder holder;
+        public RenderFileAction(IImageHolder holder)
         {
             this.holder = holder;
-            this.layouter = layouter;
         }
 
-        private IImageHolder holder;
-        private ICloudLayouter layouter;
         public string Category => "Файл";
         public string Name => "Визуализировать файл...";
         public string Description => "Выбрать файл для визуализации облака тегов";
+
         public void Perform()
         {
             var dialog = new OpenFileDialog()
