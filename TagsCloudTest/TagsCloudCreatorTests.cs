@@ -94,7 +94,7 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(path, imagePath);
 
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Contain("file type png is not supported");
+            result.Error.Should().Contain("file type .png is not supported");
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace TagsCloudTest
             var result = tagsCloudCreator.CreateCloud(textPath, path);
 
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Contain("image type ff is not supported");
+            result.Error.Should().Contain("image type .ff is not supported");
         }
 
         [Test]

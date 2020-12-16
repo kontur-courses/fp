@@ -23,16 +23,12 @@ namespace TagsCloudTest
             rectangles = new List<Rectangle>();
         }
 
-        private Size[] GetRandomSizeSet()
+        private Size[] GetSizeSet(int length = 4, int minSideSize = 10, int maxSideSize = 40)
         {
-            var length = 4;
-            var maxSideSize = 40;
-            var minSideSize = 10;
-
             var sizes = new Size[length];
-            var random = new Random();
+            var step = (maxSideSize - minSideSize) / length;
             for (int i = 0; i < length; i++)
-                sizes[i] = new Size(random.Next(minSideSize, maxSideSize), random.Next(minSideSize, maxSideSize));
+                sizes[i] = new Size(minSideSize + step, maxSideSize - step);
             return sizes;
         }
 
@@ -45,7 +41,7 @@ namespace TagsCloudTest
         [Test]
         public void PutNextRectangleShouldNotIntersect()
         {
-            PutRectangles(10, GetRandomSizeSet());
+            PutRectangles(10, GetSizeSet());
 
             var isIntersect = rectangles
                 .Any(rect => rect.IntersectsWith(rectangles.Where(other => other != rect)));
@@ -87,21 +83,27 @@ namespace TagsCloudTest
         [Test]
         public void PutNextRectangleAllRectangleShouldBeDense()
         {
-            PutRectangles(30, GetRandomSizeSet());
+            PutRectangles(30, GetSizeSet());
 
             foreach (var rectangle in rectangles)
             {
                 var vector = new TargetVector(center, rectangle.Location);
                 foreach (var delta in vector.GetPartialDelta().Take(3))
-                    rectangle.TryMoveRectangle(delta, rectangles).Should().BeFalse();
+                    TryMoveRectangle(rectangle, delta, rectangles).Should().BeFalse();
             }
+        }
+
+        private bool TryMoveRectangle(Rectangle rectangle, Point delta, IEnumerable<Rectangle> shouldNotIntersect)
+        {
+            var movedRectangle = rectangle.MoveOnTheDelta(delta);
+            return !movedRectangle.IntersectsWith(shouldNotIntersect);
         }
 
         [Test]
         [Timeout(100 * 1000)]
         public void PutNextRectanglePerformanceTest()
         {
-            PutRectangles(1000, GetRandomSizeSet());
+            PutRectangles(1000, GetSizeSet());
         }
     }
 }
