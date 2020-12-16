@@ -12,7 +12,7 @@ using TagCloud.WordsProvider;
 namespace TagCloudTest
 {
     [TestFixture]
-    public class CircularCloudLayouterTests
+    public class CircularCloudLayouterShould
     {
         [SetUp]
         public void SetUp()
@@ -89,7 +89,7 @@ namespace TagCloudTest
         }
 
         [Test]
-        public void TagCloud_ShouldContainUniqueWords()
+        public void ContainUniqueWords()
         {
             tagCloudWithCenterInZero.GenerateTagCloud();
 
@@ -99,7 +99,7 @@ namespace TagCloudTest
 
         [Test]
         [Timeout(200)]
-        public void Put1000Rectangles_StopsInSufficientTime()
+        public void Put1000Rectangles_InSufficientTime()
         {
             for (var i = 0; i < 1000; i++)
                 tagCloudWithCenterInZero.PutNextWord("asda", GetRandomSize());

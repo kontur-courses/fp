@@ -8,7 +8,7 @@ using TagCloud.WordsFilter;
 namespace TagCloudTest
 {
     [TestFixture]
-    public class WordsFilterTests
+    public class WordsFilterShould
     {
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -21,14 +21,14 @@ namespace TagCloudTest
         private IWordsFilter wordsFilter;
 
         [Test]
-        public void Prepositions_ShouldBeRemoved()
+        public void RemovePrepositions()
         {
             wordsFilter.Apply(new List<string> {"123", "in", "of", "word", "anotherword"})
                 .Should().BeEquivalentTo(new List<string> {"123", "word", "anotherword"});
         }
 
         [Test]
-        public void Words_ShouldBeNormalized()
+        public void NormalizeWords()
         {
             wordsFilter.Apply(new List<string> {"123", "in", "of", "contains", "words", "anoTHerWord"})
                 .Should().BeEquivalentTo(new List<string> {"123", "contain", "word", "anotherword"});
