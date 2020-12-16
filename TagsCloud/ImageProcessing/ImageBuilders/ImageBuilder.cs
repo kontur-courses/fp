@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using TagsCloud.ImageProcessing.Config;
 using TagsCloud.TagsCloudProcessing;
 using TagsCloud.TextProcessing.WordsConfig;
 
@@ -8,26 +7,23 @@ namespace TagsCloud.ImageProcessing.ImageBuilders
 {
     public class ImageBuilder : IImageBuilder
     {
-        private readonly ImageConfig imageConfig;
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public ImageBuilder(ImageConfig imageConfig, WordConfig wordsConfig)
+        public ImageBuilder(IWordConfig wordsConfig)
         {
-            this.imageConfig = imageConfig;
             this.wordsConfig = wordsConfig;
         }
 
-        public Bitmap BuildImage(IEnumerable<Tag> tags)
+        public void DrawTags(IEnumerable<Tag> tags, Bitmap bitmap)
         {
-            var image = new Bitmap(imageConfig.ImageSize.Width, imageConfig.ImageSize.Height);
-
-            using var graphics = Graphics.FromImage(image);
+            using var graphics = Graphics.FromImage(bitmap);
             using var brush = new SolidBrush(wordsConfig.Color);
 
             foreach (var tag in tags)
-                graphics.DrawString(tag.Value, tag.Font, brush, tag.Rectangle);
-
-            return image;
+            {
+                using var font = new Font(tag.FontConfig.FontFamily, tag.FontConfig.Size);
+                graphics.DrawString(tag.Value, font, brush, tag.Rectangle);
+            }
         }
     }
 }

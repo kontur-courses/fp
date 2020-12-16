@@ -8,6 +8,6 @@ namespace TagsCloud.Factory
     {
         Result<TService> Create();
         IEnumerable<string> GetServiceNames();
-        IServiceFactory<TService> Register(string serviceName, Func<TService> wordConverter);
+        IServiceFactory<TService> Register(string serviceName, Func<TService> creationFunc);
     }
 }

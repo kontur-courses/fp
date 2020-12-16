@@ -6,6 +6,6 @@ namespace TagsCloud.ImageProcessing.ImageBuilders
 {
     public interface IImageBuilder
     {
-        Bitmap BuildImage(IEnumerable<Tag> tags);
+        void DrawTags(IEnumerable<Tag> tags, Bitmap bitmap);
     }
 }

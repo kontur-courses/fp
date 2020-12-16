@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TagsCloud.ResultOf;
 
 namespace TagsCloud.Factory
@@ -11,7 +10,7 @@ namespace TagsCloud.Factory
 
         public abstract Result<TService> Create();
 
-        public IEnumerable<string> GetServiceNames() => services.Select(pair => pair.Key);
+        public IEnumerable<string> GetServiceNames() => services.Keys;
 
         public IServiceFactory<TService> Register(string serviceName, Func<TService> creationFunc)
         {

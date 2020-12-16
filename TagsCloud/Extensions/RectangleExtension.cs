@@ -17,11 +17,5 @@ namespace TagsCloud.Extensions
             rectangle.Y += delta.Y;
             return rectangle;
         }
-
-        public static bool TryMoveRectangle(this Rectangle rectangle, Point delta, IEnumerable<Rectangle> shouldNotIntersect)
-        {
-            var movedRectangle = rectangle.MoveOnTheDelta(delta);
-            return !movedRectangle.IntersectsWith(shouldNotIntersect);
-        }
     }
 }
