@@ -8,6 +8,7 @@ using NHunspell;
 using TagCloud.ConsoleAppHelper;
 using TagCloud.Curves;
 using TagCloud.ErrorHandling;
+using TagCloud.Visualization;
 using TagCloud.WordsFilter;
 using TagCloud.WordsProvider;
 

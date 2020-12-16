@@ -6,6 +6,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagCloud;
 using TagCloud.Curves;
+using TagCloud.Visualization;
 using TagCloud.WordsFilter;
 using TagCloud.WordsProvider;
 

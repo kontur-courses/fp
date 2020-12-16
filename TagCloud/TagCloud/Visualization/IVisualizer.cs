@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TagCloud.ErrorHandling;
 
-namespace TagCloud
+namespace TagCloud.Visualization 
 {
     public interface IVisualizer
     {

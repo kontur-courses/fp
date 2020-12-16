@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagCloud;
 using TagCloud.Curves;
+using TagCloud.Visualization;
 using TagCloud.WordsFilter;
 using TagCloud.WordsProvider;
 
@@ -11,12 +12,6 @@ namespace TagCloudTest
     [TestFixture]
     public class TagCloudVisualizerShould
     {
-        private IVisualizer visualizer;
-        private ITagCloud tagCloud;
-        private const string font = "Times New Roman";
-        private Color[] colors = {Color.Aqua};
-        private Point tagCloudCenter = new Point(1920 / 2, 1080 / 2);
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -32,6 +27,12 @@ namespace TagCloudTest
         {
             visualizer = new TagCloudVisualizer(tagCloud);
         }
+
+        private IVisualizer visualizer;
+        private ITagCloud tagCloud;
+        private const string font = "Times New Roman";
+        private readonly Color[] colors = {Color.Aqua};
+        private readonly Point tagCloudCenter = new Point(1920 / 2, 1080 / 2);
 
         [Test]
         public void ReturnError_WhenTagCloudDoesNotFitScreen()

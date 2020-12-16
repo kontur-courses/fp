@@ -3,7 +3,7 @@ using System.Drawing.Text;
 using System.Linq;
 using TagCloud.ErrorHandling;
 
-namespace TagCloud
+namespace TagCloud.Visualization
 {
     public class TagCloudVisualizer : IVisualizer
     {
@@ -18,22 +18,8 @@ namespace TagCloud
         {
             if (tagCloud.WordRectangles.Count == 0)
                 return new Bitmap(width, height);
-            var firstRectangle = tagCloud.WordRectangles[0].Rectangle;
-            var screen = new Rectangle(0, 0, width, height);
-            if (!CanTagCloudFitTheScreen(screen))
-            {
-                var tagCloudSize = CoveredArea().Size;
-                return Result.Fail<Bitmap>(
-                    $"Tag cloud is too large for that resolution. Tag cloud size is " +
-                    $"{tagCloudSize.Width}x{tagCloudSize.Height} and " +
-                    $"center is {firstRectangle.Location.X + firstRectangle.Width / 2}," +
-                    $"{firstRectangle.Location.Y + firstRectangle.Height / 2}");
-            }
-
-            var installedFonts = new InstalledFontCollection().Families.Select(family => family.Name);
-            if (!installedFonts.Contains(fontFamily))
-                return Result.Fail<Bitmap>($"Font {fontFamily} is not supported");
-
+            if (!CheckCorrectnessOfInput(width, height, colors, fontFamily, out var error))
+                return Result.Fail<Bitmap>(error);
             var bitMap = new Bitmap(width, height);
             var graphics = Graphics.FromImage(bitMap);
             graphics.Clear(Color.Black);
@@ -53,6 +39,31 @@ namespace TagCloud
             }
 
             return bitMap;
+        }
+
+        private bool CheckCorrectnessOfInput(int width, int height, Color[] colors, string fontFamily, out string error)
+        {
+            error = null;
+            var firstRectangle = tagCloud.WordRectangles[0].Rectangle;
+            var screen = new Rectangle(0, 0, width, height);
+            if (!CanTagCloudFitTheScreen(screen))
+            {
+                var tagCloudSize = CoveredArea().Size;
+                error = "Tag cloud is too large for that resolution. Tag cloud size is " +
+                        $"{tagCloudSize.Width}x{tagCloudSize.Height} and " +
+                        $"center is {firstRectangle.Location.X + firstRectangle.Width / 2}," +
+                        $"{firstRectangle.Location.Y + firstRectangle.Height / 2}";
+                return false;
+            }
+
+            var installedFonts = new InstalledFontCollection().Families.Select(family => family.Name);
+            if (!installedFonts.Contains(fontFamily))
+            {
+                error = $"Font {fontFamily} is not supported";
+                return false;
+            }
+
+            return true;
         }
 
         private bool CanTagCloudFitTheScreen(Rectangle screen)
