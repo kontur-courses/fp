@@ -14,7 +14,7 @@ namespace HomeExercise
         private readonly Graphics graphics;
         private Pen pen;
         private Color color;
-        private readonly Random randomazer;
+        private readonly Random randomizer;
         private readonly List<Rectangle> rectangles;
         private readonly string fileName;
         private readonly ImageFormat format;
@@ -28,7 +28,7 @@ namespace HomeExercise
             format = settings.Format;
             fileName = settings.FileName;
             this.rectangles = rectangles;
-            randomazer= new Random();
+            randomizer= new Random();
             color = new Color();
             bitmap = new Bitmap(settings.Size.Width, settings.Size.Height);
             graphics = Graphics.FromImage(bitmap);
@@ -54,9 +54,9 @@ namespace HomeExercise
 
         private Color GetColor()
         {
-            var R = randomazer.Next(0, 255);
-            var G = randomazer.Next(0, 255);
-            var B = randomazer.Next(0, 255);
+            var R = randomizer.Next(0, 255);
+            var G = randomizer.Next(0, 255);
+            var B = randomizer.Next(0, 255);
             
             return Color.FromArgb(R, G, B);
         }
