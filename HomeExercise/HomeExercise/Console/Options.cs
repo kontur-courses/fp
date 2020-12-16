@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using CommandLine;
+﻿using CommandLine;
 
 namespace HomeExercise.Options
 {
