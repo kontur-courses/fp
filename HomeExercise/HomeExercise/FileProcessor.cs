@@ -11,7 +11,7 @@ namespace HomeExercise
         private static char[] punctuationMarks = {'.', ',', '?', '!', ':', ':', '-', '—', '«', '»', '[', ']', '(', ')', '{','}','„','“'};
         private readonly string pathWords;
         private readonly string pathBoringWords;
-        private List<string> exludedWords = new List<string>();
+        private List<string> excludedWords = new List<string>();
         
         public FileProcessor(string pathWords, string pathBoringWords)
         {
@@ -30,7 +30,7 @@ namespace HomeExercise
                 var resultExludedWords = Result.Of(() => ExtractTextFromFile(pathBoringWords)).OnFail(Console.WriteLine);
                 if(!resultExludedWords.IsSuccess)
                     return Result.Fail<Dictionary<string, int>>(resultExludedWords.Error);
-                exludedWords = resultExludedWords.Value;
+                excludedWords = resultExludedWords.Value;
             }
 
             return resultWords.Then(FilterWords).Then(GetFrequencyWords).OnFail(Console.WriteLine);
@@ -42,7 +42,7 @@ namespace HomeExercise
                 Result.Fail<string[]>("Words not implemented");
             
             return Result.Of((() => words
-                .Where(w => !exludedWords.Contains(w))
+                .Where(w => !excludedWords.Contains(w))
                 .Select(w => w.ToLower())
                 .ToArray()));
         }
