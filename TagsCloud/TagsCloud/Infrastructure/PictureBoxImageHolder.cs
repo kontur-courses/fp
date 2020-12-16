@@ -47,7 +47,7 @@ namespace TagsCloud.Infrastructure
 
         public Result<None> RenderWordsFromFile(string fileName)
         {
-            return Result.OfAction(() => ProcessFile(fileName))
+            return ProcessFile(fileName)
                 .Then(_ => layouter.ClearLayouter())
                 .Then(_ => PlaceWords())
                 .OnFail(error => SettingsErrorMessage = error);
@@ -100,9 +100,9 @@ namespace TagsCloud.Infrastructure
         }
 
 
-        private void ProcessFile(string fileName)
+        private Result<None> ProcessFile(string fileName)
         {
-            if (string.IsNullOrEmpty(previousFileName) && !string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(previousFileName) && !string.IsNullOrEmpty(fileName) || previousFileName != fileName)
             {
                 if (previousFileName != fileName)
                 {
@@ -111,10 +111,17 @@ namespace TagsCloud.Infrastructure
                 }
 
                 if (!File.Exists(fileName))
-                    throw new FileNotFoundException("Запрошенный файл не найден");
-                wordsFreuqencies = parser.ParseWordsFrequencyFromFile(fileName);
-                previousFileName = fileName;
+                    return Result.Fail<None>("Запрошенный файл не найден");
+
+                return parser.ParseWordsFrequencyFromFile(fileName)
+                    .Then(freq =>
+                    {
+                        wordsFreuqencies = freq;
+                        previousFileName = fileName;
+                    });
             }
+
+            return Result.Ok();
         }
 
         private Result<None> PlaceWords()

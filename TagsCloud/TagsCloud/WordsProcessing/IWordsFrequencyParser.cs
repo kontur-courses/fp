@@ -4,6 +4,6 @@ namespace TagsCloud.WordsProcessing
 {
     public interface IWordsFrequencyParser
     {
-        Dictionary<string, int> ParseWordsFrequencyFromFile(string fileName);
+        Result<Dictionary<string, int>> ParseWordsFrequencyFromFile(string fileName);
     }
 }

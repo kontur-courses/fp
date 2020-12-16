@@ -4,6 +4,6 @@ namespace TagsCloud.WordsProcessing
 {
     public interface IWordsFilter
     {
-        IEnumerable<string> GetCorrectWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> GetCorrectWords(IEnumerable<string> words);
     }
 }

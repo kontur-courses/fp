@@ -11,10 +11,16 @@ namespace TagsCloud.WordsProcessing
             this.filter = filter;
         }
 
-        public Dictionary<string, int> ParseWordsFrequencyFromFile(string fileName)
+        public Result<Dictionary<string, int>> ParseWordsFrequencyFromFile(string fileName)
+        {
+            return Result.Of(() => File.ReadLines(fileName))
+                .Then(filter.GetCorrectWords)
+                .Then(CountWords);
+        }
+
+        private Dictionary<string, int> CountWords(IEnumerable<string> words)
         {
             var frequencies = new Dictionary<string, int>();
-            var words = filter.GetCorrectWords(File.ReadLines(fileName));
             foreach (var word in words)
                 if (frequencies.ContainsKey(word))
                     frequencies[word]++;
