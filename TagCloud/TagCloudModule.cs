@@ -27,11 +27,8 @@ namespace TagCloud
             builder.RegisterAssemblyTypes(dataAccess)
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope()
-                .Except<ImageSaver>()
-                .Except<IConveyor>()
-                .Except<Random>(registrationBuilder => registrationBuilder.AsSelf().SingleInstance())
-                .Except<Settings>(rb => 
-                    rb.AsSelf().AsImplementedInterfaces().SingleInstance())
+                .Except<Random>(registration => registration.AsSelf().SingleInstance())
+                .Except<Settings>(registration => registration.AsSelf().AsImplementedInterfaces().SingleInstance())
                 .Except<LowerCaseConveyor>()
                 .Except<WordTypeConveyor>()
                 .Except<WordCounterConveyor>()
