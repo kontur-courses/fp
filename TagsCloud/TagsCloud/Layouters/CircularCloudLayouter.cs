@@ -13,7 +13,6 @@ namespace TagsCloud.Layouters
         private (int Width, int Height) imageHolderSize;
         private Point Center { get; set; }
         private bool isFirst = true;
-
         public CircularCloudLayouter(ImageSettings settings)
         {
             imageHolderSize = (settings.Width, settings.Height);

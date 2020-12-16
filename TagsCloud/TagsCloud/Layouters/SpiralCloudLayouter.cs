@@ -11,7 +11,6 @@ namespace TagsCloud.Layouters
         private int step;
         private readonly List<Rectangle> rectangles;
         private (int Width, int Height) imageHolderSize;
-
         public SpiralCloudLayouter(ImageSettings settings, int step = 1)
         {
             rectangles = new List<Rectangle>();
