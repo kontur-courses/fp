@@ -16,7 +16,6 @@ namespace TagsCloud.ImageProcessing.SaverImage
             if (bitmap == null)
                 return Result.Fail<None>("Image was null");
             var result = Result.OfAction(() => bitmap.Save(path, ImageFormat));
-            bitmap.Dispose();
             return result;
         }
     }

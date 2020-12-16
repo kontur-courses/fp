@@ -7,9 +7,9 @@ namespace TagsCloud.TextProcessing.TextFilters
 {
     public class FiltersFactory : ServiceFactory<ITextFilter>
     {
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public FiltersFactory(WordConfig wordsConfig)
+        public FiltersFactory(IWordConfig wordsConfig)
         {
             this.wordsConfig = wordsConfig;
         }

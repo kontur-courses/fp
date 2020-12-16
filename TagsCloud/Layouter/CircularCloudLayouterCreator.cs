@@ -5,9 +5,9 @@ namespace TagsCloud.Layouter
 {
     public class CircularCloudLayouterCreator
     {
-        private readonly ImageConfig imageConfig;
+        private readonly IImageConfig imageConfig;
 
-        public CircularCloudLayouterCreator(ImageConfig imageConfig)
+        public CircularCloudLayouterCreator(IImageConfig imageConfig)
         {
             this.imageConfig = imageConfig;
         }

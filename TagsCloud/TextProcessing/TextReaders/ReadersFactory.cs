@@ -8,9 +8,9 @@ namespace TagsCloud.TextProcessing.TextReaders
 {
     public class ReadersFactory : ServiceFactory<IWordsReader>
     {
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public ReadersFactory(WordConfig wordsConfig)
+        public ReadersFactory(IWordConfig wordsConfig)
         {
             this.wordsConfig = wordsConfig;
         }
@@ -21,7 +21,7 @@ namespace TagsCloud.TextProcessing.TextReaders
             if (!File.Exists(wordsConfig.Path))
                 return Result.Fail<IWordsReader>($"Path: {wordsConfig.Path} don't exists");
 
-            return Result.Of(reader, $"This file type {wordsConfig.Path.Split('.').Last()} is not supported");
+            return Result.Of(reader, $"This file type {Path.GetExtension(wordsConfig.Path)} is not supported");
         }
     }
 }

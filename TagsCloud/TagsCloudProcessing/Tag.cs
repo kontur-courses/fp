@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloud.TagsCloudProcessing.FontsConfig;
 
 namespace TagsCloud.TagsCloudProcessing
 {
@@ -6,13 +7,13 @@ namespace TagsCloud.TagsCloudProcessing
     {
         public string Value { get; }
         public Rectangle Rectangle { get; }
-        public Font Font { get; }
+        public IFontConfig FontConfig { get; }
 
-        public Tag(string value, Rectangle rectangle, Font font)
+        public Tag(string value, Rectangle rectangle, IFontConfig fontConfig)
         {
             Value = value;
             Rectangle = rectangle;
-            Font = font;
+            FontConfig = fontConfig;
         }
     }
 }

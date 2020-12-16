@@ -7,9 +7,9 @@ namespace TagsCloud.TextProcessing.Converters
 {
     public class ConvertersFactory : ServiceFactory<IWordConverter>
     {
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public ConvertersFactory(WordConfig wordsConfig)
+        public ConvertersFactory(IWordConfig wordsConfig)
         {
             this.wordsConfig = wordsConfig;
         }

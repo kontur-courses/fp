@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System;
+using System.Drawing.Imaging;
 
 namespace TagsCloud.ImageProcessing.SaverImage.ImageSavers
 {
@@ -7,6 +8,6 @@ namespace TagsCloud.ImageProcessing.SaverImage.ImageSavers
     {
         public override ImageFormat ImageFormat => ImageFormat.Png;
 
-        public override bool CanSave(string path) => path.EndsWith(".png");
+        public override bool CanSave(string path) => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
     }
 }

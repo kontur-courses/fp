@@ -7,9 +7,9 @@ namespace TagsCloud.TagsCloudProcessing.TagsGeneratorFactory
 {
     public class TagsGeneratorFactory : ServiceFactory<ITagsGenerator>
     {
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public TagsGeneratorFactory(WordConfig wordsConfig)
+        public TagsGeneratorFactory(IWordConfig wordsConfig)
         {
             this.wordsConfig = wordsConfig;
         }
@@ -20,7 +20,7 @@ namespace TagsCloud.TagsCloudProcessing.TagsGeneratorFactory
                 && wordsConfig.Font.Name != wordsConfig.Font.OriginalFontName)
                 return Result.Fail<ITagsGenerator>($"This font {wordsConfig.Font.OriginalFontName} not supported");
             return Result.Of(() => services[wordsConfig.TagGeneratorName](),
-                                $"This tags generator {wordsConfig.TagGeneratorName ?? "null"} not supported");
+           $"This tags generator {wordsConfig.TagGeneratorName ?? "null"} not supported, choose tags generator from available");
         }
     }
 }

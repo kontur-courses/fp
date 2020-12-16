@@ -6,15 +6,15 @@ namespace TagsCloud.Layouter.Factory
 {
     public class RectanglesLayoutersFactory : ServiceFactory<IRectanglesLayouter>
     {
-        private readonly WordConfig wordsConfig;
+        private readonly IWordConfig wordsConfig;
 
-        public RectanglesLayoutersFactory(WordConfig wordsConfig)
+        public RectanglesLayoutersFactory(IWordConfig wordsConfig)
         {
             this.wordsConfig = wordsConfig;
         }
 
         public override Result<IRectanglesLayouter> Create() =>
              Result.Of(() => services[wordsConfig.LayouterName](),
-                $"This layouter {wordsConfig.LayouterName ?? "null"} not supported");
+                $"This layouter {wordsConfig.LayouterName ?? "null"} not supported, choose layouter from available");
     }
 }

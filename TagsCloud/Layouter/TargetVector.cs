@@ -19,8 +19,10 @@ namespace TagsCloud.Layouter
             while (target != location)
             {
                 var delta = GetDelta();
-                yield return new Point(delta.X, 0);
-                yield return new Point(0, delta.Y);
+                if (delta.X != 0)
+                    yield return new Point(delta.X, 0);
+                if (delta.Y != 0)
+                    yield return new Point(0, delta.Y);
                 location.Offset(delta.X, delta.Y);
             }
         }
