@@ -14,15 +14,21 @@ namespace TagsCloudContainer
             var creator = Configurator.GetContainer()
                 .Then(cont => cont.BeginLifetimeScope())
                 .Then(scope => scope.Resolve<TagsCloudCreator>())
-                .OnFail(err => throw new Exception(err))
-                .Value;
-            Result.Of(() => creator.SetFontRandomColor())
-                .Then(res => creator.SetImageFormat("png"))
-                .Then(res => creator.SetFontFamily("Comic Sans MS"))
-                .Then(res => creator.SetImageSize(500))
-                .Then(res => creator.AddStopWord("aba"))
-                .Then(res => creator.Create(Path.Combine(path, "input.txt"), path, "Cloud2"))
-                .OnFail(err => throw new Exception(err));
+                .OnFail(err => Console.WriteLine(err));
+            if (!creator.IsSuccess)
+            {
+                Console.ReadKey();
+                return;
+            }
+            var mainResult = Result.Of(() => creator.Value.SetFontRandomColor())
+                .Then(res => creator.Value.SetImageFormat("png"))
+                .Then(res => creator.Value.SetFontFamily("Comic Sans MS"))
+                .Then(res => creator.Value.SetImageSize(200))
+                .Then(res => creator.Value.AddStopWord("aba"))
+                .Then(res => creator.Value.Create(Path.Combine(path, "input.txt"), path, "Cloud2"))
+                .OnFail(err => Console.WriteLine(err));
+            if (!mainResult.IsSuccess)
+                Console.ReadKey();
         }
     }
 }
