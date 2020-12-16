@@ -25,6 +25,7 @@ bld/
 
 # Visual Studo 2015 cache/options directory
 .vs/
+.vs/hw_tc3/v16/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
