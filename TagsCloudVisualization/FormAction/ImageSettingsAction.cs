@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 using TagsCloudVisualization.AppSettings;
 using TagsCloudVisualization.Canvases;
 
@@ -10,7 +12,7 @@ namespace TagsCloudVisualization.FormAction
         public string Name => "Image size";
         public string Description => "Change image size of your tag cloud visualization";
 
-        private readonly ImageSettings imageSettings;
+        private ImageSettings imageSettings;
         private readonly ICanvas canvas;
         
         public ImageSettingsAction(ImageSettings imageSettings, ICanvas canvas)
@@ -21,10 +23,19 @@ namespace TagsCloudVisualization.FormAction
 
         public void Perform()
         {
+            var prevSettings = imageSettings.Copy();
             SettingsForm.For(imageSettings).ShowDialog();
-            var newImageSize = new Size(imageSettings.Width, imageSettings.Height);
-            if (newImageSize != canvas.GetImageSize())
-                canvas.RecreateImage(imageSettings);
+            try
+            {
+                var newImageSize = new Size(imageSettings.Width, imageSettings.Height);
+                if (newImageSize != canvas.GetImageSize())
+                    canvas.RecreateImage(imageSettings);
+            }
+            catch (Exception)
+            {
+                imageSettings = prevSettings;
+                MessageBox.Show("Image parameters (width and height) must be greater than 0");
+            }
         }
     }
 }
