@@ -47,7 +47,7 @@ namespace TagCloudTests
             var picked = new HashSet<Color>();
             var infos = new List<TokenInfo>();
             for (var type = WordType.UNKNOWN; type < WordType.V; type++)
-                infos.Add(new TokenInfo(type));
+                infos.Add(new TokenInfo(string.Empty, type));
 
             foreach (var color in infos.Select(info => colorPicker.GetColor(info)))
             {
@@ -64,13 +64,13 @@ namespace TagCloudTests
 
             for (var type = WordType.UNKNOWN; type < WordType.V; type++)
             {
-                var tokenInfo = new TokenInfo(type);
+                var tokenInfo = new TokenInfo(string.Empty, type);
                 typesFirstRun.Add(tokenInfo.WordType, colorPicker.GetColor(tokenInfo));
             }
 
             for (var type = WordType.UNKNOWN; type < WordType.V; type++)
             {
-                var tokenInfo = new TokenInfo(type);
+                var tokenInfo = new TokenInfo(string.Empty, type);
                 typesSecondRun.Add(tokenInfo.WordType, colorPicker.GetColor(tokenInfo));
             }
 

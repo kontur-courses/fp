@@ -38,34 +38,7 @@ namespace TagCloudTests
         public void SetUp()
         {
             builder = new ContainerBuilder();
-            builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
-            builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
-            var myStemPath = TagCloudModule.GetReleasePath("mystem");
-            builder.RegisterType<WordTypeConveyor>()
-                .As<IConveyor<string>>()
-                .WithParameter(new TypedParameter(typeof(string), myStemPath));
-            builder.RegisterType<WordCounterConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordThresholdConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<InterestingWordsConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordFontSizeConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordSizeConveyor>().As<IConveyor<string>>();
-
-            builder.RegisterType<Settings>()
-                .AsSelf()
-                .AsImplementedInterfaces()
-                .SingleInstance();
-
-            builder.RegisterType<PlainEnvironment>().AsImplementedInterfaces();
-            builder.RegisterType<SpiralStrategy>().As<ILayoutStrategy>();
-            builder.RegisterType<TagCloudLayouter>().As<ILayouter<Size, Rectangle>>();
-
-            builder.RegisterType<WordPainter>().As<IPainter<string>>();
-            builder.RegisterType<Random>().SingleInstance();
-            builder.RegisterType<ColorPicker>();
-
-            builder.RegisterType<FileSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ImagePathSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ImageSizeSettingsManager>().AsImplementedInterfaces();
+            builder.RegisterModule<TagCloudModule>();
         }
 
         [TearDown]
