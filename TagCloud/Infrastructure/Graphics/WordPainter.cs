@@ -23,7 +23,7 @@ namespace TagCloud.Infrastructure.Graphics
             this.colorPicker = colorPicker;
         }
 
-        public Image GetImage(IEnumerable<(string, TokenInfo)> tokens)
+        public Image GetImage(IEnumerable<TokenInfo> tokens)
         {
             var settings = imageSettingsProvider();
             var image = new Bitmap(settings.Width, settings.Height);
@@ -31,12 +31,12 @@ namespace TagCloud.Infrastructure.Graphics
 
             using (layouter)
             {
-                foreach (var (word, info) in tokens)
+                foreach (var info in tokens)
                 {
                     var hitbox = layouter.GetPlace(info.Size);
                     using var font = new Font(settings.FontFamily, info.FontSize);
                     using var brush = new SolidBrush(colorPicker.GetColor(info));
-                    imageGraphics.DrawString(word, font, brush, hitbox.Location);
+                    imageGraphics.DrawString(info.Token, font, brush, hitbox.Location);
                 }
             }
 

@@ -28,7 +28,7 @@ namespace TagCloud
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope()
                 .Except<ImageSaver>()
-                .Except<IConveyor<string>>()
+                .Except<IConveyor>()
                 .Except<Random>(registrationBuilder => registrationBuilder.AsSelf().SingleInstance())
                 .Except<Settings>(rb => 
                     rb.AsSelf().AsImplementedInterfaces().SingleInstance())
@@ -41,17 +41,17 @@ namespace TagCloud
                 .Except<WordSizeConveyor>()
                 .Except<OrderConveyor>();
 
-            builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
+            builder.RegisterType<LowerCaseConveyor>().As<IConveyor>();
             var myStemPath = GetReleasePath("mystem");
             builder.RegisterType<WordTypeConveyor>()
-                .As<IConveyor<string>>()
+                .As<IConveyor>()
                 .WithParameter(new TypedParameter(typeof(string), myStemPath));
-            builder.RegisterType<WordCounterConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordThresholdConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<InterestingWordsConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordFontSizeConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<WordSizeConveyor>().As<IConveyor<string>>();
-            builder.RegisterType<OrderConveyor>().As<IConveyor<string>>();
+            builder.RegisterType<WordCounterConveyor>().As<IConveyor>();
+            builder.RegisterType<WordThresholdConveyor>().As<IConveyor>();
+            builder.RegisterType<InterestingWordsConveyor>().As<IConveyor>();
+            builder.RegisterType<WordFontSizeConveyor>().As<IConveyor>();
+            builder.RegisterType<WordSizeConveyor>().As<IConveyor>();
+            builder.RegisterType<OrderConveyor>().As<IConveyor>();
 
             builder.RegisterType<ImageSaver>();
             builder.RegisterType<ColorPicker>();

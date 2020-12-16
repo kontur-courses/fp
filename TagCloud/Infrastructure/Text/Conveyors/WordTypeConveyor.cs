@@ -7,7 +7,7 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class WordTypeConveyor : IConveyor<string>
+    public class WordTypeConveyor : IConveyor
     {
         private readonly MyStem analyzer;
         private readonly Regex wordWithTypeRegex;
@@ -18,9 +18,9 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             analyzer = new MyStem {PathToMyStem = myStemPath, Parameters = "-i"};
         }
 
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
         {
-            var analysis = analyzer.Analysis(string.Join(" ", tokens.Select(pair => pair.token)));
+            var analysis = analyzer.Analysis(string.Join(" ", tokens.Select(pair => pair.Token)));
             foreach (Match match in wordWithTypeRegex.Matches(analysis))
             {
                 var word = match.Groups["word"].Value;
@@ -28,7 +28,7 @@ namespace TagCloud.Infrastructure.Text.Conveyors
                 {
                     if (!Enum.TryParse(match.Groups["type"].Value, out WordType wordType))
                         wordType = WordType.UNKNOWN;
-                    yield return (word, new TokenInfo(wordType));
+                    yield return new TokenInfo(word, wordType);
                 }
             }
         }

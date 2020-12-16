@@ -6,7 +6,7 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class WordThresholdConveyor : IConveyor<string>
+    public class WordThresholdConveyor : IConveyor
     {
         private readonly Func<IWordCountThresholdSettingProvider> wordCountThresholdProvider;
 
@@ -15,10 +15,10 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             this.wordCountThresholdProvider = wordCountThresholdProvider;
         }
 
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
         {
             var threshold = wordCountThresholdProvider().WordCountThreshold;
-            return tokens.Where(pair => pair.info.Frequency > threshold);
+            return tokens.Where(pair => pair.Frequency > threshold);
         }
     }
 }

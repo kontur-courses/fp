@@ -9,11 +9,11 @@ namespace TagCloud.Infrastructure.Graphics
 {
     public class TagCloudGenerator : IImageGenerator
     {
-        private readonly IEnumerable<IConveyor<string>> conveyors;
+        private readonly IEnumerable<IConveyor> conveyors;
         private readonly IPainter<string> painter;
         private readonly IReader<string> reader;
 
-        public TagCloudGenerator(IReader<string> reader, IEnumerable<IConveyor<string>> conveyors,
+        public TagCloudGenerator(IReader<string> reader, IEnumerable<IConveyor> conveyors,
             IPainter<string> painter)
         {
             this.reader = reader;
@@ -25,7 +25,7 @@ namespace TagCloud.Infrastructure.Graphics
         {
             var tokens = reader.ReadTokens();
             var analyzedTokens = conveyors.Aggregate(
-                tokens.Select(line => (line, new TokenInfo())),
+                tokens.Select(line => new TokenInfo(line)),
                 (current, filter) => filter.Handle(current).ToArray());
             return painter.GetImage(analyzedTokens);
         }

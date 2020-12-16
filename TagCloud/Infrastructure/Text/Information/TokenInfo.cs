@@ -4,9 +4,12 @@ namespace TagCloud.Infrastructure.Text.Information
 {
     public class TokenInfo
     {
-        public TokenInfo(WordType wordType = default, int frequency = default, int fontSize = default,
+        public string Token;
+
+        public TokenInfo(string token, WordType wordType = default, int frequency = default, int fontSize = default,
             Size size = default)
         {
+            Token = token;
             WordType = wordType;
             Frequency = frequency;
             FontSize = fontSize;

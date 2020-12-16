@@ -4,17 +4,18 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class WordCounterConveyor : IConveyor<string>
+    public class WordCounterConveyor : IConveyor
     {
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
+
         {
             tokens = tokens.ToList();
-            var counts = GetCount(tokens.Select(pair => pair.token));
+            var counts = GetCount(tokens.Select(pair => pair.Token));
             foreach (var word in counts.Keys)
             {
-                var (_, info) = tokens.First(pair => pair.token == word);
+                var info = tokens.First(pair => pair.Token == word);
                 info.Frequency = counts[word];
-                yield return (word, info);
+                yield return info;
             }
         }
 

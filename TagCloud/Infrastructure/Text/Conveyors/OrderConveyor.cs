@@ -4,11 +4,11 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class OrderConveyor : IConveyor<string>
+    public class OrderConveyor : IConveyor
     {
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
         {
-            return tokens.OrderByDescending(x => x.info.Frequency);
+            return tokens.OrderByDescending(x => x.Frequency);
         }
     }
 }

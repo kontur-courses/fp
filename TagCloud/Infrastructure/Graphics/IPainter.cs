@@ -6,6 +6,6 @@ namespace TagCloud.Infrastructure.Graphics
 {
     public interface IPainter<TToken>
     {
-        public Image GetImage(IEnumerable<(TToken, TokenInfo)> tokens);
+        public Image GetImage(IEnumerable<TokenInfo> tokens);
     }
 }

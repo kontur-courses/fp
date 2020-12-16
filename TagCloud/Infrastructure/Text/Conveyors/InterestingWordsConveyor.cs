@@ -6,7 +6,7 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class InterestingWordsConveyor : IConveyor<string>
+    public class InterestingWordsConveyor : IConveyor
     {
         private readonly Func<IExcludeTypesSettingsProvider> excludeTypesSettingsProvider;
 
@@ -15,9 +15,9 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             this.excludeTypesSettingsProvider = excludeTypesSettingsProvider;
         }
 
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
         {
-            return tokens.Where(pair => IsInteresting(pair.info.WordType));
+            return tokens.Where(pair => IsInteresting(pair.WordType));
         }
 
         private bool IsInteresting(WordType type)

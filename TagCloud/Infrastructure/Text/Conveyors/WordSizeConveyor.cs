@@ -8,7 +8,7 @@ using TagCloud.Infrastructure.Text.Information;
 
 namespace TagCloud.Infrastructure.Text.Conveyors
 {
-    public class WordSizeConveyor : IConveyor<string>
+    public class WordSizeConveyor : IConveyor
     {
         private readonly Func<IFontSettingProvider> fontSettingProvider;
 
@@ -17,18 +17,18 @@ namespace TagCloud.Infrastructure.Text.Conveyors
             this.fontSettingProvider = fontSettingProvider;
         }
 
-        public IEnumerable<(string token, TokenInfo info)> Handle(IEnumerable<(string token, TokenInfo info)> tokens)
+        public IEnumerable<TokenInfo> Handle(IEnumerable<TokenInfo> tokens)
+
         {
-            var result = new Dictionary<string, TokenInfo>();
-            foreach (var (word, info) in tokens)
+            return tokens.Select(info =>
             {
                 var fontSize = info.FontSize;
                 using var font = new Font(fontSettingProvider().FontFamily, fontSize);
-                info.Size = TextRenderer.MeasureText(word, font);
-                result[word] = info;
-            }
-
-            return result.Select(pair => (pair.Key, pair.Value));
+                info.Size = TextRenderer.MeasureText(info.Token, font);
+                return info;
+            })
+                .GroupBy(info => info.Token)
+                .Select(x => x.FirstOrDefault());
         }
     }
 }
