@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHunspell;
 using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Core
 {
     public class TextAnalyzer
     {
-        private readonly Result<Hunspell> hunspell;
+        private readonly HunspellFactory hunspellFactory;
+        private readonly PathSettings pathSettings;
 
-        public TextAnalyzer(HunspellFactory hunspellFactory)
+        public TextAnalyzer(HunspellFactory hunspellFactory, PathSettings pathSettings)
         {
-            hunspell = hunspellFactory.CreateHunspell();
+            this.hunspellFactory = hunspellFactory;
+            this.pathSettings = pathSettings;
         }
 
         public Result<List<(string, int)>> GetWordByFrequency(string[] text, HashSet<string> boringWords,
             Func<Dictionary<string, int>, IOrderedEnumerable<KeyValuePair<string, int>>> sort)
         {
-            return hunspell
+            return hunspellFactory.CreateHunspell(pathSettings)
                 .Then(hun => text.Select(x => x.ToLower().Normalize(hun)))
                 .Then(collection => collection.Where(x => !boringWords.Contains(x)))
                 .Then(collection => collection.GroupBy(x => x))

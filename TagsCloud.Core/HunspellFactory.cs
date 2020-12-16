@@ -5,13 +5,7 @@ namespace TagsCloud.Core
 {
     public class HunspellFactory
     {
-        private readonly Result<Hunspell> hunspell;
-
-        public HunspellFactory(string pathToAffix, string pathToDictionary)
-        {
-            hunspell = Result.Of(() => new Hunspell(pathToAffix, pathToDictionary));
-        }
-
-        public Result<Hunspell> CreateHunspell() => hunspell;
+        public Result<Hunspell> CreateHunspell(PathSettings settings) 
+            => Result.Of(() => new Hunspell(settings.PathToAffix, settings.PathToDictionary));
     }
 }
