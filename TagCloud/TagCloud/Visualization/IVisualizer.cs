@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagCloud.ErrorHandling;
 
 namespace TagCloud
 {
     public interface IVisualizer
     {
-        Bitmap CreateBitMap(int width, int height, Color[] colors, string fontFamily);
+        Result<Bitmap> CreateBitMap(int width, int height, Color[] colors, string fontFamily);
     }
 }

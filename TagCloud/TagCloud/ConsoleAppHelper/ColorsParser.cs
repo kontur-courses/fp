@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using TagCloud.ErrorHandling;
 
 namespace TagCloud.ConsoleAppHelper
 {
@@ -15,13 +15,14 @@ namespace TagCloud.ConsoleAppHelper
             {'p', Color.Purple}
         };
 
-        public static Color[] ParseColors(string input)
+        public static Result<Color[]> ParseColors(string input)
         {
             var result = new List<Color>();
             foreach (var colorChar in input)
             {
                 if (!colors.ContainsKey(colorChar))
-                    throw new ArgumentException($"Color {colorChar} is not supported");
+                    return new Result<Color[]>($"Color {colorChar} is not supported");
+
                 result.Add(colors[colorChar]);
             }
 

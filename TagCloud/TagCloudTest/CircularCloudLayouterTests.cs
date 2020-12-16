@@ -35,7 +35,7 @@ namespace TagCloudTest
             var image = visualizer.CreateBitMap(1920, 1080,
                 new[] {Color.Blue, Color.Aqua},
                 "Times New Roman");
-            image.Save(path);
+            image.GetValueOrThrow().Save(path);
         }
 
         private ITagCloud tagCloudWithCenterInZero;
@@ -94,7 +94,7 @@ namespace TagCloudTest
             tagCloudWithCenterInZero.GenerateTagCloud();
 
             tagCloudWithCenterInZero.WordRectangles.Select(wordRectangle => wordRectangle.Word).Should()
-                .BeEquivalentTo(wordsFilter.Apply(wordsProvider.GetWords().ToHashSet()));
+                .BeEquivalentTo(wordsFilter.Apply(wordsProvider.GetWords().GetValueOrThrow().ToHashSet()));
         }
 
         [Test]

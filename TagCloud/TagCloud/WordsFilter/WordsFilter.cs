@@ -9,21 +9,10 @@ namespace TagCloud.WordsFilter
     {
         private readonly List<Func<string, bool>> filters = new List<Func<string, bool>>();
 
-        private readonly Hunspell hunspell;
-
         private readonly HashSet<string> prepositions = new HashSet<string>
             {"in", "of", "but", "at", "until", "to", "for", "on", "by"};
 
         private readonly List<Func<string, string>> transformations = new List<Func<string, string>>();
-
-        public WordsFilter()
-        {
-        }
-
-        public WordsFilter(Hunspell hunspell)
-        {
-            this.hunspell = hunspell;
-        }
 
         public IEnumerable<string> Apply(IEnumerable<string> words)
         {
@@ -45,15 +34,19 @@ namespace TagCloud.WordsFilter
 
         public WordsFilter Normalize()
         {
-            if (hunspell != null)
-                transformations.Add(word =>
-                {
-                    var stemResult = hunspell.Stem(word);
-                    return stemResult.Count == 0 ? word : stemResult.First();
-                });
-
             transformations.Add(word => word.ToLower());
             return this;
+        }
+
+        public WordsFilter Normalize(Hunspell hunspell)
+        {
+            transformations.Add(word =>
+            {
+                var stemResult = hunspell.Stem(word);
+                return stemResult.Count == 0 ? word : stemResult.First();
+            });
+
+            return Normalize();
         }
 
         public WordsFilter And(Func<string, bool> filter)

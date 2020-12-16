@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using TagCloud.ErrorHandling;
 
 namespace TagCloud.WordsProvider
 {
@@ -11,14 +12,15 @@ namespace TagCloud.WordsProvider
         {
             SupportedExtensions = new[] {"txt"};
             if (!CheckFile(filePath))
-                throw new ArgumentException("File is incorrect");
+                throw new ArgumentException($"Incorrect file {filePath}");
         }
 
         public override string[] SupportedExtensions { get; }
 
-        public override IEnumerable<string> GetWords()
+        public override Result<IEnumerable<string>> GetWords()
         {
-            var words = Regex.Split(File.ReadAllText(FilePath), @"\W+");
+            var words = Result.Of<IEnumerable<string>>(() =>
+                Regex.Split(File.ReadAllText(FilePath), @"\W+"));
             return words;
         }
     }

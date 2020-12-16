@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.ErrorHandling;
 
 namespace TagCloud.WordsProvider
 {
     public interface IWordsProvider
     {
-        IEnumerable<string> GetWords();
+        Result<IEnumerable<string>> GetWords();
     }
 }

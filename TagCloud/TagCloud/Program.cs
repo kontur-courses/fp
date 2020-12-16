@@ -7,6 +7,7 @@ using CommandLine;
 using NHunspell;
 using TagCloud.ConsoleAppHelper;
 using TagCloud.Curves;
+using TagCloud.ErrorHandling;
 using TagCloud.WordsFilter;
 using TagCloud.WordsProvider;
 
@@ -14,7 +15,7 @@ namespace TagCloud
 {
     public class Program
     {
-        private static IContainer BuildDependencies(
+        private static Result<IContainer> BuildDependencies(
             int width,
             int height,
             Color[] colors,
@@ -24,8 +25,7 @@ namespace TagCloud
             var center = new Point(width / 2, height / 2);
             const double density = 0.05;
             const int angelStep = 5;
-            var dictionaryAff = Path.GetFullPath("../../../../dictionaries/en.aff");
-            var dictionaryDic = Path.GetFullPath("../../../../dictionaries/en.dic");
+
             builder.RegisterType<ArchimedeanSpiral>().As<ICurve>()
                 .WithParameter("center", center)
                 .WithParameter("density", density)
@@ -33,50 +33,67 @@ namespace TagCloud
             builder.RegisterType<CircularCloudLayouter>().As<ITagCloud>().SingleInstance();
             builder.RegisterType<TagCloudVisualizer>().As<IVisualizer>();
 
-
             var wordsFilePath = Path.GetFullPath(input);
-            var wordsFileExtension = Path.GetExtension(wordsFilePath);
-            var wordsProviderType = WordsProviderFinder.FindFileWordsProvider(wordsFileExtension);
-            builder.RegisterType(wordsProviderType).As<IWordsProvider>()
-                .WithParameter("filePath", wordsFilePath);
-            var wordsFilter = new WordsFilter.WordsFilter(new Hunspell(dictionaryAff, dictionaryDic))
-                .Normalize()
+            var wordsProvider = FileWordsProviderFactory.Create(wordsFilePath);
+            if (!wordsProvider.IsSuccess)
+                return Result.Fail<IContainer>(wordsProvider.Error);
+            builder.RegisterInstance(wordsProvider.Value).As<IWordsProvider>();
+
+            var dictionaryAff = Path.GetFullPath("../../../../dictionaries/en.aff");
+            var dictionaryDic = Path.GetFullPath("../../../../dictionaries/en.dic");
+            var hunspell = Result.Of(() => new Hunspell(dictionaryAff, dictionaryDic))
+                .RefineError("Hunspell was unable to find dictionaries");
+            if (!hunspell.IsSuccess)
+                return Result.Fail<IContainer>(hunspell.Error);
+
+            var wordsFilter = new WordsFilter.WordsFilter()
+                .Normalize(hunspell.Value)
                 .RemovePrepositions();
             builder.RegisterInstance(wordsFilter).As<IWordsFilter>();
 
             builder.RegisterInstance(colors).As<Color[]>();
-            return builder.Build();
+            return Result.Of(() => builder.Build());
         }
 
-        private static IContainer BuildDependencies(Options options)
+        private static Result<IContainer> BuildDependencies(Options options)
         {
+            var colors = ColorsParser.ParseColors(options.Colors);
+            if (!colors.IsSuccess)
+                return Result.Fail<IContainer>(colors.Error);
             return BuildDependencies(options.Width, options.Height,
-                ColorsParser.ParseColors(options.Colors),
+                colors.Value,
                 options.Input);
         }
 
         public static void Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<Options>(args);
-            Options options;
-            try
+            var options = Result.Of(() => ((Parsed<Options>) result).Value);
+            if (!options.IsSuccess)
             {
-                options = ((Parsed<Options>) result).Value;
-            }
-            catch
-            {
-                var errors = ((NotParsed<Options>) result).Errors;
-                foreach (var error in errors) Console.WriteLine(error);
+                foreach (var error in ((NotParsed<Options>) result).Errors)
+                    Console.WriteLine(error);
                 return;
             }
 
-            var container = BuildDependencies(options);
+            var container = BuildDependencies(options.Value)
+                .OnFail(Console.WriteLine);
+            if (!container.IsSuccess)
+                return;
 
-            container.Resolve<ITagCloud>().GenerateTagCloud();
+            var tagCloud = container.Value.Resolve<ITagCloud>().GenerateTagCloud()
+                .OnFail(Console.WriteLine);
+            if (!tagCloud.IsSuccess)
+                return;
 
-            var bitmap = container.Resolve<IVisualizer>()
-                .CreateBitMap(options.Width, options.Height, container.Resolve<Color[]>(), options.FontFamily);
-            bitmap.Save(Path.GetFullPath(options.Output), ImageFormat.Png);
+            var font = options.Value.FontFamily;
+            var colors = container.Value.Resolve<Color[]>();
+            var bitmap = container.Value.Resolve<IVisualizer>()
+                .CreateBitMap(options.Value.Width, options.Value.Height, colors, font)
+                .OnFail(Console.WriteLine);
+            if (!bitmap.IsSuccess)
+                return;
+            bitmap.Value.Save(Path.GetFullPath(options.Value.Output), ImageFormat.Png);
         }
     }
 }

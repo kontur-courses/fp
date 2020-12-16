@@ -2,12 +2,6 @@
 
 namespace TagCloud.ConsoleAppHelper
 {
-    // dotnet program
-    // -w=1920 -h=1080
-    // -f="Times New Roman"
-    // -i="words.txt"
-    // -o="Examples/test.png"
-
     public class Options
     {
         [Option('w', "width",

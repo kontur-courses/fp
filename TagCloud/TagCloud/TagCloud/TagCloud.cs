@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagCloud.ErrorHandling;
 using TagCloud.WordsFilter;
 using TagCloud.WordsProvider;
 
@@ -18,12 +19,16 @@ namespace TagCloud
 
         protected abstract IWordsFilter WordsFilter { get; }
 
-        public void GenerateTagCloud()
+        public Result<ITagCloud> GenerateTagCloud()
         {
-            var words = WordsProvider.GetWords();
-            var filteredWords = WordsFilter.Apply(words);
-            var wordsFrequencies = GetTokens(filteredWords)
-                .OrderByDescending(wordToken => wordToken.Frequency);
+            var filteredWords = WordsProvider.GetWords()
+                .Then(words => WordsFilter.Apply(words));
+            if (!filteredWords.IsSuccess)
+                return Result.Fail<ITagCloud>(filteredWords.Error);
+
+            var wordsFrequencies = GetTokens(filteredWords.Value)
+                .OrderByDescending(wordToken => wordToken.Frequency)
+                .ToArray();
             var wordsCount = wordsFrequencies.Select(wordToken => wordToken.Frequency).Sum();
             foreach (var wordToken in wordsFrequencies)
             {
@@ -32,6 +37,8 @@ namespace TagCloud
                 var size = new Size(width, height);
                 PutNextWord(wordToken.Word, size);
             }
+
+            return this;
         }
 
         public abstract WordRectangle PutNextWord(string word, Size rectangleSize);

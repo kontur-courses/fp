@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagCloud.ErrorHandling;
 
 namespace TagCloud.WordsProvider
 {
@@ -7,14 +8,19 @@ namespace TagCloud.WordsProvider
         public const int WordsCount = 100;
         public List<string> words = new List<string> {"word", "another", "123", "VeryVeryLongWord", "word"};
 
-        public IEnumerable<string> GetWords()
+        public Result<IEnumerable<string>> GetWords()
         {
-            var i = 0;
-            while (i < WordsCount)
+            IEnumerable<string> Words()
             {
-                yield return words[i % words.Count];
-                i++;
+                var i = 0;
+                while (i < WordsCount)
+                {
+                    yield return words[i % words.Count];
+                    i++;
+                }
             }
+
+            return Result.Ok(Words());
         }
     }
 }
