@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using NHunspell;
 using TagsCloud.Common;
 using TagsCloud.FileReader;
 using TagsCloud.ResultPattern;
@@ -12,23 +11,22 @@ namespace TagsCloud.Core
     public class TagsHelper
     {
         private readonly IReaderFactory readerFactory;
+        private readonly TextAnalyzer analyzer;
 
-        public TagsHelper(IReaderFactory readerFactory)
+        public TagsHelper(IReaderFactory readerFactory, TextAnalyzer analyzer)
         {
             this.readerFactory = readerFactory;
+            this.analyzer = analyzer;
         }
 
-        public List<(string, int)> GetWords(string pathToFile, string pathToBoringWords,
-            string pathToDictionary, string pathToAffix)
+        public Result<List<(string, int)>> GetWords(string pathToFile, string pathToBoringWords)
         {
             var mainText = GetTextFromFile(pathToFile).GetValueOrThrow();
             var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords).GetValueOrThrow());
-            var hunspell = Result.Of(() => new Hunspell(pathToAffix, pathToDictionary)).GetValueOrThrow();
 
-            return TextAnalyzer.GetWordByFrequency(
+            return analyzer.GetWordByFrequency(
                 mainText,
                 boringWords,
-                hunspell,
                 x => x.OrderByDescending(y => y.Value)
                     .ThenByDescending(y => y.Key.Length)
                     .ThenBy(y => y.Key, StringComparer.Ordinal));

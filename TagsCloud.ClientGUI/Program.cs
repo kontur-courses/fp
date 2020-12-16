@@ -27,6 +27,11 @@ namespace TagsCloud.ClientGUI
             service.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
 
             service.RegisterType<SpiralSettings>().AsSelf().InstancePerLifetimeScope();
+
+            service.Register(c => new HunspellFactory(
+                new PathSettings().PathToAffix,
+                new PathSettings().PathToDictionary));
+
             service.RegisterType<FontSettings>()
                 .WithProperty(new TypedParameter(typeof(string), "Times New Roman"))
                 .WithProperty(new TypedParameter(typeof(int), 20))
@@ -46,6 +51,7 @@ namespace TagsCloud.ClientGUI
             service.RegisterType<CloudVisualization>().InstancePerLifetimeScope();
             service.RegisterType<TagsCloudPainter>().InstancePerLifetimeScope();
             service.RegisterType<TagsHelper>().InstancePerLifetimeScope();
+            service.RegisterType<TextAnalyzer>().InstancePerLifetimeScope();
 
             service.RegisterType<MainForm>();
             return service.Build();

@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using NHunspell;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.Core
 {
-    public static class TextAnalyzer
+    public class TextAnalyzer
     {
-        public static List<(string, int)> GetWordByFrequency(string[] text, HashSet<string> boringWords,
-            Hunspell hunspell, Func<Dictionary<string, int>, IOrderedEnumerable<KeyValuePair<string, int>>> sort)
+        private readonly Result<Hunspell> hunspell;
+
+        public TextAnalyzer(HunspellFactory hunspellFactory)
         {
-            return sort(text
-                .Select(x => x.ToLower().Normalize(hunspell))
-                .Where(x => !boringWords.Contains(x))
-                .GroupBy(x => x)
-                .ToDictionary(x => x.Key, x => x.Count()))
-                .Select(x => (x.Key, x.Value))
-                .ToList();
+            hunspell = hunspellFactory.CreateHunspell();
+        }
+
+        public Result<List<(string, int)>> GetWordByFrequency(string[] text, HashSet<string> boringWords,
+            Func<Dictionary<string, int>, IOrderedEnumerable<KeyValuePair<string, int>>> sort)
+        {
+            return hunspell
+                .Then(hun => text.Select(x => x.ToLower().Normalize(hun)))
+                .Then(collection => collection.Where(x => !boringWords.Contains(x)))
+                .Then(collection => collection.GroupBy(x => x))
+                .Then(groups => groups.ToDictionary(x => x.Key, x => x.Count()))
+                .Then(sort)
+                .Then(collection => collection.Select(x => (x.Key, x.Value)))
+                .Then(collection => collection.ToList());
         }
     }
 }

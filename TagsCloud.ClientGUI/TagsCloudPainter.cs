@@ -25,10 +25,9 @@ namespace TagsCloud.ClientGUI
 
         public void Paint(ICircularCloudLayouter cloud)
         {
-            var words = tagsHelper.GetWords(pathSettings.PathToText, pathSettings.PathToBoringWords,
-                pathSettings.PathToDictionary, pathSettings.PathToAffix);
+            var words = tagsHelper.GetWords(pathSettings.PathToText, pathSettings.PathToBoringWords);
 
-            visualizer.Paint(cloud, words);
+            visualizer.Paint(cloud, words.GetValueOrThrow());
 
             PictureBox.Refresh();
             Application.DoEvents();
