@@ -5,6 +5,8 @@ using FakeItEasy;
 using NUnit.Framework;
 using TagsCloud.CloudLayouters;
 using TagsCloud.Common;
+using TagsCloud.Core;
+using TagsCloud.FileReader;
 using TagsCloud.Spirals;
 using TagsCloud.Visualization;
 
@@ -12,14 +14,6 @@ namespace TagsCloud.Tests
 {
     internal class CloudVisualization_Tests
     {
-        private Bitmap image;
-
-        private ISpiral spiral;
-        private ICircularCloudLayouter cloud;
-        private FontSettings fontSettings;
-        private CloudVisualization cloudVisualizer;
-        private IImageHolder imageHolder;
-
         private readonly List<(string, int)> words = new List<(string, int)>
         {
             ("первый", 8),
@@ -32,6 +26,15 @@ namespace TagsCloud.Tests
             ("восемь", 3),
             ("девять", 1)
         };
+
+        private ICircularCloudLayouter cloud;
+        private CloudVisualization cloudVisualizer;
+        private FontSettings fontSettings;
+        private Bitmap image;
+        private IImageHolder imageHolder;
+
+        private ISpiral spiral;
+        private TagsHelper tagsHelper;
 
         [SetUp]
         public void SetUp()
@@ -47,7 +50,9 @@ namespace TagsCloud.Tests
 
             spiral = new ArchimedeanSpiral(new Point(image.Width / 2, image.Height / 2), 0.005);
             cloud = new CircularCloudLayouter(spiral);
-            cloudVisualizer = new CloudVisualization(imageHolder, new Palette(), fontSettings, new ColorAlgorithm());
+            tagsHelper = new TagsHelper(new ReaderFactory());
+            cloudVisualizer = new CloudVisualization(imageHolder, new Palette(), 
+                fontSettings, new ColorAlgorithm(), tagsHelper);
         }
 
         [Test]

@@ -24,7 +24,7 @@ namespace TagsCloud.Core
             var mainText = GetTextFromFile(pathToFile).GetValueOrThrow();
             var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords).GetValueOrThrow());
             var hunspell = Result.Of(() => new Hunspell(pathToAffix, pathToDictionary)).GetValueOrThrow();
-            
+
             return TextAnalyzer.GetWordByFrequency(
                 mainText,
                 boringWords,
@@ -41,7 +41,7 @@ namespace TagsCloud.Core
                 .Then(x => x.ReadWords(document));
         }
 
-        public List<Rectangle> GetRectangles(ICircularCloudLayouter cloud, 
+        public List<Rectangle> GetRectangles(ICircularCloudLayouter cloud,
             List<(string, int)> words, Dictionary<int, Font> newFonts, Font font)
         {
             var rectangles = new List<Rectangle>();
