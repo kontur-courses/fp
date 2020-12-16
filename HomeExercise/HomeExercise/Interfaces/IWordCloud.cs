@@ -9,6 +9,6 @@ namespace HomeExercise
         Point Center { get; }
         Size Size { get; }
 
-        public void BuildCloud();
+        void BuildCloud();
     }
 }

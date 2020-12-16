@@ -4,6 +4,6 @@ namespace HomeExercise
 {
     public interface IConsoleCloudClient
     {
-        public void HandleSettingsFromConsole(string[] args, ContainerBuilder builder);
+        void HandleSettingsFromConsole(string[] args, ContainerBuilder builder);
     }
 }

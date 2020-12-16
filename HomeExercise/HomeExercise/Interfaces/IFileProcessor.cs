@@ -5,7 +5,6 @@ namespace HomeExercise
 {
     public interface IFileProcessor
     {
-        //public Dictionary<string, int> GetWords();
-        public Result<Dictionary<string, int>> GetWords();
+        Result<Dictionary<string, int>> GetWords();
     }
 }

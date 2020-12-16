@@ -4,7 +4,7 @@ namespace HomeExercise
 {
     public interface ISpiral
     {
-        public Point Center { get; }
+        Point Center { get; }
         Point GetNextPoint();
     }
 }

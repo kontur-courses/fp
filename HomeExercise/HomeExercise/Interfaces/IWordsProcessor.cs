@@ -5,6 +5,6 @@ namespace HomeExercise
 {
     public interface IWordsProcessor
     {
-        public Result<List<IWord>> HandleWords(); 
+        Result<List<IWord>> HandleWords(); 
     }
 }
