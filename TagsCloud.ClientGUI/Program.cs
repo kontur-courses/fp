@@ -3,8 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
-using NHunspell;
-using TagsCloud.ClientGUI.Infrastructure;
 using TagsCloud.CloudLayouters;
 using TagsCloud.Core;
 using TagsCloud.FileReader;

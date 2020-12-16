@@ -16,12 +16,11 @@ namespace TagsCloud.Core
             this.pathSettings = pathSettings;
         }
 
-        public Result<List<(string, int)>> GetWordByFrequency(string[] text, HashSet<string> boringWords,
+        public Result<List<(string, int)>> GetWordByFrequency(List<string> text,
             Func<Dictionary<string, int>, IOrderedEnumerable<KeyValuePair<string, int>>> sort)
         {
             return hunspellFactory.CreateHunspell(pathSettings)
-                .Then(hun => text.Select(x => x.ToLower().Normalize(hun)))
-                .Then(collection => collection.Where(x => !boringWords.Contains(x)))
+                .Then(hun => text.Select(x => x.Normalize(hun)))
                 .Then(collection => collection.GroupBy(x => x))
                 .Then(groups => groups.ToDictionary(x => x.Key, x => x.Count()))
                 .Then(sort)

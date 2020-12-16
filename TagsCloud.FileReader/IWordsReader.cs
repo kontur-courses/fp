@@ -1,9 +1,10 @@
-﻿using TagsCloud.ResultPattern;
+﻿using System.Collections.Generic;
+using TagsCloud.ResultPattern;
 
 namespace TagsCloud.FileReader
 {
     public interface IWordsReader
     {
-        Result<string[]> ReadWords(string path);
+        Result<List<string>> ReadWords(string path);
     }
 }

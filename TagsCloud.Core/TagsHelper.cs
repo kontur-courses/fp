@@ -21,18 +21,23 @@ namespace TagsCloud.Core
 
         public Result<List<(string, int)>> GetWords(string pathToFile, string pathToBoringWords)
         {
-            var mainText = GetTextFromFile(pathToFile).GetValueOrThrow();
-            var boringWords = new HashSet<string>(GetTextFromFile(pathToBoringWords).GetValueOrThrow());
-
-            return analyzer.GetWordByFrequency(
-                mainText,
-                boringWords,
+            return GetTextFromFile(pathToFile)
+                .Then(words => words.Select(x => x.ToLower()))
+                .Then(words => ExcludeBoringWords(words, pathToBoringWords))
+                .Then(words => analyzer.GetWordByFrequency(words,
                 x => x.OrderByDescending(y => y.Value)
                     .ThenByDescending(y => y.Key.Length)
-                    .ThenBy(y => y.Key, StringComparer.Ordinal));
+                    .ThenBy(y => y.Key, StringComparer.Ordinal)));
         }
 
-        private Result<string[]> GetTextFromFile(string document)
+        private Result<List<string>> ExcludeBoringWords(IEnumerable<string> text, string pathToBoringWords)
+        {
+            return GetTextFromFile(pathToBoringWords)
+                .Then(words => new HashSet<string>(words))
+                .Then(words => text.Where(x => !words.Contains(x)).ToList());
+        }
+
+        private Result<List<string>> GetTextFromFile(string document)
         {
             var extension = document.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries).Last();
             return readerFactory.GetReader(extension)
