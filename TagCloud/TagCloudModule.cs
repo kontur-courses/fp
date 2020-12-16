@@ -39,10 +39,7 @@ namespace TagCloud
                 .Except<InterestingWordsConveyor>()
                 .Except<WordFontSizeConveyor>()
                 .Except<WordSizeConveyor>()
-                .Except<OrderConveyor>()
-                ;
-            
-            builder.RegisterType<ImageSaver>();
+                .Except<OrderConveyor>();
 
             builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
             var myStemPath = GetReleasePath("mystem");
@@ -56,11 +53,7 @@ namespace TagCloud
             builder.RegisterType<WordSizeConveyor>().As<IConveyor<string>>();
             builder.RegisterType<OrderConveyor>().As<IConveyor<string>>();
 
-            builder.RegisterType<Settings>()
-                .AsSelf()
-                .AsImplementedInterfaces()
-                .SingleInstance();
-
+            builder.RegisterType<ImageSaver>();
             builder.RegisterType<ColorPicker>();
             builder.RegisterType<ColorConverter>();
         }
