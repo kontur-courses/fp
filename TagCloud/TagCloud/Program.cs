@@ -61,9 +61,7 @@ namespace TagCloud
             var colors = ColorsParser.ParseColors(options.Colors);
             if (!colors.IsSuccess)
                 return Result.Fail<IContainer>(colors.Error);
-            return BuildDependencies(options.Width, options.Height,
-                colors.Value,
-                options.Input);
+            return BuildDependencies(options.Width, options.Height, colors.Value, options.Input);
         }
 
         public static void Main(string[] args)
