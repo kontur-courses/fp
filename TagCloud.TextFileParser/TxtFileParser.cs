@@ -9,7 +9,7 @@ namespace TagCloud.TextFileParser
         {
             if (Path.GetExtension(fileName) != ".txt")
             {
-                return Result.Fail<string[]>("Некорректный формат файлы с входными данными");
+                return Result.Fail<string[]>("Некорректный формат файла с входными данными");
             }
 
             return Result.Of(() => File.ReadAllLines(Path.Combine(sourceFolderPath,
