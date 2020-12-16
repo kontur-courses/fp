@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace HomeExercise.settings
+namespace HomeExercise.Settings
 {
     public class SpiralSettings
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using HomeExercise.settings;
+using HomeExercise.Settings;
 
 namespace HomeExercise
 {

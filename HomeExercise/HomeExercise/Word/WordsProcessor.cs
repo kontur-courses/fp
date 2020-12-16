@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HomeExercise.settings;
+using HomeExercise.Settings;
 using ResultOf;
 
 namespace HomeExercise

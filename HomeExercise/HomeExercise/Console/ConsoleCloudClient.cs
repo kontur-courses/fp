@@ -6,7 +6,6 @@ using Autofac;
 using Autofac.Core;
 using CommandLine;
 using HomeExercise.Helpers;
-using HomeExercise.settings;
 using HomeExercise.Settings;
 using ResultOf;
 
