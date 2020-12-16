@@ -18,15 +18,15 @@ namespace TagsCloud.GUI
             var vScroller = new VScrollBar {Dock = DockStyle.Right, Visible = false};
             vScroller.Scroll += (sender, args) =>
                 holder.Location = new Point(holder.Location.X, -vScroller.Value);
+            Controls.Add(vScroller);
 
             var hScroller = new HScrollBar {Dock = DockStyle.Bottom, Visible = false};
             hScroller.Scroll += (sender, args) => 
                 holder.Location = new Point(-hScroller.Value, holder.Location.Y);
+            Controls.Add(hScroller);
 
             holder.Invalidated += (sender, args) => UpdateScrollers(holder, vScroller, hScroller);
             SizeChanged += (sender, args) => UpdateScrollers(holder, vScroller, hScroller);
-            Controls.Add(vScroller);
-            Controls.Add(hScroller);
 
             holder.RecreateCanvas(holder.Settings);
             Controls.Add(holder);
