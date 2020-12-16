@@ -25,11 +25,12 @@ namespace TagsCloudUI
         private readonly TableLayoutPanel tableLayoutPanel;
         private readonly NumericUpDown widthNumeric;
         private readonly NumericUpDown heightNumeric;
+        private readonly Size windowSize;
         private GroupBox filterBox;
         private GroupBox convertBox;
         private GroupBox tagGeneratorsBox;
         private GroupBox layouterBox;
-        private bool IsSettingsAccept;
+        private Button backSettingsButton;
 
         private readonly WordConfig wordsConfig;
         private readonly ImageConfig imageConfig;
@@ -72,6 +73,7 @@ namespace TagsCloudUI
             Controls.Add(tableLayoutPanel);
 
             InitView();
+            windowSize = Size;
         }
 
         private void InitView()
@@ -119,15 +121,16 @@ namespace TagsCloudUI
             heightNumeric.Value = 500;
             AddControl(heightNumeric, 1, 7, "");
 
-            var accept = new Button();
-            AddControl(accept, 0, 8, "Принять настройки", 1, 2);
-            accept.Click += AcceptSettings;
-
             var showButton = new Button();
-            showButton.Dock = DockStyle.Bottom;
-            showButton.Text = "Показать изображение";
+            AddControl(showButton, 0, 8, "Показать изображение", 1, 2);
             showButton.Click += ShowImage;
-            Controls.Add(showButton);
+
+            backSettingsButton = new Button();
+            backSettingsButton.Dock = DockStyle.Bottom;
+            backSettingsButton.Text = "Вернуться к настройкам";
+            backSettingsButton.Click += BackSettings;
+            Controls.Add(backSettingsButton);
+            backSettingsButton.Hide();
         }
 
         private void AddControl(Control control, int column, int row, string text, int spanRow = 1, int spanColumn = 1)
@@ -154,7 +157,7 @@ namespace TagsCloudUI
             return box;
         }
 
-        private void AcceptSettings(object sender, EventArgs eventArgs)
+        private void AcceptSettings()
         {
             var imageSize = new Size((int)widthNumeric.Value, (int)heightNumeric.Value);
 
@@ -169,7 +172,6 @@ namespace TagsCloudUI
             imageConfig.ImageSize = imageSize;
             imageConfig.Path = saveFileDialog.FileName;
 
-            IsSettingsAccept = true;
         }
 
         private string[] BindGroupBoxControls(GroupBox box)
@@ -187,15 +189,21 @@ namespace TagsCloudUI
             tableLayoutPanel.Show();
         }
 
+        private void BackSettings(object sender, EventArgs eventArgs)
+        {
+            tableLayoutPanel.Show();
+            backSettingsButton.Hide();
+            Size = windowSize;
+        }
+
         private void ShowImage(object sender, EventArgs eventArgs)
         {
+            AcceptSettings();
             tableLayoutPanel.Hide();
-            if (!IsSettingsAccept)
-                ShowErrorBox("settings were not applied");
-            else
-                tagsCloudProcessor.CreateCloud(wordsConfig.Path, imageConfig.Path)
-                    .Then(value => DrawCloud())
-                    .OnFail(ShowErrorBox);
+            backSettingsButton.Show();
+            tagsCloudProcessor.CreateCloud(wordsConfig.Path, imageConfig.Path)
+                .Then(value => DrawCloud())
+                .OnFail(ShowErrorBox);
         }
 
         private void DrawCloud()
