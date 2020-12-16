@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using TagsCloudVisualization.AppSettings;
 using TagsCloudVisualization.PointsGenerators;
 using TagsCloudVisualization.TagCloudBuilders;
@@ -48,11 +47,12 @@ namespace TagsCloudVisualization.FormAction
                 return;
 
             SettingsForm.For(spiralParams).ShowDialog();
-
-            var text = textReader.ReadAllText(dialog.FileName);
-            var handledWords = textHandler.GetHandledWords(text);
-            var tagCloud = tagCloudBuilder.Build(handledWords);
-            cloudVisualizer.PrintTagCloud(tagCloud);
+            
+            textReader.ReadAllText(dialog.FileName)
+                .Then(text => textHandler.GetHandledWords(text))
+                .Then(handledWords => tagCloudBuilder.Build(handledWords))
+                .Then(tagCloud => cloudVisualizer.PrintTagCloud(tagCloud))
+                .OnFail(message => MessageBox.Show(message));
         }
     }
 }

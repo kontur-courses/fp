@@ -33,7 +33,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler.GetHandledWords("hello world annd Arina");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler.GetHandledWords("hello hello hello hello");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
 
@@ -54,7 +54,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler.GetHandledWords("HELLO");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler.GetHandledWords("Hello!,!.+ 21!");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler.GetHandledWords("Hello hello hello good world world");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
             
             var result = textHandler2.GetHandledWords("Hello all world");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
             var result = textHandler2.GetHandledWords(
                 "Some beautiful text");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
             var result = textHandler2.GetHandledWords(
                 "Some beautiful text");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -149,7 +149,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
             var result = textHandler2.GetHandledWords(
                 "Some beautiful text");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
         
         [Test]
@@ -167,7 +167,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextHandlerTests
 
             var result = textHandler2.GetHandledWords("Some lin beautiful text");
 
-            result.Should().BeEquivalentTo(expected);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expected);
         }
     }
 }

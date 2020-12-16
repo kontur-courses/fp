@@ -17,17 +17,22 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
         private TextReader textReader;
         
         [Test]
-        public void ReadAllText_Throws_WhenTxtFileNotExists()
+        public void ReadAllText_ReturnsFailedResult_WhenTxtFileNotExists()
         {
-            Assert.Throws<IOException>(() => textReader.ReadAllText("sadas"));
+            var result = textReader.ReadAllText("sadas");
+
+            result.IsSuccess.Should().BeFalse();
         }
         
         [Test]
         public void ReadAllText_Throws_WhenFileExtensionDoesNotSupport()
         {
             var path = @"..\..\..\TestTexts\file.pdf";
-            
-            Assert.Throws<IOException>(() => textReader.ReadAllText(path));
+
+            var result = textReader.ReadAllText(path);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain(".pdf doesn't support");
         }
 
         [Test]
@@ -37,7 +42,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
             
             var result = textReader.ReadAllText(path);
 
-            result.Split(' ').Length.Should().Be(4);
+            result.GetValueOrThrow().Split(' ').Length.Should().Be(4);
         }
         
         [Test]
@@ -47,7 +52,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
             
             var result = textReader.ReadAllText(path);
 
-            result.Should().Be("hello world and Arina");
+            result.GetValueOrThrow().Should().Be("hello world and Arina");
         }
         
         [Test]
@@ -57,7 +62,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
             
             var result = textReader.ReadAllText(path);
 
-            result.Should().Be("Hello world with this beautiful text!");
+            result.GetValueOrThrow().Should().Be("Hello world with this beautiful text!");
         }
         
         [Test]
@@ -67,7 +72,7 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
             
             var result = textReader.ReadAllText(path);
 
-            result.Should().Be("Hello world with this beautiful text!");
+            result.GetValueOrThrow().Should().Be("Hello world with this beautiful text!");
         }
     }
 }

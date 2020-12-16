@@ -33,7 +33,8 @@ namespace TagsCloudVisualizationTests.TagCloudBuilderTests
             
             var result = sut.Build(wordsFrequency);
 
-            result.Should().Equal(new List<Tag>());
+            result.IsSuccess.Should().Be(true);
+            result.GetValueOrThrow().Should().Equal(new List<Tag>());
         }
         
         [Test]
@@ -43,7 +44,8 @@ namespace TagsCloudVisualizationTests.TagCloudBuilderTests
             
             var result = sut.Build(wordsFrequency);
 
-            result.Count.Should().Be(wordsFrequency.Count);
+            result.IsSuccess.Should().Be(true);
+            result.GetValueOrThrow().Count.Should().Be(wordsFrequency.Count);
         }
     }
 }

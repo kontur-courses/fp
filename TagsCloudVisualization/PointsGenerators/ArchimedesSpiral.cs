@@ -13,12 +13,6 @@ namespace TagsCloudVisualization.PointsGenerators
 
         public ArchimedesSpiral(SpiralParams spiralParams, Point center)
         {
-            if (Math.Abs(spiralParams.AngleStep) < 1e-3)
-                throw new ArgumentException("Angle step must be not equal zero");
-            
-            if (spiralParams.SpiralParameter == 0)
-                throw new ArgumentException("Spiral parameter must be not equal zero");
-            
             this.spiralParams = spiralParams;
             Center = center;
             spiralPoints = GetSpiralPoints().GetEnumerator();
@@ -26,6 +20,12 @@ namespace TagsCloudVisualization.PointsGenerators
 
         private IEnumerable<Point> GetSpiralPoints()
         {
+            if (Math.Abs(spiralParams.AngleStep) < 1e-3)
+                throw new ArgumentException("Angle step must be not equal zero");
+            
+            if (spiralParams.SpiralParameter == 0)
+                throw new ArgumentException("Spiral parameter must be not equal zero");
+            
             yield return Center;
 
             var angle = 0.0f;

@@ -32,15 +32,15 @@ namespace TagsCloudVisualization.TextProcessing.TextHandler
             this.weigher = weigher;
         }
 
-        public IEnumerable<Word> GetHandledWords(string text)
+        public Result<IEnumerable<Word>> GetHandledWords(string text)
         {
-            var textWords = text
-                .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
-                .Select(word => word.ToLower());
-            var filteredWords = wordFilters
-                .Aggregate(textWords, (current, filter) => filter.FilterWords(current));
-            
-            return weigher.WeighWords(filteredWords);
+            return Result
+                .Of(() => text
+                    .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => word.ToLower()))
+                .Then(textWords => wordFilters
+                    .Aggregate(textWords, (current, filter) => filter.FilterWords(current)))
+                .Then(filteredWords => weigher.WeighWords(filteredWords));
         }
     }
 }

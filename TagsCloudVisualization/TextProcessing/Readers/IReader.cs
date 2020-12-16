@@ -2,7 +2,7 @@
 {
     public interface IReader
     {
-        string ReadText(string path);
+        Result<string> ReadText(string path);
         bool CanReadFile(string path);
     }
 }

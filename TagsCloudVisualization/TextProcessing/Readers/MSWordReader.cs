@@ -8,12 +8,12 @@ namespace TagsCloudVisualization.TextProcessing.Readers
     {
         private readonly HashSet<string> supportingExtensions = new HashSet<string>{".doc", ".docx"};
         
-        public string ReadText(string path)
+        public Result<string> ReadText(string path)
         {
             if (!File.Exists(path))
-                throw new IOException($"File {path} does not exist");
+                return Result.Fail<string>($"File {path} does not exist");
             if (!CanReadFile(path))
-                throw new IOException($"MSWordReader doesn't support extension {Path.GetExtension(path)}");
+                return Result.Fail<string>($"MSWordReader doesn't support extension {Path.GetExtension(path)}");
             
             return ReadDocument(path);
         }

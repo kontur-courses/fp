@@ -14,21 +14,19 @@ namespace TagsCloudVisualization.TextProcessing.TextReader
             this.readers = readers.ToList();
         }
 
-        public string ReadAllText(string path)
+        public Result<string> ReadAllText(string path)
         {
-            if (!File.Exists(path))
-                throw new IOException($"File {path} does not exist");
-
-            return GetTextFromReader(path);
+            return !File.Exists(path) 
+                ? Result.Fail<string>($"File {path} does not exist") 
+                : GetTextFromReader(path);
         }
 
-        private string GetTextFromReader(string path)
+        private Result<string> GetTextFromReader(string path)
         {
             var reader = readers.FirstOrDefault(rdr => rdr.CanReadFile(path));
-            if (reader == null)
-                throw new IOException($"Extension {Path.GetExtension(path)} doesn't support");
-
-            return reader.ReadText(path);
+            return reader == null 
+                ? Result.Fail<string>($"Extension {Path.GetExtension(path)} doesn't support") 
+                : reader.ReadText(path);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TagsCloudVisualization.AppSettings;
 using TagsCloudVisualization.FontHandlers;
 using TagsCloudVisualization.StringExtensions;
@@ -20,15 +19,26 @@ namespace TagsCloudVisualization.TagCloudBuilders
             this.fontSettings = fontSettings;
         }
 
-        public IReadOnlyList<Tag> Build(IEnumerable<Word> wordsFrequency)
+        public Result<IReadOnlyList<Tag>> Build(IEnumerable<Word> wordsFrequency)
         {
             cloudLayouter.ClearLayout();
 
-            return (from word in wordsFrequency
-                let font = FontHandler.CalculateFont(word.Weight, fontSettings)
-                let tagSize = word.Value.MeasureString(font)
-                let rectangle = cloudLayouter.PutNextRectangle(tagSize)
-                select new Tag(word.Value, rectangle, font)).ToList();
+            var tags = new List<Tag>();
+            
+            foreach (var word in wordsFrequency)
+            {
+                var fontCalculateResult = Result.Of(() => FontHandler.CalculateFont(word.Weight, fontSettings));
+                var tagResult = fontCalculateResult
+                    .Then(fnt => word.Value.MeasureString(fnt))
+                    .Then(tagSize => cloudLayouter.PutNextRectangle(tagSize))
+                    .Then(rect => new Tag(word.Value, rect, fontCalculateResult.Value));
+
+                if (tagResult.IsSuccess)
+                    tags.Add(tagResult.Value);
+                else return Result.Fail<IReadOnlyList<Tag>>(tagResult.Error);
+            }
+
+            return tags;
         }
     }
 }

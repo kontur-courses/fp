@@ -27,12 +27,13 @@ namespace TagsCloudVisualizationTests.PointsGeneratorsTests
         [TestCase(0.0000f)]
         [TestCase(-0.0000000f)]
         [TestCase(0.5f, 0)]
-        public void InitArchimedesSpiral_Throws_IncorrectArguments(float angleStep,
+        public void GetNextPoint_ReturnsFailedResult_IncorrectArguments(float angleStep,
             int spiralParameter = 1)
         {
-            var spiralParams = new SpiralParams(spiralParameter, angleStep);
-            Assert.Throws<ArgumentException>(
-                () => new ArchimedesSpiral(spiralParams, canvas.GetImageCenter()));
+            var spiralParameters = new SpiralParams(spiralParameter, angleStep);
+            var spiral = new ArchimedesSpiral(spiralParameters, canvas.GetImageCenter());
+            
+            Assert.Throws<ArgumentException>(() => spiral.GetNextPoint());
         }
 
         [Test]

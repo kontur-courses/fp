@@ -7,13 +7,12 @@ namespace TagsCloudVisualization.TextProcessing.Readers
     {
         private readonly HashSet<string> supportingExtensions = new HashSet<string>{".txt"};
         
-        public string ReadText(string path)
+        public Result<string> ReadText(string path)
         {
-            var extension = Path.GetExtension(path);
             if (!File.Exists(path))
-                throw new IOException($"File {path} does not exist");
+                return Result.Fail<string>($"File {path} does not exist");
             if (!CanReadFile(path))
-                throw new IOException($"TxtReader doesn't support extension {extension}");
+                return Result.Fail<string>($"TxtReader doesn't support extension {Path.GetExtension(path)}");
             
             return File.ReadAllText(path);
         }

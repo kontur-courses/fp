@@ -2,6 +2,6 @@
 {
     public interface ITextReader
     {
-        string ReadAllText(string path);
+        Result<string> ReadAllText(string path);
     }
 }

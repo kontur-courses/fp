@@ -13,20 +13,29 @@ namespace TagsCloudVisualization.TagCloudLayouter
 
         public CircularCloudLayouter(IPointGenerator pointGenerator)
         {
-            this.pointGenerator = pointGenerator ?? throw new ArgumentException("Point generator cannot be null");
+            this.pointGenerator = pointGenerator;
             cloudRectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
+            if (pointGenerator == null)
+                return Result.Fail<Rectangle>("Point generator cannot be null");
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("Rectangle size must be more than zero");
+                return Result.Fail<Rectangle>("Rectangle size must be more than zero");
 
-            var point = pointGenerator.GetNextPoint();
-            
-            while (!CheckRectanglePosition(point, rectangleSize)) 
+            Point point;
+            try
+            {
                 point = pointGenerator.GetNextPoint();
-
+                while (!CheckRectanglePosition(point, rectangleSize)) 
+                    point = pointGenerator.GetNextPoint();
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<Rectangle>(e.Message);
+            }
+            
             var rectangle = GetLocatedRectangle(point, rectangleSize);
             cloudRectangles.Add(rectangle);
             pointGenerator.StartOver();

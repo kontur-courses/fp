@@ -5,6 +5,6 @@ namespace TagsCloudVisualization.TextProcessing.TextHandler
 {
     public interface ITextHandler
     {
-        IEnumerable<Word> GetHandledWords(string text);
+        Result<IEnumerable<Word>> GetHandledWords(string text);
     }
 }
