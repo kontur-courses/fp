@@ -10,8 +10,8 @@ namespace TagsCloudContainer
 
         public Result<None> Save(string path, string name, Bitmap bitmap)
         {
-            return Result.OfAction(() => bitmap.Save(path + "\\" + name + "." + FormatName, Format), 
-                "Не удалось сохранить файл с изобраджением");
+            return Result.OfAction(() => bitmap.Save($"{path}\\{name}.{FormatName}", Format), 
+                "Не удалось сохранить файл с изображением");
         }
     }
 }

@@ -16,10 +16,7 @@ namespace TagsCloudContainer
                 .Then(scope => scope.Resolve<TagsCloudCreator>())
                 .OnFail(err => Console.WriteLine(err));
             if (!creator.IsSuccess)
-            {
-                Console.ReadKey();
                 return;
-            }
             var mainResult = Result.Of(() => creator.Value.SetFontRandomColor())
                 .Then(res => creator.Value.SetImageFormat("png"))
                 .Then(res => creator.Value.SetFontFamily("Comic Sans MS"))
@@ -27,8 +24,6 @@ namespace TagsCloudContainer
                 .Then(res => creator.Value.AddStopWord("aba"))
                 .Then(res => creator.Value.Create(Path.Combine(path, "input.txt"), path, "Cloud2"))
                 .OnFail(err => Console.WriteLine(err));
-            if (!mainResult.IsSuccess)
-                Console.ReadKey();
         }
     }
 }
