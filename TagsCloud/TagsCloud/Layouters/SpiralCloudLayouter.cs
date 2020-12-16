@@ -31,7 +31,7 @@ namespace TagsCloud.Layouters
             imageHolderSize = (settings.Width, settings.Height);
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             var spiral = new Spiral(center, step);
             while (true)
@@ -42,11 +42,11 @@ namespace TagsCloud.Layouters
                 if (!RectangleIntersectWithOthers(newRectangle))
                 {
                     rectangles.Add(newRectangle);
-                    return newRectangle;
+                    return Result.Ok(newRectangle);
                 }
 
                 if (!InBoundsOfImage(newRectangle))
-                    throw new BadImageFormatException(
+                    return Result.Fail<Rectangle>(
                         "Недостаточно места для размещения слова, увеличьте размер изображения, или уменьшите размер шрифта");
             }
         }

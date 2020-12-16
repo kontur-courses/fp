@@ -141,7 +141,7 @@ namespace TagsCloud.Infrastructure
                 label.Text = pair.Key;
                 var size = label.GetPreferredSize(label.GetPreferredSize(Size));
 
-                var placingResult = Result.Of(() => layouter.PutNextRectangle(size));
+                var placingResult = layouter.PutNextRectangle(size);
                 if (!placingResult.IsSuccess)
                     return Result.Fail<None>(placingResult.Error);
                 var rect = placingResult.Value;

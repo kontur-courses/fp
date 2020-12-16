@@ -7,6 +7,6 @@ namespace TagsCloud.Layouters
     {
         void UpdateCenterPoint(ImageSettings settings);
         void ClearLayouter();
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

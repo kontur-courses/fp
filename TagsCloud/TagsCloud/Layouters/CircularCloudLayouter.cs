@@ -35,17 +35,20 @@ namespace TagsCloud.Layouters
             Center = new Point(settings.Width / 2, settings.Height / 2);
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (isFirst)
-                return PutFirstRectangle(rectangleSize);
+                return Result.Of(() => PutFirstRectangle(rectangleSize));
 
-            var rect = PlaceRectangle(new Rectangle(Center, rectangleSize));
-            rectangles.Add(rect);
-            potentialPosingPoints.AddRange(GetPotentialPosingPointsFromRectangle(rect));
+            return Result.Of(() => PlaceRectangle(new Rectangle(Center, rectangleSize)))
+                .Then(rect =>
+                {
+                    rectangles.Add(rect);
+                    potentialPosingPoints.AddRange(GetPotentialPosingPointsFromRectangle(rect));
+                    RemovePoints();
 
-            RemovePoints();
-            return rect;
+                    return rect;
+                });
         }
 
         public void RemovePoints()
