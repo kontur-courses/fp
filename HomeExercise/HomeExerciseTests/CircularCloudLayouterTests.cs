@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using FluentAssertions;
 using HomeExercise;
-using HomeExercise.settings;
 using HomeExercise.Settings;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;

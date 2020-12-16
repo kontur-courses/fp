@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using FluentAssertions;
 using HomeExercise;
-using HomeExercise.settings;
+using HomeExercise.Settings;
 using NUnit.Framework;
 
 namespace TestProject1
