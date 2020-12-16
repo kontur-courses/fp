@@ -11,6 +11,9 @@ namespace TagCloud.Visualization
         private readonly string font;
         private readonly IWordsColoring wordsColoring;
 
+        private static readonly Result<Size?> sizeError = 
+            new Result<Size?>("Was incorrect size, must be two numbers like \"2000 1500\" or \"dynamic\"");
+
         internal VisualizationInfo(IWordsColoring coloring, Size? size = null, string font = null)
         {
             this.size = size;
@@ -20,25 +23,24 @@ namespace TagCloud.Visualization
 
         internal static Result<Size?> ReadSize(string sizeStr)
         {
-            var error = new Result<Size?>("Was incorrect size, must be two numbers like \"2000 1500\" or \"dynamic\"");
             if (sizeStr == "dynamic")
             {
-                return new Result<Size?>(null, null);
+                return null;
             }
             try
             {
                 var result = ParseString(sizeStr);
                 if (result.Length != 2)
-                    return error;
+                    return sizeError;
                 if (result.Any(i => i < 0))
-                    return error;
+                    return sizeError;
                 if (result[0] == 0 || result[1] == 0)
                     return new Result<Size?>("must be two positive number, but was negative");
-                return new Result<Size?>(null, new Size(result[0], result[1]));
+                return  new Size(result[0], result[1]);
             }
             catch
             {
-                return error;
+                return sizeError;
             }
         }
 

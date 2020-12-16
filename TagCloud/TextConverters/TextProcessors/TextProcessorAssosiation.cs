@@ -24,16 +24,7 @@ namespace TagCloud.TextConverters.TextProcessors
                 return new Result<ITextProcessor>($"doesn't have processor with name {name}\n" +
                     $"List of text processor names:\n{string.Join('\n', names)}");
             }
-            ITextProcessor processor;
-            try
-            {
-                processor = processors[name];
-            }
-            catch(Exception e)
-            {
-                return new Result<ITextProcessor>($"something was wrong: {e.Message}");
-            }
-            return new Result<ITextProcessor>(null, processor);
+            return new Result<ITextProcessor>(null, processors[name]);
         }
     }
 }

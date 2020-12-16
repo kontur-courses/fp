@@ -22,22 +22,13 @@ namespace TagCloud.TextConverters.TextReaders
             {
                 return new Result<ITextReader>("file doesnt exist");
             }
-            var extension = path[path.LastIndexOf('.')..path.Length];
+            var extension = Path.GetExtension(path);
             if (!textReaders.ContainsKey(extension))
             {
                 return new Result<ITextReader>($"can't read file with extension {extension} \n" +
                     $"list of extensions to read: \n {string.Join('\n', extension)}");
             }
-            ITextReader reader;
-            try
-            {
-                reader = textReaders[extension];
-            }
-            catch (Exception e)
-            {
-                return new Result<ITextReader>($"something was wrong: {e.Message}");
-            }
-            return new Result<ITextReader>(null, reader);
+            return new Result<ITextReader>(null, textReaders[extension]);
         }
     }
 }

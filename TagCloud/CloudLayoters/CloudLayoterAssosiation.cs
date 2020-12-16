@@ -2,7 +2,6 @@
 using System.Linq;
 using System;
 using ResultOf;
-using TagCloud.PointGetters;
 
 namespace TagCloud.CloudLayoters
 {
@@ -25,16 +24,7 @@ namespace TagCloud.CloudLayoters
                 return new Result<ICloudLayoter>($"doesn't have processor with name {nameLayoter}\n" +
                     $"List of layoter names:\n{string.Join('\n', layoters)}");
             }
-            ICloudLayoter layoter;
-            try
-            {
-                layoter = cloudLayoters[nameLayoter];
-            }
-            catch (Exception e)
-            {
-                return new Result<ICloudLayoter>($"something was wrong: {e.Message}");
-            }
-            return new Result<ICloudLayoter>(null, layoter);
+            return new Result<ICloudLayoter>(null, cloudLayoters[nameLayoter]);
         } 
     }
 }

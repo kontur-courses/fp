@@ -39,16 +39,7 @@ namespace TagCloud.Visualization.WordsColorings
                 return new Result<IWordsColoring>($"doesn't have coloring with name {name}\n" +
                     $"List of coloring names:\n{string.Join('\n', coloringNames)}");
             }
-            IWordsColoring coloring;
-            try
-            {
-                coloring = colorings[name];
-            }
-            catch (Exception e)
-            {
-                return new Result<IWordsColoring>($"something was wrong: {e.Message}");
-            }
-            return new Result<IWordsColoring>(null, coloring);
+            return new Result<IWordsColoring>(null, colorings[name]);
         }
     }
 }

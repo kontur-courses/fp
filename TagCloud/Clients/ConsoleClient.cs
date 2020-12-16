@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using CommandLine;
 using TagCloud.TextConverters.TextReaders;
 using TagCloud.TextConverters.TextProcessors;
 using TagCloud.WordsMetrics;
@@ -15,10 +12,10 @@ namespace TagCloud.Clients
 {
     internal class ConsoleClient : IClient
     {
-        private Result<ITextProcessor> processor;
-        private Result<IWordsMetric> metric;
-        private Result<ICloudLayoter> layoter;
-        private Result<IPointGetter> pointGetter;
+        private ITextProcessor processor;
+        private IWordsMetric metric;
+        private ICloudLayoter layoter;
+        private IPointGetter pointGetter;
 
         private VisualizationInfo vizInfo;
 
@@ -32,24 +29,8 @@ namespace TagCloud.Clients
                 var answear = Console.ReadLine();
                 if (answear == "exit")
                     break;
-                var reader = TextReaderAssosiation.GetTextReader(answear);
-                if(!reader.IsSuccess)
-                {
-                    Console.WriteLine(reader.Error);
+                if (!ReadFileIsSuccess(answear, out var text))
                     continue;
-                }
-                var textResut = reader.GetValueOrThrow().ReadText(answear);
-                if (!textResut.IsSuccess)
-                {
-                    Console.WriteLine(textResut.Error);
-                    continue;
-                }
-                var text = textResut.GetValueOrThrow();
-                if (text == null)
-                {
-                    Console.WriteLine("something was wrong, please, try again");
-                    continue;
-                }
                 if (!ReadTagInfoIsSuccess())
                     continue;
                 if (!ReadVisualizationInfoIsSuccess())
@@ -61,75 +42,62 @@ namespace TagCloud.Clients
             }
         }
 
+        private bool ReadFileIsSuccess(string path, out string text)
+        {
+            text = null;
+            if (!TryGetValueOrWriteError(TextReaderAssosiation.GetTextReader(path), out var reader))
+                return false;
+            var textResut = reader.ReadText(path);
+            if (!textResut.IsSuccess)
+            {
+                Console.WriteLine(textResut.Error);
+                return false;
+            }
+            text = textResut.GetValueOrThrow();
+            if (text == null)
+            {
+                Console.WriteLine("something was wrong, please, try again");
+                return false;
+            }
+            return true;
+        }
+
         private bool ReadTagInfoIsSuccess()
         {
             Console.WriteLine("write params cloud configuration");
-            var answears = new List<string>()
-                {
-                    Console.ReadLine(),
-                    Console.ReadLine(),
-                    Console.ReadLine(),
-                    Console.ReadLine()
-                };
-            Parser.Default.ParseArguments<OptionsTagInfo>(answears)
-                .WithParsed(SetTagInfo);
-            if (!processor.IsSuccess)
-            {
-                Console.WriteLine(processor.Error);
+            Console.WriteLine($"type of text processor, write {TextProcessorAssosiation.paragraph} or {TextProcessorAssosiation.words}");
+            if (!TryGetValueOrWriteError(TextProcessorAssosiation.GetProcessor(Console.ReadLine()), out processor))
                 return false;
-            }
-            if (!metric.IsSuccess)
-            {
-                Console.WriteLine(metric.Error);
+            Console.WriteLine("Name of metric. Write \"count\"");
+            if (!TryGetValueOrWriteError(WordsMetricAssosiation.GetMetric(Console.ReadLine()), out metric))
                 return false;
-            }
-            if (!pointGetter.IsSuccess)
-            {
-                Console.WriteLine(pointGetter.Error);
+            Console.WriteLine($"type of point getter, write {PointGetterAssosiation.circle} or {PointGetterAssosiation.spiral}");
+            if (!TryGetValueOrWriteError(PointGetterAssosiation.GetPointGetter(Console.ReadLine()), out pointGetter))
                 return false;
-            }
-            if (!layoter.IsSuccess)
-            {
-                Console.WriteLine(layoter.Error);
+            Console.WriteLine($"type of layoter, write {CloudLayoterAssosiation.density} or {CloudLayoterAssosiation.identity}");
+            if (!TryGetValueOrWriteError(CloudLayoterAssosiation.GetCloudLayoter(Console.ReadLine()), out layoter))
                 return false;
-            }
-            layoter.GetValueOrThrow().SetPointGetterIfNull(pointGetter.GetValueOrThrow());
+            layoter.SetPointGetterIfNull(pointGetter);
             return true;
         }
 
         private bool ReadVisualizationInfoIsSuccess()
         {
             Console.WriteLine("write Visualizate configuration (3 parametrs - size, coloring and font)");
-            var answears = new List<string>()
-            {
-                Console.ReadLine(),
-                Console.ReadLine(),
-                Console.ReadLine()
-            };
-            Parser.Default.ParseArguments<OptionsVisualizate>(answears)
-                .WithParsed(SetVisualizateInfo);
+            SetVisualizateInfo();
             return vizInfo != null;
         }
 
-        private void SetTagInfo(OptionsTagInfo info)
+        private void SetVisualizateInfo()
         {
-            processor = TextProcessorAssosiation
-                .GetProcessor(SkipSpaces(info.Processor));
-            metric = WordsMetricAssosiation
-                .GetMetric(SkipSpaces(info.Metric));
-            pointGetter = PointGetterAssosiation
-                .GetPointGetter(SkipSpaces(info.PointGetter));
-            layoter = CloudLayoterAssosiation
-                .GetCloudLayoter(SkipSpaces(info.Layoter));
-        }
-
-        private void SetVisualizateInfo(OptionsVisualizate info)
-        {
-            if(!TryGetValueOrWriteError(VisualizationInfo.ReadSize(SkipSpaces(info.Size)), out var size))
+            Console.WriteLine("size to cut picture, write two numbers or \"dynamic\" for dynamic size");
+            if (!TryGetValueOrWriteError(VisualizationInfo.ReadSize(Console.ReadLine()), out var size))
                 return;
-            if (TryGetValueOrWriteError(WordsColoringAssosiation.GetColoring(SkipSpaces(info.Coloring)), out var coloring))
+            Console.WriteLine("coloring text, write red, geen, blue, black, random, multi, line red, line green, line blue, line random");
+            if (TryGetValueOrWriteError(WordsColoringAssosiation.GetColoring(Console.ReadLine()), out var coloring))
                 return;
-            string font = SkipSpaces(info.Font);
+            Console.WriteLine("font of words, write Arial, Calibri, ...");
+            var font = Console.ReadLine();
             if (!VisualizationInfo.FontIsCorrect(font))
             {
                 Console.WriteLine("Not correct font");
@@ -150,46 +118,10 @@ namespace TagCloud.Clients
             return result.IsSuccess;
         }
 
-        private string SkipSpaces(string str) => string.Join("", str.SkipWhile(c => c == ' '));
-
         public void Visualize(string text, string picturePath)
         {
-            var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter.GetValueOrThrow(), 
-                processor.GetValueOrThrow(), metric.GetValueOrThrow());
+            var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter, processor, metric);
             TagCloudVisualization.Visualize(tagCloud, picturePath, vizInfo);
-        }
-
-        internal class OptionsTagInfo
-        {
-            [Option('m', "metric", Required = true, HelpText = "Name of metric. Write \"count\"")]
-            public string Metric { get; set; }
-
-            [Option('p', "processor", Required = true, 
-                HelpText = "type of text processor, write " + TextProcessorAssosiation.paragraph + " or " + TextProcessorAssosiation.words)]
-            public string Processor { get; set; }
-
-            [Option('g', "getter", Required = true,
-                HelpText = "type of point getter, write " + PointGetterAssosiation.circle + " or " + PointGetterAssosiation.spiral)]
-            public string PointGetter { get; set; }
-
-            [Option('l', "layoter", Required = true,
-                HelpText = "type of layoter, write " + CloudLayoterAssosiation.density + " or " + CloudLayoterAssosiation.identity)]
-            public string Layoter { get; set; }
-        }
-
-        internal class OptionsVisualizate
-        {
-            [Option('s', "size", Required = false, Default = "", 
-                HelpText = "size to cut picture, write two numbers or \"dynamic\" for dynamic size")]
-            public string Size { get; set; }
-
-            [Option('f', "font", Required = false, Default = "Arial",
-                HelpText = "font of words, write Arial, Calibri, ...")]
-            public string Font { get; set; }
-
-            [Option('c', "coloring", Required = false, Default = "random",
-                HelpText = "coloring text, write red, geen, blue, black, random, multi, line red, line green, line blue, line random")]
-            public string Coloring { get; set; }
         }
     }
 }

@@ -24,16 +24,7 @@ namespace TagCloud.PointGetters
                 return new Result<IPointGetter>($"doesn't have point getter with name {name}\n" +
                     $"List of text point getter names:\n{string.Join('\n', getters)}");
             }
-            IPointGetter getter;
-            try
-            {
-                getter = pointGetters[name];
-            }
-            catch (Exception e)
-            {
-                return new Result<IPointGetter>($"something was wrong: {e.Message}");
-            }
-            return new Result<IPointGetter>(null, getter);
+            return new Result<IPointGetter>(null, pointGetters[name]);
         }
     }
 }
