@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Autofac;
-using Microsoft.Extensions.Logging;
 
 namespace TagsCloudContainer
 {

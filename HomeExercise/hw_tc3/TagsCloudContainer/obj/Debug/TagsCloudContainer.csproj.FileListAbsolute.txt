@@ -26,15 +26,11 @@ C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContain
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\obj\Debug\TagsCloudContainer.pdb
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
-C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Logging.dll
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Options.dll
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Primitives.dll
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\System.ValueTuple.dll
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
-C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Logging.xml
-C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Options.xml
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\Microsoft.Extensions.Primitives.xml
 C:\Users\Никита\Desktop\ШПОРА\fp\HomeExercise\hw_tc3\TagsCloudContainer\bin\Debug\System.ValueTuple.xml
