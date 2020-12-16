@@ -26,15 +26,8 @@ namespace TagCloud.TextProcessing
         public Result<string[]> GetWords(string inputFileName)
         {
             var path = creator.GetCurrentPath();
-            try
-            {
-                return GetDictionary(path)
+            return GetDictionary(path)
                     .Then(dict => GetNormalizeWords(dict, path + inputFileName));
-            }
-            catch (Exception e)
-            {
-                return Result.Fail<string[]>("Unhandled exception: " + e);
-            }
         }
 
         private Result<string[]> GetNormalizeWords(WordList dictionary, string pathToFile)
@@ -62,11 +55,16 @@ namespace TagCloud.TextProcessing
 
         private static Result<WordList> GetDictionary(string path)
         {
-            if (File.Exists(path + "ru_RU.dic") && File.Exists(path + "ru_RU.aff"))
+            if (!File.Exists(path + "ru_RU.dic") || !File.Exists(path + "ru_RU.aff"))
+                return Result.Fail<WordList>("Not found dictionaries (ru_RU.dic/ru_RU.aff) by path " + path);
+            try
             {
                 return WordList.CreateFromFiles(path + "ru_RU.dic", path + "ru_RU.aff");
             }
-            return Result.Fail<WordList>("Not found dictionaries (ru_RU.dic/ru_RU.aff) by path " + path);
+            catch (Exception e)
+            {
+                return Result.Fail<WordList>("Unhandled exception: " + e);
+            }
         }
     }
 }
