@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.App
+﻿using TagsCloud.Infrastructure;
+
+namespace TagsCloud.App
 {
     public interface IWordsFilter
     {
-        bool Validate(string word);
+        Result<bool> Validate(string word);
     }
 }

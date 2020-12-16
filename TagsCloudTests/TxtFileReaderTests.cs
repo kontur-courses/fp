@@ -9,6 +9,7 @@ namespace TagsCloudTests
     public class TxtFileReaderTests
     {
         private readonly TxtFileReader reader = new TxtFileReader();
+        private readonly string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..");
 
         [Test]
         public void TxtFileReader_ShouldThrow_WithWrongFileType()
@@ -16,12 +17,13 @@ namespace TagsCloudTests
             var fileName = @"C:\Users\da\Desktop\abc.jpeg";
             var resultOfReading = reader.ReadWords(fileName);
             resultOfReading.IsSuccess.Should().BeFalse();
+            resultOfReading.Error.Should().Be("Incorrect type jpeg");
         }
 
         [Test]
         public void TxtFileReader_ShouldReadLines_FromDocTypeFile()
         {
-            var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\TxtFileReaderTestFile.txt";
+            var fileName = filePath + @"\FileReadersTestsFiles\TxtFileReaderTestFile.txt";
             TestContext.WriteLine(fileName);
             var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo("Abc", "Aa", "Abcg", "Def", "Gf");
@@ -30,7 +32,7 @@ namespace TagsCloudTests
         [Test]
         public void TxtFileReader_ShouldReturnEmptyCollection_FromEmptyDocFile()
         {
-            var fileName = Directory.GetCurrentDirectory() + @"\FileReadersTestsFiles\EmptyTxtFile.txt";
+            var fileName = filePath + @"\FileReadersTestsFiles\EmptyTxtFile.txt";
             TestContext.WriteLine(fileName);
             var words = reader.ReadWords(fileName).Value;
             words.Should().BeEquivalentTo();

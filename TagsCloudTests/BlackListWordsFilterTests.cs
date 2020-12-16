@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.App;
@@ -19,7 +18,7 @@ namespace TagsCloudTests
             IEnumerable<string> blackList, string word, bool expectedResult)
         {
             var filter = new BlackListWordsFilter(blackList, normalizer);
-            var wordPassed = filter.Validate(word);
+            var wordPassed = filter.Validate(word).Value;
             wordPassed.Should().Be(expectedResult);
         }
 
@@ -27,8 +26,8 @@ namespace TagsCloudTests
         public void BlackListWordsFilter_ShouldThrow_IfCollectionIsNull()
         {
             var filter = new BlackListWordsFilter(new string[0], normalizer);
-            Action action = () => filter.Validate(null);
-            action.Should().Throw<NullReferenceException>();
+            var result = filter.Validate(null);
+            result.IsSuccess.Should().BeFalse();
         }
     }
 }

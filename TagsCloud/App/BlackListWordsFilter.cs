@@ -15,26 +15,21 @@ namespace TagsCloud.App
             this.normalizer = normalizer;
         }
 
-        public bool Validate(string word)
+        public Result<bool> Validate(string word)
         {
-            return !BlackList.Contains(normalizer.Normalize(word));
+            if (word == null)
+                return Result.Fail<bool>("The word to validatee is null");
+            return Result.Of(() => !BlackList.Contains(normalizer.Normalize(word)));
         }
 
         public Result<None> UpdateBlackList(IEnumerable<string> words)
         {
-            return Result.OfAction(() => TryUpdateBlackList(words));
-        }
-
-        private Result<None> TryUpdateBlackList(IEnumerable<string> words)
-        {
             if (words == null)
                 return Result.Fail<None>("Words collection should not be null");
-            return Result.OfAction(() =>
-            {
-                BlackList.Clear();
-                foreach (var word in words)
-                    BlackList.Add(normalizer.Normalize(word));
-            });
+            BlackList.Clear();
+            foreach (var word in words)
+                BlackList.Add(normalizer.Normalize(word));
+            return Result.Ok();
         }
     }
 }

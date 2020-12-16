@@ -24,7 +24,7 @@ namespace TagsCloud.App
         public Result<Image> GetNewTagcloud(IEnumerable<string> words)
         {
             var neededWords = words
-                .Where(word => wordsFilters.All(filter => filter.Validate(word)))
+                .Where(word => wordsFilters.All(filter => filter.Validate(word).Value))
                 .Select(word => wordNormalizer.Normalize(word))
                 .ToList();
             var counts = neededWords

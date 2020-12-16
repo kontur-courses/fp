@@ -30,7 +30,7 @@ namespace TagsCloud.App
                     words
                         .OrderBy(word => -word.Weight)
                         .Take(tagsCloudSettings.MaxWordsCount),
-                    graphics).ToArray();
+                    graphics).Value;
                 var cloudBounds = CalculateTagsCloudBounds(tags.Select(tag => tag.Rectangle));
                 var cloudExpectedSize = tagsCloudSettings.ImageSize * tagsCloudSettings.CloudToImageScaleRatio;
                 var cloudSizeRatio = CalculateRatio(cloudBounds.Size, cloudExpectedSize);
@@ -51,21 +51,23 @@ namespace TagsCloud.App
             layouter = newLayouter;
         }
 
-        private IEnumerable<Tag> GetTagsFromWords(IEnumerable<Word> words, Graphics graphics)
+        private Result<Tag[]> GetTagsFromWords(IEnumerable<Word> words, Graphics graphics)
         {
             if (words == null)
-                throw new ArgumentException("Words collection should not be null.");
-            foreach (var word in words)
-            {
-                var wordFontSize = Math.Max((int) (word.Weight * MaxFontSize), 1);
-                var wordFont = new Font(tagsCloudSettings.CurrentFontFamily,
-                    wordFontSize,
-                    tagsCloudSettings.CurrentFontStyle);
-                var newRectangle = layouter.PutNextRectangle(CalculateWordsSize(word.Value, wordFont, graphics));
-                yield return new Tag(word.Value, wordFont, newRectangle.Value);
-            }
-
+                return Result.Fail<Tag[]>("Words collection should not be null.");
+            var tagsArray = words
+                .Select(word =>
+                {
+                    var wordFontSize = Math.Max((int) (word.Weight * MaxFontSize), 1);
+                    var wordFont = new Font(tagsCloudSettings.CurrentFontFamily,
+                        wordFontSize,
+                        tagsCloudSettings.CurrentFontStyle);
+                    var newRectangle = layouter.PutNextRectangle(CalculateWordsSize(word.Value, wordFont, graphics));
+                    return new Tag(word.Value, wordFont, newRectangle.Value);
+                })
+                .ToArray();
             layouter.Reset();
+            return Result.Ok(tagsArray);
         }
 
         private static float CalculateRatio(Size tagsCloudSize, ImageSize imageSize)
@@ -75,10 +77,10 @@ namespace TagsCloud.App
             return (float) imageSize.Height / tagsCloudSize.Height;
         }
 
-        public void DrawTagsCloud(IEnumerable<Tag> tags, PointF center, Graphics graphics)
+        public Result<None> DrawTagsCloud(IEnumerable<Tag> tags, PointF center, Graphics graphics)
         {
             if (tags == null)
-                throw new ArgumentException("Tags collection should not be null.");
+                return Result.Fail<None>("Tags collection should not be null.");
             graphics.TranslateTransform(center.X, center.Y);
             graphics.Clear(tagsCloudSettings.Palette.BackgroundColor);
             var brush = new SolidBrush(tagsCloudSettings.Palette.PrimaryColor);
@@ -87,6 +89,7 @@ namespace TagsCloud.App
                     word.Font,
                     brush,
                     word.Rectangle.Location);
+            return Result.Ok();
         }
 
         private Rectangle CalculateTagsCloudBounds(IEnumerable<Rectangle> rectangles)

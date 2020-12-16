@@ -62,9 +62,9 @@ namespace TagsCloud.UI
             {
                 var fileName = OpenFileDialog.FileName;
                 var fileType = fileName.Split('.')[^1];
-                var fileReader = fileReaders.First(reader => reader.AvailableFileTypes.Contains(fileType));
+                var fileReader = fileReaders.FirstOrDefault(reader => reader.AvailableFileTypes.Contains(fileType));
                 if (fileReader == null)
-                    throw new InvalidOperationException("Invalid file");
+                    MessageBox.Show("Не удалось прочитать файл. Invalid file.");
                 var resultOfReading = fileReader
                     .ReadWords(fileName)
                     .OnFail(error => MessageBox.Show($"Не удалось прочитать файл. {error}"));
