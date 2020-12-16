@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using Autofac;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Layout;
@@ -13,6 +14,7 @@ using TagCloud.Infrastructure.Settings.UISettingsManagers;
 using TagCloud.Infrastructure.Text;
 using TagCloud.Infrastructure.Text.Conveyors;
 using TagCloud.Infrastructure.Text.Information;
+using Module = Autofac.Module;
 
 namespace TagCloud
 {
@@ -20,8 +22,26 @@ namespace TagCloud
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<TxtReader>().As<IReader<string>>();
-            builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
+            var dataAccess = Assembly.GetExecutingAssembly();
+
+            builder.RegisterAssemblyTypes(dataAccess)
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope()
+                .Except<ImageSaver>()
+                .Except<IConveyor<string>>()
+                .Except<Random>(registrationBuilder => registrationBuilder.AsSelf().SingleInstance())
+                .Except<Settings>(rb => 
+                    rb.AsSelf().AsImplementedInterfaces().SingleInstance())
+                .Except<LowerCaseConveyor>()
+                .Except<WordTypeConveyor>()
+                .Except<WordCounterConveyor>()
+                .Except<WordThresholdConveyor>()
+                .Except<InterestingWordsConveyor>()
+                .Except<WordFontSizeConveyor>()
+                .Except<WordSizeConveyor>()
+                .Except<OrderConveyor>()
+                ;
+            
             builder.RegisterType<ImageSaver>();
 
             builder.RegisterType<LowerCaseConveyor>().As<IConveyor<string>>();
@@ -41,25 +61,8 @@ namespace TagCloud
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
-            builder.RegisterType<PlainEnvironment>().AsImplementedInterfaces();
-            builder.RegisterType<SpiralStrategy>().As<ILayoutStrategy>();
-            builder.RegisterType<TagCloudLayouter>().As<ILayouter<Size, Rectangle>>();
-
-            builder.RegisterType<WordPainter>().As<IPainter<string>>();
-            builder.RegisterType<Random>().SingleInstance();
             builder.RegisterType<ColorPicker>();
             builder.RegisterType<ColorConverter>();
-
-            builder.RegisterType<FileSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ImagePathSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ImageSizeSettingsManager>().AsImplementedInterfaces();
-            builder.RegisterType<LayoutCenterSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<SpiralIncrementSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<FontSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ImageFormatSettingManager>().AsImplementedInterfaces();
-            builder.RegisterType<ColorPickerSettingsManager>().AsImplementedInterfaces();
-
-            builder.RegisterType<TagCloudGenerator>().As<IImageGenerator>();
         }
 
         public static Settings GetDefaultSettings()

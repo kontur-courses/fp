@@ -13,7 +13,7 @@ namespace TagCloudGraphicInterface
         public static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new TagCloudModule());
+            builder.RegisterModule<TagCloudModule>();
 
             builder.RegisterType<TagCloudLayouterGui>().Keyed<IApp>(UiType.Gui);
             builder.RegisterType<TagCloudLayouterGui2>().Keyed<IApp>(UiType.Gui2);
