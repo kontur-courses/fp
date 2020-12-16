@@ -92,10 +92,10 @@ namespace TagsCloud.Infrastructure
             var extension = Path.GetExtension(fileName);
             return extension switch
             {
-                ".jpeg" => ImageFormat.Jpeg,
-                ".png" => ImageFormat.Png,
-                ".tiff" => ImageFormat.Tiff,
-                _ => throw new BadImageFormatException("Неподдерживаемое расширение файла")
+                ".jpeg" => Result.Ok(ImageFormat.Jpeg),
+                ".png" => Result.Ok(ImageFormat.Png),
+                ".tiff" => Result.Ok(ImageFormat.Tiff),
+                _ => Result.Fail<ImageFormat>("Неподдерживаемое расширение файла")
             };
         }
 
