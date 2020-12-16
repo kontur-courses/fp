@@ -28,7 +28,7 @@ namespace TagsCloud.Tests
         [Test]
         public void ReturnRectangle_WithSameSize_WhenCalled_PutNextRectangle()
         {
-            layouter.PutNextRectangle(new Size(20, 10)).Size
+            layouter.PutNextRectangle(new Size(20, 10)).GetValueOrThrow().Size
                 .Should().BeEquivalentTo(new Size(20, 10));
         }
 
@@ -39,7 +39,7 @@ namespace TagsCloud.Tests
                 {new Size(1, 1), new Size(2, 2)};
             var rectangles = sizes.Select(size => layouter.PutNextRectangle(size));
 
-            rectangles.Select(x => x.Size)
+            rectangles.Select(x => x.GetValueOrThrow().Size)
                 .Should().BeEquivalentTo(sizes);
         }
 
@@ -55,7 +55,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        [Timeout(10000)]
+        [Timeout(15_000)]
         public void BeEfficient_WithManyWords()
         {
             AddRectanglesToLayouter(1650, new Size(1, 1));
@@ -65,7 +65,7 @@ namespace TagsCloud.Tests
         {
             var rects = new List<Rectangle>();
             for (var i = 0; i < amount; i++)
-                rects.Add(layouter.PutNextRectangle(size));
+                rects.Add(layouter.PutNextRectangle(size).GetValueOrThrow());
             return rects;
         }
     }

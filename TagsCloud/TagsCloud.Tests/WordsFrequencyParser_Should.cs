@@ -35,18 +35,18 @@ namespace TagsCloud.Tests
         {
             var filter = new WordsFilter(toIgnore.ToHashSet());
             var parser = new WordsFrequencyParser(filter);
-            parser.ParseWordsFrequencyFromFile(testFilePath)
+            parser.ParseWordsFrequencyFromFile(testFilePath).GetValueOrThrow()
                 .Should().NotContainKeys(toIgnore)
                 .And.ContainKeys(words.Where(word => !toIgnore.Contains(word)));
         }
 
         [TestCase("not single word in one string")]
         [TestCase(":3")]
-        public void Throw_WhenIncorrectFileFormat(string wrongFormattedString)
+        public void ReturnUnsuccessfulResult_WhenIncorrectFileFormat(string wrongFormattedString)
         {
             File.AppendAllText(testFilePath, wrongFormattedString);
             var parser = new WordsFrequencyParser(new WordsFilter(new HashSet<string>()));
-            Assert.Throws<FormatException>(() => parser.ParseWordsFrequencyFromFile(testFilePath));
+            parser.ParseWordsFrequencyFromFile(testFilePath).IsSuccess.Should().BeFalse();
         }
     }
 }
