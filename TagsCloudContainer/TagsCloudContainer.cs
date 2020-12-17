@@ -62,7 +62,7 @@ namespace TagsCloudContainer
         {
             return Sources
                 .Select(s => s.GetWords())
-                .EnumerateOrFail()
+                .EnumerateOrFail().RefineError("Не удаётся прочитать слова из источника")
                 .Then(words => words
                     .SelectMany(word => word)
                     .GroupBy(w => w.word)
