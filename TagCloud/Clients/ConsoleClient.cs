@@ -24,7 +24,6 @@ namespace TagCloud.Clients
             Console.WriteLine("Hello, I'm your personal visualization client");
             while (true)
             {
-                vizInfo = null;
                 Console.WriteLine("Write path to file with text or \"exit\" to exit");
                 var answear = Console.ReadLine();
                 if (answear == "exit")
@@ -90,11 +89,12 @@ namespace TagCloud.Clients
 
         private void SetVisualizateInfo()
         {
+            vizInfo = null;
             Console.WriteLine("size to cut picture, write two numbers or \"dynamic\" for dynamic size");
             if (!TryGetValueOrWriteError(VisualizationInfo.ReadSize(Console.ReadLine()), out var size))
                 return;
             Console.WriteLine("coloring text, write red, geen, blue, black, random, multi, line red, line green, line blue, line random");
-            if (TryGetValueOrWriteError(WordsColoringAssosiation.GetColoring(Console.ReadLine()), out var coloring))
+            if (!TryGetValueOrWriteError(WordsColoringAssosiation.GetColoring(Console.ReadLine()), out var coloring))
                 return;
             Console.WriteLine("font of words, write Arial, Calibri, ...");
             var font = Console.ReadLine();

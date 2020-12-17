@@ -36,7 +36,7 @@ namespace TagCloud.Visualization.WordsColorings
         {
             if (!colorings.ContainsKey(name))
             {
-                return new Result<IWordsColoring>($"doesn't have coloring with name {name}\n" +
+                return new Result<IWordsColoring>($"doesn't have coloring with name \"{name}\"\n" +
                     $"List of coloring names:\n{string.Join('\n', coloringNames)}");
             }
             return new Result<IWordsColoring>(null, colorings[name]);
