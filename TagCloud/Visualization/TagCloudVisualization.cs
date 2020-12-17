@@ -17,10 +17,10 @@ namespace TagCloud.Visualization
             {
                 var color = info.GetColor(location.word, location.location, cloud);
                 var pen = new Pen(color);
-                graphics.DrawRectangle(pen, ShiftRectangle(location.location));
-                graphics.DrawString(location.word, info.GetFont(location.location.Height), 
-                    info.GetSolidBrush(location.word, location.location, cloud), 
-                    ShiftRectangle(location.location));
+                var r = ShiftRectangle(location.location);
+                graphics.DrawRectangle(pen, r);
+                graphics.DrawString(location.word, info.GetFont((int)(r.Height * 0.75)),
+                    info.GetSolidBrush(location.word, location.location, cloud), r);
             }
             bitmap.Save(path);
 
