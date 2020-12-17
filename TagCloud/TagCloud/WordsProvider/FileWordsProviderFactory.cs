@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using TagCloud.ErrorHandling;
-using TagCloud.WordsProvider;
 
-namespace TagCloud.ConsoleAppHelper
+namespace TagCloud.WordsProvider
 {
     public static class FileWordsProviderFactory
     {
@@ -12,10 +11,10 @@ namespace TagCloud.ConsoleAppHelper
             switch (extension)
             {
                 case ".txt":
-                    return Result.Of<IWordsProvider>(() => new TxtWordsProvider(filePath));
+                    return TxtWordsProvider.Create(filePath);
                 case ".doc":
                 case ".docx":
-                    return Result.Of<IWordsProvider>(() => new MicrosoftWordWordsProvider(filePath));
+                    return MicrosoftWordWordsProvider.Create(filePath);
                 default:
                     return Result.Fail<IWordsProvider>($"Extension {extension} is not supported");
             }

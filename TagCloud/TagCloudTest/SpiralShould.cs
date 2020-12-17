@@ -6,7 +6,7 @@ using TagCloud.Curves;
 namespace TagCloudTest
 {
     [TestFixture]
-    public class SpiralTests
+    public class SpiralShould
     {
         [SetUp]
         public void SetUp()
@@ -17,7 +17,7 @@ namespace TagCloudTest
         private ArchimedeanSpiral curve;
 
         [Test]
-        public void SpiralStartsAtCenter()
+        public void StartAtCenter()
         {
             var startingPoint = new Point(1, 5);
             var shiftedSpiral = new ArchimedeanSpiral(startingPoint);
@@ -26,7 +26,7 @@ namespace TagCloudTest
         }
 
         [Test]
-        public void DistanceBetween2PointsAfterFullSpin_ShouldIncrease()
+        public void IncreaseDistanceBetween2PointsAfterFullSpin()
         {
             curve.Next();
             var point1 = curve.CurrentPoint;

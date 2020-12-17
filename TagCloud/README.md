@@ -23,3 +23,6 @@ b - blue
 y - yellow  
 p - purple  
 По умолчанию rgb
+
+__Пример запуска__  
+./TagCloud.exe -w 2400 -h 2000 -i "../../../../words.txt" -o "../../../../Examples/test1.png" -c ry

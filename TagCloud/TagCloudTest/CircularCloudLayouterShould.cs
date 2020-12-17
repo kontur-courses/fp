@@ -32,8 +32,8 @@ namespace TagCloudTest
                 return;
             var fileName = $"{TestContext.CurrentContext.Test.Name}_Failed.jpg";
             var path = $"../../../FailedTests/{fileName}";
-            var visualizer = new TagCloudVisualizer(tagCloudWithCenterInZero);
-            var image = visualizer.CreateBitMap(1920, 1080,
+            var visualizer = new TagCloudTagCloudVisualizer(tagCloudWithCenterInZero);
+            var image = visualizer.CreateTagCloudBitMap(1920, 1080,
                 new[] {Color.Blue, Color.Aqua},
                 "Times New Roman");
             image.GetValueOrThrow().Save(path);

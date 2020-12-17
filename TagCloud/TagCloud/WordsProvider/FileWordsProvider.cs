@@ -18,6 +18,11 @@ namespace TagCloud.WordsProvider
 
         public abstract Result<IEnumerable<string>> GetWords();
 
+        protected string IncorrectFileExceptionMessage()
+        {
+            return $"Incorrect file {FilePath}";
+        }
+
         protected bool CheckFile(string filePath)
         {
             return File.Exists(filePath) &&

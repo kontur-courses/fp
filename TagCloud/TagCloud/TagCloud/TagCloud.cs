@@ -10,7 +10,7 @@ namespace TagCloud
 {
     public abstract class TagCloud : ITagCloud
     {
-        public TagCloud()
+        protected TagCloud()
         {
             WordRectangles = new List<WordRectangle>();
         }

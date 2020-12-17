@@ -13,6 +13,7 @@
         <AssemblyName>TagCloudTest</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,7 +59,7 @@
         <Compile Include="CircularCloudLayouterShould.cs" />
         <Compile Include="ColorParserShould.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="SpiralTests.cs" />
+        <Compile Include="SpiralShould.cs" />
         <Compile Include="TagCloudVisualizerShould.cs" />
         <Compile Include="WordsFilterShould.cs" />
     </ItemGroup>

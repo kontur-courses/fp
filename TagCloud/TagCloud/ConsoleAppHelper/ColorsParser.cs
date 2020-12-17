@@ -6,7 +6,7 @@ namespace TagCloud.ConsoleAppHelper
 {
     public static class ColorsParser
     {
-        public static Dictionary<char, Color> colors = new Dictionary<char, Color>
+        private static readonly Dictionary<char, Color> colors = new Dictionary<char, Color>
         {
             {'r', Color.Red},
             {'g', Color.Green},

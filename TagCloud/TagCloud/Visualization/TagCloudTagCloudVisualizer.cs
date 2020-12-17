@@ -5,37 +5,36 @@ using TagCloud.ErrorHandling;
 
 namespace TagCloud.Visualization
 {
-    public class TagCloudVisualizer : IVisualizer
+    public class TagCloudTagCloudVisualizer : ITagCloudVisualizer
     {
         private readonly ITagCloud tagCloud;
 
-        public TagCloudVisualizer(ITagCloud tagCloud)
+        public TagCloudTagCloudVisualizer(ITagCloud tagCloud)
         {
             this.tagCloud = tagCloud;
         }
 
-        public Result<Bitmap> CreateBitMap(int width, int height, Color[] colors, string fontFamily)
+        public Result<Bitmap> CreateTagCloudBitMap(int width, int height, Color[] colors, string fontFamily)
         {
             if (tagCloud.WordRectangles.Count == 0)
                 return new Bitmap(width, height);
             if (!CheckCorrectnessOfInput(width, height, colors, fontFamily, out var error))
                 return Result.Fail<Bitmap>(error);
             var bitMap = new Bitmap(width, height);
-            var graphics = Graphics.FromImage(bitMap);
+            using var graphics = Graphics.FromImage(bitMap);
             graphics.Clear(Color.Black);
-            var colorNumber = 0;
-
+            using var cycledColors = colors.Cycle().GetEnumerator();
+            cycledColors.MoveNext();
             foreach (var wordRectangle in tagCloud.WordRectangles)
             {
-                var color = colors[colorNumber];
+                var color = cycledColors.Current;
                 var word = wordRectangle.Word;
                 var rectangle = wordRectangle.Rectangle;
                 var font = GetBiggestFont(wordRectangle, fontFamily, graphics);
                 graphics.DrawString(word, font, new SolidBrush(color), new PointF(rectangle.Left, rectangle.Y));
                 graphics.DrawPolygon(new Pen(color), RectangleToPointFArray(rectangle));
 
-                colorNumber++;
-                colorNumber %= colors.Length;
+                cycledColors.MoveNext();
             }
 
             return bitMap;
@@ -60,6 +59,12 @@ namespace TagCloud.Visualization
             if (!installedFonts.Contains(fontFamily))
             {
                 error = $"Font {fontFamily} is not supported";
+                return false;
+            }
+
+            if (colors == null || colors.Length == 0)
+            {
+                error = "Colors are not specified";
                 return false;
             }
 

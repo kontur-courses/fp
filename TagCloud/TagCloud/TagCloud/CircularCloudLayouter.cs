@@ -29,13 +29,17 @@ namespace TagCloud
             {
                 var currentPoint = curve.CurrentPoint;
                 var possibleRectangle = new Rectangle(currentPoint, rectangleSize);
-                var canFit = WordRectangles.All(rect => !rect.Rectangle.IntersectsWith(possibleRectangle));
                 curve.Next();
-                if (!canFit) continue;
+                if (!CanFit(possibleRectangle)) continue;
                 var wordRectangle = new WordRectangle(possibleRectangle, word);
                 WordRectangles.Add(wordRectangle);
                 return wordRectangle;
             }
+        }
+
+        private bool CanFit(Rectangle rectangle)
+        {
+            return WordRectangles.All(rect => !rect.Rectangle.IntersectsWith(rectangle));
         }
     }
 }

@@ -25,25 +25,44 @@ namespace TagCloudTest
         [SetUp]
         public void SetUp()
         {
-            visualizer = new TagCloudVisualizer(tagCloud);
+            tagCloudVisualizer = new TagCloudTagCloudVisualizer(tagCloud);
         }
 
-        private IVisualizer visualizer;
+        private ITagCloudVisualizer tagCloudVisualizer;
         private ITagCloud tagCloud;
-        private const string font = "Times New Roman";
+        private const string Font = "Times New Roman";
         private readonly Color[] colors = {Color.Aqua};
         private readonly Point tagCloudCenter = new Point(1920 / 2, 1080 / 2);
 
         [Test]
         public void ReturnError_WhenTagCloudDoesNotFitScreen()
         {
-            visualizer.CreateBitMap(100, 100, colors, font).IsSuccess.Should().BeFalse();
+            var bitmap = tagCloudVisualizer.CreateTagCloudBitMap(100, 100, colors, Font);
+            bitmap.IsSuccess.Should().BeFalse();
+            bitmap.Error.Should().StartWithEquivalent("Tag cloud is too large for that resolution.");
         }
 
         [Test]
         public void ReturnError_WhenFontIsIncorrect()
         {
-            visualizer.CreateBitMap(5000, 5000, colors, "asdas").IsSuccess.Should().BeFalse();
+            var bitmap = tagCloudVisualizer.CreateTagCloudBitMap(5000, 5000, colors, "asdas");
+            bitmap.IsSuccess.Should().BeFalse();
+            bitmap.Error.Should().StartWithEquivalent("font");
+        }
+
+        [Test]
+        public void ReturnError_WhenColorsAreEmpty()
+        {
+            var bitmap = tagCloudVisualizer.CreateTagCloudBitMap(5000, 5000, new Color[0], Font);
+            bitmap.IsSuccess.Should().BeFalse();
+            bitmap.Error.Should().StartWithEquivalent("Colors are not specified");
+        }
+
+        [Test]
+        public void WorkOnCorrectInput()
+        {
+            var bitmap = tagCloudVisualizer.CreateTagCloudBitMap(5000, 5000, colors, Font);
+            bitmap.IsSuccess.Should().BeTrue();
         }
     }
 }
