@@ -12,27 +12,29 @@ namespace TagsCloud.Core
     {
         private readonly IReaderFactory readerFactory;
         private readonly TextAnalyzer analyzer;
+        private readonly PathSettings pathSettings;
 
-        public TagsHelper(IReaderFactory readerFactory, TextAnalyzer analyzer)
+        public TagsHelper(IReaderFactory readerFactory, TextAnalyzer analyzer, PathSettings pathSettings)
         {
             this.readerFactory = readerFactory;
             this.analyzer = analyzer;
+            this.pathSettings = pathSettings;
         }
 
-        public Result<List<(string, int)>> GetWords(string pathToFile, string pathToBoringWords)
+        public Result<List<(string, int)>> GetWords()
         {
-            return GetTextFromFile(pathToFile)
+            return GetTextFromFile(pathSettings.PathToText)
                 .Then(words => words.Select(x => x.ToLower()))
-                .Then(words => ExcludeBoringWords(words, pathToBoringWords))
+                .Then(ExcludeBoringWords)
                 .Then(words => analyzer.GetWordByFrequency(words,
                 x => x.OrderByDescending(y => y.Value)
                     .ThenByDescending(y => y.Key.Length)
                     .ThenBy(y => y.Key, StringComparer.Ordinal)));
         }
 
-        private Result<List<string>> ExcludeBoringWords(IEnumerable<string> text, string pathToBoringWords)
+        private Result<List<string>> ExcludeBoringWords(IEnumerable<string> text)
         {
-            return GetTextFromFile(pathToBoringWords)
+            return GetTextFromFile(pathSettings.PathToBoringWords)
                 .Then(words => new HashSet<string>(words))
                 .Then(words => text.Where(x => !words.Contains(x)).ToList());
         }
@@ -44,24 +46,21 @@ namespace TagsCloud.Core
                 .Then(x => x.ReadWords(document));
         }
 
-        public List<Rectangle> GetRectangles(ICircularCloudLayouter cloud,
-            List<(string, int)> words, Dictionary<int, Font> newFonts, Font font)
+        public Result<Dictionary<int, Font>> CreateFonts(List<(string, int)> words, Font font)
         {
-            var rectangles = new List<Rectangle>();
-            foreach (var (word, fontSize) in words)
-            {
-                if (!newFonts.TryGetValue(fontSize, out var newFont))
-                {
-                    newFont = new Font(font.FontFamily, (int) (font.Size * Math.Log(fontSize + 1)), font.Style);
-                    newFonts[fontSize] = newFont;
-                }
+            return Result.Of(() => words.Select(x => x.Item2))
+                .Then(frequency => frequency.GroupBy(x => x))
+                .Then(groups => groups.ToDictionary(x => x.Key, 
+                    x => new Font(font.FontFamily, (int) (font.Size * Math.Log(x.Key + 1)), font.Style)));
+        }
 
-                var rect = cloud
-                    .PutNextRectangle(new Size((int)newFont.Size * word.Length, newFont.Height))
-                    .GetValueOrThrow();
-                rectangles.Add(rect);
-            }
-            return rectangles;
+        public Result<List<Result<Rectangle>>> GetRectangles(ICircularCloudLayouter cloud, 
+            List<(string, int)> words, DisposableDictionary<int, Font> fonts)
+        {
+            return words
+                .Select(x => cloud
+                    .PutNextRectangle(new Size((int) fonts[x.Item2].Size * x.Item1.Length, fonts[x.Item2].Height)))
+                .ToList();
         }
     }
 }
