@@ -70,25 +70,35 @@ namespace TagsCloudContainer
                         g.Sum(gg => gg.count))));
         }
 
-        protected string PreprocessWord(string word)
+        protected Result<string> PreprocessWord(string word)
         {
+            var wordResult = word.AsResult();
             foreach (var preprocessingFuncion in PreprocessingFuncions)
             {
-                word = preprocessingFuncion(word);
-                if (word == null) return null;
+                var result = wordResult;
+                wordResult = Result.Of(() => preprocessingFuncion(result.Value));
+                if (!wordResult.IsSuccess) return wordResult.RefineError("Не удалось преобразовать слово");
+                if (wordResult.Value == null) return null;
             }
 
-            return word;
+            return wordResult;
         }
 
-        protected IEnumerable<(string word, int count)> PreprocessWords(IEnumerable<(string word, int count)> words)
+        protected Result<IEnumerable<(string word, int count)>> PreprocessWords(IEnumerable<(string word, int count)> words)
         {
-            return words
+            string error = null;
+
+            var result = words
                 .Select(s => (word: PreprocessWord(s.word), s.count))
-                .Where(w => w.word != null)
-                .GroupBy(w => w.word)
+                .TakeWhile(w => (error = w.word.Error) == null)
+                .Where(w => w.word.Value != null)
+                .ToArray()
+                .GroupBy(w => w.word.Value)
                 .Select(g => (g.Key,
-                    g.Sum(gg => gg.count)));
+                    g.Sum(gg => gg.count)))
+                .AsResult();
+
+            return error == null ? result : Result.Fail<IEnumerable<(string Key, int)>>(error);
         }
     }
 }
