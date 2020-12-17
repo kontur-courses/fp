@@ -15,16 +15,6 @@ namespace TagCloudTest
     [TestFixture]
     public class CircularCloudLayouterShould
     {
-        [SetUp]
-        public void SetUp()
-        {
-            spiral = new ArchimedeanSpiral(new Point(0, 0));
-            wordsProvider = new CircularWordsProvider();
-            wordsFilter = new WordsFilter().Normalize();
-            tagCloudWithCenterInZero =
-                new CircularCloudLayouter(spiral, wordsProvider, wordsFilter);
-        }
-
         [TearDown]
         public void TearDown()
         {
@@ -32,45 +22,36 @@ namespace TagCloudTest
                 return;
             var fileName = $"{TestContext.CurrentContext.Test.Name}_Failed.jpg";
             var path = $"../../../FailedTests/{fileName}";
-            var visualizer = new TagCloudTagCloudVisualizer(tagCloudWithCenterInZero);
+            var visualizer = new TagCloudTagCloudVisualizer(GetDefaultTagCloud());
             var image = visualizer.CreateTagCloudBitMap(1920, 1080,
                 new[] {Color.Blue, Color.Aqua},
                 "Times New Roman");
             image.GetValueOrThrow().Save(path);
         }
 
-        private ITagCloud tagCloudWithCenterInZero;
-        private ICurve spiral;
-        private readonly Random rnd = new Random();
-        private IWordsProvider wordsProvider;
-        private IWordsFilter wordsFilter;
-
-        private Size GetRandomSize()
-        {
-            return new Size(rnd.Next() % 100 + 1, rnd.Next() % 100 + 1);
-        }
-
         [Test]
         public void PutNextRectangle_DoesntThrow()
         {
-            Assert.DoesNotThrow(() => tagCloudWithCenterInZero.PutNextWord("abc", new Size(10, 10)));
+            Assert.DoesNotThrow(() => GetDefaultTagCloud().PutNextWord("abc", new Size(10, 10)));
         }
 
         [Test]
         public void PutNextRectangle_PutsAllRectangles()
         {
             var expectedRectanglesCount = 15;
+            var tagCloud = GetDefaultTagCloud();
             for (var i = 0; i < expectedRectanglesCount; i++)
-                tagCloudWithCenterInZero.PutNextWord("abc", GetRandomSize());
+                tagCloud.PutNextWord("abc", GetRandomSize());
 
-            tagCloudWithCenterInZero.WordRectangles.Should().HaveCount(expectedRectanglesCount);
+            tagCloud.WordRectangles.Should().HaveCount(expectedRectanglesCount);
         }
 
         [Test]
         public void PutNextRectangle_PutsFirstRectangleInCenter()
         {
             var center = new Point(10, 18);
-            var shiftedTagCloud = new CircularCloudLayouter(new ArchimedeanSpiral(center), wordsProvider, wordsFilter);
+            var shiftedTagCloud = new CircularCloudLayouter(new ArchimedeanSpiral(center),
+                GetDefaultWordsProvider(), GetDefaultWordsFilter());
             shiftedTagCloud.PutNextWord("dsadsa", new Size(10, 5));
 
             shiftedTagCloud.WordRectangles[0].Rectangle.Location.Should().Be(center);
@@ -79,11 +60,12 @@ namespace TagCloudTest
         [Test]
         public void Rectangles_ShouldNotIntersect()
         {
+            var tagCloud = GetDefaultTagCloud();
             for (var i = 0; i < 100; i++)
-                tagCloudWithCenterInZero.PutNextWord("dadas", GetRandomSize());
+                tagCloud.PutNextWord("dadas", GetRandomSize());
 
-            foreach (var wordRectangle in tagCloudWithCenterInZero.WordRectangles)
-                tagCloudWithCenterInZero.WordRectangles.All(
+            foreach (var wordRectangle in tagCloud.WordRectangles)
+                tagCloud.WordRectangles.All(
                         other => other.Equals(wordRectangle)
                                  || !other.Rectangle.IntersectsWith(wordRectangle.Rectangle))
                     .Should().BeTrue();
@@ -92,10 +74,12 @@ namespace TagCloudTest
         [Test]
         public void ContainUniqueWords()
         {
-            tagCloudWithCenterInZero.GenerateTagCloud();
+            var tagCloud = GetDefaultTagCloud();
+            tagCloud.GenerateTagCloud();
 
-            tagCloudWithCenterInZero.WordRectangles.Select(wordRectangle => wordRectangle.Word).Should()
-                .BeEquivalentTo(wordsFilter.Apply(wordsProvider.GetWords().GetValueOrThrow().ToHashSet()));
+            tagCloud.WordRectangles.Select(wordRectangle => wordRectangle.Word).Should()
+                .BeEquivalentTo(GetDefaultWordsFilter()
+                    .Apply(GetDefaultWordsProvider().GetWords().GetValueOrThrow().ToHashSet()));
         }
 
         [Test]
@@ -103,7 +87,32 @@ namespace TagCloudTest
         public void Put1000Rectangles_InSufficientTime()
         {
             for (var i = 0; i < 1000; i++)
-                tagCloudWithCenterInZero.PutNextWord("asda", GetRandomSize());
+                GetDefaultTagCloud().PutNextWord("asda", GetRandomSize());
+        }
+
+        private readonly Random rnd = new Random();
+
+        private Size GetRandomSize()
+        {
+            return new Size(rnd.Next() % 100 + 1, rnd.Next() % 100 + 1);
+        }
+
+        private IWordsProvider GetDefaultWordsProvider()
+        {
+            return new CircularWordsProvider();
+        }
+
+        private IWordsFilter GetDefaultWordsFilter()
+        {
+            return new WordsFilter().Normalize();
+        }
+
+        private ITagCloud GetDefaultTagCloud()
+        {
+            var spiral = new ArchimedeanSpiral(new Point(0, 0));
+            var wordsProvider = GetDefaultWordsProvider();
+            var wordsFilter = GetDefaultWordsFilter();
+            return new CircularCloudLayouter(spiral, wordsProvider, wordsFilter);
         }
     }
 }
