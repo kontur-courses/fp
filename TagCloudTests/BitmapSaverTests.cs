@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.BitmapSaver;
@@ -12,17 +11,17 @@ namespace TagCloudTests
         [Test]
         public void Save_ShouldThrow_WhenIncorrectFormat()
         {
-            Action act = () => BitmapSaver.Save(new Bitmap(100,100), "jpga");
+            BitmapSaver.Save(new Bitmap(100, 100), "jpga").IsSuccess.Should().BeFalse();
 
-            act.Should().Throw<ArgumentException>();
+
         }
 
         [Test]
         public void Save_ShouldThrow_WhenIncorrectPath()
         {
-            Action act = () => BitmapSaver.Save(new Bitmap(100, 100), "png", "blablapath");
+            BitmapSaver.Save(new Bitmap(100, 100), "png", "blablapath").IsSuccess.Should().BeFalse();
 
-            act.Should().Throw<ArgumentException>();
+            
         }
     }
 }

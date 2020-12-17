@@ -23,15 +23,15 @@ namespace TagCloudTests
 
             var result = reader.GetWordsFromFile(filePath);
 
-            result.Should().BeEquivalentTo("всем", "привет", "меня", "зовут", "данил");
+            result.GetValueOrThrow().Should().BeEquivalentTo("всем", "привет", "меня", "зовут", "данил");
         }
 
         [Test]
         public void GetWordsFromFile_ShouldThrow_WhenFileDoesNotExists()
         {
-            Action act = () => reader.GetWordsFromFile("bla bla file");
+            reader.GetWordsFromFile("bla bla file").IsSuccess.Should().BeFalse();
 
-            act.Should().Throw<ArgumentException>();
+            
         }
     }
 }
