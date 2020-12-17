@@ -29,40 +29,64 @@ namespace TagsCloud.Visualization
             this.tagsHelper = tagsHelper;
         }
 
-        public void Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
+        public Result<None> Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
         {
-            using (var newFonts = new DisposableDictionary<int, Font>(fontSettings.Font
-                .Then(font => tagsHelper.CreateFonts(words, font))
-                .GetValueOrThrow()))
-            {
-                var imageSize = imageHolder.GetImageSize().GetValueOrThrow();
-                var rectangles = tagsHelper.GetRectangles(cloud, words, newFonts)
-                    .Then(x => x.Select(rect => rect.GetValueOrThrow()).ToList())
-                    .GetValueOrThrow();
-
-                using (var graphics = imageHolder.StartDrawing().GetValueOrThrow())
+            return imageHolder.StartDrawing()
+                .Then(PaintBackground)
+                .Then(graphics =>
                 {
-                    if (!RectanglesFitIntoSize(rectangles, imageSize))
-                        Result.Fail<Size>("cloud does not fit into image size").GetValueOrThrow();
-
-                    using (var brush = new SolidBrush(palette.BackgroundColor))
-                        graphics.FillRectangle(brush, 0, 0, imageSize.Width, imageSize.Height);
-
-                    for (var i = 0; i < rectangles.Count; ++i)
-                    {
-                        var drawFormat = new StringFormat
+                    return fontSettings.Font
+                        .Then(font => new DisposableDictionary<int, Font>(tagsHelper.CreateFonts(words, font)))
+                        .Then(newFonts =>
                         {
-                            Alignment = StringAlignment.Center,
-                            LineAlignment = StringAlignment.Center
-                        };
-                        graphics.DrawRectangle(new Pen(Color.White), rectangles[i]);
-
-                        using (var brush = new SolidBrush(GetColor(words[i].Item1[0])))
-                            graphics.DrawString(words[i].Item1, newFonts[words[i].Item2], brush, rectangles[i], drawFormat);
-                    }
-                }
-            }
+                            var g = tagsHelper.GetRectangles(cloud, words, newFonts)
+                                .Then(x => x.Select(rect => rect.GetValueOrThrow()).ToList())
+                                .Then(RectanglesFitIntoSize)
+                                .Then(x => PaintRectangles(graphics, x))
+                                .Then(x => PaintWords(graphics, newFonts, x, words));
+                            newFonts.Dispose();
+                            return g;
+                        });
+                })
+                .Then(graphics => graphics.Dispose());
         }
+
+        private Result<Graphics> PaintBackground(Graphics graphics)
+        {
+            return imageHolder.GetImageSize()
+                .Then(size =>
+                {
+                    using (var brush = new SolidBrush(palette.BackgroundColor))
+                        graphics.FillRectangle(brush, 0, 0, size.Width, size.Height);
+                    return graphics;
+                });
+        }
+
+        private Result<List<Rectangle>> PaintRectangles(Graphics graphics, List<Rectangle> rectangles)
+        {
+            foreach (var rect in rectangles)
+                graphics.DrawRectangle(new Pen(Color.White), rect);
+            return rectangles;
+        }
+
+        private Result<Graphics> PaintWords(Graphics graphics, DisposableDictionary<int, Font> newFonts,
+            List<Rectangle> rectangles, List<(string, int)> words)
+        {
+            var drawFormat = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            for (var i = 0; i < rectangles.Count; ++i)
+            {
+                using (var brush = new SolidBrush(GetColor(words[i].Item1[0])))
+                    graphics.DrawString(words[i].Item1, newFonts[words[i].Item2], brush, rectangles[i], drawFormat);
+            }
+
+            return graphics;
+        }
+
 
         private Color GetColor(char letter)
         {
@@ -80,17 +104,25 @@ namespace TagsCloud.Visualization
             }
         }
 
-        private bool RectanglesFitIntoSize(List<Rectangle> rectangles, Size size)
+        private Result<List<Rectangle>> RectanglesFitIntoSize(List<Rectangle> rectangles)
         {
-            var maxRight = rectangles.Max(x => x.Right);
-            var minLeft = rectangles.Min(x => x.Left);
-            var maxBottom = rectangles.Max(x => x.Bottom);
-            var minTop = rectangles.Min(x => x.Top);
+            return imageHolder.GetImageSize()
+                .Then(size =>
+                {
+                    return Validate(rectangles,
+                        rect => rect.Max(x => x.Right) < size.Width
+                                && rect.Min(x => x.Left) > 0
+                                && rect.Max(x => x.Bottom) < size.Height
+                                && rect.Min(x => x.Top) > 0,
+                        "cloud does not fit into image size");
+                });
+        }
 
-            return maxRight < size.Width
-                   && minLeft > 0
-                   && maxBottom < size.Height
-                   && minTop > 0;
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
+        {
+            return predicate(obj)
+                ? Result.Ok(obj)
+                : Result.Fail<T>(errorMessage);
         }
     }
 }

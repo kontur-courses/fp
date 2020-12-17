@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using TagsCloud.Common;
 using TagsCloud.Core;
+using TagsCloud.ResultPattern;
 using TagsCloud.Visualization;
 
 namespace TagsCloud.ClientGUI
@@ -22,7 +23,10 @@ namespace TagsCloud.ClientGUI
 
         public void Paint(ICircularCloudLayouter cloud)
         {
-            visualizer.Paint(cloud, tagsHelper.GetWords().GetValueOrThrow());
+            tagsHelper.GetWords()
+                .Then(words => visualizer.Paint(cloud, words))
+                .GetValueOrThrow();
+
             PictureBox.Refresh();
             Application.DoEvents();
         }

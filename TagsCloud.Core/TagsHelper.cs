@@ -46,12 +46,13 @@ namespace TagsCloud.Core
                 .Then(x => x.ReadWords(document));
         }
 
-        public Result<Dictionary<int, Font>> CreateFonts(List<(string, int)> words, Font font)
+        public Dictionary<int, Font> CreateFonts(List<(string, int)> words, Font font)
         {
-            return Result.Of(() => words.Select(x => x.Item2))
-                .Then(frequency => frequency.GroupBy(x => x))
-                .Then(groups => groups.ToDictionary(x => x.Key, 
-                    x => new Font(font.FontFamily, (int) (font.Size * Math.Log(x.Key + 1)), font.Style)));
+            return words
+                .Select(x => x.Item2)
+                .GroupBy(x => x)
+                .ToDictionary(x => x.Key,
+                    x => new Font(font.FontFamily, (int) (font.Size * Math.Log(x.Key + 1)), font.Style));
         }
 
         public Result<List<Result<Rectangle>>> GetRectangles(ICircularCloudLayouter cloud, 
