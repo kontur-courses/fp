@@ -12,7 +12,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\fp\FileSenderRailway\FileSenderRailway.csproj" />
+    <ProjectReference Include="..\FileSenderRailway\FileSenderRailway.csproj" />
   </ItemGroup>
   
 </Project>
