@@ -4,6 +4,6 @@ namespace TagsCloudContainer
 {
     public interface IWordsSource
     {
-        IEnumerable<(string word, int count)> GetWords();
+        Result<IEnumerable<(string word, int count)>> GetWords();
     }
 }

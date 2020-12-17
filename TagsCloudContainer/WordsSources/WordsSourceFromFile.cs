@@ -12,7 +12,7 @@ namespace TagsCloudContainer
             FileName = fileName;
         }
 
-        public IEnumerable<(string word, int count)> GetWords()
+        public Result<IEnumerable<(string word, int count)>> GetWords()
             => new WordsSourceFromText(File.ReadAllText(FileName)).GetWords();
     }
 }

@@ -13,10 +13,10 @@ namespace TagsCloudContainer
             Text = text;
         }
 
-        public IEnumerable<(string word, int count)> GetWords()
+        public Result<IEnumerable<(string word, int count)>> GetWords()
         {
             var words = Regex.Matches(Text, @"\b\w+\b").Cast<Match>().Select(m => m.Value);
-            return words.GroupBy(w => w).Select(g => (g.Key, g.Count()));
+            return words.GroupBy(w => w).Select(g => (g.Key, g.Count())).AsResult();
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TagsCloudContainer
 
         public virtual Result<None> Render()
         {
-            return Result.Of(GetWords)
+            return GetWords()
                 .Then(PreprocessWords)
                 .Then(Enumerable.ToArray)
                 .Then(words => words.Select(word => new LayoutedWord(word.word, word.count)))
@@ -58,13 +58,16 @@ namespace TagsCloudContainer
                 .Then(Renderer.Render);
         }
 
-        protected IEnumerable<(string word, int count)> GetWords()
+        protected Result<IEnumerable<(string word, int count)>> GetWords()
         {
             return Sources
-                .SelectMany(s => s.GetWords())
-                .GroupBy(w => w.word)
-                .Select(g => (g.Key,
-                    g.Sum(gg => gg.count)));
+                .Select(s => s.GetWords())
+                .EnumerateOrFail()
+                .Then(words => words
+                    .SelectMany(word => word)
+                    .GroupBy(w => w.word)
+                    .Select(g => (g.Key,
+                        g.Sum(gg => gg.count))));
         }
 
         protected string PreprocessWord(string word)
