@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using NHunspell;
 using NUnit.Framework;
 using TagsCloud.Core;
 
@@ -10,28 +9,17 @@ namespace TagsCloud.Tests
 {
     internal class TextAnalyzer_Tests
     {
-        private static readonly string PathToDictionary = "Texts/ru_RU.dic";
-        private static readonly string PathToAffix = "Texts/ru_RU.aff";
-        private static readonly Hunspell Hunspell = new Hunspell(PathToAffix, PathToDictionary);
-
-        [Test]
-        public void GetWordByFrequency_CorrectFrequencyWithoutSorting()
-        {
-            var text = "русское\nрусского\nрусский\nбани\nконь\nконь";
-            var expected = new List<(string, int)>
+        private static readonly PathSettings PathSettings
+            = new PathSettings
             {
-                ("русский", 3),
-                ("баня", 1),
-                ("конь", 2)
+                PathToAffix = "Texts/ru_RU.aff", 
+                PathToDictionary = "Texts/ru_RU.dic"
             };
 
-            var actual = TextAnalyzer.GetWordByFrequency(text.Split('\n'), new HashSet<string>(), Hunspell, x => x);
-
-            actual.Should().BeEquivalentTo(expected);
-        }
+        private readonly TextAnalyzer textAnalyzer = new TextAnalyzer(new HunspellFactory(), PathSettings);
 
         [Test]
-        public void GetWordByFrequency_CorrectFrequencyWithSorting()
+        public void GetWordByFrequency_CorrectFrequencyWithSortingByDescending()
         {
             var text = "баян\nрусское\nрусский\nрусского\nбани\nконь\nконя\nбанный";
             var expected = new List<(string, int)>
@@ -43,49 +31,35 @@ namespace TagsCloud.Tests
                 ("баян", 1)
             };
 
-            var actual = TextAnalyzer.GetWordByFrequency(
-                text.Split('\n'),
-                new HashSet<string>(),
-                Hunspell,
+            var actual = textAnalyzer.GetWordByFrequency(
+                text.Split('\n').ToList(),
                 x => x.OrderByDescending(y => y.Value)
                     .ThenByDescending(y => y.Key.Length)
-                    .ThenBy(y => y.Key, StringComparer.Ordinal));
+                    .ThenBy(y => y.Key, StringComparer.Ordinal))
+                .GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }
 
         [Test]
-        public void GetWordByFrequency_CorrectFrequencyWithoutBoringWords()
+        public void GetWordByFrequency_CorrectFrequencyWithSortingByAscending()
         {
-            var text = "баян\nи\nа\nно\nбаян\nда\nя";
+            var text = "баян\nрусское\nрусский\nрусского\nбани\nконь\nконя\nбанный";
             var expected = new List<(string, int)>
             {
-                ("баян", 2)
-            };
-
-            var actual = TextAnalyzer.GetWordByFrequency(
-                text.Split('\n'),
-                new HashSet<string> {"и", "а", "но", "да", "я"},
-                Hunspell,
-                x => x.OrderByDescending(y => y.Value)
-                    .ThenByDescending(y => y.Key.Length)
-                    .ThenBy(y => y.Key, StringComparer.Ordinal));
-
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void GetWordByFrequency_CorrectFrequencyAllWordsInLowerCase()
-        {
-            var text = "РУССКОЕ\nРусский\nРуССкогО\nбани\nКОНЬ\nконя";
-            var expected = new List<(string, int)>
-            {
-                ("русский", 3),
                 ("баня", 1),
-                ("конь", 2)
+                ("баян", 1),
+                ("банный", 1),
+                ("конь", 2),
+                ("русский", 3)
             };
 
-            var actual = TextAnalyzer.GetWordByFrequency(text.Split('\n'), new HashSet<string>(), Hunspell, x => x);
+            var actual = textAnalyzer.GetWordByFrequency(
+                    text.Split('\n').ToList(),
+                    x => x.OrderBy(y => y.Value)
+                        .ThenByDescending(y => y.Key.Length)
+                        .ThenBy(y => y.Key, StringComparer.Ordinal))
+                .GetValueOrThrow();
 
             actual.Should().BeEquivalentTo(expected);
         }

@@ -34,12 +34,16 @@ namespace TagsCloud.Tests
         private IImageHolder imageHolder;
 
         private ISpiral spiral;
+        private SpiralSettings spiralSettings;
+        private PathSettings pathSettings;
         private TagsHelper tagsHelper;
 
         [SetUp]
         public void SetUp()
         {
             image = new Bitmap(800, 800);
+            spiralSettings = new SpiralSettings();
+            pathSettings = new PathSettings();
             fontSettings = new FontSettings {FontFamilyName = "Arial", FontSize = 20};
 
             imageHolder = A.Fake<IImageHolder>();
@@ -48,9 +52,9 @@ namespace TagsCloud.Tests
             A.CallTo(() => imageHolder.StartDrawing())
                 .Returns(Graphics.FromImage(image));
 
-            spiral = new ArchimedeanSpiral(new Point(image.Width / 2, image.Height / 2), 0.005);
+            spiral = new ArchimedeanSpiral(new Point(image.Width / 2, image.Height / 2), spiralSettings);
             cloud = new CircularCloudLayouter(spiral);
-            tagsHelper = new TagsHelper(new ReaderFactory());
+            tagsHelper = new TagsHelper(new ReaderFactory(), new TextAnalyzer(new HunspellFactory(), pathSettings), pathSettings);
             cloudVisualizer = new CloudVisualization(imageHolder, new Palette(), 
                 fontSettings, new ColorAlgorithm(), tagsHelper);
         }
@@ -65,7 +69,7 @@ namespace TagsCloud.Tests
         public void Paint_ThrowException_WhenCloudDoesNotFitIntoImageSize()
         {
             fontSettings.FontSize = 50;
-            Assert.Throws<InvalidOperationException>(() => cloudVisualizer.Paint(cloud, words));
+            Assert.Throws<InvalidOperationException>(() => cloudVisualizer.Paint(cloud, words).GetValueOrThrow());
         }
     }
 }

@@ -32,10 +32,14 @@ namespace TagsCloud.ClientGUI
                 .InstancePerLifetimeScope();
 
             service.RegisterType<PathSettings>()
-                .WithProperty(new TypedParameter(typeof(string), Path.Join(Directory.GetCurrentDirectory(), "Texts", "SourceText2.txt")))
-                .WithProperty(new TypedParameter(typeof(string), Path.Join(Directory.GetCurrentDirectory(), "Texts", "BoringWords.txt")))
-                .WithProperty(new TypedParameter(typeof(string), Path.Join(Directory.GetCurrentDirectory(), "Texts", "ru_RU.dic")))
-                .WithProperty(new TypedParameter(typeof(string), Path.Join(Directory.GetCurrentDirectory(), "Texts", "ru_RU.aff")))
+                .WithProperty(new TypedParameter(typeof(string),
+                    Path.Join(Directory.GetCurrentDirectory(), "Texts", "SourceText2.txt")))
+                .WithProperty(new TypedParameter(typeof(string),
+                    Path.Join(Directory.GetCurrentDirectory(), "Texts", "BoringWords.txt")))
+                .WithProperty(new TypedParameter(typeof(string),
+                    Path.Join(Directory.GetCurrentDirectory(), "Texts", "ru_RU.dic")))
+                .WithProperty(new TypedParameter(typeof(string),
+                    Path.Join(Directory.GetCurrentDirectory(), "Texts", "ru_RU.aff")))
                 .InstancePerLifetimeScope();
 
             service.RegisterType<Palette>().AsSelf().InstancePerLifetimeScope();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -10,24 +9,28 @@ namespace TagsCloud.Tests
     internal class ArchimedeanSpiral_Tests
     {
         private ArchimedeanSpiral spiral;
+        private SpiralSettings spiralSettings;
 
         [SetUp]
         public void SetUp()
         {
-            spiral = new ArchimedeanSpiral(new Point(), 0.1);
+            spiralSettings = new SpiralSettings();
+            spiral = new ArchimedeanSpiral(new Point(), spiralSettings);
         }
 
         [Test]
-        public void InitializeSpiral_ThrowException_WhenNotPositiveSpiralParameter()
+        public void InitializeSpiralSettings_SetMinSpiralParameter_WhenNotPositiveSpiralParameter()
         {
-            Assert.Throws<InvalidOperationException>(() => spiral = new ArchimedeanSpiral(new Point(), -1));
+            spiralSettings = new SpiralSettings {SpiralParameter = -1};
+
+            spiralSettings.SpiralParameter.Should().Be(0.001);
         }
 
         [Test]
         public void GetNextPoint_FirstPointEqualsCenter()
         {
             var center = new Point(-1, 2);
-            spiral = new ArchimedeanSpiral(center, 0.1);
+            spiral = new ArchimedeanSpiral(center, spiralSettings);
             spiral.GetNextPoint().Should().Be(center);
         }
 

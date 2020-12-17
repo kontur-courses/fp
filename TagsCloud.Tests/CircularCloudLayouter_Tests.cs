@@ -21,21 +21,24 @@ namespace TagsCloud.Tests
         private ISpiral spiral;
         private List<Rectangle> rectangles;
         private ICircularCloudLayouter cloud;
+        private SpiralSettings spiralSettings;
 
         [SetUp]
         public void SetUp()
         {
             center = new Point(ImageWidth / 2, ImageHeight / 2);
-            spiral = new ArchimedeanSpiral(center, 0.005);
+            spiralSettings = new SpiralSettings();
+            spiral = new ArchimedeanSpiral(center, spiralSettings);
             cloud = new CircularCloudLayouter(spiral);
         }
 
         [TestCase(-1, 1, TestName = "WhenNotPositiveWidth")]
         [TestCase(1, -1, TestName = "WhenNotPositiveHeight")]
-        public void PutNextRectangle_ThrowException(int width, int height)
+        public void PutNextRectangle_RectangleWithMinSize(int width, int height)
         {
-            Assert.Throws<InvalidOperationException>(() 
-                => cloud.PutNextRectangle(new Size(width, height)).GetValueOrThrow());
+            var rect = cloud.PutNextRectangle(new Size(width, height));
+
+            rect.Size.Should().Be(new Size(1, 1));
         }
 
         [TestCase(1, TestName = "WhenAdd1Rectangle")]
@@ -43,8 +46,7 @@ namespace TagsCloud.Tests
         [TestCase(100, TestName = "WhenAdd100Rectangle")]
         public void PutNextRectangle_CorrectCountOfRectangles(int count)
         {
-            rectangles = generator.GenerateSize(count)
-                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
+            rectangles = generator.GenerateSize(count).Select(x => cloud.PutNextRectangle(x)).ToList();
 
             rectangles.Should().HaveCount(count);
         }
@@ -53,10 +55,10 @@ namespace TagsCloud.Tests
         public void PutNextRectangle_FirstRectangleOnCenter()
         {
             center = new Point(1, 2);
-            spiral = new ArchimedeanSpiral(center, 0.005);
+            spiral = new ArchimedeanSpiral(center, spiralSettings);
             cloud = new CircularCloudLayouter(spiral);
 
-            var rect = cloud.PutNextRectangle(new Size(10, 10)).GetValueOrThrow();
+            var rect = cloud.PutNextRectangle(new Size(10, 10));
             var rectCenter = new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
 
             rectCenter.Should().Be(center);
@@ -66,8 +68,7 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_RectanglesDoesNotIntersect(int count)
         {
-            rectangles = generator.GenerateSize(count)
-                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
+            rectangles = generator.GenerateSize(count).Select(x => cloud.PutNextRectangle(x)).ToList();
 
             foreach (var rect in rectangles)
                 rect.IntersectsWith(rectangles.Where(x => x != rect)).Should().BeFalse();
@@ -77,8 +78,7 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_PlacedRectanglesHasNearlyCircleShape(int count)
         {
-            rectangles = generator.GenerateSize(count)
-                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
+            rectangles = generator.GenerateSize(count).Select(x => cloud.PutNextRectangle(x)).ToList();
 
             var top = center.Y - rectangles.Min(rect => rect.Top);
             var left = center.X - rectangles.Min(rect => rect.Left);
@@ -95,8 +95,7 @@ namespace TagsCloud.Tests
         [TestCase(1000, TestName = "WhenAdd1000RandomRectangles")]
         public void PutNextRectangle_RectanglesPlacedTightly(int count)
         {
-            rectangles = generator.GenerateSize(count)
-                .Select(x => cloud.PutNextRectangle(x).GetValueOrThrow()).ToList();
+            rectangles = generator.GenerateSize(count).Select(x => cloud.PutNextRectangle(x)).ToList();
 
             var allRectanglesArea = rectangles.Select(x => x.Width * x.Height).Sum();
             var radius = rectangles.Max(x => GetDistanceFromPointToCenter(x.Location));
