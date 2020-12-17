@@ -13,6 +13,11 @@ namespace TagsCloudContainer
         }
 
         public Result<IEnumerable<(string word, int count)>> GetWords()
-            => new WordsSourceFromText(File.ReadAllText(FileName)).GetWords();
+        {
+            if (!File.Exists(FileName))
+                return Result.Fail<IEnumerable<(string WordRendererToImage, int count)>>(
+                    $"Не удаётся прочитать файл {FileName}");
+            return new WordsSourceFromText(File.ReadAllText(FileName)).GetWords();
+        }
     }
 }
