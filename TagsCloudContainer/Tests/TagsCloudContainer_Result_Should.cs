@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -35,6 +36,19 @@ namespace TagsCloudContainer
             result.IsSuccess.Should().BeFalse();
             result.Error.Should().StartWith("Не удалось преобразовать слово. ");
             result.Error.Should().Contain("!hello, ");
+        }
+
+        [Test]
+        public void Fail_WhenRectanglesPlacedOutsideImageBorders()
+        {
+            renderer.AutoSize = false;
+            renderer.Output = new Bitmap(600, 600);
+            container.AddFromText("SuperMegaVeryLongLongLongWord");
+            renderer.WithScale(((info, word) => 250));
+            var result = container.Render();
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().StartWith("Прямоугольники выходят за границы изображения");
         }
         
         [SetUp]
