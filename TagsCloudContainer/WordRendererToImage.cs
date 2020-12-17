@@ -93,13 +93,22 @@ namespace TagsCloudContainer
             }
         }
 
-        public virtual void Render(IEnumerable<LayoutedWord> words)
+        public virtual Result<None> Render(IEnumerable<LayoutedWord> words)
         {
             var renderingInfo = new RenderingInfo(this, words.ToArray());
             if (AutoSize)
                 Output = new Bitmap(
                     (int) renderingInfo.WordsBorders.Size.Width,
                     (int) renderingInfo.WordsBorders.Size.Height);
+            else
+            {
+                var borders = renderingInfo.WordsBorders;
+                var imageBorders = new RectangleF(Point.Empty, Output.Size);
+                imageBorders.Offset(Output.Width / 2f, Output.Height / 2f);
+                if (!imageBorders.Contains(borders))
+                    return Result.Fail<None>("Прямоугольники выходят за границы изображения");
+            }
+            
             foreach (var word in renderingInfo.WordsArray)
             {
                 var font = ScaledToRectangle(fontFunction(renderingInfo, word), word.Rectangle);
@@ -111,6 +120,8 @@ namespace TagsCloudContainer
 
                 Render(word, font, color, rectangle, renderingInfo);
             }
+
+            return Result.Ok();
         }
 
         protected virtual void Render(LayoutedWord word, Font font, Color color, RectangleF rectangle, RenderingInfo info)

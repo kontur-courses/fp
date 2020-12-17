@@ -5,6 +5,6 @@ namespace TagsCloudContainer
     public interface IWordRenderer
     {
         IEnumerable<LayoutedWord> SizeWords(IEnumerable<LayoutedWord> words);
-        void Render(IEnumerable<LayoutedWord> words);
+        Result<None> Render(IEnumerable<LayoutedWord> words);
     }
 }
