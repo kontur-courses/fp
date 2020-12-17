@@ -47,16 +47,15 @@ namespace TagsCloudContainer
             return this;
         }
 
-        public virtual void Render()
+        public virtual Result<None> Render()
         {
-            var words = GetWords();
-            var preprocessedWords = PreprocessWords(words).ToArray();
-            var convertedWords = preprocessedWords
-                .Select(w => new LayoutedWord(w.word, w.count));
-            var sizedWords = Renderer.SizeWords(convertedWords);
-            var layoutedWords = Layouter.LayoutWords(sizedWords);
-
-            Renderer.Render(layoutedWords);
+            return Result.Of(GetWords)
+                .Then(PreprocessWords)
+                .Then(Enumerable.ToArray)
+                .Then(words => words.Select(word => new LayoutedWord(word.word, word.count)))
+                .Then(Renderer.SizeWords)
+                .Then(Layouter.LayoutWords)
+                .Then(Renderer.Render);
         }
 
         protected IEnumerable<(string word, int count)> GetWords()
