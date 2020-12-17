@@ -83,6 +83,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Result.cs" />
         <Compile Include="TagsCloudContainer.cs" />
+        <Compile Include="Tests\TagsCloudContainer_Result_Should.cs" />
         <Compile Include="Tests\TagsCloudContainer_Should.cs" />
         <Compile Include="Tests\TextBuilder.cs" />
         <Compile Include="Tests\WordsRendererToImageDebug.cs" />
