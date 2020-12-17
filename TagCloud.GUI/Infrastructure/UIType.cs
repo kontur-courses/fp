@@ -1,4 +1,4 @@
-namespace TagCloudGraphicInterface.Infrastructure
+namespace TagCloud.GUI.Infrastructure
 {
     public enum UiType
     {

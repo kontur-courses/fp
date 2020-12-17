@@ -14,9 +14,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloud", "TagCloud\TagClo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudTests", "TagCloudTests\TagCloudTests.csproj", "{8B1265E8-97DD-4532-8A54-41339D2FB070}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudGraphicInterface", "TagCloudGraphicInterface\TagCloudGraphicInterface.csproj", "{98AC8B27-3017-4BBF-BBD5-72643F3CC349}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloud.GUI", "TagCloud.GUI\TagCloud.GUI.csproj", "{98AC8B27-3017-4BBF-BBD5-72643F3CC349}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudLineInterface", "TagCloudLineInterface\TagCloudLineInterface.csproj", "{3CE3F957-4351-46C7-A7C4-CACE02310D5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloud.CLI", "TagCloud.CLI\TagCloud.CLI.csproj", "{3CE3F957-4351-46C7-A7C4-CACE02310D5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

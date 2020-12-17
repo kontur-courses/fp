@@ -1,4 +1,4 @@
-namespace TagCloudGraphicInterface
+namespace TagCloud.GUI.Infrastructure
 {
     public enum ErrorLevel
     {

@@ -16,7 +16,7 @@ using Image = System.Drawing.Image;
 using Settings = TagCloud.Infrastructure.Settings.Settings;
 using Window = Gtk.Window;
 
-namespace TagCloudGraphicInterface.GUI
+namespace TagCloud.GUI.Infrastructure
 {
     internal class TagCloudLayouterGui : IApp
     {

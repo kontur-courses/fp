@@ -5,8 +5,9 @@ using TagCloud.App;
 using TagCloud.Infrastructure.Graphics;
 using TagCloud.Infrastructure.Settings;
 using TagCloud.Infrastructure.Settings.UISettingsManagers.Interfaces;
+using TagCloud.CLI.Infrastructure;
 
-namespace TagCloudLineInterface.CLI
+namespace TagCloud.CLI.Infrastructure
 {
     public class TagCloudLayouterCli : IApp
     {

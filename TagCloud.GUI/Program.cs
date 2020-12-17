@@ -2,11 +2,9 @@
 using Autofac.Features.Indexed;
 using TagCloud.App;
 using CommandLine;
-using TagCloud;
-using TagCloudGraphicInterface.GUI;
-using TagCloudGraphicInterface.Infrastructure;
+using TagCloud.GUI.Infrastructure;
 
-namespace TagCloudGraphicInterface
+namespace TagCloud.GUI
 {
     internal class Program
     {

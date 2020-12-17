@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using Autofac;
-using TagCloud;
 using TagCloud.App;
-using TagCloudLineInterface.CLI;
+using TagCloud.CLI.Infrastructure;
 
-namespace TagCloudLineInterface
+namespace TagCloud.CLI
 {
     internal class Program
     {

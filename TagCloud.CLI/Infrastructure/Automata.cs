@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TagCloudLineInterface.CLI
+namespace TagCloud.CLI.Infrastructure
 {
     public class Automata
     {

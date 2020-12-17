@@ -1,6 +1,6 @@
 using TagCloud.App;
 
-namespace TagCloudGraphicInterface.Infrastructure
+namespace TagCloud.GUI.Infrastructure
 {
     internal class TagCloudLayouterGui2 : IApp
     {
