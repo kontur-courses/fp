@@ -40,7 +40,6 @@ namespace TagsCloud.Visualization
                         .Then(newFonts =>
                         {
                             var g = tagsHelper.GetRectangles(cloud, words, newFonts)
-                                .Then(x => x.Select(rect => rect.GetValueOrThrow()).ToList())
                                 .Then(RectanglesFitIntoSize)
                                 .Then(x => PaintRectangles(graphics, x))
                                 .Then(x => PaintWords(graphics, newFonts, x, words));

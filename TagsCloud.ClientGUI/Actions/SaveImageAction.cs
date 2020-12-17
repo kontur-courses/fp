@@ -27,8 +27,12 @@ namespace TagsCloud.ClientGUI.Actions
                 Filter = "(*.png)|*.png|(*.jpg)|*.jpg|(*.bmp)|*.bmp"
             };
             var res = dialog.ShowDialog();
-            if (res == DialogResult.OK) 
-                imageHolder.SaveImage(dialog.FileName).GetValueOrThrow();
+            if (res != DialogResult.OK)
+                return;
+            
+            var result = imageHolder.SaveImage(dialog.FileName);
+            if (!result.IsSuccess)
+                MessageBox.Show(result.Error);
         }
     }
 }

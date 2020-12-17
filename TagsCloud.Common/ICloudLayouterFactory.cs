@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.Common
+﻿using System.Drawing;
+
+namespace TagsCloud.Common
 {
     public interface ICloudLayouterFactory
     {
-        ICircularCloudLayouter CreateCircularLayouter();
+        ICircularCloudLayouter CreateCircularLayouter(Point center);
     }
 }

@@ -21,14 +21,15 @@ namespace TagsCloud.ClientGUI
 
         public PictureBoxImageHolder PictureBox { get; }
 
-        public void Paint(ICircularCloudLayouter cloud)
+        public Result<None> Paint(ICircularCloudLayouter cloud)
         {
-            tagsHelper.GetWords()
-                .Then(words => visualizer.Paint(cloud, words))
-                .GetValueOrThrow();
+            var result = tagsHelper.GetWords()
+                .Then(words => visualizer.Paint(cloud, words));
 
             PictureBox.Refresh();
             Application.DoEvents();
+
+            return result;
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Common;
-using TagsCloud.ResultPattern;
 
 namespace TagsCloud.CloudLayouters
 {
     public class CircularCloudLayouter : ICircularCloudLayouter
     {
+        private readonly Size minRectangleSize = new Size(1, 1);
         private readonly ISpiral spiral;
         private readonly List<Rectangle> rectangles = new List<Rectangle>();
 
@@ -15,14 +15,14 @@ namespace TagsCloud.CloudLayouters
             this.spiral = spiral;
         }
 
-        public Result<Rectangle> PutNextRectangle(Size rectSize)
+        public Rectangle PutNextRectangle(Size rectSize)
         {
             if (rectSize.Width <= 0 || rectSize.Height <= 0)
-                return Result.Fail<Rectangle>("rectangle's width and height must be positive numbers");
+                rectSize = minRectangleSize;
 
             var rect = GetNextRectangle(rectSize);
             rectangles.Add(rect);
-            return rect.AsResult();
+            return rect;
         }
 
         private Rectangle GetNextRectangle(Size rectSize)

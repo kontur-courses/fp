@@ -1,4 +1,5 @@
-﻿using TagsCloud.Common;
+﻿using System.Drawing;
+using TagsCloud.Common;
 
 namespace TagsCloud.CloudLayouters
 {
@@ -11,9 +12,9 @@ namespace TagsCloud.CloudLayouters
             this.spiralFactory = spiralFactory;
         }
 
-        public ICircularCloudLayouter CreateCircularLayouter()
+        public ICircularCloudLayouter CreateCircularLayouter(Point center)
         {
-            return new CircularCloudLayouter(spiralFactory.Create());
+            return new CircularCloudLayouter(spiralFactory.Create(center));
         }
     }
 }

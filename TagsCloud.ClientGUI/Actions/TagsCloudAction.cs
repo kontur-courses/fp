@@ -1,5 +1,9 @@
-﻿using TagsCloud.ClientGUI.Infrastructure;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using TagsCloud.ClientGUI.Infrastructure;
 using TagsCloud.Common;
+using TagsCloud.ResultPattern;
+using TagsCloud.Visualization;
 
 namespace TagsCloud.ClientGUI.Actions
 {
@@ -7,11 +11,14 @@ namespace TagsCloud.ClientGUI.Actions
     {
         private readonly ICloudLayouterFactory cloudFactory;
         private readonly TagsCloudPainter tagsCloudPainter;
+        private readonly IImageHolder imageHolder;
 
-        public TagsCloudAction(TagsCloudPainter tagsCloudPainter, ICloudLayouterFactory cloudFactory)
+        public TagsCloudAction(IImageHolder imageHolder,
+            TagsCloudPainter tagsCloudPainter, ICloudLayouterFactory cloudFactory)
         {
             this.tagsCloudPainter = tagsCloudPainter;
             this.cloudFactory = cloudFactory;
+            this.imageHolder = imageHolder;
         }
 
         public string Category => "Облако тегов";
@@ -20,7 +27,12 @@ namespace TagsCloud.ClientGUI.Actions
 
         public void Perform()
         {
-            tagsCloudPainter.Paint(cloudFactory.CreateCircularLayouter());
+            var result = imageHolder.GetImageSize()
+                .Then(size => new Point(size.Width / 2, size.Height / 2))
+                .Then(center => tagsCloudPainter.Paint(cloudFactory.CreateCircularLayouter(center)));
+
+            if (!result.IsSuccess)
+                MessageBox.Show(result.Error);
         }
     }
 }

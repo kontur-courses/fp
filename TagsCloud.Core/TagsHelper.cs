@@ -55,7 +55,7 @@ namespace TagsCloud.Core
                     x => new Font(font.FontFamily, (int) (font.Size * Math.Log(x.Key + 1)), font.Style));
         }
 
-        public Result<List<Result<Rectangle>>> GetRectangles(ICircularCloudLayouter cloud, 
+        public Result<List<Rectangle>> GetRectangles(ICircularCloudLayouter cloud, 
             List<(string, int)> words, DisposableDictionary<int, Font> fonts)
         {
             return words

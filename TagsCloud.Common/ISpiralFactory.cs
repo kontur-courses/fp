@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.Common
+﻿using System.Drawing;
+
+namespace TagsCloud.Common
 {
     public interface ISpiralFactory
     {
-        ISpiral Create();
+        ISpiral Create(Point center);
     }
 }
