@@ -1,5 +1,4 @@
-﻿using System.IO;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization.TextProcessing.Readers;
 using TextReader = TagsCloudVisualization.TextProcessing.TextReader.TextReader;
@@ -22,10 +21,11 @@ namespace TagsCloudVisualizationTests.TextProcessingTests.TextReaderTests
             var result = textReader.ReadAllText("sadas");
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("File sadas does not exist");
         }
         
         [Test]
-        public void ReadAllText_Throws_WhenFileExtensionDoesNotSupport()
+        public void ReadAllText_ReturnsFailedResult_WhenFileExtensionDoesNotSupport()
         {
             var path = @"..\..\..\TestTexts\file.pdf";
 

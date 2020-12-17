@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using NUnit.Framework;
@@ -73,6 +72,7 @@ namespace TagsCloudVisualizationTests.TagCloudTests
             var result = sut.PutNextRectangle(new Size(width, height));
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("Rectangle size must be more than zero");
         }
 
         [Test]
@@ -82,6 +82,7 @@ namespace TagsCloudVisualizationTests.TagCloudTests
             var result = layouter.PutNextRectangle(new Size(2, 2));
 
             result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("Point generator cannot be null");
         }
         
         [Test]

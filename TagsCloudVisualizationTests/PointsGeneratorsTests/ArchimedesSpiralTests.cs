@@ -27,7 +27,7 @@ namespace TagsCloudVisualizationTests.PointsGeneratorsTests
         [TestCase(0.0000f)]
         [TestCase(-0.0000000f)]
         [TestCase(0.5f, 0)]
-        public void GetNextPoint_ReturnsFailedResult_IncorrectArguments(float angleStep,
+        public void GetNextPoint_Throws_IncorrectArguments(float angleStep,
             int spiralParameter = 1)
         {
             var spiralParameters = new SpiralParams(spiralParameter, angleStep);
