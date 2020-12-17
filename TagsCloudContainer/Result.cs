@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TagsCloudContainer
 {
@@ -128,6 +130,14 @@ namespace TagsCloudContainer
             string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
+        }
+
+        public static Result<IEnumerable<TInput>> EnumerateOrFail<TInput>(this IEnumerable<Result<TInput>> input)
+        {
+            string error = null;
+            input = input.TakeWhile(t => (error = t.Error) == null).ToArray();
+            if (error != null) return Fail<IEnumerable<TInput>>(error);
+            return input.Select(r => r.Value).AsResult();
         }
     }
 }
