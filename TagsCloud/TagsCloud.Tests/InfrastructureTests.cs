@@ -93,6 +93,48 @@ namespace TagsCloud.Tests
 
         }
 
+        [Test]
+        public void ImageHolder_RenderWordsFromFile_Should_Fail_WhenFileContentNotCorrect()
+        {
+            var filter = new WordsFilter(new ExcludingWordsConfigurator(new List<string>()));
+            var parser = new WordsFrequencyParser(filter);
+            var settings = new ImageSettings(1920, 1080);
+            var holder = new PictureBoxImageHolder(parser, settings, new CircularCloudLayouter(settings));
+
+            var path = Assembly.GetExecutingAssembly().Location + "testText.txt";
+            File.WriteAllText(path, GetText() + $"{Environment.NewLine} not one word");
+
+            var result = holder.RenderWordsFromFile(path);
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("Входной файл должен содержать только одно слово в строке");
+        }
+
+        [Test]
+        public void ImageHolder_RenderWordsFromFile_Should_Fail_WhenIncorrectFilePath()
+        {
+            var filter = new WordsFilter(new ExcludingWordsConfigurator(new List<string>()));
+            var parser = new WordsFrequencyParser(filter);
+            var settings = new ImageSettings(1920, 1080);
+            var holder = new PictureBoxImageHolder(parser, settings, new CircularCloudLayouter(settings));
+
+            var result = holder.RenderWordsFromFile("");
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("Запрошенный файл не найден");
+        }
+        
+        [Test]
+        public void ImageHolder_SaveImage_Should_Fail_WithIncorrectFormat()
+        {
+            var filter = new WordsFilter(new ExcludingWordsConfigurator(new List<string>()));
+            var parser = new WordsFrequencyParser(filter);
+            var settings = new ImageSettings(1920, 1080);
+            var holder = new PictureBoxImageHolder(parser, settings, new CircularCloudLayouter(settings));
+
+            var result = holder.SaveImage("C:\\");
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("Неподдерживаемое расширение файла");
+        }
+
         private string GetText()
         {
             var words = new List<string>();
