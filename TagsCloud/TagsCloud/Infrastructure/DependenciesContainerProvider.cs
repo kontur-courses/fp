@@ -17,13 +17,14 @@ namespace TagsCloud.Infrastructure
             builder.RegisterType<SpiralCloudLayouter>().AsSelf().As<ICloudLayouter>().SingleInstance();
             builder.RegisterType<CircularCloudLayouter>().AsSelf().As<ICloudLayouter>().SingleInstance();
             builder.Register(_ => imageSettings).SingleInstance();
-            builder.Register(_ => new WordsFilter(wordsToExclude)).AsSelf().As<IWordsFilter>().SingleInstance();
+            builder.Register(_ => new ExcludingWordsConfigurator(wordsToExclude)).AsSelf().SingleInstance();
+            builder.RegisterType<WordsFilter>().AsSelf().As<IWordsFilter>().SingleInstance();
             builder.RegisterType<WordsFrequencyParser>().As<IWordsFrequencyParser>();
 
             builder.RegisterType<RenderFileAction>().As<IUiAction>();
             builder.RegisterType<SaveImageAction>().As<IUiAction>();
             builder.RegisterType<ImageSettingsAction>().As<IUiAction>();
-            builder.Register(_ => new ParserSettingsAction(wordsToExclude)).As<IUiAction>().SingleInstance();
+            builder.RegisterType<ParserSettingsAction>().As<IUiAction>().SingleInstance();
             builder.RegisterType<SelectDenseLayouterAction>().As<IUiAction>();
             builder.RegisterType<SelectSpiralLayouterAction>().As<IUiAction>();
             builder.RegisterType<MainForm>().AsSelf();

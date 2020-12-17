@@ -102,13 +102,11 @@ namespace TagsCloud.Infrastructure
 
         private Result<None> ProcessFile(string fileName)
         {
+            RecreateCanvas(Settings);
             if (string.IsNullOrEmpty(previousFileName) && !string.IsNullOrEmpty(fileName) || previousFileName != fileName)
             {
                 if (previousFileName != fileName)
-                {
-                    RecreateCanvas(Settings);
                     layouter.ClearLayouter();
-                }
 
                 if (!File.Exists(fileName))
                     return Result.Fail<None>("Запрошенный файл не найден");

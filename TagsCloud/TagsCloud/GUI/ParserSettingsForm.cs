@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using TagsCloud.WordsProcessing;
 
 namespace TagsCloud.GUI
 {
     class ParserSettingsForm : Form
     {
-        public ParserSettingsForm(HashSet<string> wordsToIgnore)
+        public ParserSettingsForm(ExcludingWordsConfigurator configurator)
         {
             Text = "Настройка отбора слов";
             Size = new Size(300, 350);
@@ -18,7 +19,7 @@ namespace TagsCloud.GUI
             Shown += (sender, args) =>
             {
                 ignoredWords.Items.Clear();
-                ignoredWords.Items.AddRange(wordsToIgnore?.ToArray());
+                ignoredWords.Items.AddRange(configurator.ExcludedWords?.ToArray());
             };
             Controls.Add(ignoredWords);
 
@@ -31,10 +32,10 @@ namespace TagsCloud.GUI
                 if(string.IsNullOrEmpty(wordToExclude.Text))
                     return;
 
-                if (!wordsToIgnore.Contains(wordToExclude.Text))
+                if (!configurator.ExcludedWords.Contains(wordToExclude.Text))
                 {
                     ignoredWords.Items.Add(wordToExclude.Text.ToLower());
-                    wordsToIgnore.Add(wordToExclude.Text.ToLower());
+                    configurator.ExcludedWords.Add(wordToExclude.Text.ToLower());
                 }
                 else
                     MessageBox.Show("Данное слово уже исключено");
@@ -45,7 +46,7 @@ namespace TagsCloud.GUI
             var deleteButton = new Button {Text = "Удалить выбранное слово", Dock = DockStyle.Bottom};
             deleteButton.Click += (sender, args) =>
             {
-                wordsToIgnore.Remove((string)ignoredWords.SelectedItem);
+                configurator.ExcludedWords.Remove((string)ignoredWords.SelectedItem);
                 ignoredWords.Items.Remove(ignoredWords.SelectedItem);
             };
             Controls.Add(deleteButton);

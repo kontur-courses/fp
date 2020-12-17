@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using TagsCloud.GUI;
+using TagsCloud.WordsProcessing;
 
 namespace TagsCloud.UiActions
 {
     public class ParserSettingsAction : IUiAction
     {
-        private readonly HashSet<string> wordsToIgnore;
-        public ParserSettingsAction(HashSet<string> wordsToIgnore)
+        private readonly ExcludingWordsConfigurator configurator;
+        public ParserSettingsAction(ExcludingWordsConfigurator configurator)
         {
-            this.wordsToIgnore = wordsToIgnore;
+            this.configurator = configurator;
         }
 
         public string Category => "Настройки";
@@ -17,7 +18,7 @@ namespace TagsCloud.UiActions
 
         public void Perform()
         {
-            new ParserSettingsForm(wordsToIgnore).Show();
+            new ParserSettingsForm(configurator).Show();
         }
     }
 }
