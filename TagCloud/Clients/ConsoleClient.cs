@@ -37,7 +37,7 @@ namespace TagCloud.Clients
                     continue;
                 Console.WriteLine("write path file to save");
                 answear = Console.ReadLine();
-                Visualize(text, answear);
+                Visualizate(text, answear);
                 Console.WriteLine("file save");
             }
         }
@@ -118,7 +118,7 @@ namespace TagCloud.Clients
             return result.IsSuccess;
         }
 
-        public void Visualize(string text, string picturePath)
+        public void Visualizate(string text, string picturePath)
         {
             var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter, processor, metric);
             TagCloudVisualization.Visualize(tagCloud, picturePath, vizInfo);
