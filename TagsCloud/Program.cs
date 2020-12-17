@@ -52,7 +52,7 @@ namespace TagsCloud
 
             if (!filePath.IsSuccess)
                 ErrorHandler.ThrowError(filePath.Error);
-           
+
             Console.WriteLine($"File was saved on {filePath.Value}");
 
             bitmapCreator.Dispose();
@@ -67,7 +67,7 @@ namespace TagsCloud
                 CommandOptionType.SingleValue);
             var textColor = app.Option("-t|--tagcolor <TAGCOLOR>", "Tags color", CommandOptionType.SingleValue);
             var font = app.Option("-f|--font <FONT>", "Font family", CommandOptionType.SingleValue);
-            var format = app.Option("-r|--format <FORMAT>", "Result image format. Only png, jpg, jpeg, bmp", 
+            var format = app.Option("-r|--format <FORMAT>", "Result image format. Only png, jpg, jpeg, bmp",
                 CommandOptionType.SingleValue);
             var size = app.Option<Size>("-s|--size <SIZE>", "Result image size", CommandOptionType.SingleValue);
 

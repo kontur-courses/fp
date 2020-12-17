@@ -10,7 +10,6 @@ namespace TagCloudTests
         public void FilterWords_ShouldNotContainsPartOfSpeech_WhenExcludeIt()
         {
             var filter = new PartsOfSpeechFilter(PartsOfSpeech.CONJ);
-
             var words = new[] {"и", "всем", "привет"};
 
             var result = filter.FilterWords(words);

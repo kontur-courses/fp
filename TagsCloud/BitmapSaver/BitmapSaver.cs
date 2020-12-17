@@ -26,12 +26,12 @@ namespace TagsCloud.BitmapSaver
 
             if (!Directory.Exists(directoryPath))
                 return Result.Fail<string>("This directory does not exist.");
-            
+
             var imageFormat = _supportedFormats[format];
             var filePath = Path.GetFullPath(CreateFilePath(directoryPath, format));
 
             bitmap.Save(filePath, imageFormat);
-            
+
             return Result.Ok(filePath);
         }
 

@@ -30,8 +30,6 @@ namespace TagCloudTests
         public void GetWordsFromFile_ShouldThrow_WhenFileDoesNotExists()
         {
             reader.GetWordsFromFile("bla bla file").IsSuccess.Should().BeFalse();
-
-            
         }
     }
 }

@@ -36,7 +36,7 @@ namespace TagsCloud.LayoutAlgorithms
             _rectangles.Add(result);
             return result;
         }
-        
+
         private Rectangle MoveToCanvasCenter(Rectangle rectangle, int axisStep = 1)
         {
             if (rectangle.GetMiddlePoint() == _canvasCenter)

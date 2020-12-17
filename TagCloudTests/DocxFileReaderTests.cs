@@ -9,6 +9,7 @@ namespace TagCloudTests
     public class DocxFileReaderTests
     {
         private DocxFileReader reader;
+
         [SetUp]
         public void SetUp()
         {
