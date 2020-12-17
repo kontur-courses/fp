@@ -11,11 +11,13 @@ namespace TagsCloud.Tests
     public class CircularCloudLayouter_Should
     {
         private CircularCloudLayouter layouter;
+        private ImageSettings settings;
 
         [SetUp]
         public void SetUp()
         {
-            layouter = new CircularCloudLayouter(new ImageSettings(1080, 1080));
+            settings = new ImageSettings(1080, 1080);
+            layouter = new CircularCloudLayouter(settings);
         }
 
         [Test]
@@ -52,6 +54,17 @@ namespace TagsCloud.Tests
             rects
                 .Should().OnlyContain(rect =>
                     rects.All(y => !y.IntersectsWith(rect) || y == rect));
+        }
+
+        [Test]
+        public void Fail_OnPutNextRectangle_WhenSizeIsLargerThenSettings()
+        {
+            var rectSize = new Size(settings.Width + 1, settings.Height + 1);
+            var result = layouter.PutNextRectangle(rectSize);
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should()
+                .Be(
+                    "Недостаточно места для размещения слова, увеличьте размер изображения, или уменьшите размер шрифта");
         }
 
         [Test]

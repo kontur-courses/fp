@@ -41,7 +41,7 @@ namespace TagsCloud.Tests
 
             settings.Width = 1720;
             holder.RecreateCanvas(settings);
-            A.CallTo(() => layouter.UpdateCenterPoint(settings)).MustHaveHappened(3, Times.Exactly);
+            A.CallTo(() => layouter.UpdateCenterPoint(settings)).MustHaveHappened(4, Times.Exactly);
         }
 
         [Test]
@@ -77,7 +77,8 @@ namespace TagsCloud.Tests
             var path = Assembly.GetExecutingAssembly().Location + "testText.txt";
             File.WriteAllText(path, GetText());
 
-            var filter = new WordsFilter(new HashSet<string>());
+            var configurator = new ExcludingWordsConfigurator(new HashSet<string>());
+            var filter = new WordsFilter(configurator);
             var parser = new WordsFrequencyParser(filter);
             var fakeParser = A.Fake<IWordsFrequencyParser>(opts => opts.Wrapping(parser));
             var settings = A.Fake<ImageSettings>(opts => 

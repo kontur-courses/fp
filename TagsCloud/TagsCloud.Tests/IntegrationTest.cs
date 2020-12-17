@@ -51,7 +51,8 @@ namespace TagsCloud.Tests
         {
             var builder = new ContainerBuilder();
             builder.Register(_ => new ImageSettings(imageWidth, imageHeight)).As<ImageSettings>().SingleInstance();
-            builder.Register(_ => new WordsFilter(wordsToIgnore, regexPatternOfWord)).As<IWordsFilter>().SingleInstance();
+            builder.Register(_ => new ExcludingWordsConfigurator(wordsToIgnore)).AsSelf().SingleInstance();
+            builder.RegisterType<WordsFilter>().As<IWordsFilter>().SingleInstance();
             builder.RegisterType<WordsFrequencyParser>().As<IWordsFrequencyParser>().SingleInstance();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().AsSelf().SingleInstance();
             builder.RegisterType<SpiralCloudLayouter>().As<ICloudLayouter>().AsSelf().SingleInstance();

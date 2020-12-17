@@ -67,6 +67,11 @@ namespace TagsCloud.Layouters
             var rect = new Rectangle(
                 new Point(Center.X - rectangleSize.Width / 2, (Center.Y - rectangleSize.Height / 2)),
                 rectangleSize);
+            
+            if(!InBoundsOfImage(rect))
+                throw new BadImageFormatException(
+                    "Недостаточно места для размещения слова, увеличьте размер изображения, или уменьшите размер шрифта");
+
             rectangles.Add(rect);
             potentialPosingPoints.AddRange(GetPotentialPosingPointsFromRectangle(rect));
             isFirst = false;
