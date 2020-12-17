@@ -17,7 +17,7 @@ namespace TagCloud.Visualization
         internal VisualizationInfo(IWordsColoring coloring, Size? size = null, string font = null)
         {
             this.size = size;
-            this.font = Fonts.GetFont(font);
+            this.font = font;
             wordsColoring = coloring;
         }
 
