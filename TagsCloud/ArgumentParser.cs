@@ -53,7 +53,7 @@ namespace TagsCloud
 
         public static Result<Size> GetSize(string size)
         {
-            var widthAndHeight = size.Split('x');
+            var widthAndHeight = size.Split('x', 'х');
 
             Size result;
             if (int.TryParse(widthAndHeight[0], out var width) &&
