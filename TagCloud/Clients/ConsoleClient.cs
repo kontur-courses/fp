@@ -121,6 +121,11 @@ namespace TagCloud.Clients
         public void Visualizate(string text, string picturePath)
         {
             var tagCloud = AlgorithmTagCloud.GetTagCloud(text, layoter, processor, metric);
+            if(vizInfo.TryGetSize(out var size) && (size.Width < tagCloud.Width || size.Height < tagCloud.Height))
+            {
+                Console.WriteLine($"so small size, width and height should be more or equals: {tagCloud.Width}, {tagCloud.Height}");
+                return;
+            }
             TagCloudVisualization.Visualize(tagCloud, picturePath, vizInfo);
         }
     }

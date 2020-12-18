@@ -7,7 +7,7 @@ namespace TagCloud.Visualization
     {
         internal static void Visualize(TagCloud cloud, string path, VisualizationInfo info)
         {
-            var bitmap = info.TryGetSize(out var size) ? new Bitmap(size.Width, size.Height) : 
+            var bitmap = info.TryGetSize(out var size) ? new Bitmap(size.Width, size.Height) :
                 new Bitmap(2 * cloud.layouter.Size().Width, 2 * cloud.layouter.Size().Height);
             var vectorShift = new Point(
                 bitmap.Size.Width / 2 - cloud.Center.X, 

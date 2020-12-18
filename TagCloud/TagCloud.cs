@@ -15,6 +15,10 @@ namespace TagCloud
         public int Bottom => layouter.Bottom;
         public int Left => layouter.Left;
         public int Right => layouter.Right;
+
+        public int Width => Right - Left;
+
+        public int Height => Bottom - Top;
         public Point Center => layouter.Center();
 
         internal TagCloud(Dictionary<string, double> wordsMetric, ICloudLayoter layouter)
@@ -40,7 +44,7 @@ namespace TagCloud
 
         private (string word, Rectangle location) GetWordLocation(KeyValuePair<string, double> word)
         {
-            var size = new Size(10 * word.Key.Length * (int)word.Value, 10 * (int)word.Value);
+            var size = new Size((int)(10 * word.Key.Length * word.Value * 5/6), (int)(10 * word.Value));
             var location = layouter.PutNextRectangle(size);
             return (word.Key, location);
         }
