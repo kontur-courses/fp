@@ -10,6 +10,7 @@ namespace TagCloud.Extensions
             builder
                 .RegisterType<T>()
                 .As<ICommand>()
+                .AsSelf()
                 .InstancePerLifetimeScope()
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
