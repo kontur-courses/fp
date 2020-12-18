@@ -39,6 +39,7 @@ namespace TagCloud
         private (string word, Rectangle location)[] GetLocations() =>
             wordsMetric
             .OrderByDescending(w => w.Value)
+            .ThenBy(w => w.Key.Length)
             .Select(w => GetWordLocation(w))
             .ToArray();
 
