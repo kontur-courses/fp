@@ -65,15 +65,15 @@ namespace WordCloudGenerator
             return read;
         }
 
-        private IEnumerable<T> RepeatUntil<T>(Func<T> get, Func<T, bool> shouldStop)
+        private IEnumerable<T> RepeatUntil<T>(Func<T> getItem, Func<T, bool> shouldStop)
         {
             while (true)
             {
-                var getted = get();
-                if (shouldStop(getted))
+                var item = getItem();
+                if (shouldStop(item))
                     yield break;
 
-                yield return getted;
+                yield return item;
             }
         }
 
