@@ -20,9 +20,9 @@ namespace TagCloud.Extensions
             return words;
         }
 
-        public static ISource SelectAppropriateSourceForExtension(this ISource[] sources, SourceSettings settings)
+        public static ISource SelectAppropriateSourceForExtension(this ISource[] sources, string filename)
         {
-            var extension = Path.GetExtension(settings.Destination)?.Substring(1);
+            var extension = Path.GetExtension(filename)?.Substring(1);
             return sources.FirstOrDefault(source => source.SupportExtension == extension);
         }
     }

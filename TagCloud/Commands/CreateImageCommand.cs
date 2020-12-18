@@ -1,4 +1,5 @@
 ﻿using System;
+using ResultOf;
 using TagCloud.Renderers;
 using TagCloud.Settings;
 
@@ -26,8 +27,10 @@ namespace TagCloud.Commands
                 return CommandResult.WithNoArgs();
 
             settings.Name = args[0];
-            createRender().Render();
-            return new CommandResult(true, $"Created in {settings.OutputPath}");
+            var result = Result.Of(() => createRender().Render());
+            if (result.IsSuccess)
+                return new CommandResult(true, $"Created in {settings.OutputPath}");
+            return new CommandResult(false, result.Error);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 using TagCloud.Settings;
 using TagCloud.TagClouds;
 using TagCloud.Visualizers;
@@ -16,17 +17,28 @@ namespace TagCloud.Renderers
             this.settings = settings;
         }
 
-        public void Render()
+        public Result<None> Render()
         {
             var leftUpBound = visualizer.VisualizeTarget.LeftUpBound;
             var rightDownBound = visualizer.VisualizeTarget.RightDownBound;
 
-            var image = new Bitmap(
-                rightDownBound.X - leftUpBound.X,
-                rightDownBound.Y - leftUpBound.Y);
-            var graphics = Graphics.FromImage(image);
-            visualizer.Draw(graphics);
-            image.Save($"{settings.FileName}.png");
+            return CreateImage(leftUpBound, rightDownBound)
+                .Then(Visualize)
+                .Then(image => image.Save($"{settings.FileName}.png"));
+        }
+
+        private Result<Bitmap> CreateImage(Point leftUp, Point rightDown)
+        {
+            return Result.Of(() => new Bitmap(
+                rightDown.X - leftUp.X,
+                rightDown.Y - leftUp.Y));
+        }
+
+        private Result<Bitmap> Visualize(Bitmap image)
+        {
+            return Result.Of(() => Graphics.FromImage(image))
+                .Then(graphic => visualizer.Draw(graphic))
+                .Then(none => image);
         }
     }
 }

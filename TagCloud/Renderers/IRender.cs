@@ -1,7 +1,9 @@
-﻿namespace TagCloud.Renderers
+﻿using ResultOf;
+
+namespace TagCloud.Renderers
 {
     public interface IRender
     {
-        void Render();
+        Result<None> Render();
     }
 }

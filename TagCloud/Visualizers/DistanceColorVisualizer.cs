@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagCloud.Extensions;
 using TagCloud.Layouters;
 using TagCloud.Settings;
@@ -26,9 +27,7 @@ namespace TagCloud.Visualizers
             VisualizeTarget = cloud;
             this.cloudSettings = cloudSettings;
             // Сомнительная штука этот выбор
-            var source = sources.SelectAppropriateSourceForExtension(sourceSettings);
-            if (source == null)
-                throw new Exception("Document's format doesn't support");
+            var source = sources.SelectAppropriateSourceForExtension(sourceSettings.Destination);
             foreach (var word in source.GetWordsWithWeight())
             {
                 var size = GenerateSize(FakeGraphics, word.Key, word.Value);
@@ -40,7 +39,7 @@ namespace TagCloud.Visualizers
 
         public CircleTagCloud VisualizeTarget { get; }
 
-        public void Draw(Graphics graphics)
+        public Result<None> Draw(Graphics graphics)
         {
             var leftUpBound = VisualizeTarget.LeftUpBound;
             graphics.TranslateTransform(-leftUpBound.X, -leftUpBound.Y);
@@ -59,6 +58,8 @@ namespace TagCloud.Visualizers
                 graphics.DrawString(word, cloudSettings.Font, brush, PointF.Empty);
                 graphics.Restore(state);
             }
+
+            return Result.Ok();
         }
 
         private SolidBrush GetBrush(double gradientBlend)

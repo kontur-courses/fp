@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using ResultOf;
 using TagCloud.Settings;
 
 namespace TagCloud.Commands
@@ -11,8 +12,8 @@ namespace TagCloud.Commands
     {
         private readonly CloudSettings cloudSettings;
 
-        private readonly Dictionary<string, Action<CloudSettings, string>> setters
-            = new Dictionary<string, Action<CloudSettings, string>>
+        private readonly Dictionary<string, Func<CloudSettings, string, object>> setters
+            = new Dictionary<string, Func<CloudSettings, string, object>>
             {
                 {
                     nameof(CloudSettings.InnerColor),
@@ -24,15 +25,21 @@ namespace TagCloud.Commands
                 },
                 {
                     nameof(CloudSettings.InnerColorRadius),
-                    (settings, radius) => settings.InnerColorRadius = double.Parse(radius)
+                    (settings, data) => Parse(data)
+                        .Then(ShouldBeNonNegative)
+                        .Then(radius => settings.InnerColorRadius = radius).GetValueOrThrow()
                 },
                 {
                     nameof(CloudSettings.OuterColorRadius),
-                    (settings, radius) => settings.OuterColorRadius = double.Parse(radius)
+                    (settings, data) => Parse(data)
+                        .Then(ShouldBeNonNegative)
+                        .Then(radius => settings.OuterColorRadius = radius).GetValueOrThrow()
                 },
                 {
                     nameof(CloudSettings.StartRadius),
-                    (settings, radius) => settings.StartRadius = double.Parse(radius)
+                    (settings, data) => Parse(data)
+                        .Then(ShouldBeNonNegative)
+                        .Then(radius => settings.StartRadius = radius).GetValueOrThrow()
                 },
                 {
                     "FontName",
@@ -43,7 +50,7 @@ namespace TagCloud.Commands
         public CloudSettingsCommand(CloudSettings cloudSettings)
         {
             this.cloudSettings = cloudSettings;
-            Usage = $"{CommandId} <property> <value>, or without args";
+            Usage = $"{CommandId} <property> <data>, or without args";
         }
 
         public string CommandId { get; } = "cs";
@@ -58,21 +65,24 @@ namespace TagCloud.Commands
                 return CommandResult.WithNoArgs();
             var property = args[0];
             var value = args[1];
+
+            var result = GetSetter(property)
+                .Then(setter => setter(cloudSettings, value))
+                .Then(obj => new CommandResult(true, $"{property} now is {obj}"));
+
+            return result.IsSuccess
+                ? result.GetValueOrThrow()
+                : new CommandResult(false, result.Error);
+        }
+
+        private Result<Func<CloudSettings, string, object>> GetSetter(string property)
+        {
             if (!setters.TryGetValue(property, out var setter))
-                return new CommandResult(false,
+                return Result.Fail<Func<CloudSettings, string, object>>(
                     "Property doesn't exists.\nYou can set the following properties:\n" +
-                    string.Join("\n", setters.Select(x => x.Key)));
-
-            try
-            {
-                setter(cloudSettings, value);
-            }
-            catch (Exception e)
-            {
-                return new CommandResult(false, $"An error occurred: '{e.Message}'");
-            }
-
-            return new CommandResult(true, $"{property} now is {value}");
+                    string.Join("\n", setters.Select(x => x.Key))
+                );
+            return Result.Ok(setter);
         }
 
         private ICommandResult AllProperties()
@@ -90,6 +100,23 @@ namespace TagCloud.Commands
             }
 
             return new CommandResult(true, builder.ToString());
+        }
+
+        private static Result<T> Validate<T>(T value, Func<T, bool> predicate, string message)
+        {
+            return predicate(value) ? Result.Ok(value) : Result.Fail<T>(message);
+        }
+
+        private static Result<double> ShouldBeNonNegative(double value)
+        {
+            return Validate(value, v => v >= 0, "Should be non negative");
+        }
+
+        private static Result<double> Parse(string data)
+        {
+            return double.TryParse(data, out var value)
+                ? Result.Ok(value)
+                : Result.Fail<double>("Couldn't parse to double");
         }
     }
 }

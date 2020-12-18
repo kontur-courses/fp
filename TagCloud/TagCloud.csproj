@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FileSenderRailway\FileSenderRailway.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="data\example.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
