@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization;
 
 namespace Cloud.ClientUI
 {
     public interface ISaver
     {
-        public void SaveImage(Bitmap bitmap, string fileName);
+        public  Result<None> SaveImage(Bitmap bitmap, string fileName);
     }
 }

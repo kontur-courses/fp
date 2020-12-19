@@ -20,9 +20,6 @@ namespace TagsCloudVisualization.CloudLayouters
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
-            if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
-                throw new ArgumentException("Width or height of size was negative");
-
             var rectangle = GetRectangle(rectangleSize);
             Rectangles.Add(rectangle);
 

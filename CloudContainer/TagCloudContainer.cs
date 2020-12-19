@@ -26,20 +26,18 @@ namespace CloudContainer
         }
 
 
-        public Bitmap GetImage(TagCloudArguments arguments)
+        public Result<Bitmap> GetImage(TagCloudArguments arguments)
         {
             config.SetValues(arguments.Font, arguments.Center,
                 arguments.TextColor, arguments.ImageSize, arguments.BoringWords);
             cleaner.AddBoringWords(config.BoringWords);
-
+            
             var path = Path.Join(Directory.GetCurrentDirectory(), arguments.InputFileName);
-
-            var words = provider.GetWords(path);
-            var cleanedWords = cleaner.CleanWords(words);
-
-            var cloudTags = converter.ConvertWords(cleanedWords);
-
-            return Drawer.DrawImage(cloudTags, config);
+            
+            return provider.GetWords(path)
+                .Then(x => cleaner.CleanWords(x))
+                .Then(x => converter.ConvertWords(x))
+                .Then(x => Drawer.DrawImage(x, config));
         }
     }
 }

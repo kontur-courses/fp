@@ -18,7 +18,7 @@ namespace TagsCloudVisualization.WordsConverters
             this.config = config;
         }
 
-        public List<ICloudTag> ConvertWords(List<string> words)
+        public Result<List<ICloudTag>> ConvertWords(List<string> words)
         {
             var result = new List<ICloudTag>();
             var graphics = Graphics.FromHwnd(new IntPtr());

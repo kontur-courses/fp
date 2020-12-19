@@ -5,6 +5,6 @@ namespace TagsCloudVisualization.WordsConverters
 {
     public interface IWordConverter
     {
-        public List<ICloudTag> ConvertWords(List<string> words);
+        public Result<List<ICloudTag>> ConvertWords(List<string> words);
     }
 }

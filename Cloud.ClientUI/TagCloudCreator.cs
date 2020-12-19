@@ -1,5 +1,7 @@
-﻿using CloudContainer;
+﻿using System;
+using CloudContainer;
 using Microsoft.Extensions.DependencyInjection;
+using TagsCloudVisualization;
 
 namespace Cloud.ClientUI
 {
@@ -17,9 +19,10 @@ namespace Cloud.ClientUI
         public void Run(TagCloudArguments arguments)
         {
             var visualizationContainer = container.CreateTagCloudContainer(arguments);
-            var image = visualizationContainer.BuildServiceProvider().GetService<TagCloudContainer>()
-                .GetImage(arguments);
-            saver.SaveImage(image, arguments.OutputFileName);
+            visualizationContainer.BuildServiceProvider().GetService<TagCloudContainer>()
+                .GetImage(arguments)
+                .Then(x => saver.SaveImage(x, arguments.OutputFileName))
+                .Then(x => Console.WriteLine());
         }
     }
 }

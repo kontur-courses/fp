@@ -9,33 +9,43 @@ namespace TagsCloudVisualization
 {
     public static class Drawer
     {
-        public static Bitmap DrawImage(List<ICloudTag> rectangles, IConfig config)
+        public static Result<Bitmap> DrawImage(List<ICloudTag> rectangles, IConfig config)
         {
-            CheckParameters(rectangles, config.Center);
-
-            var actualSize = new Size(config.Center.X + GetDeltaX(rectangles),
-                config.Center.Y + GetDeltaY(rectangles));
-            var size = new Size(Math.Max(actualSize.Width, config.ImageSize.Width),
-                Math.Max(actualSize.Height, config.ImageSize.Height));
-            var image = new Bitmap(size.Width, size.Height);
-            using var graphics = Graphics.FromImage(image);
-
-            foreach (var rectangle in rectangles)
+            return CheckPoint(config.Center)
+                .Then(_ => CheckRectangles(rectangles))
+                .Then(_ =>
             {
-                graphics.DrawString(rectangle.Text, config.Font, new SolidBrush(config.TextColor), rectangle.Rectangle);
-                graphics.DrawRectangle(new Pen(config.TextColor), rectangle.Rectangle);
-            }
+                var actualSize = new Size(config.Center.X + GetDeltaX(rectangles),
+                    config.Center.Y + GetDeltaY(rectangles));
+                var size = new Size(Math.Max(actualSize.Width, config.ImageSize.Width),
+                    Math.Max(actualSize.Height, config.ImageSize.Height));
+                var image = new Bitmap(size.Width, size.Height);
+                using var graphics = Graphics.FromImage(image);
 
-            return image;
+                foreach (var rectangle in rectangles)
+                {
+                    graphics.DrawString(rectangle.Text, config.Font, new SolidBrush(config.TextColor),
+                        rectangle.Rectangle);
+                    graphics.DrawRectangle(new Pen(config.TextColor), rectangle.Rectangle);
+                }
+
+                return image;
+
+            });
         }
 
-        private static void CheckParameters(List<ICloudTag> rectangles, Point center)
+        private static Result<Point> CheckPoint(Point center)
         {
-            if (center.X < 0 || center.Y < 0)
-                throw new ArgumentException("X or Y of center was negative");
+            return center.X < 0 || center.Y < 0 
+                ? Result.Fail<Point>("X or Y of center was negative") 
+                : Result.Ok(center);
+        }
 
-            if (!rectangles.Any())
-                throw new ArgumentException("The sequence contains no elements");
+        private static Result<List<ICloudTag>> CheckRectangles(List<ICloudTag> rectangles)
+        {
+            return !rectangles.Any() 
+                ? Result.Fail<List<ICloudTag>>("The sequence contains no elements") 
+                : Result.Ok(rectangles);
         }
 
         private static int GetDeltaX(List<ICloudTag> rectangles)

@@ -13,8 +13,6 @@ namespace TagsCloudVisualization.PointProviders
         public PointProvider(IConfig config)
         {
             this.config = config;
-            if (config.Center.X < 0 || config.Center.Y < 0)
-                throw new ArgumentException("X or Y of center was negative");
         }
 
         public Point GetPoint()
