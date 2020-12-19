@@ -8,11 +8,11 @@ namespace TagsCloud.FileReader
         {
             switch (extension)
             {
-                case "txt":
+                case ".txt":
                     return new TxtReader();
-                case "rtf":
+                case ".rtf":
                     return new RtfReader();
-                case "docx":
+                case ".docx":
                     return new DocxReader();
                 default:
                     return Result.Fail<IWordsReader>("not valid extension of file");

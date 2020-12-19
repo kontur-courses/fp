@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using TagsCloud.Common;
 using TagsCloud.Core;
 using TagsCloud.ResultPattern;
@@ -21,7 +22,7 @@ namespace TagsCloud.ClientGUI
 
         public PictureBoxImageHolder PictureBox { get; }
 
-        public Result<None> Paint(ICircularCloudLayouter cloud)
+        public Result<Graphics> Paint(ICircularCloudLayouter cloud)
         {
             var result = tagsHelper.GetWords()
                 .Then(words => visualizer.Paint(cloud, words));

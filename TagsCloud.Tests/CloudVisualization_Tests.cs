@@ -62,7 +62,7 @@ namespace TagsCloud.Tests
         [Test]
         public void Paint_ResultIsSucсess_WhenCloudFitIntoImageSize()
         {
-            Assert.DoesNotThrow(() => cloudVisualizer.Paint(cloud, words));
+            Assert.DoesNotThrow(() => cloudVisualizer.Paint(cloud, words).GetValueOrThrow());
         }
 
         [Test]

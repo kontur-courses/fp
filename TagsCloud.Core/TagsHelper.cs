@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using TagsCloud.Common;
 using TagsCloud.FileReader;
@@ -39,10 +40,9 @@ namespace TagsCloud.Core
                 .Then(words => text.Where(x => !words.Contains(x)).ToList());
         }
 
-        private Result<List<string>> GetTextFromFile(string document)
+        private Result<string[]> GetTextFromFile(string document)
         {
-            var extension = document.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries).Last();
-            return readerFactory.GetReader(extension)
+            return readerFactory.GetReader(new FileInfo(document).Extension)
                 .Then(x => x.ReadWords(document));
         }
 
@@ -59,8 +59,12 @@ namespace TagsCloud.Core
             List<(string, int)> words, DisposableDictionary<int, Font> fonts)
         {
             return words
-                .Select(x => cloud
-                    .PutNextRectangle(new Size((int) fonts[x.Item2].Size * x.Item1.Length, fonts[x.Item2].Height)))
+                .Select(x =>
+                {
+                    var (value, frequency) = x;
+                    return cloud.PutNextRectangle(
+                        new Size((int) fonts[frequency].Size * value.Length, fonts[frequency].Height));
+                })
                 .ToList();
         }
     }

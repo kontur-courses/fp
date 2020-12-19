@@ -29,25 +29,25 @@ namespace TagsCloud.Visualization
             this.tagsHelper = tagsHelper;
         }
 
-        public Result<None> Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
+        public Result<Graphics> Paint(ICircularCloudLayouter cloud, List<(string, int)> words)
         {
             return imageHolder.StartDrawing()
-                .Then(PaintBackground)
-                .Then(graphics =>
+                .Then(graphics => 
                 {
-                    return fontSettings.Font
-                        .Then(font => new DisposableDictionary<int, Font>(tagsHelper.CreateFonts(words, font)))
-                        .Then(newFonts =>
-                        {
-                            var g = tagsHelper.GetRectangles(cloud, words, newFonts)
-                                .Then(RectanglesFitIntoSize)
-                                .Then(x => PaintRectangles(graphics, x))
-                                .Then(x => PaintWords(graphics, newFonts, x, words));
-                            newFonts.Dispose();
-                            return g;
-                        });
-                })
-                .Then(graphics => graphics.Dispose());
+                    using var _ = graphics;
+                    return PaintBackground(_)
+                        .Then(g => fontSettings.Font
+                                .Then(font => new DisposableDictionary<int, Font>(tagsHelper.CreateFonts(words, font)))
+                                .Then(newFonts =>
+                                {
+                                    using var localFonts = newFonts;
+                                    return tagsHelper.GetRectangles(cloud, words, localFonts)
+                                        .Then(RectanglesFitIntoSize)
+                                        .Then(x => PaintRectangles(g, x))
+                                        .Then(x => PaintWords(g, localFonts, x, words));
+                                })
+                        );
+                });
         }
 
         private Result<Graphics> PaintBackground(Graphics graphics)
