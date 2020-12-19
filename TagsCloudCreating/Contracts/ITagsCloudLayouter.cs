@@ -5,6 +5,6 @@ namespace TagsCloudCreating.Contracts
     public interface ITagsCloudLayouter
     {
         public Rectangle PutNextRectangle(Size size);
-        public void Recreate();
+        public void Reset();
     }
 }

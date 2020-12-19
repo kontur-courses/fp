@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TagsCloudCreating.Configuration;
-using TagsCloudVisualization.Contracts;
+ using TagsCloudCreating.Core.WordProcessors;
+ using TagsCloudVisualization.Contracts;
 
 namespace TagsCloudVisualization.MenuItems.Settings
 {
@@ -72,7 +73,7 @@ namespace TagsCloudVisualization.MenuItems.Settings
             MinimizeBox = false;
         }
 
-        private static CheckBox[] ConvertToSpeechList(Dictionary<string, bool> speechPartStatuses)
+        private static CheckBox[] ConvertToSpeechList(IDictionary<PartsOfSpeech, bool> speechPartStatuses)
         {
             var checkBoxes = new List<CheckBox>();
             foreach (var (speechPart, status) in speechPartStatuses)
@@ -85,7 +86,7 @@ namespace TagsCloudVisualization.MenuItems.Settings
             return checkBoxes.ToArray();
         }
 
-        private static CheckBox ConvertToCheckBox(string speechPart, bool status) =>
-            new CheckBox {Text = speechPart, Checked = status, AutoSize = true};
+        private static CheckBox ConvertToCheckBox(PartsOfSpeech speechPart, bool status) =>
+            new CheckBox {Text = speechPart.ToString(), Checked = status, AutoSize = true};
     }
 }

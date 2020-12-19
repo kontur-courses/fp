@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudCreating.Configuration;
 using TagsCloudCreating.Contracts;
-using TagsCloudLayouters.Infrastructure;
+using TagsCloudCreating.Infrastructure;
 
 namespace TagsCloudCreating.Core.CircularCloudLayouter
 {
@@ -28,8 +29,12 @@ namespace TagsCloudCreating.Core.CircularCloudLayouter
         {
             Rectangle nextRectangle;
 
-            do nextRectangle = new Rectangle(Spiral.GetNextPoint(), rectangleSize);
-            while (Rectangles.Any(r => r.IntersectsWith(nextRectangle)));
+            do
+            {
+                var center = Spiral.GetNextPoint();
+                var leftAngle = new Point(center.X - rectangleSize.Width / 2, center.Y - rectangleSize.Height / 2);
+                nextRectangle = new Rectangle(leftAngle, rectangleSize);
+            } while (Rectangles.Any(r => r.IntersectsWith(nextRectangle)));
 
             if (NeedingShiftToCenter)
                 nextRectangle = GetShiftedToCenterRectangle(nextRectangle);
@@ -37,7 +42,7 @@ namespace TagsCloudCreating.Core.CircularCloudLayouter
             return nextRectangle;
         }
 
-        public void Recreate()
+        public void Reset()
         {
             Center = LayouterSettings.StartPoint;
             NeedingShiftToCenter = LayouterSettings.NeedingShiftToCenter;
@@ -66,7 +71,6 @@ namespace TagsCloudCreating.Core.CircularCloudLayouter
 
             return shiftedRectangle;
         }
-
 
         private static List<Rectangle> GetNeighboursFor(Rectangle rectangle)
         {

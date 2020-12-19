@@ -29,7 +29,7 @@ namespace TagsCloudCreating.Core
                 )
                 .Then(InsertTagsInFrames)
                 .Then(tags => tags.OrderByDescending(t => t.Frequency).AsEnumerable());
-            Layouter.Recreate();
+            Layouter.Reset();
             return readyTags;
         }
 

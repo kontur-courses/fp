@@ -10,7 +10,7 @@ namespace TagsCloudCreating.Core.ColorizeAlgorithms
         private readonly Random rnd = new Random();
         [Browsable(false)] public string Name => "Steel for humans";
 
-        public Color Paint()
+        public Color GetColor()
         {
             var grey = rnd.Next(255);
             return Color.FromArgb(grey, grey, grey);

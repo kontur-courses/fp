@@ -8,22 +8,22 @@ namespace TagsCloudCreating.Core.WordProcessors
 {
     public static class MyStemHandler
     {
-        public static readonly Dictionary<string, string> BoringWords = new Dictionary<string, string>
+        public static readonly Dictionary<PartsOfSpeech, string> BoringWords = new Dictionary<PartsOfSpeech, string>
         {
-            ["Прилагательное"] = "A",
-            ["Наречие"] = "ADV",
-            ["Местоимение-наречие"] = "ADVPRO",
-            ["Числительное-прилагательное"] = "ANUM",
-            ["Местоимение-прилагательное"] = "APRO",
-            ["Часть сложного слова"] = "COM",
-            ["Союз"] = "CONJ",
-            ["Междометие"] = "INTJ",
-            ["Числительное"] = "NUM",
-            ["Частица"] = "PART",
-            ["Предлог"] = "PR",
-            ["Существительное"] = "S",
-            ["Местоимение-существительное"] = "SPRO",
-            ["Глагол"] = "V"
+            [PartsOfSpeech.Adjective] = "A",
+            [PartsOfSpeech.Adverb] = "ADV",
+            [PartsOfSpeech.PronounAdverb] = "ADVPRO",
+            [PartsOfSpeech.NumeralAdjective] = "ANUM",
+            [PartsOfSpeech.PronounAdjective] = "APRO",
+            [PartsOfSpeech.PartCompoundWord] = "COM",
+            [PartsOfSpeech.Conjunction] = "CONJ",
+            [PartsOfSpeech.Interjection] = "INTJ",
+            [PartsOfSpeech.Numeral] = "NUM",
+            [PartsOfSpeech.Particle] = "PART",
+            [PartsOfSpeech.Preposition] = "PR",
+            [PartsOfSpeech.Noun] = "S",
+            [PartsOfSpeech.PronounNoun] = "SPRO",
+            [PartsOfSpeech.Verb] = "V"
         };
 
         public static IEnumerable<(string word, string speechPart)> GetWordsWithPartsOfSpeech(IEnumerable<string> words)

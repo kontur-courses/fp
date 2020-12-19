@@ -10,6 +10,6 @@ namespace TagsCloudCreating.Core.ColorizeAlgorithms
         private readonly Random rnd = new Random();
 
         [Browsable(false)] public string Name => "Random colorizer";
-        public Color Paint() => Color.FromArgb(rnd.Next(255), rnd.Next(255), rnd.Next(255));
+        public Color GetColor() => Color.FromArgb(rnd.Next(255), rnd.Next(255), rnd.Next(255));
     }
 }

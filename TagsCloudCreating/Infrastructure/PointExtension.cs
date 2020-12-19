@@ -1,7 +1,7 @@
-﻿﻿using System;
+﻿using System;
 using System.Drawing;
 
-namespace TagsCloudLayouters.Infrastructure
+namespace TagsCloudCreating.Infrastructure
 {
     internal static class PointExtension
     {

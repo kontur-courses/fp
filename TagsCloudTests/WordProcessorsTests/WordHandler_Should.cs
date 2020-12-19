@@ -10,23 +10,8 @@ namespace TagsCloudTests.WordProcessorsTests
     [TestFixture]
     public class WordHandler_Should
     {
-        private readonly Dictionary<string, bool> defaultSpeechPartsStatuses = new Dictionary<string, bool>
-        {
-            ["Прилагательное"] = true,
-            ["Наречие"] = true,
-            ["Местоимение-наречие"] = true,
-            ["Числительное-прилагательное"] = true,
-            ["Местоимение-прилагательное"] = true,
-            ["Часть сложного слова"] = true,
-            ["Союз"] = true,
-            ["Междометие"] = true,
-            ["Числительное"] = true,
-            ["Частица"] = true,
-            ["Предлог"] = true,
-            ["Существительное"] = true,
-            ["Местоимение-существительное"] = true,
-            ["Глагол"] = true
-        };
+        private readonly Dictionary<PartsOfSpeech, bool> defaultSpeechPartsStatuses =
+            new WordHandlerSettings().SpeechPartsStatuses;
 
         [Test]
         public void NormilizeAndExcludeBoringWords_AllWordsInteresting_ReturnsAllInputWords()
@@ -46,7 +31,6 @@ namespace TagsCloudTests.WordProcessorsTests
                     "соловей",
                     "защебетать",
                     "воробей",
-                    "чуть-чуть",
                     "умолкать"
                 );
         }
@@ -54,8 +38,8 @@ namespace TagsCloudTests.WordProcessorsTests
         [Test]
         public void NormilizeAndExcludeBoringWords_AllWordsBoring_ReturnsAllInputWords()
         {
-            var sentence =
-                "Утром в лесу запели два звонких соловья и защебетали воробьи, чуть-чуть умолкая.".Split(" ");
+            var sentence = "Утром в лесу запели два звонких соловья и защебетали воробьи, чуть-чуть умолкая."
+                .Split(" ");
             var wordHandlerSettings = new WordHandlerSettings
             {
                 SpeechPartsStatuses = defaultSpeechPartsStatuses
@@ -72,9 +56,9 @@ namespace TagsCloudTests.WordProcessorsTests
         {
             var settings = new WordHandlerSettings
             {
-                SpeechPartsStatuses = new Dictionary<string, bool>
+                SpeechPartsStatuses = new Dictionary<PartsOfSpeech, bool>
                 {
-                    ["Прилагательное"] = true, ["Существительное"] = false, ["Союз"] = false
+                    [PartsOfSpeech.Adjective] = true, [PartsOfSpeech.Noun] = false, [PartsOfSpeech.Conjunction] = false
                 }
             };
             var words = "Красивое и сочное яблоко".Split(" ");

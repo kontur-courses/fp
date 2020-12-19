@@ -1,25 +1,26 @@
 ﻿﻿using System.Collections.Generic;
+ using TagsCloudCreating.Core.WordProcessors;
 
-namespace TagsCloudCreating.Configuration
+ namespace TagsCloudCreating.Configuration
 {
     public class WordHandlerSettings
     {
-        public Dictionary<string, bool> SpeechPartsStatuses { get; set; } = new Dictionary<string, bool>
+        public Dictionary<PartsOfSpeech, bool> SpeechPartsStatuses { get; set; } = new Dictionary<PartsOfSpeech, bool>
         {
-            ["Прилагательное"] = true,
-            ["Наречие"] = false,
-            ["Местоимение-наречие"] = false,
-            ["Числительное-прилагательное"] = true,
-            ["Местоимение-прилагательное"] = false,
-            ["Часть сложного слова"] = true,
-            ["Союз"] = false,
-            ["Междометие"] = true,
-            ["Числительное"] = true,
-            ["Частица"] = false,
-            ["Предлог"] = false,
-            ["Существительное"] = true,
-            ["Местоимение-существительное"] = false,
-            ["Глагол"] = true
+            [PartsOfSpeech.Adjective] = true,
+            [PartsOfSpeech.Adverb] = false,
+            [PartsOfSpeech.PronounAdverb] = false,
+            [PartsOfSpeech.NumeralAdjective] = true,
+            [PartsOfSpeech.PronounAdjective] = false,
+            [PartsOfSpeech.PartCompoundWord] = true,
+            [PartsOfSpeech.Conjunction] = false,
+            [PartsOfSpeech.Interjection] = true,
+            [PartsOfSpeech.Numeral] = true,
+            [PartsOfSpeech.Particle] = false,
+            [PartsOfSpeech.Preposition] = false,
+            [PartsOfSpeech.Noun] = true,
+            [PartsOfSpeech.PronounNoun] = false,
+            [PartsOfSpeech.Verb] = true
         };
     }
 }

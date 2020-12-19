@@ -17,7 +17,7 @@ namespace TagsCloudCreating.Core.WordProcessors
             Frequency = frequency;
             var fontSize = (frequency + tagsSettings.Font.Size) * 2;
             Font = new Font(tagsSettings.Font.Name, fontSize);
-            Color = tagsSettings.Colorizer.Paint();
+            Color = tagsSettings.Colorizer.GetColor();
         }
 
         public Tag InsertTagInFrame(Rectangle frame)
