@@ -20,8 +20,8 @@ x64/
 x86/
 build/
 bld/
-[Bb]in/
 [Oo]bj/
+[Bb]in/
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -195,5 +195,3 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
-
-*Solved.cs
