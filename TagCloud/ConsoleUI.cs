@@ -21,41 +21,41 @@ namespace WordCloudGenerator
 
         public void Run()
         {
-            var text = AskFilePathAndRead();
-            var (wordsToSkip, wordCount) = AskPreparerSettings();
+            var text = GetInputFromUserFilePathAndRead();
+            var (wordsToSkip, wordCount) = GetInputFromUserPreparerSettings();
             var preparer = preparerFactory(wordsToSkip);
             var frequencies = PerformAndReport("Обработка текста", () => preparer.CreateWordFreqList(text, wordCount));
 
-            var algorithm = AskGenerationAlgorithm();
+            var algorithm = GetInputFromUserGenerationAlgorithm();
             var graphicStrings = PerformAndReport("Генерация облака", () => algorithm(frequencies));
 
-            var palette = AskPalette();
-            var font = AskFont();
+            var palette = GetInputFromUserPalette();
+            var font = GetInputFromUserFont();
             var painter = painterFactory(palette, font);
 
             var img = Result.RepeatUntilOk(() =>
             {
-                var size = AskSize();
+                var size = GetInputFromUserSize();
                 return painter.Paint(graphicStrings, size);
             }, Console.WriteLine).Value;
 
-            var pathToSave = AskUntilCorrect("путь по которому сохранить изображение", Saver.IsPathCorrect,
+            var pathToSave = GetInputFromUserUntilCorrect("путь по которому сохранить изображение", Saver.IsPathCorrect,
                 "путь неверный");
             Saver.SaveImage(img, pathToSave);
 
             Console.WriteLine($"Изображение сохранено в {pathToSave}");
         }
 
-        private string Ask(string what)
+        private string GetInputFromUser(string message)
         {
-            Console.WriteLine($"Введите {what}");
+            Console.WriteLine($"Введите {message}");
 
             return Console.ReadLine();
         }
 
-        private string AskUntilCorrect(string what, Func<string, bool> isCorrect, string ifErr)
+        private string GetInputFromUserUntilCorrect(string message, Func<string, bool> isCorrect, string ifErr)
         {
-            var read = Ask(what);
+            var read = GetInputFromUser(message);
             while (!isCorrect(read))
             {
                 Console.WriteLine($"{ifErr}, введите снова");
@@ -91,57 +91,57 @@ namespace WordCloudGenerator
             Console.Write('\r' + new string(' ', Console.BufferWidth));
         }
 
-        private string AskFilePathAndRead()
+        private string GetInputFromUserFilePathAndRead()
         {
             var readingResult = Result.RepeatUntilOk(() =>
             {
-                var pathToText = Ask("полный путь к файлу с текстом");
+                var pathToText = GetInputFromUser("полный путь к файлу с текстом");
                 return Reader.ReadFile(pathToText);
             }, Console.WriteLine);
 
             return readingResult.Value;
         }
 
-        private (IEnumerable<string> wordsToSkip, int wordCount) AskPreparerSettings()
+        private (IEnumerable<string> wordsToSkip, int wordCount) GetInputFromUserPreparerSettings()
         {
             var wordsToSkip = RepeatUntil(
-                () => Ask("Введите слово которое нужно пропускать (пустая строка, чтобы закончить)"),
+                () => GetInputFromUser("Введите слово которое нужно пропускать (пустая строка, чтобы закончить)"),
                 string.IsNullOrEmpty);
 
-            var wordCount = Result.RepeatUntilOk(() => int.Parse(Ask("колличество слов в облаке")),
+            var wordCount = Result.RepeatUntilOk(() => int.Parse(GetInputFromUser("колличество слов в облаке")),
                 s => Console.WriteLine("Невозможно привести к целому числу"));
             return (wordsToSkip, wordCount.Value);
         }
 
-        private Func<IEnumerable<WordFrequency>, IEnumerable<GraphicString>> AskGenerationAlgorithm()
+        private Func<IEnumerable<WordFrequency>, IEnumerable<GraphicString>> GetInputFromUserGenerationAlgorithm()
         {
-            var algoChoice = AskUntilCorrect(
+            var algoChoice = GetInputFromUserUntilCorrect(
                 "какой алгоритм использовать - экспоненциальный или пропорциональный? (1/2)",
                 str => str == "1" || str == "2", "нужно выбрать 1 или 2");
             return AlgorithmFabric.Create((AlgorithmType) int.Parse(algoChoice));
         }
 
-        private FontFamily AskFont()
+        private FontFamily GetInputFromUserFont()
         {
             var fonts = FontFamily.Families;
             var fontResult = Result.RepeatUntilOk(() =>
             {
-                var fontName = Ask("каким шрифтом рисовать").ToLower();
+                var fontName = GetInputFromUser("каким шрифтом рисовать").ToLower();
                 return fonts.First(font => fontName.ToLower() == fontName);
             }, err => Console.WriteLine("Такого шрифта не существует"));
 
             return fontResult.Value;
         }
 
-        private IPalette AskPalette()
+        private IPalette GetInputFromUserPalette()
         {
             var colorConverter = new ColorConverter();
 
-            var bgColor = colorConverter.ConvertFromString(AskUntilCorrect("цвет фона",
+            var bgColor = colorConverter.ConvertFromString(GetInputFromUserUntilCorrect("цвет фона",
                 colorConverter.CanConvertFrom, "такого цвета не существует"));
 
             var colorsStr =
-                RepeatUntil(() => AskUntilCorrect("цвета палитры (пустая строка чтобы прекратить)",
+                RepeatUntil(() => GetInputFromUserUntilCorrect("цвета палитры (пустая строка чтобы прекратить)",
                     colorConverter.CanConvertFrom,
                     "такого цвета не существует"), string.IsNullOrEmpty);
             var mainColors = colorsStr.Select(colorConverter.ConvertFromString).Cast<Color>();
@@ -150,17 +150,17 @@ namespace WordCloudGenerator
             return palette;
         }
 
-        private Size AskSize()
+        private Size GetInputFromUserSize()
         {
-            var way = AskUntilCorrect("задать размер самому, или посчитать автоматически (1/2)",
+            var way = GetInputFromUserUntilCorrect("задать размер самому, или посчитать автоматически (1/2)",
                 s => s == "1" || s == "2", "нужно ввести 1 или 2");
             if (way == "2")
                 return Size.Empty;
 
-            var width = AskUntilCorrect("ширину", s => int.TryParse(s, out var n) && n > 0,
+            var width = GetInputFromUserUntilCorrect("ширину", s => int.TryParse(s, out var n) && n > 0,
                 "Должна быть числом, больше 0");
 
-            var height = AskUntilCorrect("высоту", s => int.TryParse(s, out var n) && n > 0,
+            var height = GetInputFromUserUntilCorrect("высоту", s => int.TryParse(s, out var n) && n > 0,
                 "Должна быть числом, больше 0");
 
             return new Size(int.Parse(width), int.Parse(height));
