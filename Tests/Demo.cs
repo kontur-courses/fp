@@ -11,27 +11,11 @@ namespace Tests
     [TestFixture]
     public class Demo
     {
-        private IContainer container;
-
-        [SetUp]
-        public void SetUp()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterType<Preparer>().As<IPreparer>()
-                .WithParameter("filter", new Func<string, bool>(str => str.Length >= 3));
-            builder.RegisterType<Painter>().As<IPainter>();
-            builder.RegisterInstance(FontFamily.GenericSansSerif).As<FontFamily>();
-
-            builder.RegisterType<OrderedChoicePalette>().As<IPalette>();
-            builder.RegisterType<CircularLayouter>().As<ILayouter>();
-
-            container = builder.Build();
-        }
-
         [Test]
         public void Demo1()
         {
-            var text = Reader.ReadFile("text.txt");
+            var textPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "text.txt");
+            var text = Reader.ReadFile(textPath);
             var preparer = new Preparer(new[] {"что", "если", "это", "как"}, word => word.Length > 3);
             var prepared = preparer.CreateWordFreqList(text, 200);
             var algorithm = AlgorithmFabric.Create(AlgorithmType.Exponential);
