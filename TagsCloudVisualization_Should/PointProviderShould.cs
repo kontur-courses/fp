@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
@@ -32,17 +31,6 @@ namespace TagsCloudVisualization_Should
             var actualPoint = pointProvider.GetPoint();
 
             actualPoint.ShouldBeEquivalentTo(expectedPoint);
-        }
-
-        [Test]
-        public void CreatePointProvider_ThrowArgumentException_CenterWithNegativeXOrY()
-        {
-            var center = new Point(-1, -1);
-            config.SetValues(new Font(FontFamily.GenericMonospace, 25),
-                center, Color.Blue, new Size(1500, 1500), new HashSet<string>());
-            Action act = () => new PointProvider(config);
-
-            act.ShouldThrow<ArgumentException>().WithMessage("X or Y of center was negative");
         }
     }
 }

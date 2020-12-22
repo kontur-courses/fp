@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -24,23 +23,23 @@ namespace TagsCloudVisualization_Should
         }
 
         [Test]
-        public void DrawImage_ThrowArgumentException_CenterWithNegativeXOrY()
+        public void DrawImage_IsNotSuccess_CenterWithNegativeXOrY()
         {
             config.SetValues(new Font(FontFamily.GenericMonospace, 25),
                 new Point(-1, -1), Color.Blue, new Size(1500, 1500), new HashSet<string>());
             var cloudTags = new List<ICloudTag> {new CloudTag(new Rectangle(1, 1, 1, 1), "")};
 
-            Action act = () => Drawer.DrawImage(cloudTags, config);
+            var actual = Drawer.DrawImage(cloudTags, config);
 
-            act.ShouldThrow<ArgumentException>().WithMessage("X or Y of center was negative");
+            actual.IsSuccess.Should().BeFalse();
         }
 
         [Test]
-        public void DrawImage_ThrowArgumentException_SequenceOfElementsIsEmpty()
+        public void DrawImage_IsNotSuccess_SequenceOfElementsIsEmpty()
         {
-            Action act = () => Drawer.DrawImage(new List<ICloudTag>(), config);
+            var actual = Drawer.DrawImage(new List<ICloudTag>(), config);
 
-            act.ShouldThrow<ArgumentException>().WithMessage("The sequence contains no elements");
+            actual.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -55,7 +54,7 @@ namespace TagsCloudVisualization_Should
 
             var actualBitmap = Drawer.DrawImage(cloutTags, config);
 
-            actualBitmap.Size.Should().Be(expectedSize);
+            actualBitmap.GetValueOrThrow().Size.Should().Be(expectedSize);
         }
 
 
@@ -69,7 +68,7 @@ namespace TagsCloudVisualization_Should
 
             var actualBitmap = Drawer.DrawImage(cloutTags, config);
 
-            actualBitmap.RawFormat.Should().Be(expectedFormat);
+            actualBitmap.GetValueOrThrow().RawFormat.Should().Be(expectedFormat);
         }
 
         private List<Rectangle> GetRectangles(int count)

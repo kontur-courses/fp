@@ -17,7 +17,7 @@ namespace TagsCloudVisualization_Should
 
             var actualWords = provider.GetWords(path);
 
-            actualWords.Should().BeEquivalentTo(expectedWords);
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
         }
     }
 }

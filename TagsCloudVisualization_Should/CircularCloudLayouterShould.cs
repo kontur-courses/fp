@@ -24,20 +24,6 @@ namespace TagsCloudVisualization_Should
         }
 
         [Test]
-        public void PutNextRectangle_ThrowArgumentException_SizeOfRectangleHaveNegativeValue()
-        {
-            var center = new Point(100, 100);
-            config.SetValues(new Font(FontFamily.GenericMonospace, 25),
-                center, Color.Blue, new Size(1500, 1500), new HashSet<string>());
-            var pointProvider = new PointProvider(config);
-            var cloud = new CircularCloudLayouter(pointProvider);
-
-            Action act = () => cloud.PutNextRectangle(new Size(-1, -1));
-
-            act.ShouldThrow<ArgumentException>().WithMessage("Width or height of size was negative");
-        }
-
-        [Test]
         public void PutNextRectangle_ReturnSameRectangle_OneRectangle()
         {
             var center = new Point(40, 40);

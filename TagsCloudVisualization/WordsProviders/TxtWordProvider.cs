@@ -7,16 +7,26 @@ namespace TagsCloudVisualization.WordsProviders
     {
         public Result<List<string>> GetWords(string filepath)
         {
-            var words = new List<string>();
+            return ValidateFile(filepath)
+                .Then(_ => ReadWords(filepath));
+        }
 
-            if (!File.Exists(filepath))
-                return Result.Fail<List<string>>("File with words was not found");
+        private static Result<List<string>> ReadWords(string filepath)
+        {
+            var words = new List<string>();
 
             using var sr = new StreamReader(filepath);
             string word;
             while ((word = sr.ReadLine()) != null) words.Add(word);
 
             return words;
+        }
+
+        private static Result<string> ValidateFile(string filepath)
+        {
+            return !File.Exists(filepath)
+                ? Result.Fail<string>("File with words was not found")
+                : Result.Ok(filepath);
         }
     }
 }

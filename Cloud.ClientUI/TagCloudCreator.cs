@@ -22,7 +22,6 @@ namespace Cloud.ClientUI
             visualizationContainer.BuildServiceProvider().GetService<TagCloudContainer>()
                 .GetImage(arguments)
                 .Then(x => saver.SaveImage(x, arguments.OutputFileName))
-                .Then(x => Console.WriteLine())
                 .OnFail(Console.WriteLine);
         }
     }

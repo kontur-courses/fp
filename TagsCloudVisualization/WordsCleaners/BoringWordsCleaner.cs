@@ -19,7 +19,7 @@ namespace TagsCloudVisualization.WordsCleaners
             var ruDict = Path.Join(Directory.GetCurrentDirectory(), "ru_RU.dic");
             var ruAff = Path.Join(Directory.GetCurrentDirectory(), "ru_RU.aff");
             if (!File.Exists(ruDict) || !File.Exists(ruAff))
-                return Result.Fail<List<string>>("there is no ruDict or ruAff in directore");//TODO give normal name
+                return Result.Fail<List<string>>("there is no ruDict or ruAff in directore"); //TODO give normal name
             var hunspell = new Hunspell(ruAff, ruDict);
             var cleanedWords = words
                 .Where(loweredWord => !boringWords.Contains(hunspell.Stem(loweredWord.ToLower()).FirstOrDefault()))

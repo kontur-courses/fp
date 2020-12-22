@@ -21,7 +21,7 @@ namespace TagsCloudVisualization.WordsConverters
         public Result<List<ICloudTag>> ConvertWords(List<string> words)
         {
             var result = new List<ICloudTag>();
-            var graphics = Graphics.FromHwnd(new IntPtr());
+            using var graphics = Graphics.FromHwnd(IntPtr.Zero);
             foreach (var word in words)
             {
                 var size = graphics.MeasureString(word, config.Font);

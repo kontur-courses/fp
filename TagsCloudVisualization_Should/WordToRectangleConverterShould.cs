@@ -31,7 +31,7 @@ namespace TagsCloudVisualization_Should
 
             var actualTags = converter.ConvertWords(words);
 
-            actualTags.Should().BeEquivalentTo(actualTags);
+            actualTags.GetValueOrThrow().Should().BeEquivalentTo(expectedTags);
         }
     }
 }
