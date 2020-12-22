@@ -11,33 +11,35 @@ namespace TagsCloudVisualization
     {
         public static Result<Bitmap> DrawImage(List<ICloudTag> rectangles, IConfig config)
         {
-            return CheckPoint(config.Center)
-                .Then(_ => CheckRectangles(rectangles))
-                .Then(_ =>
-                {
-                    var actualSize = new Size(config.Center.X + GetDeltaX(rectangles),
-                        config.Center.Y + GetDeltaY(rectangles));
-                    var size = new Size(Math.Max(actualSize.Width, config.ImageSize.Width),
-                        Math.Max(actualSize.Height, config.ImageSize.Height));
-                    var image = new Bitmap(size.Width, size.Height);
-                    using var graphics = Graphics.FromImage(image);
-
-                    foreach (var rectangle in rectangles)
-                    {
-                        graphics.DrawString(rectangle.Text, config.Font, new SolidBrush(config.TextColor),
-                            rectangle.Rectangle);
-                        graphics.DrawRectangle(new Pen(config.TextColor), rectangle.Rectangle);
-                    }
-
-                    return image;
-                });
+            return CheckPoint(config)
+                .Then(y => CheckRectangles(rectangles)
+                    .Then(x => DrawRectangles(x, y)));
         }
 
-        private static Result<Point> CheckPoint(Point center)
+        private static Result<Bitmap> DrawRectangles(List<ICloudTag> rectangles, IConfig config)
         {
-            return center.X < 0 || center.Y < 0
-                ? Result.Fail<Point>("X or Y of center was negative")
-                : Result.Ok(center);
+            var actualSize = new Size(config.Center.X + GetDeltaX(rectangles),
+                config.Center.Y + GetDeltaY(rectangles));
+            var size = new Size(Math.Max(actualSize.Width, config.ImageSize.Width),
+                Math.Max(actualSize.Height, config.ImageSize.Height));
+            var image = new Bitmap(size.Width, size.Height);
+            using var graphics = Graphics.FromImage(image);
+
+            foreach (var rectangle in rectangles)
+            {
+                graphics.DrawString(rectangle.Text, config.Font, new SolidBrush(config.TextColor),
+                    rectangle.Rectangle);
+                graphics.DrawRectangle(new Pen(config.TextColor), rectangle.Rectangle);
+            }
+
+            return image;
+        }
+
+        private static Result<IConfig> CheckPoint(IConfig config)
+        {
+            return config.Center.X < 0 || config.Center.Y < 0
+                ? Result.Fail<IConfig>("X or Y of center was negative")
+                : Result.Ok(config);
         }
 
         private static Result<List<ICloudTag>> CheckRectangles(List<ICloudTag> rectangles)

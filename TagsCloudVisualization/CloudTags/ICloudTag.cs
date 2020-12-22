@@ -6,5 +6,7 @@ namespace TagsCloudVisualization.CloudTags
     {
         public Rectangle Rectangle { get; }
         public string Text { get; }
+
+        public bool Equals(ICloudTag tag);
     }
 }

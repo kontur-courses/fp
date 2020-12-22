@@ -10,6 +10,11 @@ namespace TagsCloudVisualization.CloudTags
             Text = text;
         }
 
+        public bool Equals(ICloudTag tag)
+        {
+            return Text == tag.Text && Rectangle.Equals(tag.Rectangle);
+        }
+
         public Rectangle Rectangle { get; }
         public string Text { get; }
     }

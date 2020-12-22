@@ -21,8 +21,8 @@ namespace Cloud.ClientUI
             var visualizationContainer = container.CreateTagCloudContainer(arguments);
             visualizationContainer.BuildServiceProvider().GetService<TagCloudContainer>()
                 .GetImage(arguments)
-                .Then(x => saver.SaveImage(x, arguments.OutputFileName))
-                .OnFail(Console.WriteLine);
+                .Then(x => saver.SaveImage(x, arguments.OutputFileName)
+                    .OnFail(Console.WriteLine));
         }
     }
 }

@@ -8,7 +8,7 @@ namespace TagsCloudVisualization.WordsProviders
         public Result<List<string>> GetWords(string filepath)
         {
             return ValidateFile(filepath)
-                .Then(_ => ReadWords(filepath));
+                .Then(ReadWords);
         }
 
         private static Result<List<string>> ReadWords(string filepath)

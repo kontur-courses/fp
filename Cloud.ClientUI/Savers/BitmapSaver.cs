@@ -11,12 +11,15 @@ namespace Cloud.ClientUI
         public Result<None> SaveImage(Bitmap bitmap, string fileName)
         {
             return CheckValidFileName(fileName)
-                .Then(_ =>
-                {
-                    var path = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fileName}.bmp";
-                    bitmap.Save(path, ImageFormat.Bmp);
-                    return Result.Ok();
-                });
+                .Then(x => Save(bitmap, x));
+
+        }
+
+        private static Result<None> Save(Bitmap bitmap, string fileName)
+        {
+            var path = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fileName}.bmp";
+            bitmap.Save(path, ImageFormat.Bmp);
+            return Result.Ok();
         }
 
         private static Result<string> CheckValidFileName(string name)

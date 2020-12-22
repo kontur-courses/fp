@@ -33,12 +33,11 @@ namespace CloudContainer
             cleaner.AddBoringWords(config.BoringWords);
 
             var path = Path.Join(Directory.GetCurrentDirectory(), arguments.InputFileName);
-
             return provider
                 .GetWords(path)
-                .Then(x => cleaner.CleanWords(x))
-                .Then(x => converter.ConvertWords(x))
-                .Then(x => Drawer.DrawImage(x, config));
+                .Then(x => cleaner.CleanWords(x)
+                    .Then(y => converter.ConvertWords(y)
+                        .Then(z => Drawer.DrawImage(z, config))));
         }
     }
 }
