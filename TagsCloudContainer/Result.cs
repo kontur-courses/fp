@@ -46,23 +46,16 @@ namespace TagsCloudContainer
     public static class Result
     {
         public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
+            => Ok(value);
 
         public static Result<T> Ok<T>(T value)
-        {
-            return new Result<T>(null, value);
-        }
+            => new Result<T>(null, value);
+
         public static Result<None> Ok()
-        {
-            return Ok<None>(null);
-        }
+            => Ok<None>(null);
 
         public static Result<T> Fail<T>(string errorMessage)
-        {
-            return new Result<T>(errorMessage);
-        }
+            => new Result<T>(errorMessage);
 
         public static Result<T> Of<T>(Func<T> function, string errorMessage = null)
         {
