@@ -12,7 +12,6 @@ namespace Cloud.ClientUI
         {
             return CheckValidFileName(fileName)
                 .Then(x => Save(bitmap, x));
-
         }
 
         private static Result<None> Save(Bitmap bitmap, string fileName)

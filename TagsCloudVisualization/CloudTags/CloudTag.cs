@@ -12,7 +12,7 @@ namespace TagsCloudVisualization.CloudTags
 
         public bool Equals(ICloudTag tag)
         {
-            return Text == tag.Text && Rectangle.Equals(tag.Rectangle);
+            return tag != null && Text == tag.Text && Rectangle.Equals(tag.Rectangle);
         }
 
         public Rectangle Rectangle { get; }
