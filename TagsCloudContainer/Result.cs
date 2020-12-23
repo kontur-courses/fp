@@ -13,7 +13,7 @@ namespace TagsCloudContainer
 
     public readonly struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             ErrorMessage = error;
             Value = value;
