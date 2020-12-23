@@ -18,10 +18,6 @@ namespace TagsCloudContainer
             ErrorMessage = error;
             Value = value;
         }
-        public static implicit operator Result<T>(T v)
-        {
-            return Result.Ok(v);
-        }
 
         public string ErrorMessage { get; }
         internal T Value { get; }

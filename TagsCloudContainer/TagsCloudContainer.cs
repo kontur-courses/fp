@@ -78,7 +78,7 @@ namespace TagsCloudContainer
                 var result = wordResult;
                 wordResult = Result.Of(() => preprocessingFuncion(result.Value));
                 if (!wordResult.IsSuccess) return wordResult.RefineError("Не удалось преобразовать слово");
-                if (wordResult.Value == null) return null;
+                if (wordResult.Value == null) return Result.Ok<string>(null);
             }
 
             return wordResult;
