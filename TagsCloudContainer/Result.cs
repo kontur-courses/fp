@@ -49,33 +49,33 @@ namespace TagsCloudContainer
             return Ok<None>(null);
         }
 
-        public static Result<T> Fail<T>(string e)
+        public static Result<T> Fail<T>(string errorMessage)
         {
-            return new Result<T>(e);
+            return new Result<T>(errorMessage);
         }
 
-        public static Result<T> Of<T>(Func<T> f, string error = null)
+        public static Result<T> Of<T>(Func<T> function, string errorMessage = null)
         {
             try
             {
-                return Ok(f());
+                return Ok(function());
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message);
+                return Fail<T>(errorMessage ?? e.Message);
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> OfAction(Action action, string errorMessage = null)
         {
             try
             {
-                f();
+                action();
                 return Ok();
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message);
+                return Fail<None>(errorMessage ?? e.Message);
             }
         }
 
