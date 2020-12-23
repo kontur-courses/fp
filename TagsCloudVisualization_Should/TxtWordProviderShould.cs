@@ -12,7 +12,7 @@ namespace TagsCloudVisualization_Should
         public void GetWords_ListWithWords_TxtDocument()
         {
             var provider = new TxtWordProvider();
-            var path = Path.Join(Directory.GetCurrentDirectory(), "text.txt");
+            var path = "text.txt";
             var expectedWords = new List<string> {"он", "пошел"};
 
             var actualWords = provider.GetWords(path);

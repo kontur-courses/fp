@@ -32,7 +32,7 @@ namespace CloudContainer
                 arguments.TextColor, arguments.ImageSize, arguments.BoringWords);
             cleaner.AddBoringWords(config.BoringWords);
 
-            var path = Path.Join(Directory.GetCurrentDirectory(), arguments.InputFileName);
+            var path = arguments.InputFileName;
             return provider
                 .GetWords(path)
                 .Then(x => cleaner.CleanWords(x)
