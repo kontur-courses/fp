@@ -25,11 +25,6 @@ namespace TagsCloudContainer
 
         public string ErrorMessage { get; }
         internal T Value { get; }
-        public T GetValueOrThrow()
-        {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {ErrorMessage}");
-        }
         public bool IsSuccess => ErrorMessage == null;
     }
 
