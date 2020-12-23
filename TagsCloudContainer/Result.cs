@@ -15,7 +15,7 @@ namespace TagsCloudContainer
     {
         public Result(string error, T value = default(T))
         {
-            Error = error;
+            ErrorMessage = error;
             Value = value;
         }
         public static implicit operator Result<T>(T v)
@@ -23,14 +23,14 @@ namespace TagsCloudContainer
             return Result.Ok(v);
         }
 
-        public string Error { get; }
+        public string ErrorMessage { get; }
         internal T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            throw new InvalidOperationException($"No value. Only Error {ErrorMessage}");
         }
-        public bool IsSuccess => Error == null;
+        public bool IsSuccess => ErrorMessage == null;
     }
 
     public static class Result
@@ -106,14 +106,14 @@ namespace TagsCloudContainer
         {
             return input.IsSuccess
                 ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
+                : Fail<TOutput>(input.ErrorMessage);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess) handleError(input.Error);
+            if (!input.IsSuccess) handleError(input.ErrorMessage);
             return input;
         }
 
@@ -122,7 +122,7 @@ namespace TagsCloudContainer
             Func<string, string> replaceError)
         {
             if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return Fail<TInput>(replaceError(input.ErrorMessage));
         }
 
         public static Result<TInput> RefineError<TInput>(
@@ -135,7 +135,7 @@ namespace TagsCloudContainer
         public static Result<IEnumerable<TInput>> EnumerateOrFail<TInput>(this IEnumerable<Result<TInput>> input)
         {
             string error = null;
-            input = input.TakeWhile(t => (error = t.Error) == null).ToArray();
+            input = input.TakeWhile(t => (error = t.ErrorMessage) == null).ToArray();
             if (error != null) return Fail<IEnumerable<TInput>>(error);
             return input.Select(r => r.Value).AsResult();
         }

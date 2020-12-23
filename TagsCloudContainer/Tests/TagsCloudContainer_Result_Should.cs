@@ -21,8 +21,8 @@ namespace TagsCloudContainer
             container.AddFromFile(fileName);
             var result = container.Render();
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().StartWith("Не удаётся прочитать слова из источника. ");
-            result.Error.Should().Contain($"Не удаётся прочитать файл {fileName}");
+            result.ErrorMessage.Should().StartWith("Не удаётся прочитать слова из источника. ");
+            result.ErrorMessage.Should().Contain($"Не удаётся прочитать файл {fileName}");
         }
 
         [Test]
@@ -34,8 +34,8 @@ namespace TagsCloudContainer
                 .Render();
             
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().StartWith("Не удалось преобразовать слово. ");
-            result.Error.Should().Contain("!hello, ");
+            result.ErrorMessage.Should().StartWith("Не удалось преобразовать слово. ");
+            result.ErrorMessage.Should().Contain("!hello, ");
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace TagsCloudContainer
             var result = container.Render();
 
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().StartWith("Прямоугольники выходят за границы изображения");
+            result.ErrorMessage.Should().StartWith("Прямоугольники выходят за границы изображения");
         }
         
         [SetUp]

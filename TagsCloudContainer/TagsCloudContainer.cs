@@ -90,7 +90,7 @@ namespace TagsCloudContainer
 
             var result = words
                 .Select(s => (word: PreprocessWord(s.word), s.count))
-                .TakeWhile(w => (error = w.word.Error) == null)
+                .TakeWhile(w => (error = w.word.ErrorMessage) == null)
                 .Where(w => w.word.Value != null)
                 .ToArray()
                 .GroupBy(w => w.word.Value)
