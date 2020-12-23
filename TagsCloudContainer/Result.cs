@@ -104,14 +104,6 @@ namespace TagsCloudContainer
                 : Fail<TOutput>(input.ErrorMessage);
         }
 
-        public static Result<TInput> OnFail<TInput>(
-            this Result<TInput> input,
-            Action<string> handleError)
-        {
-            if (!input.IsSuccess) handleError(input.ErrorMessage);
-            return input;
-        }
-
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError)
