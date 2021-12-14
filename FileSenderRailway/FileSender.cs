@@ -27,38 +27,43 @@ namespace FileSenderRailway
         {
             foreach (var file in files)
             {
-                string errorMessage = null;
-                try
+                var prepareResult = PrepareFileToSend(file, certificate);
+                if (!prepareResult.IsSuccess)
                 {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
-                    sender.Send(doc);
-                }
-                catch (FormatException e)
-                {
-                    errorMessage = "Can't prepare file to send. " + e.Message;
-                }
-                catch (InvalidOperationException e)
-                {
-                    errorMessage = "Can't send. " + e.Message;
-                }
-                yield return new FileSendResult(file, errorMessage);
+                    yield return new FileSendResult(file, prepareResult.Error);
+                    continue;
+                }                   
+                
+                var sendResult = prepareResult
+                    .Then(sender.Send)
+                    .RefineError("Can't send");
+
+                yield return new FileSendResult(file, sendResult.Error);
             }
         }
 
-        private bool IsValidFormatVersion(Document doc)
+        private Result<Document> PrepareFileToSend(FileContent file, X509Certificate certificate)
         {
-            return doc.Format == "4.0" || doc.Format == "3.1";
+            return recognizer.Recognize(file)
+                    .Then(ValidateFormatVersion)
+                    .Then(ValidateTimestamp)
+                    .RefineError("Can't prepare file to send")
+                    .Then(result => result with { Content = cryptographer
+                    .Sign(result.Content, certificate) });
         }
 
-        private bool IsValidTimestamp(Document doc)
+        private Result<Document> ValidateFormatVersion(Document doc)
         {
-            var oneMonthBefore = now().AddMonths(-1);
-            return doc.Created > oneMonthBefore;
+            if (doc.Format == "4.0" || doc.Format == "3.1")
+                return Result.Ok(doc);
+            return Result.Fail<Document>("Invalid format version");
+        }
+
+        private Result<Document> ValidateTimestamp(Document doc)
+        {
+            if (doc.Created > now().AddMonths(-1))
+                return Result.Ok(doc);
+            return Result.Fail<Document>("Too old document");
         }
     }
 }

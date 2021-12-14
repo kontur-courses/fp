@@ -51,7 +51,7 @@ namespace FileSenderRailway
         public void Fail_WhenNotRecognized()
         {
             A.CallTo(() => recognizer.Recognize(file))
-                .Throws(new FormatException("Can't recognize"));
+                .Returns(Result.Fail<Document>("Can't recognize"));
 
             VerifyErrorOnPrepareFile(file, certificate);
         }
@@ -71,7 +71,7 @@ namespace FileSenderRailway
         private void PrepareDocument(FileContent content, byte[] signedContent, DateTime created, string format)
         {
             var document = new Document(content.Name, content.Content, created, format);
-            A.CallTo(() => recognizer.Recognize(content)).Returns(document);
+            A.CallTo(() => recognizer.Recognize(content)).Returns(Result.Ok(document));
             A.CallTo(() => cryptographer.Sign(content.Content, certificate)).Returns(signedContent);
         }
 

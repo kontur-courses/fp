@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace FileSenderRailway
 {
     public class None
     {
@@ -16,6 +16,7 @@ namespace ResultOf
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);

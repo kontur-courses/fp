@@ -8,7 +8,7 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(continuation);
         }
 
         public static Result<TSelected> SelectMany<TInput, TOutput, TSelected>(
@@ -16,7 +16,7 @@ namespace ResultOfTask
             Func<TInput, Result<TOutput>> continuation,
             Func<TInput, TOutput, TSelected> resultSelector)
         {
-            throw new NotImplementedException();
+            return input.Then(continuation).Then(inp => resultSelector(input.Value, inp));
         }
     }
 }
