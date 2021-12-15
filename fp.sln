@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudLayouter", "CircularCl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{95D773E7-4B91-42A6-9468-3711FD2D33A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Results", "Results\Results.csproj", "{668C0AE9-A672-4525-A8F0-0E564EB62ED3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{95D773E7-4B91-42A6-9468-3711FD2D33A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95D773E7-4B91-42A6-9468-3711FD2D33A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95D773E7-4B91-42A6-9468-3711FD2D33A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{668C0AE9-A672-4525-A8F0-0E564EB62ED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{668C0AE9-A672-4525-A8F0-0E564EB62ED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{668C0AE9-A672-4525-A8F0-0E564EB62ED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{668C0AE9-A672-4525-A8F0-0E564EB62ED3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
