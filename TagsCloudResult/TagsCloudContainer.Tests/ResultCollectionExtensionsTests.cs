@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloudContainer.Tests
 {
@@ -22,8 +22,8 @@ namespace TagsCloudContainer.Tests
         public void CombineResults_WhenAllResultsSuccess_ReturnValuesEnumerable()
         {
             var finaleResult = successResults.CombineResults();
-            
-            finaleResult.GetValueOrThrow().Should().BeEquivalentTo(values);
+
+            finaleResult.Should().BeOk(values);
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace TagsCloudContainer.Tests
 
             var finaleResult = allResults.CombineResults();
 
-            finaleResult.Error.Should().BeEquivalentTo("0");
+            finaleResult.Should().BeFailed("0");
         }
     }
 }

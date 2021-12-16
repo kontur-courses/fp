@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Preprocessing;
-using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloudContainer.Tests
 {
@@ -28,7 +27,7 @@ namespace TagsCloudContainer.Tests
                 {"привет", forbiddenPart, $"привет{forbiddenPart}", $"{forbiddenPart}привет", $"при{forbiddenPart}вет"};
 
             parser.ParseWords(words)
-                .Should().BeEquivalentTo(Result.Ok(new List<SpeechPartWord> {new("привет", SpeechPart.S)}));
+                .Should().BeOk(new List<SpeechPartWord> {new("привет", SpeechPart.S)});
         }
 
         [Test]
@@ -36,7 +35,7 @@ namespace TagsCloudContainer.Tests
         {
             var speechPartWord = new SpeechPartWord("красно-синий", SpeechPart.A);
             parser.ParseWords(new[] {speechPartWord.Word})
-                .Should().BeEquivalentTo(Result.Ok(new List<SpeechPartWord> {speechPartWord}));
+                .Should().BeOk(new List<SpeechPartWord> {speechPartWord});
         }
 
         [TestCaseSource(nameof(ParseWordsReturnWordInfosCases))]
@@ -44,7 +43,7 @@ namespace TagsCloudContainer.Tests
         {
             var words = speechPartWords.Select(speechPartWord => speechPartWord.Word);
             parser.ParseWords(words)
-                .Should().BeEquivalentTo(Result.Ok(speechPartWords));
+                .Should().BeOk(speechPartWords);
         }
 
         private static IEnumerable<TestCaseData> ParseWordsReturnWordInfosCases()

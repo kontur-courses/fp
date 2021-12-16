@@ -4,6 +4,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloudContainer.Tests
 {
@@ -48,14 +49,14 @@ namespace TagsCloudContainer.Tests
         public void ResultOf_ThrowingExceptionFunc_ReturnsFail()
         {
             Result.Of<int>(() => throw new Exception("123"))
-                .Should().BeEquivalentTo(Result.Fail<int>("123"));
+                .Should().BeFailed("123");
         }
 
         [Test]
         public void ResultOf_ThrowingExceptionFuncWithCustomError_ReturnsFailWithError()
         {
             Result.Of<int>(() => throw new Exception("123"), "new error")
-                .Should().BeEquivalentTo(Result.Fail<int>("new error"));
+                .Should().BeFailed("new error");
         }
 
         [Test]
@@ -69,14 +70,14 @@ namespace TagsCloudContainer.Tests
         public void ResultOfAction_ThrowingException_ReturnsFail()
         {
             Result.OfAction(() => throw new Exception("123"))
-                .Should().BeEquivalentTo(Result.Fail<int>("123"));
+                .Should().BeFailed("123");
         }
 
         [Test]
         public void ResultOfAction_ThrowingExceptionWithCustomError_ReturnsFailWithError()
         {
             Result.OfAction(() => throw new Exception("123"), "new error")
-                .Should().BeEquivalentTo(Result.Fail<int>("new error"));
+                .Should().BeFailed("new error");
         }
 
         [Test]
@@ -91,7 +92,7 @@ namespace TagsCloudContainer.Tests
         public void AsResult_CreateSuccessResult()
         {
             5.AsResult()
-                .Should().BeEquivalentTo(Result.Ok(5));
+                .Should().BeOk(5);
         }
 
         [Test]
@@ -100,7 +101,7 @@ namespace TagsCloudContainer.Tests
             var result = Result.Ok(41)
                 .Then(n => n + 5);
 
-            result.Should().BeEquivalentTo(Result.Ok(46));
+            result.Should().BeOk(46);
         }
 
         [Test]
@@ -110,7 +111,7 @@ namespace TagsCloudContainer.Tests
             var result = Result.Fail<int>("err")
                 .Then(n => next.Object(n));
 
-            result.Should().BeEquivalentTo(Result.Fail<int>("err"));
+            result.Should().BeFailed("err");
             next.Verify(f => f(It.IsAny<int>()), Times.Never);
         }
 
@@ -122,7 +123,7 @@ namespace TagsCloudContainer.Tests
             var result = Result.Ok(22)
                 .Then(next);
 
-            result.Should().BeEquivalentTo(Result.Fail("err"));
+            result.Should().BeFailed("err");
         }
 
         [Test]
@@ -132,7 +133,7 @@ namespace TagsCloudContainer.Tests
                 .Then(n => Result.Ok(n + 10))
                 .Then(n => n + 10);
 
-            result.Should().BeEquivalentTo(Result.Ok(42));
+            result.Should().BeOk(42);
         }
 
         [Test]
@@ -143,7 +144,7 @@ namespace TagsCloudContainer.Tests
                 .Then(n => Result.Fail<int>("err"))
                 .Then(n => next.Object(n));
 
-            result.Should().BeEquivalentTo(Result.Fail("err"));
+            result.Should().BeFailed("err");
             next.Verify(f => f(It.IsAny<int>()), Times.Never);
         }
 
@@ -177,7 +178,7 @@ namespace TagsCloudContainer.Tests
                 .Then(Math.Acos)
                 .Then(list.Add);
 
-            result.Should().BeEquivalentTo(Result.Ok());
+            result.Should().BeOk();
             list.Should().BeEquivalentTo(new List<double> {0});
         }
 
@@ -215,7 +216,7 @@ namespace TagsCloudContainer.Tests
             var result = Result.Fail("err")
                 .ReplaceError(err => "new err");
 
-            result.Should().BeEquivalentTo(Result.Fail("new err"));
+            result.Should().BeFailed("new err");
         }
 
         [Test]
@@ -225,7 +226,7 @@ namespace TagsCloudContainer.Tests
                 .ReplaceError(e => "new err")
                 .Then(() => Result.Fail("err"));
 
-            result.Should().BeEquivalentTo(Result.Fail("err"));
+            result.Should().BeFailed("err");
         }
 
         [Test]
@@ -235,7 +236,7 @@ namespace TagsCloudContainer.Tests
             var result = calculation
                 .RefineError("Posting results to db.");
 
-            result.Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection."));
+            result.Should().BeFailed("Posting results to db. No connection.");
         }
 
         [Test]
@@ -243,7 +244,7 @@ namespace TagsCloudContainer.Tests
         {
             Result<int> result = 5;
 
-            result.Should().BeEquivalentTo(Result.Ok(5));
+            result.Should().BeOk(5);
         }
     }
 }
