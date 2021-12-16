@@ -23,19 +23,13 @@ namespace TagsCloudApp.Actions
         private Result<None> SetMaxFontSize()
         {
             return Validate.Positive(nameof(renderArgs.MaxFontSize), renderArgs.MaxFontSize)
-                .Then(max =>
-                {
-                    settings.MaxFontSize = max;
-                });
+                .Then(max => { settings.MaxFontSize = max; });
         }
 
         private Result<None> SetMinFontSize()
         {
             return Validate.Positive(nameof(renderArgs.MinFontSize), renderArgs.MinFontSize)
-                .Then(min =>
-                {
-                    settings.MinFontSize = min;
-                });
+                .Then(min => { settings.MinFontSize = min; });
         }
     }
 }

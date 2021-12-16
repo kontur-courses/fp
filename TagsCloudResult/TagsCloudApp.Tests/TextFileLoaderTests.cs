@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using TagsCloudApp.WordsLoading;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloud.Tests
 {
@@ -19,7 +19,7 @@ namespace TagsCloud.Tests
         public void LoadText_WithNotExistingFile_ReturnFailResult()
         {
             loader.LoadText("sef")
-                .IsSuccess.Should().BeFalse();
+                .Should().BeFailed();
         }
     }
 }

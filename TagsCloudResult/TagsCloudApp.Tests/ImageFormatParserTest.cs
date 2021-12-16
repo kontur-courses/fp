@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
-using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudApp.Parsers;
-using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloud.Tests
 {
@@ -21,14 +20,14 @@ namespace TagsCloud.Tests
         public void Parse_ReturnFailResult_WithIncorrectValue()
         {
             parser.Parse("esf")
-                .IsSuccess.Should().BeFalse();
+                .Should().BeFailed();
         }
 
         [TestCaseSource(nameof(ParseCases))]
         public void Parse_ReturnFormat_WithCorrectValue(string value, ImageFormat expected)
         {
             parser.Parse(value)
-                .Should().BeEquivalentTo(Result.Ok(expected));
+                .Should().BeOk(expected);
         }
 
         public static IEnumerable<TestCaseData> ParseCases()

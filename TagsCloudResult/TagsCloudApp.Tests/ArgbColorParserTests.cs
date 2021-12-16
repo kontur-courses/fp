@@ -3,6 +3,7 @@ using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudApp.Parsers;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloud.Tests
 {
@@ -22,7 +23,7 @@ namespace TagsCloud.Tests
         public void Parse_WithIncorrectValue_ReturnFailResult(string value)
         {
             parser.Parse(value)
-                .IsSuccess.Should().BeFalse();
+                .Should().BeFailed();
         }
 
         [TestCaseSource(nameof(ParseReturnColorFromCases))]

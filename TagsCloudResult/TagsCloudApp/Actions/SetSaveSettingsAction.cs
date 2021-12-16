@@ -21,10 +21,7 @@ namespace TagsCloudApp.Actions
         {
             settings.OutputFile = renderArgs.OutputPath;
             return parser.Parse(renderArgs.ImageFormat)
-                .Then(format =>
-                {
-                    settings.ImageFormat = format;
-                });
+                .Then(format => { settings.ImageFormat = format; });
         }
     }
 }

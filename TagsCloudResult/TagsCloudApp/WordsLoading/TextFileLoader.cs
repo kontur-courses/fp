@@ -12,7 +12,7 @@ namespace TagsCloudApp.WordsLoading
         {
             return File.Exists(filename)
                 ? LoadTextFromExistingFile(filename)
-                : Result.Fail<string>($"File not exist: {filename}");
+                : Result.Fail<string>($"File not exist at: {filename}.");
         }
 
         protected abstract Result<string> LoadTextFromExistingFile(string filename);

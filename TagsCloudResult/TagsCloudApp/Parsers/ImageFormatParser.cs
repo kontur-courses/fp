@@ -13,7 +13,7 @@ namespace TagsCloudApp.Parsers
         public Result<ImageFormat> Parse(string value)
         {
             return GetImageFormat(value)
-                .RefineError($"Available formats: {GetAvailableFormats()}");
+                .RefineError("Invalid image format.");
         }
 
         private static Result<ImageFormat> GetImageFormat(string value)
@@ -24,7 +24,7 @@ namespace TagsCloudApp.Parsers
 
             return format != null
                 ? Result.Ok(format)
-                : Result.Fail<ImageFormat>("Can't find image format");
+                : Result.Fail<ImageFormat>($"Available formats: {GetAvailableFormats()}.");
         }
 
         private static string GetAvailableFormats()

@@ -1,7 +1,6 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using TagsCloudApp.Actions;
-using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloud.Tests
 {
@@ -12,7 +11,7 @@ namespace TagsCloud.Tests
         public void Positive_WhenValueNegative_ReturnFailResult(int value)
         {
             Validate.Positive("", value)
-                .IsSuccess.Should().BeFalse();
+                .Should().BeFailed();
         }
 
         [TestCase(1)]
@@ -21,7 +20,7 @@ namespace TagsCloud.Tests
         public void Positive_WhenValuePositive_ReturnOkResult(int value)
         {
             Validate.Positive("", value)
-                .Should().BeEquivalentTo(Result.Ok(value));
+                .Should().BeOk(value);
         }
     }
 }

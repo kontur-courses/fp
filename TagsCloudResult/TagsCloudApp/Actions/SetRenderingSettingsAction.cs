@@ -34,6 +34,7 @@ namespace TagsCloudApp.Actions
             return colorParser.Parse(renderArgs.BackgroundColor)
                 .Then(color =>
                 {
+                    settings.Background.Dispose();
                     settings.Background = new SolidBrush(color);
                 });
         }

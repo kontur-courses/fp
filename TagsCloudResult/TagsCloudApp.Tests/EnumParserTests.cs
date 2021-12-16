@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
-using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudApp.Parsers;
 using TagsCloudContainer.Preprocessing;
-using TagsCloudContainer.Results;
+using TagsCloudContainer.Tests.FluentAssertionsExtensions;
 
 namespace TagsCloud.Tests
 {
@@ -22,7 +21,7 @@ namespace TagsCloud.Tests
         public void Parse_ReturnCorrectValue(string value, SpeechPart expected)
         {
             parser.Parse<SpeechPart>(value)
-                .Should().BeEquivalentTo(Result.Ok(expected));
+                .Should().BeOk(expected);
         }
 
         [TestCase("all")]
@@ -30,14 +29,14 @@ namespace TagsCloud.Tests
         public void Parse_IgnoreCase(string value)
         {
             parser.Parse<MemberTypes>(value)
-                .Should().BeEquivalentTo(Result.Ok(MemberTypes.All));
+                .Should().BeOk(MemberTypes.All);
         }
 
         [Test]
         public void Parse_ReturnFailResult_WithIncorrectValue()
         {
             parser.Parse<SpeechPart>("QWE")
-                .IsSuccess.Should().BeFalse();
+                .Should().BeFailed();
         }
     }
 }
