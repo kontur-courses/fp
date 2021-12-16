@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Preprocessing;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.ColorMappers
 {

@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer
+﻿namespace TagsCloudContainer.Results
 {
     public class None
     {

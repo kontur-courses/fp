@@ -1,7 +1,5 @@
-﻿using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
+﻿using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {

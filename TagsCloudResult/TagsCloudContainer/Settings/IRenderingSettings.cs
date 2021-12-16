@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloudContainer.Settings.Interfaces
+namespace TagsCloudContainer.Settings
 {
     public interface IRenderingSettings
     {

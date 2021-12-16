@@ -1,15 +1,11 @@
-﻿using System;
-using System.Drawing;
-using TagsCloudContainer;
+﻿using System.Drawing;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Parsers
 {
     public class ArgbColorParser : IArgbColorParser
     {
-        public Result<Color> TryParse(string value)
-        {
-            return Result.Of(() => ColorTranslator.FromHtml(value))
-                .ReplaceError(_ => $"Incorrect color: {value}");
-        }
+        public Result<Color> Parse(string value) =>
+            Result.Of(() => ColorTranslator.FromHtml(value), $"Incorrect color: {value}");
     }
 }

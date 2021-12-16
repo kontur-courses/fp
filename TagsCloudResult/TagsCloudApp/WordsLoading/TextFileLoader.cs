@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.WordsLoading
 {

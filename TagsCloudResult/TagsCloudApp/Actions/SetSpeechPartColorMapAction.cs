@@ -2,11 +2,9 @@
 using System.Drawing;
 using System.Linq;
 using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
 using TagsCloudContainer.Preprocessing;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
@@ -36,9 +34,14 @@ namespace TagsCloudApp.Actions
         public Result<None> Perform()
         {
             return keyValueParser.Parse(renderArgs.SpeechPartColorMap)
-                .Select(keyValue => enumParser.TryParse<SpeechPart>(keyValue.Key)
-                    .Then(speechPart => colorParser.TryParse(keyValue.Value)
-                        .Then(color => new KeyValuePair<SpeechPart, Color>(speechPart, color))))
+                .Select(keyValue =>
+                {
+                    var speechPart = enumParser.Parse<SpeechPart>(keyValue.Key);
+                    var color = colorParser.Parse(keyValue.Value);
+                    return Result.Of(() => new KeyValuePair<SpeechPart, Color>(
+                        speechPart.GetValueOrThrow(),
+                        color.GetValueOrThrow()));
+                })
                 .CombineResults()
                 .Then(keyValues =>
                 {

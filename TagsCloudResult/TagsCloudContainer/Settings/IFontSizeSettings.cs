@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.Settings.Interfaces
+﻿namespace TagsCloudContainer.Settings
 {
     public interface IFontSizeSettings
     {

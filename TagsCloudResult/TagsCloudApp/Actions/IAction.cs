@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer;
+﻿using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Actions
 {

@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 
-namespace TagsCloudContainer.Settings.Interfaces
+namespace TagsCloudContainer.Settings
 {
     public interface IDefaultColorSettings
     {
-        Color Color { get; set; } 
+        Color Color { get; set; }
     }
 }

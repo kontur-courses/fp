@@ -4,8 +4,8 @@ using System.Linq;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Preprocessing;
 using TagsCloudContainer.Rendering;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer
 {
@@ -31,7 +31,7 @@ namespace TagsCloudContainer
         public Result<Bitmap> RenderWords(IEnumerable<string> words)
         {
             return PreprocessWords(words)
-                .Then(processedWords => tagsCloudLayouter.GetCloudLayout(processedWords))
+                .Then(tagsCloudLayouter.GetCloudLayout)
                 .Then(layout => colorMapperSettings.ColorMapper.GetColorMap(layout)
                     .Then(colorMap => GetWordsStyles(layout, colorMap).ToList())
                     .Then(wordsStyles => CreateBitmap(wordsStyles, layout)));

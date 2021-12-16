@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudContainer.Tests
 {
-    public class ResultLinqExtensionsTests
+    public class ResultCollectionExtensionsTests
     {
         private IEnumerable<int> values;
         private IEnumerable<Result<int>> successResults;
@@ -22,14 +22,14 @@ namespace TagsCloudContainer.Tests
         public void CombineResults_WhenAllResultsSuccess_ReturnValuesEnumerable()
         {
             var finaleResult = successResults.CombineResults();
-
+            
             finaleResult.GetValueOrThrow().Should().BeEquivalentTo(values);
         }
 
         [Test]
         public void CombineResults_WithFailedResults_ReturnFirstFailedException()
         {
-            var failedResults = Enumerable.Range(0, 10).Select(i => new Result<int>(i.ToString()));
+            var failedResults = Enumerable.Range(0, 10).Select(i => Result.Fail<int>(i.ToString()));
             var allResults = successResults.Concat(failedResults);
 
             var finaleResult = allResults.CombineResults();

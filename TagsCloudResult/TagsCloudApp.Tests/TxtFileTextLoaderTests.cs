@@ -4,6 +4,7 @@ using System.Text;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudApp.WordsLoading;
+using TagsCloudContainer.Results;
 
 namespace TagsCloud.Tests
 {
@@ -24,7 +25,7 @@ namespace TagsCloud.Tests
             var text = "Hello world!";
             File.WriteAllText(testFile, text, encoding);
             loader.LoadText(testFile)
-                .Should().Be(text);
+                .Should().BeEquivalentTo(Result.Ok(text));
         }
 
         private static IEnumerable<TestCaseData> GetWordsFromEncodingTestCases()

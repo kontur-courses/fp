@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudContainer.ColorMappers
 {

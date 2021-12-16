@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudContainer.Preprocessing
 {

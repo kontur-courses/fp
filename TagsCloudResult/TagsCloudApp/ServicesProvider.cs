@@ -12,10 +12,10 @@ using TagsCloudContainer.MathFunctions;
 using TagsCloudContainer.Preprocessing;
 using TagsCloudContainer.Rendering;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
+using TagsCloudContainer.Settings.Default;
 using TagsCloudVisualization;
 
-namespace TagsCloudApp.RenderCommand
+namespace TagsCloudApp
 {
     public class ServicesProvider
     {
@@ -89,7 +89,7 @@ namespace TagsCloudApp.RenderCommand
                 .AddSingleton<IFileTextLoaderResolver, FileTextLoaderResolver>();
         }
 
-        private void AddActions(IServiceCollection collection)
+        private static void AddActions(IServiceCollection collection)
         {
             collection.AddSingleton<RenderAction>()
                 .AddSingleton<IAction, SetDefaultColorAction>()

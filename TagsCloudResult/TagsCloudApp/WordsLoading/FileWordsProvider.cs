@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.WordsLoading
 {
@@ -37,7 +36,7 @@ namespace TagsCloudApp.WordsLoading
         private Result<FileType> GetFileType(string filename)
         {
             var fileExtension = filename.Split('.').Last();
-            return enumParser.TryParse<FileType>(fileExtension);
+            return enumParser.Parse<FileType>(fileExtension);
         }
     }
 }

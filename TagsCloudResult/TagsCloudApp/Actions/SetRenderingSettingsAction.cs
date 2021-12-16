@@ -1,17 +1,15 @@
 ﻿using System.Drawing;
 using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
     public class SetRenderingSettingsAction : IAction
     {
-        private IRenderArgs renderArgs;
-        private IArgbColorParser colorParser;
-        private IRenderingSettings settings;
+        private readonly IRenderArgs renderArgs;
+        private readonly IArgbColorParser colorParser;
+        private readonly IRenderingSettings settings;
 
         public SetRenderingSettingsAction(
             IRenderingSettings settings,
@@ -27,12 +25,13 @@ namespace TagsCloudApp.Actions
         {
             settings.Scale = renderArgs.ImageScale;
             settings.DesiredImageSize = renderArgs.ImageSize;
+            settings.Background.Dispose();
             return SetBackgroundColor();
         }
 
         private Result<None> SetBackgroundColor()
         {
-            return colorParser.TryParse(renderArgs.BackgroundColor)
+            return colorParser.Parse(renderArgs.BackgroundColor)
                 .Then(color =>
                 {
                     settings.Background = new SolidBrush(color);

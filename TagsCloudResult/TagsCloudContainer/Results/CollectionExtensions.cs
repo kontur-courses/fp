@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Results
 {
     public static class CollectionExtensions
     {

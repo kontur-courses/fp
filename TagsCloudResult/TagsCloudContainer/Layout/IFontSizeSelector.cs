@@ -4,6 +4,6 @@ namespace TagsCloudContainer.Layout
 {
     public interface IFontSizeSelector
     {
-        IEnumerable<FontSizedWord> GetFontSizedWords(IEnumerable<string> words);
+        IEnumerable<SizedWord> GetFontSizedWords(IEnumerable<string> words);
     }
 }

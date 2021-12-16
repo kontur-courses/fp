@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Rendering
 {

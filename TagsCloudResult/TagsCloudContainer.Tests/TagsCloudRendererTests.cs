@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using TagsCloudContainer.Rendering;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 using TagsCloudVisualizationTests.TestingLibrary;
 
 namespace TagsCloudContainer.Tests

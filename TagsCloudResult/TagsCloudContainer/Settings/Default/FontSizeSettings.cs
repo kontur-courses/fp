@@ -1,6 +1,4 @@
-﻿using TagsCloudContainer.Settings.Interfaces;
-
-namespace TagsCloudContainer.Settings
+﻿namespace TagsCloudContainer.Settings.Default
 {
     public class FontSizeSettings : IFontSizeSettings
     {

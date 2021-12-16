@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Layout
 {
@@ -18,7 +17,7 @@ namespace TagsCloudContainer.Layout
             this.wordsScaleSettings = wordsScaleSettings;
         }
 
-        public IEnumerable<FontSizedWord> GetFontSizedWords(IEnumerable<string> words)
+        public IEnumerable<SizedWord> GetFontSizedWords(IEnumerable<string> words)
         {
             if (words == null)
                 throw new ArgumentNullException(nameof(words));
@@ -31,7 +30,7 @@ namespace TagsCloudContainer.Layout
 
             return wordsFrequencies.Select(
                 pair =>
-                    new FontSizedWord(
+                    new SizedWord(
                         pair.Key,
                         wordsScaleSettings.Function.GetValue(firstPoint, secondPoint, pair.Value)));
         }

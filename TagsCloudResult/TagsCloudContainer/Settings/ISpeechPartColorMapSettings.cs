@@ -2,7 +2,7 @@
 using System.Drawing;
 using TagsCloudContainer.Preprocessing;
 
-namespace TagsCloudContainer.Settings.Interfaces
+namespace TagsCloudContainer.Settings
 {
     public interface ISpeechPartColorMapSettings
     {

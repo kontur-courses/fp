@@ -7,7 +7,6 @@ using Moq;
 using NUnit.Framework;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 using TagsCloudVisualization;
 
 namespace TagsCloudContainer.Tests
@@ -27,7 +26,7 @@ namespace TagsCloudContainer.Tests
                 s => s.FontFamily == FontFamily.GenericMonospace);
 
             var fontSizeSelector = Mock.Of<IFontSizeSelector>(
-                s => s.GetFontSizedWords(words) == words.Select(w => new FontSizedWord(w, random.Next(10, 50))));
+                s => s.GetFontSizedWords(words) == words.Select(w => new SizedWord(w, random.Next(10, 50))));
 
             layouter = new FontBasedLayouter(
                 fontFamilySettings,

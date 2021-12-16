@@ -1,5 +1,5 @@
 ﻿using System.Drawing.Imaging;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Parsers
 {

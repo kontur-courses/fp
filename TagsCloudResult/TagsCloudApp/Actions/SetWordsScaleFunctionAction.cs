@@ -1,10 +1,8 @@
 ﻿using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
 using TagsCloudContainer.DependencyInjection;
 using TagsCloudContainer.MathFunctions;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
@@ -29,7 +27,7 @@ namespace TagsCloudApp.Actions
 
         public Result<None> Perform()
         {
-            return enumParser.TryParse<MathFunctionType>(renderArgs.WordsScale)
+            return enumParser.Parse<MathFunctionType>(renderArgs.WordsScale)
                 .Then(type =>
                 {
                     settings.Function = resolver.GetService(type);

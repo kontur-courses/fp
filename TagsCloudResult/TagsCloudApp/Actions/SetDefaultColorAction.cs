@@ -1,8 +1,6 @@
 ﻿using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
@@ -24,7 +22,7 @@ namespace TagsCloudApp.Actions
 
         public Result<None> Perform()
         {
-            return colorParser.TryParse(renderArgs.DefaultColor)
+            return colorParser.Parse(renderArgs.DefaultColor)
                 .Then(color =>
                 {
                     settings.Color = color;

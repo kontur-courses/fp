@@ -1,8 +1,8 @@
 ﻿using System;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
+using TagsCloudApp.Actions;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp
 {

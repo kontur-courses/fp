@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
-using TagsCloudContainer.Settings.Interfaces;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Default
 {
     public class FontFamilySettings : IFontFamilySettings
     {

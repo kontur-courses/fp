@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 using TagsCloudVisualization;
 
 namespace TagsCloudContainer.Layout
@@ -32,7 +31,7 @@ namespace TagsCloudContainer.Layout
                 throw new ArgumentNullException(nameof(words));
 
             var fontSizedWords = fontSizeSelector.GetFontSizedWords(words);
-            var wordsLayout = GetWordsLayout(fontSizedWords.OrderByDescending(word => word.FontSize)).ToList();
+            var wordsLayout = GetWordsLayout(fontSizedWords.OrderByDescending(word => word.Size)).ToList();
             var rectangles = wordsLayout.Select(wordLayout => wordLayout.Rectangle).ToList();
             var wordsLocations = wordsLayout.Select(wordLayout => wordLayout.WordLayout);
 
@@ -43,14 +42,14 @@ namespace TagsCloudContainer.Layout
         }
 
         private IEnumerable<(WordLayout WordLayout, Rectangle Rectangle)> GetWordsLayout(
-            IEnumerable<FontSizedWord> fontSizedWords)
+            IEnumerable<SizedWord> fontSizedWords)
         {
             using var bitmap = new Bitmap(1, 1);
             using var graphics = Graphics.FromImage(bitmap);
 
             foreach (var fontSizedWord in fontSizedWords)
             {
-                var font = new Font(fontFamilySettings.FontFamily, fontSizedWord.FontSize);
+                var font = new Font(fontFamilySettings.FontFamily, fontSizedWord.Size);
                 var wordSize = graphics
                     .MeasureString(fontSizedWord.Word, font, PointF.Empty, StringFormat.GenericTypographic)
                     .ToSizeCeiling();

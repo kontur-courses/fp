@@ -1,8 +1,7 @@
 ﻿using TagsCloudContainer.DependencyInjection;
 using TagsCloudContainer.MathFunctions;
-using TagsCloudContainer.Settings.Interfaces;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Default
 {
     public class WordsScaleSettings : IWordsScaleSettings
     {

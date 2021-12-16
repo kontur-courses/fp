@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using TagsCloudApp.WordsLoading;
@@ -16,7 +16,10 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void LoadText_ThrowsException_WhenFilename() =>
-            Assert.Throws<ApplicationException>(() => loader.LoadText("notExistingFile"));
+        public void LoadText_WithNotExistingFile_ReturnFailResult()
+        {
+            loader.LoadText("sef")
+                .IsSuccess.Should().BeFalse();
+        }
     }
 }

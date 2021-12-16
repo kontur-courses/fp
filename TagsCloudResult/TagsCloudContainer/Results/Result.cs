@@ -1,20 +1,16 @@
 ﻿using System;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Results
 {
     public class Result<T>
     {
-        public Result(string error, T value = default(T))
+        internal Result(string error, T value = default)
         {
             Error = error;
             Value = value;
         }
 
-        public static implicit operator Result<T>(T v)
-        {
-            return Result.Ok(v);
-        }
-
+        public bool IsSuccess => Error == null;
         public string Error { get; }
         private T Value { get; }
 
@@ -24,49 +20,25 @@ namespace TagsCloudContainer
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
 
-        public bool IsSuccess => Error == null;
+        public static implicit operator Result<T>(T value) =>
+            Result.Ok(value);
     }
 
     public static class Result
     {
-        public static Result<(TFirst, TSecond)> Zip<TFirst, TSecond>(
-            Result<TFirst> first,
-            Result<TSecond> second)
-        {
-            if (!first.IsSuccess)
-                return Fail<(TFirst, TSecond)>(first.Error);
+        public static Result<T> Ok<T>(T value) => new(null, value);
+        public static Result<None> Ok() => Ok<None>(null);
 
-            if (!second.IsSuccess)
-                return Fail<(TFirst, TSecond)>(second.Error);
+        public static Result<T> Fail<T>(string error) => new(error);
+        public static Result<None> Fail(string error) => Fail<None>(error);
 
-            return Ok((first.GetValueOrThrow(), second.GetValueOrThrow()));
-        }
+        public static Result<T> AsResult<T>(this T value) => Ok(value);
 
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
-
-        public static Result<T> Ok<T>(T value)
-        {
-            return new Result<T>(null, value);
-        }
-
-        public static Result<None> Ok()
-        {
-            return Ok<None>(null);
-        }
-
-        public static Result<T> Fail<T>(string e)
-        {
-            return new Result<T>(e);
-        }
-
-        public static Result<T> Of<T>(Func<T> f, string error = null)
+        public static Result<T> Of<T>(Func<T> func, string? error = null)
         {
             try
             {
-                return Ok(f());
+                return Ok(func());
             }
             catch (Exception e)
             {
@@ -74,11 +46,11 @@ namespace TagsCloudContainer
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> OfAction(Action action, string? error = null)
         {
             try
             {
-                f();
+                action();
                 return Ok();
             }
             catch (Exception e)
@@ -87,27 +59,12 @@ namespace TagsCloudContainer
             }
         }
 
-
-        public static Result<None> Then(
-            this Result<None> input,
-            Func<Result<None>> continuation)
-        {
-            return input.Then(_ => continuation());
-        }
-
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
             return input.Then(inp => Of(() => continuation(inp)));
         }
-
-        // public static Result<None> Then<TInput, TOutput>(
-        //     this Result<TInput> input,
-        //     Action<TInput> continuation)
-        // {
-        //     return input.Then(inp => OfAction(() => continuation(inp)));
-        // }
 
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
@@ -125,6 +82,13 @@ namespace TagsCloudContainer
                 : Fail<TOutput>(input.Error);
         }
 
+        public static Result<None> Then(
+            this Result<None> input,
+            Func<Result<None>> continuation)
+        {
+            return input.Then(_ => continuation());
+        }
+
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
@@ -137,15 +101,16 @@ namespace TagsCloudContainer
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess
+                ? input
+                : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(
             this Result<TInput> input,
             string errorMessage)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            return input.ReplaceError(err => errorMessage + " " + err);
         }
     }
 }

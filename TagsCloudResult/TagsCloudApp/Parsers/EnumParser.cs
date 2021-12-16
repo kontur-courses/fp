@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Parsers
 {
     public class EnumParser : IEnumParser
     {
-        public Result<T> TryParse<T>(string value) where T : struct, Enum
+        public Result<T> Parse<T>(string value) where T : struct, Enum
         {
             if (Enum.TryParse<T>(value, true, out var enumValue))
                 return Result.Ok(enumValue);

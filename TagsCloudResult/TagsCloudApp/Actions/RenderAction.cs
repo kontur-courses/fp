@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TagsCloudApp.Actions;
 using TagsCloudApp.WordsLoading;
 using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
-namespace TagsCloudApp.RenderCommand
+namespace TagsCloudApp.Actions
 {
     public class RenderAction : IAction
     {

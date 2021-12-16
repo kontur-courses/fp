@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudContainer.Preprocessing
 {
@@ -48,16 +49,16 @@ namespace TagsCloudContainer.Preprocessing
             var readTask = myStem.StandardOutput.ReadLineAsync();
             var canProcessWord = readTask.Wait(450);
             if (!canProcessWord || readTask.Result == null)
-                return Result.Fail<string>($"Can't get result from mystem");
+                return Result.Fail<string>("Can't get result from mystem");
 
-            return Result.Ok(readTask.Result);
+            return readTask.Result;
         }
 
         private static Result<SpeechPart> ParseSpeechPart(string wordInfo)
         {
             var speechPartGroup = speechPartRegex.Match(wordInfo).Groups["SpeechPart"];
             if (speechPartGroup.Success && Enum.TryParse<SpeechPart>(speechPartGroup.Value, out var speechPart))
-                return Result.Ok<SpeechPart>(speechPart);
+                return speechPart;
 
             return Result.Fail<SpeechPart>("Can't parse speech part");
         }

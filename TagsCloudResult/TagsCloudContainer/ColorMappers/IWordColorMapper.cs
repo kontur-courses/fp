@@ -2,6 +2,7 @@
 using System.Drawing;
 using TagsCloudContainer.DependencyInjection;
 using TagsCloudContainer.Layout;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudContainer.ColorMappers
 {

@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
 using TagsCloudContainer.Preprocessing;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
@@ -27,7 +25,7 @@ namespace TagsCloudApp.Actions
         public Result<None> Perform()
         {
             return renderArgs.IgnoredSpeechParts
-                .Select(s => enumParser.TryParse<SpeechPart>(s))
+                .Select(s => enumParser.Parse<SpeechPart>(s))
                 .CombineResults()
                 .Then(ignoreSpeechParts =>
                 {

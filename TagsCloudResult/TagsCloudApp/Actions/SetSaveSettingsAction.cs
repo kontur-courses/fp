@@ -1,7 +1,6 @@
 ﻿using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
 using TagsCloudApp.Settings;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Actions
 {

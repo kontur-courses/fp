@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.ColorMappers;
 
-namespace TagsCloudContainer.Settings.Interfaces
+namespace TagsCloudContainer.Settings
 {
     public interface IWordColorMapperSettings
     {

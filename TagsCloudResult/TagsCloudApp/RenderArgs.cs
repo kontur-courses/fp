@@ -2,7 +2,11 @@
 using System.Drawing;
 using CommandLine;
 
-namespace TagsCloudApp.RenderCommand
+#pragma warning disable 8618 Non-nullable member is uninitialized
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
+
+namespace TagsCloudApp
 {
     [Verb("render")]
     public class RenderArgs : IRenderArgs

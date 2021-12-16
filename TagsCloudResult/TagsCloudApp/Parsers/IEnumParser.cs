@@ -1,10 +1,10 @@
 ﻿using System;
-using TagsCloudContainer;
+using TagsCloudContainer.Results;
 
 namespace TagsCloudApp.Parsers
 {
     public interface IEnumParser
     {
-        Result<T> TryParse<T>(string value) where T : struct, Enum;
+        Result<T> Parse<T>(string value) where T : struct, Enum;
     }
 }

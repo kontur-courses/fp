@@ -1,10 +1,8 @@
 ﻿using TagsCloudApp.Parsers;
-using TagsCloudApp.RenderCommand;
-using TagsCloudContainer;
 using TagsCloudContainer.ColorMappers;
 using TagsCloudContainer.DependencyInjection;
+using TagsCloudContainer.Results;
 using TagsCloudContainer.Settings;
-using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudApp.Actions
 {
@@ -29,7 +27,7 @@ namespace TagsCloudApp.Actions
 
         public Result<None> Perform()
         {
-            return enumParser.TryParse<WordColorMapperType>(renderArgs.ColorMapperType)
+            return enumParser.Parse<WordColorMapperType>(renderArgs.ColorMapperType)
                 .Then(type =>
                 {
                     settings.ColorMapper = resolver.GetService(type);

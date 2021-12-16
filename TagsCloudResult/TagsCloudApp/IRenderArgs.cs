@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace TagsCloudApp.RenderCommand
+namespace TagsCloudApp
 {
     public interface IRenderArgs
     {
