@@ -32,7 +32,7 @@ public class ConsoleUI : IUserInterface
     {
         var res = fileReaderFactory
             .Create(settings.InputPath)
-            .Then(x=> x.GetLines(settings.InputPath))
+            .Then(fileReader=> fileReader.GetLines(settings.InputPath))
             .Then(lemmatizer.GetLemmas)
             .Then(filter.FilterWords)
             .Then(weigher.GetWeightedWords)

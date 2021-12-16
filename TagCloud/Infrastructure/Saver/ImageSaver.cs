@@ -27,7 +27,7 @@ public class ImageSaver : IImageSaver
         }
         catch (Exception e)
         {
-            return Result.Fail<None>(e.Message);
+            return Result.Fail<None>($"Save error: {e.Message}");
         }
 
         return Result.Ok();
