@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -9,9 +8,7 @@ namespace App.Implementation.GeometryUtils
     {
         public static bool IntersectsWithAny(this Rectangle rect, List<Rectangle> rectangles)
         {
-            if (rectangles == null)
-                throw new ArgumentException("rectangles list can't be null");
-            return rectangles.Any(rect.IntersectsWith);
+            return rectangles?.Any(rect.IntersectsWith) ?? false;
         }
 
         public static IEnumerable<Point> GetCorners(this Rectangle rect)

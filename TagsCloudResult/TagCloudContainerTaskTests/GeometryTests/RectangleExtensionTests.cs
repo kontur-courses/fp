@@ -27,14 +27,10 @@ namespace TagCloudContainerTaskTests.GeometryTests
         }
 
         [Test]
-        public void IntersectWithAny_ShouldThrowOnNull()
+        public void IntersectWithAny_ShouldReturnFalseOnNull()
         {
-            Action act = () => rect.IntersectsWithAny(null);
-
-            act
-                .Should()
-                .Throw<ArgumentException>()
-                .WithMessage("rectangles list can't be null");
+            var result = rect.IntersectsWithAny(null);
+            result.Should().BeFalse();
         }
 
         [Test]
