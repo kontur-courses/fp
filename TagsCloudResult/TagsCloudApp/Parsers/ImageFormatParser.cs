@@ -11,33 +11,27 @@ namespace TagsCloudApp.Parsers
         private const BindingFlags bindingAttributes =
             BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase;
 
-        public ImageFormat Parse(string value)
+        public Result<ImageFormat> Parse(string value)
         {
-            var formatResult = TryGetImageFormat(value);
-            if (formatResult.Success)
-                return formatResult.Value;
-
-            throw GenerateException();
+            return GetImageFormat(value)
+                .RefineError($"Available formats: {GetAvailableFormats()}");
         }
 
-        private static Result<ImageFormat> TryGetImageFormat(string value)
+        private static Result<ImageFormat> GetImageFormat(string value)
         {
             var format = (ImageFormat?)typeof(ImageFormat)
                 .GetProperty(value, bindingAttributes)
                 ?.GetValue(null);
 
             return format != null
-                ? new Result<ImageFormat>(format)
-                : new Result<ImageFormat>(new Exception("Can't find image format."));
+                ? Result.Ok(format)
+                : Result.Fail<ImageFormat>("Can't find image format");
         }
 
-        private static ApplicationException GenerateException()
+        private static string GetAvailableFormats()
         {
-            var availableFormats = string.Join(
-                ", ",
+            return string.Join(", ",
                 typeof(ImageFormat).GetProperties(bindingAttributes).Select(propInfo => propInfo.Name));
-
-            return new ApplicationException("Available formats: " + availableFormats);
         }
     }
 }

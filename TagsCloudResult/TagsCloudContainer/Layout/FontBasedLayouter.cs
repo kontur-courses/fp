@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 using TagsCloudVisualization;
 
 namespace TagsCloudContainer.Layout

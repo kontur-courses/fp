@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.Parsers
 {
     public interface IArgbColorParser
     {
-        Color Parse(string value);
+        Result<Color> TryParse(string value);
     }
 }

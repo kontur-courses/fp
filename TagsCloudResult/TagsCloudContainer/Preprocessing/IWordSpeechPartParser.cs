@@ -4,6 +4,6 @@ namespace TagsCloudContainer.Preprocessing
 {
     public interface IWordSpeechPartParser
     {
-        IEnumerable<SpeechPartWord> ParseWords(IEnumerable<string> words);
+        Result<IEnumerable<SpeechPartWord>> ParseWords(IEnumerable<string> words);
     }
 }

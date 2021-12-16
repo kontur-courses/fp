@@ -4,6 +4,7 @@ using System.Linq;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Preprocessing;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.ColorMappers
 {
@@ -25,22 +26,30 @@ namespace TagsCloudContainer.ColorMappers
             this.defaultColor = defaultColor;
         }
 
-        public Dictionary<WordLayout, Color> GetColorMap(CloudLayout layout)
+        public Result<Dictionary<WordLayout, Color>> GetColorMap(CloudLayout layout)
         {
             var words = layout.WordLayouts.Select(wordLayout => wordLayout.Word);
-            var speechParts = wordSpeechPartParser.ParseWords(words)
-                .Select(speechPartWord => speechPartWord.SpeechPart);
 
-            var wordLayoutColorMap = new Dictionary<WordLayout, Color>();
-            foreach (var (speechPart, wordLayout) in speechParts.Zip(layout.WordLayouts))
-            {
-                wordLayoutColorMap[wordLayout] =
-                    colorMapSettings.ColorMap.TryGetValue(speechPart, out var color)
-                        ? color
-                        : defaultColor.Color;
-            }
+            return wordSpeechPartParser.ParseWords(words)
+                .Then(speechPartWords => speechPartWords
+                    .Select(speechPartWord => speechPartWord.SpeechPart))
+                .Then(speechParts =>
+                    FillMap(layout.WordLayouts.Zip(speechParts)));
+        }
 
-            return wordLayoutColorMap;
+        private Dictionary<WordLayout, Color> FillMap(
+            IEnumerable<(WordLayout WordLayout, SpeechPart SpeechPart)> layoutSpeechPartPairs)
+        {
+            return layoutSpeechPartPairs.ToDictionary(
+                pair => pair.WordLayout,
+                pair => SelectColor(pair.SpeechPart));
+        }
+
+        private Color SelectColor(SpeechPart speechPart)
+        {
+            return colorMapSettings.ColorMap.TryGetValue(speechPart, out var color)
+                ? color
+                : defaultColor.Color;
         }
     }
 }

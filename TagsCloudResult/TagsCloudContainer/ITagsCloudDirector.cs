@@ -4,8 +4,8 @@ using System.Drawing;
 
 namespace TagsCloudContainer
 {
-    public interface ITagsCloudDirector : IDisposable
+    public interface ITagsCloudDirector
     {
-        Bitmap RenderWords(IEnumerable<string> words);
+        Result<Bitmap> RenderWords(IEnumerable<string> words);
     }
 }

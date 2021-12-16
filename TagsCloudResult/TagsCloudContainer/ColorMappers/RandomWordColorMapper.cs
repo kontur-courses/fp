@@ -17,7 +17,7 @@ namespace TagsCloudContainer.ColorMappers
             this.random = random;
         }
 
-        public Dictionary<WordLayout, Color> GetColorMap(CloudLayout layout)
+        public Result<Dictionary<WordLayout, Color>> GetColorMap(CloudLayout layout)
         {
             return layout.WordLayouts.ToDictionary(
                 wordLayout => wordLayout,

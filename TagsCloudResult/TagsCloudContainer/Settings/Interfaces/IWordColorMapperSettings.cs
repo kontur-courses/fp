@@ -1,9 +1,9 @@
 ﻿using TagsCloudContainer.ColorMappers;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Interfaces
 {
     public interface IWordColorMapperSettings
     {
-        IWordColorMapper ColorMapper { get; }
+        IWordColorMapper ColorMapper { get; set; }
     }
 }

@@ -13,8 +13,8 @@ namespace TagsCloudApp.RenderCommand
         [Option('o', "output", Default = "output.png")]
         public string OutputPath { get; set; }
 
-        [Option("fontFamily", HelpText = "(Default: Courier New)")]
-        public FontFamily FontFamily { get; set; } = new("Courier New");
+        [Option("fontFamily", Default = "Courier New")]
+        public string FontFamily { get; set; }
 
         [Option("maxFont", Default = 32)]
         public int MaxFontSize { get; set; }
@@ -23,7 +23,7 @@ namespace TagsCloudApp.RenderCommand
         public int MinFontSize { get; set; }
 
         [Option('s', "size", Default = null, HelpText = "Example: 10, 10")]
-        public Size? ImageSize { get; set; } = null;
+        public Size? ImageSize { get; set; }
 
         [Option("scale", Default = 1.0f)]
         public float ImageScale { get; set; }

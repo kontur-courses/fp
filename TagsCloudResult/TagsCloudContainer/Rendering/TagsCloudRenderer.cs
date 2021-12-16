@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Rendering
 {
@@ -51,11 +52,6 @@ namespace TagsCloudContainer.Rendering
             var scaleY = (float)renderingSettings.DesiredImageSize.Value.Height / imageSize.Height;
 
             return (scaleX, scaleY);
-        }
-
-        public void Dispose()
-        {
-            renderingSettings.Dispose();
         }
     }
 }

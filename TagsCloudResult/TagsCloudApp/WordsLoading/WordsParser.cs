@@ -7,7 +7,7 @@ namespace TagsCloudApp.WordsLoading
     {
         private static readonly Regex wordRegex = new(@"[\p{L}-]+");
 
-        public IEnumerable<string> Parse(string text)
+        public IEnumerable<string> ParseText(string text)
         {
             foreach (Match match in wordRegex.Matches(text))
                 yield return match.Value;

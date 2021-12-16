@@ -4,15 +4,9 @@ using TagsCloudApp.RenderCommand;
 
 namespace TagsCloudApp.Settings
 {
-    public class SaveSettings : ISaveSettings
+    class SaveSettings : ISaveSettings
     {
-        public string OutputFile { get; }
-        public ImageFormat ImageFormat { get; }
-
-        public SaveSettings(IRenderArgs renderArgs, IImageFormatParser imageFormatParser)
-        {
-            OutputFile = renderArgs.OutputPath;
-            ImageFormat = imageFormatParser.Parse(renderArgs.ImageFormat);
-        }
+        public string OutputFile { get; set; } = "output.txt";
+        public ImageFormat ImageFormat { get; set; } = ImageFormat.Png;
     }
 }

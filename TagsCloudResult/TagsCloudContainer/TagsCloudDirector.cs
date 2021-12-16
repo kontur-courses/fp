@@ -5,6 +5,7 @@ using TagsCloudContainer.Layout;
 using TagsCloudContainer.Preprocessing;
 using TagsCloudContainer.Rendering;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer
 {
@@ -27,23 +28,27 @@ namespace TagsCloudContainer
             this.tagsCloudLayouter = tagsCloudLayouter;
         }
 
-        public Bitmap RenderWords(IEnumerable<string> words)
+        public Result<Bitmap> RenderWords(IEnumerable<string> words)
         {
-            var preprocessedWords = PreprocessWords(words);
-            var layout = tagsCloudLayouter.GetCloudLayout(preprocessedWords);
-            var colorMap = colorMapperSettings.ColorMapper.GetColorMap(layout);
-            var wordsStyles = GetWordsStyles(layout, colorMap).ToList();
-            var bitmap = renderer.GetBitmap(wordsStyles, layout.ImageSize);
-            wordsStyles.ForEach(x => x.Dispose());
-            return bitmap;
+            return PreprocessWords(words)
+                .Then(processedWords => tagsCloudLayouter.GetCloudLayout(processedWords))
+                .Then(layout => colorMapperSettings.ColorMapper.GetColorMap(layout)
+                    .Then(colorMap => GetWordsStyles(layout, colorMap).ToList())
+                    .Then(wordsStyles => CreateBitmap(wordsStyles, layout)));
         }
 
-        private IEnumerable<string> PreprocessWords(IEnumerable<string> words)
+        private Bitmap CreateBitmap(List<WordStyle> wordsStyles, CloudLayout layout)
         {
-            foreach (var preprocessor in preprocessors)
-                words = preprocessor.Preprocess(words);
+            var bmp = renderer.GetBitmap(wordsStyles, layout.ImageSize);
+            wordsStyles.ForEach(x => x.Dispose());
+            return bmp;
+        }
 
-            return words;
+        private Result<IEnumerable<string>> PreprocessWords(IEnumerable<string> words)
+        {
+            return preprocessors.Aggregate(
+                words.AsResult(),
+                (result, preprocessor) => result.Then(preprocessor.Preprocess));
         }
 
         private static IEnumerable<WordStyle> GetWordsStyles(
@@ -55,11 +60,6 @@ namespace TagsCloudContainer
                 var brush = new SolidBrush(colorMap[wordLayout]);
                 yield return new WordStyle(wordLayout.Word, wordLayout.Font, wordLayout.Location, brush);
             }
-        }
-
-        public void Dispose()
-        {
-            renderer.Dispose();
         }
     }
 }

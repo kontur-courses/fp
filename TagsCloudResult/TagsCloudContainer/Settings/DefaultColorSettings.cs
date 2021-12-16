@@ -1,14 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Settings
 {
     public class DefaultColorSettings : IDefaultColorSettings
     {
-        public Color Color { get; }
-
-        public DefaultColorSettings(IRenderSettings settings)
-        {
-            Color = settings.DefaultColor;
-        }
+        public Color Color { get; set; } = Color.Aqua;
     }
 }

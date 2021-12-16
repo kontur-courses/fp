@@ -1,17 +1,16 @@
 ﻿using TagsCloudContainer.DependencyInjection;
 using TagsCloudContainer.MathFunctions;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Settings
 {
     public class WordsScaleSettings : IWordsScaleSettings
     {
-        public IMathFunction Function { get; }
+        public IMathFunction Function { get; set; }
 
-        public WordsScaleSettings(
-            IRenderSettings settings,
-            IServiceResolver<MathFunctionType, IMathFunction> functionResolver)
+        public WordsScaleSettings(IServiceResolver<MathFunctionType, IMathFunction> resolver)
         {
-            Function = functionResolver.GetService(settings.WordsScale);
+            Function = resolver.GetService(MathFunctionType.Linear);
         }
     }
 }

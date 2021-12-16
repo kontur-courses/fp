@@ -24,7 +24,7 @@ namespace TagsCloud.Tests
             var words = new List<string> {"aaa", "bbb", "ccc", "ddd"};
             var input = string.Join(separator, words);
 
-            parser.Parse(input)
+            parser.ParseText(input)
                 .Should().BeEquivalentTo(words);
         }
 
@@ -33,7 +33,7 @@ namespace TagsCloud.Tests
         {
             var input = "white-black";
 
-            parser.Parse(input)
+            parser.ParseText(input)
                 .Should().BeEquivalentTo(input);
         }
     }

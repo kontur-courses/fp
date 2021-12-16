@@ -1,14 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Settings
 {
     public class FontFamilySettings : IFontFamilySettings
     {
-        public FontFamily FontFamily { get; }
-
-        public FontFamilySettings(IRenderSettings settings)
-        {
-            FontFamily = settings.FontFamily;
-        }
+        public FontFamily FontFamily { get; set; } = FontFamily.GenericMonospace;
     }
 }

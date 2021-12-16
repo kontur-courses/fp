@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudContainer.Layout;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.ColorMappers
 {
@@ -16,7 +17,7 @@ namespace TagsCloudContainer.ColorMappers
             this.settings = settings;
         }
 
-        public Dictionary<WordLayout, Color> GetColorMap(CloudLayout layout) =>
+        public Result<Dictionary<WordLayout, Color>> GetColorMap(CloudLayout layout) =>
             layout.WordLayouts.ToDictionary(wordLayout => wordLayout, _ => settings.Color);
     }
 }

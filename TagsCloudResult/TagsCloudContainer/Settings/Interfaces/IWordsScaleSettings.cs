@@ -1,9 +1,9 @@
 ﻿using TagsCloudContainer.MathFunctions;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Interfaces
 {
     public interface IWordsScaleSettings
     {
-        IMathFunction Function { get; }
+        IMathFunction Function { get; set; }
     }
 }

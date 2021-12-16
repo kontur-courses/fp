@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TagsCloudContainer.Settings;
+using TagsCloudContainer.Settings.Interfaces;
 
 namespace TagsCloudContainer.Preprocessing
 {
@@ -17,11 +18,12 @@ namespace TagsCloudContainer.Preprocessing
             this.settings = settings;
         }
 
-        public IEnumerable<string> Preprocess(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
             return wordSpeechPartParser.ParseWords(words)
-                .Where(word => !settings.SpeechPartsToRemove.Contains(word.SpeechPart))
-                .Select(word => word.Word);
+                .Then(speechPartWords => speechPartWords
+                    .Where(word => !settings.SpeechPartsToRemove.Contains(word.SpeechPart))
+                    .Select(word => word.Word));
         }
     }
 }

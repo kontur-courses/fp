@@ -2,6 +2,7 @@
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using TagsCloudApp.RenderCommand;
+using TagsCloudContainer;
 
 namespace TagsCloudApp
 {
@@ -13,17 +14,12 @@ namespace TagsCloudApp
             if (options == null)
                 return;
 
-            var services = new RenderServicesConfigurator(options);
-            var provider = services.ConfigureServices().BuildServiceProvider();
-            try
-            {
-                var renderCommand = provider.GetRequiredService<IRenderCommand>();
-                renderCommand.Render();
-            }
-            catch (ApplicationException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            var render = new ServicesProvider(options)
+                .BuildProvider()
+                .GetRequiredService<RenderAction>();
+
+            render.Perform()
+                .OnFail(Console.WriteLine);
         }
     }
 }

@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.Parsers
 {
     public class EnumParser : IEnumParser
     {
-        public T Parse<T>(string value) where T : struct, Enum
+        public Result<T> TryParse<T>(string value) where T : struct, Enum
         {
             if (Enum.TryParse<T>(value, true, out var enumValue))
-                return enumValue;
+                return Result.Ok(enumValue);
 
-            throw new ApplicationException(
+            var valuesDescription = GetEnumValuesDescription(typeof(T));
+            return Result.Fail<T>(
                 $"Invalid value: {value}. Available values:\n"
-                + string.Join(
-                    Environment.NewLine,
-                    GetEnumValuesDescription(typeof(T))));
+                + string.Join(Environment.NewLine, valuesDescription));
         }
 
-        private IEnumerable<string> GetEnumValuesDescription(Type type)
+        private static IEnumerable<string> GetEnumValuesDescription(Type type)
         {
             foreach (var enumName in type.GetEnumNames())
             {

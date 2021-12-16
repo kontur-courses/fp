@@ -2,6 +2,7 @@
 using System.Linq;
 using TagsCloudApp.Parsers;
 using TagsCloudApp.RenderCommand;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.WordsLoading
 {
@@ -24,19 +25,19 @@ namespace TagsCloudApp.WordsLoading
             this.enumParser = enumParser;
         }
 
-        public IEnumerable<string> GetWords()
+        public Result<IEnumerable<string>> GetWords()
         {
             var filename = renderArgs.InputPath;
-            var fileType = GetFileType(filename);
-            var fileTextLoader = loaderResolver.GetFileTextLoader(fileType);
-            var text = fileTextLoader.LoadText(filename);
-            return wordParser.Parse(text);
+            return GetFileType(filename)
+                .Then(loaderResolver.GetFileTextLoader)
+                .Then(loader => loader.LoadText(filename))
+                .Then(wordParser.ParseText);
         }
 
-        private FileType GetFileType(string filename)
+        private Result<FileType> GetFileType(string filename)
         {
             var fileExtension = filename.Split('.').Last();
-            return enumParser.Parse<FileType>(fileExtension);
+            return enumParser.TryParse<FileType>(fileExtension);
         }
     }
 }

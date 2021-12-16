@@ -7,7 +7,7 @@ namespace TagsCloudApp.RenderCommand
     {
         string InputPath { get; }
         string OutputPath { get; }
-        FontFamily FontFamily { get; }
+        string FontFamily { get; }
         int MaxFontSize { get; }
         int MinFontSize { get; }
         Size? ImageSize { get; }

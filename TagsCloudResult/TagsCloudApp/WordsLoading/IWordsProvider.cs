@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.WordsLoading
 {
     public interface IWordsProvider
     {
-        IEnumerable<string> GetWords();
+        Result<IEnumerable<string>> GetWords();
     }
 }

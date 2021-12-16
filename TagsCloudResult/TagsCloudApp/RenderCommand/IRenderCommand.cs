@@ -1,7 +1,10 @@
-﻿namespace TagsCloudApp.RenderCommand
-{
-    public interface IRenderCommand
-    {
-        void Render();
-    }
-}
+﻿// using TagsCloudContainer;
+// using TagsCloudContainer.Settings;
+//
+// namespace TagsCloudApp.RenderCommand
+// {
+//     public interface IRenderCommand
+//     {
+//         Result<None> Render();
+//     }
+// }

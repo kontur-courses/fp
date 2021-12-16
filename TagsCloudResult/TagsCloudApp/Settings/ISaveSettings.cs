@@ -4,7 +4,7 @@ namespace TagsCloudApp.Settings
 {
     public interface ISaveSettings
     {
-        string OutputFile { get; }
-        ImageFormat ImageFormat { get; }
+        string OutputFile { get; set; }
+        ImageFormat ImageFormat { get; set; }
     }
 }

@@ -1,14 +1,10 @@
-﻿namespace TagsCloudContainer.Settings
+﻿using TagsCloudContainer.Settings.Interfaces;
+
+namespace TagsCloudContainer.Settings
 {
     public class FontSizeSettings : IFontSizeSettings
     {
-        public float MaxFontSize { get; }
-        public float MinFontSize { get; }
-
-        public FontSizeSettings(IRenderSettings settings)
-        {
-            MaxFontSize = Validate.Positive("Max font", settings.MaxFontSize);
-            MinFontSize = Validate.Positive("Min font", settings.MinFontSize);
-        }
+        public float MaxFontSize { get; set; } = 32;
+        public float MinFontSize { get; set; } = 10;
     }
 }

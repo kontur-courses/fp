@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using TagsCloudContainer.Preprocessing;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Interfaces
 {
     public interface ISpeechPartFilterSettings
     {
-        HashSet<SpeechPart> SpeechPartsToRemove { get; }
+        IEnumerable<SpeechPart> SpeechPartsToRemove { get; set; }
     }
 }

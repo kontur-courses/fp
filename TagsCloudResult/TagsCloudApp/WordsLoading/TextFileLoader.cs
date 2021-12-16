@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.WordsLoading
 {
@@ -8,14 +9,13 @@ namespace TagsCloudApp.WordsLoading
     {
         public abstract IEnumerable<FileType> SupportedTypes { get; }
 
-        public string LoadText(string filename)
+        public Result<string> LoadText(string filename)
         {
-            if (!File.Exists(filename))
-                throw new ApplicationException($"File not exist: {filename}");
-
-            return LoadTextFromExistingFile(filename);
+            return File.Exists(filename)
+                ? LoadTextFromExistingFile(filename)
+                : Result.Fail<string>($"File not exist: {filename}");
         }
 
-        protected abstract string LoadTextFromExistingFile(string filename);
+        protected abstract Result<string> LoadTextFromExistingFile(string filename);
     }
 }

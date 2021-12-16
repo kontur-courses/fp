@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TagsCloudContainer;
 
 namespace TagsCloudApp.WordsLoading
 {
@@ -7,7 +8,7 @@ namespace TagsCloudApp.WordsLoading
     {
         public override IEnumerable<FileType> SupportedTypes => new[] {FileType.Txt};
 
-        protected override string LoadTextFromExistingFile(string filename) =>
+        protected override Result<string> LoadTextFromExistingFile(string filename) =>
             File.ReadAllText(filename);
     }
 }

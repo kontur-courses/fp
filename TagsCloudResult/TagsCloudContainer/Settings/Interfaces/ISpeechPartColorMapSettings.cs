@@ -2,10 +2,10 @@
 using System.Drawing;
 using TagsCloudContainer.Preprocessing;
 
-namespace TagsCloudContainer.Settings
+namespace TagsCloudContainer.Settings.Interfaces
 {
     public interface ISpeechPartColorMapSettings
     {
-        Dictionary<SpeechPart, Color> ColorMap { get; }
+        IReadOnlyDictionary<SpeechPart, Color> ColorMap { get; set; }
     }
 }

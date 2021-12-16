@@ -19,44 +19,47 @@ namespace TagsCloudContainer.Preprocessing
             RedirectStandardOutput = true
         };
 
-        public IEnumerable<SpeechPartWord> ParseWords(IEnumerable<string> words)
+        public Result<IEnumerable<SpeechPartWord>> ParseWords(IEnumerable<string> words)
         {
             using var myStem = Process.Start(myStemStartInfo);
-            if (myStem == null)
-                throw new ApplicationException($"Can't start mystem. Path: {myStemStartInfo.FileName}.");
-
-            var filteredWords = words.Where(word => validWordRegex.IsMatch(word));
-            return ParseWords(filteredWords, myStem).ToList();
+            return myStem != null
+                ? ParseWords(words, myStem)
+                : Result.Fail<IEnumerable<SpeechPartWord>>(
+                    $"Can't start mystem. Executable path: {myStemStartInfo.FileName}");
         }
 
-        private static IEnumerable<SpeechPartWord> ParseWords(IEnumerable<string> words, Process myStem)
+        private static Result<IEnumerable<SpeechPartWord>> ParseWords(IEnumerable<string> words, Process myStem)
         {
-            foreach (var word in words.Where(word => validWordRegex.IsMatch(word)))
-            {
-                var wordInfoResult = TryGetWordInfo(myStem, word);
-                if (!wordInfoResult.Success)
-                    throw GenerateSpeechPartParseException(word);
-
-                var speechPartGroup = speechPartRegex.Match(wordInfoResult.Value).Groups["SpeechPart"];
-                if (!speechPartGroup.Success || !Enum.TryParse<SpeechPart>(speechPartGroup.Value, out var speechPart))
-                    throw GenerateSpeechPartParseException(word);
-
-                yield return new SpeechPartWord(word, speechPart);
-            }
+            return FilterWords(words)
+                .Select(word =>
+                    GetWordInfo(word, myStem)
+                        .Then(ParseSpeechPart)
+                        .Then(speechPart => new SpeechPartWord(word, speechPart))
+                        .RefineError($"Word: {word}"))
+                .CombineResults();
         }
 
-        private static Result<string> TryGetWordInfo(Process myStem, string word)
+        private static IEnumerable<string> FilterWords(IEnumerable<string> words) =>
+            words.Where(word => validWordRegex.IsMatch(word));
+
+        private static Result<string> GetWordInfo(string word, Process myStem)
         {
             myStem.StandardInput.WriteLine(word);
             var readTask = myStem.StandardOutput.ReadLineAsync();
             var canProcessWord = readTask.Wait(450);
             if (!canProcessWord || readTask.Result == null)
-                return new Result<string>(new Exception("Can't get result from mystem."));
+                return Result.Fail<string>($"Can't get result from mystem");
 
-            return new Result<string>(readTask.Result);
+            return Result.Ok(readTask.Result);
         }
 
-        private static ApplicationException GenerateSpeechPartParseException(string word) =>
-            new($"Can't get speech part of '{word}'.");
+        private static Result<SpeechPart> ParseSpeechPart(string wordInfo)
+        {
+            var speechPartGroup = speechPartRegex.Match(wordInfo).Groups["SpeechPart"];
+            if (speechPartGroup.Success && Enum.TryParse<SpeechPart>(speechPartGroup.Value, out var speechPart))
+                return Result.Ok<SpeechPart>(speechPart);
+
+            return Result.Fail<SpeechPart>("Can't parse speech part");
+        }
     }
 }

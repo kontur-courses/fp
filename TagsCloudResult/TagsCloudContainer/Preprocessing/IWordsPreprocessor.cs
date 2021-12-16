@@ -4,6 +4,6 @@ namespace TagsCloudContainer.Preprocessing
 {
     public interface IWordsPreprocessor
     {
-        IEnumerable<string> Preprocess(IEnumerable<string> words);
+        Result<IEnumerable<string>> Preprocess(IEnumerable<string> words);
     }
 }
