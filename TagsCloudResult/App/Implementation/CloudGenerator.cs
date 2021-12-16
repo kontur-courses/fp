@@ -46,26 +46,39 @@ namespace App.Implementation
             this.imageSizeSettings = imageSizeSettings;
         }
 
-        public Result<Bitmap> GenerateCloud()
+        public Result<CloudVisualization> GenerateCloud()
         {
             var words = ReadWords();
+            if (!words.IsSuccess)
+                return Result.Fail<CloudVisualization>(words.Error);
 
             words = PreprocessWords(words);
+            if (!words.IsSuccess)
+                return Result.Fail<CloudVisualization>(words.Error);
+
             words = FilterWords(words);
+            if (!words.IsSuccess)
+                return Result.Fail<CloudVisualization>(words.Error);
 
             var wordsFrequencies = frequencyAnalyzer.AnalyzeWordsFrequency(words.Value);
             var tags = tagger.CreateRawTags(wordsFrequencies).ToArray();
 
             var layouter = layouterFactory.CreateLayouter();
+            if (!layouter.IsSuccess)
+                return Result.Fail<CloudVisualization>(layouter.Error);
 
+            var correctTags = new List<Tag>();
             foreach (var tag in tags)
             {
-                var rectResult = layouter.PutNextRectangle(tag.WordOuterRectangle.Size);
+                var rectResult = layouter.Value.PutNextRectangle(tag.WordOuterRectangle.Size);
                 if (rectResult.IsSuccess)
+                {
                     tag.WordOuterRectangle = rectResult.Value;
+                    correctTags.Add(tag);
+                }
             }
 
-            return GetBitmap(layouter, tags);
+            return GetCloudVisualization(layouter.Value, correctTags);
         }
 
         private Result<IEnumerable<string>> PreprocessWords(Result<IEnumerable<string>> words)
@@ -108,16 +121,31 @@ namespace App.Implementation
         {
             var reader = readerFactory.CreateReader();
 
-            return reader.IsSuccess
-                ? reader.Value.ReadLines()
-                : Result.Fail<IEnumerable<string>>(
-                    $"{reader.Error}. Can not find suitable file reader");
+            if (!reader.IsSuccess)
+            {
+                var msg = $"{reader.Error}. Can not find suitable file reader";
+                return Result.Fail<IEnumerable<string>>(msg);
+            }
+
+            var readResult = reader.Value.ReadLines();
+
+            return readResult.IsSuccess
+                ? readResult
+                : Result.Fail<IEnumerable<string>>(readResult.Error);
         }
 
-        private Result<Bitmap> GetBitmap(ICloudLayouter layouter, IEnumerable<Tag> tags)
+        private Result<CloudVisualization> GetCloudVisualization(ICloudLayouter layouter, IEnumerable<Tag> tags)
         {
+            if (imageSizeSettings.Size.Width <= 0 || imageSizeSettings.Size.Height <= 0)
+                return Result.Fail<CloudVisualization>("Incorrect image size.");
+
+            var userRequiredSize = new Size(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
+            var cloudRequiredSize = layouter.GetRectanglesBoundaryBox();
+
             var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
-            return Result.Ok(visualizer.VisualizeCloud(bitmap, layouter.Center, tags));
+            var visualization = visualizer.VisualizeCloud(bitmap, layouter.Center, tags);
+
+            return Result.Ok(new CloudVisualization(visualization, cloudRequiredSize, userRequiredSize));
         }
     }
 }

@@ -27,8 +27,7 @@ namespace GuiClient
 
         public void GenerateImage()
         {
-            if (Image != null)
-                mainForm.Value.ClientSize = sizeSettings.Size;
+            UpdateImageSize();
 
             var generationResult = cloudGenerator.GenerateCloud();
 
@@ -38,7 +37,10 @@ namespace GuiClient
                 return;
             }
 
-            Image = generationResult.Value;
+            if (!generationResult.Value.IsCloudFitToUserSize())
+                MessageBox.Show("Cloud did not fit to specified image size");
+
+            Image = generationResult.Value.Visualization;
         }
 
         public void SaveImage()
@@ -50,6 +52,17 @@ namespace GuiClient
             }
 
             Image.Save(outputResultSettings.OutputFilePath, outputResultSettings.ImageFormat);
+        }
+
+        private void UpdateImageSize()
+        {
+            if (Image != null)
+            {
+                if (sizeSettings.Size.Width <= 0 || sizeSettings.Size.Height <= 0)
+                    MessageBox.Show("Incorrect image size.");
+                else
+                    mainForm.Value.ClientSize = sizeSettings.Size;
+            }
         }
     }
 }

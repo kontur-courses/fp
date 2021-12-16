@@ -1,9 +1,7 @@
-﻿using System.Drawing;
-
-namespace App.Infrastructure
+﻿namespace App.Infrastructure
 {
     public interface ICloudGenerator
     {
-        Result<Bitmap> GenerateCloud();
+        Result<CloudVisualization> GenerateCloud();
     }
 }

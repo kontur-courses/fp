@@ -4,6 +4,6 @@ namespace App.Infrastructure.LayoutingAlgorithms
 {
     public interface ILayouterFactory
     {
-        ICloudLayouter CreateLayouter();
+        Result<ICloudLayouter> CreateLayouter();
     }
 }
