@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using App.Infrastructure.FileInteractions.Readers;
 using App.Infrastructure.SettingsHolders;
 
@@ -14,18 +13,22 @@ namespace App.Implementation.FileInteractions.Readers
             this.inputFileSettings = inputFileSettings;
         }
 
-        public ILinesReader CreateReader()
+        public Result<ILinesReader> CreateReader()
         {
             switch (Path.GetExtension(inputFileSettings.InputFileName))
             {
                 case ".txt":
-                    return new FromStreamReader(new StreamReader(inputFileSettings.InputFileName));
+                    return new Result<ILinesReader>(
+                        null,
+                        new FromStreamReader(new StreamReader(inputFileSettings.InputFileName)));
                 case ".doc":
                 case ".docx":
-                    return new FromDocReader(inputFileSettings.InputFileName);
+                    return new Result<ILinesReader>(
+                        null,
+                        new FromDocReader(inputFileSettings.InputFileName));
             }
 
-            throw new NotImplementedException("Unknown input file extension");
+            return Result.Fail<ILinesReader>("Unknown input file extension");
         }
     }
 }

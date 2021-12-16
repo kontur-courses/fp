@@ -48,7 +48,11 @@ namespace App.Implementation
         {
             var reader = readerFactory.CreateReader();
 
-            var words = reader.ReadLines();
+            if (!reader.IsSuccess)
+            {
+            }
+
+            var words = reader.Value.ReadLines();
 
             foreach (var preprocessor in preprocessors)
                 words = preprocessor.Preprocess(words);

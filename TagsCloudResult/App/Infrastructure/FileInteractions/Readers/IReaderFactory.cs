@@ -2,6 +2,6 @@
 {
     public interface IReaderFactory
     {
-        ILinesReader CreateReader();
+        Result<ILinesReader> CreateReader();
     }
 }
