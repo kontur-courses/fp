@@ -44,13 +44,12 @@ namespace App.Implementation
             this.imageSizeSettings = imageSizeSettings;
         }
 
-        public Bitmap GenerateCloud()
+        public Result<Bitmap> GenerateCloud()
         {
             var reader = readerFactory.CreateReader();
 
             if (!reader.IsSuccess)
-            {
-            }
+                return Result.Fail<Bitmap>($"{reader.Error}. Can not find suitable file reader");
 
             var words = reader.Value.ReadLines();
 
@@ -75,7 +74,8 @@ namespace App.Implementation
             }
 
             var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
-            return visualizer.VisualizeCloud(bitmap, layouter.Center, tags);
+
+            return Result.Ok(visualizer.VisualizeCloud(bitmap, layouter.Center, tags));
         }
     }
 }

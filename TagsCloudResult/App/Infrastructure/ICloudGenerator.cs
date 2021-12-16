@@ -4,6 +4,6 @@ namespace App.Infrastructure
 {
     public interface ICloudGenerator
     {
-        Bitmap GenerateCloud();
+        Result<Bitmap> GenerateCloud();
     }
 }

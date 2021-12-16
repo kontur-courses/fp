@@ -30,20 +30,26 @@ namespace GuiClient
             if (Image != null)
                 mainForm.Value.ClientSize = sizeSettings.Size;
 
-            Image = cloudGenerator.GenerateCloud();
+            var generationResult = cloudGenerator.GenerateCloud();
+
+            if (!generationResult.IsSuccess)
+            {
+                MessageBox.Show(generationResult.Error);
+                return;
+            }
+
+            Image = generationResult.Value;
         }
 
         public void SaveImage()
         {
-            FailIfNotInitialized();
-            Image.Save(outputResultSettings.OutputFilePath, outputResultSettings.ImageFormat);
-        }
-
-        private void FailIfNotInitialized()
-        {
             if (Image == null)
-                throw new InvalidOperationException(
-                    "Call PictureBoxImageHolder.GenerateImage before other method call!");
+            {
+                MessageBox.Show("There's no image to save");
+                return;
+            }
+
+            Image.Save(outputResultSettings.OutputFilePath, outputResultSettings.ImageFormat);
         }
     }
 }

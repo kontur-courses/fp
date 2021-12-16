@@ -15,20 +15,17 @@ namespace App.Implementation.FileInteractions.Readers
 
         public Result<ILinesReader> CreateReader()
         {
-            switch (Path.GetExtension(inputFileSettings.InputFileName))
+            return Path.GetExtension(inputFileSettings.InputFileName) switch
             {
-                case ".txt":
-                    return new Result<ILinesReader>(
-                        null,
-                        new FromStreamReader(new StreamReader(inputFileSettings.InputFileName)));
-                case ".doc":
-                case ".docx":
-                    return new Result<ILinesReader>(
-                        null,
-                        new FromDocReader(inputFileSettings.InputFileName));
-            }
+                ".txt" => new Result<ILinesReader>(
+                    null,
+                    new FromStreamReader(new StreamReader(inputFileSettings.InputFileName))),
 
-            return Result.Fail<ILinesReader>("Unknown input file extension");
+                ".doc" or ".docx" => new Result<ILinesReader>(
+                    null,
+                    new FromDocReader(inputFileSettings.InputFileName)),
+                _ => Result.Fail<ILinesReader>($"Unknown extension of file {inputFileSettings.InputFileName}")
+            };
         }
     }
 }
