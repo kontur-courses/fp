@@ -23,9 +23,11 @@ namespace App.Implementation.FileInteractions.Readers
                 .Document
                 .Body?
                 .SelectMany(item => Regex.Split(item.InnerText, @"\P{L}+", RegexOptions.Compiled))
-                .Select(word => word), $"Can not read lines from file {fileName}");
+                .Select(word => word));
 
-            return new Result<IEnumerable<string>>(resultOfReading.Error, resultOfReading.Value);
+            return resultOfReading.IsSuccess
+                ? resultOfReading
+                : resultOfReading.RefineError($"Can not read lines from file {fileName}");
         }
     }
 }

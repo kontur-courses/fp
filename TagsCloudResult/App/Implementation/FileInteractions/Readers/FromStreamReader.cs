@@ -19,9 +19,11 @@ namespace App.Implementation.FileInteractions.Readers
         {
             var resultOfReading = Result.Of(() => ReadFromStream()
                 .SelectMany(line => Regex.Split(line, @"\P{L}+", RegexOptions.Compiled))
-                .Select(word => word), "Can not read lines from stream");
+                .Select(word => word));
 
-            return new Result<IEnumerable<string>>(resultOfReading.Error, resultOfReading.Value);
+            return resultOfReading.IsSuccess
+                ? resultOfReading
+                : resultOfReading.RefineError("Can not read lines from stream");
         }
 
         private IEnumerable<string> ReadFromStream()
