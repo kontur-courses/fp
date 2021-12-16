@@ -15,15 +15,17 @@ namespace App.Implementation.FileInteractions.Readers
             this.fileName = fileName;
         }
 
-        public IEnumerable<string> ReadLines()
+        public Result<IEnumerable<string>> ReadLines()
         {
-            return WordprocessingDocument
+            var resultOfReading = Result.Of(() => WordprocessingDocument
                 .Open(fileName, false)
                 .MainDocumentPart?
                 .Document
                 .Body?
                 .SelectMany(item => Regex.Split(item.InnerText, @"\P{L}+", RegexOptions.Compiled))
-                .Select(word => word);
+                .Select(word => word), $"Can not read lines from file {fileName}");
+
+            return new Result<IEnumerable<string>>(resultOfReading.Error, resultOfReading.Value);
         }
     }
 }

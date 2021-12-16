@@ -4,6 +4,6 @@ namespace App.Infrastructure.FileInteractions.Readers
 {
     public interface ILinesReader
     {
-        IEnumerable<string> ReadLines();
+        Result<IEnumerable<string>> ReadLines();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -20,19 +21,45 @@ namespace App.Implementation.Words.Preprocessors
             pathToInitFormExe = "mystem.exe";
         }
 
-        public IEnumerable<string> Preprocess(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Preprocess(Result<IEnumerable<string>> words)
         {
-            var cwd = Directory.GetCurrentDirectory();
-            writer.WriteLinesTo(new StreamWriter(inputFilePath, false, Encoding.UTF8), words);
+            if (!words.IsSuccess)
+                return words;
 
+            PrepareWordsForOuterLibrary(words.Value);
+
+            return TryToLeadWordsToInitForm();
+        }
+
+        private Result<IEnumerable<string>> TryToLeadWordsToInitForm()
+        {
             var initialLeadingFormProcess = CreateInitialLeadingFormProcess(inputFilePath);
-
             using (initialLeadingFormProcess)
             {
-                initialLeadingFormProcess.Start();
-                while (!initialLeadingFormProcess.StandardOutput.EndOfStream)
-                    yield return initialLeadingFormProcess.StandardOutput.ReadLine();
+                try
+                {
+                    var wordsInitForms = new List<string>();
+                    initialLeadingFormProcess.Start();
+
+                    while (!initialLeadingFormProcess.StandardOutput.EndOfStream)
+                        wordsInitForms.Add(initialLeadingFormProcess.StandardOutput.ReadLine());
+
+                    return new Result<IEnumerable<string>>(null, wordsInitForms);
+                }
+                catch (Exception e)
+                {
+                    var msg = $"Error during {pathToInitFormExe} work. {e.Message}";
+                    return Result.Fail<IEnumerable<string>>(msg);
+                }
             }
+        }
+
+        private void PrepareWordsForOuterLibrary(IEnumerable<string> words)
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            var streamWriter = new StreamWriter(inputFilePath, false, Encoding.UTF8);
+
+            writer.WriteLinesTo(streamWriter, words);
         }
 
         private Process CreateInitialLeadingFormProcess(string pathToFile)

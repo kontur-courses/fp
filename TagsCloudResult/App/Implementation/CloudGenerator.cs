@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using App.Implementation.Words.Tags;
 using App.Infrastructure;
 using App.Infrastructure.FileInteractions.Readers;
 using App.Infrastructure.LayoutingAlgorithms;
+using App.Infrastructure.LayoutingAlgorithms.AlgorithmFromTDD;
 using App.Infrastructure.SettingsHolders;
 using App.Infrastructure.Visualization;
 using App.Infrastructure.Words.Filters;
@@ -46,35 +48,75 @@ namespace App.Implementation
 
         public Result<Bitmap> GenerateCloud()
         {
-            var reader = readerFactory.CreateReader();
+            var words = ReadWords();
 
-            if (!reader.IsSuccess)
-                return Result.Fail<Bitmap>($"{reader.Error}. Can not find suitable file reader");
+            words = PreprocessWords(words);
+            words = FilterWords(words);
 
-            var words = reader.Value.ReadLines();
-
-            foreach (var preprocessor in preprocessors)
-                words = preprocessor.Preprocess(words);
-
-            foreach (var filter in filters)
-                words = filter.FilterWords(words);
-
-            var wordsFrequencies = frequencyAnalyzer.AnalyzeWordsFrequency(words);
+            var wordsFrequencies = frequencyAnalyzer.AnalyzeWordsFrequency(words.Value);
             var tags = tagger.CreateRawTags(wordsFrequencies).ToArray();
 
             var layouter = layouterFactory.CreateLayouter();
+
             foreach (var tag in tags)
             {
-                var outerRectangle = tag.WordOuterRectangle;
-                var rectResult = layouter.PutNextRectangle(outerRectangle.Size);
+                var rectResult = layouter.PutNextRectangle(tag.WordOuterRectangle.Size);
                 if (rectResult.IsSuccess)
-                    outerRectangle = rectResult.Value;
-
-                tag.WordOuterRectangle = outerRectangle;
+                    tag.WordOuterRectangle = rectResult.Value;
             }
 
-            var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
+            return GetBitmap(layouter, tags);
+        }
 
+        private Result<IEnumerable<string>> PreprocessWords(Result<IEnumerable<string>> words)
+        {
+            if (!words.IsSuccess)
+                return words;
+
+            foreach (var preprocessor in preprocessors)
+            {
+                words = preprocessor.Preprocess(words);
+                if (!words.IsSuccess)
+                {
+                    var msg = $"Error when preprocessing words. {words.Error}";
+                    return Result.Fail<IEnumerable<string>>(msg);
+                }
+            }
+
+            return words;
+        }
+
+        private Result<IEnumerable<string>> FilterWords(Result<IEnumerable<string>> words)
+        {
+            if (!words.IsSuccess)
+                return words;
+
+            foreach (var filter in filters)
+            {
+                words = filter.FilterWords(words);
+                if (!words.IsSuccess)
+                {
+                    var msg = $"Error when Filtering words. {words.Error}";
+                    return Result.Fail<IEnumerable<string>>(msg);
+                }
+            }
+
+            return words;
+        }
+
+        private Result<IEnumerable<string>> ReadWords()
+        {
+            var reader = readerFactory.CreateReader();
+
+            return reader.IsSuccess
+                ? reader.Value.ReadLines()
+                : Result.Fail<IEnumerable<string>>(
+                    $"{reader.Error}. Can not find suitable file reader");
+        }
+
+        private Result<Bitmap> GetBitmap(ICloudLayouter layouter, IEnumerable<Tag> tags)
+        {
+            var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
             return Result.Ok(visualizer.VisualizeCloud(bitmap, layouter.Center, tags));
         }
     }

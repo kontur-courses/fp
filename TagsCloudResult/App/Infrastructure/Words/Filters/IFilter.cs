@@ -4,6 +4,6 @@ namespace App.Infrastructure.Words.Filters
 {
     public interface IFilter
     {
-        IEnumerable<string> FilterWords(IEnumerable<string> words);
+        Result<IEnumerable<string>> FilterWords(Result<IEnumerable<string>> words);
     }
 }

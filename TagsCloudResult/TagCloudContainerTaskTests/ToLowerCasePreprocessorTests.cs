@@ -22,7 +22,7 @@ namespace TagCloudContainerTaskTests
         {
             var words = new List<string> { "СлоВа", "В", "разНОм", "РеГИстРе" };
             var expected = words.Select(word => word.ToLower()).ToList();
-            var result = preprocessor.Preprocess(words).ToList();
+            var result = preprocessor.Preprocess(words).Value.ToList();
 
             result.Should().Equal(expected);
         }

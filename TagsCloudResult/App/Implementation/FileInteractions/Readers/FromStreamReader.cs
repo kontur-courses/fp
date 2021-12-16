@@ -15,11 +15,13 @@ namespace App.Implementation.FileInteractions.Readers
             this.streamReader = streamReader;
         }
 
-        public IEnumerable<string> ReadLines()
+        public Result<IEnumerable<string>> ReadLines()
         {
-            return ReadFromStream()
+            var resultOfReading = Result.Of(() => ReadFromStream()
                 .SelectMany(line => Regex.Split(line, @"\P{L}+", RegexOptions.Compiled))
-                .Select(word => word);
+                .Select(word => word), "Can not read lines from stream");
+
+            return new Result<IEnumerable<string>>(resultOfReading.Error, resultOfReading.Value);
         }
 
         private IEnumerable<string> ReadFromStream()

@@ -32,7 +32,7 @@ namespace TagCloudContainerTaskTests
 
             var filteredWords = filter.FilterWords(words);
 
-            filteredWords.Should().HaveCount(2);
+            filteredWords.Value.Should().HaveCount(2);
         }
     }
 }
