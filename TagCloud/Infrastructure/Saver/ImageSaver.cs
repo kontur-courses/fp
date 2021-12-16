@@ -6,7 +6,7 @@ namespace TagCloud.Infrastructure.Saver;
 
 public class ImageSaver : IImageSaver
 {
-    public static IReadOnlyDictionary<string, ImageFormat> ImageFormats = new Dictionary<string, ImageFormat>
+    public static readonly IReadOnlyDictionary<string, ImageFormat> ImageFormats = new Dictionary<string, ImageFormat>
     {
         ["png"] = ImageFormat.Png,
         ["bmp"] = ImageFormat.Bmp,
@@ -21,8 +21,15 @@ public class ImageSaver : IImageSaver
         if (!ImageFormats.TryGetValue(outputFormat.ToLowerInvariant(), out var imageFormat))
             return Result.Fail<None>($"Acceptable formats: {string.Join(',', ImageFormats.Keys)}, but was {outputFormat.ToLowerInvariant()}");
 
-        bitmap.Save($"{outputPath}.{outputFormat.ToLowerInvariant()}", imageFormat);
-        bitmap.Dispose();
+        try
+        {
+            bitmap.Save($"{outputPath}.{outputFormat.ToLowerInvariant()}", imageFormat);
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<None>(e.Message);
+        }
+
         return Result.Ok();
     }
 }

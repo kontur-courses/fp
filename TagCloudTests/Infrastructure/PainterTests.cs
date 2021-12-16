@@ -24,14 +24,15 @@ internal class PainterTests
     }
 
     [Test]
-    public void Constructor_ThrowArgumentException_WhenImageSizesIsInvalid()
+    public void CreateImage_ReturnFail_WhenImageSizesIsInvalid()
     {
         var invalidSettings = new AppSettings { ImageHeight = -1, ImageWidth = -1 };
+        var sut = new Painter(palette, layouterFactory, invalidSettings);
 
-        var action = () => new Painter(palette, layouterFactory, invalidSettings);
+        var actual = sut.CreateImage(new Dictionary<string, int>() { { "test", 1 } });
 
-        action.Should().Throw<ArgumentException>()
-            .WithMessage("Image sizes must be great than zero, but was -1x-1");
+        actual.IsSuccess.Should().BeFalse();
+        actual.Error.Should().Be("Image sizes must be great than zero, but was -1x-1");
     }
 
     [Test]

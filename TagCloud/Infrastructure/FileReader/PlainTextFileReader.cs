@@ -4,8 +4,6 @@ namespace TagCloud.Infrastructure.FileReader;
 
 public class PlainTextFileReader : IFileReader
 {
-    private static readonly IReadOnlySet<string> SupportedExtensions = new HashSet<string> { ".txt"};
-
     public Result<IEnumerable<string>> GetLines(string inputPath)
     {
         return !File.Exists(inputPath) 
@@ -13,8 +11,8 @@ public class PlainTextFileReader : IFileReader
             : Result.Ok(File.ReadLines(inputPath));
     }
 
-    public IEnumerable<string> GetSupportedExtensions()
+    public virtual IEnumerable<string> GetSupportedExtensions()
     {
-        return SupportedExtensions;
+        yield return ".txt";
     }
 }

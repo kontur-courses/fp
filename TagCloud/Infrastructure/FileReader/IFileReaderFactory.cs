@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Infrastructure.FileReader;
+﻿using TagCloud.Infrastructure.Monad;
+
+namespace TagCloud.Infrastructure.FileReader;
 
 public interface IFileReaderFactory
 {
-    IFileReader Create(string filePath);
+    Result<IFileReader> Create(string filePath);
 }

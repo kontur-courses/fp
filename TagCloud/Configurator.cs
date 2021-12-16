@@ -30,7 +30,7 @@ internal static class Configurator
         builder.Register(c => new Filter().AddCondition(AuxiliaryPartOfSpechCondition.Filter))
             .As<IFilter>().SingleInstance();
         builder.Register(c => 
-                new FileReaderFactory(c.Resolve<IEnumerable<IFileReader>>(), c.Resolve<PlainTextFileReader>()))
+                new FileReaderFactory(c.Resolve<IEnumerable<IFileReader>>()))
             .As<IFileReaderFactory>().SingleInstance();
         builder.Register(c =>
                 new CloudLayouterFactory(c.Resolve<IEnumerable<ICloudLayouter>>(), c.Resolve<CircularCloudLayouter>()))

@@ -31,7 +31,8 @@ public class ConsoleUI : IUserInterface
     public void Run(IAppSettings settings)
     {
         var res = fileReaderFactory
-            .Create(settings.InputPath).GetLines(settings.InputPath)
+            .Create(settings.InputPath)
+            .Then(x=> x.GetLines(settings.InputPath))
             .Then(lemmatizer.GetLemmas)
             .Then(filter.FilterWords)
             .Then(weigher.GetWeightedWords)

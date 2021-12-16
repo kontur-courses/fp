@@ -2,23 +2,23 @@
 
 public readonly struct Result<T>
 {
-    public Result(string error, T value = default)
+    public Result(string? error, T? value = default)
     {
         Error = error;
         Value = value;
     }
 
-    public static implicit operator Result<T>(T value)
+    public static implicit operator Result<T>(T? value)
     {
         return Result.Ok(value);
     }
 
-    public string Error { get; }
-    public T Value { get; }
+    public string? Error { get; }
+    public T? Value { get; }
 
     public T GetValueOrThrow()
     {
-        if (IsSuccess) return Value;
+        if (IsSuccess && Value != null) return Value;
 
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }
@@ -28,12 +28,12 @@ public readonly struct Result<T>
 
 public static class Result
 {
-    public static Result<T> AsResult<T>(this T value)
+    public static Result<T> AsResult<T>(this T? value)
     {
         return Ok(value);
     }
 
-    public static Result<T> Ok<T>(T value)
+    public static Result<T> Ok<T>(T? value)
     {
         return new Result<T>(null, value);
     }
@@ -43,12 +43,12 @@ public static class Result
         return Ok<None>(null);
     }
 
-    public static Result<T> Fail<T>(string error)
+    public static Result<T> Fail<T>(string? error)
     {
         return new Result<T>(error);
     }
 
-    public static Result<T> Of<T>(Func<T> f, string error = null)
+    public static Result<T> Of<T>(Func<T> f, string? error = null)
     {
         try
         {
@@ -60,11 +60,11 @@ public static class Result
         }
     }
 
-    public static Result<None> OfAction(Action f, string error = null)
+    public static Result<None> OfAction(Action action, string? error = null)
     {
         try
         {
-            f();
+            action();
             return Ok();
         }
         catch (Exception e)
@@ -78,27 +78,25 @@ public static class Result
         return input.Then(inp => Of(() => continuation(inp)));
     }
 
-    public static Result<None> Then<TInput>(
-        this Result<TInput> input,
-        Action<TInput> continuation)
+    public static Result<None> Then<TInput>(this Result<TInput> input, Action<TInput> continuation)
     {
         return input.Then(inp => OfAction(() => continuation(inp)));
     }
 
     public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input, Func<TInput, Result<TOutput>> continuation)
     {
-        return input.IsSuccess
+        return input.IsSuccess && input.Value != null
             ? continuation(input.Value)
             : Fail<TOutput>(input.Error);
     }
 
-    public static Result<TInput> OnFail<TInput>(this Result<TInput> input, Action<string> handleError)
+    public static Result<TInput> OnFail<TInput>(this Result<TInput> input, Action<string?> handleError)
     {
         if (!input.IsSuccess) handleError(input.Error);
         return input;
     }
 
-    public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input, Func<string, string> replaceError)
+    public static Result<TInput> ReplaceError<TInput>(this Result<TInput> input, Func<string?, string> replaceError)
     {
         return input.IsSuccess 
             ? input 

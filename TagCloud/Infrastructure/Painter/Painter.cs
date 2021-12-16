@@ -13,7 +13,6 @@ public class Painter : IPainter
 
     public Painter(IPalette palette, ICloudLayouterFactory layouterFactory, IAppSettings settings)
     {
-        ValidateSettings(settings);
         this.palette = palette;
         this.layouterFactory = layouterFactory;
         this.settings = settings;
@@ -21,8 +20,11 @@ public class Painter : IPainter
 
     public Result<Bitmap> CreateImage(Dictionary<string, int> weightedWords)
     {
-        if (weightedWords == null || !weightedWords.Any())
+        if (!weightedWords.Any())
             return Result.Fail<Bitmap>("Impossible to save an empty tag cloud");
+
+        if (!IsValidSizes(settings))
+            return Result.Fail<Bitmap>($"Image sizes must be great than zero, but was {settings.ImageWidth}x{settings.ImageHeight}");
 
         var bitmap = new Bitmap(settings.ImageWidth, settings.ImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
@@ -33,9 +35,9 @@ public class Painter : IPainter
         if (!tags.IsSuccess)
             return Result.Fail<Bitmap>(tags.Error);
 
-        var scale = CalculateScale(settings.ImageWidth, settings.ImageHeight, tags.Value);
+        var scale = CalculateScale(settings.ImageWidth, settings.ImageHeight, tags.GetValueOrThrow());
 
-        foreach (var tag in tags.Value)
+        foreach (var tag in tags.GetValueOrThrow())
         {
             using var brush = new SolidBrush(palette.MainColor);
             using var font = new Font(settings.FontName, tag.FontSize * scale);
@@ -66,10 +68,9 @@ public class Painter : IPainter
         return Result.Ok(positionedWords);
     }
 
-    private static void ValidateSettings(IImageSettingsProvider settings)
+    private static bool IsValidSizes(IImageSettingsProvider settings)
     {
-        if (settings.ImageHeight <= 0 || settings.ImageWidth <= 0)
-            throw new ArgumentException($"Image sizes must be great than zero, but was {settings.ImageWidth}x{settings.ImageHeight}");
+        return settings.ImageHeight > 0 && settings.ImageWidth > 0;
     }
 
     private static float CalculateScale(int imageWidth, int imageHeight, IReadOnlyCollection<Tag> tags)

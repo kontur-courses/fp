@@ -47,9 +47,9 @@ internal class ConsoleUITests
 
     private class FakeFileReaderFactory : IFileReaderFactory
     {
-        public IFileReader Create(string filePath)
+        public Result<IFileReader> Create(string filePath)
         {
-            return new FakeReader();
+            return Result.Ok<IFileReader>(new FakeReader());
         }
     }
 
