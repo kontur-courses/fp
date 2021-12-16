@@ -36,19 +36,19 @@ namespace TagCloudContainerTaskTests
 
             var actualRect = layouter.PutNextRectangle(new Size(10, 10));
 
-            actualRect.Size.Should().BeEquivalentTo(expectedRect.Size);
+            actualRect.Value.Size.Should().BeEquivalentTo(expectedRect.Size);
         }
 
         [TestCase(-1, -1)]
         [TestCase(-1, -0)]
         [TestCase(0, -1)]
         [TestCase(0, 0)]
-        public void PutNextRectangle_ShouldThrow_WhenIncorrectSize(int width, int height)
+        public void PutNextRectangle_ShouldNotBeSuccess_WhenIncorrectSize(int width, int height)
         {
             var rectSize = new Size(width, height);
-            Action act = () => layouter.PutNextRectangle(rectSize);
+            var rectResult = layouter.PutNextRectangle(rectSize);
 
-            act.Should().Throw<ArgumentException>("Incorrect size:", rectSize);
+            rectResult.IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace TagCloudContainerTaskTests
 
             var rect = layouter.PutNextRectangle(rectSize);
 
-            rect.Location
+            rect.Value.Location
                 .Should()
                 .BeEquivalentTo(new Point(-5, -5));
         }
@@ -124,7 +124,7 @@ namespace TagCloudContainerTaskTests
         private List<Rectangle> PutNextNRectangles(int n)
         {
             return RectangleSizeGenerator.GetNextNRandomSizes(n)
-                .Select(size => layouter.PutNextRectangle(size)).ToList();
+                .Select(size => layouter.PutNextRectangle(size).Value).ToList();
         }
 
         private static bool IsIntersectExist(List<Rectangle> rectangles)

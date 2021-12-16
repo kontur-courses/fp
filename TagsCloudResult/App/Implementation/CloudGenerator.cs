@@ -63,7 +63,10 @@ namespace App.Implementation
             foreach (var tag in tags)
             {
                 var outerRectangle = tag.WordOuterRectangle;
-                outerRectangle = layouter.PutNextRectangle(outerRectangle.Size);
+                var rectResult = layouter.PutNextRectangle(outerRectangle.Size);
+                if (rectResult.IsSuccess)
+                    outerRectangle = rectResult.Value;
+
                 tag.WordOuterRectangle = outerRectangle;
             }
 

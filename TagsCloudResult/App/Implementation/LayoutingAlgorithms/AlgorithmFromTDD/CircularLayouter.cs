@@ -26,19 +26,6 @@ namespace App.Implementation.LayoutingAlgorithms.AlgorithmFromTDD
             return new List<Rectangle>(rectangles);
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
-        {
-            ThrowIfIncorrectSize(rectangleSize);
-
-            var rect = new Rectangle(Center.MovePointToSizeCenter(rectangleSize, false), rectangleSize);
-
-            while (rect.IntersectsWithAny(rectangles))
-                rect = new Rectangle(arrow.Rotate().MovePointToSizeCenter(rect.Size, false), rect.Size);
-
-            rectangles.Add(rect);
-            return rect;
-        }
-
         public int GetCloudBoundaryRadius()
         {
             return rectangles.Count == 0
@@ -62,10 +49,41 @@ namespace App.Implementation.LayoutingAlgorithms.AlgorithmFromTDD
             return new Size(width, height);
         }
 
-        private void ThrowIfIncorrectSize(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("Width and height of rectangle must be a positive numbers");
+            var rect = CheckForIncorrectSize(rectangleSize);
+
+            if (!rect.IsSuccess)
+                return rect;
+
+            rect = SetRectangleToCenter(rectangleSize);
+
+            while (rect.Value.IntersectsWithAny(rectangles))
+                rect = RotateRectangle(rect.Value);
+
+            rectangles.Add(rect.Value);
+            return rect;
+        }
+
+        private Rectangle RotateRectangle(Rectangle rectangle)
+        {
+            return new Rectangle(
+                arrow.Rotate().MovePointToSizeCenter(rectangle.Size, false),
+                rectangle.Size);
+        }
+
+        private Result<Rectangle> SetRectangleToCenter(Size rectangleSize)
+        {
+            return Result.Ok(new Rectangle(
+                Center.MovePointToSizeCenter(rectangleSize, false),
+                rectangleSize));
+        }
+
+        private static Result<Rectangle> CheckForIncorrectSize(Size rectangleSize)
+        {
+            return rectangleSize.Width <= 0 || rectangleSize.Height <= 0
+                ? Result.Fail<Rectangle>("Width and height of rectangle must be a positive numbers")
+                : Result.Ok(new Rectangle(Point.Empty, rectangleSize));
         }
     }
 }

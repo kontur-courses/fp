@@ -9,6 +9,6 @@ namespace App.Infrastructure.LayoutingAlgorithms
 
         Size GetRectanglesBoundaryBox();
 
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }
