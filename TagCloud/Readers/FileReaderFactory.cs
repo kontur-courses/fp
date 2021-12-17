@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TagCloud.Readers
 {
@@ -12,8 +13,14 @@ namespace TagCloud.Readers
                 {"docx", new DocFileReader()}
             };
         
-        public IFileReader Create(string fileExtension)
+        public Result<IFileReader> Create(string fileExtension)
         {
+            if (fileReadersFactory.TryGetValue(fileExtension, out var reader))
+                return Result.Fail<IFileReader>("The tag cloud generator does not " +
+                                                "support the input file with the extension " +
+                                                $"\"{fileExtension}\".\n" +
+                                                $"Please make an introductory file with one of these extensions:" +
+                                                $"{fileReadersFactory.Keys.ToArray()}");
             return fileReadersFactory[fileExtension];
         }
     }
