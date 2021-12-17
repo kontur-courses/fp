@@ -16,11 +16,26 @@ public static class ResultExtensions
         return input.Then(inp => Result.Of(() => continuation(inp)));
     }
 
-    public static Result Then<TInput, TOutput>(
+    public static Result<TInput> Then<TInput>(
         this Result<TInput> input,
         Action<TInput> continuation)
     {
-        return input.Then(inp => Result.OfAction(() => continuation(inp)));
+        return input.Then(inp => Result.Of(() =>
+        {
+            continuation(inp);
+            return inp;
+        }));
+    }
+
+    public static Result<TInput> Then<TInput>(
+        this Result<TInput> input,
+        Action continuation)
+    {
+        return input.Then(inp => Result.Of(() =>
+        {
+            continuation();
+            return inp;
+        }));
     }
 
     public static Result Then(
@@ -30,21 +45,21 @@ public static class ResultExtensions
         return input.Then(() => Result.OfAction(() => continuation()));
     }
 
-    public static Result Then(
-        this Result input,
-        Func<Result> continuation)
-    {
-        return input.IsSuccess
-            ? continuation()
-            : Result.Fail(input.Error!);
-    }
-
     public static Result<TOutput> Then<TOutput>(
         this Result input,
-        Func<Result<TOutput>> continuation)
+        Func<TOutput> continuation)
     {
         return input.IsSuccess
-            ? continuation()
+            ? Result.Of(continuation)
+            : Result.Fail<TOutput>(input.Error!);
+    }
+
+    public static Result<TOutput> Then<TInput, TOutput>(
+        this Result<TInput> input,
+        Func<TInput, Result<TOutput>> continuation)
+    {
+        return input.IsSuccess
+            ? continuation(input.Value!)
             : Result.Fail<TOutput>(input.Error!);
     }
 
@@ -55,15 +70,6 @@ public static class ResultExtensions
         return input.IsSuccess
             ? continuation(input.Value!)
             : Result.Fail(input.Error!);
-    }
-
-    public static Result<TOutput> Then<TInput, TOutput>(
-        this Result<TInput> input,
-        Func<TInput, Result<TOutput>> continuation)
-    {
-        return input.IsSuccess
-            ? continuation(input.Value!)
-            : Result.Fail<TOutput>(input.Error!);
     }
 
     public static Result<TInput> OnFail<TInput>(

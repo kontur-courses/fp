@@ -1,13 +1,15 @@
-﻿namespace ResultOf;
+﻿using ResultExtensions;
+
+namespace ResultOf;
 
 public struct Result
 {
     internal Result(string? error)
     {
-        Error = error;
+        Error = error!;
     }
 
-    public string? Error { get; }
+    public string Error { get; }
     public bool IsSuccess => Error == null;
 
     public static Result<T> Ok<T>(T value)
@@ -37,7 +39,14 @@ public struct Result
         }
         catch (Exception e)
         {
-            return Fail<T>(error ?? e.Message);
+            var fail = Fail<T>(error ?? e.Message);
+            while (e.InnerException != null)
+            {
+                e = e.InnerException;
+                fail = fail.RefineError(e.Message);
+            }
+
+            return fail;
         }
     }
 
@@ -59,16 +68,16 @@ public struct Result<T>
 {
     internal Result(string? error, T? value = default)
     {
-        Error = error;
+        Error = error!;
         Value = value;
     }
+
+    public string Error { get; }
 
     public static implicit operator Result<T>(T v)
     {
         return new(null, v);
     }
-
-    public string? Error { get; }
     internal T? Value { get; }
     public T GetValueOrThrow()
     {
@@ -77,4 +86,9 @@ public struct Result<T>
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }
     public bool IsSuccess => Error == null;
+
+    public static implicit operator Result(Result<T> result)
+    {
+        return new Result(result.Error);
+    }
 }
