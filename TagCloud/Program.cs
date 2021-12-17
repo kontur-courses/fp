@@ -12,6 +12,7 @@ using TagCloud.TextHandlers.Filters;
 using TagCloud.TextHandlers.Parser;
 using IContainer = Autofac.IContainer;
 
+
 namespace TagCloud
 {
     public static class Program
