@@ -16,7 +16,10 @@ public class SpeechPartFilter : IWordFilter
 
     public bool IsValid(string word)
     {
-        var part = myStem.AnalyzeWord(word)?.SpeechPart;
-        return part.HasValue && !settings.ToFilterOut.Contains(part.Value);
+        var result = myStem.AnalyzeWord(word);
+        if (!result.IsSuccess)
+            return false;
+        var part = result.GetValueOrThrow().SpeechPart;
+        return !settings.ToFilterOut.Contains(part);
     }
 }

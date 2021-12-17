@@ -16,7 +16,10 @@ public class FileReader : ITextReader
     {
         foreach (var path in paths)
         {
-            this.paths.Add(new(path));
+            var file = new FileInfo(path);
+            if (!file.Exists)
+                throw new FileNotFoundException($"Could not find file with name '{path}'");
+            this.paths.Add(file);
         }
     }
 

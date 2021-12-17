@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using ResultExtensions;
+using ResultOf;
+using System.Reflection;
 using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer;
@@ -21,23 +23,23 @@ public class ServiceIndex
     private readonly HashSet<Type> availableServices = new();
     public IReadOnlySet<Type> AvailableServices => availableServices;
 
-    public ImplementationCard GetImplementation(string typeName)
+    public Result<ImplementationCard> GetImplementation(string typeName)
     {
         if (!nameImplementationPair.TryGetValue(typeName, out var type))
         {
             if (!fullNameImplementationPair.TryGetValue(typeName, out type))
-                throw new ArgumentException($"Could not find type with name '{typeName}'. Make sure required assembly is provided and requested service implements '{nameof(IService)}' interface");
+                return Result.Fail<ImplementationCard>($"Could not find type with name '{typeName}'. Make sure required assembly is provided and requested service implements '{nameof(IService)}' interface");
         }
 
         return type;
     }
 
-    public Type GetService(string typeName)
+    public Result<Type> GetService(string typeName)
     {
         if (!nameServicePair.TryGetValue(typeName, out var type))
         {
             if (!fullNameServicePair.TryGetValue(typeName, out type))
-                throw new ArgumentException($"Could not find type with name '{typeName}'. Make sure required assembly is provided and requested service implements '{nameof(IService)}' interface");
+                return Result.Fail<Type>($"Could not find type with name '{typeName}'. Make sure required assembly is provided and requested service implements '{nameof(IService)}' interface");
         }
 
         return type;

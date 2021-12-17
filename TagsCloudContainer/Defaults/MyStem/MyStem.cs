@@ -1,11 +1,13 @@
-﻿using System.Diagnostics;
+﻿using ResultExtensions;
+using ResultOf;
+using System.Diagnostics;
 using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer.Defaults.MyStem;
 
 public class MyStem : ISingletonService, IDisposable
 {
-    private static bool disposedValue;
+    private bool disposedValue = false;
     private static readonly ProcessStartInfo startInfo = new()
     {
         UseShellExecute = false,
@@ -18,7 +20,6 @@ public class MyStem : ISingletonService, IDisposable
     private readonly Process myStemProccess;
     private bool isStarted = false;
     private readonly Dictionary<string, WordStat> cache = new();
-    private readonly Dictionary<string, WordStat[]> complexWordCache = new();
 
     public MyStem()
     {
@@ -28,13 +29,13 @@ public class MyStem : ISingletonService, IDisposable
         };
     }
 
-    public WordStat? AnalyzeWord(string word)
+    public Result<WordStat> AnalyzeWord(string word)
     {
         if (disposedValue)
             throw new InvalidOperationException("MyStem object was disposed");
 
         if (word == null)
-            return null;
+            return Result.Fail<WordStat>("Word was null");
 
         if (cache.TryGetValue(word, out var stat))
             return stat;
@@ -50,14 +51,15 @@ public class MyStem : ISingletonService, IDisposable
         myStemProccess.StandardInput.WriteLine(word);
 
         var stats = ParseWordStats(ReadAllLines(myStemProccess.StandardOutput));
-        stat = stats.Length > 0 ? stats[0] : null;
-        if (stat != null)
+        var statResult = stats.Length > 0 ? stats[0] : Result.Fail<WordStat>("MyStem could not understand a word");
+        if (statResult.IsSuccess)
         {
+            stat = statResult.GetValueOrThrow();
             cache[word] = stat;
             cache[stat.Stem] = stat;
         }
 
-        return stat;
+        return statResult;
     }
 
     private static IEnumerable<string> ReadAllLines(StreamReader reader)
@@ -69,23 +71,23 @@ public class MyStem : ISingletonService, IDisposable
         }
     }
 
-    private static WordStat[] ParseWordStats(IEnumerable<string> lines)
+    private static Result<WordStat>[] ParseWordStats(IEnumerable<string> lines)
     {
         return lines.Select(ParseWordStat)
-            .Where(x => x != null)
-            .OrderByDescending(x => x!.Stem.Length)
-            .ToArray()!;
+            .Where(x => x.IsSuccess)
+            .OrderByDescending(x => x.GetValueOrThrow().Stem.Length)
+            .ToArray();
     }
 
-    private static WordStat? ParseWordStat(string wordStat)
+    private static Result<WordStat> ParseWordStat(string wordStat)
     {
         if (wordStat.EndsWith("??"))
-            return null;
+            return Result.Fail<WordStat>("MyStem could not understand a word");
         var stemGrSeparation = wordStat.IndexOf('=');
         var grEnd = wordStat.IndexOf('=', stemGrSeparation + 1);
         var part = wordStat[(stemGrSeparation + 1)..grEnd].Split(',')[0];
         var stem = wordStat[..stemGrSeparation].TrimEnd('?');
-        return new(stem, Enum.Parse<SpeechPart>(part));
+        return new WordStat(stem, Enum.Parse<SpeechPart>(part));
     }
 
     private void HandleErrorData(object sender, DataReceivedEventArgs e)

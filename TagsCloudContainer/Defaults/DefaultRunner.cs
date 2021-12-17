@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Mono.Options;
+using ResultExtensions;
+using ResultOf;
 using TagsCloudContainer.Abstractions;
 using TagsCloudContainer.Defaults.SettingsProviders;
 
@@ -14,16 +16,26 @@ public class DefaultRunner : IRunner
         this.container = container;
     }
 
-    public void Run(params string[] args)
+    public Result Run(params string[] args)
     {
-        ParseSettings(args);
-        var vis = container.Resolve<IVisualizer>();
-        var output = container.Resolve<OutputSettings>();
-        var img = vis.GetBitmap();
-        img.Save(output.OutputPath, output.ImageFormat.GetFormat());
+        var parseSettingsResult = ParseSettings(args);
+        if (!parseSettingsResult.IsSuccess)
+        {
+            return parseSettingsResult.
+                RefineError($"Failed to parse arguments[{ string.Join(", ", args)}]");
+        }
+
+        var outputResult = Result.Of(container.Resolve<OutputSettings>);
+        if (!outputResult.IsSuccess)
+            return outputResult;
+
+        var output = outputResult.GetValueOrThrow();
+        return Result.Of(container.Resolve<IVisualizer>)
+            .Then(vis => vis.GetBitmap())
+            .Then(img => img.Save(output.OutputPath, output.ImageFormat.GetFormat()));
     }
 
-    private void ParseSettings(string[] args)
+    private Result ParseSettings(string[] args)
     {
         var allSettingsProviders = container.Resolve<IEnumerable<ICliSettingsProvider>>().ToList();
         var argsList = args.ToList();
@@ -34,21 +46,30 @@ public class DefaultRunner : IRunner
         };
         allOptions.Add(helperOptions);
 
-        foreach (var item in allOptions)
+        try
         {
-            argsList = item.Parse(argsList);
-            if (!argsList.Any())
-                break;
+            foreach (var item in allOptions)
+            {
+                argsList = item.Parse(argsList);
+                if (!argsList.Any())
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
         }
 
         if (argsList.Any())
-            throw new ArgumentException($"Unknown arguments encountered: [{string.Join(", ", argsList)}]");
+            return Result.Fail($"Unknown arguments encountered: [{string.Join(", ", argsList)}]");
 
         foreach (var provider in allSettingsProviders.OfType<IRequiredSettingsProvider>())
         {
             if (!provider.IsSet)
-                throw new ArgumentException($"One of the required arguments were not provided: {provider.GetType().Name}");
+                return Result.Fail($"One of the required arguments were not provided: {provider.GetType().Name}");
         }
+
+        return Result.Ok();
     }
 
     private static void ShowHelp(List<OptionSet> allOptions)

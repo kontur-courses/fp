@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CircularCloudLayouter\CloudLayouter.csproj" />
+    <ProjectReference Include="..\Results\Results.csproj" />
   </ItemGroup>
 
   <ItemGroup>

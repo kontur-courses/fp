@@ -1,8 +1,9 @@
-﻿using TagsCloudContainer.Registrations;
+﻿using ResultOf;
+using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer.Abstractions;
 
 public interface IWordNormalizer : IService
 {
-    string? Normalize(string word);
+    Result<string> Normalize(string word);
 }

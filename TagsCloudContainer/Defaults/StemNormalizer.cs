@@ -1,4 +1,6 @@
-﻿using TagsCloudContainer.Abstractions;
+﻿using ResultExtensions;
+using ResultOf;
+using TagsCloudContainer.Abstractions;
 
 namespace TagsCloudContainer.Defaults;
 
@@ -11,8 +13,11 @@ public class StemNormalizer : IWordNormalizer
         this.myStem = myStem;
     }
 
-    public string? Normalize(string word)
+    public Result<string> Normalize(string word)
     {
-        return myStem.AnalyzeWord(word)?.Stem;
+        var result = myStem.AnalyzeWord(word);
+        return result.IsSuccess
+            ? result.GetValueOrThrow().Stem
+            : Result.Fail<string>($"Could not normilize word '{word}'");
     }
 }

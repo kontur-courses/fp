@@ -20,7 +20,7 @@ public class InputSettings : IRequiredSettingsProvider
                     {
                         Paths = v.Split('|');
                         if(UseString)
-                            throw new ArgumentException("Can't use both input providers");
+                            throw new ArgumentException("Can't use both file and string input providers");
                         UseFile=true;
                     }
                 },

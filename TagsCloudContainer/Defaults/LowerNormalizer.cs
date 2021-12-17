@@ -1,10 +1,11 @@
-﻿using TagsCloudContainer.Abstractions;
+﻿using ResultOf;
+using TagsCloudContainer.Abstractions;
 
 namespace TagsCloudContainer.Defaults;
 
 public class LowerNormalizer : IWordNormalizer
 {
-    public string Normalize(string word)
+    public Result<string> Normalize(string word)
     {
         return word.ToLower();
     }
