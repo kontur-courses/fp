@@ -9,6 +9,50 @@ public struct Result
 
     public string? Error { get; }
     public bool IsSuccess => Error == null;
+
+    public static Result<T> Ok<T>(T value)
+    {
+        return new Result<T>(null, value);
+    }
+    public static Result Ok()
+    {
+        return new(null);
+    }
+
+    public static Result Fail(string e)
+    {
+        return new(e);
+    }
+
+    public static Result<T> Fail<T>(string e)
+    {
+        return new Result<T>(e);
+    }
+
+    public static Result<T> Of<T>(Func<T> f, string? error = null)
+    {
+        try
+        {
+            return Ok(f());
+        }
+        catch (Exception e)
+        {
+            return Fail<T>(error ?? e.Message);
+        }
+    }
+
+    public static Result OfAction(Action f, string? error = null)
+    {
+        try
+        {
+            f();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Fail(error ?? e.Message);
+        }
+    }
 }
 
 public struct Result<T>
