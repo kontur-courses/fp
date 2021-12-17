@@ -116,8 +116,9 @@ namespace TagCloud
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess 
+                ? input 
+                : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(

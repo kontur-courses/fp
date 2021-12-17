@@ -21,15 +21,17 @@ namespace TagCloud.Apps
 
         public void Run(Configuration configuration)
         {
-            var words = reader.Read(configuration.WordsFilename).ToArray();
+            /*var words = reader.Read(configuration.WordsFilename);
             if (words.Length == 0)
             {
                 Console.WriteLine($"File {configuration.WordsFilename} is empty");
                 return;
-            }
+            }*/
 
-            var template = templateCreator.GetTemplate(words);
-            visualizer.Draw(template, configuration.OutputFilename);
+            reader
+                .Read(configuration.WordsFilename)
+                .Then(templateCreator.GetTemplate)
+                .Then(t=>visualizer.Draw(t, configuration.OutputFilename));
         }
     }
 }

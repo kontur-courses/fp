@@ -4,6 +4,6 @@ namespace TagCloud.TextHandlers.Parser
 {
     public interface ITextParser
     {
-        IEnumerable<string> GetWords(string path);
+        Result<IEnumerable<string>> GetWords(string path);
     }
 }

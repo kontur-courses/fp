@@ -7,16 +7,24 @@ namespace TagCloud.TextHandlers.Parser
 {
     public class WordsFromTextParser : ITextParser
     {
-        public IEnumerable<string> GetWords(string path)
+        public Result<IEnumerable<string>> GetWords(string path)
         {
-            var input = File.ReadAllText(path);
-            var matches = Regex.Matches(input, @"\b[\w']*\b");
+            /*
+                     var input = File.ReadAllText(path);
+                     var matches = Regex.Matches(input, @"\b[\w']*\b");
+         
+                     var words = matches.Cast<Match>()
+                         .Where(m => !string.IsNullOrEmpty(m.Value))
+                         .Select(m => m.Value);
+                         */
 
-            var words = matches.Cast<Match>()
-                .Where(m => !string.IsNullOrEmpty(m.Value))
-                .Select(m => m.Value);
-
-            return words;
+            return File.ReadAllText(path)
+                .AsResult()
+                .Then(i => Regex.Matches(i, @"\b[\w']*\b"))
+                .Then(m => m.Cast<Match>())
+                .Then(e => e.Where(m => !string.IsNullOrEmpty(m.Value)))
+                .Then(e => e.Select(m => m.Value))
+                .ReplaceError(_ => $"Error on reading {path}");
         }
     }
 }

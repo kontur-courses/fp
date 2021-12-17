@@ -26,9 +26,12 @@ namespace TagCloud.TextHandlers.Filters
             return this;
         }
 
-        public IEnumerable<string> Filter(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> words)
         {
-            return words.Where(w => filters.All(f => f(w)));
+            return words
+                .Where(word => filters.All(f => f(word)))
+                .AsResult()
+                .ReplaceError(_ => "Filter error");
         }
     }
 }

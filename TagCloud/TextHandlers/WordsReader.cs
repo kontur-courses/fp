@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using TagCloud.TextHandlers.Converters;
 using TagCloud.TextHandlers.Filters;
 using TagCloud.TextHandlers.Parser;
@@ -18,12 +19,11 @@ namespace TagCloud.TextHandlers
             this.filter = filter;
         }
 
-        public IEnumerable<string> Read(string filename)
+        public Result<IEnumerable<string>> Read(string filename)
         {
-            var words = parser.GetWords(filename);
-            var filtered = filter.Filter(words);
-            var converted = converter.Convert(filtered);
-            return converted;
+            return parser.GetWords(filename)
+                .Then(filter.Filter)
+                .Then(converter.Convert);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace TagCloud.TextHandlers
 {
     public interface IReader
     {
-        public IEnumerable<string> Read(string filename);
+        public Result<IEnumerable<string>> Read(string filename);
     }
 }

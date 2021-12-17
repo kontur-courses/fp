@@ -21,7 +21,7 @@ namespace TagCloud.Tests
         [Test]
         public void GetWords_ShouldReturnAllWordsFromFile()
         {
-            var sut = new WordsParser();
+            var sut = new WordsByLineParser();
 
             var actualWords = sut.GetWords(filename);
 
@@ -34,7 +34,7 @@ namespace TagCloud.Tests
         public void GetWords_CanReadOtherFormats(string fileExtension)
         {
             File.WriteAllText($"test.{fileExtension}", string.Join(Environment.NewLine, words));
-            var sut = new WordsParser();
+            var sut = new WordsByLineParser();
 
             var actualWords = sut.GetWords(filename);
 

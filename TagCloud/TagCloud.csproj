@@ -26,8 +26,4 @@
       <Compile Remove="TextHandlers\Converters\PunctuationMarksRemover.cs" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="bin\Debug\net48" />
-    </ItemGroup>
-
 </Project>
