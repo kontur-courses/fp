@@ -8,6 +8,7 @@ namespace ResultOfTask
         {
         }
     }
+
     public struct Result<T>
     {
         public Result(string error, T value = default(T))
@@ -15,13 +16,16 @@ namespace ResultOfTask
             Error = error;
             Value = value;
         }
+
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -58,21 +62,45 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return !input.IsSuccess
+                ? new Result<TOutput>(input.Error)
+                : input.Then(inp => Of(() => continuation(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return !input.IsSuccess
+                ? new Result<TOutput>(input.Error)
+                : continuation(input.Value);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+            {
+                handleError(input.Error);
+            }
+
+            return input;
+        }
+
+        public static Result<TInput> ReplaceError<TInput>(
+            this Result<TInput> input,
+            Func<string, string> replace)
+        {
+            if (input.IsSuccess)
+                return input;
+            return Fail<TInput>(replace(input.Error)); /*new Result<TInput>(replace(input.Error), input.Value);*/
+        }
+
+        public static Result<TInput> RefineError<TInput>(
+            this Result<TInput> input, string replace)
+        {
+            return input.ReplaceError(e => replace + ". " + input.Error);
         }
     }
 }
