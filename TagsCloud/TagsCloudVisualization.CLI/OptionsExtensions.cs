@@ -54,7 +54,8 @@ namespace TagsCloudVisualization.CLI
                 .DefaultIfEmpty("en")
                 .Distinct()
                 .Select(CreateInfinitiveFormProcessorFromDictionary)
-                .Traverse();
+                .Traverse()
+                .RefineError("[Create words dictionary]");
         }
 
 
@@ -67,10 +68,16 @@ namespace TagsCloudVisualization.CLI
                 select value;
         }
 
-        private static Result<Color> ParseBackgroundColor(Options options) => Color.FromName(options.BackgroundColor);
+        private static Result<Color> ParseBackgroundColor(Options options)
+        {
+            return Color.FromName(options.BackgroundColor);
+        }
 
-        private static Result<PositiveSize> ParseSize(Options options) =>
-            PositiveSize.Create(options.Width, options.Height);
+        private static Result<PositiveSize> ParseSize(Options options)
+        {
+            return PositiveSize.Create(options.Width, options.Height)
+                .RefineError("Incorrect image size");
+        }
 
         private static Result<TagDrawableSettingsProvider> GetTagDrawableSettingsProvider(Options options)
         {
