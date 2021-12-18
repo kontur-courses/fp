@@ -2,13 +2,6 @@
 
 namespace TagsCloud.Visualization.Utils
 {
-    public class None
-    {
-        private None()
-        {
-        }
-    }
-
     public struct Result<T>
     {
         public Result(string error, T value = default)
@@ -31,10 +24,14 @@ namespace TagsCloud.Visualization.Utils
         public bool IsSuccess => Error == null;
 
         public Result<T> Validate(Predicate<T> validator, string errorMessage) =>
-            validator(Value) ? this : Result.Fail<T>(errorMessage);
+            Validate(validator, _ => errorMessage);
 
-        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage) =>
-            validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
+        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage)
+        {
+            if(IsSuccess)
+                return validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
+            return this;
+        }
     }
 
     public static class Result

@@ -23,8 +23,8 @@ namespace TagsCloud.Visualization.WordsParser
         private Dictionary<string, int> ConstructDictionary(string text)
         {
             return Regex.Split(text.ToLower(), WordsPattern)
-                .Where(w => w.Length > 1 && wordsFilters.All(x => x.IsWordValid(w)))
-                .GroupBy(s => s)
+                .Where(word => word.Length > 1 && wordsFilters.All(x => x.IsWordValid(word)))
+                .GroupBy(word => word)
                 .ToDictionary(x => x.Key, x => x.Count());
         }
     }
