@@ -155,5 +155,37 @@ namespace ResultMonad.Tests
                 .RefineError("Posting results to db")
                 .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
+
+        [Test]
+        public void Result_Should_ValidateReturnResultWithValue_WhenValidated()
+        {
+            Result.Ok(42)
+                .Validate(_ => true, "Error")
+                .Should().BeEquivalentTo(Result.Ok(42));
+        }
+
+        [Test]
+        public void Result_Should_ValidateReturnError_WhenNotValidated()
+        {
+            Result.Ok(42)
+                .Validate(_ => false, "Error")
+                .Should().BeEquivalentTo(Result.Fail<int>("Error"));
+        }
+
+        [Test]
+        public void Result_Should_ToNoneReturnNone_WhenContainedValue()
+        {
+            Result.Ok(42)
+                .ToNone()
+                .Should().BeEquivalentTo(Result.Ok());
+        }
+
+        [Test]
+        public void Result_Should_ToNoneReturnError_WhenContainedError()
+        {
+            Result.Fail<int>("Error")
+                .ToNone()
+                .Should().BeEquivalentTo(Result.Fail<None>("Error"));
+        }
     }
 }

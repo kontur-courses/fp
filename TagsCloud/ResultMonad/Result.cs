@@ -72,6 +72,12 @@ namespace ResultMonad
                 ? continuation(input.Value)
                 : Fail<TOutput>(input.Error);
 
+        public static Result<TOutput> Then<TOutput>(this Result<None> input, Func<Result<TOutput>> continuation) =>
+            input.Then(_ => continuation());
+
+        public static Result<TOutput> Then<TOutput>(this Result<None> input, Func<TOutput> continuation) =>
+            input.Then(_ => continuation());
+
         public static Result<TInput> OnFail<TInput>(this Result<TInput> input, Action<string> handleError)
         {
             if (!input.IsSuccess) handleError(input.Error);
@@ -84,5 +90,12 @@ namespace ResultMonad
 
         public static Result<TInput> RefineError<TInput>(this Result<TInput> input, string errorMessage) =>
             input.ReplaceError(err => errorMessage + ". " + err);
+
+        public static Result<TInput> Validate<TInput>(this Result<TInput> input,
+            Func<TInput, bool> validator,
+            string errorMessage) =>
+            input.Then(i => validator(i) ? Ok(i) : Fail<TInput>(errorMessage));
+
+        public static Result<None> ToNone<TInput>(this Result<TInput> input) => input.Then(_ => Ok());
     }
 }
