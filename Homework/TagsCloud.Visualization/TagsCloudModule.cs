@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autofac;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Drawers;
@@ -8,10 +7,7 @@ using TagsCloud.Visualization.ImagesSavior;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
 using TagsCloud.Visualization.LayouterCores;
 using TagsCloud.Visualization.PointGenerator;
-using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsParser;
-using TagsCloud.Visualization.WordsReaders;
-using TagsCloud.Visualization.WordsReaders.FileReaders;
 using TagsCloud.Visualization.WordsSizeServices;
 
 namespace TagsCloud.Visualization
@@ -26,7 +22,7 @@ namespace TagsCloud.Visualization
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<WordsService>().As<IWordsService>();
-            
+
             builder.RegisterType<WordsParser.WordsParser>().As<IWordsParser>();
 
             builder.Register(_ => new FontFactory.FontFactory(settings.FontSettings)).As<IFontFactory>();

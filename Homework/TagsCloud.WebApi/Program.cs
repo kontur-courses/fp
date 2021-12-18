@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-
 namespace TagsCloud.WebApi
 {
     public class Program
@@ -11,7 +10,7 @@ namespace TagsCloud.WebApi
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder  CreateHostBuilder(string[] args) =>
+        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
     }

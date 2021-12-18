@@ -27,7 +27,7 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
         {
             var font = fontFactory.GetFont(word, minCount, maxCount);
             var size = wordsSizeService.CalculateSize(word, font);
-            
+
             layouter.PutNextRectangle(size)
                 .Then(rectangle => words.Add(new WordWithBorder(word, font, rectangle)));
 

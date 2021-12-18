@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;

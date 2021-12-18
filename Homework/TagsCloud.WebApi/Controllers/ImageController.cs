@@ -18,7 +18,6 @@ namespace TagsCloud.WebApi.Controllers
         [HttpGet("image")]
         public IActionResult GetImage(string text)
         {
-            
             /*using var image = layouterCore.GenerateImage(new SimpleTextReader(text)).GetValueOrThrow();
             
             using var ms = new MemoryStream();

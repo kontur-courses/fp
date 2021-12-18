@@ -9,8 +9,8 @@ namespace TagsCloud.Words
     public class CliLayouterCore
     {
         private readonly IImageSavior imageSavior;
-        private readonly IWordsReadService wordsReadService;
         private readonly ILayouterCore layouterCore;
+        private readonly IWordsReadService wordsReadService;
 
         public CliLayouterCore(
             ILayouterCore layouterCore,

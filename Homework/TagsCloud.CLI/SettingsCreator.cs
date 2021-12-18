@@ -21,8 +21,9 @@ namespace TagsCloud.Words
                 {
                     FamilyName = options.FamilyName,
                     MaxSize = options.MaxSize,
-                    FontStyle = Enum.TryParse<FontStyle>(options.FontStyle, true, out var style) 
-                        ? style : FontStyle.Regular
+                    FontStyle = Enum.TryParse<FontStyle>(options.FontStyle, true, out var style)
+                        ? style
+                        : FontStyle.Regular
                 },
 
                 SaveSettings = new SaveSettings

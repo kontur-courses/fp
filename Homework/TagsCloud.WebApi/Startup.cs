@@ -16,22 +16,19 @@ namespace TagsCloud.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
         public IContainer ApplicationContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider  ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            
+
             services.AddCors(options =>
             {
-                options.AddPolicy(name: "test",
+                options.AddPolicy("test",
                     corsPolicyBuilder =>
                     {
                         corsPolicyBuilder
@@ -42,19 +39,19 @@ namespace TagsCloud.WebApi
             });
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(type => type.ToString());
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "TagsCloud.WebApi",
-                    Version = "7.0",
+                    Version = "7.0"
                 });
             });
-            
+
             var builder = RegisterDependencies();
-            
+
             builder.Populate(services);
 
             ApplicationContainer = builder.Build();
@@ -70,7 +67,6 @@ namespace TagsCloud.WebApi
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PathFinder.Api v1"));
-
             }
             else
             {
@@ -86,7 +82,7 @@ namespace TagsCloud.WebApi
             app.UseRouting();
 
             app.UseCors("test");
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -98,17 +94,14 @@ namespace TagsCloud.WebApi
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer("start");
-                }
+                if (env.IsDevelopment()) spa.UseReactDevelopmentServer("start");
             });
         }
-        
+
         private ContainerBuilder RegisterDependencies()
         {
             var builder = new ContainerBuilder();
-            
+
             var settings = new TagsCloudModuleSettings
             {
                 LayouterType = typeof(CircularCloudLayouter),
