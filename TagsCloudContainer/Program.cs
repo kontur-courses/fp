@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using TagsCloudContainer.Common;
+using TagsCloudContainer.Common.Result;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Layouters;
 using TagsCloudContainer.Painting;
@@ -77,6 +78,7 @@ namespace TagsCloudContainer
             var preBuilder = new ContainerBuilder();
             preBuilder.RegisterInstance(Console.Out).As<TextWriter>();
             preBuilder.RegisterInstance(Console.In).As<TextReader>();
+            preBuilder.RegisterType<ConsoleResultHandler>().As<IResultHandler>();
             preBuilder.RegisterInstance(builder).As<ContainerBuilder>();
             RegisterActions(preBuilder);
             return preBuilder;
@@ -102,8 +104,8 @@ namespace TagsCloudContainer
                 .GetTypes()
                 .Where(t => action.IsAssignableFrom(t))
                 .ToArray();
-            builder.RegisterTypes(actions).As<UiAction>();
-            builder.RegisterType<ConsoleMenuCreator>().As<IMenuCreator>();
+            builder.RegisterTypes(actions).As<IUiAction>();
+            builder.RegisterType<MenuCreator>().As<IMenuCreator>();
         }
     }
 }

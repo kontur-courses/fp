@@ -2,7 +2,7 @@
 {
     public interface IMainMenu
     {
-        public ConsoleCategory[] Categories { get; }
+        public Category[] Categories { get; }
 
         public void ChooseCategory();
     }

@@ -1,25 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using TagsCloudContainer.Common.Result;
 using TagsCloudContainer.UI.Menu;
 
 namespace TagsCloudContainer.UI
 {
     public static class UiActionExtensions
     {
-        public static ConsoleMainMenu GetConsoleMenu
-            (this UiAction[] actions, TextReader reader, TextWriter writer)
+        public static MainMenu GetMenu
+            (this IUiAction[] actions, IResultHandler handler)
         {
-            var categories = GetCategories(actions, reader, writer);
-            var menuCategories = new Dictionary<int, ConsoleCategory>();
+            var categories = GetCategories(actions, handler);
+            var menuCategories = new Dictionary<int, Category>();
             for (var i = 0; i < categories.Length; i++) 
                 menuCategories[i + 1] = categories[i];
-            return new ConsoleMainMenu(menuCategories, reader, writer);
+            return new MainMenu(menuCategories, handler);
         }
 
-        private static ConsoleCategory[] GetCategories
-            (UiAction[] actions, TextReader reader, TextWriter writer)
+        private static Category[] GetCategories
+            (IUiAction[] actions, IResultHandler handler)
         {
-            var result = new List<ConsoleCategory>();
+            var result = new List<Category>();
             var categories = new Dictionary<string, List<MenuItem>>();
             
             foreach (var uiAction in actions)
@@ -37,13 +37,13 @@ namespace TagsCloudContainer.UI
                 var itmes = categories[name];
                 for (var i = 0; i < itmes.Count; i++) 
                     categoryItems[i + 1] = itmes[i];
-                result.Add(new ConsoleCategory(categoryItems, name, reader, writer));
+                result.Add(new Category(categoryItems, name, handler));
             }
 
             return result.ToArray();
         }
 
-        private static MenuItem CreateMenuItem(UiAction action) 
+        private static MenuItem CreateMenuItem(IUiAction action) 
             => new MenuItem(action.Name, action.Perform);
     }
 }
