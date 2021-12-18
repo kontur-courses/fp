@@ -59,7 +59,14 @@ public struct Result
         }
         catch (Exception e)
         {
-            return Fail(error ?? e.Message);
+            var fail = Fail(error ?? e.Message);
+            while (e.InnerException != null)
+            {
+                e = e.InnerException;
+                fail = fail.RefineError(e.Message);
+            }
+
+            return fail;
         }
     }
 }
