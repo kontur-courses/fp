@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace TagsCloudVisualization.WordsProvider
@@ -10,11 +9,6 @@ namespace TagsCloudVisualization.WordsProvider
         {
         }
 
-        protected override IEnumerable<string> GetText()
-        {
-            if (!File.Exists(PathToFile))
-                throw new Exception($"File {PathToFile} not found");
-            return File.ReadLines(PathToFile);
-        }
+        protected override IEnumerable<string> GetText() => File.ReadLines(PathToFile);
     }
 }

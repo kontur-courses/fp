@@ -44,7 +44,7 @@ namespace TagsCloudVisualization.Tests.WordsProvider
 
             var words = _provider.GetWords();
 
-            words.Should().BeEmpty();
+            words.GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase(new object[]
@@ -63,14 +63,16 @@ namespace TagsCloudVisualization.Tests.WordsProvider
 
             var words = _provider.GetWords();
 
-            words.Should().ContainInOrder(expectedWords);
+            words.GetValueOrThrow().Should().ContainInOrder(expectedWords);
         }
 
         [Test]
-        public void GetWords_ShouldThrowException_WhenFileNotExists()
+        public void GetWords_ShouldContainError_WhenFileNotExists()
         {
             var provider = new WordsFromTxtFileProvider(DateTime.Now.ToString(CultureInfo.InvariantCulture));
-            Assert.Throws<Exception>(() => provider.GetWords());
+            var words = provider.GetWords();
+            words.IsSuccess.Should().BeFalse();
+            words.Error.Should().NotBeNullOrEmpty();
         }
     }
 }
