@@ -1,20 +1,30 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Visualization.WordsReaders.FileReaders
 {
     public class PdfFileReader : IFileReader
     {
-        public string Read(string filename)
+        public Result<string> Read(string filename)
         {
-            var text = new StringBuilder();
+            try
+            {
+                var text = new StringBuilder();
 
-            using var reader = new PdfReader(filename);
+                using var reader = new PdfReader(filename);
 
-            for (var i = 1; i <= reader.NumberOfPages; i++) text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                for (var i = 1; i <= reader.NumberOfPages; i++)
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
 
-            return text.ToString();
+                return text.ToString();
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<string>(e.Message);
+            }
         }
 
         public bool CanRead(string extension) => extension == "pdf";
