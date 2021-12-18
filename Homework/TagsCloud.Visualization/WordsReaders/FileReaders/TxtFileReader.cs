@@ -5,9 +5,10 @@ namespace TagsCloud.Visualization.WordsReaders.FileReaders
 {
     public class TxtFileReader : IFileReader
     {
-        public Result<string> Read(string filename) => 
+        public Result<string> Read(string filename) =>
             filename.AsResult()
                 .Then(File.ReadAllText);
+
         public bool CanRead(string extension) => extension == "txt";
     }
 }

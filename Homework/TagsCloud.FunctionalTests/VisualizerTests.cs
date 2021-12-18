@@ -20,7 +20,7 @@ namespace TagsCloud.FunctionalTests
         public void Should_ReadWords_From(string extension)
         {
             var settings = GenerateDefaultSettings();
-            
+
             using var container = CreateContainer(settings, extension);
 
             var visualizer = container.Resolve<ILayouterCore>();
@@ -39,12 +39,12 @@ namespace TagsCloud.FunctionalTests
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new TagsCloudModule(settings));
-            
+
             builder.RegisterType<TxtFileReader>().As<IFileReader>();
             builder.RegisterType<DocFileReader>().As<IFileReader>();
             builder.RegisterType<PdfFileReader>().As<IFileReader>();
-            
-            builder.Register(ctx => 
+
+            builder.Register(ctx =>
                     new FileReadService(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
                         ctx.Resolve<IEnumerable<IFileReader>>()))
                 .As<IWordsReadService>();

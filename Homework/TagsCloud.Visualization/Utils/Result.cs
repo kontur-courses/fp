@@ -17,10 +17,7 @@ namespace TagsCloud.Visualization.Utils
             Value = value;
         }
 
-        public static implicit operator Result<T>(T v)
-        {
-            return Result.Ok(v);
-        }
+        public static implicit operator Result<T>(T v) => Result.Ok(v);
 
         public string Error { get; }
         internal T Value { get; }
@@ -33,35 +30,22 @@ namespace TagsCloud.Visualization.Utils
 
         public bool IsSuccess => Error == null;
 
-        public Result<T> Validate(Predicate<T> validator, string errorMessage)
-        {
-            return validator(Value) ? this : Result.Fail<T>(errorMessage);
-        }
-        
-        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage)
-        {
-            return validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
-        }
+        public Result<T> Validate(Predicate<T> validator, string errorMessage) =>
+            validator(Value) ? this : Result.Fail<T>(errorMessage);
+
+        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage) =>
+            validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
     }
 
     public static class Result
     {
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
+        public static Result<T> AsResult<T>(this T value) => Ok(value);
 
         public static Result<T> Ok<T>(T value) => new(null, value);
 
-        public static Result<None> Ok()
-        {
-            return Ok<None>(null);
-        }
+        public static Result<None> Ok() => Ok<None>(null);
 
-        public static Result<T> Fail<T>(string e)
-        {
-            return new(e);
-        }
+        public static Result<T> Fail<T>(string e) => new(e);
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
@@ -87,7 +71,7 @@ namespace TagsCloud.Visualization.Utils
                 return Fail<None>(error ?? e.Message);
             }
         }
-        
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
@@ -104,12 +88,10 @@ namespace TagsCloud.Visualization.Utils
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
-        {
-            return input.IsSuccess
+            Func<TInput, Result<TOutput>> continuation) =>
+            input.IsSuccess
                 ? continuation(input.Value)
                 : Fail<TOutput>(input.Error);
-        }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
@@ -123,7 +105,7 @@ namespace TagsCloud.Visualization.Utils
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError) =>
-                input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
+            input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
 
         public static Result<TInput> RefineError<TInput>(
             this Result<TInput> input,
