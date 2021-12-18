@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using App.Infrastructure.SettingsHolders;
 using GuiClient.UiActions;
 
 namespace GuiClient
@@ -10,10 +9,8 @@ namespace GuiClient
     {
         public MainForm(
             IEnumerable<IUiAction> actions,
-            PictureBoxImageHolder pictureBox,
-            IImageSizeSettingsHolder imageSizeSettings)
+            PictureBoxImageHolder pictureBox)
         {
-            ClientSize = imageSizeSettings.Size;
             MaximizeBox = false;
             MinimizeBox = false;
 
