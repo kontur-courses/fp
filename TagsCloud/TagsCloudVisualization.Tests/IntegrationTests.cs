@@ -6,6 +6,7 @@ using Autofac;
 using NUnit.Framework;
 using ResultMonad;
 using TagsCloudVisualization.Module;
+using TagsCloudVisualization.WordsProvider;
 
 namespace TagsCloudVisualization.Tests
 {
@@ -13,23 +14,23 @@ namespace TagsCloudVisualization.Tests
     public class IntegrationTests
     {
         private const string ImageFile = "TagsCloud";
-
+        private static readonly string WordsFile = Path.Combine(Directory.GetCurrentDirectory(), "Words.txt");
         private readonly TagsCloudVisualisationSettings _settings = new()
         {
-            WordsFile = Path.Combine(Directory.GetCurrentDirectory(), "Words.txt"),
+            WordsProvider = new WordsFromTxtFileProvider(WordsFile),
             BoringWords = new[] { "a", "b", "c" }
         };
 
         [OneTimeSetUp]
         public void BeforeAll()
         {
-            File.Create(_settings.WordsFile).Close();
+            File.Create(WordsFile).Close();
         }
 
         [OneTimeTearDown]
         public void AfterAll()
         {
-            File.Delete(_settings.WordsFile);
+            File.Delete(WordsFile);
         }
 
         [Test]
@@ -43,15 +44,14 @@ namespace TagsCloudVisualization.Tests
                 }.Concat(Enumerable.Range(0, 100).Select(i => $"Word{i}"))
                 .ToArray();
             var generated = GenerateWordsList(uniqueWords, 1000);
-            File.WriteAllLines(_settings.WordsFile, generated);
+            File.WriteAllLines(WordsFile, generated);
 
-            var container = new ContainerBuilder()
+            new ContainerBuilder()
                 .RegisterTagsClouds(_settings)
                 .RegisterImageCreation(ImageFile)
-                .Build();
-
-            var visualizer = container.Resolve<TagsCloudVisualizer>();
-            visualizer.Visualize().OnFail(Assert.Fail);
+                .Then(b => b.Build().Resolve<TagsCloudVisualizer>())
+                .Then(v => v.Visualize(20))
+                .OnFail(Assert.Fail);
         }
 
         private static IEnumerable<string> GenerateWordsList(IList<string> uniqueWords, int count)

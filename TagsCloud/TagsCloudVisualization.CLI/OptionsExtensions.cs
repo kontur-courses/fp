@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ResultMonad;
 using TagsCloudDrawer.ColorGenerators;
 using TagsCloudDrawer.ImageSaveService;
 using TagsCloudDrawer.ImageSettings;
@@ -11,6 +12,7 @@ using TagsCloudVisualization.CloudLayouter.VectorsGenerator;
 using TagsCloudVisualization.Drawable.Tags.Settings;
 using TagsCloudVisualization.Drawable.Tags.Settings.TagColorGenerator;
 using TagsCloudVisualization.WordsPreprocessor;
+using TagsCloudVisualization.WordsProvider;
 
 namespace TagsCloudVisualization.CLI
 {
@@ -18,68 +20,98 @@ namespace TagsCloudVisualization.CLI
     {
         private static string DictionariesDirectory => Path.Combine(Directory.GetCurrentDirectory(), "Dictionaries");
 
-        internal static TagsCloudVisualisationSettings ToDrawerSettings(this Options options)
+        internal static Result<TagsCloudVisualisationSettings> ToDrawerSettings(this Options options)
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            return new TagsCloudVisualisationSettings
-            {
-                WordsFile = options.WordsFile,
-                BoringWords = GetExcludedWordsFromFile(options.ExcludingWordsFile),
-                ImageSettingsProvider = new ImageSettingsProvider
+            return Result.Ok()
+                .ValidateNonNull(options, nameof(options))
+                .Then(() =>
                 {
-                    BackgroundColor = ParseBackgroundColor(options.BackgroundColor),
-                    ImageSize = new Size(options.Width, options.Height)
-                },
-                TagDrawableSettingsProvider = new TagDrawableSettingsProvider
-                {
-                    ColorGenerator = GetTagsColorGeneratorFromName(options.TagsColor),
-                    Font = new FontSettings
-                    {
-                        Family = options.FontFamily,
-                        MaxSize = options.MaxFontSize
-                    }
-                },
-                Layouter = GetLayouter(options),
-                ImageSaveService = GetSaveServiceFromName(options.Extension),
-                WordsPreprocessors = GetWordPreprocessors(options.Languages.DefaultIfEmpty("en"))
-            };
+                    return
+                        from wordsProvider in GetWordsFromFileProviderForFile(options.WordsFile)
+                        from boringWords in GetExcludedWordsFromFile(options.ExcludingWordsFile)
+                        from imageSettingsProvider in GetImageSettingsProvider(options)
+                        from tagDrawableSettingsProvider in GetTagDrawableSettingsProvider(options)
+                        from layouter in GetLayouter(options)
+                        from imageSaveService in GetSaveServiceFromName(options)
+                        from wordsPreprocessors in GetWordPreprocessors(options)
+                        select new TagsCloudVisualisationSettings
+                        {
+                            WordsProvider = wordsProvider,
+                            BoringWords = boringWords,
+                            ImageSettingsProvider = imageSettingsProvider,
+                            TagDrawableSettingsProvider = tagDrawableSettingsProvider,
+                            Layouter = layouter,
+                            ImageSaveService = imageSaveService,
+                            WordsPreprocessors = wordsPreprocessors
+                        };
+                });
         }
 
-        private static IEnumerable<IWordsPreprocessor> GetWordPreprocessors(IEnumerable<string> optionsLanguages) =>
-            optionsLanguages.Distinct().Select(language =>
-            {
-                try
-                {
-                    return CreateInfinitiveFormProcessorFromDictionary(language);
-                }
-                catch (Exception)
-                {
-                    throw new ArgumentException($"Language '{language}' not supported.");
-                }
-            });
-
-        private static ToInfinitiveFormProcessor CreateInfinitiveFormProcessorFromDictionary(string language)
+        private static Result<IEnumerable<IWordsPreprocessor>> GetWordPreprocessors(Options options)
         {
-            using var dictionaryStream = File.OpenRead(Path.Combine(DictionariesDirectory, language, "index.dic"));
-            using var affixStream = File.OpenRead(Path.Combine(DictionariesDirectory, language, "index.aff"));
-            return new ToInfinitiveFormProcessor(dictionaryStream, affixStream);
+            return options.Languages
+                .DefaultIfEmpty("en")
+                .Distinct()
+                .Select(CreateInfinitiveFormProcessorFromDictionary)
+                .Traverse();
         }
 
-        private static IEnumerable<string> GetExcludedWordsFromFile(string filename) =>
-            !File.Exists(filename) ? Array.Empty<string>() : File.ReadLines(filename);
 
-        private static IImageSaveService GetSaveServiceFromName(string extension)
+        private static Result<ImageSettingsProvider> GetImageSettingsProvider(Options options)
         {
-            return extension switch
+            return
+                from backgroundColor in ParseBackgroundColor(options)
+                from imageSize in ParseSize(options)
+                from value in ImageSettingsProvider.Create(backgroundColor, imageSize)
+                select value;
+        }
+
+        private static Result<Color> ParseBackgroundColor(Options options) => Color.FromName(options.BackgroundColor);
+
+        private static Result<Size> ParseSize(Options options) => new Size(options.Width, options.Height);
+
+        private static Result<TagDrawableSettingsProvider> GetTagDrawableSettingsProvider(Options options)
+        {
+            return
+                from colorGenerator in GetTagsColorGeneratorFromName(options.TagsColor)
+                from fontSettings in FontSettings.Create(options.FontFamily, options.MaxFontSize)
+                from value in TagDrawableSettingsProvider.Create(fontSettings, colorGenerator)
+                select value;
+        }
+
+        private static Result<IWordsPreprocessor> CreateInfinitiveFormProcessorFromDictionary(string language)
+        {
+            var dictionaryPath = Path.Combine(DictionariesDirectory, language, "index.dic");
+            var affixPath = Path.Combine(DictionariesDirectory, language, "index.aff");
+            if (!File.Exists(dictionaryPath))
+                return Result.Fail<IWordsPreprocessor>($"Cannot find file {dictionaryPath}");
+            if (!File.Exists(affixPath))
+                return Result.Fail<IWordsPreprocessor>($"Cannot find file {affixPath}");
+            return Result.Of<IWordsPreprocessor>(() =>
+            {
+                using var dictionaryStream = File.OpenRead(dictionaryPath);
+                using var affixStream = File.OpenRead(affixPath);
+                return new ToInfinitiveFormProcessor(dictionaryStream, affixStream);
+            }, $"Error when load dictionary for {language}");
+        }
+
+        private static Result<IEnumerable<string>> GetExcludedWordsFromFile(string filename) =>
+            !File.Exists(filename)
+                ? Enumerable.Empty<string>().AsResult()
+                : File.ReadLines(filename).AsResult();
+
+        private static Result<IImageSaveService> GetSaveServiceFromName(Options options)
+        {
+            return options.Extension switch
             {
                 "png"  => new PngSaveService(),
                 "jpeg" => new JpegSaveService(),
                 "bmp"  => new BmpSaveService(),
-                _      => throw new ArgumentException($"Cannot save file with {extension} extension")
+                _      => Result.Fail<IImageSaveService>($"Cannot save file with {options.Extension} extension")
             };
         }
 
-        private static ILayouter GetLayouter(Options options)
+        private static Result<ILayouter> GetLayouter(Options options)
         {
             return options.Algorithm switch
             {
@@ -87,25 +119,39 @@ namespace TagsCloudVisualization.CLI
                 "random" => new NonIntersectedLayouter(Point.Empty,
                     new RandomVectorsGenerator(new Random(),
                         Size.Round(new SizeF(options.Width * 0.5f, options.Height * 0.5f)))),
-                _ => throw new ArgumentException($"Layouter {options.Algorithm} not defined")
+                _ => Result.Fail<ILayouter>($"Layouter {options.Algorithm} not defined")
             };
         }
 
-        private static Color ParseBackgroundColor(string color) => Color.FromName(color);
 
-        private static ITagColorGenerator GetTagsColorGeneratorFromName(string name)
+        private static Result<ITagColorGenerator> GetTagsColorGeneratorFromName(string name)
         {
-            switch (name)
+            return name switch
             {
-                case "random":
-                    return new RandomTagColorGenerator(new RandomColorGenerator(new Random()));
-                case "rainbow":
-                    return new RandomTagColorGenerator(new RainbowColorGenerator(new Random()));
-            }
+                "random"  => new RandomTagColorGenerator(new RandomColorGenerator(new Random())),
+                "rainbow" => new RandomTagColorGenerator(new RainbowColorGenerator(new Random())),
+                _ => Enum.TryParse(name, true, out KnownColor color)
+                    ? new StrengthAlphaTagColorGenerator(Color.FromKnownColor(color))
+                    : Result.Fail<ITagColorGenerator>($"Color {name} not defined")
+            };
+        }
 
-            if (Enum.TryParse(name, true, out KnownColor color))
-                return new StrengthAlphaTagColorGenerator(Color.FromKnownColor(color));
-            throw new ArgumentException($"Color {name} not defined");
+        private static Result<IWordsProvider> GetWordsFromFileProviderForFile(string pathToFile)
+        {
+            return Result.Ok()
+                .ValidateNonNull(pathToFile, nameof(pathToFile))
+                .Then(() =>
+                {
+                    var extension = Path.GetExtension(pathToFile)[1..];
+                    return extension switch
+                    {
+                        "txt"  => new WordsFromTxtFileProvider(pathToFile),
+                        "doc"  => new WordsFromDocFileProvider(pathToFile),
+                        "docx" => new WordsFromDocFileProvider(pathToFile),
+                        "pdf"  => new WordsFromPdfFileProvider(pathToFile),
+                        _      => Result.Fail<IWordsProvider>($"Cannot find file reader for *.{extension} not found")
+                    };
+                });
         }
     }
 }

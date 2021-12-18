@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ResultMonad;
 using TagsCloudDrawer;
@@ -25,11 +24,11 @@ namespace TagsCloudVisualization
             IWordsToTagsTransformer transformer,
             IDrawableDisplayer displayer)
         {
-            _wordsProvider = wordsProvider ?? throw new ArgumentNullException(nameof(wordsProvider));
-            _preprocessor = preprocessor ?? throw new ArgumentNullException(nameof(preprocessor));
-            _tagDrawableFactory = tagDrawableFactory ?? throw new ArgumentNullException(nameof(tagDrawableFactory));
-            _transformer = transformer ?? throw new ArgumentNullException(nameof(transformer));
-            _displayer = displayer ?? throw new ArgumentNullException(nameof(displayer));
+            _wordsProvider = wordsProvider;
+            _preprocessor = preprocessor;
+            _tagDrawableFactory = tagDrawableFactory;
+            _transformer = transformer;
+            _displayer = displayer;
         }
 
         public Result<None> Visualize(int limit = int.MaxValue)

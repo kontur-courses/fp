@@ -1,20 +1,33 @@
-﻿using System;
+﻿using System.Drawing;
+using System.Linq;
+using ResultMonad;
 
 namespace TagsCloudVisualization.Drawable.Tags.Settings
 {
     public class FontSettings
     {
-        private readonly int _maxSize = 20;
-        public string Family { get; init; } = "Arial";
+        public string Family { get; }
+        public int MaxSize { get; }
 
-        public int MaxSize
+        private FontSettings(string family, int maxSize)
         {
-            get => _maxSize;
-            init
-            {
-                if (value <= 0) throw new ArgumentException($"Expected positive value, but was {value}");
-                _maxSize = value;
-            }
+            Family = family;
+            MaxSize = maxSize;
+        }
+
+        public static FontSettings Default { get; } = new("Arial", 50);
+
+        public static Result<FontSettings> Create(string fontFamily, int maxSize)
+        {
+            return Result.Ok()
+                .Validate(() => IsValidFont(fontFamily), $"Font {fontFamily} not supported")
+                .Validate(() => maxSize > 0, $"Expected positive max size, but actual was {maxSize}")
+                .ToValue(new FontSettings(fontFamily, maxSize));
+        }
+
+        private static bool IsValidFont(string fontFamily)
+        {
+            return FontFamily.Families.Any(x => x.Name.Equals(fontFamily));
         }
     }
 }

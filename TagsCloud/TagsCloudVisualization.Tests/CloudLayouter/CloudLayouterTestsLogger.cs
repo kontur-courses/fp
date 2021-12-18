@@ -20,12 +20,7 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
     {
         private readonly IDrawer _drawer = new Drawer();
         private readonly IColorGenerator _colorGenerator = new RainbowColorGenerator(new Random());
-
-        private readonly IImageSettingsProvider _imageSettingsProvider = new ImageSettingsProvider
-        {
-            ImageSize = new Size(1000, 1000)
-        };
-
+        private readonly IImageSettingsProvider _imageSettingsProvider = ImageSettingsProvider.Default;
         private readonly IImageSaveService _saveService = new PngSaveService();
         private string _outputDirectory;
 

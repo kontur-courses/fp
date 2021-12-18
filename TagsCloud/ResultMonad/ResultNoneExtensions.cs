@@ -15,6 +15,9 @@ namespace ResultMonad
         public static Result<None> Validate(this Result<None> input, Func<bool> validate, string err) =>
             input.Validate(_ => validate(), err);
 
+        public static Result<None> ValidateNonNull<T>(this Result<None> input, T param, string paramName) =>
+            input.Validate(() => param is not null, $"{paramName} was null");
+
         public static Result<TOutput> ToValue<TOutput>(this Result<None> input, TOutput output) =>
             input.Then(() => output);
     }

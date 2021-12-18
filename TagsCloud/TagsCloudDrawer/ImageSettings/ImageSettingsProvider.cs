@@ -1,22 +1,28 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultMonad;
 
 namespace TagsCloudDrawer.ImageSettings
 {
     public class ImageSettingsProvider : IImageSettingsProvider
     {
-        private readonly Size _imageSize = new(800, 600);
-        public Color BackgroundColor { get; init; } = Color.Gray;
+        public static ImageSettingsProvider Default { get; } = new(Color.Gray, new Size(800, 600));
 
-        public Size ImageSize
+        public Color BackgroundColor { get; }
+
+        public Size ImageSize { get; }
+
+        private ImageSettingsProvider(Color backgroundColor, Size imageSize)
         {
-            get => _imageSize;
-            init
-            {
-                if (value.Width <= 0) throw new ArgumentException("Expected width to be positive");
-                if (value.Height <= 0) throw new ArgumentException("Expected height to be positive");
-                _imageSize = value;
-            }
+            BackgroundColor = backgroundColor;
+            ImageSize = imageSize;
+        }
+
+        public static Result<ImageSettingsProvider> Create(Color backgroundColor, Size imageSize)
+        {
+            return Result.Ok()
+                .Validate(() => imageSize.Width > 0, "Expected width of image to be positive")
+                .Validate(() => imageSize.Height > 0, "Expected height of image to be positive")
+                .ToValue(new ImageSettingsProvider(backgroundColor, imageSize));
         }
     }
 }

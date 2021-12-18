@@ -28,14 +28,20 @@ namespace TagsCloudVisualization.CLI
             }
 
             var filename = Path.Combine(directory, options.OutputFileName ?? GenerateName());
-            var container = new ContainerBuilder()
-                .RegisterTagsClouds(options.ToDrawerSettings())
-                .RegisterImageCreation(filename)
-                .Build();
-            container.Resolve<TagsCloudVisualizer>()
-                .Visualize(options.MaxTags)
+            options.ToDrawerSettings()
+                .Then(settings => CreateContainer(settings, filename))
+                .Then(c => c.Resolve<TagsCloudVisualizer>())
+                .Then(visualizer => visualizer.Visualize(options.MaxTags))
                 .OnSuccess(() => Console.WriteLine($"Tags cloud {filename} generated."))
                 .OnFail(err => Console.WriteLine($"Error: {err}"));
+        }
+
+        private static Result<IContainer> CreateContainer(TagsCloudVisualisationSettings settings, string filename)
+        {
+            return new ContainerBuilder()
+                .RegisterTagsClouds(settings)
+                .RegisterImageCreation(filename)
+                .Then(b => b.Build());
         }
 
         private static string GenerateName() =>

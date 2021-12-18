@@ -1,6 +1,5 @@
-﻿using System;
-using System.IO;
-using Autofac;
+﻿using Autofac;
+using ResultMonad;
 using TagsCloudDrawer.Drawer;
 using TagsCloudDrawer.ImageCreator;
 using TagsCloudDrawer.ImageSaveService;
@@ -18,15 +17,22 @@ namespace TagsCloudVisualization.Module
     {
         private readonly TagsCloudVisualisationSettings _settings;
 
-        public TagsCloudDrawerModule(TagsCloudVisualisationSettings settings)
+        private TagsCloudDrawerModule(TagsCloudVisualisationSettings settings)
         {
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _settings = settings;
+        }
+
+        public static Result<TagsCloudDrawerModule> Create(TagsCloudVisualisationSettings settings)
+        {
+            return Result.Ok()
+                .ValidateNonNull(settings, nameof(settings))
+                .ToValue(new TagsCloudDrawerModule(settings));
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterInstance(GetWordsFromFileProviderForFile(_settings.WordsFile)).As<IWordsProvider>();
+            builder.RegisterInstance(_settings.WordsProvider).As<IWordsProvider>();
             RegisterWordPreprocessors(builder);
             builder.RegisterInstance(_settings.ImageSettingsProvider).As<IImageSettingsProvider>();
             builder.RegisterInstance(_settings.TagDrawableSettingsProvider).As<ITagDrawableSettingsProvider>();
@@ -46,20 +52,6 @@ namespace TagsCloudVisualization.Module
                 builder.RegisterInstance(preprocessor).As<IWordsPreprocessor>();
             builder.RegisterInstance(new RemoveBoringPreprocessor(_settings.BoringWords)).As<IWordsPreprocessor>();
             builder.RegisterComposite<IWordsPreprocessor>((_, processors) => new CombinedPreprocessor(processors));
-        }
-
-        private static IWordsProvider GetWordsFromFileProviderForFile(string pathToFile)
-        {
-            if (pathToFile == null) throw new ArgumentNullException(nameof(pathToFile));
-            var extension = Path.GetExtension(pathToFile)[1..];
-            return extension switch
-            {
-                "txt"  => new WordsFromTxtFileProvider(pathToFile),
-                "doc"  => new WordsFromDocFileProvider(pathToFile),
-                "docx" => new WordsFromDocFileProvider(pathToFile),
-                "pdf"  => new WordsFromPdfFileProvider(pathToFile),
-                _      => throw new Exception($"Cannot find file reader for *.{extension} not found")
-            };
         }
     }
 }
