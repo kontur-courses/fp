@@ -1,7 +1,9 @@
-﻿namespace TagsCloudVisualization.Drawable.Tags.Factory
+﻿using ResultMonad;
+
+namespace TagsCloudVisualization.Drawable.Tags.Factory
 {
     public interface ITagDrawableFactory
     {
-        TagDrawable Create(Tag tag);
+        Result<TagDrawable> Create(Tag tag);
     }
 }

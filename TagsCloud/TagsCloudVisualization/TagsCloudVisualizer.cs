@@ -44,11 +44,11 @@ namespace TagsCloudVisualization
                 .Then(_displayer.Display);
         }
 
-        private IEnumerable<IDrawable> PrepareToDrawable(IEnumerable<Tag> tags, int limit)
+        private IEnumerable<Result<IDrawable>> PrepareToDrawable(IEnumerable<Tag> tags, int limit)
         {
             return tags
                 .OrderByDescending(tag => tag.Weight)
-                .Select(_tagDrawableFactory.Create)
+                .Select(tag => _tagDrawableFactory.Create(tag).Then(Result.Ok<IDrawable>))
                 .Take(limit);
         }
     }

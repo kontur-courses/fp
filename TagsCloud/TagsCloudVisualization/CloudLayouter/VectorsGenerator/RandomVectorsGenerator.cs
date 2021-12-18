@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Drawing;
+using ResultMonad;
 
 namespace TagsCloudVisualization.CloudLayouter.VectorsGenerator
 {
     public class RandomVectorsGenerator : IVectorsGenerator
     {
         private readonly Random _random;
-        private readonly Size _sizeRange;
+        private readonly PositiveSize _sizeRange;
 
-        public RandomVectorsGenerator(Random random, Size sizeRange)
+        private RandomVectorsGenerator(Random random, PositiveSize sizeRange)
         {
-            _random = random ?? throw new ArgumentNullException(nameof(random));
-            if (sizeRange.Width <= 0 || sizeRange.Height <= 0)
-                throw new ArgumentException(
-                    $"Expected positive dimensions of size, but actual width = {sizeRange.Width}, height = {sizeRange.Height}");
+            _random = random;
             _sizeRange = sizeRange;
+        }
+
+        public static Result<RandomVectorsGenerator> Create(Random random, PositiveSize sizeRange)
+        {
+            return Result.Ok()
+                .ValidateNonNull(random, nameof(random))
+                .ToValue(new RandomVectorsGenerator(random, sizeRange));
         }
 
         public Point GetNextVector() =>

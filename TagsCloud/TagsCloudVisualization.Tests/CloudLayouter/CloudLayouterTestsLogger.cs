@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ResultMonad;
+using TagsCloudDrawer;
 using TagsCloudDrawer.ColorGenerators;
 using TagsCloudDrawer.Drawer;
 using TagsCloudDrawer.ImageCreator;
@@ -30,7 +32,8 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
                 throw new Exception($"{nameof(_outputDirectory)} was null or empty");
             var path = Path.Combine(_outputDirectory, testName);
             var creator = new ImageCreator(_drawer, _saveService, _imageSettingsProvider);
-            creator.Create(path, rectangles.Select(rect => new RectangleDrawable(rect, _colorGenerator)));
+            creator.Create(path,
+                rectangles.Select(rect => Result.Ok<IDrawable>(new RectangleDrawable(rect, _colorGenerator))));
             Console.WriteLine($"Tag cloud visualization saved to file {path}");
         }
 

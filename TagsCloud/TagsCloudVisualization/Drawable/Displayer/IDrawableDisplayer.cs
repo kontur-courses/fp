@@ -6,6 +6,6 @@ namespace TagsCloudVisualization.Drawable.Displayer
 {
     public interface IDrawableDisplayer
     {
-        Result<None> Display(IEnumerable<IDrawable> drawables);
+        Result<None> Display(IEnumerable<Result<IDrawable>> drawables);
     }
 }

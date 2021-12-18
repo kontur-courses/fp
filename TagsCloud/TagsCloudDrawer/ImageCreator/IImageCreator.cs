@@ -5,6 +5,6 @@ namespace TagsCloudDrawer.ImageCreator
 {
     public interface IImageCreator
     {
-        Result<None> Create(string filename, IEnumerable<IDrawable> tags);
+        Result<None> Create(string filename, IEnumerable<Result<IDrawable>> tags);
     }
 }

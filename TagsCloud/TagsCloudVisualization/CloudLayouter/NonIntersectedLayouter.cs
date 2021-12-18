@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultMonad;
 using TagsCloudVisualization.CloudLayouter.VectorsGenerator;
 using TagsCloudVisualization.Extensions;
 
@@ -16,19 +17,20 @@ namespace TagsCloudVisualization.CloudLayouter
         public NonIntersectedLayouter(Point center, IVectorsGenerator vectorsGenerator)
         {
             _center = center;
-            _vectorsGenerator = vectorsGenerator ?? throw new ArgumentNullException(nameof(vectorsGenerator));
+            _vectorsGenerator = vectorsGenerator;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(PositiveSize rectangleSize)
         {
-            if (rectangleSize.Width <= 0) throw new ArgumentException("Width should be positive");
-            if (rectangleSize.Height <= 0) throw new ArgumentException("Height should be positive");
-
-            var rectangle = CreateCorrectRectangle(rectangleSize);
-            _rectangles.Add(rectangle);
-            return rectangle;
+            return Result.Ok()
+                .Then(() =>
+                {
+                    var rectangle = CreateCorrectRectangle(rectangleSize);
+                    _rectangles.Add(rectangle);
+                    return rectangle;
+                });
         }
-
+        
         private Rectangle CreateCorrectRectangle(Size rectangleSize)
         {
             var rectangle = new Rectangle(_center, rectangleSize);

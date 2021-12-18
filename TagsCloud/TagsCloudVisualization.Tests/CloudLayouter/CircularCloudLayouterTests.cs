@@ -30,10 +30,10 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
         [TestCase(1, 0)]
         [TestCase(-1, 1)]
         [TestCase(1, -1)]
-        public void PutNextRectangle_ShouldThrowException_WhenInvalidSize(int width, int height)
+        public void PutNextRectangle_ShouldContainException_WhenInvalidSize(int width, int height)
         {
             var size = new Size(width, height);
-            Assert.Throws<ArgumentException>(() => _layouter.PutNextRectangle(size));
+            _layouter.PutNextRectangle(size).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
         {
             var size = new Size(100, 100);
 
-            var rectangle = _layouter.PutNextRectangle(size);
+            var rectangle = _layouter.PutNextRectangle(size).GetValueOrThrow();
             _rectangles = new[] { rectangle };
 
             rectangle.Size.Should().Be(size);
@@ -52,8 +52,8 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
         {
             var size = new Size(100, 100);
 
-            var firstRectangle = _layouter.PutNextRectangle(size);
-            var secondRectangle = _layouter.PutNextRectangle(size);
+            var firstRectangle = _layouter.PutNextRectangle(size).GetValueOrThrow();
+            var secondRectangle = _layouter.PutNextRectangle(size).GetValueOrThrow();
             _rectangles = new[] { firstRectangle, secondRectangle };
 
             firstRectangle.IntersectsWith(secondRectangle).Should().BeFalse();
@@ -65,8 +65,8 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
             var firstSize = new Size(100, 100);
             var secondSize = new Size(50, 100);
 
-            var firstRectangle = _layouter.PutNextRectangle(firstSize);
-            var secondRectangle = _layouter.PutNextRectangle(secondSize);
+            var firstRectangle = _layouter.PutNextRectangle(firstSize).GetValueOrThrow();
+            var secondRectangle = _layouter.PutNextRectangle(secondSize).GetValueOrThrow();
             _rectangles = new[] { firstRectangle, secondRectangle };
 
             firstRectangle.Size.Should().NotBe(secondRectangle.Size);
@@ -122,7 +122,8 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
             _rectangles = new Rectangle[rectanglesCount];
 
             var stopWatch = Stopwatch.StartNew();
-            for (var i = 0; i < rectanglesCount; i++) _rectangles[i] = _layouter.PutNextRectangle(size);
+            for (var i = 0; i < rectanglesCount; i++)
+                _rectangles[i] = _layouter.PutNextRectangle(size).GetValueOrThrow();
             stopWatch.Stop();
 
             stopWatch.Elapsed.Milliseconds.Should().BeLessOrEqualTo(maxMilliseconds);
@@ -140,7 +141,7 @@ namespace TagsCloudVisualization.Tests.CloudLayouter
         private Rectangle[] GenerateRectangles(int count, Func<Size> sizeFactory)
         {
             return Enumerable.Range(0, count)
-                .Select(_ => _layouter.PutNextRectangle(sizeFactory()))
+                .Select(_ => _layouter.PutNextRectangle(sizeFactory()).GetValueOrThrow())
                 .ToArray();
         }
 

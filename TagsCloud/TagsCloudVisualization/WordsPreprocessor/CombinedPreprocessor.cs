@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace TagsCloudVisualization.WordsPreprocessor
@@ -10,7 +9,7 @@ namespace TagsCloudVisualization.WordsPreprocessor
 
         public CombinedPreprocessor(IEnumerable<IWordsPreprocessor> preprocessors)
         {
-            _preprocessors = preprocessors ?? throw new ArgumentNullException(nameof(preprocessors));
+            _preprocessors = preprocessors;
         }
 
         public CombinedPreprocessor(params IWordsPreprocessor[] preprocessors) : this(preprocessors.AsEnumerable())

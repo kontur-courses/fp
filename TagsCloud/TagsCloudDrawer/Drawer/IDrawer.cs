@@ -6,6 +6,6 @@ namespace TagsCloudDrawer.Drawer
 {
     public interface IDrawer
     {
-        Result<None> Draw(Graphics graphics, Size size, IEnumerable<IDrawable> drawables);
+        Result<None> Draw(Graphics graphics, Size size, IEnumerable<Result<IDrawable>> drawables);
     }
 }

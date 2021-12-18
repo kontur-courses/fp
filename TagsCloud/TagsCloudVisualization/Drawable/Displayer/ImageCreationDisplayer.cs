@@ -16,6 +16,6 @@ namespace TagsCloudVisualization.Drawable.Displayer
             _creator = creator;
         }
 
-        public Result<None> Display(IEnumerable<IDrawable> drawables) => _creator.Create(_filename, drawables);
+        public Result<None> Display(IEnumerable<Result<IDrawable>> drawables) => _creator.Create(_filename, drawables);
     }
 }

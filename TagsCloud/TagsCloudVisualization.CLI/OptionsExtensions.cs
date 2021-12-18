@@ -116,13 +116,24 @@ namespace TagsCloudVisualization.CLI
             return options.Algorithm switch
             {
                 "circular" => new NonIntersectedLayouter(Point.Empty, new CircularVectorsGenerator(0.005, 360)),
-                "random" => new NonIntersectedLayouter(Point.Empty,
-                    new RandomVectorsGenerator(new Random(),
-                        Size.Round(new SizeF(options.Width * 0.5f, options.Height * 0.5f)))),
-                _ => Result.Fail<ILayouter>($"Layouter {options.Algorithm} not defined")
+                "random"   => CreateRandomLayouter(options).Then(Result.Ok<ILayouter>),
+                _          => Result.Fail<ILayouter>($"Layouter {options.Algorithm} not defined")
             };
         }
 
+        private static Result<NonIntersectedLayouter> CreateRandomLayouter(Options options)
+        {
+            return
+                from size in GetSizeRange(options)
+                from vectorsGenerator in RandomVectorsGenerator.Create(new Random(), size)
+                select new NonIntersectedLayouter(Point.Empty, vectorsGenerator);
+        }
+
+        private static Result<PositiveSize> GetSizeRange(Options options)
+        {
+            var size = Size.Round(new SizeF(options.Width * 0.5f, options.Height * 0.5f));
+            return PositiveSize.Create(size.Width, size.Height);
+        }
 
         private static Result<ITagColorGenerator> GetTagsColorGeneratorFromName(string name)
         {

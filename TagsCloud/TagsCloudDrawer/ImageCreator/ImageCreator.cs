@@ -21,7 +21,7 @@ namespace TagsCloudDrawer.ImageCreator
             _settingsProvider = settingsProvider;
         }
 
-        public Result<None> Create(string filename, IEnumerable<IDrawable> drawables)
+        public Result<None> Create(string filename, IEnumerable<Result<IDrawable>> drawables)
         {
             var size = _settingsProvider.ImageSize;
             using var bitmap = new Bitmap(size.Width, size.Height);
