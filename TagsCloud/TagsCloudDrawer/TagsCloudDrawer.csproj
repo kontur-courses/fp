@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ResultMonad\ResultMonad.csproj"/>
+        <ProjectReference Include="..\TagsCloud.Utils\TagsCloud.Utils.csproj"/>
     </ItemGroup>
 
 </Project>

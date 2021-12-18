@@ -15,6 +15,7 @@ namespace TagsCloudVisualization.Tests
     {
         private const string ImageFile = "TagsCloud";
         private static readonly string WordsFile = Path.Combine(Directory.GetCurrentDirectory(), "Words.txt");
+
         private readonly TagsCloudVisualisationSettings _settings = new()
         {
             WordsProvider = new WordsFromTxtFileProvider(WordsFile),

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using ResultMonad;
+using TagsCloud.Utils;
 
 namespace TagsCloudDrawer.ImageSettings
 {
@@ -17,11 +18,9 @@ namespace TagsCloudDrawer.ImageSettings
             ImageSize = imageSize;
         }
 
-        public static Result<ImageSettingsProvider> Create(Color backgroundColor, Size imageSize)
+        public static Result<ImageSettingsProvider> Create(Color backgroundColor, PositiveSize imageSize)
         {
             return Result.Ok()
-                .Validate(() => imageSize.Width > 0, "Expected width of image to be positive")
-                .Validate(() => imageSize.Height > 0, "Expected height of image to be positive")
                 .ToValue(new ImageSettingsProvider(backgroundColor, imageSize));
         }
     }

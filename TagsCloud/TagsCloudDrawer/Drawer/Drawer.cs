@@ -28,6 +28,5 @@ namespace TagsCloudDrawer.Drawer
             drawable.Draw(graphics);
             return Result.Ok();
         }
-        
     }
 }

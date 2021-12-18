@@ -69,7 +69,8 @@ namespace TagsCloudVisualization.CLI
 
         private static Result<Color> ParseBackgroundColor(Options options) => Color.FromName(options.BackgroundColor);
 
-        private static Result<Size> ParseSize(Options options) => new Size(options.Width, options.Height);
+        private static Result<PositiveSize> ParseSize(Options options) =>
+            PositiveSize.Create(options.Width, options.Height);
 
         private static Result<TagDrawableSettingsProvider> GetTagDrawableSettingsProvider(Options options)
         {

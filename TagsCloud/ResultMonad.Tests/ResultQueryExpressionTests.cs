@@ -1,9 +1,8 @@
 using System;
 using FluentAssertions;
 using NUnit.Framework;
-using ResultMonad;
 
-namespace ResultOf
+namespace ResultMonad.Tests
 {
     [TestFixture]
     public class ResultQueryExpressionTests

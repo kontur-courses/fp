@@ -31,7 +31,7 @@ namespace TagsCloudVisualization.CloudLayouter
                     return rectangle;
                 });
         }
-        
+
         private Rectangle CreateCorrectRectangle(Size rectangleSize)
         {
             var rectangle = new Rectangle(_center, rectangleSize);

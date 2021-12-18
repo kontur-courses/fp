@@ -13,7 +13,7 @@ namespace TagsCloudVisualization.WordsProvider
         protected override IEnumerable<string> GetText()
         {
             using var reader = new PdfReader(PathToFile);
-            
+
             for (var i = 1; i <= reader.NumberOfPages; i++) yield return PdfTextExtractor.GetTextFromPage(reader, i);
         }
     }
