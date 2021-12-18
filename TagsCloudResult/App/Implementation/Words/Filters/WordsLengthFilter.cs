@@ -17,11 +17,10 @@ namespace App.Implementation.Words.Filters
             this.minLength = minLength;
         }
 
-        public Result<IEnumerable<string>> FilterWords(Result<IEnumerable<string>> words)
+        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            return words.IsSuccess
-                ? Result.Of(() => words.Value.Where(word => word.Length >= minLength))
-                : words;
+            //return Result.Fail<IEnumerable<string>>("");
+            return Result.Of(() => words.Where(word => word.Length >= minLength));
         }
     }
 }

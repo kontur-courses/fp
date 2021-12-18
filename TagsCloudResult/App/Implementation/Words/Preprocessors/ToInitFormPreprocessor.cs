@@ -21,12 +21,9 @@ namespace App.Implementation.Words.Preprocessors
             pathToInitFormExe = "mystem.exe";
         }
 
-        public Result<IEnumerable<string>> Preprocess(Result<IEnumerable<string>> words)
+        public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
-            if (!words.IsSuccess)
-                return words;
-
-            PrepareWordsForOuterLibrary(words.Value);
+            PrepareWordsForOuterLibrary(words);
 
             return TryToLeadWordsToInitForm();
         }

@@ -48,73 +48,22 @@ namespace App.Implementation
 
         public Result<CloudVisualization> GenerateCloud()
         {
-            var words = ReadWords();
-            if (!words.IsSuccess)
-                return Result.Fail<CloudVisualization>(words.Error);
-
-            words = PreprocessWords(words);
-            if (!words.IsSuccess)
-                return Result.Fail<CloudVisualization>(words.Error);
-
-            words = FilterWords(words);
-            if (!words.IsSuccess)
-                return Result.Fail<CloudVisualization>(words.Error);
-
-            var wordsFrequencies = frequencyAnalyzer.AnalyzeWordsFrequency(words.Value);
-            var tags = tagger.CreateRawTags(wordsFrequencies).ToArray();
-
             var layouter = layouterFactory.CreateLayouter();
             if (!layouter.IsSuccess)
                 return Result.Fail<CloudVisualization>(layouter.Error);
 
-            var correctTags = new List<Tag>();
-            foreach (var tag in tags)
-            {
-                var rectResult = layouter.Value.PutNextRectangle(tag.WordOuterRectangle.Size);
-                if (rectResult.IsSuccess)
-                {
-                    tag.WordOuterRectangle = rectResult.Value;
-                    correctTags.Add(tag);
-                }
-            }
+            var tagsResult = ReadWords()
+                .Then(PreprocessWords)
+                .Then(FilterWords)
+                .Then(frequencyAnalyzer.AnalyzeWordsFrequency)
+                .Then(tagger.CreateRawTags);
 
-            return GetCloudVisualization(layouter.Value, correctTags);
-        }
+            if (!tagsResult.IsSuccess)
+                return Result.Fail<CloudVisualization>(tagsResult.Error);
 
-        private Result<IEnumerable<string>> PreprocessWords(Result<IEnumerable<string>> words)
-        {
-            if (!words.IsSuccess)
-                return words;
+            var tags = LocateTags(layouter.Value, tagsResult.Value.ToList());
 
-            foreach (var preprocessor in preprocessors)
-            {
-                words = preprocessor.Preprocess(words);
-                if (!words.IsSuccess)
-                {
-                    var msg = $"Error when preprocessing words. {words.Error}";
-                    return Result.Fail<IEnumerable<string>>(msg);
-                }
-            }
-
-            return words;
-        }
-
-        private Result<IEnumerable<string>> FilterWords(Result<IEnumerable<string>> words)
-        {
-            if (!words.IsSuccess)
-                return words;
-
-            foreach (var filter in filters)
-            {
-                words = filter.FilterWords(words);
-                if (!words.IsSuccess)
-                {
-                    var msg = $"Error when Filtering words. {words.Error}";
-                    return Result.Fail<IEnumerable<string>>(msg);
-                }
-            }
-
-            return words;
+            return GetCloudVisualization(layouter.Value, tags.Value);
         }
 
         private Result<IEnumerable<string>> ReadWords()
@@ -132,6 +81,55 @@ namespace App.Implementation
             return readResult.IsSuccess
                 ? readResult
                 : Result.Fail<IEnumerable<string>>(readResult.Error);
+        }
+
+        private Result<IEnumerable<string>> PreprocessWords(IEnumerable<string> words)
+        {
+            foreach (var preprocessor in preprocessors)
+            {
+                var preprocessedWords = preprocessor.Preprocess(words);
+
+                if (!preprocessedWords.IsSuccess)
+                    return preprocessedWords
+                        .RefineError($"Error when preprocessing words. {preprocessedWords.Error}");
+
+                words = preprocessedWords.Value;
+            }
+
+            return new Result<IEnumerable<string>>(null, words);
+        }
+
+        private Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
+        {
+            foreach (var filter in filters)
+            {
+                var filteredWords = filter.FilterWords(words);
+
+                if (!filteredWords.IsSuccess)
+                    return filteredWords
+                        .RefineError($"Error when Filtering words. {filteredWords.Error}");
+
+                words = filteredWords.Value;
+            }
+
+            return new Result<IEnumerable<string>>(null, words);
+        }
+
+        private Result<List<Tag>> LocateTags(ICloudLayouter layouter, List<Tag> tags)
+        {
+            for (var i = 0; i < tags.Count; i++)
+            {
+                var rectResult = layouter.PutNextRectangle(tags[i].WordOuterRectangle.Size);
+                if (!rectResult.IsSuccess)
+                {
+                    tags.RemoveAt(i);
+                    continue;
+                }
+
+                tags[i].WordOuterRectangle = rectResult.Value;
+            }
+
+            return tags;
         }
 
         private Result<CloudVisualization> GetCloudVisualization(ICloudLayouter layouter, IEnumerable<Tag> tags)

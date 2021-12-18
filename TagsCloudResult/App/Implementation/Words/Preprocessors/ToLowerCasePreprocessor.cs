@@ -6,11 +6,9 @@ namespace App.Implementation.Words.Preprocessors
 {
     public class ToLowerCasePreprocessor : IPreprocessor
     {
-        public Result<IEnumerable<string>> Preprocess(Result<IEnumerable<string>> words)
+        public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
-            return words.IsSuccess
-                ? Result.Of(() => words.Value.Select(word => word.ToLower()))
-                : words;
+            return Result.Of(() => words.Select(word => word.ToLower()));
         }
     }
 }
