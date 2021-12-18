@@ -1,6 +1,6 @@
 ﻿using ResultMonad;
 
-namespace TagsCloudVisualization
+namespace TagsCloud.Utils
 {
     public readonly struct Tag
     {

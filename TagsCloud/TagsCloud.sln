@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultMonad", "ResultMonad\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultMonad.Tests", "ResultMonad.Tests\ResultMonad.Tests.csproj", "{6A69E461-5082-4384-AD93-0F30DD68816F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloud.Utils", "TagsCloud.Utils\TagsCloud.Utils.csproj", "{D384BD6A-3D7A-47D0-8BE3-2651725E425C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{6A69E461-5082-4384-AD93-0F30DD68816F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A69E461-5082-4384-AD93-0F30DD68816F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A69E461-5082-4384-AD93-0F30DD68816F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D384BD6A-3D7A-47D0-8BE3-2651725E425C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D384BD6A-3D7A-47D0-8BE3-2651725E425C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D384BD6A-3D7A-47D0-8BE3-2651725E425C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D384BD6A-3D7A-47D0-8BE3-2651725E425C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

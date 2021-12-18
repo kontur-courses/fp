@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ResultMonad;
+using TagsCloud.Utils;
 
 namespace TagsCloudVisualization.WordsToTagsTransformers
 {

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using ResultMonad;
+using TagsCloud.Utils;
 
 namespace TagsCloudVisualization.WordsProvider
 {

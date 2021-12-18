@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using ResultMonad;
+using TagsCloud.Utils;
 using TagsCloudVisualization.CloudLayouter;
 using TagsCloudVisualization.Drawable.Tags.Settings;
 

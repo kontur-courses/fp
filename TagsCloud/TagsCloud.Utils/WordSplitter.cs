@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace TagsCloudVisualization
+namespace TagsCloud.Utils
 {
     public static class WordSplitter
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using ResultMonad;
+using TagsCloud.Utils;
 using TagsCloudVisualization.CloudLayouter.VectorsGenerator;
 using TagsCloudVisualization.Extensions;
 

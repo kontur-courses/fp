@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Utils;
 using TagsCloudVisualization.CloudLayouter;
 using TagsCloudVisualization.CloudLayouter.VectorsGenerator;
 

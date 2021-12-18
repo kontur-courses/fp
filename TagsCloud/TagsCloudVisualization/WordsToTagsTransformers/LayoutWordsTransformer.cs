@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ResultMonad;
+using TagsCloud.Utils;
 
 namespace TagsCloudVisualization.WordsToTagsTransformers
 {

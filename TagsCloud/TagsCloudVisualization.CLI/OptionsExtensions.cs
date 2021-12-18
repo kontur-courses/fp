@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ResultMonad;
+using TagsCloud.Utils;
 using TagsCloudDrawer.ColorGenerators;
 using TagsCloudDrawer.ImageSaveService;
 using TagsCloudDrawer.ImageSettings;

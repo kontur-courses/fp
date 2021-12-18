@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloud.Utils;
 using TagsCloudDrawer;
 using TagsCloudVisualization.Drawable.Tags.Settings;
 using TagsCloudVisualization.Extensions;

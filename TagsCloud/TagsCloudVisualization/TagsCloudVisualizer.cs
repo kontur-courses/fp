@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ResultMonad;
+using TagsCloud.Utils;
 using TagsCloudDrawer;
 using TagsCloudVisualization.Drawable.Displayer;
 using TagsCloudVisualization.Drawable.Tags.Factory;

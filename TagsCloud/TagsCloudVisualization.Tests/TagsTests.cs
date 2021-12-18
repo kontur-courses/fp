@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Utils;
 
 namespace TagsCloudVisualization.Tests
 {
