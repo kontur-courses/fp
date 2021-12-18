@@ -6,12 +6,12 @@ namespace App.Infrastructure.Visualization
 {
     public interface IDrawer
     {
-        void DrawCanvasBoundary(Graphics graphics, Size imgSize);
+        void DrawCanvasBoundary(Image image);
 
-        void DrawAxis(Graphics graphics, Size imgSize, Point cloudCenter);
+        void DrawAxis(Image image, Point cloudCenter);
 
-        void DrawCloudBoundary(Graphics graphics, Size imgSize, Point cloudCenter, int cloudCircleRadius);
+        void DrawCloudBoundary(Image image, Point cloudCenter, int cloudCircleRadius);
 
-        void DrawTags(Graphics graphics, IEnumerable<Tag> tags);
+        void DrawTags(Image image, IEnumerable<Tag> tags);
     }
 }

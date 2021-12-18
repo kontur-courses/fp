@@ -16,18 +16,15 @@ namespace App.Implementation.Visualization
 
         public Bitmap VisualizeCloud(Bitmap image, Point cloudCenter, IEnumerable<Tag> tags)
         {
-            drawer.DrawTags(Graphics.FromImage(image), tags);
+            drawer.DrawTags(image, tags);
             return image;
         }
 
         public void VisualizeDebuggingMarkupOnImage(Image image, Point cloudCenter, int cloudCircleRadius)
         {
-            var graphics = Graphics.FromImage(image);
-            var imageSize = image.Size;
-
-            drawer.DrawCanvasBoundary(graphics, imageSize);
-            drawer.DrawAxis(graphics, imageSize, cloudCenter);
-            drawer.DrawCloudBoundary(graphics, imageSize, cloudCenter, cloudCircleRadius);
+            drawer.DrawCanvasBoundary(image);
+            drawer.DrawAxis(image, cloudCenter);
+            drawer.DrawCloudBoundary(image, cloudCenter, cloudCircleRadius);
         }
     }
 }

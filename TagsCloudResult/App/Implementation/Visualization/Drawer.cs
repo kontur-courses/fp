@@ -22,30 +22,32 @@ namespace App.Implementation.Visualization
             this.imageSizeSettings = imageSizeSettings;
         }
 
-        public void DrawCanvasBoundary(Graphics graphics, Size imgSize)
+        public void DrawCanvasBoundary(Image image)
         {
             var boundary = new Rectangle(Point.Empty,
-                new Size(imgSize.Width - 1, imgSize.Height - 1));
+                new Size(image.Width - 1, image.Height - 1));
 
             using (var pen = new Pen(Brushes.Red, LineWidth))
+            using (var graphics = Graphics.FromImage(image))
             {
                 graphics.DrawRectangle(pen, boundary);
             }
         }
 
-        public void DrawAxis(Graphics graphics, Size imgSize, Point cloudCenter)
+        public void DrawAxis(Image image, Point cloudCenter)
         {
             using (var pen = new Pen(Brushes.Black, LineWidth))
+            using (var graphics = Graphics.FromImage(image))
             {
                 graphics.DrawLine(pen, cloudCenter, new Point(cloudCenter.X, 0));
-                graphics.DrawLine(pen, cloudCenter, new Point(cloudCenter.X, imgSize.Height));
+                graphics.DrawLine(pen, cloudCenter, new Point(cloudCenter.X, image.Height));
 
                 graphics.DrawLine(pen, cloudCenter, new Point(0, cloudCenter.Y));
-                graphics.DrawLine(pen, cloudCenter, new Point(imgSize.Width, cloudCenter.Y));
+                graphics.DrawLine(pen, cloudCenter, new Point(image.Width, cloudCenter.Y));
             }
         }
 
-        public void DrawCloudBoundary(Graphics graphics, Size imgSize, Point cloudCenter, int cloudCircleRadius)
+        public void DrawCloudBoundary(Image image, Point cloudCenter, int cloudCircleRadius)
         {
             var location = new Point(
                 cloudCenter.X - cloudCircleRadius,
@@ -54,26 +56,27 @@ namespace App.Implementation.Visualization
             var size = new Size(cloudCircleRadius * 2, cloudCircleRadius * 2);
 
             using (var pen = new Pen(Brushes.DodgerBlue, LineWidth))
+            using (var graphics = Graphics.FromImage(image))
             {
                 graphics.DrawEllipse(pen, new Rectangle(location, size));
             }
         }
 
-        public void DrawTags(Graphics graphics, IEnumerable<Tag> tags)
+        public void DrawTags(Image image, IEnumerable<Tag> tags)
         {
-            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-
+            using (var graphics = Graphics.FromImage(image))
             using (var backgroundBrush = new SolidBrush(paletteSettings.BackgroundColor))
-            {
-                var backgroundRectangle = new RectangleF(PointF.Empty, new Size(
-                    imageSizeSettings.Size.Width,
-                    imageSizeSettings.Size.Height));
-
-                graphics.FillRectangle(backgroundBrush, backgroundRectangle);
-            }
-
             using (var brush = new SolidBrush(paletteSettings.WordColor))
             {
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                {
+                    var backgroundRectangle = new RectangleF(PointF.Empty, new Size(
+                        imageSizeSettings.Size.Width,
+                        imageSizeSettings.Size.Height));
+
+                    graphics.FillRectangle(backgroundBrush, backgroundRectangle);
+                }
+
                 foreach (var tag in tags)
                     using (var font = new Font(Tag.WordFont.Name, tag.WordEmSize))
                     {
