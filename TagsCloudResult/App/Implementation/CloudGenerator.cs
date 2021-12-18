@@ -119,10 +119,14 @@ namespace App.Implementation
         {
             for (var i = 0; i < tags.Count; i++)
             {
+                if (i >= tags.Count)
+                    break;
+
                 var rectResult = layouter.PutNextRectangle(tags[i].WordOuterRectangle.Size);
                 if (!rectResult.IsSuccess)
                 {
                     tags.RemoveAt(i);
+                    i--;
                     continue;
                 }
 

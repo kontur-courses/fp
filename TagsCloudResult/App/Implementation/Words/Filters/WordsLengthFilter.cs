@@ -19,7 +19,6 @@ namespace App.Implementation.Words.Filters
 
         public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            //return Result.Fail<IEnumerable<string>>("");
             return Result.Of(() => words.Where(word => word.Length >= minLength));
         }
     }
