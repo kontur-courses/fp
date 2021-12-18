@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using ResultMonad;
 
 namespace TagsCloudVisualization.CloudLayouter
 {
     public interface ILayouter
     {
-        public Rectangle PutNextRectangle(Size rectangleSize);
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

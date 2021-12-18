@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultMonad;
 using TagsCloudDrawer.Drawer;
 using TagsCloudDrawer.ImageSaveService;
 using TagsCloudDrawer.ImageSettings;
@@ -20,14 +21,14 @@ namespace TagsCloudDrawer.ImageCreator
             _settingsProvider = settingsProvider;
         }
 
-        public void Create(string filename, IEnumerable<IDrawable> drawables)
+        public Result<None> Create(string filename, IEnumerable<IDrawable> drawables)
         {
             var size = _settingsProvider.ImageSize;
             using var bitmap = new Bitmap(size.Width, size.Height);
             using var graphics = Graphics.FromImage(bitmap);
             graphics.Clear(_settingsProvider.BackgroundColor);
-            _drawer.Draw(graphics, bitmap.Size, drawables);
-            _saveService.Save(filename, bitmap);
+            return _drawer.Draw(graphics, bitmap.Size, drawables)
+                .OnSuccess(() => _saveService.Save(filename, bitmap));
         }
     }
 }

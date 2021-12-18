@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ResultMonad;
 using TagsCloudDrawer;
 using TagsCloudDrawer.ImageCreator;
 
@@ -15,6 +16,6 @@ namespace TagsCloudVisualization.Drawable.Displayer
             _creator = creator;
         }
 
-        public void Display(IEnumerable<IDrawable> drawables) => _creator.Create(_filename, drawables);
+        public Result<None> Display(IEnumerable<IDrawable> drawables) => _creator.Create(_filename, drawables);
     }
 }

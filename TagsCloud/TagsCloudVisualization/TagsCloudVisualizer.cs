@@ -18,7 +18,8 @@ namespace TagsCloudVisualization
         private readonly IWordsToTagsTransformer _transformer;
         private readonly IDrawableDisplayer _displayer;
 
-        public TagsCloudVisualizer(IWordsProvider wordsProvider,
+        public TagsCloudVisualizer(
+            IWordsProvider wordsProvider,
             IWordsPreprocessor preprocessor,
             ITagDrawableFactory tagDrawableFactory,
             IWordsToTagsTransformer transformer,

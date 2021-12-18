@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultMonad;
 
 namespace TagsCloudDrawer.ImageCreator
 {
     public interface IImageCreator
     {
-        void Create(string filename, IEnumerable<IDrawable> tags);
+        Result<None> Create(string filename, IEnumerable<IDrawable> tags);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ResultMonad;
@@ -12,7 +11,7 @@ namespace TagsCloudVisualization.WordsProvider
 
         protected WordsFromFileProvider(string pathToFile)
         {
-            PathToFile = pathToFile ?? throw new ArgumentNullException(nameof(pathToFile));
+            PathToFile = pathToFile;
         }
 
         public Result<IEnumerable<string>> GetWords()

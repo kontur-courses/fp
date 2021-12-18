@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using ResultMonad;
 using TagsCloudDrawer;
 
 namespace TagsCloudVisualization.Drawable.Displayer
 {
     public interface IDrawableDisplayer
     {
-        void Display(IEnumerable<IDrawable> drawables);
+        Result<None> Display(IEnumerable<IDrawable> drawables);
     }
 }
