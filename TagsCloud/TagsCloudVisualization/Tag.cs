@@ -18,7 +18,7 @@ namespace TagsCloudVisualization
             return Result.Ok()
                 .Validate(() => weight is > 0 and <= 1, $"{nameof(weight)} expected be in (0, 1], but actual {weight}")
                 .Validate(() => !string.IsNullOrEmpty(word), $"{nameof(word)} is not correct, actual = {word}")
-                .Then(new Tag(word, weight));
+                .ToValue(new Tag(word, weight));
         }
 
         public override string ToString() => $"{nameof(Word)} = {Word}, {nameof(Weight)} = {Weight}";
