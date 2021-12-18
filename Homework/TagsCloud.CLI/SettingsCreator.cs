@@ -6,36 +6,70 @@ using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.ImagesSavior;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Words
 {
     public class SettingsCreator
     {
-        public TagsCloudModuleSettings Create(Options options) =>
-            new()
+        public Result<TagsCloudModuleSettings> Parse(Options options) =>
+            from fontSettings in ParseFont(options)
+            from saveSettings in ParseSaveSettings(options)
+            from layouterType in ParseLayouter(options.Algorithm)
+            select new TagsCloudModuleSettings
             {
                 Center = Point.Empty,
                 InputWordsFile = options.WordsFile,
                 BoringWordsFile = options.BoringWordsFile,
-                FontSettings = new FontSettings
-                {
-                    FamilyName = options.FamilyName,
-                    MaxSize = options.MaxSize,
-                    FontStyle = Enum.TryParse<FontStyle>(options.FontStyle, true, out var style)
-                        ? style
-                        : FontStyle.Regular
-                },
-
-                SaveSettings = new SaveSettings
-                {
-                    OutputDirectory = options.OutputDirectory ?? GetDirectoryForSavingExamples(),
-                    OutputFileName = options.OutputFile,
-                    Extension = options.Extension
-                },
-
-                LayouterType = CreateLayouterTypeFromName(options.Algorithm),
+                FontSettings = fontSettings,
+                SaveSettings = saveSettings,
+                LayouterType = layouterType,
                 LayoutVisitor = CreateDrawerVisitorFromName(options.Color)
             };
+
+        private Result<FontSettings> ParseFont(Options options) =>
+            from fontStyle in ParseFontStyle(options.FontStyle)
+            from fontName in ParseFontName(options.FamilyName)
+            select new FontSettings
+            {
+                FamilyName = fontName,
+                MaxSize = options.MaxSize,
+                FontStyle = fontStyle
+            };
+
+        private Result<SaveSettings> ParseSaveSettings(Options options) =>
+            new SaveSettings
+            {
+                OutputDirectory = options.OutputDirectory ?? GetDirectoryForSavingExamples(),
+                OutputFileName = options.OutputFile,
+                Extension = options.Extension
+            };
+
+        private Result<FontStyle> ParseFontStyle(string fontStyleName)
+        {
+            return Enum.TryParse<FontStyle>(fontStyleName, true, out var style) switch
+            {
+                true => style,
+                false => Result.Fail<FontStyle>($"Unknown font style {fontStyleName}")
+            };
+        }
+
+        private Result<string> ParseFontName(string fontName)
+        {
+            using var testFont = new Font(fontName, 8);
+            return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase)
+                ? fontName
+                : Result.Fail<string>($"font with name {fontName} doesn't exists");
+        }
+
+        private Result<Type> ParseLayouter(string layouterName)
+        {
+            return layouterName switch
+            {
+                "circular" => typeof(CircularCloudLayouter),
+                _ => Result.Fail<Type>($"Layouter {layouterName} is not defined")
+            };
+        }
 
         private IContainerVisitor CreateDrawerVisitorFromName(string textColor)
         {
@@ -44,15 +78,6 @@ namespace TagsCloud.Words
 
             var color = Color.FromName(textColor);
             return new ConcreteColorDrawerVisitor(new ImageSettings {Color = color});
-        }
-
-        private Type CreateLayouterTypeFromName(string name)
-        {
-            return name switch
-            {
-                "circular" => typeof(CircularCloudLayouter),
-                _ => throw new ArgumentException($"Layouter {name} is not defined")
-            };
         }
 
         private string GetDirectoryForSavingExamples()

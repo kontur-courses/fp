@@ -29,7 +29,8 @@ namespace TagsCloud.Visualization.WordsFilter
                 boringWords = baseBoringWords;
             else
                 boringWords = wordsReadService.Read()
-                    .OnFail(x => throw new Exception($"can not read boring words file: {x}"))
+                    .RefineError("can not read boring words file")
+                    .OnFail(x => throw new Exception(x))
                     .GetValueOrThrow()
                     .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)
                     .ToHashSet();

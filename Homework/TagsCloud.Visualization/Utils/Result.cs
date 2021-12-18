@@ -2,6 +2,23 @@
 
 namespace TagsCloud.Visualization.Utils
 {
+    public static class ResultQueryExpressionExtensions
+    {
+        public static Result<TOutput> SelectMany<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<TInput, Result<TOutput>> continuation) =>
+            input.Then(continuation);
+
+        public static Result<TSelected> SelectMany<TInput, TOutput, TSelected>(
+            this Result<TInput> input,
+            Func<TInput, Result<TOutput>> continuation,
+            Func<TInput, TOutput, TSelected> resultSelector)
+        {
+            return input.Then(continuation)
+                .Then(o => resultSelector(input.Value, o));
+        }
+    }
+
     public struct Result<T>
     {
         public Result(string error, T value = default)
@@ -28,7 +45,7 @@ namespace TagsCloud.Visualization.Utils
 
         public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage)
         {
-            if(IsSuccess)
+            if (IsSuccess)
                 return validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
             return this;
         }

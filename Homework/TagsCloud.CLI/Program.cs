@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using CommandLine;
 using TagsCloud.Visualization;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsReaders;
 using TagsCloud.Visualization.WordsReaders.FileReaders;
@@ -17,11 +19,15 @@ namespace TagsCloud.Words
             if (result.Errors.Any())
                 return;
 
-            var settings = new SettingsCreator().Create(result.Value);
+            new SettingsCreator()
+                .Parse(result.Value)
+                .OnFail(x => Console.WriteLine(x, Console.Error))
+                .Then(s =>
+                {
+                    using var container = CreateContainer(s).BeginLifetimeScope();
 
-            using var container = CreateContainer(settings).BeginLifetimeScope();
-
-            container.Resolve<CliLayouterCore>().Run();
+                    container.Resolve<CliLayouterCore>().Run();
+                });
         }
 
         private static IContainer CreateContainer(TagsCloudModuleSettings settings)

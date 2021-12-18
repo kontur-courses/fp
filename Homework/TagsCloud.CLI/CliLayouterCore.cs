@@ -25,7 +25,7 @@ namespace TagsCloud.Words
         public void Run()
         {
             layouterCore.GenerateImage(wordsReadService)
-                .OnFail(Console.WriteLine)
+                .OnFail(x => Console.WriteLine(x, Console.Error))
                 .Then(x => imageSavior.Save(x))
                 .Then(x => x.Dispose());
         }
