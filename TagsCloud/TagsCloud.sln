@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudDrawer", "TagsClou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudVisualization.CLI", "TagsCloudVisualization.CLI\TagsCloudVisualization.CLI.csproj", "{30571300-2F4B-46BE-961D-8BCDAA86FA19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultMonad", "ResultMonad\ResultMonad.csproj", "{72459236-EFD0-46F8-88C4-53C1E31F4694}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultMonad.Tests", "ResultMonad.Tests\ResultMonad.Tests.csproj", "{6A69E461-5082-4384-AD93-0F30DD68816F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{30571300-2F4B-46BE-961D-8BCDAA86FA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30571300-2F4B-46BE-961D-8BCDAA86FA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30571300-2F4B-46BE-961D-8BCDAA86FA19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72459236-EFD0-46F8-88C4-53C1E31F4694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72459236-EFD0-46F8-88C4-53C1E31F4694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72459236-EFD0-46F8-88C4-53C1E31F4694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72459236-EFD0-46F8-88C4-53C1E31F4694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A69E461-5082-4384-AD93-0F30DD68816F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A69E461-5082-4384-AD93-0F30DD68816F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A69E461-5082-4384-AD93-0F30DD68816F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A69E461-5082-4384-AD93-0F30DD68816F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
