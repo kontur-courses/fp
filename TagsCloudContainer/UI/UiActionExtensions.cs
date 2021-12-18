@@ -7,7 +7,7 @@ namespace TagsCloudContainer.UI
     public static class UiActionExtensions
     {
         public static ConsoleMainMenu GetConsoleMenu
-            (this ConsoleUiAction[] actions, TextReader reader, TextWriter writer)
+            (this UiAction[] actions, TextReader reader, TextWriter writer)
         {
             var categories = GetCategories(actions, reader, writer);
             var menuCategories = new Dictionary<int, ConsoleCategory>();
@@ -17,7 +17,7 @@ namespace TagsCloudContainer.UI
         }
 
         private static ConsoleCategory[] GetCategories
-            (ConsoleUiAction[] actions, TextReader reader, TextWriter writer)
+            (UiAction[] actions, TextReader reader, TextWriter writer)
         {
             var result = new List<ConsoleCategory>();
             var categories = new Dictionary<string, List<MenuItem>>();
@@ -43,7 +43,7 @@ namespace TagsCloudContainer.UI
             return result.ToArray();
         }
 
-        private static MenuItem CreateMenuItem(ConsoleUiAction action) 
+        private static MenuItem CreateMenuItem(UiAction action) 
             => new MenuItem(action.Name, action.Perform);
     }
 }

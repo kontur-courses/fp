@@ -1,33 +1,27 @@
-﻿using System.IO;
+﻿using System;
 using System.Text.RegularExpressions;
+using TagsCloudContainer.Common.Result;
 
 namespace TagsCloudContainer.UI
 {
-    public class SetPathToImageAction : ConsoleUiAction
+    public class SetPathToImageAction : UiAction
     {
         public override string Category => "AppSettings";
         public override string Name => "SetPathToImage";
-        public override string Description { get; }
+        public override string Description => "";
 
-        public SetPathToImageAction(TextReader reader, TextWriter writer)
-            :base(reader, writer)
+        public SetPathToImageAction(IResultHandler handler)
+            :base(handler)
         {
         }
 
-        public override void Perform()
+        protected override void PerformAction()
         {
-            writer.WriteLine("Set Path To Image");
-            while (true)
-            {
-                var path = reader.ReadLine();
-                var r = new Regex(@"^(([a-zA-Z]\:)|(\\))(\\{1}|((\\{1})[^\\]([^/:*?<>""|]*))+)$");
-                if (r.IsMatch(path))
-                {
-                    AppSettings.ImageFilename = path;
-                    return;
-                }
-                writer.WriteLine("It`s not good path to file, Check it for mistakes");
-            }
+            var path = handler.GetText();
+            var r = new Regex(@"^(([a-zA-Z]\:)|(\\))(\\{1}|((\\{1})[^\\]([^/:*?<>""|]*))+)$");
+            if (!r.IsMatch(path)) 
+                throw new Exception("It`s not good path to file, Check it for mistakes");
+            AppSettings.ImageFilename = path;
         }
     }
 }

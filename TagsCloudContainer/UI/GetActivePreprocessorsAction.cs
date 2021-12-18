@@ -1,24 +1,24 @@
-﻿using System.IO;
-using TagsCloudContainer.Common;
+﻿using TagsCloudContainer.Common;
+using TagsCloudContainer.Common.Result;
 
 namespace TagsCloudContainer.UI
 {
-    public class GetActivePreprocessorsAction : ConsoleUiAction
+    public class GetActivePreprocessorsAction : UiAction
     {
         public override string Category => "Preprocessors";
         public override string Name => "GetActivePreprocessors";
-        public override string Description { get; }
+        public override string Description => "";
 
-        public GetActivePreprocessorsAction(TextReader reader, TextWriter writer)
-            : base(reader, writer)
+        public GetActivePreprocessorsAction(IResultHandler handler)
+            : base(handler)
         {
         }
 
-        public override void Perform()
+        protected override void PerformAction()
         {
             var preprocessors = PreprocessorsRegistrator.GetActivePreprocessors();
             foreach (var preprocessor in preprocessors) 
-                writer.WriteLine(preprocessor.Name);
+                handler.AddHandledText(preprocessor.Name);
         }
     }
 }

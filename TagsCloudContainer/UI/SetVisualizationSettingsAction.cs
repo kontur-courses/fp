@@ -1,117 +1,96 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
+using TagsCloudContainer.Common.Result;
 
 namespace TagsCloudContainer.UI
 {
-    public class SetVisualizationSettingsAction : ConsoleUiAction
+    public class SetVisualizationSettingsAction : UiAction
     {
         public override string Category => "Visualization";
         public override string Name => "SetVisualizationSettings";
-        public override string Description { get; }
+        public override string Description => "Change visualizator settings";
 
-        public SetVisualizationSettingsAction
-            (TextReader reader, TextWriter writer) : base(reader, writer)
+        public SetVisualizationSettingsAction(IResultHandler handler)
+            : base(handler)
         {
         }
 
-        public override void Perform()
+        protected override void PerformAction()
         {
-            writer.WriteLine("Change visualizator settings");
-            SetSize();
+            Result.OfAction(SetSize)
+                .Then((n) => ShouldContinue(SetBackground))
+                .Then((n) => ShouldContinue(SetFontFamily))
+                .Then((n) => ShouldContinue(SetMinMargin))
+                .Then((n) => ShouldContinue(SetFillingTags));
         }
 
         private void SetSize()
         {
             var size = new Size();
-            writer.WriteLine("Set Width of result image");
-            while (true)
+            void SetWidth()
             {
-                var width = reader.ReadLine();
-                if (int.TryParse(width, out var w))
-                {
-                    size.Width = w;
-                    break;
-                }
-                writer.WriteLine("Width should be int!");
+                var width = handler.GetText();
+                if (!int.TryParse(width, out var w)) 
+                    throw new Exception("Width should be int!");
+                size.Width = w;
+            }
+            void SetHeight()
+            {
+                var height = handler.GetText();
+                if (!int.TryParse(height, out var h))
+                    throw new Exception("Height should be int!");
+                size.Height = h;
             }
 
-            writer.WriteLine("Set Height of result image");
-            while (true)
-            {
-                var height = reader.ReadLine();
-                if (int.TryParse(height, out var h))
-                {
-                    size.Height = h;
-                    break;
-                }
-                writer.WriteLine("Width should be int!");
-            }
+            handler.AddHandledText("Set Width of result image");
+            handler.Handle(SetWidth);
+
+            handler.AddHandledText("Set Height of result image");
+            handler.Handle(SetHeight);
+            
             AppSettings.ImageSize = size;
-            ShouldContinue(SetBackground);
         }
 
         private void SetBackground()
         {
-            writer.WriteLine("Set Color image background");
-            while (true)
+            void SetValue()
             {
-                try
-                {
-                    var clr = reader.ReadLine();
-                    AppSettings.BackgroundColor = Color.FromName(clr);
-                    ShouldContinue(SetFontFamily);
-                    return;
-                }
-                catch (Exception)
-                {
-                    writer.WriteLine("It is not a color, try set 'Red' color");
-                }
+                var clr = handler.GetText();
+                AppSettings.BackgroundColor = Color.FromName(clr);
             }
-            
+            handler.AddHandledText("Set Color image background");
+            handler.Handle(SetValue, "It is not a color, try set 'Red' color");
         }
 
         private void SetFontFamily()
         {
-            writer.WriteLine("Set FontFamily of Tags");
-            while (true)
+            void SetValue()
             {
-                try
-                {
-                    var family = reader.ReadLine();
-                    AppSettings.FontFamily = new FontFamily(family);
-                    ShouldContinue(SetMinMargin);
-                    return;
-                }
-                catch (Exception)
-                {
-                    writer.WriteLine("It is not a FontFamily, try set 'Arial' family");
-                }
+                var family = handler.GetText();
+                AppSettings.FontFamily = new FontFamily(family);
             }
+            handler.AddHandledText("Set FontFamily of Tags");
+            handler.Handle(SetValue, "It is not a FontFamily, try set 'Arial' family");
         }
 
         private void SetMinMargin()
         {
-            writer.WriteLine("Set minimal margin of cloud from borders");
-            while (true)
+            void SetValue()
             {
-                var width = reader.ReadLine();
-                if (float.TryParse(width, out var margin))
-                {
-                    AppSettings.MinMargin = margin;
-                    break;
-                }
-                writer.WriteLine("margin should be float!");
+                var minMargin = handler.GetText();
+                if (!float.TryParse(minMargin, out var margin))
+                    throw new Exception("Margin should be float!");
+                AppSettings.MinMargin = margin;
             }
-            ShouldContinue(SetFillingTags);
+            handler.AddHandledText("Set minimal margin of cloud from borders");
+            handler.Handle(SetValue);
         }
 
         private void SetFillingTags()
         {
-            writer.WriteLine("Set Filling Tag rectangles by colors, yes or no? 'y', 'n'");
-            while (true)
+            void SetValue()
             {
-                var answer = reader.ReadLine();
+                var answer = handler.GetText();
                 switch (answer)
                 {
                     case "y":
@@ -121,29 +100,29 @@ namespace TagsCloudContainer.UI
                         AppSettings.FillTags = false;
                         return;
                     default:
-                        writer.WriteLine("Answer should be 'y' or 'n'");
-                        break;
+                        throw new Exception("Answer should be 'y' or 'n'");
                 }
             }
+            handler.AddHandledText("Set Filling Tag rectangles by colors, yes or no? 'y', 'n'");
+            handler.Handle(SetValue);
         }
 
         private void ShouldContinue(Action action)
         {
-            writer.WriteLine("Should continue change settings, yes or no? 'y', 'n'");
+            handler.AddHandledText("Should continue change settings, yes or no? 'y', 'n'");
             while (true)
             {
-                var answer = reader.ReadLine();
+                var answer = handler.GetText();
                 switch (answer)
                 {
                     case "y":
-                        AppSettings.FillTags = true;
                         action();
                         return;
                     case "n":
-                        AppSettings.FillTags = false;
-                        return;
+                        throw new Exception("Changing visualizator settings ended.\n" +
+                                            "If You want to change it again, you Should choose this action again");
                     default:
-                        writer.WriteLine("Answer should be 'y' or 'n'");
+                        handler.AddHandledText("Answer should be 'y' or 'n'");
                         break;
                 }
             }

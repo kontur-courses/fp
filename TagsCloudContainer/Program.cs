@@ -96,13 +96,13 @@ namespace TagsCloudContainer
 
         private static void RegisterActions(ContainerBuilder builder)
         {
-            var action = typeof(ConsoleUiAction);
+            var action = typeof(UiAction);
             var actions = AppDomain.CurrentDomain.GetAssemblies()
                 .First(a => a.FullName.Contains("TagsCloudContainer"))
                 .GetTypes()
                 .Where(t => action.IsAssignableFrom(t))
                 .ToArray();
-            builder.RegisterTypes(actions).As<ConsoleUiAction>();
+            builder.RegisterTypes(actions).As<UiAction>();
             builder.RegisterType<ConsoleMenuCreator>().As<IMenuCreator>();
         }
     }
