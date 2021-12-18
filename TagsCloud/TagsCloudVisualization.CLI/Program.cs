@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using CommandLine;
+using ResultMonad;
 using TagsCloudVisualization.Module;
 
 namespace TagsCloudVisualization.CLI
@@ -11,17 +12,10 @@ namespace TagsCloudVisualization.CLI
     {
         private static void Main(string[] args)
         {
-            try
+            var result = Parser.Default.ParseArguments<Options>(args);
+            if (!result.Errors.Any())
             {
-                var result = Parser.Default.ParseArguments<Options>(args);
-                if (!result.Errors.Any())
-                {
-                    Run(result.Value);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+                Run(result.Value);
             }
         }
 
@@ -38,8 +32,10 @@ namespace TagsCloudVisualization.CLI
                 .RegisterTagsClouds(options.ToDrawerSettings())
                 .RegisterImageCreation(filename)
                 .Build();
-            container.Resolve<TagsCloudVisualizer>().Visualize(options.MaxTags);
-            Console.WriteLine($"Tags cloud {filename} generated.");
+            container.Resolve<TagsCloudVisualizer>()
+                .Visualize(options.MaxTags)
+                .OnSuccess(() => Console.WriteLine($"Tags cloud {filename} generated."))
+                .OnFail(err => Console.WriteLine($"Error: {err}"));
         }
 
         private static string GenerateName() =>

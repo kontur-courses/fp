@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using NUnit.Framework;
+using ResultMonad;
 using TagsCloudVisualization.Module;
 
 namespace TagsCloudVisualization.Tests
@@ -50,7 +51,7 @@ namespace TagsCloudVisualization.Tests
                 .Build();
 
             var visualizer = container.Resolve<TagsCloudVisualizer>();
-            visualizer.Visualize();
+            visualizer.Visualize().OnFail(Assert.Fail);
         }
 
         private static IEnumerable<string> GenerateWordsList(IList<string> uniqueWords, int count)
