@@ -1,5 +1,7 @@
-﻿using TagsCloud.Visualization.ImagesSavior;
+﻿using System;
+using TagsCloud.Visualization.ImagesSavior;
 using TagsCloud.Visualization.LayouterCores;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Words
@@ -22,9 +24,10 @@ namespace TagsCloud.Words
 
         public void Run()
         {
-            using var image = layouterCore.GenerateImage(wordsReadService);
-
-            imageSavior.Save(image);
+            layouterCore.GenerateImage(wordsReadService)
+                .OnFail(Console.WriteLine)
+                .Then(x => imageSavior.Save(x))
+                .Then(x => x.Dispose());
         }
     }
 }

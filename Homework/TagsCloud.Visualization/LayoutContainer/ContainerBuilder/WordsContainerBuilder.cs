@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.Models;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsSizeServices;
 
 namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
@@ -26,8 +27,10 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
         {
             var font = fontFactory.GetFont(word, minCount, maxCount);
             var size = wordsSizeService.CalculateSize(word, font);
-            var rectangle = layouter.PutNextRectangle(size);
-            words.Add(new WordWithBorder(word, font, rectangle));
+            
+            layouter.PutNextRectangle(size)
+                .Then(rectangle => words.Add(new WordWithBorder(word, font, rectangle)));
+
             return this;
         }
 

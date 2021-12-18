@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Autofac;
 using NUnit.Framework;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.LayouterCores;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 using TagsCloud.Visualization.WordsReaders.FileReaders;
 
@@ -36,7 +36,8 @@ namespace TagsCloud.FunctionalTests
             var container = builder.Build();
 
             var visualizer = container.Resolve<ILayouterCore>();
-            visualizer.GenerateImage(container.Resolve<IWordsReadService>()).Dispose();
+            visualizer.GenerateImage(container.Resolve<IWordsReadService>())
+                .Then(x => x.Dispose());
         }
 
         private TagsCloudModuleSettings GenerateDefaultSettings() =>

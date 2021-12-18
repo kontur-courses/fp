@@ -11,8 +11,6 @@ using Microsoft.OpenApi.Models;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.WordsFilter;
-using TagsCloud.Visualization.WordsReaders;
-using TagsCloud.WebApi.Services;
 
 namespace TagsCloud.WebApi
 {

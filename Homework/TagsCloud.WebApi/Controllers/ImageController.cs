@@ -2,7 +2,8 @@
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.WebApi.Services;
+using TagsCloud.Visualization.Utils;
+using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.WebApi.Controllers
 {
@@ -17,12 +18,28 @@ namespace TagsCloud.WebApi.Controllers
         [HttpGet("image")]
         public IActionResult GetImage(string text)
         {
-            using var image = layouterCore.GenerateImage(new SimpleTextReader(text));
+            
+            /*using var image = layouterCore.GenerateImage(new SimpleTextReader(text)).GetValueOrThrow();
             
             using var ms = new MemoryStream();
             image.Save(ms, ImageFormat.Png);
             
-            return File(ms.ToArray(), "image/png");
+            return File(ms.ToArray(), "image/png");*/
+            var res = layouterCore.GenerateImage(new SimpleTextReader(text))
+                .Then(image =>
+                {
+                    var ms = new MemoryStream();
+                    image.Save(ms, ImageFormat.Png);
+                    image.Dispose();
+                    return ms;
+                })
+                .Then(stream =>
+                {
+                    using var m = stream;
+                    return File(m.ToArray(), "image/png");
+                });
+
+            return res.IsSuccess ? res.GetValueOrThrow() : BadRequest(res.Error);
         }
     }
 }

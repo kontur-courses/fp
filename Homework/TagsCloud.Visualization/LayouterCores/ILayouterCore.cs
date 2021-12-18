@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.LayouterCores
 {
     public interface ILayouterCore
     {
-        Image GenerateImage(IWordsReadService wordsReadService);
+        Result<Image> GenerateImage(IWordsReadService wordsReadService);
     }
 }

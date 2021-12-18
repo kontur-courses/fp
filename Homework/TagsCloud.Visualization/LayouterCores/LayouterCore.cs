@@ -1,7 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.LayouterCores
@@ -22,18 +24,14 @@ namespace TagsCloud.Visualization.LayouterCores
             this.drawer = drawer;
         }
 
-        public Image GenerateImage(IWordsReadService wordsReadService)
+        public Result<Image> GenerateImage(IWordsReadService wordsReadService)
         {
-            var parsedWords = wordsService.GetWords(wordsReadService);
-
-            var maxCount = parsedWords.Max(x => x.Count);
-            var minCount = parsedWords.Min(x => x.Count);
-
-            var wordsContainer = wordsContainerBuilder
-                .AddWords(parsedWords, minCount, maxCount)
-                .Build();
-
-            return drawer.Draw(wordsContainer);
+            return wordsService.GetWords(wordsReadService)
+                .Then(words => wordsContainerBuilder.AddWords(words,
+                    words.Min(x => x.Count),
+                    words.Max(x => x.Count)))
+                .Then(container => container.Build())
+                .Then(container => drawer.Draw(container));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.PointGenerator;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Visualization
 {
@@ -13,18 +14,18 @@ namespace TagsCloud.Visualization
 
         public CircularCloudLayouter(IPointGenerator pointGenerator) => this.pointGenerator = pointGenerator;
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException($"rectangle's width and height must be positive, but was: {rectangleSize}");
-
-            var rectangle = GetFirstCorrectRectangle(rectangleSize);
-
-            rectangle = ShiftRectangleToCenter(rectangle);
-
-            rectangles.Add(rectangle);
-
-            return rectangle;
+            return rectangleSize.AsResult()
+                .Validate(x => x.Width > 0 && x.Height > 0,
+                    $"rectangle's width and height must be positive, but was: {rectangleSize}")
+                .Then(GetFirstCorrectRectangle)
+                .Then(ShiftRectangleToCenter)
+                .Then(x =>
+                {
+                    rectangles.Add(x);
+                    return x;
+                });
         }
 
         private Rectangle GetFirstCorrectRectangle(Size rectangleSize)

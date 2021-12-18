@@ -37,6 +37,11 @@ namespace TagsCloud.Visualization.Utils
         {
             return validator(Value) ? this : Result.Fail<T>(errorMessage);
         }
+        
+        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage)
+        {
+            return validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
+        }
     }
 
     public static class Result

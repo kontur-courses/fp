@@ -1,7 +1,9 @@
-﻿namespace TagsCloud.Visualization.WordsReaders
+﻿using TagsCloud.Visualization.Utils;
+
+namespace TagsCloud.Visualization.WordsReaders
 {
     public interface IWordsReadService
     {
-        string Read();
+        Result<string> Read();
     }
 }

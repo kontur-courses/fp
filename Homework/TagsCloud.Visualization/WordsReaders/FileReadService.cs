@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders.FileReaders;
 
 namespace TagsCloud.Visualization.WordsReaders
@@ -17,25 +18,16 @@ namespace TagsCloud.Visualization.WordsReaders
             this.fileReaders = fileReaders;
         }
 
-        public string Read()
+        public Result<string> Read()
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (!File.Exists(fileName))
-                throw new FileNotFoundException($"File {fileName} doesn't exists");
-
-            var fileExtension = Path.GetExtension(fileName)?.Replace(".", "");
-
-            if (fileExtension == null)
-                throw new ArgumentException($"Unknown extension of file: {fileName}");
-
-            var reader = fileReaders.FirstOrDefault(x => x.CanRead(fileExtension));
-
-            if (reader == null)
-                throw new ArgumentException($"Unsupported file extension: {fileExtension}");
-
-            return reader.Read(fileName);
+            return fileName.AsResult()
+                .Validate(f => f != null, nameof(fileName))
+                .Validate(File.Exists, $"File {fileName} doesn't exists")
+                .Then(f => Path.GetExtension(f)?.Replace(".", ""))
+                .Validate(ext => ext != null, ext => $"Unknown extension of file: {ext}")
+                .Then(ext => fileReaders.FirstOrDefault(x => x.CanRead(ext)))
+                .Validate(x => x != null, "Unsupported file extension")
+                .Then(x => x.Read(fileName));
         }
     }
 }

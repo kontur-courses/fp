@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsParser;
 
@@ -21,9 +22,8 @@ namespace TagsCloud.Tests
         [TestCaseSource(typeof(TestDataGenerator))]
         public void CountWordsFrequency_Should_ParseCorrectly_When(string text, Dictionary<string, int> expectedResult)
         {
-            var result = sut.CountWordsFrequency(text);
-
-            result.Should().Equal(expectedResult);
+            sut.CountWordsFrequency(text)
+                .Then(x => x.Should().Equal(expectedResult));
         }
 
         [Test]

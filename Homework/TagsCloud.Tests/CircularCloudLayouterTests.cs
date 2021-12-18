@@ -12,6 +12,7 @@ using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayoutContainer;
 using TagsCloud.Visualization.PointGenerator;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Tests
 {
@@ -38,7 +39,7 @@ namespace TagsCloud.Tests
             {
                 var testName = TestContext.CurrentContext.Test.Name;
                 var rectanglesContainer = new RectanglesContainer {Items = rectangles};
-                using var image = drawer.Draw(rectanglesContainer);
+                using var image = drawer.Draw(rectanglesContainer).GetValueOrThrow();
                 var path = Path.Combine(GetDirectoryForSavingFailedTest(), $"{testName}.png");
                 image.Save(path);
 
@@ -73,9 +74,8 @@ namespace TagsCloud.Tests
         {
             var size = new Size(12, 34);
 
-            var rectangle = sut.PutNextRectangle(size);
-
-            rectangle.Size.Should().Be(size);
+            sut.PutNextRectangle(size)
+                .Then(x => x.Size.Should().Be(size));
         }
 
         [TestCase(10, 10)]
@@ -86,9 +86,9 @@ namespace TagsCloud.Tests
         {
             var rectangle = sut.PutNextRectangle(new Size(width, height));
 
-            var rectangleCenter = rectangle.GetCenter();
-
-            rectangleCenter.Should().Be(center);
+            rectangle
+                .Then(x => x.GetCenter())
+                .Then(x => x.Should().Be(center));
         }
 
         [Test]
@@ -120,6 +120,8 @@ namespace TagsCloud.Tests
 
             rectangles = Enumerable.Range(0, count)
                 .Select(_ => sut.PutNextRectangle(size))
+                .Where(x => x.IsSuccess)
+                .Select(x => x.GetValueOrThrow())
                 .ToList();
 
             foreach (var rectangle in rectangles)
@@ -153,7 +155,10 @@ namespace TagsCloud.Tests
             var sizes = Enumerable.Range(0, count)
                 .Select(_ => new Size(rnd.Next(1, maxWidth), rnd.Next(1, maxHeight)));
 
-            return sizes.Select(x => sut.PutNextRectangle(x)).ToList();
+            return sizes.Select(x => sut.PutNextRectangle(x))
+                .Where(x => x.IsSuccess)
+                .Select(x => x.GetValueOrThrow())
+                .ToList();
         }
 
         private IEnumerable<(Rectangle, IEnumerable<Rectangle>)> GetItemAndListWithoutIt(

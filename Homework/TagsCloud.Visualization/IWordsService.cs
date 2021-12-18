@@ -1,10 +1,11 @@
 ﻿using TagsCloud.Visualization.Models;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization
 {
     public interface IWordsService
     {
-        Word[] GetWords(IWordsReadService wordsReadService);
+        Result<Word[]> GetWords(IWordsReadService wordsReadService);
     }
 }

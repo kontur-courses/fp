@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TagsCloud.Visualization.Models;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsParser;
 using TagsCloud.Visualization.WordsReaders;
 
@@ -11,17 +13,18 @@ namespace TagsCloud.Visualization
 
         public WordsService(IWordsParser wordsParser) => this.wordsParser = wordsParser;
 
-        public Word[] GetWords(IWordsReadService wordsReadService)
+        public Result<Word[]> GetWords(IWordsReadService wordsReadService)
         {
-            var text = wordsReadService.Read();
+            return wordsReadService.Read()
+                .Then(t => wordsParser.CountWordsFrequency(t))
+                .Then(TransformToWords);
+        }
 
-            var parsed = wordsParser.CountWordsFrequency(text);
-
-            return parsed
+        private Word[] TransformToWords(Dictionary<string, int> parsedWords)
+            => parsedWords
                 .Where(x => x.Value > 1)
                 .OrderByDescending(x => x.Value)
                 .Select(x => new Word(x.Key, x.Value))
                 .ToArray();
-        }
     }
 }

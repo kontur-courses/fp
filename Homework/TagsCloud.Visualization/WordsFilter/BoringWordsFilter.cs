@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.WordsFilter
@@ -28,6 +29,8 @@ namespace TagsCloud.Visualization.WordsFilter
                 boringWords = baseBoringWords;
             else
                 boringWords = wordsReadService.Read()
+                    .OnFail(x => throw new Exception($"can not read boring words file: {x}"))
+                    .GetValueOrThrow()
                     .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)
                     .ToHashSet();
         }

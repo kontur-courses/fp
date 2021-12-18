@@ -1,16 +1,13 @@
-﻿using TagsCloud.Visualization.WordsReaders;
+﻿using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.WebApi.Services
+namespace TagsCloud.Visualization.WordsReaders
 {
     public class SimpleTextReader : IWordsReadService
     {
-        private string words;
+        private readonly string words;
 
-        public SimpleTextReader(string words)
-        {
-            this.words = words;
-        }
-        
-        public string Read() => words;
+        public SimpleTextReader(string words) => this.words = words;
+
+        public Result<string> Read() => words;
     }
 }

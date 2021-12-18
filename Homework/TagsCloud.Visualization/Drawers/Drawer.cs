@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.LayoutContainer;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Visualization.Drawers
 {
@@ -14,10 +15,10 @@ namespace TagsCloud.Visualization.Drawers
 
         public Drawer(IContainerVisitor visitor) => this.visitor = visitor;
 
-        public Image Draw<T>(ILayoutContainer<T> layoutContainer)
+        public Result<Image> Draw<T>(ILayoutContainer<T> layoutContainer)
         {
             if (!layoutContainer.Items.Any())
-                throw new ArgumentException("rectangles array can't be empty");
+                return Result.Fail<Image>("rectangles array can't be empty");
 
             var (width, height) = layoutContainer.GetWidthAndHeight();
             var (widthWithOffset, heightWithOffset) = (width + OffsetX, height + OffsetY);
