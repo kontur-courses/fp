@@ -24,7 +24,7 @@ namespace TagsCloudVisualization.Tests.WordsToTagsTransformer
 
             var tags = _transformer.Transform(words);
 
-            tags.Should().BeEmpty();
+            tags.GetValueOrThrow().Should().BeEmpty();
         }
 
         [Test]
@@ -40,8 +40,7 @@ namespace TagsCloudVisualization.Tests.WordsToTagsTransformer
                 "big"
             };
 
-            var tags = _transformer.Transform(words).ToArray();
-
+            var tags = _transformer.Transform(words).GetValueOrThrow().ToArray();
             tags.Should().HaveCount(3);
             tags
                 .Select(x => x.Weight)

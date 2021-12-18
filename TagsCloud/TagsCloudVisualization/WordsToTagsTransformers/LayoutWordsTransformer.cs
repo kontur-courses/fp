@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ResultMonad;
 
 namespace TagsCloudVisualization.WordsToTagsTransformers
 {
     public class LayoutWordsTransformer : IWordsToTagsTransformer
     {
-        public IEnumerable<Tag> Transform(IEnumerable<string> words)
+        public Result<IEnumerable<Tag>> Transform(IEnumerable<string> words)
         {
             var counts = new Dictionary<string, int>();
             var maxCount = 1;
@@ -17,7 +18,7 @@ namespace TagsCloudVisualization.WordsToTagsTransformers
                 maxCount = Math.Max(maxCount, counts[word]);
             }
 
-            return counts.Select(pair => new Tag(pair.Key, pair.Value / (float)maxCount));
+            return counts.Select(pair => Tag.Create(pair.Key, pair.Value / (float)maxCount)).Traverse();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ResultMonad;
 
 namespace TagsCloudVisualization
 {
@@ -7,12 +7,18 @@ namespace TagsCloudVisualization
         public readonly string Word;
         public readonly float Weight;
 
-        public Tag(string word, float weight)
+        private Tag(string word, float weight)
         {
-            if (weight is <= 0 or > 1)
-                throw new ArgumentException($"{nameof(weight)} expected be in (0, 1]");
             Word = word;
             Weight = weight;
+        }
+
+        public static Result<Tag> Create(string word, float weight)
+        {
+            return Result.Ok()
+                .Validate(() => weight is > 0 and <= 1, $"{nameof(weight)} expected be in (0, 1], but actual {weight}")
+                .Validate(() => !string.IsNullOrEmpty(word), $"{nameof(word)} is not correct, actual = {word}")
+                .Then(new Tag(word, weight));
         }
 
         public override string ToString() => $"{nameof(Word)} = {Word}, {nameof(Weight)} = {Weight}";

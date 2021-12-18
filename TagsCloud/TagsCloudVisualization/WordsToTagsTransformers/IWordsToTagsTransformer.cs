@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultMonad;
 
 namespace TagsCloudVisualization.WordsToTagsTransformers
 {
     public interface IWordsToTagsTransformer
     {
-        IEnumerable<Tag> Transform(IEnumerable<string> words);
+        Result<IEnumerable<Tag>> Transform(IEnumerable<string> words);
     }
 }
