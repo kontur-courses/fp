@@ -63,7 +63,7 @@ namespace App.Implementation
 
             var tags = LocateTags(layouter.Value, tagsResult.Value.ToList());
 
-            return GetCloudVisualization(layouter.Value, tags.Value);
+            return GetCloudVisualization(layouter.Value, tags);
         }
 
         private Result<IEnumerable<string>> ReadWords()
@@ -91,12 +91,12 @@ namespace App.Implementation
 
                 if (!preprocessedWords.IsSuccess)
                     return preprocessedWords
-                        .RefineError($"Error when preprocessing words. {preprocessedWords.Error}");
+                        .RefineError("Error when preprocessing words");
 
                 words = preprocessedWords.Value;
             }
 
-            return new Result<IEnumerable<string>>(null, words);
+            return Result.Ok(words);
         }
 
         private Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
@@ -107,15 +107,15 @@ namespace App.Implementation
 
                 if (!filteredWords.IsSuccess)
                     return filteredWords
-                        .RefineError($"Error when Filtering words. {filteredWords.Error}");
+                        .RefineError("Error when Filtering words");
 
                 words = filteredWords.Value;
             }
 
-            return new Result<IEnumerable<string>>(null, words);
+            return Result.Ok(words);
         }
 
-        private Result<List<Tag>> LocateTags(ICloudLayouter layouter, List<Tag> tags)
+        private List<Tag> LocateTags(ICloudLayouter layouter, List<Tag> tags)
         {
             for (var i = 0; i < tags.Count; i++)
             {
