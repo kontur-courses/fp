@@ -52,11 +52,11 @@ namespace TagsCloud.Tests
         [TestCase(0, 1, TestName = "Only one is zero")]
         [TestCase(0, 0, TestName = "Both coordinates are zero")]
         [TestCase(-1, 3, TestName = "Negative width")]
-        public void PutNextRectangle_Should_ThrowException_WhenSizeNotPositive(int width, int height)
+        public void PutNextRectangle_Should_ReturnFalseResult_WhenSizeNotPositive(int width, int height)
         {
             var size = new Size(width, height);
 
-            Assert.Throws<ArgumentException>(() => sut.PutNextRectangle(size));
+            sut.PutNextRectangle(size).IsSuccess.Should().Be(false);
         }
 
         [TestCase(1)]

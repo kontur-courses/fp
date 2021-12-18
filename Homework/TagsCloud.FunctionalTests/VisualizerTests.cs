@@ -20,20 +20,8 @@ namespace TagsCloud.FunctionalTests
         public void Should_ReadWords_From(string extension)
         {
             var settings = GenerateDefaultSettings();
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule(new TagsCloudModule(settings));
             
-            builder.RegisterType<TxtFileReader>().As<IFileReader>();
-            builder.RegisterType<DocFileReader>().As<IFileReader>();
-            builder.RegisterType<PdfFileReader>().As<IFileReader>();
-            
-            builder.Register(ctx => 
-                    new FileReadService(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
-                    ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsReadService>();
-            
-            var container = builder.Build();
+            using var container = CreateContainer(settings, extension);
 
             var visualizer = container.Resolve<ILayouterCore>();
             visualizer.GenerateImage(container.Resolve<IWordsReadService>())
@@ -46,5 +34,22 @@ namespace TagsCloud.FunctionalTests
                 LayouterType = typeof(CircularCloudLayouter),
                 LayoutVisitor = new RandomColorDrawerVisitor()
             };
+
+        private IContainer CreateContainer(TagsCloudModuleSettings settings, string extension)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new TagsCloudModule(settings));
+            
+            builder.RegisterType<TxtFileReader>().As<IFileReader>();
+            builder.RegisterType<DocFileReader>().As<IFileReader>();
+            builder.RegisterType<PdfFileReader>().As<IFileReader>();
+            
+            builder.Register(ctx => 
+                    new FileReadService(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
+                        ctx.Resolve<IEnumerable<IFileReader>>()))
+                .As<IWordsReadService>();
+
+            return builder.Build();
+        }
     }
 }

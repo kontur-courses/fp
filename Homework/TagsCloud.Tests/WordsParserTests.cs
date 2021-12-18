@@ -27,9 +27,9 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void CountWordsFrequency_Should_ThrowException_OnNullInput()
+        public void CountWordsFrequency_Should_ReturnFalseResult_OnNullInput()
         {
-            Assert.Throws<ArgumentNullException>(() => sut.CountWordsFrequency(null));
+            sut.CountWordsFrequency(null).IsSuccess.Should().Be(false);
         }
     }
 
