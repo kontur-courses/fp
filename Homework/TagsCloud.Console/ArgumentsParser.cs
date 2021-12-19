@@ -1,11 +1,11 @@
-﻿using System;
-using CommandLine;
+﻿using CommandLine;
+using TagsCloudContainer;
 
 namespace TagsCloud.Console
 {
     public class ArgumentsParser
     {
-        public static T Parse<T>(string[] args)
+        public static Result<T> Parse<T>(string[] args)
             where T : new()
         {
             using var parser = new Parser(config =>
@@ -15,11 +15,8 @@ namespace TagsCloud.Console
             });
             var parsed = parser.ParseArguments<T>(args) as Parsed<T>;
             if (parsed == null)
-            {
-                System.Console.WriteLine("Input is incorrect");
-                Environment.Exit(-1);
-            }
-
+                return Result.Fail<T>("Syntax Error. Could not parse console input");
+            
             return parsed.Value;
         }
     }

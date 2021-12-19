@@ -2,6 +2,6 @@
 {
     public interface IResolver<TKey, TService>
     {
-        public TService Get(TKey key);
+        public Result<TService> Get(TKey key);
     }
 }

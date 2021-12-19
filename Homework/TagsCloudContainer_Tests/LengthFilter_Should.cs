@@ -1,5 +1,4 @@
-﻿using System;
-using FakeItEasy;
+﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
@@ -51,13 +50,6 @@ namespace TagsCloudContainer_Tests
             sut.Filter(testingInput)
                 .Should()
                 .BeEmpty();
-        }
-
-        [Test]
-        public void Throw_WhenNegativeArgument()
-        {
-            A.CallTo(() => settings.MinWordLength).Returns(-1);
-            Assert.Throws<ArgumentException>(() => sut = new LengthFilter(settings));
         }
     }
 }

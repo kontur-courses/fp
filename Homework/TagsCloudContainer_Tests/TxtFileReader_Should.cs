@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.FileReader;
 
@@ -30,19 +28,22 @@ namespace TagsCloudContainer_Tests
         public void ReadFile_WhenExists()
         {
             var result = sut.ReadWords(TestFilePath);
-            result.Should().BeEquivalentTo(expectedOutput);
+            result.GetValueOrThrow().Should().BeEquivalentTo(expectedOutput);
         }
 
         [Test]
-        public void Throw_WhenFileDoesNotExist()
+        public void ReturnsFailResult_WhenFileDoesNotExist()
         {
-            Assert.Throws<Exception>(() => sut.ReadWords("notexist.txt").First());
+            var result = sut.ReadWords("notexist");
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void ReturnNothing_WhenEmptyFile()
         {
-            sut.ReadWords(@"..\..\..\TestFiles\empty.txt").Should().BeEmpty();
+            sut.ReadWords(@"..\..\..\TestFiles\empty.txt").GetValueOrThrow()
+                .Should()
+                .BeEmpty();
         }
     }
 }

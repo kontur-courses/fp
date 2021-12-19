@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace TagsCloudContainer.Visualizer.ColorGenerators
@@ -13,11 +12,11 @@ namespace TagsCloudContainer.Visualizer.ColorGenerators
             resolver = colorGenerators.ToDictionary(x => x.PalleteType);
         }
 
-        public IColorGenerator Get(PalleteType palleteType)
+        public Result<IColorGenerator> Get(PalleteType palleteType)
         {
             if (resolver.ContainsKey(palleteType))
-                return resolver[palleteType];
-            throw new ArgumentException($"{palleteType} not found");
+                return Result.Ok(resolver[palleteType]);
+            return Result.Fail<IColorGenerator>($"{palleteType} not found");
         }
     }
 }

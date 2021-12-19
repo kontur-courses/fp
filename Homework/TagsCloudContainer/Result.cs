@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TagsCloudContainer.Result
+namespace TagsCloudContainer
 {
     public class None
     {

@@ -43,16 +43,16 @@ namespace TagsCloudContainer_Tests
         public void CreateImage_WithSetSize()
         {
             A.CallTo(() => settings.ImageSize).Returns(new Size(1920, 1080));
-            sut.Visualize(freqDict)
+            sut.Visualize(freqDict).GetValueOrThrow()
                 .Should().Match<Bitmap>(b => b.Size == settings.ImageSize);
         }
 
         [Test]
-        public void Throw_WhenLayouterPutWordOutsideImage()
+        public void ReturnFailResult_WhenLayouterPutWordOutsideImage()
         {
             A.CallTo(() => layouter.PutNextRectangle(A<Size>.Ignored))
                 .Returns(new Rectangle(new Point(settings.ImageSize), new Size(5, 5)));
-            Assert.Throws<Exception>(() => sut.Visualize(freqDict));
+            sut.Visualize(freqDict).IsSuccess.Should().BeFalse();
         }
 
         [Test]

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Layouter.PointsProviders;
@@ -20,11 +19,10 @@ namespace TagsCloudContainer.Layouter
         public IReadOnlyCollection<Rectangle> Rectangles => rectangles;
 
 
-        public Rectangle PutNextRectangle(Size size)
+        public Result<Rectangle> PutNextRectangle(Size size)
         {
-            if (size.Height <= 0 || size.Width <= 0)
-                throw new ArgumentException("All size params should be greater than zero!");
-
+            if (size.Height < 0 || size.Width < 0)
+                return Result.Fail<Rectangle>("Negative size of rectangle is not expected");
             Rectangle nextRectangle;
             do
             {

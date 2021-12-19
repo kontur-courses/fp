@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using TagsCloudContainer;
 
 namespace TagsCloud.Console
@@ -7,21 +8,24 @@ namespace TagsCloud.Console
     {
         public static void Main(string[] args)
         {
-            var appSettings = AppSettings.Parse(args);
-            var tagCloudSettings = TagCloudSettings.Parse(args);
-            using var container = Configure(appSettings, tagCloudSettings);
-            container.Resolve<IConsoleUI>()
-                .Run(appSettings, tagCloudSettings);
-        }
-
-        internal static IContainer Configure(IAppSettings settings, ITagCloudSettings tagCloudSettings)
-        {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(settings).AsImplementedInterfaces().SingleInstance();
-            builder.RegisterInstance(tagCloudSettings).AsImplementedInterfaces().SingleInstance();
+            var appSettings = AppSettings.Parse(args)
+                .Then(appSettings => builder.RegisterInstance(appSettings).AsImplementedInterfaces().SingleInstance())
+                .Then(_ => TagCloudSettings.Parse(args))
+                .Then(tagSettings => builder.RegisterInstance(tagSettings).AsImplementedInterfaces().SingleInstance())
+                .OnFail(HandleError);
             builder.RegisterType<ConsoleUI>().AsImplementedInterfaces();
             builder.RegisterModule<InfrastructureModule>();
-            return builder.Build();
+            using var container = builder.Build();
+            container.Resolve<IConsoleUI>()
+                .Run()
+                .OnFail(HandleError);
+        }
+
+        private static void HandleError(string error)
+        {
+            System.Console.WriteLine(error);
+            Environment.Exit(-1);
         }
     }
 }

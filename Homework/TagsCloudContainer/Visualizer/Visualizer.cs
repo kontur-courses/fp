@@ -35,7 +35,7 @@ namespace TagsCloudContainer.Visualizer
             graphics.Dispose();
         }
 
-        public Bitmap Visualize(Dictionary<string, int> freqDict)
+        public Result<Bitmap> Visualize(Dictionary<string, int> freqDict)
         {
             var wordsCount = freqDict.Count;
             var wordsColors = wordsColorsGenerator.GetColors(wordsCount);
@@ -44,28 +44,48 @@ namespace TagsCloudContainer.Visualizer
                 .ToArray();
             var mostFreq = orderedFreqPairs.First().Value;
             foreach (var (word, freq) in orderedFreqPairs)
-                VisualizeWord(word, freq, mostFreq, wordsColors.Pop());
+            {
+                var visualizationResult = VisualizeWord(word, freq, mostFreq, wordsColors.Pop());
+                if(!visualizationResult.IsSuccess)
+                    return Result.Fail<Bitmap>("Visualization error. " + visualizationResult.Error);
+            }
             return bmp;
         }
 
-        private void VisualizeWord(string word, int freq, int mostFreq, Color color)
+        private Result<None> VisualizeWord(string word, int freq, int mostFreq, Color color)
         {
-            var freqDelta = mostFreq - freq;
-            using var newFont = new Font(font.FontFamily, Math.Max(font.Size - freqDelta, 5));
-            var rectSize = new Size((int) newFont.Size * word.Length, newFont.Height);
-            var layoutRectangle = layouter.PutNextRectangle(rectSize);
-            if (IsRectangleOutsideImage(layoutRectangle))
-                throw new Exception("word was outside the image");
-            using var brush = new SolidBrush(color);
-            graphics.DrawString(word, newFont, brush, layoutRectangle);
+            Font newFont = default!;
+            Brush brush = default!;
+            try
+            {
+                var freqDelta = mostFreq - freq;
+                newFont = new Font(font.FontFamily, Math.Max(font.Size - freqDelta, 5));
+                brush = new SolidBrush(color);
+                return GetLayoutRectangle(word, newFont)
+                    .Then(rect => graphics.DrawString(word, newFont, brush, rect));
+            }
+            finally
+            {
+                newFont.Dispose();
+                brush.Dispose();
+            }
+        }
+        
+        private Result<Rectangle> GetLayoutRectangle(string word, Font wordFont)
+        {
+            var rectSize = new Size((int) wordFont.Size * word.Length, wordFont.Height);
+            return layouter.PutNextRectangle(rectSize)
+                .Then(CheckRectangleOutsideImage);
         }
 
-        private bool IsRectangleOutsideImage(Rectangle rect)
+        private Result<Rectangle> CheckRectangleOutsideImage(Rectangle rect)
         {
             return rect.Left < 0
                    || rect.Right > imageSize.Width
                    || rect.Top < 0
-                   || rect.Bottom > imageSize.Height;
+                   || rect.Bottom > imageSize.Height
+                ? Result.Fail<Rectangle>("Tag cloud is outside the image")
+                : rect;
         }
     }
 }

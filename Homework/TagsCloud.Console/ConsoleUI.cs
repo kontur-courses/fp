@@ -9,19 +9,22 @@ namespace TagsCloud.Console
         private readonly IResolver<string, IFileReader> fileReadersResolver;
         private readonly IBitmapSaver saver;
         private readonly ITagCloud tagCloud;
+        private readonly IAppSettings appSettings;
 
-        public ConsoleUI(IResolver<string, IFileReader> fileReadersResolver, IBitmapSaver saver, ITagCloud tagCloud)
+        public ConsoleUI(IAppSettings appSettings, IResolver<string, IFileReader> fileReadersResolver, IBitmapSaver saver, ITagCloud tagCloud)
         {
+            this.appSettings = appSettings;
             this.fileReadersResolver = fileReadersResolver;
             this.saver = saver;
             this.tagCloud = tagCloud;
         }
 
-        public void Run(IAppSettings appSettings, ITagCloudSettings tagCloudSettings)
+        public Result<None> Run()
         {
-            var content = fileReadersResolver.Get(appSettings.InputPath).ReadWords(appSettings.InputPath);
-            using var visualization = tagCloud.LayDown(content);
-            saver.Save(visualization, appSettings.OutputPath);
+            return fileReadersResolver.Get(appSettings.InputPath)
+                .Then(fileReader => fileReader.ReadWords(appSettings.InputPath))
+                .Then(words => tagCloud.LayDown(words))
+                .Then(bmp => saver.Save(bmp, appSettings.OutputPath));
         }
     }
 }

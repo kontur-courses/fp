@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,17 +9,28 @@ namespace TagsCloudContainer.FileReader
         private readonly Dictionary<string, IFileReader> fileReadersResolver;
 
 
-        public FileReadersResolver(IFileReader[] readers)
+        public FileReadersResolver(params IFileReader[] readers)
         {
             fileReadersResolver = readers.ToDictionary(x => x.Extension);
         }
 
-        public IFileReader Get(string path)
+        public Result<IFileReader> Get(string path)
+        {
+            return CheckNullOrEmpty(path)
+                .Then(GetFileReader);
+        }
+
+        private Result<string> CheckNullOrEmpty(string path)
+            => !string.IsNullOrEmpty(path)
+                ? path
+                : Result.Fail<string>("Path is null or empty");
+
+        private Result<IFileReader> GetFileReader(string path)
         {
             var ext = Path.GetExtension(path);
             if (fileReadersResolver.ContainsKey(ext))
-                return fileReadersResolver[ext];
-            throw new ArgumentException($"Формат {path} не поддерживается");
+                return Result.Ok(fileReadersResolver[ext]);
+            return Result.Fail<IFileReader>($"Format {ext} is not supported");
         }
     }
 }

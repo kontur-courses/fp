@@ -26,12 +26,13 @@ namespace TagsCloudContainer
             this.wordsConverter = wordsConverter;
         }
 
-        public Bitmap LayDown(IEnumerable<string> words)
+        public Result<Bitmap> LayDown(IEnumerable<string> words)
         {
-            var preparedWords = wordsConverter.Prepare(words);
-            var filteredWords = filterApplyer.Apply(preparedWords);
-            var freqDict = frequencyAnalyzer.GetWordsFrequency(filteredWords);
-            return visualizer.Visualize(freqDict);
+            return Result.Of(() => wordsConverter.Prepare(words))
+                .Then(convertedWords => filterApplyer.Apply(convertedWords))
+                .Then(filteredWords => frequencyAnalyzer.GetWordsFrequency(filteredWords))
+                .Then(freqDict => visualizer.Visualize(freqDict))
+                .RefineError("Произошла ошибка при формировании облака тегов: ");
         }
     }
 }

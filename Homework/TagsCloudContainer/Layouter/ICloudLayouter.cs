@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace TagsCloudContainer.Layouter
 {
     public interface ICloudLayouter
     {
-        public IReadOnlyCollection<Rectangle> Rectangles { get; }
-        public Rectangle PutNextRectangle(Size size);
+        public Result<Rectangle> PutNextRectangle(Size size);
     }
 }

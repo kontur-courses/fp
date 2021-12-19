@@ -43,12 +43,13 @@ namespace TagsCloudContainer_Tests
             Directory.Delete(testPath, true);
         }
 
-        [Test]
-        public void ThrowWithMessage_WhenDisposedBitmap()
+        [TestCase("test.txt", "* wrong image extension *")]
+        [TestCase("", "* empty or null")]
+        [TestCase(null, "* empty or null")]
+        public void ReturnsFailResultWithMessage(string path, string errorMessage)
         {
-            testingBmp.Dispose();
-            Action act = () => sut.Save(testingBmp, "test.png");
-            act.Should().Throw<Exception>().WithMessage("Не удалось сохранить файл");
+            var result = sut.Save(testingBmp, path);
+            result.Error.Should().Match(errorMessage);
         }
     }
 }

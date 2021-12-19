@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using TagsCloudContainer;
 
 namespace TagsCloud.Console
 {
@@ -11,7 +12,7 @@ namespace TagsCloud.Console
         public string OutputPath { get; set; } = null!;
 
 
-        public static IAppSettings Parse(string[] args)
+        public static Result<AppSettings> Parse(string[] args)
         {
             return ArgumentsParser.Parse<AppSettings>(args);
         }

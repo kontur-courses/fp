@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
@@ -26,21 +25,23 @@ namespace TagsCloudContainer_Tests
 
         private CloudLayouter sut;
         private IPointsProvider pointsProvider;
-
-        [TestCase(0, 3, TestName = "width of rectangle is not expected to be zero")]
-        [TestCase(3, 0, TestName = "height of rectangle is not expected to be zero")]
+        
+        
         [TestCase(-1, 3, TestName = "width of rectangle is not expected to be negative")]
         [TestCase(3, -1, TestName = "height of rectangle is not expected to be zero")]
-        public void Throw_WhenIncorrectSize(int width, int height)
+        public void ReturnFailResult_WhenIncorrectSize(int width, int height)
         {
             var size = new Size(width, height);
-            Assert.Throws<ArgumentException>(() => sut.PutNextRectangle(size));
+            sut.PutNextRectangle(size).IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void PutFirstRectangleInCenter()
         {
-            sut.PutNextRectangle(testingSize).Should().Be(new Rectangle(testingCenter, testingSize));
+            sut.PutNextRectangle(testingSize)
+                .GetValueOrThrow()
+                .Should().
+                Be(new Rectangle(testingCenter, testingSize));
         }
 
         [Test]

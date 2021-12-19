@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace TagsCloudContainer.Layouter.PointsProviders
@@ -9,16 +8,16 @@ namespace TagsCloudContainer.Layouter.PointsProviders
         private readonly Dictionary<LayoutAlrogorithm, IPointsProvider> resolver;
 
 
-        public PointsProvidersResolver(IPointsProvider[] pointsProvider)
+        public PointsProvidersResolver(params IPointsProvider[] pointsProvider)
         {
             resolver = pointsProvider.ToDictionary(x => x.AlghorithmName);
         }
 
-        public IPointsProvider Get(LayoutAlrogorithm algorithm)
+        public Result<IPointsProvider> Get(LayoutAlrogorithm algorithm)
         {
             if (resolver.ContainsKey(algorithm))
-                return resolver[algorithm];
-            throw new ArgumentException($"{algorithm} does not exist");
+                return Result.Ok(resolver[algorithm]);
+            return Result.Fail<IPointsProvider>($"{algorithm} does not exist");
         }
     }
 }

@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Visualizer
 {
     public interface IVisualizer
     {
-        public Bitmap Visualize(Dictionary<string, int> freqDict);
+        public Result<Bitmap> Visualize(Dictionary<string, int> freqDict);
     }
 }

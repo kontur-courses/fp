@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -17,22 +16,34 @@ namespace TagsCloudContainer.BitmapSaver
             ".icon"
         };
 
-        public void Save(Bitmap bmp, string fullPathWithExt)
+        public Result<None> Save(Bitmap bmp, string fullPathWithExt)
         {
-            var ext = Path.GetExtension(fullPathWithExt);
-            var directory = Path.GetDirectoryName(fullPathWithExt);
-            if (!allowedExt.Contains(ext))
-                throw new ArgumentException($"file {fullPathWithExt} has wrong image extension {ext}");
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-            try
-            {
-                bmp.Save(fullPathWithExt);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Не удалось сохранить файл", e);
-            }
+            return CheckEmptyOrNull(fullPathWithExt)
+                .Then(ValidateExtension)
+                .Then(ValidateDirectory)
+                .Then(bmp.Save)
+                .RefineError("File saving error"); 
         }
+
+        private Result<string> ValidateDirectory(string path)
+        {
+            var directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                Result.Of(() => Directory.CreateDirectory(directory).FullName)
+                    .Then(_ => path);
+            return Result.Ok(path);
+        }
+        private Result<string> ValidateExtension(string path)
+        {
+            var ext = Path.GetExtension(path);
+            return allowedExt.Contains(ext)
+                ? Result.Ok(path)
+                : Result.Fail<string>($"File {path} has wrong image extension {ext}");
+        }
+
+        private Result<string> CheckEmptyOrNull(string path)
+            => !string.IsNullOrEmpty(path)
+                ? Result.Ok(path)
+                : Result.Fail<string>("Saving path is empty or null");
     }
 }

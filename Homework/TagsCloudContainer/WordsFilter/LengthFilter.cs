@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TagsCloudContainer.WordsPreparator;
 
@@ -12,8 +11,6 @@ namespace TagsCloudContainer.WordsFilter
 
         public LengthFilter(ITagCloudSettings settings)
         {
-            if (settings.MinWordLength < 0)
-                throw new ArgumentException($"Setting {nameof(settings.MinWordLength)} can't be negative");
             minLength = settings.MinWordLength;
         }
 

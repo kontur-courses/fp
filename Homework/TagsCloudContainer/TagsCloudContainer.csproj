@@ -25,6 +25,7 @@
         <Compile Remove="Visualizer\ColorGenerators\IColorGeneratorsResolver.cs" />
         <Compile Remove="Layouter\PointsProviders\SpiralPointsProviderFactory.cs" />
         <Compile Remove="Properties\**" />
+        <Compile Remove="Result\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,12 +38,14 @@
         <EmbeddedResource Remove="TextReader\Parsers\**" />
         <EmbeddedResource Remove="FileReader\Parsers\**" />
         <EmbeddedResource Remove="Properties\**" />
+        <EmbeddedResource Remove="Result\**" />
     </ItemGroup>
 
     <ItemGroup>
         <None Remove="TextReader\Parsers\**" />
         <None Remove="FileReader\Parsers\**" />
         <None Remove="Properties\**" />
+        <None Remove="Result\**" />
     </ItemGroup>
 
 </Project>
