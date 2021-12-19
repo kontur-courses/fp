@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 
 namespace TagCloud.Extensions
 {
@@ -11,7 +11,7 @@ namespace TagCloud.Extensions
         ///     Находит расстояние от точки внутри прямоугольника до каждой его стороны
         /// </summary>
         /// <returns>Возвращает расстояния в порядке left, top, right, bottom (все расстояния положительные)</returns>
-        public static List<int> GetDistancesToInnerPoint(this Rectangle rect, Point point)
+        public static Result<List<int>> GetDistancesToInnerPoint(this Rectangle rect, Point point)
         {
             var left = point.X - rect.Left;
             var top = point.Y - rect.Top;
@@ -19,17 +19,9 @@ namespace TagCloud.Extensions
             var bottom = rect.Bottom - point.Y;
 
             var distances = new List<int> {left, top, right, bottom};
-            if (distances.Any(d => d < 0))
-                throw new ArgumentException("Точка расположена вне прямоугольника");
-            return distances;
-        }
-
-        public static Rectangle UnionRange(this Rectangle rectangle, IEnumerable<Rectangle> others)
-        {
-            var union = rectangle;
-            foreach (var r in others)
-                union = Rectangle.Union(union, r);
-            return union;
+            return distances.Any(d => d < 0)
+                ? Result.Fail<List<int>>("Точка расположена вне прямоугольника")
+                : distances.AsResult();
         }
     }
 }

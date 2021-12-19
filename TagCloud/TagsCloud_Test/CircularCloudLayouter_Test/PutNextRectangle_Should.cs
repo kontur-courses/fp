@@ -37,27 +37,25 @@ namespace TagsCloud_Test
         public void PutRectangle_WithCorrectSize_ByParameter()
         {
             var rectSize = new Size(50, 20);
-            GetLayouter(Point.Empty).PutNextRectangle(rectSize).Size.Should().Be(rectSize);
+            GetLayouter(Point.Empty).PutNextRectangle(rectSize).GetValueOrThrow().Size.Should().Be(rectSize);
         }
 
         [TestCase(-50, -20)]
         [TestCase(-50, 20)]
         [TestCase(50, -20)]
-        public void Throw_OnNegativeSize(int width, int height)
+        public void Failure_OnNegativeSize(int width, int height)
         {
             var rectSize = new Size(width, height);
-            Action putRect = () => GetLayouter(Point.Empty).PutNextRectangle(rectSize).Size.Should().Be(rectSize);
-            putRect.Should().Throw<ArgumentException>();
+            GetLayouter(Point.Empty).PutNextRectangle(rectSize).IsSuccess.Should().BeFalse();
         }
 
         [TestCase(0, 0)]
         [TestCase(0, 20)]
         [TestCase(50, 0)]
-        public void Throw_OnZeroSize(int width, int height)
+        public void Failure_OnZeroSize(int width, int height)
         {
             var rectSize = new Size(width, height);
-            Action putRect = () => GetLayouter(Point.Empty).PutNextRectangle(rectSize).Size.Should().Be(rectSize);
-            putRect.Should().Throw<ArgumentException>();
+            GetLayouter(Point.Empty).PutNextRectangle(rectSize).IsSuccess.Should().BeFalse();
         }
 
         [TestCase(0, 0)]
@@ -69,7 +67,8 @@ namespace TagsCloud_Test
         {
             var center = new Point(x, y);
             var rectSize = new Size(50, 20);
-            GetLayouter(center).PutNextRectangle(rectSize).IntersectsWith(new Rectangle(center, Size.Empty)).Should()
+            GetLayouter(center).PutNextRectangle(rectSize).GetValueOrThrow()
+                .IntersectsWith(new Rectangle(center, Size.Empty)).Should()
                 .BeTrue();
         }
 

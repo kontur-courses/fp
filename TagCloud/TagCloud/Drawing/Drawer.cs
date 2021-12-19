@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 using TagCloud.Extensions;
 using TagCloud.PreLayout;
 
@@ -16,10 +17,15 @@ namespace TagCloud.Drawing
             _palette = palette;
         }
 
-        public Bitmap Draw(IDrawerOptions options, List<Word> words)
+        public Result<Bitmap> Draw(IDrawerOptions options, List<Result<Word>> wordResults)
         {
-            var bitmap = GetClearBitmap(options, words.Select(w => w.Rectangle));
-
+            var words = wordResults
+                .Where(r => r.IsSuccess)
+                .Select(r => r.Value);
+            var bitmapResult = GetClearBitmap(options, words.Select(w => w.Rectangle));
+            if (!bitmapResult.IsSuccess)
+                return Result.Fail<Bitmap>($"Не удалось нарисовать изображение {bitmapResult.Error}");
+            var bitmap = bitmapResult.Value;
             using var g = Graphics.FromImage(bitmap);
             _palette
                 .WithWordColors(options.WordColors.ToList())
@@ -37,23 +43,27 @@ namespace TagCloud.Drawing
                 g.DrawString(word.Text, word.Font, brush, rectangle.Location);
             }
 
-            return bitmap;
+            return bitmap.AsResult();
         }
 
-        private static Bitmap GetClearBitmap(IDrawerOptions options, IEnumerable<Rectangle> rectangles)
+        private static Result<Bitmap> GetClearBitmap(IDrawerOptions options, IEnumerable<Rectangle> rectangles)
         {
-            var bitmapSize = GetCanvasSize(rectangles, options.Center);
-            return new Bitmap(bitmapSize.Width, bitmapSize.Height);
+            return GetCanvasSize(rectangles, options.Center)
+                .Then(s => new Bitmap(s.Width, s.Height));
         }
 
-        private static Size GetCanvasSize(IEnumerable<Rectangle> rectangles, Point center)
+        private static Result<Size> GetCanvasSize(IEnumerable<Rectangle> rectangles, Point center)
         {
             var union = rectangles.Aggregate(Rectangle.Union);
-            var distances = union.GetDistancesToInnerPoint(center);
+            var distancesResult = union.GetDistancesToInnerPoint(center);
+            if (!distancesResult.IsSuccess)
+                return Result.Fail<Size>($"Не удалось задать размер изображения, {distancesResult.Error}");
+            var distances = distancesResult.Value;
             var horizontalIncrement = Math.Abs(distances[0] - distances[2]);
             var verticalIncrement = Math.Abs(distances[1] - distances[3]);
             union.Inflate(horizontalIncrement, verticalIncrement);
-            return new Size((int) (union.Width * 1.1), (int) (union.Height * 1.1));
+            var canvasSize = new Size((int) (union.Width * 1.1), (int) (union.Height * 1.1));
+            return canvasSize.AsResult();
         }
     }
 }

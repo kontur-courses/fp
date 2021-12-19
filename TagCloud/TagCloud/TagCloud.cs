@@ -44,29 +44,40 @@ namespace TagCloud
 
         public TagCloud DrawTagClouds(IDrawerOptions options)
         {
-            if (!_processedTexts.Any())
+            if (_processedTexts.Any())
             {
-                _statusWriter.WriteLine("Сначала нужно подготовить данные. Сейчас список обработанных текстов пуст.");
+                var results = _processedTexts.Select(text =>
+                    text.AsResult()
+                        .Then(t =>
+                        {
+                            _statusWriter.WriteLine("Раскладываю текст");
+                            return _wordLayouter.Layout(options, t);
+                        })
+                        .Then(words =>
+                        {
+                            _statusWriter.WriteLine("Рисую bitmap");
+                            return _drawer.Draw(options, words);
+                        })
+                        .Then(b =>
+                        {
+                            if (options.Size == Size.Empty) return b;
+                            _statusWriter.WriteLine("Масштабирую к заданному размеру. (Возможно ухудшение качества)");
+                            return b.ScaledResize(options.Size, options.BackgroundColor);
+                        })
+                        .Then(b =>
+                        {
+                            _statusWriter.WriteLine("Сохраняю bitmap\n");
+                            TagCloudImageSaver.Save(b, options.FileName, options.Path, options.Format);
+                        })
+                        .OnFail(error => _statusWriter.WriteLine($"Произошла ошибка: {error}"))
+                );
+                if (results.All(r => !r.IsSuccess))
+                    _statusWriter.WriteLine("Из-за возникших ошибок ни одно изображение не было нарисовано");
+                _statusWriter.WriteLine($"Готово!\nФайлы здесь: {options.Path}");
                 return this;
             }
 
-            foreach (var text in _processedTexts)
-            {
-                _statusWriter.WriteLine("Раскладываю текст");
-                var layoutedWords = _wordLayouter.Layout(options, text);
-                _statusWriter.WriteLine("Рисую bitmap");
-                var bitmap = _drawer.Draw(options, layoutedWords);
-                if (options.Size != Size.Empty)
-                {
-                    _statusWriter.WriteLine("Масштабирую к заданному размеру. (Возможно ухудшение качества)");
-                    bitmap = bitmap.ScaledResize(options.Size, options.BackgroundColor);
-                }
-
-                _statusWriter.WriteLine("Сохраняю bitmap\n");
-                TagCloudImageSaver.Save(bitmap, options.FileName, options.Path, options.Format);
-            }
-
-            _statusWriter.WriteLine($"Готово!\nФайлы здесь: {options.Path}");
+            _statusWriter.WriteLine("Сначала нужно подготовить данные. Сейчас список обработанных текстов пуст.");
             return this;
         }
 

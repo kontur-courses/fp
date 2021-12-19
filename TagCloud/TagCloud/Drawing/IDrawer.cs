@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagCloud.PreLayout;
 
 namespace TagCloud.Drawing
 {
     public interface IDrawer
     {
-        Bitmap Draw(IDrawerOptions options, List<Word> words);
+        Result<Bitmap> Draw(IDrawerOptions options, List<Result<Word>> words);
     }
 }

@@ -32,9 +32,7 @@ namespace TagCloud_ConsoleUI
                     .OnFail(Console.WriteLine);
 
                 args = argumentsPattern.Matches(Console.ReadLine())
-                    .Select(m => m.Value.Contains('\"')
-                        ? m.Value.Replace("\"", "")
-                        : m.Value)
+                    .Select(m => m.Value.Replace("\"", ""))
                     .ToArray();
             }
         }

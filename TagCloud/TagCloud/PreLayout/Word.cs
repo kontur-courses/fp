@@ -12,8 +12,13 @@ namespace TagCloud.PreLayout
             Font = font;
         }
 
+        public Word(Word word, Rectangle rect) : this(word.Text, word.Font)
+        {
+            Rectangle = rect;
+        }
+
         public Font Font { get; }
-        public Rectangle Rectangle { get; set; }
+        public Rectangle Rectangle { get; }
 
         public Word WithFontSize(double fontSize)
         {

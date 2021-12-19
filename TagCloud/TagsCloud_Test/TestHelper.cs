@@ -32,7 +32,7 @@ namespace TagsCloud_Test
                 squareSum += r.Width * r.Height;
             }
 
-            var radius = union.GetDistancesToInnerPoint(center).Average();
+            var radius = union.GetDistancesToInnerPoint(center).GetValueOrThrow().Average();
             var sphereSquare = Math.PI * radius * radius;
             return squareSum / sphereSquare;
         }

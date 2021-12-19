@@ -11,15 +11,15 @@ namespace TagCloud.TextProcessing
     internal class MyStemManager : IMorphologyAnalyzer
     {
         private const string UtilFileName = "mystem.exe";
-        private const string TempPath = @"c:\temp\output.txt";
         private const string Arguments = "-nl -ig -d --format json";
+        private static readonly string _tempPath = Path.Combine(Path.GetTempPath(), "output.txt");
 
         public Result<IEnumerable<ILexeme>> GetLexemesFrom(string filePath)
         {
             var myStemResults = RunMyStem(filePath)
                 .Then(_ => Result.Of(ParseMyStemResult));
             if (myStemResults.IsSuccess)
-                File.Delete(TempPath);
+                File.Delete(_tempPath);
             return myStemResults;
         }
 
@@ -44,7 +44,7 @@ namespace TagCloud.TextProcessing
 
         private static IEnumerable<ILexeme?> ParseMyStemResult()
         {
-            return File.ReadAllText(TempPath)
+            return File.ReadAllText(_tempPath)
                 .Split("\n", StringSplitOptions.RemoveEmptyEntries)
                 .Select(JsonConvert.DeserializeObject<MyStemResultDto>)
                 .Select(MyStemResult.FromDto)
@@ -58,7 +58,7 @@ namespace TagCloud.TextProcessing
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.Arguments = $"{Arguments} {filepath} {TempPath}";
+            process.StartInfo.Arguments = $"{Arguments} {filepath} {_tempPath}";
             return process;
         }
     }
