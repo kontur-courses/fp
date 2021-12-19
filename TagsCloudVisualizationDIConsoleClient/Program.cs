@@ -22,6 +22,9 @@ namespace TagsCloudVisualizationDIConsoleClient
             var pathToFile = args.ElementAtOrDefault(0);
             var pathToSave = args.ElementAtOrDefault(1);
 
+            if (pathToSave == null)
+                throw new ArgumentException("incorrect path to save");
+
             var lastIndexOfSlashes = pathToSave.LastIndexOf('\\');
             var lastDotIndex = pathToSave.LastIndexOf('.');
             var safeDirectory = pathToSave.Remove(lastIndexOfSlashes);
@@ -67,14 +70,16 @@ namespace TagsCloudVisualizationDIConsoleClient
             return File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList();
         }
 
-
+        
         private static void CheckArguments(string pathToFile, string pathToSafeFile)
         {
             if (!File.Exists(pathToFile))
                 throw new Exception($"Giving path to file: {pathToFile} is not valid, NOTSYSTEM");
-
+            /*
             if (!Directory.Exists(pathToSafeFile))
                 throw new Exception($"Giving path to safefile: {pathToSafeFile} is not valid, NOTSYSTEM");
+            */
         }
+        
     }
 }

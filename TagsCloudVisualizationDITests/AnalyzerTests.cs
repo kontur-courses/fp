@@ -18,7 +18,7 @@ namespace TagsCloudVisualizationDITests
         {
             var settings = new DefaultSettingsConfiguration(string.Empty, string.Empty, ImageFormat.Png, null);
             var analyzer = ((ISettingsConfiguration)settings).Analyzer;
-            Action invoking = () => analyzer.InvokeMystemAnalization();
+            Action invoking = () => analyzer.InvokeMystemAnalizationResult();
             invoking.Should().NotThrow();
 
         }
@@ -32,8 +32,12 @@ namespace TagsCloudVisualizationDITests
             var settings = (ISettingsConfiguration)new DefaultSettingsConfiguration(path, savePath, ImageFormat.Png, null);
             var analyzer = settings.Analyzer;
             var reader = settings.FileReader;
-            analyzer.InvokeMystemAnalization();
+            analyzer.InvokeMystemAnalizationResult();
             var words = reader.ReadText();
+            if (words.IsSuccess)
+            {
+
+            }
             var result = analyzer.GetAnalyzedWords(words).ToList();
             var expectedResult = new List<Word>
             {

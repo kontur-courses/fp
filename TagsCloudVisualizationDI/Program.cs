@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -26,6 +27,7 @@ namespace TagsCloudVisualizationDI
                 PartsOfSpeech.SpeechPart.PART, PartsOfSpeech.SpeechPart.PR,
             };
             var myStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
+            //var myStemPath = "U:\\" + "\\mystAm.exe";
             var saveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
             var arguments = "-lndw -ig";
             var center = new Point(2500, 2500);
@@ -80,13 +82,21 @@ namespace TagsCloudVisualizationDI
             var elementSize = new Size(100, 100);
             var format = imageFormat;
             var visualization = buildContainer.Resolve<IVisualization>();
-            
-
-            analyzer.InvokeMystemAnalization();
 
 
-            var wordsFromFile = reader.ReadText();
-            var analyzedWords = analyzer.GetAnalyzedWords(wordsFromFile).ToList();
+
+
+            var invokeResult = analyzer.InvokeMystemAnalizationResult();
+            if (!invokeResult.IsSuccess)
+                PrintAboutFail(invokeResult.Error);
+
+
+
+            var wordsFromFile = reader.ReadText().OnFail(er => PrintAboutFail(er));
+
+
+
+            List<Word> analyzedWords = analyzer.GetAnalyzedWords(wordsFromFile).ToList();
             var normalyzedWords = NormalyzeWords(analyzedWords, normalizer).ToList();
             var formedElements = filler.FormStatisticElements(elementSize, normalyzedWords);
             var sizedElements = visualization.FindSizeForElements(formedElements);
@@ -94,7 +104,12 @@ namespace TagsCloudVisualizationDI
                 OrderByDescending(el => el.WordElement.CntOfWords).ToList();
             var positionedElements = filler.MakePositionElements(sortedElements);
 
-            visualization.DrawAndSaveImage(positionedElements, saver.GetSavePath(), format);
+            visualization.DrawAndSaveImage(positionedElements, saver.GetSavePath(), format).OnFail(er => PrintAboutFail(er));
+        }
+
+        private static void PrintAboutFail(string error)
+        {
+            throw new Exception(error);
         }
 
         private static IEnumerable<Word> NormalyzeWords(IEnumerable<Word> analyzedWords, INormalizer normalizer)

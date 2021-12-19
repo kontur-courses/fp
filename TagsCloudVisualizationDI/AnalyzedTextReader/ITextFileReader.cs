@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 namespace TagsCloudVisualizationDI.AnalyzedTextReader
 {
@@ -7,6 +9,6 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
         public string PreAnalyzedTextPath { get; }
 
         public Encoding ReadingEncoding { get; }
-        string[] ReadText();
+        Result<IEnumerable<string>> ReadText();
     }
 }
