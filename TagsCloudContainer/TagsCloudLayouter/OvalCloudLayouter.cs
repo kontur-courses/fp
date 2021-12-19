@@ -1,7 +1,9 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Extensions;
+using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.TagsCloudLayouter
 {
     public class OvalCloudLayouter : ICloudLayouter
     {
@@ -103,6 +105,6 @@ namespace TagsCloudContainer
             return rectangle.Location.Y
                 + Math.Sign(Cloud.Center.Y
                 - rectangle.Location.Y - rectangle.Size.Height / 2);
-        }       
+        }
     }
 }

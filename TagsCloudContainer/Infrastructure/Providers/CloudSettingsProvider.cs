@@ -1,7 +1,9 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.TagPainters;
+using TagsCloudContainer.TagsCloudLayouter.Spirals;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Infrastructure.Providers
 {
     public static class CloudSettingsProvider
     {
@@ -14,10 +16,10 @@ namespace TagsCloudContainer
             };
         }
 
-        private static Settings settings = SettingsProvider.GetSettings();
+        private static readonly Settings.Settings settings = SettingsProvider.GetSettings();
 
-        private static ITagPainter painter = new PrimaryTagPainter(settings);
+        private static readonly ITagPainter painter = new PrimaryTagPainter(settings);
 
-        private static ISpiral spiral = new ArchimedeanSpiral(settings);
+        private static readonly ISpiral spiral = new ArchimedeanSpiral(settings);
     }
 }

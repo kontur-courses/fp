@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer.Infrastructure
+namespace TagsCloudContainer.Infrastructure.Settings
 {
     public class CloudSettings
     {

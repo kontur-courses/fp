@@ -1,7 +1,14 @@
 ﻿using LightInject;
+using TagsCloudContainer.Appliers;
+using TagsCloudContainer.ConsoleInterface;
+using TagsCloudContainer.ConsoleInterface.ConsoleActions;
 using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Parsers;
+using TagsCloudContainer.TagPainters;
+using TagsCloudContainer.TagsCloudLayouter;
+using TagsCloudContainer.TagsCloudLayouter.Spirals;
 
-namespace TagsCloudContainer.Infrastructure
+namespace TagsCloudContainer.Infrastructure.Providers
 {
     public static class ContainerProvider
     {

@@ -1,7 +1,8 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Settings;
+using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer;
+namespace TagsCloudContainer.TagPainters;
 
 public class GradientTagPainter : ITagPainter
 {
@@ -26,7 +27,7 @@ public class GradientTagPainter : ITagPainter
         {
             var color = Color.FromArgb(
                 primary.R + (int)(deltaR * tag.Frequency),
-                primary.G + (int)(deltaG * tag.Frequency), 
+                primary.G + (int)(deltaG * tag.Frequency),
                 primary.B + (int)(deltaB * tag.Frequency));
             yield return new PaintedTag(tag, color);
         }

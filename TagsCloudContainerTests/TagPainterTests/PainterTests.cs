@@ -1,15 +1,16 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Linq;
-using TagsCloudContainer.Infrastructure;
+using FluentAssertions;
+using NUnit.Framework;
+using TagsCloudContainer.Infrastructure.Settings;
+using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.TagPainterTests
 {
     internal abstract class PainterTests
     {
-        private Tag[] tags = new[]
+        private readonly Tag[] tags = new[]
             {
                 new Tag(0.3, "First"),
                 new Tag(0.5, "Second"),

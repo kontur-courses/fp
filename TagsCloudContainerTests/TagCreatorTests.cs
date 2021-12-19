@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
 using TagsCloudContainer;
 using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainerTests
@@ -34,7 +34,7 @@ namespace TagsCloudContainerTests
         public void Should_ComposeTagsCorrectly()
         {
             var result = tagCreator.CreateTags(words);
-            var expected = new [] { 
+            var expected = new[] {
                 new Tag(0.5, "music"),
                 new Tag(0.25, "guitar"),
                 new Tag(0.25, "string")

@@ -1,4 +1,5 @@
 ﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Infrastructure.Tags;
 
 namespace TagsCloudContainer.Interfaces;
 

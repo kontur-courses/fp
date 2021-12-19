@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer;
+﻿namespace TagsCloudContainer.Infrastructure;
 
 public class None
 {
@@ -26,7 +26,7 @@ public struct Result<T>
 
     public T GetValueOrThrow()
     {
-        if (IsSuccess) 
+        if (IsSuccess)
             return Value;
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }

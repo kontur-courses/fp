@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.Drawing;
+using FluentAssertions;
 using NUnit.Framework;
-using System.Drawing;
-using TagsCloudContainer;
+using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.SpiralTests
 {
     internal abstract class SpiralTests
     {

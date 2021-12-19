@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System.IO;
 using TagsCloudContainer;
 using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Infrastructure.Providers;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainerTests

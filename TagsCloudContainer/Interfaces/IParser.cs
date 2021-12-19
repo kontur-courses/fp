@@ -1,4 +1,6 @@
-﻿namespace TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Infrastructure;
+
+namespace TagsCloudContainer.Interfaces;
 
 public interface IParser
 {

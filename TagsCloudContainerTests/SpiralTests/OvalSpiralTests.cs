@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
-using TagsCloudContainer;
+using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudContainer.TagsCloudLayouter.Spirals;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.SpiralTests
 {
     internal class OvalSpiralTests : SpiralTests
     {

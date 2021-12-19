@@ -1,14 +1,16 @@
 ﻿using System.Drawing.Imaging;
-using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Filters;
+using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Preprocessors;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Infrastructure.Providers
 {
     public static class SettingsProvider
     {
-        public static Settings GetSettings()
+        public static Settings.Settings GetSettings()
         {
-            return new Settings
+            return new Settings.Settings
             {
                 Palette = palette,
                 Font = font,
@@ -19,28 +21,28 @@ namespace TagsCloudContainer
             };
         }
 
-        private static Palette palette = new Palette
+        private static readonly Palette palette = new Palette
         {
             Background = Color.Black,
             Primary = Color.Orange,
         };
 
-        private static Font font = new Font(FontFamily.GenericMonospace, 20);
+        private static readonly Font font = new Font(FontFamily.GenericMonospace, 20);
 
-        private static Size imageSize = new Size(1000, 1000);
+        private static readonly Size imageSize = new Size(1000, 1000);
 
-        private static IPreprocessor[] preprocessors = new IPreprocessor[]
+        private static readonly IPreprocessor[] preprocessors = new IPreprocessor[]
         {
             new TrimPreprocessor(),
             new MarkPreprocessor(),
             new LowercasePreprocessor()
         };
 
-        private static IFilter[] filters = new IFilter[]
+        private static readonly IFilter[] filters = new IFilter[]
         {
             new ExcludeFilter()
         };
 
-        private static ImageFormat format = ImageFormat.Png;
+        private static readonly ImageFormat format = ImageFormat.Png;
     }
 }

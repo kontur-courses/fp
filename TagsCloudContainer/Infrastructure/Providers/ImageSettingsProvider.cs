@@ -1,6 +1,6 @@
 ﻿using System.Drawing.Imaging;
 
-namespace TagsCloudContainer.Infrastructure;
+namespace TagsCloudContainer.Infrastructure.Providers;
 
 public static class ImageSettingsProvider
 {

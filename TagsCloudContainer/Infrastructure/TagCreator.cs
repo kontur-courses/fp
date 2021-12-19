@@ -1,7 +1,8 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Extensions;
+using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Infrastructure
 {
     public class TagCreator : ITagCreator
     {
@@ -14,6 +15,7 @@ namespace TagsCloudContainer
 
         public Result<IEnumerable<Tag>> CreateTags(IEnumerable<string> words)
         {
+            wordStatistics = new Dictionary<string, int>();
             CalculateStatistics(words);
 
             if (wordCount < 1)

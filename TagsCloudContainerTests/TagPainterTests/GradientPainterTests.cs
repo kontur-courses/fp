@@ -1,8 +1,9 @@
-﻿using NUnit.Framework;
-using System;
-using TagsCloudContainer;
+﻿using System;
+using NUnit.Framework;
+using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.TagPainterTests
 {
     internal class GradientPainterTests : PainterTests
     {
@@ -13,7 +14,7 @@ namespace TagsCloudContainerTests
             palette = settings.Palette;
             painter = new GradientTagPainter(settings);
             selector = tag => Math.Abs(tag.Color.R - palette.Primary.R);
-            expected = new[] { "Third" , "First", "Second" };
+            expected = new[] { "Third", "First", "Second" };
         }
     }
 }

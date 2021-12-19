@@ -1,15 +1,15 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.ConsoleInterface.ConsoleActions
 {
     public class CloudSettingsAction : IUIAction
     {
-        private CloudSettings cloudSettings;
-        private Dictionary<string, ITagPainter> painterSelector;
-        private Dictionary<string, ISpiral> spiralSelector;
+        private readonly CloudSettings cloudSettings;
+        private readonly Dictionary<string, ITagPainter> painterSelector;
+        private readonly Dictionary<string, ISpiral> spiralSelector;
 
-        public CloudSettingsAction(CloudSettings cloudSettings, 
+        public CloudSettingsAction(CloudSettings cloudSettings,
             ITagPainter[] painters, ISpiral[] spirals)
         {
             this.cloudSettings = cloudSettings;

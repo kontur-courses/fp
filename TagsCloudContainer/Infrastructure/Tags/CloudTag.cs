@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace TagsCloudContainer.Infrastructure;
+﻿namespace TagsCloudContainer.Infrastructure.Tags;
 
 public record CloudTag : PaintedTag
 {

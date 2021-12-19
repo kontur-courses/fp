@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
-using TagsCloudContainer;
+using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.TagPainterTests
 {
     internal class FrequencyPainterTests : PainterTests
     {

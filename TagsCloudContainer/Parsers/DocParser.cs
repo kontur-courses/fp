@@ -1,7 +1,8 @@
-﻿using TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Interfaces;
 using Application = Microsoft.Office.Interop.Word.Application;
 
-namespace TagsCloudContainer 
+namespace TagsCloudContainer.Parsers
 {
     public class DocParser : IParser
     {

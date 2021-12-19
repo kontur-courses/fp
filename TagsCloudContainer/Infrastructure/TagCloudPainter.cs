@@ -1,16 +1,16 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer;
+namespace TagsCloudContainer.Infrastructure;
 
 public class TagCloudPainter
 {
     private const int AddedImageSize = 300;
-    private ICloudLayouter layouter;
-    private Settings settings;
+    private readonly ICloudLayouter layouter;
+    private readonly Settings.Settings settings;
 
     public TagCloudPainter(ICloudLayouter layouter,
-        Settings settings)
+        Settings.Settings settings)
     {
         this.layouter = layouter;
         this.settings = settings;
@@ -19,7 +19,7 @@ public class TagCloudPainter
     public string Paint(IEnumerable<PaintedTag> tags)
     {
         var cloudTags = PutCloudTags(tags).ToList();
-        var neededSize = CalculateCoverageSize(cloudTags.Select(tag => tag.Rectangle)) 
+        var neededSize = CalculateCoverageSize(cloudTags.Select(tag => tag.Rectangle))
             + new Size(AddedImageSize, AddedImageSize);
         var imageOffset = neededSize / 2 - new Size(settings.Center);
         var scaleX = settings.ImageSize.Width / (float)neededSize.Width;
@@ -27,7 +27,7 @@ public class TagCloudPainter
         return DrawTags(scaleX, scaleY, cloudTags, imageOffset);
     }
 
-    private string DrawTags(float scaleX, float scaleY, 
+    private string DrawTags(float scaleX, float scaleY,
         IEnumerable<CloudTag> cloudTags, Size imageOffset)
     {
         var bm = new Bitmap(settings.ImageSize.Height, settings.ImageSize.Width);

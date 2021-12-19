@@ -1,7 +1,7 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer;
+namespace TagsCloudContainer.TagPainters;
 
 public class RandomTagPainter : ITagPainter
 {

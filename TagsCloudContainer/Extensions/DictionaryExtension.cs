@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer;
+﻿namespace TagsCloudContainer.Extensions;
 
 public static class DictionaryExtension
 {

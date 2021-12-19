@@ -1,5 +1,6 @@
 ﻿using LightInject;
 using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Infrastructure.Providers;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer

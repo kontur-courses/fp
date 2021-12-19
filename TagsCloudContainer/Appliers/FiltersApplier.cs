@@ -1,11 +1,11 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.Appliers
 {
     public class FiltersApplier : IFiltersApplier
     {
-        private IFilter[] filters;
+        private readonly IFilter[] filters;
 
         public FiltersApplier(Settings settings)
         {

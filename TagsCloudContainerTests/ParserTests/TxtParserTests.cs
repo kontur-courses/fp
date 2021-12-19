@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using TagsCloudContainer;
+using TagsCloudContainer.Parsers;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.ParserTests
 {
     internal class TxtParserTests : ParserTests
     {

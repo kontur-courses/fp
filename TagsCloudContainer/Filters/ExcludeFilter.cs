@@ -1,10 +1,10 @@
 ﻿using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer;
+namespace TagsCloudContainer.Filters;
 
 public class ExcludeFilter : IFilter
 {
-    private HashSet<string> wordsToExclude = new()
+    private readonly HashSet<string> wordsToExclude = new()
     {
         "and",
         "to",

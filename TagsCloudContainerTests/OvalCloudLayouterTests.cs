@@ -1,11 +1,13 @@
-﻿using NUnit.Framework;
-using FluentAssertions;
-using System.Drawing;
-using TagsCloudContainer;
+﻿using FluentAssertions;
+using FluentAssertions.Extensions;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using FluentAssertions.Extensions;
+using TagsCloudContainer;
+using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudContainer.TagsCloudLayouter;
 
 namespace TagsCloudContainerTests
 {

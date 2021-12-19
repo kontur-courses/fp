@@ -1,16 +1,18 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Linq;
-using TagsCloudContainer;
-using TagsCloudContainer.Infrastructure;
+using FluentAssertions;
+using NUnit.Framework;
+using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudContainer.Infrastructure.Settings;
+using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.TagPainterTests
 {
     internal class RandomPainterTests
     {
-        private Tag[] tags = new[]
+        private readonly Tag[] tags = new[]
             {
                 new Tag(0.2, "First"),
                 new Tag(0.4, "Second"),
@@ -20,7 +22,7 @@ namespace TagsCloudContainerTests
             };
         protected ITagPainter painter;
         protected Palette palette;
-        protected Func<PaintedTag, int> selector;      
+        protected Func<PaintedTag, int> selector;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -36,8 +38,8 @@ namespace TagsCloudContainerTests
         {
             var result = painter.Paint(tags);
 
-            result.All(tag => result.All(other 
-                => other.Color != tag.Color 
+            result.All(tag => result.All(other
+                => other.Color != tag.Color
                 || other.Text == tag.Text)).Should().BeTrue();
         }
     }

@@ -1,6 +1,7 @@
-﻿using TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer 
+namespace TagsCloudContainer.Parsers
 {
     public class TxtParser : IParser
     {

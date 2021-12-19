@@ -1,15 +1,13 @@
-﻿using FluentAssertions;
+﻿using System.IO;
+using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.IO;
-using System.Linq;
 using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests.ParserTests
 {
     internal abstract class ParserTests
     {
-        private string textsFolder = Path.GetFullPath(@"..\..\..\texts");
+        private readonly string textsFolder = Path.GetFullPath(@"..\..\..\texts");
         protected IParser parser;
         protected string format;
 

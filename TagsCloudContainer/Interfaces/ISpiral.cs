@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace TagsCloudContainer.Interfaces;
+﻿namespace TagsCloudContainer.Interfaces;
 
 public interface ISpiral
 {

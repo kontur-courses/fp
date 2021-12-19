@@ -1,10 +1,10 @@
 ﻿using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer;
+namespace TagsCloudContainer.ConsoleInterface;
 
 public class ConsoleUI : IUI
 {
-    private Dictionary<string, IUIAction> actions;
+    private readonly Dictionary<string, IUIAction> actions;
 
     public ConsoleUI(IUIAction[] uiActions)
     {
