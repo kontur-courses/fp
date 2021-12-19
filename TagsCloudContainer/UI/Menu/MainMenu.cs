@@ -31,8 +31,7 @@ namespace TagsCloudContainer.UI.Menu
         public void ChooseCategory()
         {
             GetCategories();
-            while (true) 
-                handler.Handle(ChooseCategoryAction);
+            handler.Handle(ChooseCategoryAction);
         }
 
         private void ChooseCategoryAction()
@@ -42,10 +41,7 @@ namespace TagsCloudContainer.UI.Menu
                 Environment.Exit(0);
             if (int.TryParse(keyStr, out var key))
                 if (categories.ContainsKey(key))
-                {
                     categories[key].ChooseMenuItem();
-                    GetCategories();
-                }
                 else
                     throw new Exception("No Category with that key");
             else

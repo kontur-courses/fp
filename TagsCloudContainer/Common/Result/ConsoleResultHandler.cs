@@ -18,10 +18,12 @@ namespace TagsCloudContainer.Common.Result
         {
             while (true)
             {
+                writer.WriteLine();
                 var result = Result.OfAction(action, error);
-                if(result.IsSuccess)
+                writer.WriteLine();
+                if (result.IsSuccess)
                     return;
-                writer.WriteLine(result.Error);
+                writer.WriteLine(result.Error + "\n");
             }
         }
 

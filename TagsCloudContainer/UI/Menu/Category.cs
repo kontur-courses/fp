@@ -37,19 +37,22 @@ namespace TagsCloudContainer.UI.Menu
 
         private void ChooseMenuItemAction()
         {
-            var keyStr = handler.GetText();
-            if (keyStr == "Q")
-                return;
-            if (int.TryParse(keyStr, out var key))
-                if (items.ContainsKey(key))
-                {
-                    items[key].Perform();
-                    GetMenuItems();
-                }
+            while (true)
+            {
+                var keyStr = handler.GetText();
+                if (keyStr == "Q")
+                    return;
+                if (int.TryParse(keyStr, out var key))
+                    if (items.ContainsKey(key))
+                    {
+                        items[key].Perform();
+                        GetMenuItems();
+                    }
+                    else
+                        throw new Exception("No menu item with that key");
                 else
-                    throw new Exception("No menu item with that key");
-            else
-                throw new Exception("Key should be int!");
+                    throw new Exception("Key should be int!");
+            }
         }
     }
 }
