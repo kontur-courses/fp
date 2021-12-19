@@ -27,7 +27,7 @@ namespace TagsCloudVisualizationDI.TextAnalization.Visualization
             using var image = new Bitmap(ImageSize.Width, ImageSize.Height);
             var drawImage = DrawRectangles(image, elements);
 
-            return Result.OfAction(() => drawImage.Save(savePath, format), $"Invalid save path: {savePath}");
+            return Result.OfAction(() => drawImage.Save(savePath, format), $"Error during saving");
             /*
             try
             {

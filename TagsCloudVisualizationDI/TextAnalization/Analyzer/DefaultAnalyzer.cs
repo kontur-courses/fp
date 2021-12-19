@@ -51,9 +51,9 @@ namespace TagsCloudVisualizationDI.TextAnalization.Analyzer
             return false;
         }
 
-        public IEnumerable<Word> GetAnalyzedWords(Result<IEnumerable<string>> words)
+        public IEnumerable<Word> GetAnalyzedWords(IEnumerable<string> words)
         {
-            foreach (var word in words.Value)
+            foreach (var word in words)
             {
                 if (CheckWord(word, out string content, out PartsOfSpeech.SpeechPart type))
                 {

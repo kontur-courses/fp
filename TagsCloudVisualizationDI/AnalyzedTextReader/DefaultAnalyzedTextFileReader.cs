@@ -5,9 +5,9 @@ using System.Text;
 
 namespace TagsCloudVisualizationDI.AnalyzedTextReader
 {
-    public class DefaultTextFileReader : ITextFileReader
+    public class DefaultAnalyzedTextFileReader : IAnalyzedTextFileReader
     {
-        public DefaultTextFileReader(string preAnalyzedTextPath, Encoding encoding)
+        public DefaultAnalyzedTextFileReader(string preAnalyzedTextPath, Encoding encoding)
         {
             PreAnalyzedTextPath = preAnalyzedTextPath;
             ReadingEncoding = encoding;
@@ -18,8 +18,12 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
         public Encoding ReadingEncoding { get; }
 
 
-        public Result<IEnumerable<string>> ReadText()
+        public IEnumerable<string> ReadText()
         {
+            return File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding);
+
+
+            /*
             if (File.Exists(PreAnalyzedTextPath))
             {
                 return Result.Ok(File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding) as IEnumerable<string>);
@@ -27,6 +31,7 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
 
             //throw new FileNotFoundException($"Giving path {PreAnalyzedTextPath} is not valid");
             return Result.Fail<IEnumerable<string>>($"Giving path {PreAnalyzedTextPath} is not valid");
+            */
         }
     }
 }

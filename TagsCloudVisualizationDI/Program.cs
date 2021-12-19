@@ -9,7 +9,6 @@ using System.Text;
 using TagsCloudVisualizationDI.AnalyzedTextReader;
 using TagsCloudVisualizationDI.Layouter.Filler;
 using TagsCloudVisualizationDI.Saving;
-using TagsCloudVisualizationDI.Settings;
 using TagsCloudVisualizationDI.TextAnalization;
 using TagsCloudVisualizationDI.TextAnalization.Analyzer;
 using TagsCloudVisualizationDI.TextAnalization.Normalizer;
@@ -19,23 +18,47 @@ namespace TagsCloudVisualizationDI
 {
     public class Program
     {
-        public static void Main(string pathToFile, string pathToSave, ImageFormat imageFormat, List<string> excludedWordsList)
+        private const string Arguments = "-lndw -ig";
+        private const int Multiplier = 25;
+        private static readonly Point Center = new Point(2500, 2500);
+        private static readonly SolidBrush Brush = new SolidBrush(Color.Black);
+        private static readonly Font Font = new Font("Times", 15);
+        private static readonly Size ImageSize = new Size(5000, 5000);
+        private static readonly Encoding Encoding = Encoding.UTF8;
+
+        private static readonly string MyStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
+        private static readonly string SaveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
+
+
+        public static void Main(string pathToFile, string pathToSave, Result<ImageFormat> imageFormat, Result<List<string>> excludedWordsList)
         {
             var excludedSpeechParts = new[]
             {
                 PartsOfSpeech.SpeechPart.CONJ, PartsOfSpeech.SpeechPart.INTJ,
                 PartsOfSpeech.SpeechPart.PART, PartsOfSpeech.SpeechPart.PR,
             };
-            var myStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
-            //var myStemPath = "U:\\" + "\\mystAm.exe";
-            var saveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
-            var arguments = "-lndw -ig";
-            var center = new Point(2500, 2500);
-            var brush = new SolidBrush(Color.Black);
-            var textFont = new Font("Times", 15);
-            var imageSize = new Size(5000, 5000);
-            var multiplier = 25;
-            var encoding = Encoding.UTF8;
+
+            imageFormat.OnFail(error => PrintAboutFail(error));
+            excludedWordsList.OnFail(error => PrintAboutFail(error));
+
+
+            //var myStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
+            //var saveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
+
+
+            Checker.CheckPathToFile(pathToFile);
+            Checker.CheckPathToDirectory(pathToSave.Substring(0, pathToSave.LastIndexOf("\\")+1));
+            Checker.CheckPathToFile(MyStemPath);
+            Checker.CheckPathToFile(SaveAnalizationPath);
+
+
+            //var arguments = "-lndw -ig";
+            //var center = new Point(2500, 2500);
+            //var brush = new SolidBrush(Color.Black);
+            //var textFont = new Font("Times", 15);
+            //var imageSize = new Size(5000, 5000);
+            //var multiplier = 25;
+            //var encoding = Encoding.UTF8;
 
 
 
@@ -45,30 +68,30 @@ namespace TagsCloudVisualizationDI
 
             containerBuilder.RegisterType<DefaultSaver>().As<ISaver>()
                 .WithParameter("savePath", pathToSave)
-                .WithParameter("imageFormat", imageFormat ?? ImageFormat.Png);
+                .WithParameter("imageFormat", imageFormat.Value ?? ImageFormat.Png);
 
             
             containerBuilder.RegisterType<DefaultAnalyzer>().As<IAnalyzer>()
                 .WithParameter("excludedSpeechParts", excludedSpeechParts)
-                .WithParameter("excludedWords", excludedWordsList ?? new List<string>())
+                .WithParameter("excludedWords", excludedWordsList.Value ?? new List<string>())
                 .WithParameter("filePath", pathToFile)
-                .WithParameter("saveAnalizationPath", saveAnalizationPath)
-                .WithParameter("mystemPath", myStemPath)
-                .WithParameter("arguments", arguments);
+                .WithParameter("saveAnalizationPath", SaveAnalizationPath)
+                .WithParameter("mystemPath", MyStemPath)
+                .WithParameter("arguments", Arguments);
 
             containerBuilder.RegisterType<CircularCloudLayouterForRectanglesWithText>().As<IContentFiller>()
-                .WithParameter("center", center);
+                .WithParameter("center", Center);
 
 
             containerBuilder.RegisterType<DefaultVisualization>().As<IVisualization>()
-                .WithParameter("brush", brush)
-                .WithParameter("font", textFont)
-                .WithParameter("imageSize", imageSize)
-                .WithParameter("sizeMultiplier", multiplier);
+                .WithParameter("brush", Brush)
+                .WithParameter("font", Font)
+                .WithParameter("imageSize", ImageSize)
+                .WithParameter("sizeMultiplier", Multiplier);
 
-            containerBuilder.RegisterType<DefaultTextFileReader>().As<ITextFileReader>()
-                .WithParameter("preAnalyzedTextPath", saveAnalizationPath)
-                .WithParameter("encoding", encoding);
+            containerBuilder.RegisterType<DefaultAnalyzedTextFileReader>().As<IAnalyzedTextFileReader>()
+                .WithParameter("preAnalyzedTextPath", SaveAnalizationPath)
+                .WithParameter("encoding", Encoding);
 
 
 
@@ -77,26 +100,28 @@ namespace TagsCloudVisualizationDI
             var analyzer = buildContainer.Resolve<IAnalyzer>();
             var normalizer = buildContainer.Resolve<INormalizer>();
             var filler = buildContainer.Resolve<IContentFiller>();
-            var reader = buildContainer.Resolve<ITextFileReader>();
+            var reader = buildContainer.Resolve<IAnalyzedTextFileReader>();
             var saver = buildContainer.Resolve<ISaver>();
             var elementSize = new Size(100, 100);
-            var format = imageFormat;
+            var format = imageFormat.Value;
             var visualization = buildContainer.Resolve<IVisualization>();
 
 
 
 
             var invokeResult = analyzer.InvokeMystemAnalizationResult();
+
+
             if (!invokeResult.IsSuccess)
                 PrintAboutFail(invokeResult.Error);
 
 
 
-            var wordsFromFile = reader.ReadText().OnFail(er => PrintAboutFail(er));
+            var wordsFromFile = reader.ReadText();
 
 
 
-            List<Word> analyzedWords = analyzer.GetAnalyzedWords(wordsFromFile).ToList();
+            var analyzedWords = analyzer.GetAnalyzedWords(wordsFromFile).ToList();
             var normalyzedWords = NormalyzeWords(analyzedWords, normalizer).ToList();
             var formedElements = filler.FormStatisticElements(elementSize, normalyzedWords);
             var sizedElements = visualization.FindSizeForElements(formedElements);

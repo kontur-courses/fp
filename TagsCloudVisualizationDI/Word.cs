@@ -9,8 +9,6 @@ namespace TagsCloudVisualizationDI
 
         public Word(string word)
         {
-            if (word.Split(' ').Length != 1)
-                throw new ArgumentException();
             WordText = word;
             CntOfWords = 1;
         }

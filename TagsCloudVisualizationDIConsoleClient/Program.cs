@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using TagsCloudVisualizationDI;
 
 namespace TagsCloudVisualizationDIConsoleClient
 {
@@ -25,13 +26,8 @@ namespace TagsCloudVisualizationDIConsoleClient
             if (pathToSave == null)
                 throw new ArgumentException("incorrect path to save");
 
-            var lastIndexOfSlashes = pathToSave.LastIndexOf('\\');
             var lastDotIndex = pathToSave.LastIndexOf('.');
-            var safeDirectory = pathToSave.Remove(lastIndexOfSlashes);
-            CheckArguments(pathToFile, safeDirectory);
-
-            var possibleFormat =
-                pathToSave.Substring(lastDotIndex);
+            var possibleFormat = pathToSave.Substring(lastDotIndex);
 
             var pathWithoutFormat = pathToSave.Substring(0, lastDotIndex);
 
@@ -44,9 +40,9 @@ namespace TagsCloudVisualizationDIConsoleClient
             TagsCloudVisualizationDI.Program.Main(pathToFile, pathWithoutFormat, imageFormat, excludedWordList);
         }
 
-        private static ImageFormat CheckPossibleFormat(string possibleFormat)
+        private static Result<ImageFormat> CheckPossibleFormat(string possibleFormat)
         {
-            return (possibleFormat.ToLower()) switch
+            return Result.Of(() => possibleFormat.ToLower() switch
             {
                 ".png" => ImageFormat.Png,
                 ".jpeg" => ImageFormat.Jpeg,
@@ -56,11 +52,12 @@ namespace TagsCloudVisualizationDIConsoleClient
                 ".ico" => ImageFormat.Icon,
                 ".gif" => ImageFormat.Gif,
                 _ => ImageFormat.Png,
-            };
+            });
         }
 
-        private static List<string> MakeExcludeWordList(string excludedWordsDocumentPath)
+        private static Result<List<string>> MakeExcludeWordList(string excludedWordsDocumentPath)
         {
+            /*
             if (excludedWordsDocumentPath == null)
                 return null;
 
@@ -68,18 +65,9 @@ namespace TagsCloudVisualizationDIConsoleClient
                 throw new Exception($"Giving path to file: {excludedWordsDocumentPath} is not valid, NOTSYSTEM");
 
             return File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList();
-        }
-
-        
-        private static void CheckArguments(string pathToFile, string pathToSafeFile)
-        {
-            if (!File.Exists(pathToFile))
-                throw new Exception($"Giving path to file: {pathToFile} is not valid, NOTSYSTEM");
-            /*
-            if (!Directory.Exists(pathToSafeFile))
-                throw new Exception($"Giving path to safefile: {pathToSafeFile} is not valid, NOTSYSTEM");
             */
+            return Result.Of(() =>File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList(),
+                $"Giving path to file: {excludedWordsDocumentPath} is not valid, NOTSYSTEM");
         }
-        
     }
 }

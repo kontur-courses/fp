@@ -62,6 +62,12 @@ namespace TagsCloudVisualizationDI
             }
         }
 
+        public static void OnFalse(bool checkResult, string errorMessage, Action<string> act)
+        {
+            if (!checkResult)
+                act.Invoke(errorMessage);
+        }
+
         public static Result<None> OfAction(Action f, string error = null)
         {
             try

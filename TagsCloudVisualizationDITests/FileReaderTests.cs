@@ -16,7 +16,7 @@ namespace TagsCloudVisualizationDITests
         public void ShouldNotThrowExceptionOnCoerrectPath()
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex1.TXT";
-            var fileReader = new DefaultTextFileReader(savePath, Encoding.UTF8);
+            var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
             Action read = () => fileReader.ReadText();
             read.Should().NotThrow();
         }
@@ -25,7 +25,7 @@ namespace TagsCloudVisualizationDITests
         public void ShouldThrowExceptionIfPathNotCorrect()
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "abraccadabras";
-            var fileReader = new DefaultTextFileReader(savePath, Encoding.UTF8);
+            var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
             Action read = () => fileReader.ReadText();
             read.Should().Throw<FileNotFoundException>();
         }
@@ -34,9 +34,9 @@ namespace TagsCloudVisualizationDITests
         public void ShouldBeCorrectCntOfLines()
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex1.TXT";
-            var fileReader = new DefaultTextFileReader(savePath, Encoding.UTF8);
+            var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
             var lines = fileReader.ReadText();
-            lines.GetValueOrThrow().ToList().Count.Should().Be(8);
+            lines.Count().Should().Be(8);
         }
     }
 }
