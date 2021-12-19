@@ -125,9 +125,6 @@ namespace App.Implementation
 
         private Result<CloudVisualization> GetCloudVisualization(ICloudLayouter layouter, IEnumerable<Tag> tags)
         {
-            if (imageSizeSettings.Size.Width <= 0 || imageSizeSettings.Size.Height <= 0)
-                return Result.Fail<CloudVisualization>("Incorrect image size.");
-
             var cloudRequiredSize = layouter.GetRectanglesBoundaryBox();
 
             var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using App;
 using App.Infrastructure;
 using App.Infrastructure.SettingsHolders;
@@ -10,25 +8,25 @@ namespace GuiClient
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
         private readonly ICloudGenerator cloudGenerator;
-        private readonly Lazy<MainForm> mainForm;
         private readonly IOutputResultSettingsHolder outputResultSettings;
         private readonly IImageSizeSettingsHolder sizeSettings;
 
         public PictureBoxImageHolder(
             IImageSizeSettingsHolder sizeSettings,
             IOutputResultSettingsHolder outputResultSettings,
-            ICloudGenerator cloudGenerator,
-            Lazy<MainForm> mainForm
-        )
+            ICloudGenerator cloudGenerator)
         {
             this.sizeSettings = sizeSettings;
             this.outputResultSettings = outputResultSettings;
-            this.mainForm = mainForm;
             this.cloudGenerator = cloudGenerator;
+            
         }
 
         public void GenerateImage()
         {
+            if (sizeSettings.Size.IsEmpty)
+                sizeSettings.Size = Parent.ClientSize;
+
             cloudGenerator.GenerateCloud()
                 .OnFail(error => MessageBox.Show(error))
                 .Then(ShowMessageIfCloudDidNotFit)
