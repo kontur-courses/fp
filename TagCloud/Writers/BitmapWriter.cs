@@ -7,11 +7,23 @@ namespace TagCloud.Writers
 {
     public class BitmapWriter : IFileWriter
     {
-        public void Write(Bitmap bitmap, string filename, string extension)
+        public void Write(Bitmap bitmap, string filename)
         {
-            var format = GetImageFormatByExtension(extension);
-            var env = Environment.CurrentDirectory + "\\";
-            bitmap.Save(env + filename, format);
+            using (bitmap)
+            {
+                var extension = GetExtensionsFromFileName(filename);
+                Console.WriteLine(extension);
+                var format = GetImageFormatByExtension(extension);
+                Console.WriteLine(format);
+                var env = Environment.CurrentDirectory + "\\";
+                bitmap.Save(env + filename, format);
+            }
+        }
+
+        private static string GetExtensionsFromFileName(string filename)
+        {
+            var lastDotIndex = filename.LastIndexOf('.');
+            return filename[(lastDotIndex + 1)..];
         }
 
         private ImageFormat GetImageFormatByExtension(string extension)

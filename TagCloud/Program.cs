@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using TagCloud.UI;
+using TagCloud.UI.Console;
 
 
 namespace TagCloud
@@ -8,8 +9,8 @@ namespace TagCloud
     {
         private static void Main(string[] args)
         {
-            using var container = DependencyConfigurator.GetConfiguredContainer();
-            var client = container.Resolve<IUserInterface>();
+            //using var container = DependencyConfigurator.GetConfiguredContainer();
+            var client = new ConsoleUI();
             client.Run(args);
         }
     }

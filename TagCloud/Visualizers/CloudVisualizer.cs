@@ -1,29 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagCloud.Creators;
+using TagCloud.Layouters;
 
 namespace TagCloud.Visualizers
 {
     public class CloudVisualizer : IVisualizer
     {
-        public Bitmap DrawCloud(IEnumerable<Tag> tags, 
-            IDrawingSettings drawingSettings, 
-            ITagColoring tagColoringAlgorithm)
+        private readonly DrawingSettings drawingSettings;
+        //private readonly ITagColoring tagColoring;
+
+        public CloudVisualizer(DrawingSettings drawingSettings)
         {
-            var bitmap = drawingSettings.Bitmap;
-            var graph = drawingSettings.Graphics;
+            this.drawingSettings = drawingSettings;
+        }
+
+        public Result<Bitmap> DrawCloud(IEnumerable<Tag> tags,
+            ITagColoringFactory tagColoringFactory)
+        {
+            Console.WriteLine(drawingSettings.Width);
+            Console.WriteLine(drawingSettings.Height);
+            var bitmap = new Bitmap(drawingSettings.Width, drawingSettings.Height);
+            using var graph = Graphics.FromImage(bitmap);
+            var tagColoringAlgorithm = tagColoringFactory
+                .Create(drawingSettings.AlgorithmName, drawingSettings.PenColors);
+            if (!tagColoringAlgorithm.IsSuccess)
+                return Result.Fail<Bitmap>(tagColoringAlgorithm.Error);
             var backgroundBrush = drawingSettings.BackgroundColor;
 
             graph.Clear(backgroundBrush);
 
             foreach (var tag in tags)
             {
-                var color = tagColoringAlgorithm.GetNextColor();
+                if (!tag.ContainingRectangle.InsideSize(bitmap.Size))
+                    return Result.Fail<Bitmap>("Tag is out of image");
+                var color = tagColoringAlgorithm.Value.GetNextColor();
                 using var brush = new SolidBrush(color);
                 DrawTag(tag, graph, drawingSettings.Font, brush);
             }
 
-            return bitmap;
+            return bitmap.AsResult();
         }
 
         private void DrawTag(Tag tag, Graphics graph, Font font, Brush pen)

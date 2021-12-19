@@ -9,26 +9,24 @@ namespace TagCloud.Visualizers
         public IEnumerable<Color> PenColors { get; }
         public Color BackgroundColor { get; }
         public Font Font { get; }
-        public Bitmap Bitmap { get; }
-        public Graphics Graphics { get; }
+        public int Width { get; }
+        public int Height { get; }
+        public string AlgorithmName { get; }
 
-        public DrawingSettings(IEnumerable<Color> penColor, Color backgroundColor, int width, int height, Font font)
+        public DrawingSettings(IEnumerable<Color> penColor, Color backgroundColor, Font font, int width, int height, string algorithmName)
         {
             PenColors = penColor;
             BackgroundColor = backgroundColor;
             Font = font;
-            if (width < 0 || height < 0)
-                throw new ArgumentException("Width and height should be positive but was: " +
-                                            $"Width = {width} " +
-                                            $"Height = {height}");
-            Bitmap = new Bitmap(width, height);
-            Graphics = Graphics.FromImage(Bitmap);
+            Width = width;
+            Height = height;
+            AlgorithmName = algorithmName;
         }
 
         public void Dispose()
         {
-            Bitmap?.Dispose();
-            Graphics?.Dispose();
+            //Bitmap?.Dispose();
+            //Graphics?.Dispose();
             Font?.Dispose();
             GC.SuppressFinalize(this);
         }

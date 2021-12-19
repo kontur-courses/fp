@@ -9,7 +9,9 @@ namespace TagCloud.Visualizers
         public IEnumerable<Color> PenColors { get; }
         public Color BackgroundColor { get; }
         public Font Font { get; }
-        public Bitmap Bitmap { get; }
-        public Graphics Graphics { get; }
+        public int Width { get; }
+        public int Height { get; }
+        //public Bitmap Bitmap { get; }
+        //public Graphics Graphics { get; }
     }
 }

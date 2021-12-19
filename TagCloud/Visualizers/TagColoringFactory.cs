@@ -12,9 +12,12 @@ namespace TagCloud.Visualizers
             {"random", colors => new RandomTagColoring(colors)}
         };
 
-        public ITagColoring Create(string algorithmName, IEnumerable<Color> colors)
+        public Result<ITagColoring> Create(string algorithmName, IEnumerable<Color> colors)
         {
-            return factory[algorithmName](colors);
+            if (factory.TryGetValue(algorithmName, out var algorithm))
+                return Result.Ok(algorithm(colors));
+            return Result.Fail<ITagColoring>("Wrong coloring algorithm name." +
+                                             $" Please use one of this {factory.Keys}");
         }
     }
 }

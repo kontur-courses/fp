@@ -19,17 +19,21 @@ namespace TagCloud.Layouters
             usedPoints = new HashSet<Point>();
         }
 
-        public IEnumerable<Tag> PutTags(IEnumerable<Tag> tags)
+        public Result<IEnumerable<Tag>> PutTags(IEnumerable<Tag> tags)
         {
-            return tags.Select(PutNextTag);
+            return Result.Of(() => tags
+                .OrderByDescending(tag => tag.Frequency)
+                .Select(PutNextTag));
         }
 
         private Tag PutNextTag(Tag tag)
         {
             if (tag.Size.Height <= 0 || tag.Size.Width <= 0)
+            {
                 throw new ArgumentException("Size Should be positive but was: " +
                                             $"Height: {tag.Size.Height}" +
                                             $"Width: {tag.Size.Width}");
+            }
 
             if (TryPutTagInCenter(tag, out var placedTag))
                 return placedTag;

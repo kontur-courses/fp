@@ -5,6 +5,6 @@ namespace TagCloud.Layouters
 {
     public interface ICloudLayouter
     {
-        IEnumerable<Tag> PutTags(IEnumerable<Tag> tags);
+        Result<IEnumerable<Tag>> PutTags(IEnumerable<Tag> tags);
     }
 }

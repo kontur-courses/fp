@@ -2,6 +2,6 @@
 {
     public interface IFileReaderFactory
     {
-        Result<IFileReader> Create(string fileExtension);
+        Result<IFileReader> Create(string filename);
     }
 }

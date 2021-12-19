@@ -66,7 +66,7 @@ namespace TagCloud
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message);
+                return Fail<None>(error ?? e.Message + e.StackTrace);
             }
         }
 

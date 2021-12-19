@@ -5,6 +5,6 @@ namespace TagCloud.Visualizers
 {
     public interface ITagColoringFactory
     {
-        ITagColoring Create(string algorithmName, IEnumerable<Color> colors);
+        Result<ITagColoring> Create(string algorithmName, IEnumerable<Color> colors);
     }
 }

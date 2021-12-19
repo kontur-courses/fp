@@ -15,13 +15,21 @@ namespace TagCloud.Readers
         
         public Result<IFileReader> Create(string fileExtension)
         {
-            if (fileReadersFactory.TryGetValue(fileExtension, out var reader))
+            //var fileExtension = GetExtensionsFromFileName(filename);
+
+            if (!fileReadersFactory.TryGetValue(fileExtension, out var reader))
                 return Result.Fail<IFileReader>("The tag cloud generator does not " +
                                                 "support the input file with the extension " +
                                                 $"\"{fileExtension}\".\n" +
                                                 $"Please make an introductory file with one of these extensions:" +
                                                 $"{fileReadersFactory.Keys.ToArray()}");
-            return fileReadersFactory[fileExtension];
+            return reader.AsResult();
+        }
+
+        private static string GetExtensionsFromFileName(string filename)
+        {
+            var lastDotIndex = filename.LastIndexOf('.');
+            return filename[(lastDotIndex + 1)..];
         }
     }
 }
