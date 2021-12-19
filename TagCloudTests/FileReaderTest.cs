@@ -18,9 +18,10 @@ namespace TagCloudTests
         }
 
         [Test]
-        public void ReadFile_ShouldThrows_WhenNoFile()
+        public void ReadFile_ShouldReturnsFailResult()
         {
-            Assert.Throws<FileNotFoundException>(() => reader.ReadFile("abc"));
+           reader.ReadFile("abc").Error.Should().Be("File abc not found." +
+                                                    " Please check that file exists");
         }
 
         [Test]
@@ -33,7 +34,7 @@ namespace TagCloudTests
             var lines = reader.ReadFile(Environment.CurrentDirectory + "\\test.txt");
 
             fileInfo.Delete();
-            lines.Should().Contain("test").And.Contain("text");
+            lines.GetValueOrThrow().Should().Contain("test").And.Contain("text");
         }
     }
 }

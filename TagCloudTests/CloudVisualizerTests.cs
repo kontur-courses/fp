@@ -11,14 +11,24 @@ namespace TagCloudTests
     public class CloudVisualizatorTests
     {
         private IVisualizer visualizer;
-        private IDrawingSettings drawingSettings;
+        private DrawingSettings drawingSettings;
 
         [SetUp]
         public void SetUp()
         {
-            drawingSettings = new DrawingSettings(new[] {Color.Blue}, Color.CornflowerBlue, 1200, 1200,
-                new Font(FontFamily.GenericSansSerif, 8));
-            visualizer = new CloudVisualizer();
+            //var settings = new DrawingSettings(new[] { Color.Blue },
+            //    Color.CornflowerBlue,
+            //    new Font(FontFamily.GenericSansSerif, 8),
+            //    200,
+            //    200,
+            //    "alt");
+            drawingSettings = new DrawingSettings(new[] { Color.Blue },
+                Color.CornflowerBlue,
+                new Font(FontFamily.GenericSansSerif, 8),
+                200,
+                200,
+                "alt");
+            visualizer = new CloudVisualizer(drawingSettings);
         }
 
         [TearDown]
@@ -33,25 +43,26 @@ namespace TagCloudTests
         [TestCase(-1, 1, TestName = "When Negative Width")]
         [TestCase(1, -1, TestName = "When Negative Height")]
         [TestCase(-1, -1, TestName = "When Negative Width And Height")]
-        public void DrawingSettingsCtor_ShouldThrows(int width, int height)
+        public void DrawCloud_ShouldReturns_FailResult(int width, int height)
         {
-            Assert.Throws<ArgumentException>(() => new DrawingSettings(new[] { Color.Blue },
-                Color.CornflowerBlue, width, height,
-                new Font(FontFamily.GenericSansSerif, 8)));
+            var settings = new DrawingSettings(new[] {Color.Blue},
+                Color.CornflowerBlue,
+                new Font(FontFamily.GenericSansSerif, 8),
+                width, height, "alt");
+            var visualizer = new CloudVisualizer(settings);
+
+            visualizer.DrawCloud(null, null).IsSuccess.Should().BeFalse();
         }
 
         [TestCaseSource(nameof(CasesForDrawRectangle))]
         public void DrawRectangle_Should(int pixelX, int pixelY, int expectedARGBColor)
         {
-            var settings = new DrawingSettings(new[] { Color.Blue },
-                Color.CornflowerBlue, 200, 200,
-                new Font(FontFamily.GenericSansSerif, 8));
             var tag = new Tag("bbbbbbb", 1, new Size(50, 50));
             var tags = new[] { new Tag(tag, new Rectangle(new Point(50, 50), new Size()))};
 
-            visualizer.DrawCloud(tags, settings, new AlternatingTagColoring(drawingSettings.PenColors));
+            var bitmap = visualizer.DrawCloud(tags, new TagColoringFactory());
 
-            settings.Bitmap.GetPixel(pixelX, pixelY).ToArgb()
+            bitmap.GetValueOrThrow().GetPixel(pixelX, pixelY).ToArgb()
                 .Should().Be(expectedARGBColor);
         }
 

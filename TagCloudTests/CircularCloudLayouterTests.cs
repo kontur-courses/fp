@@ -154,7 +154,7 @@ namespace TagCloudTests
         }
 
         internal IEnumerable<Tag> PutTags(IEnumerable<Tag> tags) 
-            => layouter.PutTags(tags);
+            => layouter.PutTags(tags).GetValueOrThrow();
         
     }
 }

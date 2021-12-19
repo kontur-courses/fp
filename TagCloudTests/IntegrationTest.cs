@@ -19,17 +19,6 @@ namespace TagCloudTests
         public void ClientRun_ShouldCreateFileWithTagCloud()
         {
             var args = new[] {"-i", "test.txt", "-o", "test.png"};
-            var fileReader = new FileReaderFactory();
-            var boringWordsFilter = new BoringWordsFilter();
-            var textAnalyzer = new TextAnalyzer(
-                new [] {boringWordsFilter}, 
-                new [] {new WordsToLowerConverter()},
-                new FrequencyAnalyzer());
-            var tagCreator = new TagCreatorFactory();
-            var tagColoringFactory = new TagColoringFactory();
-            var layouterFactory = new CircularCloudLayouterFactory();
-            var visualizer = new CloudVisualizer();
-            var fileWriter = new BitmapWriter();
             var fileInfo = new FileInfo(Environment.CurrentDirectory + "\\test.txt");
             using (var writer = fileInfo.CreateText())
                 writer.Write("test\ntext\ntest\ntext\na\nb");
@@ -37,15 +26,7 @@ namespace TagCloudTests
             using (var writer = fileWithBoringWords.CreateText())
                 writer.Write("a\nb");
 
-
-            var client = new ConsoleUI(fileReader, 
-                textAnalyzer,
-                boringWordsFilter,
-                layouterFactory, 
-                visualizer, 
-                fileWriter, 
-                tagCreator,
-                tagColoringFactory);
+            var client = new ConsoleUI();
             client.Run(args);
 
             var image = new FileInfo(Environment.CurrentDirectory + "\\test.txt");
