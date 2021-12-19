@@ -31,7 +31,8 @@ namespace TagCloud.Apps
             reader
                 .Read(configuration.WordsFilename)
                 .Then(templateCreator.GetTemplate)
-                .Then(t=>visualizer.Draw(t, configuration.OutputFilename));
+                .Then(t => visualizer.Draw(t, configuration.OutputFilename))
+                .OnFail(Console.WriteLine);
         }
     }
 }

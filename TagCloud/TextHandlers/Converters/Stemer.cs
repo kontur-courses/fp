@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NHunspell;
 
 namespace TagCloud.TextHandlers.Converters
@@ -7,9 +8,11 @@ namespace TagCloud.TextHandlers.Converters
     {
         private readonly Hunspell hunspell = new("../../../ru_ru.aff", "../../../ru_ru.dic");
 
-        public string Convert(string original)
+        public Result<string> Convert(string original)
         {
-            return hunspell.Stem(original).FirstOrDefault() ?? original;
+            return original.AsResult()
+                .Then(w => hunspell.Stem(w).FirstOrDefault() ?? w)
+                .ReplaceError(e => "Hunspell error");
         }
     }
 }

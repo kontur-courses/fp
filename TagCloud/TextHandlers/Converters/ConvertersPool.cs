@@ -6,31 +6,40 @@ namespace TagCloud.TextHandlers.Converters
 {
     public class ConvertersPool : IConvertersPool
     {
-        private readonly List<Func<string, string>> converters;
+        private readonly List<Func<string, Result<string>>> converters;
 
         public ConvertersPool(IConverter[] converters)
         {
-            this.converters = new List<Func<string, string>>();
+            this.converters = new List<Func<string, Result<string>>>();
             foreach (var converter in converters)
             {
                 this.converters.Add(converter.Convert);
             }
         }
 
-        public ConvertersPool Using(Func<string, string> converter)
+        public ConvertersPool Using(Func<string, Result<string>> converter)
         {
             converters.Add(converter);
             return this;
         }
 
-        public IEnumerable<string> Convert(IEnumerable<string> words)
+        public Result<IEnumerable<string>> Convert(IEnumerable<string> words)
         {
-            return words.Select(Convert);
+            return words
+                .AsResult()
+                .Then(w => w.Select(Convert))
+                .Then(results => results.Select(w => w.Value));
         }
 
-        public string Convert(string word)
+        public Result<string> Convert(string word)
         {
-            return converters.Aggregate(word, (current, converter) => converter(current));
+            var converted = word.AsResult();
+            foreach (var converter in converters)
+            {
+                converted.Then(converter);
+            }
+
+            return converted;
         }
     }
 }

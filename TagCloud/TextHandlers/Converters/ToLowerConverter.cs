@@ -2,9 +2,9 @@
 {
     public class ToLowerConverter : IConverter
     {
-        public string Convert(string word)
+        public Result<string> Convert(string word)
         {
-            return word.ToLower();
+            return word.AsResult().Then(w => w.ToLower());
         }
     }
 }

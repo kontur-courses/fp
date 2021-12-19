@@ -8,40 +8,34 @@ using TagCloud.Templates.Colors;
 
 namespace TagCloud.Configurations
 {
-    public class CommandLineConfigurationProvider : IConfigurationProvider
+    public static class CommandLineConfigurationProvider
     {
-        private readonly IEnumerable<string> args;
-
-        public CommandLineConfigurationProvider(IEnumerable<string> args)
+        public static Result<Configuration> GetConfiguration(IEnumerable<string> args)
         {
-            this.args = args;
+            return args.AsResult()
+                .Then(a => Parser.Default.ParseArguments<Options>(a).Value)
+                .Then(CheckArguments)
+                .Then(CreateConfiguration);
         }
 
-        public Configuration GetConfiguration()
-        {
-            Options arguments;
-            try
-            {
-                arguments = Parser.Default.ParseArguments<Options>(args).Value;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.InnerException?.Message);
-                return null;
-            }
 
+        private static Options CheckArguments(Options arguments)
+        {
             if (arguments == null)
             {
-                Console.WriteLine("Invalid arguments");
-                return null;
+                throw new ArgumentException("Invalid arguments");
             }
 
             if (!File.Exists(arguments.Filename))
             {
-                Console.WriteLine($"File {arguments.Filename} does not exist!");
-                return null;
+                throw new FileNotFoundException($"File {arguments.Filename} does not exist!");
             }
 
+            return arguments;
+        }
+
+        private static Configuration CreateConfiguration(Options arguments)
+        {
             var configuration = new Configuration(arguments.Filename, arguments.Output)
             {
                 ImageSize = new Size(arguments.Width, arguments.Height),
@@ -60,10 +54,5 @@ namespace TagCloud.Configurations
                 };
             return configuration;
         }
-    }
-
-    public interface IConfigurationProvider
-    {
-        Configuration GetConfiguration();
     }
 }

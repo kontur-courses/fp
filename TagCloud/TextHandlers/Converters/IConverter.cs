@@ -4,6 +4,6 @@ namespace TagCloud.TextHandlers.Converters
 {
     public interface IConverter
     {
-       string Convert(string word);
+       Result<string> Convert(string word);
     }
 }

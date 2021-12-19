@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TagCloud.Templates
@@ -48,10 +49,5 @@ namespace TagCloud.Templates
 
             return wordToCount;
         }
-    }
-
-    public interface IFontSizeCalculator
-    {
-        Dictionary<string, float> GetFontSizes(IEnumerable<string> words);
     }
 }
