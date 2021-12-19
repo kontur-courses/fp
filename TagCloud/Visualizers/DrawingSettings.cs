@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace TagCloud.Visualizers
 {
-    public class DrawingSettings
+    public class DrawingSettings : IDisposable
     {
         public IEnumerable<Color> PenColors { get; }
         public Color BackgroundColor { get; }

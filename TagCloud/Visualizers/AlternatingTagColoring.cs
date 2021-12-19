@@ -6,7 +6,7 @@ namespace TagCloud.Visualizers
 {
     public class AlternatingTagColoring : ITagColoring
     {
-        private IEnumerator<Color> colorEnumerator;
+        private readonly IEnumerator<Color> colorEnumerator;
 
         public AlternatingTagColoring(IEnumerable<Color> colors)
         {

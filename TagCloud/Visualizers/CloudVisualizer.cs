@@ -19,6 +19,10 @@ namespace TagCloud.Visualizers
         public Result<Bitmap> DrawCloud(IEnumerable<Tag> tags,
             ITagColoringFactory tagColoringFactory)
         {
+            if (drawingSettings.Width <= 0 || drawingSettings.Height <= 0)
+                return Result.Fail<Bitmap>("Width and height should be positive, " +
+                                           $"but was: Width = {drawingSettings.Width}, " +
+                                           $"Height = {drawingSettings.Height}");
             var bitmap = new Bitmap(drawingSettings.Width, drawingSettings.Height);
             using var graph = Graphics.FromImage(bitmap);
 
