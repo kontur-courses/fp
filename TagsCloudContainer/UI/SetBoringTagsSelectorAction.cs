@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using TagsCloudContainer.Common.Result;
 using TagsCloudContainer.Preprocessors;
 
@@ -23,8 +24,11 @@ namespace TagsCloudContainer.UI
             var selector = handler.GetText();
             try
             {
-                var t = CSharpScript.EvaluateAsync<CustomTagsFilter.RelevantTag>(selector);
-                t.Wait();
+                var scriptOptions = ScriptOptions.Default
+                    .WithReferences(nameof(TagsCloudContainer))
+                    .WithImports("System");
+                var t = CSharpScript.EvaluateAsync<CustomTagsFilter.RelevantTag>(selector, scriptOptions);
+                t.Wait(); 
                 builder.RegisterInstance(t.Result)
                     .As<CustomTagsFilter.RelevantTag>();
             }
