@@ -19,7 +19,9 @@ namespace App.Implementation.Words.Filters
 
         public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
         {
-            return Result.Of(() => words.Where(word => word.Length >= minLength));
+            return words is null
+                ? Result.Fail<IEnumerable<string>>("Words list can not be null")
+                : Result.Of(() => words.Where(word => word.Length >= minLength));
         }
     }
 }

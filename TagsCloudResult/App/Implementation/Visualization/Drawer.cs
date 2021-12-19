@@ -64,13 +64,13 @@ namespace App.Implementation.Visualization
             using var brush = new SolidBrush(paletteSettings.WordColor);
 
             graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-            {
-                var backgroundRectangle = new RectangleF(PointF.Empty, new Size(
-                    imageSizeSettings.Size.Width,
-                    imageSizeSettings.Size.Height));
 
-                graphics.FillRectangle(backgroundBrush, backgroundRectangle);
-            }
+            var backgroundRectangle = new RectangleF(PointF.Empty, new Size(
+                imageSizeSettings.Size.Width,
+                imageSizeSettings.Size.Height));
+
+            graphics.FillRectangle(backgroundBrush, backgroundRectangle);
+
 
             foreach (var tag in tags)
             {

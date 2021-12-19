@@ -23,11 +23,8 @@ namespace App.Implementation.Words.Preprocessors
 
         public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
-            var preparingResult = PrepareWordsForOuterLibrary(words);
-
-            return preparingResult.IsSuccess
-                ? TryToLeadWordsToInitForm()
-                : Result.Fail<IEnumerable<string>>(preparingResult.Error);
+            return PrepareWordsForOuterLibrary(words)
+                .Then(none => TryToLeadWordsToInitForm());
         }
 
         private Result<IEnumerable<string>> TryToLeadWordsToInitForm()

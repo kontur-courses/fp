@@ -18,19 +18,18 @@ namespace App.Implementation.FileInteractions.Readers
 
         public Result<IEnumerable<string>> ReadLines()
         {
-            return ReadFromStream()
-                    .Then(words => words
-                        .SelectMany(line => Regex
-                            .Split(line, @"\P{L}+", RegexOptions.Compiled))
-                        .Select(word => word))
-                .RefineError("Can not read lines from stream");
-        }
-
-        private Result<IEnumerable<string>> ReadFromStream()
-        {
             if (!File.Exists(fileName))
                 return Result.Fail<IEnumerable<string>>($"File {fileName} is not found");
 
+            return Result.Of(ReadFromStream)
+                    .Then(words => words
+                        .SelectMany(line => Regex
+                            .Split(line, @"\P{L}+", RegexOptions.Compiled)))
+                .RefineError("Can not read lines from stream");
+        }
+
+        private IEnumerable<string> ReadFromStream()
+        {
             using var streamReader = new StreamReader(fileName, Encoding.UTF8);
 
             var words = new List<string>();

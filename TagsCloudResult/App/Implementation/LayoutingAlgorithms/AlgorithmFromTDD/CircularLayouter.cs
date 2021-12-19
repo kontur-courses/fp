@@ -51,18 +51,18 @@ namespace App.Implementation.LayoutingAlgorithms.AlgorithmFromTDD
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            var rectangleResult = CheckForIncorrectSize(rectangleSize);
+            return CheckForIncorrectSize(rectangleSize)
+                .Then(rect => SetRectangleToCenter(rect.Size))
+                .Then(FindFirstNotIntersectingLocation);
+        }
 
-            if (!rectangleResult.IsSuccess)
-                return rectangleResult;
-
-            var rectangle = SetRectangleToCenter(rectangleSize);
-
+        private Rectangle FindFirstNotIntersectingLocation(Rectangle rectangle)
+        {
             while (rectangle.IntersectsWithAny(rectangles))
                 rectangle = RotateRectangle(rectangle);
 
             rectangles.Add(rectangle);
-            return Result.Ok(rectangle);
+            return rectangle;
         }
 
         private Rectangle RotateRectangle(Rectangle rectangle)
