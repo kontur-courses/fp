@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using TagCloud.Analyzers;
-using TagCloud.Creators;
-using TagCloud.Layouters;
-using TagCloud.Readers;
 using TagCloud.UI.Console;
-using TagCloud.Visualizers;
-using TagCloud.Writers;
 
 namespace TagCloudTests
 {
