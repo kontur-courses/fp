@@ -15,6 +15,7 @@ namespace TagCloud_ConsoleUI
         private readonly Color _defaultBackgroundColor = Color.White;
         private Color _backgroundColor;
         private float _baseFontSize = 14;
+        private Size _size;
 
         [Option("format", Required = false, HelpText = "Задать формат результирующего изображения")]
         public ImageExtension ImageExtension { get; set; } = ImageExtension.Png;
@@ -52,7 +53,13 @@ namespace TagCloud_ConsoleUI
 
         [Option("image-size", Required = false, HelpText = "Задать размер итогового изображения\n" +
                                                            "(пример: draw --image-size 1920,1080)")]
-        public Size Size { get; set; }
+        public Size Size
+        {
+            get => _size;
+            set => _size = value.Height > 0 && value.Width > 0
+                ? value
+                : throw new ArgumentException("размер изображения не может быть отрицательным или нулевым");
+        }
 
         public ImageFormat? Format => GetImageFormat(ImageExtension);
 
