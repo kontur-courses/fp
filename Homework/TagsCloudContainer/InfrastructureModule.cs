@@ -15,7 +15,7 @@ namespace TagsCloudContainer
             builder.Register(c => c.Resolve<IFactory<IVisualizerSettings>>().Create())
                 .AsImplementedInterfaces()
                 .SingleInstance();
-            builder.RegisterInstance(new MorphAnalyzer(withLemmatization:true)).SingleInstance();
+            builder.RegisterInstance(new MorphAnalyzer(true)).SingleInstance();
         }
     }
 }

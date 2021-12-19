@@ -25,8 +25,8 @@ namespace TagsCloudContainer_Tests
 
         private CloudLayouter sut;
         private IPointsProvider pointsProvider;
-        
-        
+
+
         [TestCase(-1, 3, TestName = "width of rectangle is not expected to be negative")]
         [TestCase(3, -1, TestName = "height of rectangle is not expected to be zero")]
         public void ReturnFailResult_WhenIncorrectSize(int width, int height)
@@ -40,8 +40,7 @@ namespace TagsCloudContainer_Tests
         {
             sut.PutNextRectangle(testingSize)
                 .GetValueOrThrow()
-                .Should().
-                Be(new Rectangle(testingCenter, testingSize));
+                .Should().Be(new Rectangle(testingCenter, testingSize));
         }
 
         [Test]

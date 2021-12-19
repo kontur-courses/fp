@@ -9,7 +9,7 @@ namespace TagsCloud.Console
         public static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
-            var appSettings = AppSettings.Parse(args)
+            AppSettings.Parse(args)
                 .Then(appSettings => builder.RegisterInstance(appSettings).AsImplementedInterfaces().SingleInstance())
                 .Then(_ => TagCloudSettings.Parse(args))
                 .Then(tagSettings => builder.RegisterInstance(tagSettings).AsImplementedInterfaces().SingleInstance())

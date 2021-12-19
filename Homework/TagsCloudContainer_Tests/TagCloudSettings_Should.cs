@@ -9,10 +9,11 @@ namespace TagsCloudContainer_Tests
     {
         private readonly TagCloudSettings sut;
 
-        [Test, TestCaseSource(nameof(TestSource))]
+        [Test]
+        [TestCaseSource(nameof(TestSource))]
         public void ReturnFailResult_WhenIncorrectSetting(string arg)
         {
-            TagCloudSettings.Parse(new []{arg}).IsSuccess.Should().BeFalse();
+            TagCloudSettings.Parse(new[] {arg}).IsSuccess.Should().BeFalse();
         }
 
         private static IEnumerable<string> TestSource()

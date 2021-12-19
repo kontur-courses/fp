@@ -46,9 +46,10 @@ namespace TagsCloudContainer.Visualizer
             foreach (var (word, freq) in orderedFreqPairs)
             {
                 var visualizationResult = VisualizeWord(word, freq, mostFreq, wordsColors.Pop());
-                if(!visualizationResult.IsSuccess)
+                if (!visualizationResult.IsSuccess)
                     return Result.Fail<Bitmap>("Visualization error. " + visualizationResult.Error);
             }
+
             return bmp;
         }
 
@@ -70,7 +71,7 @@ namespace TagsCloudContainer.Visualizer
                 brush.Dispose();
             }
         }
-        
+
         private Result<Rectangle> GetLayoutRectangle(string word, Font wordFont)
         {
             var rectSize = new Size((int) wordFont.Size * word.Length, wordFont.Height);

@@ -22,7 +22,7 @@ namespace TagsCloudContainer.BitmapSaver
                 .Then(ValidateExtension)
                 .Then(ValidateDirectory)
                 .Then(bmp.Save)
-                .RefineError("File saving error"); 
+                .RefineError("File saving error");
         }
 
         private Result<string> ValidateDirectory(string path)
@@ -33,6 +33,7 @@ namespace TagsCloudContainer.BitmapSaver
                     .Then(_ => path);
             return Result.Ok(path);
         }
+
         private Result<string> ValidateExtension(string path)
         {
             var ext = Path.GetExtension(path);
@@ -42,8 +43,10 @@ namespace TagsCloudContainer.BitmapSaver
         }
 
         private Result<string> CheckEmptyOrNull(string path)
-            => !string.IsNullOrEmpty(path)
+        {
+            return !string.IsNullOrEmpty(path)
                 ? Result.Ok(path)
                 : Result.Fail<string>("Saving path is empty or null");
+        }
     }
 }

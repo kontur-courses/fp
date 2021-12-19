@@ -16,7 +16,7 @@ namespace TagsCloud.Console
             var parsed = parser.ParseArguments<T>(args) as Parsed<T>;
             if (parsed == null)
                 return Result.Fail<T>("Syntax Error. Could not parse console input");
-            
+
             return parsed.Value;
         }
     }

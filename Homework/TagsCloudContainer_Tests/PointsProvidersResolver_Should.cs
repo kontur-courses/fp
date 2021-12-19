@@ -24,7 +24,7 @@ namespace TagsCloudContainer_Tests
         [Test]
         public void ReturnsFailResultWithMessage_WhenProviderDoesNotExist()
         {
-            A.CallTo(() => pointsProvider.AlghorithmName).Returns((LayoutAlrogorithm)int.MaxValue);
+            A.CallTo(() => pointsProvider.AlghorithmName).Returns((LayoutAlrogorithm) int.MaxValue);
             sut = new PointsProvidersResolver(pointsProvider);
             sut.Get(LayoutAlrogorithm.Circular).Error
                 .Should()

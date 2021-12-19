@@ -6,12 +6,13 @@ namespace TagsCloud.Console
 {
     public class ConsoleUI : IConsoleUI
     {
+        private readonly IAppSettings appSettings;
         private readonly IResolver<string, IFileReader> fileReadersResolver;
         private readonly IBitmapSaver saver;
         private readonly ITagCloud tagCloud;
-        private readonly IAppSettings appSettings;
 
-        public ConsoleUI(IAppSettings appSettings, IResolver<string, IFileReader> fileReadersResolver, IBitmapSaver saver, ITagCloud tagCloud)
+        public ConsoleUI(IAppSettings appSettings, IResolver<string, IFileReader> fileReadersResolver,
+            IBitmapSaver saver, ITagCloud tagCloud)
         {
             this.appSettings = appSettings;
             this.fileReadersResolver = fileReadersResolver;

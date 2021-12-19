@@ -21,9 +21,11 @@ namespace TagsCloudContainer.FileReader
         }
 
         private Result<string> CheckNullOrEmpty(string path)
-            => !string.IsNullOrEmpty(path)
+        {
+            return !string.IsNullOrEmpty(path)
                 ? path
                 : Result.Fail<string>("Path is null or empty");
+        }
 
         private Result<IFileReader> GetFileReader(string path)
         {

@@ -11,7 +11,7 @@ namespace TagsCloudContainer_Tests
         private readonly IFileReader reader = A.Fake<IFileReader>();
         private FileReadersResolver sut;
 
-        
+
         [TestCase(".txt", ".txt", TestName = "when extension is supported", ExpectedResult = true)]
         [TestCase(".png", ".txt", TestName = "when unsupported extension", ExpectedResult = false)]
         public bool ReturnsCorrectResult(string fileReaderExtension, string fileExtension)

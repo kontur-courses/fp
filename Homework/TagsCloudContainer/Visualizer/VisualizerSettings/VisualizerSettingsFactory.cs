@@ -8,7 +8,8 @@ namespace TagsCloudContainer.Visualizer.VisualizerSettings
         private readonly IResolver<PalleteType, IColorGenerator> colorsGeneratorResolver;
         private readonly ITagCloudSettings settings;
 
-        public VisualizerSettingsFactory(IResolver<PalleteType, IColorGenerator> colorsGeneratorResolver, ITagCloudSettings settings)
+        public VisualizerSettingsFactory(IResolver<PalleteType, IColorGenerator> colorsGeneratorResolver,
+            ITagCloudSettings settings)
         {
             this.colorsGeneratorResolver = colorsGeneratorResolver;
             this.settings = settings;
