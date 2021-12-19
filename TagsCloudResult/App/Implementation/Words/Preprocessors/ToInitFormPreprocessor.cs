@@ -23,9 +23,11 @@ namespace App.Implementation.Words.Preprocessors
 
         public Result<IEnumerable<string>> Preprocess(IEnumerable<string> words)
         {
-            PrepareWordsForOuterLibrary(words);
+            var preparingResult = PrepareWordsForOuterLibrary(words);
 
-            return TryToLeadWordsToInitForm();
+            return preparingResult.IsSuccess
+                ? TryToLeadWordsToInitForm()
+                : Result.Fail<IEnumerable<string>>(preparingResult.Error);
         }
 
         private Result<IEnumerable<string>> TryToLeadWordsToInitForm()
@@ -41,7 +43,7 @@ namespace App.Implementation.Words.Preprocessors
                     while (!initialLeadingFormProcess.StandardOutput.EndOfStream)
                         wordsInitForms.Add(initialLeadingFormProcess.StandardOutput.ReadLine());
 
-                    return new Result<IEnumerable<string>>(null, wordsInitForms);
+                    return wordsInitForms;
                 }
                 catch (Exception e)
                 {
@@ -51,12 +53,16 @@ namespace App.Implementation.Words.Preprocessors
             }
         }
 
-        private void PrepareWordsForOuterLibrary(IEnumerable<string> words)
+        private Result<None> PrepareWordsForOuterLibrary(IEnumerable<string> words)
         {
-            var cwd = Directory.GetCurrentDirectory();
-            var streamWriter = new StreamWriter(inputFilePath, false, Encoding.UTF8);
+            if (!File.Exists(inputFilePath))
+                return Result.Fail<None>($"Unable write to file {inputFilePath}");
 
-            writer.WriteLinesTo(streamWriter, words);
+            return Result.OfAction(() =>
+            {
+                using var streamWriter = new StreamWriter(inputFilePath, false, Encoding.UTF8);
+                writer.WriteLinesTo(streamWriter, words);
+            });
         }
 
         private Process CreateInitialLeadingFormProcess(string pathToFile)

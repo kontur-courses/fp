@@ -6,22 +6,19 @@ namespace App
     {
         public CloudVisualization(
             Bitmap visualization,
-            Size cloudRequiredRequiredSize,
-            Size userRequiredSize)
+            Size cloudRequiredRequiredSize)
         {
             Visualization = visualization;
             CloudRequiredSize = cloudRequiredRequiredSize;
-            UserRequiredSize = userRequiredSize;
         }
 
         public Bitmap Visualization { get; }
         public Size CloudRequiredSize { get; }
-        public Size UserRequiredSize { get; }
 
-        public bool IsCloudFitToUserSize()
+        public bool IsCloudFitToSpecifiedSize(Size size)
         {
-            return UserRequiredSize.Width >= CloudRequiredSize.Width
-                   && UserRequiredSize.Height >= CloudRequiredSize.Height;
+            return size.Width >= CloudRequiredSize.Width
+                   && size.Height >= CloudRequiredSize.Height;
         }
     }
 }

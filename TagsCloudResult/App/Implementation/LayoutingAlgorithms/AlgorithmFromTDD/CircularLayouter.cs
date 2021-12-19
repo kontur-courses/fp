@@ -51,18 +51,18 @@ namespace App.Implementation.LayoutingAlgorithms.AlgorithmFromTDD
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            var rect = CheckForIncorrectSize(rectangleSize);
+            var rectangleResult = CheckForIncorrectSize(rectangleSize);
 
-            if (!rect.IsSuccess)
-                return rect;
+            if (!rectangleResult.IsSuccess)
+                return rectangleResult;
 
-            rect = SetRectangleToCenter(rectangleSize);
+            var rectangle = SetRectangleToCenter(rectangleSize);
 
-            while (rect.Value.IntersectsWithAny(rectangles))
-                rect = RotateRectangle(rect.Value);
+            while (rectangle.IntersectsWithAny(rectangles))
+                rectangle = RotateRectangle(rectangle);
 
-            rectangles.Add(rect.Value);
-            return rect;
+            rectangles.Add(rectangle);
+            return Result.Ok(rectangle);
         }
 
         private Rectangle RotateRectangle(Rectangle rectangle)
@@ -72,11 +72,11 @@ namespace App.Implementation.LayoutingAlgorithms.AlgorithmFromTDD
                 rectangle.Size);
         }
 
-        private Result<Rectangle> SetRectangleToCenter(Size rectangleSize)
+        private Rectangle SetRectangleToCenter(Size rectangleSize)
         {
-            return Result.Ok(new Rectangle(
+            return new Rectangle(
                 Center.MovePointToSizeCenter(rectangleSize, false),
-                rectangleSize));
+                rectangleSize);
         }
 
         private static Result<Rectangle> CheckForIncorrectSize(Size rectangleSize)

@@ -20,7 +20,6 @@ namespace GuiClient.UiActions
         public void Perform()
         {
             SettingsForm.For(settings).ShowDialog();
-            imageHolder.GenerateImage();
         }
     }
 }

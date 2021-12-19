@@ -68,19 +68,9 @@ namespace App.Implementation
 
         private Result<IEnumerable<string>> ReadWords()
         {
-            var reader = readerFactory.CreateReader();
-
-            if (!reader.IsSuccess)
-            {
-                var msg = $"{reader.Error}. Can not find suitable file reader";
-                return Result.Fail<IEnumerable<string>>(msg);
-            }
-
-            var readResult = reader.Value.ReadLines();
-
-            return readResult.IsSuccess
-                ? readResult
-                : Result.Fail<IEnumerable<string>>(readResult.Error);
+            return readerFactory.CreateReader()
+                .RefineError("Can not find suitable file reader")
+                .Then(reader => reader.ReadLines());
         }
 
         private Result<IEnumerable<string>> PreprocessWords(IEnumerable<string> words)
@@ -119,9 +109,6 @@ namespace App.Implementation
         {
             for (var i = 0; i < tags.Count; i++)
             {
-                if (i >= tags.Count)
-                    break;
-
                 var rectResult = layouter.PutNextRectangle(tags[i].WordOuterRectangle.Size);
                 if (!rectResult.IsSuccess)
                 {
@@ -141,13 +128,12 @@ namespace App.Implementation
             if (imageSizeSettings.Size.Width <= 0 || imageSizeSettings.Size.Height <= 0)
                 return Result.Fail<CloudVisualization>("Incorrect image size.");
 
-            var userRequiredSize = new Size(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
             var cloudRequiredSize = layouter.GetRectanglesBoundaryBox();
 
             var bitmap = new Bitmap(imageSizeSettings.Size.Width, imageSizeSettings.Size.Height);
             var visualization = visualizer.VisualizeCloud(bitmap, layouter.Center, tags);
 
-            return Result.Ok(new CloudVisualization(visualization, cloudRequiredSize, userRequiredSize));
+            return Result.Ok(new CloudVisualization(visualization, cloudRequiredSize));
         }
     }
 }

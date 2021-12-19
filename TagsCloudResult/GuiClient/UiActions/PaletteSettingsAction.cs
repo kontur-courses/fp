@@ -4,12 +4,10 @@ namespace GuiClient.UiActions
 {
     public class PaletteSettingsAction : IUiAction
     {
-        private readonly IImageHolder imageHolder;
         private readonly PaletteSettings palette;
 
-        public PaletteSettingsAction(IImageHolder imageHolder, PaletteSettings palette)
+        public PaletteSettingsAction(PaletteSettings palette)
         {
-            this.imageHolder = imageHolder;
             this.palette = palette;
         }
 
@@ -20,7 +18,6 @@ namespace GuiClient.UiActions
         public void Perform()
         {
             SettingsForm.For(palette).ShowDialog();
-            imageHolder.GenerateImage();
         }
     }
 }

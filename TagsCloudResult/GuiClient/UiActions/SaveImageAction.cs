@@ -7,12 +7,12 @@ namespace GuiClient.UiActions
     public class SaveImageAction : IUiAction
     {
         private readonly IImageHolder imageHolder;
-        private readonly OutputResultSettings outputSettingses;
+        private readonly OutputResultSettings outputSettings;
 
-        public SaveImageAction(IImageHolder imageHolder, OutputResultSettings outputSettingses)
+        public SaveImageAction(IImageHolder imageHolder, OutputResultSettings outputSettings)
         {
             this.imageHolder = imageHolder;
-            this.outputSettingses = outputSettingses;
+            this.outputSettings = outputSettings;
         }
 
         public MenuCategory Category => MenuCategory.File;
@@ -24,13 +24,13 @@ namespace GuiClient.UiActions
             var dialog = new SaveFileDialog
             {
                 CheckFileExists = false,
-                InitialDirectory = Path.GetFullPath(outputSettingses.OutputFilePath),
+                InitialDirectory = Path.GetFullPath(outputSettings.OutputFilePath),
                 Filter = "Изображения (*.png;*.jpeg;*.bmp)|*.png;*.jpeg;*.bmp"
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
             {
-                outputSettingses.OutputFilePath = dialog.FileName;
+                outputSettings.OutputFilePath = dialog.FileName;
                 imageHolder.SaveImage();
             }
         }

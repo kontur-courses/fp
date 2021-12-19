@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using App;
 using App.Infrastructure;
 using App.Infrastructure.SettingsHolders;
 
@@ -27,20 +29,10 @@ namespace GuiClient
 
         public void GenerateImage()
         {
-            UpdateImageSize();
-
-            var generationResult = cloudGenerator.GenerateCloud();
-
-            if (!generationResult.IsSuccess)
-            {
-                MessageBox.Show(generationResult.Error);
-                return;
-            }
-
-            if (!generationResult.Value.IsCloudFitToUserSize())
-                MessageBox.Show("Cloud did not fit to specified image size");
-
-            Image = generationResult.Value.Visualization;
+            cloudGenerator.GenerateCloud()
+                .OnFail(error => MessageBox.Show(error))
+                .Then(ShowMessageIfCloudDidNotFit)
+                .Then(result => Image = result.Visualization);
         }
 
         public void SaveImage()
@@ -54,15 +46,12 @@ namespace GuiClient
             Image.Save(outputResultSettings.OutputFilePath, outputResultSettings.ImageFormat);
         }
 
-        private void UpdateImageSize()
+        private Result<CloudVisualization> ShowMessageIfCloudDidNotFit(CloudVisualization visualization)
         {
-            if (Image != null)
-            {
-                if (sizeSettings.Size.Width <= 0 || sizeSettings.Size.Height <= 0)
-                    MessageBox.Show("Incorrect image size.");
-                else
-                    mainForm.Value.ClientSize = sizeSettings.Size;
-            }
+            if (!visualization.IsCloudFitToSpecifiedSize(sizeSettings.Size))
+                MessageBox.Show("Cloud did not fit to specified image size");
+
+            return Result.Ok(visualization);
         }
     }
 }

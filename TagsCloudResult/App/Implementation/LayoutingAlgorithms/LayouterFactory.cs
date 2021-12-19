@@ -17,12 +17,10 @@ namespace App.Implementation.LayoutingAlgorithms
 
         public Result<ICloudLayouter> CreateLayouter()
         {
-            return imageSizeSettings.Size.Width <= 0 || imageSizeSettings.Size.Height <= 0
-                ? Result.Fail<ICloudLayouter>("Incorrect image size.")
-                : new CircularLayouter(
-                    new Point(
-                        imageSizeSettings.Size.Width / 2,
-                        imageSizeSettings.Size.Height / 2));
+            return new CircularLayouter(
+                new Point(
+                    imageSizeSettings.Size.Width / 2,
+                    imageSizeSettings.Size.Height / 2));
         }
     }
 }

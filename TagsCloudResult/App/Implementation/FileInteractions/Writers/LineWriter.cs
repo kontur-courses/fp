@@ -8,11 +8,9 @@ namespace App.Implementation.FileInteractions.Writers
     {
         public void WriteLinesTo(StreamWriter streamWriter, IEnumerable<string> words)
         {
-            using (streamWriter)
-            {
-                foreach (var word in words)
-                    streamWriter.WriteLine(word);
-            }
+            foreach (var word in words)
+                streamWriter.WriteLine(word);
+
         }
     }
 }

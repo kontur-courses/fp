@@ -19,7 +19,7 @@ namespace App.Implementation.FileInteractions.Readers
             {
                 ".txt" => new Result<ILinesReader>(
                     null,
-                    new FromStreamReader(new StreamReader(inputFileSettings.InputFileName))),
+                    new FromStreamReader(inputFileSettings.InputFileName)),
 
                 ".doc" or ".docx" => new Result<ILinesReader>(
                     null,

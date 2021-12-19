@@ -1,4 +1,5 @@
-﻿using App.Implementation.SettingsHolders;
+﻿using App;
+using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
 {
@@ -20,7 +21,6 @@ namespace GuiClient.UiActions
         public void Perform()
         {
             SettingsForm.For(settings).ShowDialog();
-            imageHolder.GenerateImage();
         }
     }
 }

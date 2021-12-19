@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using App.Infrastructure.FileInteractions.Readers;
@@ -17,17 +18,17 @@ namespace App.Implementation.FileInteractions.Readers
 
         public Result<IEnumerable<string>> ReadLines()
         {
-            var resultOfReading = Result.Of(() => WordprocessingDocument
-                .Open(fileName, false)
-                .MainDocumentPart?
-                .Document
-                .Body?
-                .SelectMany(item => Regex.Split(item.InnerText, @"\P{L}+", RegexOptions.Compiled))
-                .Select(word => word));
+            if (!File.Exists(fileName))
+                return Result.Fail<IEnumerable<string>>($"File {fileName} is not found");
 
-            return resultOfReading.IsSuccess
-                ? resultOfReading
-                : resultOfReading.RefineError($"Can not read lines from file {fileName}");
+            return Result.Of(() => WordprocessingDocument
+                    .Open(fileName, false)
+                    .MainDocumentPart?
+                    .Document
+                    .Body?
+                    .SelectMany(item => Regex.Split(item.InnerText, @"\P{L}+", RegexOptions.Compiled))
+                    .Select(word => word))
+                .RefineError($"Can not read lines from file {fileName}");
         }
     }
 }
