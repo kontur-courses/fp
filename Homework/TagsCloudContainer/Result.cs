@@ -107,6 +107,16 @@ namespace TagsCloudContainer
                 : Fail<TOutput>(input.Error);
         }
 
+        public static Result<TOutput> Then<TFirstInput, TSecondInput, TOutput>(
+            this Result<TFirstInput> input,
+            Func<TFirstInput, TSecondInput, Result<TOutput>> continuation,
+            TSecondInput source)
+        {
+            return input.IsSuccess
+                ? continuation(input.Value, source)
+                : Fail<TOutput>(input.Error);
+        }
+
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
