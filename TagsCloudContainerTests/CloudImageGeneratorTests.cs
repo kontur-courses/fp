@@ -20,7 +20,7 @@ namespace TagsCloudContainerTests
             var preprocessed = container.GetInstance<IPreprocessorsApplier>()
                 .ApplyPreprocessors(parsed.Value);
             var tags = container.GetInstance<ITagCreator>().CreateTags(preprocessed);
-            var painted = container.GetInstance<ITagPainter>("1").Paint(tags.Value);
+            var painted = container.GetInstance<ITagPainter>("1").PaintTags(tags.Value);
             var cloudPainter = container.GetInstance<TagCloudPainter>();
 
             var path = cloudPainter.Paint(painted);

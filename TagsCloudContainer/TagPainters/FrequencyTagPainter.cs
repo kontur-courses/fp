@@ -14,7 +14,7 @@ public class FrequencyTagPainter : ITagPainter
         this.settings = settings;
     }
 
-    public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
+    public IEnumerable<PaintedTag> PaintTags(IEnumerable<Tag> tags)
     {
         foreach (var tag in tags)
         {

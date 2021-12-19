@@ -19,7 +19,8 @@ public class TagCloudPainter
     public string Paint(IEnumerable<PaintedTag> tags)
     {
         var cloudTags = PutCloudTags(tags).ToList();
-        var neededSize = CalculateCoverageSize(cloudTags.Select(tag => tag.Rectangle))
+        var neededSize = CalculateCoverageSize(cloudTags
+                             .Select(tag => tag.Rectangle).ToArray())
             + new Size(AddedImageSize, AddedImageSize);
         var imageOffset = neededSize / 2 - new Size(settings.Center);
         var scaleX = settings.ImageSize.Width / (float)neededSize.Width;
@@ -70,7 +71,7 @@ public class TagCloudPainter
         }
     }
 
-    private static Size CalculateCoverageSize(IEnumerable<Rectangle> rectangles)
+    private static Size CalculateCoverageSize(Rectangle[] rectangles)
     {
         var maxX = rectangles.Max(x => x.X + x.Size.Width);
         var minX = rectangles.Min(x => x.X);

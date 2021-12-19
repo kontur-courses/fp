@@ -36,7 +36,7 @@ namespace TagsCloudContainerTests.TagPainterTests
         [Test]
         public void Should_PaintCorrectly()
         {
-            var result = painter.Paint(tags);
+            var result = painter.PaintTags(tags);
 
             result.All(tag => result.All(other
                 => other.Color != tag.Color

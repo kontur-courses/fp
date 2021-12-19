@@ -19,10 +19,12 @@ namespace TagsCloudContainer.Parsers
 
         private IEnumerable<string> ParseFile(string path)
         {
-            using (var reader = new StreamReader(path))
+            using var reader = new StreamReader(path);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
-                    yield return reader.ReadLine();
+                var line = reader.ReadLine();
+                if (line is not null)
+                    yield return line;
             }
         }
     }

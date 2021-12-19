@@ -91,7 +91,7 @@ public class GenerateImageAction : IUIAction
             .Then(preprocessorsApplier.ApplyPreprocessors)
             .Then(filtersApplier.ApplyFilters)
             .Then(tagCreator.CreateTags)
-            .Then(tagPainter.Paint)
+            .Then(tagPainter.PaintTags)
             .Then(cloudPainter.Paint);
     }
 }

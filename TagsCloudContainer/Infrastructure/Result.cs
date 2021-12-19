@@ -1,13 +1,6 @@
 ﻿namespace TagsCloudContainer.Infrastructure;
 
-public class None
-{
-    private None()
-    {
-    }
-}
-
-public struct Result<T>
+public readonly struct Result<T>
 {
     public string Error { get; }
     public T Value { get; }

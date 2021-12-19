@@ -14,7 +14,7 @@ public class GradientTagPainter : ITagPainter
         this.settings = settings;
     }
 
-    public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
+    public IEnumerable<PaintedTag> PaintTags(IEnumerable<Tag> tags)
     {
         var primary = settings.Palette.Primary;
         var secondary = Color.FromArgb(255 - primary.R,

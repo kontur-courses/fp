@@ -7,6 +7,13 @@ namespace TagsCloudContainer.Infrastructure.Providers
 {
     public static class CloudSettingsProvider
     {
+        static CloudSettingsProvider()
+        {
+            var settings = SettingsProvider.GetSettings();
+            painter = new PrimaryTagPainter(settings);
+            spiral = new ArchimedeanSpiral(settings);
+        }
+
         public static CloudSettings GetSettings()
         {
             return new CloudSettings
@@ -16,10 +23,8 @@ namespace TagsCloudContainer.Infrastructure.Providers
             };
         }
 
-        private static readonly Settings.Settings settings = SettingsProvider.GetSettings();
+        private static readonly ITagPainter painter;
 
-        private static readonly ITagPainter painter = new PrimaryTagPainter(settings);
-
-        private static readonly ISpiral spiral = new ArchimedeanSpiral(settings);
+        private static readonly ISpiral spiral;
     }
 }

@@ -7,5 +7,5 @@ public interface ITagPainter
 {
     string Name { get; }
 
-    IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags);
+    IEnumerable<PaintedTag> PaintTags(IEnumerable<Tag> tags);
 }

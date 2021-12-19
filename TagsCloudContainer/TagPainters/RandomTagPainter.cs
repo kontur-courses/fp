@@ -15,11 +15,9 @@ public class RandomTagPainter : ITagPainter
 
     public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
     {
-        foreach (var tag in tags)
-        {
-            var randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-            var cl = randomColor;
-            yield return new PaintedTag(tag, cl);
-        }
+        return from tag in tags 
+            let randomColor = Color.FromArgb(rnd.Next(256), 
+                rnd.Next(256), rnd.Next(256)) 
+            select new PaintedTag(tag, randomColor);
     }
 }

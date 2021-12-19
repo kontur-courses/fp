@@ -24,7 +24,7 @@ namespace TagsCloudContainerTests.TagPainterTests
         [Test]
         public void Should_PaintCorrectly()
         {
-            var result = painter.Paint(tags);
+            var result = painter.PaintTags(tags);
 
             result.OrderBy(selector).Select(tag => tag.Text)
                 .Should().BeEquivalentTo(expected);

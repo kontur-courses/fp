@@ -16,7 +16,6 @@ public class PrimaryTagPainter : ITagPainter
 
     public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
     {
-        foreach (var tag in tags)
-            yield return new PaintedTag(tag, settings.Palette.Primary);
+        return tags.Select(tag => new PaintedTag(tag, settings.Palette.Primary));
     }
 }
