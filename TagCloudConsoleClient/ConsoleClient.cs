@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Diagnostics;
 using System.IO;
-using Autofac;
 using CommandLine;
 using TagsCloudVisualization;
-using TagsCloudVisualization.Default;
 
 namespace TagCloudConsoleClient
 {
@@ -28,15 +22,12 @@ namespace TagCloudConsoleClient
         private void Start(Options options)
         {
             var factory = new TagCloudFactory();
-            try
+            var result = factory.CreateInstance(options.Manhattan, options.Order)
+                .Then(tagCloud => tagCloud.CreateTagCloudFromFile(options.SourcePath, options.ResultPath, options.Font,
+                    options.BackGround, options.MaxCount, options.Width, options.Height));
+            if (!result.IsSuccess)
             {
-                var tagCloud = factory.CreateInstance(options.Manhattan, options.Order);
-                tagCloud.CreateTagCloudFromFile(options.SourcePath, options.ResultPath, options.Font,
-                    options.BackGround, options.MaxCount, options.Width, options.Height);
-            }
-            catch (Exception e)
-            {
-                console.WriteLine("Error: " + e.Message);
+                console.WriteLine("Error: " + result.Error);
                 return;
             }
             console.WriteLine("Success!");

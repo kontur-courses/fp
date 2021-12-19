@@ -7,10 +7,10 @@ namespace TagsCloudVisualization.Default
 {
     public class TokenShuffler : ITokenOrderer
     {
-        public IEnumerable<Token> OrderTokens(IEnumerable<Token> tokens)
+        public Result<IEnumerable<Token>> OrderTokens(IEnumerable<Token> tokens)
         {
             var rnd = new Random();
-            return tokens.OrderBy(x => rnd.Next());
+            return Result.Ok<IEnumerable<Token>>(tokens.OrderBy(x => rnd.Next()));
         }
     }
 }

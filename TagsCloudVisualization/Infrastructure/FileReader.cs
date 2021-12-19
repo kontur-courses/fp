@@ -18,9 +18,10 @@ namespace TagsCloudVisualization.Infrastructure
             return fileReaders.Any(reader => reader.CanReadFile(file));
         }
 
-        public string ReadFile(FileInfo file)
+        public Result<string> ReadFile(FileInfo file)
         {
-            return fileReaders.First(reader => reader.CanReadFile(file)).ReadFile(file);
+            return CanReadFile(file) ? fileReaders.First(reader => reader.CanReadFile(file)).ReadFile(file) :
+                    Result.Fail<string>("Unknown source file format.");
         }
     }
 }

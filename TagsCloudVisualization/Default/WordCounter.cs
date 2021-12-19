@@ -6,12 +6,13 @@ namespace TagsCloudVisualization.Default
 {
     public class WordCounter : ITokenWeigher
     {
-        public Token[] Evaluate(IEnumerable<string> words, int maxTokenCount)
+        public Result<Token[]> Evaluate(IEnumerable<string> words, int maxTokenCount)
         {
-            return words.GroupBy(x => x).Select(word => new Token(word.Key, word.Count()))
+            return Result.Ok(words.GroupBy(x => x)
+                .Select(word => new Token(word.Key, word.Count()))
                 .OrderByDescending(t => t.Weight)
                 .Take(maxTokenCount)
-                .ToArray();
+                .ToArray());
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization.Default;
@@ -20,7 +19,7 @@ namespace TagCloudTests
         public void Selector_EmptyString_NoWords()
         {
             var words = selector.GetWords("");
-            words.Should().BeEmpty();
+            words.Value.Should().BeEmpty();
         }
 
         [Test]
@@ -28,7 +27,7 @@ namespace TagCloudTests
         {
             var text = "HeLLo wOrld";
             var expected = new[] { "hello", "world" };
-            var words = selector.GetWords(text);
+            var words = selector.GetWords(text).Value;
             words.Should().BeEquivalentTo(expected);
         }
 
@@ -43,7 +42,7 @@ namespace TagCloudTests
         [TestCase("don't")]
         public void Selector_Should_NotSeparate(string text)
         {
-            var words = selector.GetWords(text);
+            var words = selector.GetWords(text).Value;
             words.Should().HaveCount(1).And.Contain(text);
         }
 
@@ -53,7 +52,7 @@ namespace TagCloudTests
         [TestCase("abc.", new []{"abc"})]
         public void Selector_Should_Separate(string text, string[] expectedWords)
         {
-            var words = selector.GetWords(text);
+            var words = selector.GetWords(text).Value;
             words.Should().BeEquivalentTo(expectedWords);
         }
 
@@ -62,7 +61,7 @@ namespace TagCloudTests
         {
             var text = "abc. . .net5.0 something.";
             var expected = new[] { "abc",".net5.0","something"};
-            var words = selector.GetWords(text);
+            var words = selector.GetWords(text).Value;
             words.Should().BeEquivalentTo(expected);
         }
     }

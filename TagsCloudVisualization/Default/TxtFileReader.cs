@@ -14,9 +14,9 @@ namespace TagsCloudVisualization.Default
 
         }
 
-        public string ReadFile(FileInfo file)
+        public Result<string> ReadFile(FileInfo file)
         {
-            return file.OpenText().ReadToEnd();
+            return Result.Of(() => file.OpenText().ReadToEnd(), "Unable to read from file:" + file.Name);
         }
     }
 }

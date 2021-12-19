@@ -16,7 +16,12 @@ namespace TagsCloudVisualization.Default
             '.', '_', '-', '\''
         };
 
-        public IEnumerable<string> GetWords(string text)
+        public Result<IEnumerable<string>> GetWords(string text)
+        {
+            return Result.Ok(GetWordsEnumerable(text));
+        }
+        
+        private IEnumerable<string> GetWordsEnumerable(string text)
         {
             var currentStart = 0;
             for (var i = 0; i < text.Length; i++)

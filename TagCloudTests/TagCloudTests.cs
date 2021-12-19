@@ -22,7 +22,7 @@ namespace TagCloudTests
         {
             sourceFile = random.Next() + ".txt";
             resultFile = random.Next() + ".png";
-            tagCloud = factory.CreateInstance(false, "sorted");
+            tagCloud = factory.CreateInstance(false, "sorted").Value;
             CreateFile(sourceFile, DefaultContent);
         }
 
@@ -51,9 +51,9 @@ namespace TagCloudTests
         [TestCase(-100, -100)]
         public void TagCloud_NonPositiveResolution_Throws(int width, int height)
         {
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, SystemFonts.DefaultFont,
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, SystemFonts.DefaultFont,
                 new Color(), 100, new Size(width, height));
-            act.Should().Throw<ArgumentException>().WithMessage("Resolution must be positive");
+            result.Error.Should().Be("Resolution must be positive");
         }
         
         [TestCase("Comic Sans")]
@@ -61,9 +61,9 @@ namespace TagCloudTests
         [TestCase("default")]
         public void TagCloud_UnknownFont_Throws(string fontName)
         {
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, fontName,
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, fontName,
                 "Red", 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Unknown Font *");
+            result.Error.Should().MatchRegex("Unknown Font *");
         }
         
         [TestCase("red")]
@@ -71,18 +71,18 @@ namespace TagCloudTests
         [TestCase("default")]
         public void TagCloud_UnknownColor_Throws(string colorName)
         {
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 colorName, 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Unknown Color *");
+            result.Error.Should().MatchRegex("Unknown color *");
         }
         
         [Test]
         public void TagCloud_SourceNotExist_Throws()
         {
             DeleteFiles();
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Source file not found");
+            result.Error.Should().Be("Source file not found");
         }
         
         [TestCase("doc")]
@@ -95,9 +95,9 @@ namespace TagCloudTests
             DeleteFiles();
             sourceFile = random.Next() + "." + extension;
             CreateFile(sourceFile, DefaultContent);
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Unknown source file format.");
+            result.Error.Should().Be("Unknown source file format.");
         }
         
         [TestCase("txt")]
@@ -106,9 +106,9 @@ namespace TagCloudTests
             DeleteFiles();
             sourceFile = random.Next() + "." + extension;
             CreateFile(sourceFile, DefaultContent);
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().NotThrow();
+            result.IsSuccess.Should().BeTrue();
         }
         
         [Test]
@@ -116,9 +116,9 @@ namespace TagCloudTests
         {
             DeleteFiles();
             CreateFile(sourceFile, "");
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Zero tags found");
+            result.Error.Should().Be("Zero tags found");
         }
         
         [TestCase("doc")]
@@ -129,9 +129,9 @@ namespace TagCloudTests
         public void TagCloud_ResultWrongFormat_Throws(string extension)
         {
             resultFile = random.Next() + "."  + extension;
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().Throw<ArgumentException>().WithMessage("Unknown image format");
+            result.Error.Should().Be("Unknown image format");
         }
         
         [TestCase("png")]
@@ -142,9 +142,9 @@ namespace TagCloudTests
         public void TagCloud_ResultRightFormat_NotThrows(string extension)
         {
             resultFile = random.Next() + "."  + extension;
-            Action act = () => tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
+            var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 "Red", 100, 100, 100);
-            act.Should().NotThrow();
+            result.IsSuccess.Should().BeTrue();
         }
     }
 }

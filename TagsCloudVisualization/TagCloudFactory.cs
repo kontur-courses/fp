@@ -15,13 +15,13 @@ namespace TagsCloudVisualization
             ["mixed"] = new TokenShuffler()
         };
 
-        public TagCloud CreateInstance(bool manhattan, string order)
+        public Result<TagCloud> CreateInstance(bool manhattan, string order)
         {
             var metric = manhattan ? 
                 (Func<PointF, PointF, float>)CircularCloudMaker.ManhattanDistance :
                 CircularCloudMaker.Distance;
             if (order == null || !Orders.ContainsKey(order))
-                throw new ArgumentException("Unknown order");
+                return Result.Fail<TagCloud>("Unknown order");
             var orderer = Orders[order];
             var builder = new ContainerBuilder();
             builder.RegisterType<TxtFileReader>().As<IFileReader>();
@@ -37,7 +37,7 @@ namespace TagsCloudVisualization
             builder.RegisterInstance(new CircularCloudMaker(Point.Empty, metric)).As<ICloudMaker>();
             var container = builder.Build();
             using var scope = container.BeginLifetimeScope();
-            return scope.Resolve<TagCloud>();
+            return scope.Resolve<TagCloud>().AsResult();
         }
     }
 }

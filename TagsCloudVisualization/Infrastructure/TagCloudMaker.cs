@@ -18,7 +18,7 @@ namespace TagsCloudVisualization.Infrastructure
             graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
         }
 
-        public Tag[] CreateTagCloud(Token[] tokens, Font font)
+        public Tag[] CreateTagCloud(IEnumerable<Token> tokens, Font font)
         {
             var tags = new List<Tag>();
             foreach (var token in tokens)

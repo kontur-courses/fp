@@ -6,9 +6,10 @@ namespace TagsCloudVisualization.Default
 {
     public class TokenSortedOrder : ITokenOrderer
     {
-        public IEnumerable<Token> OrderTokens(IEnumerable<Token> tokens)
+        public Result<IEnumerable<Token>> OrderTokens(IEnumerable<Token> tokens)
         {
-            return tokens.OrderByDescending(t => t.Weight).ThenByDescending(t => t.Value.Length);
+            return Result.Ok<IEnumerable<Token>>(tokens.OrderByDescending(t => t.Weight)
+                .ThenByDescending(t => t.Value.Length));
         }
     }
 }
