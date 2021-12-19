@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>TagsCloudCLI</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TagsCloudImageSaver\TagsCloudImageSaver.csproj" />
+      <ProjectReference Include="..\TagsCloudVisualization\TagsCloudVisualization.csproj" />
+    </ItemGroup>
+
+</Project>
