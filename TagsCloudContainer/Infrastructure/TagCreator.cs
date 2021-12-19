@@ -1,17 +1,12 @@
 ﻿using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.Infrastructure
 {
     public class TagCreator : ITagCreator
     {
         private Dictionary<string, int> wordStatistics = new();
-        private int wordCount = 0;
-
-        public TagCreator()
-        {
-        }
+        private int wordCount;
 
         public Result<IEnumerable<Tag>> CreateTags(IEnumerable<string> words)
         {

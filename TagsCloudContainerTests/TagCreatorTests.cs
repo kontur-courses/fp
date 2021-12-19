@@ -3,7 +3,6 @@ using NUnit.Framework;
 using TagsCloudContainer;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainerTests
 {

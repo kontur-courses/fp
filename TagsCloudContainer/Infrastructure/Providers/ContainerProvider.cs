@@ -2,11 +2,10 @@
 using TagsCloudContainer.Appliers;
 using TagsCloudContainer.ConsoleInterface;
 using TagsCloudContainer.ConsoleInterface.ConsoleActions;
-using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Parsers;
+using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
 using TagsCloudContainer.TagsCloudLayouter;
-using TagsCloudContainer.TagsCloudLayouter.Spirals;
 
 namespace TagsCloudContainer.Infrastructure.Providers
 {

@@ -1,6 +1,4 @@
-﻿using TagsCloudContainer.Interfaces;
-
-namespace TagsCloudContainer.Preprocessors;
+﻿namespace TagsCloudContainer.Preprocessors;
 
 public class LowercasePreprocessor : IPreprocessor
 {

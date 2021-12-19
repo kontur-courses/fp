@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Imaging;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Filters;
+using TagsCloudContainer.Preprocessors;
 
 namespace TagsCloudContainer.Infrastructure.Settings
 {

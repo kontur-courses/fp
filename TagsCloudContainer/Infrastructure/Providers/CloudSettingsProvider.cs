@@ -1,7 +1,6 @@
 ﻿using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
-using TagsCloudContainer.TagsCloudLayouter.Spirals;
 
 namespace TagsCloudContainer.Infrastructure.Providers
 {

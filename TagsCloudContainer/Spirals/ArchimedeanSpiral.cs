@@ -1,17 +1,16 @@
 ﻿using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Interfaces;
 
-namespace TagsCloudContainer.TagsCloudLayouter.Spirals
+namespace TagsCloudContainer.Spirals
 {
-    public class OvalSpiral : ISpiral
+    public class ArchimedeanSpiral : ISpiral
     {
-        public string Name => "Oval spiral";
+        public string Name => "Circle spiral";
         private readonly double spiralCoef;
         private readonly double angleDelta;
         private readonly Settings settings;
         private double currentAngle;
 
-        public OvalSpiral(Settings settings)
+        public ArchimedeanSpiral(Settings settings)
         {
             this.settings = settings;
             spiralCoef = 1;
@@ -21,7 +20,7 @@ namespace TagsCloudContainer.TagsCloudLayouter.Spirals
         public Point GetNext()
         {
             var center = settings.Center;
-            var x = Math.Round(2 * spiralCoef * currentAngle * Math.Cos(currentAngle)) + center.X;
+            var x = Math.Round(spiralCoef * currentAngle * Math.Cos(currentAngle)) + center.X;
             var y = Math.Round(spiralCoef * currentAngle * Math.Sin(currentAngle)) + center.Y;
             currentAngle += angleDelta;
             return new Point((int)x, (int)y);

@@ -1,6 +1,5 @@
 ﻿using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagPainters;
 
@@ -14,7 +13,7 @@ public class PrimaryTagPainter : ITagPainter
         this.settings = settings;
     }
 
-    public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
+    public IEnumerable<PaintedTag> PaintTags(IEnumerable<Tag> tags)
     {
         return tags.Select(tag => new PaintedTag(tag, settings.Palette.Primary));
     }

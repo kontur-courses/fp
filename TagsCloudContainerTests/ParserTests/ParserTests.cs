@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Parsers;
 
 namespace TagsCloudContainerTests.ParserTests
 {

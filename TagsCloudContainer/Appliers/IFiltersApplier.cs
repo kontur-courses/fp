@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.Interfaces;
+﻿namespace TagsCloudContainer.Appliers;
 
 public interface IFiltersApplier
 {

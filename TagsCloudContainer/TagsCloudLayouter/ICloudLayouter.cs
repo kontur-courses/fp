@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudContainer.Interfaces;
+namespace TagsCloudContainer.TagsCloudLayouter;
 
 public interface ICloudLayouter
 {

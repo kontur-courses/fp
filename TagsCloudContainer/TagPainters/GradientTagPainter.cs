@@ -1,6 +1,5 @@
 ﻿using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagPainters;
 

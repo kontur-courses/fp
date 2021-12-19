@@ -1,5 +1,4 @@
 ﻿using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.Parsers
 {

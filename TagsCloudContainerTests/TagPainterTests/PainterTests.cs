@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudContainerTests.TagPainterTests
 {

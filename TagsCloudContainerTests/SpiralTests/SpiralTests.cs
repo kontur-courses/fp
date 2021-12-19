@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Extensions;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Spirals;
 
 namespace TagsCloudContainerTests.SpiralTests
 {

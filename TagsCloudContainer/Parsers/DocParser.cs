@@ -1,5 +1,4 @@
 ﻿using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Interfaces;
 using Application = Microsoft.Office.Interop.Word.Application;
 
 namespace TagsCloudContainer.Parsers

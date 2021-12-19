@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudContainer.Interfaces;
+namespace TagsCloudContainer.Parsers;
 
 public interface IParser
 {

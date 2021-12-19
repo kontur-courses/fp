@@ -1,5 +1,5 @@
 ﻿using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.TagsCloudLayouter;
 
 namespace TagsCloudContainer.Infrastructure;
 
@@ -18,7 +18,7 @@ public class TagCloudPainter
 
     public string Paint(IEnumerable<PaintedTag> tags)
     {
-        var cloudTags = PutCloudTags(tags).ToList();
+        var cloudTags = PutCloudTags(tags.ToList()).ToList();
         var neededSize = CalculateCoverageSize(cloudTags
                              .Select(tag => tag.Rectangle).ToArray())
             + new Size(AddedImageSize, AddedImageSize);
@@ -43,7 +43,11 @@ public class TagCloudPainter
                 new SolidBrush(tag.Color), tag.Rectangle);
         }
 
-        layouter.Reset();
+        return SaveBitmap(bm);
+    }
+
+    private string SaveBitmap(Bitmap bm)
+    {
         var layoutsPath = Path.Combine(Path.GetFullPath(@"..\..\..\"), "layouts");
         if (!Directory.Exists(layoutsPath))
             Directory.CreateDirectory(layoutsPath);
@@ -52,10 +56,10 @@ public class TagCloudPainter
         return savePath;
     }
 
-    private IEnumerable<CloudTag> PutCloudTags(IEnumerable<PaintedTag> tags)
+    private IEnumerable<CloudTag> PutCloudTags(List<PaintedTag> tags)
     {
         var averageFrequency = tags.Select(tag => tag.Frequency).Sum()
-            / tags.Count();
+            / tags.Count;
 
         foreach (var tag in tags)
         {
@@ -69,6 +73,8 @@ public class TagCloudPainter
                 continue;
             yield return new CloudTag(tag, label, result.Value);
         }
+
+        layouter.Reset();
     }
 
     private static Size CalculateCoverageSize(Rectangle[] rectangles)

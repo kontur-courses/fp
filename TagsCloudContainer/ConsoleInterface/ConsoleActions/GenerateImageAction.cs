@@ -1,6 +1,8 @@
-﻿using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Appliers;
+using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Interfaces;
+using TagsCloudContainer.Parsers;
+using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudContainer.ConsoleInterface.ConsoleActions;
 

@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.Interfaces;
+﻿namespace TagsCloudContainer.Preprocessors;
 
 public interface IPreprocessor
 {

@@ -1,6 +1,4 @@
-﻿using TagsCloudContainer.Interfaces;
-
-namespace TagsCloudContainer.Filters;
+﻿namespace TagsCloudContainer.Filters;
 
 public class ExcludeFilter : IFilter
 {

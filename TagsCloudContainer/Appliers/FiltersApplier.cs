@@ -1,5 +1,5 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Filters;
+using TagsCloudContainer.Infrastructure.Settings;
 
 namespace TagsCloudContainer.Appliers
 {

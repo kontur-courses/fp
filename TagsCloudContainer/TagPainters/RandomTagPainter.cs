@@ -1,5 +1,4 @@
 ﻿using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagPainters;
 
@@ -13,11 +12,13 @@ public class RandomTagPainter : ITagPainter
         rnd = new Random();
     }
 
-    public IEnumerable<PaintedTag> Paint(IEnumerable<Tag> tags)
+    public IEnumerable<PaintedTag> PaintTags(IEnumerable<Tag> tags)
     {
-        return from tag in tags 
-            let randomColor = Color.FromArgb(rnd.Next(256), 
-                rnd.Next(256), rnd.Next(256)) 
-            select new PaintedTag(tag, randomColor);
+        foreach (var tag in tags)
+        {
+            var randomColor = Color.FromArgb(rnd.Next(256),
+                rnd.Next(256), rnd.Next(256));
+            yield return new PaintedTag(tag, randomColor);
+        }
     }
 }

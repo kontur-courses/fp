@@ -5,7 +5,6 @@ using NUnit.Framework;
 using TagsCloudContainer.Infrastructure.Providers;
 using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudContainerTests.TagPainterTests

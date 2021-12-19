@@ -1,4 +1,5 @@
-﻿using TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Spirals;
+using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudContainer.Infrastructure.Settings
 {

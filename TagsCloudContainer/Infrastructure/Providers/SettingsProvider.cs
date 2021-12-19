@@ -1,7 +1,6 @@
 ﻿using System.Drawing.Imaging;
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Preprocessors;
 
 namespace TagsCloudContainer.Infrastructure.Providers
