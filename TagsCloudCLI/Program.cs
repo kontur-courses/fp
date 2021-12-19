@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
-using TagsCloudImageSaver;
 using CommandLine;
+using TagsCloudImageSaver;
 using TagsCloudVisualization;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudCLI
-{ 
-    class Program
-    { 
-        static void Main(string[] args)
+{
+    public class Program
+    {
+        private static void Main(string[] args)
         {
             try
             {
