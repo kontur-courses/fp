@@ -9,7 +9,8 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
         public string PreAnalyzedTextPath { get; }
 
         public Encoding ReadingEncoding { get; }
-        //Result<IEnumerable<string>> ReadText();
-        IEnumerable<string> ReadText();
+
+        Result<IEnumerable<string>> ReadText();
+        //IEnumerable<string> ReadText();
     }
 }

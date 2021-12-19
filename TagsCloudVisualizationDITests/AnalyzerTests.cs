@@ -34,7 +34,7 @@ namespace TagsCloudVisualizationDITests
             var reader = settings.FileReader;
             analyzer.InvokeMystemAnalizationResult();
             var words = reader.ReadText();
-            var result = analyzer.GetAnalyzedWords(words).ToList();
+            var result = analyzer.GetAnalyzedWords(words.GetValueOrThrow()).ToList();
             var expectedResult = new List<Word>
             {
                 new Word("тот"),

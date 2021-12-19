@@ -18,20 +18,9 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
         public Encoding ReadingEncoding { get; }
 
 
-        public IEnumerable<string> ReadText()
+        public Result<IEnumerable<string>> ReadText()
         {
             return File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding);
-
-
-            /*
-            if (File.Exists(PreAnalyzedTextPath))
-            {
-                return Result.Ok(File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding) as IEnumerable<string>);
-            }
-
-            //throw new FileNotFoundException($"Giving path {PreAnalyzedTextPath} is not valid");
-            return Result.Fail<IEnumerable<string>>($"Giving path {PreAnalyzedTextPath} is not valid");
-            */
         }
     }
 }

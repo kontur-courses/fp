@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 
 namespace TagsCloudVisualizationDI.TextAnalization.Visualization
@@ -16,10 +18,17 @@ namespace TagsCloudVisualizationDI.TextAnalization.Visualization
 
         public DefaultVisualization(Brush brush, Font font, Size imageSize, int sizeMultiplier)
         {
+            Result.OnFalse(CheckFont(font), er => Program.PrintAboutFail(er), $"Incorrect font name {font.Name}");
+
             ColorBrush = brush;
             TextFont = font;
             ImageSize = imageSize;
             SizeMultiplier = sizeMultiplier;
+        }
+
+        private bool CheckFont(Font font)
+        {
+            return FontFamily.Families.Select(family => family.Name).Contains(font.Name);
         }
 
         public Result<None> DrawAndSaveImage(List<RectangleWithWord> elements, string savePath, ImageFormat format)
@@ -37,7 +46,7 @@ namespace TagsCloudVisualizationDI.TextAnalization.Visualization
             foreach (var element in elementList)
             {
                 var fontSize = SizeMultiplier * element.WordElement.CntOfWords;
-                var font = new Font("Times", fontSize);
+                var font = new Font(TextFont.Name, fontSize);
 
                 graphics.DrawString(element.WordElement.WordText, font, ColorBrush,
                     element.RectangleElement.Location.X, element.RectangleElement.Location.Y);

@@ -9,7 +9,7 @@ namespace TagsCloudVisualizationDI
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
@@ -62,7 +62,7 @@ namespace TagsCloudVisualizationDI
             }
         }
 
-        public static void OnFalse(bool checkResult, string errorMessage, Action<string> act)
+        public static void OnFalse(bool checkResult, Action<string> act, string errorMessage = null)
         {
             if (!checkResult)
                 act.Invoke(errorMessage);

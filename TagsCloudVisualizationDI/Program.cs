@@ -25,9 +25,10 @@ namespace TagsCloudVisualizationDI
         private static readonly Font Font = new Font("Times", 15);
         private static readonly Size ImageSize = new Size(5000, 5000);
         private static readonly Encoding Encoding = Encoding.UTF8;
+        private static readonly Size ElementSize = new Size(100, 100);
 
         private static readonly string MyStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
-        private static readonly string SaveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
+        private static readonly string SaveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT";
 
 
         public static void Main(string pathToFile, string pathToSave, Result<ImageFormat> imageFormat, Result<List<string>> excludedWordsList)
@@ -65,12 +66,12 @@ namespace TagsCloudVisualizationDI
 
             containerBuilder.RegisterType<DefaultSaver>().As<ISaver>()
                 .WithParameter("savePath", pathToSave)
-                .WithParameter("imageFormat", imageFormat.Value ?? ImageFormat.Png);
+                .WithParameter("imageFormat", imageFormat.GetValueOrThrow() ?? ImageFormat.Png);
 
             
             containerBuilder.RegisterType<DefaultAnalyzer>().As<IAnalyzer>()
                 .WithParameter("excludedSpeechParts", excludedSpeechParts)
-                .WithParameter("excludedWords", excludedWordsList.Value ?? new List<string>())
+                .WithParameter("excludedWords", excludedWordsList.GetValueOrThrow() ?? new List<string>())
                 .WithParameter("filePath", pathToFile)
                 .WithParameter("saveAnalizationPath", SaveAnalizationPath)
                 .WithParameter("mystemPath", MyStemPath)
@@ -99,9 +100,13 @@ namespace TagsCloudVisualizationDI
             var filler = buildContainer.Resolve<IContentFiller>();
             var reader = buildContainer.Resolve<IAnalyzedTextFileReader>();
             var saver = buildContainer.Resolve<ISaver>();
+            var visualization = buildContainer.Resolve<IVisualization>();
+
+            /*
             var elementSize = new Size(100, 100);
             var format = imageFormat.Value;
-            var visualization = buildContainer.Resolve<IVisualization>();
+            */
+            
 
 
 
@@ -112,8 +117,24 @@ namespace TagsCloudVisualizationDI
             if (!invokeResult.IsSuccess)
                 PrintAboutFail(invokeResult.Error);
 
+            reader.ReadText()
+                .Then(analyzedWords => analyzer.GetAnalyzedWords(analyzedWords))
 
+                .Then(normalyzedWords => NormalyzeWords(normalyzedWords, normalizer))
 
+                .Then(formedElement => 
+                    filler.FormStatisticElements(ElementSize, formedElement.ToList()))
+
+                .Then(sizedElement => 
+                    visualization.FindSizeForElements(sizedElement).OrderByDescending(el => el.WordElement.CntOfWords).ToList())
+
+                .Then(positionedElement => filler.MakePositionElements(positionedElement))
+
+                .Then(res => 
+                    visualization.DrawAndSaveImage(res, saver.GetSavePath(), imageFormat.GetValueOrThrow())
+                    .OnFail(er => PrintAboutFail(er)));
+
+            /*
             var wordsFromFile = reader.ReadText();
 
 
@@ -127,9 +148,10 @@ namespace TagsCloudVisualizationDI
             var positionedElements = filler.MakePositionElements(sortedElements);
 
             visualization.DrawAndSaveImage(positionedElements, saver.GetSavePath(), format).OnFail(er => PrintAboutFail(er));
+            */
         }
 
-        private static void PrintAboutFail(string error)
+        internal static void PrintAboutFail(string error)
         {
             throw new Exception(error);
         }

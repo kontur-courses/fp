@@ -11,18 +11,13 @@ namespace TagsCloudVisualizationDI
     {
         public static void CheckPathToFile(string pathToFile)
         {
-            Result.OnFalse(File.Exists(pathToFile),$"pathToFile {pathToFile}  is not exist", (error) => PrintAboutFail(error));
+            Result.OnFalse(File.Exists(pathToFile),(error) => Program.PrintAboutFail(error), $"pathToFile {pathToFile}  is not exist");
         }
 
 
         public static void CheckPathToDirectory(string pathToDirectory)
         {
-            Result.OnFalse(Directory.Exists(pathToDirectory), $"pathToDirectory {pathToDirectory}  is not exist", (error) => PrintAboutFail(error));
-        }
-
-        private static void PrintAboutFail(string message)
-        {
-            throw new Exception(message);
+            Result.OnFalse(Directory.Exists(pathToDirectory), (error) => Program.PrintAboutFail(error), $"pathToDirectory {pathToDirectory}  is not exist");
         }
     }
 }

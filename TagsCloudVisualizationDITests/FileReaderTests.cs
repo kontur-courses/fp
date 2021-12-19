@@ -36,7 +36,7 @@ namespace TagsCloudVisualizationDITests
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex1.TXT";
             var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
             var lines = fileReader.ReadText();
-            lines.Count().Should().Be(8);
+            lines.GetValueOrThrow().Count().Should().Be(8);
         }
     }
 }

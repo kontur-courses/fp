@@ -17,25 +17,24 @@ namespace TagsCloudVisualizationDIConsoleClient
                 return;
             }
 
-            if (args.Length < 2 || args.Length > 4)
-                throw new ArgumentException("Incorrect Number Of MystemArgs");
+            Result.OnFalse(!(args.Length < 2 || args.Length > 3), (er) => PrintAboutFail(er), $"Incorrect number of arguments ({args.Length})" +
+                "but should be between 2 and 3");
 
             var pathToFile = args.ElementAtOrDefault(0);
             var pathToSave = args.ElementAtOrDefault(1);
 
-            if (pathToSave == null)
-                throw new ArgumentException("incorrect path to save");
 
             var lastDotIndex = pathToSave.LastIndexOf('.');
-            var possibleFormat = pathToSave.Substring(lastDotIndex);
+            var possibleFormat = pathToSave[lastDotIndex..];
 
-            var pathWithoutFormat = pathToSave.Substring(0, lastDotIndex);
+            var pathWithoutFormat = pathToSave[..lastDotIndex];
 
             var imageFormat = CheckPossibleFormat(possibleFormat);
 
 
             var excludedWordsDocument = args.ElementAtOrDefault(2);
-            var excludedWordList = MakeExcludeWordList(excludedWordsDocument);
+            var excludedWordList 
+                = excludedWordsDocument == null ? new Result<List<string>>() : MakeExcludeWordList(excludedWordsDocument);
 
             TagsCloudVisualizationDI.Program.Main(pathToFile, pathWithoutFormat, imageFormat, excludedWordList);
         }
@@ -51,7 +50,7 @@ namespace TagsCloudVisualizationDIConsoleClient
                 ".tiff" => ImageFormat.Tiff,
                 ".ico" => ImageFormat.Icon,
                 ".gif" => ImageFormat.Gif,
-                _ => ImageFormat.Png,
+                _ => throw new FormatException("Incorrect image format"),
             });
         }
 
@@ -59,6 +58,11 @@ namespace TagsCloudVisualizationDIConsoleClient
         {
             return Result.Of(() =>File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList(),
                 $"Giving path to file: {excludedWordsDocumentPath} is not valid, NOTSYSTEM");
+        }
+
+        private static void PrintAboutFail(string error)
+        {
+            throw new Exception(error);
         }
     }
 }
