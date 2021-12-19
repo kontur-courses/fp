@@ -6,12 +6,10 @@ using TagCloud.Analyzers;
 using TagCloud.Creators;
 using TagCloud.Layouters;
 using TagCloud.Readers;
-using TagCloud.UI;
-using TagCloud.UI.Console;
 using TagCloud.Visualizers;
 using TagCloud.Writers;
 
-namespace TagCloud
+namespace TagCloud.UI.Console
 {
     public static class DependencyConfigurator
     {
