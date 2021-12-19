@@ -7,7 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using TagsCloudVisualizationDI;
 using TagsCloudVisualizationDI.Saving;
-using TagsCloudVisualizationDI.TextAnalization.Visualization;
+using TagsCloudVisualizationDI.TextAnalyze.Visualization;
 
 namespace TagsCloudVisualizationDITests
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Text;
-using System.Threading;
+﻿using System.IO;
 
 namespace TagsCloudVisualizationDI
 {
@@ -11,13 +6,15 @@ namespace TagsCloudVisualizationDI
     {
         public static void CheckPathToFile(string pathToFile)
         {
-            Result.OnFalse(File.Exists(pathToFile),(error) => Program.PrintAboutFail(error), $"pathToFile {pathToFile}  is not exist");
+            Result.OnFalse(File.Exists(pathToFile),(error) 
+                => Program.PrintAboutFail(error), $"pathToFile {pathToFile}  is not exist");
         }
 
 
         public static void CheckPathToDirectory(string pathToDirectory)
         {
-            Result.OnFalse(Directory.Exists(pathToDirectory), (error) => Program.PrintAboutFail(error), $"pathToDirectory {pathToDirectory}  is not exist");
+            Result.OnFalse(Directory.Exists(pathToDirectory), (error) 
+                => Program.PrintAboutFail(error), $"pathToDirectory {pathToDirectory}  is not exist");
         }
     }
 }

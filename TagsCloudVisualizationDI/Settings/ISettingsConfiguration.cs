@@ -6,10 +6,10 @@ using System.Text;
 using TagsCloudVisualizationDI.AnalyzedTextReader;
 using TagsCloudVisualizationDI.Layouter.Filler;
 using TagsCloudVisualizationDI.Saving;
-using TagsCloudVisualizationDI.TextAnalization;
-using TagsCloudVisualizationDI.TextAnalization.Analyzer;
-using TagsCloudVisualizationDI.TextAnalization.Normalizer;
-using TagsCloudVisualizationDI.TextAnalization.Visualization;
+using TagsCloudVisualizationDI.TextAnalyze;
+using TagsCloudVisualizationDI.TextAnalyze.Analyzer;
+using TagsCloudVisualizationDI.TextAnalyze.Normalizer;
+using TagsCloudVisualizationDI.TextAnalyze.Visualization;
 
 namespace TagsCloudVisualizationDI.Settings
 {

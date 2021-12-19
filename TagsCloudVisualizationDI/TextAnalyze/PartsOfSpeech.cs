@@ -1,4 +1,4 @@
-﻿namespace TagsCloudVisualizationDI.TextAnalization
+﻿namespace TagsCloudVisualizationDI.TextAnalyze
 {
     public static class PartsOfSpeech
     {

@@ -9,10 +9,10 @@ using System.Text;
 using TagsCloudVisualizationDI.AnalyzedTextReader;
 using TagsCloudVisualizationDI.Layouter.Filler;
 using TagsCloudVisualizationDI.Saving;
-using TagsCloudVisualizationDI.TextAnalization;
-using TagsCloudVisualizationDI.TextAnalization.Analyzer;
-using TagsCloudVisualizationDI.TextAnalization.Normalizer;
-using TagsCloudVisualizationDI.TextAnalization.Visualization;
+using TagsCloudVisualizationDI.TextAnalyze;
+using TagsCloudVisualizationDI.TextAnalyze.Analyzer;
+using TagsCloudVisualizationDI.TextAnalyze.Normalizer;
+using TagsCloudVisualizationDI.TextAnalyze.Visualization;
 
 namespace TagsCloudVisualizationDI
 {
@@ -31,7 +31,8 @@ namespace TagsCloudVisualizationDI
         private static readonly string SaveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT";
 
 
-        public static void Main(string pathToFile, string pathToSave, Result<ImageFormat> imageFormat, Result<List<string>> excludedWordsList)
+        public static void Main(string pathToFile, string pathToSave, 
+            Result<ImageFormat> imageFormat, Result<List<string>> excludedWordsList)
         {
             var excludedSpeechParts = new[]
             {
@@ -43,22 +44,11 @@ namespace TagsCloudVisualizationDI
             excludedWordsList.OnFail(error => PrintAboutFail(error));
 
 
-
             Checker.CheckPathToFile(pathToFile);
-            Checker.CheckPathToDirectory(pathToSave.Substring(0, pathToSave.LastIndexOf("\\")+1));
+            Checker.CheckPathToDirectory(pathToSave
+                .Substring(0, pathToSave.LastIndexOf("\\", StringComparison.InvariantCulture)+1));
             Checker.CheckPathToFile(MyStemPath);
             Checker.CheckPathToFile(SaveAnalizationPath);
-
-
-            //var arguments = "-lndw -ig";
-            //var center = new Point(2500, 2500);
-            //var brush = new SolidBrush(Color.Black);
-            //var textFont = new Font("Times", 15);
-            //var imageSize = new Size(5000, 5000);
-            //var multiplier = 25;
-            //var encoding = Encoding.UTF8;
-
-
 
 
             var containerBuilder = new ContainerBuilder();
@@ -68,14 +58,14 @@ namespace TagsCloudVisualizationDI
                 .WithParameter("savePath", pathToSave)
                 .WithParameter("imageFormat", imageFormat.GetValueOrThrow() ?? ImageFormat.Png);
 
-            
+
             containerBuilder.RegisterType<DefaultAnalyzer>().As<IAnalyzer>()
                 .WithParameter("excludedSpeechParts", excludedSpeechParts)
                 .WithParameter("excludedWords", excludedWordsList.GetValueOrThrow() ?? new List<string>())
                 .WithParameter("filePath", pathToFile)
-                .WithParameter("saveAnalizationPath", SaveAnalizationPath)
                 .WithParameter("mystemPath", MyStemPath)
-                .WithParameter("arguments", Arguments);
+                .WithParameter("arguments", Arguments)
+                .WithParameter("saveAnalyzePath", SaveAnalizationPath);
 
             containerBuilder.RegisterType<CircularCloudLayouterForRectanglesWithText>().As<IContentFiller>()
                 .WithParameter("center", Center);
@@ -102,13 +92,6 @@ namespace TagsCloudVisualizationDI
             var saver = buildContainer.Resolve<ISaver>();
             var visualization = buildContainer.Resolve<IVisualization>();
 
-            /*
-            var elementSize = new Size(100, 100);
-            var format = imageFormat.Value;
-            */
-            
-
-
 
 
             var invokeResult = analyzer.InvokeMystemAnalizationResult();
@@ -120,35 +103,20 @@ namespace TagsCloudVisualizationDI
             reader.ReadText()
                 .Then(analyzedWords => analyzer.GetAnalyzedWords(analyzedWords))
 
-                .Then(normalyzedWords => NormalyzeWords(normalyzedWords, normalizer))
+                .Then(normalizedWords => NormalizeWords(normalizedWords, normalizer))
 
                 .Then(formedElement => 
                     filler.FormStatisticElements(ElementSize, formedElement.ToList()))
 
                 .Then(sizedElement => 
-                    visualization.FindSizeForElements(sizedElement).OrderByDescending(el => el.WordElement.CntOfWords).ToList())
+                    visualization.FindSizeForElements(sizedElement)
+                        .OrderByDescending(el => el.WordElement.CntOfWords).ToList())
 
                 .Then(positionedElement => filler.MakePositionElements(positionedElement))
 
                 .Then(res => 
                     visualization.DrawAndSaveImage(res, saver.GetSavePath(), imageFormat.GetValueOrThrow())
                     .OnFail(er => PrintAboutFail(er)));
-
-            /*
-            var wordsFromFile = reader.ReadText();
-
-
-
-            var analyzedWords = analyzer.GetAnalyzedWords(wordsFromFile).ToList();
-            var normalyzedWords = NormalyzeWords(analyzedWords, normalizer).ToList();
-            var formedElements = filler.FormStatisticElements(elementSize, normalyzedWords);
-            var sizedElements = visualization.FindSizeForElements(formedElements);
-            var sortedElements = sizedElements.
-                OrderByDescending(el => el.WordElement.CntOfWords).ToList();
-            var positionedElements = filler.MakePositionElements(sortedElements);
-
-            visualization.DrawAndSaveImage(positionedElements, saver.GetSavePath(), format).OnFail(er => PrintAboutFail(er));
-            */
         }
 
         internal static void PrintAboutFail(string error)
@@ -156,7 +124,7 @@ namespace TagsCloudVisualizationDI
             throw new Exception(error);
         }
 
-        private static IEnumerable<Word> NormalyzeWords(IEnumerable<Word> analyzedWords, INormalizer normalizer)
+        private static IEnumerable<Word> NormalizeWords(IEnumerable<Word> analyzedWords, INormalizer normalizer)
         {
             foreach (var word in analyzedWords)
             {

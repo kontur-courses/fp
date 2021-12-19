@@ -2,31 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TagsCloudVisualizationDI.TextAnalization.Analyzer
+namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 {
     public class DefaultAnalyzer : IAnalyzer
     {
         private readonly HashSet<PartsOfSpeech.SpeechPart> _excludedSpeechParts;
         private readonly IEnumerable<string> _excludedWords;
         public string FilePath { get; }
-        public string SaveAnalizationPath { get; }
+        public string SaveAnalyzePath { get; }
         public string MystemPath { get; }
         public string MystemArgs { get; }
 
 
         public DefaultAnalyzer(IEnumerable<PartsOfSpeech.SpeechPart> excludedSpeechParts, IEnumerable<string> excludedWords,
-            string filePath, string saveAnalizationPath, string mystemPath, string arguments)
+            string filePath, string saveAnalyzePath, string mystemPath, string arguments)
         {
             _excludedSpeechParts = excludedSpeechParts.ToHashSet();
             _excludedWords = excludedWords;
             FilePath = filePath;
-            SaveAnalizationPath = saveAnalizationPath;
+            SaveAnalyzePath = saveAnalyzePath;
             MystemPath = mystemPath;
             MystemArgs = arguments;
         }
 
 
-        private bool CheckWord(string inputWord, out string wordContent, out PartsOfSpeech.SpeechPart enumElementOfCurrentType)
+        private static bool CheckWord(string inputWord, out string wordContent, out PartsOfSpeech.SpeechPart enumElementOfCurrentType)
         {
             var wordAndPart = inputWord.Split(new[] { ' ', ',', '=' }, 3, StringSplitOptions.RemoveEmptyEntries);
             if (wordAndPart.Length < 2)

@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudVisualizationDI;
 using TagsCloudVisualizationDI.Layouter.Filler;
-using TagsCloudVisualizationDI.TextAnalization.Visualization;
+using TagsCloudVisualizationDI.TextAnalyze.Visualization;
 
 namespace TagsCloudVisualizationDITests
 {

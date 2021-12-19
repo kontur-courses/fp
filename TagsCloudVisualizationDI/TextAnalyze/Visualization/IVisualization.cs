@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 
-namespace TagsCloudVisualizationDI.TextAnalization.Visualization
+namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
 {
     public interface IVisualization : IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace TagsCloudVisualizationDI.TextAnalization.Normalizer
+﻿namespace TagsCloudVisualizationDI.TextAnalyze.Normalizer
 {
     public class DefaultNormalizer : INormalizer
     {

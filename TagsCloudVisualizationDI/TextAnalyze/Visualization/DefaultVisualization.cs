@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 
 
-namespace TagsCloudVisualizationDI.TextAnalization.Visualization
+namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
 {
     public class DefaultVisualization : IVisualization
     {
@@ -26,7 +24,7 @@ namespace TagsCloudVisualizationDI.TextAnalization.Visualization
             SizeMultiplier = sizeMultiplier;
         }
 
-        private bool CheckFont(Font font)
+        private static bool CheckFont(Font font)
         {
             return FontFamily.Families.Select(family => family.Name).Contains(font.Name);
         }
