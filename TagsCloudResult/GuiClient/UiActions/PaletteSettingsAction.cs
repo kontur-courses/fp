@@ -1,4 +1,5 @@
-﻿using App.Implementation.SettingsHolders;
+﻿using App;
+using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
 {
@@ -15,9 +16,9 @@ namespace GuiClient.UiActions
         public string Name => "Палитра...";
         public string Description => "Цвета для облака тегов";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            SettingsForm.For(palette).ShowDialog();
+            return Result.OfAction(() => SettingsForm.For(palette).ShowDialog());
         }
     }
 }

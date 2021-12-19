@@ -1,4 +1,5 @@
-﻿using App;
+﻿using System.Windows.Forms;
+using App;
 using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
@@ -18,9 +19,9 @@ namespace GuiClient.UiActions
         public string Name => "Шрифт...";
         public string Description => "Шрифты для тегов";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            SettingsForm.For(settings).ShowDialog();
+            return Result.OfAction(() => SettingsForm.For(settings).ShowDialog());
         }
     }
 }

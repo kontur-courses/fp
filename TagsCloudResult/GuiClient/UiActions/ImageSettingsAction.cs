@@ -1,4 +1,5 @@
-﻿using App.Implementation.SettingsHolders;
+﻿using App;
+using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
 {
@@ -17,9 +18,9 @@ namespace GuiClient.UiActions
         public string Name => "Изображение...";
         public string Description => "Размеры изображения";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            SettingsForm.For(settings).ShowDialog();
+            return Result.OfAction(() => SettingsForm.For(settings).ShowDialog());
         }
     }
 }

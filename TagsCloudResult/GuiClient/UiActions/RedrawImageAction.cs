@@ -1,4 +1,6 @@
-﻿namespace GuiClient.UiActions
+﻿using App;
+
+namespace GuiClient.UiActions
 {
     public class RedrawImageAction : IUiAction
     {
@@ -15,9 +17,9 @@
 
         public string Description => "Обновить изображение";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            imageHolder.GenerateImage();
+            return Result.OfAction(() => imageHolder.GenerateImage());
         }
     }
 }

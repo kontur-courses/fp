@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using App;
 using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
@@ -16,16 +17,19 @@ namespace GuiClient.UiActions
         public string Name => "Открыть...";
         public string Description => "Использовать файл как источник слов";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            var dialog = new OpenFileDialog
+            return Result.OfAction(() =>
             {
-                CheckFileExists = true,
-                Filter = "Текстовые файлы (*.txt;*.docx)|*.txt;*.docx"
-            };
-            var res = dialog.ShowDialog();
-            if (res == DialogResult.OK)
-                settings.InputFileName = dialog.FileName;
+                var dialog = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                    Filter = "Текстовые файлы (*.txt;*.docx)|*.txt;*.docx"
+                };
+                var res = dialog.ShowDialog();
+                if (res == DialogResult.OK)
+                    settings.InputFileName = dialog.FileName;
+            });
         }
     }
 }

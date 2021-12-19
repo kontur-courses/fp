@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using App;
 using App.Implementation.SettingsHolders;
 
 namespace GuiClient.UiActions
@@ -19,20 +20,25 @@ namespace GuiClient.UiActions
         public string Name => "Сохранить...";
         public string Description => "Сохранить изображение в файл";
 
-        public void Perform()
+        public Result<None> Perform()
         {
-            var dialog = new SaveFileDialog
+            return Result.OfAction(() =>
             {
-                CheckFileExists = false,
-                InitialDirectory = Path.GetFullPath(outputSettings.OutputFilePath),
-                Filter = "Изображения (*.png;*.jpeg;*.bmp)|*.png;*.jpeg;*.bmp"
-            };
-            var res = dialog.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                outputSettings.OutputFilePath = dialog.FileName;
-                imageHolder.SaveImage();
-            }
+                var
+                    dialog = new SaveFileDialog
+                    {
+                        CheckFileExists = false,
+                        InitialDirectory = Path.GetFullPath(outputSettings.OutputFilePath),
+                        Filter = "Изображения (*.png;*.jpeg;*.bmp)|*.png;*.jpeg;*.bmp"
+                    };
+
+                var res = dialog.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    outputSettings.OutputFilePath = dialog.FileName;
+                    imageHolder.SaveImage();
+                }
+            });
         }
     }
 }
