@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
@@ -14,39 +14,35 @@ namespace TagCloud.TextProcessing
         private const string TempPath = @"c:\temp\output.txt";
         private const string Arguments = "-nl -ig -d --format json";
 
-        public IEnumerable<ILexeme?> GetLexemesFrom(string filePath)
+        public Result<IEnumerable<ILexeme>> GetLexemesFrom(string filePath)
         {
-            RunMyStem(filePath);
-            var myStemResults = ParseMyStemResult();
-            File.Delete(TempPath);
+            var myStemResults = RunMyStem(filePath)
+                .Then(_ => Result.Of(ParseMyStemResult));
+            if (myStemResults.IsSuccess)
+                File.Delete(TempPath);
             return myStemResults;
         }
 
-        private static void RunMyStem(string filePath)
+        private static Result<None> RunMyStem(string filePath)
         {
             using var process = ConfigureProcess(filePath);
             var myStemErrorOut = string.Empty;
             process.ErrorDataReceived += (s, e) => myStemErrorOut += e.Data;
-            try
-            {
-                process.Start();
-            }
-            catch (Exception e)
-            {
-                throw new ApplicationException("MyStem не запустился" +
-                                               " проверьте наличие утилиты в корневом каталоге программы", e);
-            }
 
-            process.BeginErrorReadLine();
-            process.WaitForExit();
-            if (!string.IsNullOrEmpty(myStemErrorOut))
-                throw new WarningException(
-                    "MyStem отработал с ошибками, обработка текста прервана.\n" +
-                    "Проверьте исходный текст на соответствие кодировке UTF-8.\n" +
-                    $"Вывод MyStem: {myStemErrorOut}");
+            return Result
+                .Of(() => process.Start(),
+                    "MyStem не запустился, проверьте наличие утилиты в корневом каталоге программы")
+                .Then(_ => process.BeginErrorReadLine())
+                .Then(_ => process.WaitForExit())
+                .Then(_ => !string.IsNullOrEmpty(myStemErrorOut)
+                    ? Result.Fail<None>(
+                        "MyStem отработал с ошибками, обработка текста прервана.\n" +
+                        "Проверьте исходный текст на соответствие кодировке UTF-8.\n" +
+                        $"Вывод MyStem: {myStemErrorOut}")
+                    : Result.Ok());
         }
 
-        private static IEnumerable<MyStemResult?> ParseMyStemResult()
+        private static IEnumerable<ILexeme?> ParseMyStemResult()
         {
             return File.ReadAllText(TempPath)
                 .Split("\n", StringSplitOptions.RemoveEmptyEntries)

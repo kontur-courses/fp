@@ -1,7 +1,9 @@
-﻿namespace TagCloud.TextProcessing
+﻿using ResultOf;
+
+namespace TagCloud.TextProcessing
 {
     public interface IFileProvider
     {
-        string GetTxtFilePath(string path);
+        Result<string> GetTxtFilePath(string path);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
     public interface ITextProcessor
     {
-        IEnumerable<Dictionary<string, int>> GetWordsWithFrequency(ITextProcessingOptions options);
+        Result<Dictionary<string, int>> GetWordsWithFrequency(ITextProcessingOptions options, string filePath);
     }
 }

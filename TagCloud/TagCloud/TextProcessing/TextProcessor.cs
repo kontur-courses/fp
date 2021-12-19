@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
@@ -14,15 +15,19 @@ namespace TagCloud.TextProcessing
             _morphologyAnalyzer = morphologyAnalyzer;
         }
 
-        public IEnumerable<Dictionary<string, int>> GetWordsWithFrequency(ITextProcessingOptions options)
+        public Result<Dictionary<string, int>> GetWordsWithFrequency(ITextProcessingOptions options, string filePath)
         {
-            return options.FilesToProcess
-                .Select(filePath => _morphologyAnalyzer.GetLexemesFrom(_textProvider.GetTxtFilePath(filePath)))
-                .Select(lexemes => lexemes.Where(r =>
-                    !options.ExcludePartOfSpeech.Contains(r.PartOfSpeech) || options.IncludeWords.Contains(r.Lemma)))
-                .Select(withPosExcluded => withPosExcluded.Select(r => r.Lemma))
-                .Select(lemmas => lemmas.Where(w => !options.ExcludeWords.Contains(w)))
-                .Select(withWordsExcluded => GetMostCommonWords(withWordsExcluded, options.Amount));
+            return _textProvider.GetTxtFilePath(filePath)
+                .Then(_morphologyAnalyzer.GetLexemesFrom)
+                .Then(lexemes =>
+                {
+                    var excluded = lexemes
+                        .Where(r => !options.ExcludePartOfSpeech.Contains(r.PartOfSpeech)
+                                    || options.IncludeWords.Contains(r.Lemma))
+                        .Select(r => r.Lemma)
+                        .Where(w => !options.ExcludeWords.Contains(w));
+                    return GetMostCommonWords(excluded, options.Amount);
+                });
         }
 
         private static Dictionary<string, int> GetMostCommonWords(IEnumerable<string> words, int amount)

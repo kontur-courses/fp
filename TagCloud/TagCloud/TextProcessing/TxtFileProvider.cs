@@ -1,14 +1,15 @@
 ﻿using System.IO;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
     public class TxtFileProvider : IFileProvider
     {
-        public string GetTxtFilePath(string path)
+        public Result<string> GetTxtFilePath(string path)
         {
-            if (!File.Exists(path))
-                throw new IOException($"Файл по пути {path} не был найден");
-            return path;
+            return !File.Exists(path) 
+                ? Result.Fail<string>($"Файл по пути {path} не был найден")
+                : Result.Ok(path);
         }
     }
 }

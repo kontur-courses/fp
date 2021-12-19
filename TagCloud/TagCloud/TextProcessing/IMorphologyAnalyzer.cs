@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagCloud.TextProcessing
 {
     public interface IMorphologyAnalyzer
     {
-        public IEnumerable<ILexeme?> GetLexemesFrom(string filePath);
+        public Result<IEnumerable<ILexeme>> GetLexemesFrom(string filePath);
     }
 }

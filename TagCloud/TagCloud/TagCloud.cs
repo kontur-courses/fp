@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ResultOf;
 using TagCloud.BitmapSaving;
 using TagCloud.Drawing;
 using TagCloud.Extensions;
@@ -30,18 +30,15 @@ namespace TagCloud
 
         public TagCloud ProcessText(ITextProcessingOptions options)
         {
-            _statusWriter.WriteLine("Начинаю обработку текста");
-            try
+            foreach (var filePath in options.FilesToProcess)
             {
-                _processedTexts = _textProcessor.GetWordsWithFrequency(options).ToList();
-                _statusWriter.WriteLine("Обработка завершена\n");
-                return this;
+                _statusWriter.WriteLine($"Идет обработка текста {filePath}");
+                _textProcessor.GetWordsWithFrequency(options, filePath)
+                    .Then(_processedTexts.Add)
+                    .Then(_ => _statusWriter.WriteLine("Обработка завершена\n"))
+                    .OnFail(error => _statusWriter.WriteLine($"Произошла ошибка:\n{error}"));
             }
-            catch (Exception e)
-            {
-                _statusWriter.WriteLine($"Произошла ошибка:\n{e.Message}");
-                return this;
-            }
+            return this;
         }
 
         public TagCloud DrawTagClouds(IDrawerOptions options)
