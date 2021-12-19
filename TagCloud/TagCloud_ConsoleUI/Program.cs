@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CommandLine;
 using CommandLine.Text;
+using ResultOf;
 using TagCloud;
 
 namespace TagCloud_ConsoleUI
@@ -10,22 +12,30 @@ namespace TagCloud_ConsoleUI
     {
         public static void Main(string[] args)
         {
+            var argumentsPattern = new Regex("(\"[^\"]*\")|(\\S+)", RegexOptions.Compiled);
             var builder = new TagCloudBuilder();
             var tagCloud = builder
                 .CreateDefault()
                 .WithStatusWriter<ConsoleStatusWriter>()
                 .Build();
-
+            var parser = new Parser(c => c.HelpWriter = null);
             while (!args.Contains("exit"))
             {
-                var parserResult = new Parser(c => c.HelpWriter = null)
-                    .ParseArguments<DrawerOptions, TextProcessingOptions, ClearOptions>(args);
-                parserResult.MapResult(
-                    (DrawerOptions opts) => tagCloud.DrawTagClouds(opts),
-                    (TextProcessingOptions opts) => tagCloud.ProcessText(opts),
-                    (ClearOptions opts) => tagCloud.ClearProcessedTexts(),
-                    errors => DisplayHelp(parserResult));
-                args = Console.ReadLine().Split();
+                Result.Of(() => parser.ParseArguments<DrawerOptions, TextProcessingOptions, ClearOptions>(args),
+                        "При разборе аргументов произошла ошибка")
+                    .Then(res =>
+                        res.MapResult(
+                            (DrawerOptions opts) => tagCloud.DrawTagClouds(opts),
+                            (TextProcessingOptions opts) => tagCloud.ProcessText(opts),
+                            (ClearOptions opts) => tagCloud.ClearProcessedTexts(),
+                            errors => DisplayHelp(res)))
+                    .OnFail(Console.WriteLine);
+
+                args = argumentsPattern.Matches(Console.ReadLine())
+                    .Select(m => m.Value.Contains('\"')
+                        ? m.Value.Replace("\"", "")
+                        : m.Value)
+                    .ToArray();
             }
         }
 

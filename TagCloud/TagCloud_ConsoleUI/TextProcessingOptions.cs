@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
 using TagCloud.TextProcessing;
@@ -8,6 +9,7 @@ namespace TagCloud_ConsoleUI
     [Verb("process", HelpText = "Обработать текст из файла по заданному пути")]
     public class TextProcessingOptions : ITextProcessingOptions
     {
+        private int _amount;
         private HashSet<PartOfSpeech> _excludePartOfSpeech;
 
         private HashSet<string> _excludeWords;
@@ -43,7 +45,12 @@ namespace TagCloud_ConsoleUI
             HelpText =
                 "Установить количество слов в итоговом облаке тэгов (при наличии такого количества в исходном тексте)",
             Default = 1000)]
-        public int Amount { get; set; }
+        public int Amount
+        {
+            get => _amount;
+            set => _amount =
+                value > 0 ? value : throw new ArgumentException("Количество слов должно быть положительным");
+        }
 
         [Option('s', "exclude-pos", Required = false, HelpText = "Задать список частей речи для исключения из облака",
             Separator = ':')]

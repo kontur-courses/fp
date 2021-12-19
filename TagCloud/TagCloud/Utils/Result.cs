@@ -11,11 +11,12 @@ namespace ResultOf
 
     public struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -23,11 +24,13 @@ namespace ResultOf
 
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -42,6 +45,7 @@ namespace ResultOf
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);
@@ -119,8 +123,8 @@ namespace ResultOf
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            return input.IsSuccess 
-                ? input 
+            return input.IsSuccess
+                ? input
                 : Fail<TInput>(replaceError(input.Error));
         }
 

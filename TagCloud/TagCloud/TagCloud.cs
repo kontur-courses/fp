@@ -14,10 +14,10 @@ namespace TagCloud
     public class TagCloud
     {
         private readonly IDrawer _drawer;
+        private readonly List<Dictionary<string, int>> _processedTexts = new();
         private readonly TextWriter _statusWriter;
         private readonly ITextProcessor _textProcessor;
         private readonly IWordLayouter _wordLayouter;
-        private List<Dictionary<string, int>> _processedTexts = new();
 
         public TagCloud(ITextProcessor textProcessor, IWordLayouter wordLayouter, IDrawer drawer,
             TextWriter statusWriter)
@@ -38,6 +38,7 @@ namespace TagCloud
                     .Then(_ => _statusWriter.WriteLine("Обработка завершена\n"))
                     .OnFail(error => _statusWriter.WriteLine($"Произошла ошибка:\n{error}"));
             }
+
             return this;
         }
 

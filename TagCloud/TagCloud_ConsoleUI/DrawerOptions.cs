@@ -14,6 +14,7 @@ namespace TagCloud_ConsoleUI
     {
         private readonly Color _defaultBackgroundColor = Color.White;
         private Color _backgroundColor;
+        private float _baseFontSize = 14;
 
         [Option("format", Required = false, HelpText = "Задать формат результирующего изображения")]
         public ImageExtension ImageExtension { get; set; } = ImageExtension.Png;
@@ -42,7 +43,12 @@ namespace TagCloud_ConsoleUI
 
         [Option('s', "font-size", Required = false,
             HelpText = "Задать базовый размер шрифта (итоговый зависит от частоты встречаемости слова)", Default = 14)]
-        public float BaseFontSize { get; set; } = 14;
+        public float BaseFontSize
+        {
+            get => _baseFontSize;
+            set => _baseFontSize =
+                value > 0 ? value : throw new ArgumentException("Размер шрифта должен быть положительным");
+        }
 
         [Option("image-size", Required = false, HelpText = "Задать размер итогового изображения\n" +
                                                            "(пример: draw --image-size 1920,1080)")]
