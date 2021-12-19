@@ -1,6 +1,4 @@
-﻿using Autofac;
-using TagCloud.UI;
-using TagCloud.UI.Console;
+﻿using TagCloud.UI.Console;
 
 
 namespace TagCloud

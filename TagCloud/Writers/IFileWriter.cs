@@ -4,6 +4,6 @@ namespace TagCloud.Writers
 {
     public interface IFileWriter
     {
-        void Write(Bitmap bitmap, string filename);
+        void Write(Bitmap bitmap, string filename, string extension);
     }
 }

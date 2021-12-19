@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using TagCloud.Creators;
 using TagCloud.Layouters;
+using TagCloud.ResultMonad;
 
 namespace TagCloud.Visualizers
 {
     public class CloudVisualizer : IVisualizer
     {
         private readonly DrawingSettings drawingSettings;
-        //private readonly ITagColoring tagColoring;
 
         public CloudVisualizer(DrawingSettings drawingSettings)
         {
@@ -20,16 +19,16 @@ namespace TagCloud.Visualizers
         public Result<Bitmap> DrawCloud(IEnumerable<Tag> tags,
             ITagColoringFactory tagColoringFactory)
         {
-            Console.WriteLine(drawingSettings.Width);
-            Console.WriteLine(drawingSettings.Height);
             var bitmap = new Bitmap(drawingSettings.Width, drawingSettings.Height);
             using var graph = Graphics.FromImage(bitmap);
+
             var tagColoringAlgorithm = tagColoringFactory
                 .Create(drawingSettings.AlgorithmName, drawingSettings.PenColors);
+
             if (!tagColoringAlgorithm.IsSuccess)
                 return Result.Fail<Bitmap>(tagColoringAlgorithm.Error);
-            var backgroundBrush = drawingSettings.BackgroundColor;
 
+            var backgroundBrush = drawingSettings.BackgroundColor;
             graph.Clear(backgroundBrush);
 
             foreach (var tag in tags)

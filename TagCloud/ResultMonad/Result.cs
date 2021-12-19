@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TagCloud
+namespace TagCloud.ResultMonad
 {
     public readonly struct Result<T>
     {
@@ -66,7 +66,7 @@ namespace TagCloud
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message + e.StackTrace);
+                return Fail<None>(error ?? e.Message);
             }
         }
 

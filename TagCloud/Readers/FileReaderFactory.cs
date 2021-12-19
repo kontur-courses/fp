@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.ResultMonad;
 
 namespace TagCloud.Readers
 {
@@ -24,12 +25,6 @@ namespace TagCloud.Readers
                                                 $"Please make an introductory file with one of these extensions:" +
                                                 $"{fileReadersFactory.Keys.ToArray()}");
             return reader.AsResult();
-        }
-
-        private static string GetExtensionsFromFileName(string filename)
-        {
-            var lastDotIndex = filename.LastIndexOf('.');
-            return filename[(lastDotIndex + 1)..];
         }
     }
 }

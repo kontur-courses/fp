@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.Creators;
+using TagCloud.ResultMonad;
 
 namespace TagCloud.Visualizers
 {

@@ -1,4 +1,6 @@
-﻿namespace TagCloud.Readers
+﻿using TagCloud.ResultMonad;
+
+namespace TagCloud.Readers
 {
     public interface IFileReader
     {

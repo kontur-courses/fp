@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Autofac;
@@ -32,12 +31,10 @@ namespace TagCloud
                 .WithParameter(new TypedParameter(typeof(Font), drawingSettings.Font))
                 .SingleInstance();
 
-            //builder.RegisterType<TagCreatorFactory>().As<ITagCreatorFactory>().SingleInstance();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>()
                 .WithParameter(new TypedParameter(typeof(Point), center))
                 .SingleInstance();
 
-            //builder.RegisterType<CircularCloudLayouterFactory>().As<ICloudLayouterFactory>().SingleInstance();
             builder.RegisterType<CloudVisualizer>().As<IVisualizer>().SingleInstance();
             builder.RegisterType<BitmapWriter>().As<IFileWriter>().SingleInstance();
             builder.RegisterType<WordsToLowerConverter>().As<IWordConverter>().SingleInstance();
