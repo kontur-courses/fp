@@ -31,9 +31,8 @@ namespace GuiClient.UiActions
             if (IsSizeCorrect(newSize))
                 return Result.Ok();
 
-            MessageBox.Show("Image width and height must be greater then 0");
             settings.Size = oldSize;
-            return Result.Fail<None>("Incorrect image size");
+            return Result.Fail<None>("image sizes should be greater then 0");
 
         }
 

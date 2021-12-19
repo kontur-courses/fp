@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using App;
 
 namespace GuiClient.UiActions
 {
@@ -24,12 +25,23 @@ namespace GuiClient.UiActions
 
         public static ToolStripItem ToMenuItem(this IUiAction action)
         {
-            return
-                new ToolStripMenuItem(action.Name, null, (sender, args) => action.Perform())
+            return new ToolStripMenuItem(
+                action.Name,
+                null,
+                (sender, args) =>
                 {
-                    ToolTipText = action.Description,
-                    Tag = action
-                };
+                    action.Perform()
+                        .OnFail(error =>
+                        {
+                            MessageBox.Show($"{error}",
+                                "Error message",
+                                MessageBoxButtons.OK);
+                        });
+                })
+            {
+                ToolTipText = action.Description,
+                Tag = action
+            };
         }
     }
 }

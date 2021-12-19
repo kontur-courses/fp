@@ -19,7 +19,8 @@ namespace GuiClient
             this.sizeSettings = sizeSettings;
             this.outputResultSettings = outputResultSettings;
             this.cloudGenerator = cloudGenerator;
-            
+            SizeMode = PictureBoxSizeMode.StretchImage;
+
         }
 
         public void GenerateImage()
@@ -29,7 +30,6 @@ namespace GuiClient
 
             cloudGenerator.GenerateCloud()
                 .OnFail(error => MessageBox.Show(error))
-                .Then(ShowMessageIfCloudDidNotFit)
                 .Then(result => Image = result.Visualization);
         }
 
@@ -42,14 +42,6 @@ namespace GuiClient
             }
 
             Image.Save(outputResultSettings.OutputFilePath, outputResultSettings.ImageFormat);
-        }
-
-        private Result<CloudVisualization> ShowMessageIfCloudDidNotFit(CloudVisualization visualization)
-        {
-            if (!visualization.IsCloudFitToSpecifiedSize(sizeSettings.Size))
-                MessageBox.Show("Cloud did not fit to specified image size");
-
-            return Result.Ok(visualization);
         }
     }
 }
