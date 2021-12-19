@@ -57,15 +57,6 @@ namespace TagsCloudVisualizationDIConsoleClient
 
         private static Result<List<string>> MakeExcludeWordList(string excludedWordsDocumentPath)
         {
-            /*
-            if (excludedWordsDocumentPath == null)
-                return null;
-
-            if (!File.Exists(excludedWordsDocumentPath))
-                throw new Exception($"Giving path to file: {excludedWordsDocumentPath} is not valid, NOTSYSTEM");
-
-            return File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList();
-            */
             return Result.Of(() =>File.ReadLines(excludedWordsDocumentPath).Select(w => w.ToLower()).ToList(),
                 $"Giving path to file: {excludedWordsDocumentPath} is not valid, NOTSYSTEM");
         }

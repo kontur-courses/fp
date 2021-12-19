@@ -28,16 +28,6 @@ namespace TagsCloudVisualizationDI.TextAnalization.Visualization
             var drawImage = DrawRectangles(image, elements);
 
             return Result.OfAction(() => drawImage.Save(savePath, format), $"Error during saving");
-            /*
-            try
-            {
-                drawImage.Save(savePath, format);
-            }
-            catch (System.Runtime.InteropServices.ExternalException)
-            {
-                throw new FileNotFoundException($"Invalid save path: {savePath}");
-            }
-            */
         }
 
 

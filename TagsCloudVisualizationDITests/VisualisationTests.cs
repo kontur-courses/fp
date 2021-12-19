@@ -30,7 +30,7 @@ namespace TagsCloudVisualizationDITests
         {
             var visualization = new DefaultVisualization(new SolidBrush(Color.AliceBlue), new Font("times", 15),
                 new Size(10, 10), 10);
-            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "", ImageFormat.Png);
+            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "G:\\", ImageFormat.Png);
             act.Should().Throw<FileNotFoundException>();
         }
 

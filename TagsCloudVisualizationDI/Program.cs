@@ -42,9 +42,6 @@ namespace TagsCloudVisualizationDI
             excludedWordsList.OnFail(error => PrintAboutFail(error));
 
 
-            //var myStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
-            //var saveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT"; //!!!!
-
 
             Checker.CheckPathToFile(pathToFile);
             Checker.CheckPathToDirectory(pathToSave.Substring(0, pathToSave.LastIndexOf("\\")+1));

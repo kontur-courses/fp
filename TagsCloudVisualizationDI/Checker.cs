@@ -20,27 +20,8 @@ namespace TagsCloudVisualizationDI
             Result.OnFalse(Directory.Exists(pathToDirectory), $"pathToDirectory {pathToDirectory}  is not exist", (error) => PrintAboutFail(error));
         }
 
-        /*
-        public static Result<None> CheckPathToDirectory(string pathToSave)
-        {
-            Console.WriteLine(pathToSave);
-            var a = Result.OfAction(() => Directory.Exists(pathToSave));
-            var b = a.Error;
-            Console.WriteLine("@@@");
-            Console.WriteLine(Directory.Exists(pathToSave));
-            Console.WriteLine(a.Value);
-            Console.WriteLine(a.Error);
-            Console.WriteLine(a.IsSuccess);
-
-
-            //Console.WriteLine(Result.OfAction(() => Directory.Exists(pathToSave)).Value);
-            return Result.OfAction(() => Directory.Exists(pathToSave));
-            //.OnFail(exc => PrintAboutFail(exc));
-        }
-        */
         private static void PrintAboutFail(string message)
         {
-            //throw error.GetBaseException();
             throw new Exception(message);
         }
     }

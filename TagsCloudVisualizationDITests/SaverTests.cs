@@ -19,7 +19,7 @@ namespace TagsCloudVisualizationDITests
         }
 
         [Test]
-        public void ShouldNotThrowExcWhenGetWay()
+        public void ShouldNotExcWhenGetWay()
         {
             var savePath = "C:\\savePath\testfile";
             var saver = new DefaultSaver(savePath, ImageFormat.Png);
