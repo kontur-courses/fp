@@ -31,7 +31,7 @@ namespace TagsCloudContainer
             graphics.Clear(Color.DarkKhaki);
             foreach (var wordCount in parser.GetWordsCounts())
                 DrawWord(wordCount, graphics);
-            var savingName = pathToSaving + "." + config.ImageFormat;
+            var savingName = pathToSaving + "tagcloud" + "." + config.ImageFormat;
             image.Save(savingName, config.ImageFormat);
             graphics.Dispose();
             image.Dispose();

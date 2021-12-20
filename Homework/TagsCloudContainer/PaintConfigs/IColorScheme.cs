@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace TagsCloudContainer.PaintConfigs
 {
-    public interface IColorScheme : IDisposable
+    public interface IColorScheme
     {
         Brush GetNextColor();
     }

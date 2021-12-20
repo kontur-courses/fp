@@ -26,7 +26,7 @@ namespace TagsCloudContainer
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            throw new ArgumentException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
     }

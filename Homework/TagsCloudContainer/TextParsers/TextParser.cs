@@ -28,14 +28,14 @@ namespace TagsCloudContainer.TextParsers
             var groupedWords = new Dictionary<string, int>();
             foreach (var word in sourceReader.GetNextWord())
             {
-                var handledWord = HandleWord(word);
+                var handledWord = ProcessWord(word);
                 grouper(handledWord, groupedWords);
             }
 
             return groupedWords;
         }
 
-        private string HandleWord(string word)
+        private string ProcessWord(string word)
         {
             foreach (var handler in handlers)
                 word = handler(word);
