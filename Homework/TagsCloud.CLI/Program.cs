@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Autofac;
 using CommandLine;
-using TagsCloud.Visualization;
-using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.WordsFilter;
-using TagsCloud.Visualization.WordsReaders;
-using TagsCloud.Visualization.WordsReaders.FileReaders;
+using TagsCloud.Words.Options;
 
 namespace TagsCloud.Words
 {
@@ -15,46 +9,19 @@ namespace TagsCloud.Words
     {
         public static void Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<Options>(args);
-            if (result.Errors.Any())
-                return;
-
-            SettingsCreator.CreateFrom(result.Value)
-                .OnFail(x => Console.WriteLine(x, Console.Error))
-                .Then(s =>
-                {
-                    using var container = CreateContainer(s).BeginLifetimeScope();
-
-                    container.Resolve<CliTagsCloudVisualizer>().Run();
-                });
+            Parser.Default.ParseArguments<CreateCloudCommand>(args)
+                .MapResult(
+                    command => CreateCloudProcessor.Run(command),
+                    HandleParseError
+                );
         }
 
-        private static IContainer CreateContainer(TagsCloudModuleSettings settings)
+        private static int HandleParseError(IEnumerable<Error> errors)
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterModule(new TagsCloudModule(settings));
+            foreach (var error in errors)
+                Console.WriteLine(error.ToString() ?? string.Empty, Console.Error);
 
-            builder.RegisterType<TxtFileReader>().As<IFileReader>();
-            builder.RegisterType<DocFileReader>().As<IFileReader>();
-            builder.RegisterType<PdfFileReader>().As<IFileReader>();
-
-            builder.Register(ctx => new FileProvider(settings.InputWordsFile,
-                    ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsProvider>();
-            RegisterBoringWordsFilter(builder, settings);
-
-            builder.RegisterType<CliTagsCloudVisualizer>().AsSelf();
-            return builder.Build();
-        }
-
-
-        private static void RegisterBoringWordsFilter(ContainerBuilder builder, TagsCloudModuleSettings settings)
-        {
-            if (settings.BoringWordsFile == null)
-                builder.Register(_ => new BoringWordsFilter()).As<IWordsFilter>();
-            else
-                builder.Register(ctx => new BoringWordsFilter(new FileProvider(settings.BoringWordsFile,
-                    ctx.Resolve<IEnumerable<IFileReader>>()))).As<IWordsFilter>();
+            return 1;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace TagsCloud.Words
+namespace TagsCloud.Words.Options
 {
     public class Options
     {
@@ -9,15 +9,6 @@ namespace TagsCloud.Words
 
         [Option("boringwords", HelpText = "Path to boring words file")]
         public string BoringWordsFile { get; set; }
-
-        [Option("dir", HelpText = "Output directory", Default = null)]
-        public string OutputDirectory { get; set; }
-
-        [Option("outputfile", HelpText = "Output file name", Default = "result_words")]
-        public string OutputFile { get; set; }
-
-        [Option("ext", HelpText = "Output file extension", Default = "png")]
-        public string Extension { get; set; }
 
         [Option("color", HelpText = "Words color, if not set will use random color generation", Default = "random")]
         public string Color { get; set; }

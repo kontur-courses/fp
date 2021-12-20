@@ -8,12 +8,13 @@ using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.Utils;
+using TagsCloud.Words.Options;
 
 namespace TagsCloud.Words
 {
     public static class SettingsCreator
     {
-        public static Result<TagsCloudModuleSettings> CreateFrom(Options options) =>
+        public static Result<TagsCloudModuleSettings> CreateFrom(CreateCloudCommand options) =>
             from fontSettings in ParseFont(options)
             from saveSettings in ParseSaveSettings(options)
             from layouterType in ParseLayouter(options.Algorithm)
@@ -28,7 +29,7 @@ namespace TagsCloud.Words
                 LayoutVisitor = CreateDrawerVisitorFromName(options.Color)
             };
 
-        private static Result<FontSettings> ParseFont(Options options) =>
+        private static Result<FontSettings> ParseFont(CreateCloudCommand options) =>
             from fontStyle in ParseFontStyle(options.FontStyle)
             from fontName in ParseFontName(options.FamilyName)
             select new FontSettings
@@ -38,7 +39,7 @@ namespace TagsCloud.Words
                 FontStyle = fontStyle
             };
 
-        private static Result<SaveSettings> ParseSaveSettings(Options options) =>
+        private static Result<SaveSettings> ParseSaveSettings(CreateCloudCommand options) =>
             new SaveSettings
             {
                 OutputDirectory = options.OutputDirectory ?? GetDirectoryForSavingExamples(),
