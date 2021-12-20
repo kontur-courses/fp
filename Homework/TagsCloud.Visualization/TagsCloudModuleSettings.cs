@@ -8,13 +8,12 @@ namespace TagsCloud.Visualization
 {
     public class TagsCloudModuleSettings
     {
-        public Point Center { get; set; }
-        public string InputWordsFile { get; set; }
-
-        public string BoringWordsFile { get; set; }
-        public Type LayouterType { get; set; }
-        public IContainerVisitor LayoutVisitor { get; set; }
-        public SaveSettings SaveSettings { get; set; }
-        public FontSettings FontSettings { get; set; } = new();
+        public Point Center { get; init; }
+        public string InputWordsFile { get; init; }
+        public string BoringWordsFile { get; init; }
+        public Type LayouterType { get; init; }
+        public IContainerVisitor LayoutVisitor { get; init; }
+        public SaveSettings SaveSettings { get; init; }
+        public FontSettings FontSettings { get; init; }
     }
 }
