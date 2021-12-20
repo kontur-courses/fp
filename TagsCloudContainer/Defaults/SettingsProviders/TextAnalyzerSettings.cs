@@ -5,7 +5,9 @@ namespace TagsCloudContainer.Defaults.SettingsProviders;
 
 public class TextAnalyzerSettings : ICliSettingsProvider
 {
-    public char[] WordSeparators { get; private set; } = { ' ', ',', '.' };
+    private static readonly char[] defaultSeparators = { ' ', ',', '.' };
+
+    public char[] WordSeparators { get; private set; } = defaultSeparators;
     private const char separator = '/';
 
     public OptionSet GetCliOptions()
@@ -14,7 +16,7 @@ public class TextAnalyzerSettings : ICliSettingsProvider
         {
             {
                 "word-separators=",
-                $"Set separators to separate words, separated by '{separator}'. Defaults to '{string.Join(separator, WordSeparators)}'",
+                $"Set separators to separate words, separated by '{separator}'. Defaults to '{string.Join(separator, defaultSeparators)}'",
                 v => WordSeparators = v.Split(separator).Cast<char>().ToArray()
             }
         };

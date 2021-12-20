@@ -6,12 +6,14 @@ namespace TagsCloudContainer.Defaults.SettingsProviders;
 
 public class LayouterSettingsProvider : ICliSettingsProvider
 {
-    public Point Center { get; private set; } = new(300, 100);
+    private static readonly Point defaultCenter = new(300, 100);
+
+    public Point Center { get; private set; } = defaultCenter;
     public OptionSet GetCliOptions()
     {
         var options = new OptionSet()
         {
-            { "center=", $"Coordinates of center for CircularLayouter, separated by ','. Defaults to {Center}", v => Center = Parse(v) }
+            { "center=", $"Coordinates of center for CircularLayouter, separated by ','. Defaults to {defaultCenter}", v => Center = Parse(v) }
         };
 
         return options;

@@ -6,9 +6,13 @@ namespace TagsCloudContainer.Defaults.SettingsProviders;
 
 public class StyleProvider : ICliSettingsProvider
 {
-    public string FontFamilyName { get; private set; } = "Comic Sans MS";
-    public double MinSize { get; private set; } = 50;
-    public Color BrushColor { get; private set; } = Color.White;
+    private const string defaultFont = "Comic Sans MS";
+    private const int defaultSize = 50;
+    private static readonly Color defaultColor = Color.White;
+
+    public string FontFamilyName { get; private set; } = defaultFont;
+    public double MinSize { get; private set; } = defaultSize;
+    public Color BrushColor { get; private set; } = defaultColor;
     public Style GetStyle(ITag tag)
     {
         var font = new Font(new FontFamily(FontFamilyName), (float)((1 + tag.RelativeSize) * MinSize));
@@ -19,9 +23,9 @@ public class StyleProvider : ICliSettingsProvider
     {
         var options = new OptionSet()
         {
-            { "font-family=", $"Sets the font family name for tags. Defaults to {FontFamilyName}", v => FontFamilyName = v },
-            { "min-size=", $"Sets the min size for tags. Defaults to {MinSize}", (double v) => MinSize = v },
-            { "color=", $"Sets the color for tags. Defaults to {BrushColor.Name}", (Color v) => BrushColor = v },
+            { "font-family=", $"Sets the font family name for tags. Defaults to {defaultFont}", v => FontFamilyName = v },
+            { "min-size=", $"Sets the min size for tags. Defaults to {defaultSize}", (double v) => MinSize = v },
+            { "color=", $"Sets the color for tags. Defaults to {defaultColor.Name}", (Color v) => BrushColor = v },
         };
 
         return options;

@@ -6,13 +6,15 @@ namespace TagsCloudContainer.Defaults.SettingsProviders;
 
 public class SpeechPartFilterSettings : ICliSettingsProvider
 {
-    private readonly HashSet<SpeechPart> toFilterOut = new()
+    private static readonly HashSet<SpeechPart> defaultFilter= new()
     {
         SpeechPart.CONJ,
         SpeechPart.INTJ,
         SpeechPart.PART,
         SpeechPart.PR,
     };
+
+    private readonly HashSet<SpeechPart> toFilterOut = defaultFilter.ToHashSet();
 
     public IReadOnlySet<SpeechPart> ToFilterOut => toFilterOut;
 
