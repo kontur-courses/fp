@@ -101,5 +101,23 @@ namespace CLI
             using (var font = new Font(config.TagsFontName, config.TagsFontSize))
                 return font.Name == config.TagsFontName;
         }
+
+        private Result<CommandLineConfig> UseColorSchemeFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.TagsColors = GetColorScheme(options);
+            return CheckUsedArg(config, c => c.TagsColors != null, "Unknown color scheme is given!");
+        }
+
+        private IColorScheme GetColorScheme(Options options)
+        {
+            switch (options.Color)
+            {
+                case 0: return new BlackWhiteScheme();
+                case 1: return new CamouflageScheme();
+                case 2: return new CyberpunkScheme();
+                default: return null;
+            }
+        }
     }
 }
