@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using ResultMonad;
 using TagsCloudVisualization.DrawableContainers.Builders;
 using TagsCloudVisualization.ImageCreators;
 using TagsCloudVisualization.WordsPreprocessors;
@@ -28,18 +30,14 @@ namespace TagsCloudVisualization
 
         public Image Visualize()
         {
-            var words = fileReadService.GetFileContent();
-                
-            var preparedWords = wordsProcessor.Preprocess(words);
-            var tags = wordsToTagTransformer.Transform(preparedWords);
-            
-            foreach (var tag in tags)
-            {
-                drawableContainerBuilder.AddTag(tag);
-            }
-
-            var drawableContainer = drawableContainerBuilder.Build();
-            return imageCreator.Draw(drawableContainer);
+            return new Result<IEnumerable<string>>()
+                .Then(_ => fileReadService.GetFileContent())
+                .Then(words => wordsProcessor.Preprocess(words))
+                .Then(words => wordsToTagTransformer.Transform(words))
+                .Then(tags => drawableContainerBuilder.AddTags(tags))
+                .Then(_ => drawableContainerBuilder.Build())
+                .Then(container => imageCreator.Draw(container))
+                .GetValueOrThrow();
         }
     }
 }
