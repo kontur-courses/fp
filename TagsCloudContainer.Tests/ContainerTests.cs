@@ -32,7 +32,7 @@ public class ContainerTests
     }
 
     [TestCaseSource(nameof(IncorrectArgsSource))]
-    public void ShouldReturnFailedResult_WhenBothDefaultInputProvided(IncorrectArg arg)
+    public void ShouldReturnFailedResult_WhenIncorrectArgumentsForRunnerProvided(IncorrectArg arg)
     {
         var result = InitializationHelper.RunWithArgs(arg.Args);
 
@@ -103,13 +103,13 @@ public class ContainerTests
         yield return new(new[] { "--files", "abc" }, "Could not find file");
         yield return new(new[] { "--string", "тэгер тэг тэги", "--files", "abc" }, "Can't use both file and string input providers");
         yield return new(new[] { "--center", "abc" }, "String abc was in incorrect format, should be two ints separated by ','");
-        yield return new(new[] { "--image-format", "abc" }, "Could not convert string `abc' to type ImageFormatType");
-        yield return new(new[] { "--add-parts", "abc" }, "Requested value 'abc' was not found.");
-        yield return new(new[] { "--min-size", "abc" }, "Could not convert string `abc' to type Double");
-        yield return new(new[] { "--color", "abc" }, "Could not convert string `abc' to type Color");
-        yield return new(new[] { "--height", "abc" }, "Could not convert string `abc' to type Int32");
-        yield return new(new[] { "--width", "abc" }, "Could not convert string `abc' to type Int32");
-        yield return new(new[] { "--smoothing-mode", "abc" }, "Could not convert string `abc' to type SmoothingMode");
+        yield return new(new[] { "--image-format", "abc" }, "Could not parse abc as ImageFormatType");
+        yield return new(new[] { "--add-parts", "abc" }, "Could not parse abc as SpeechPart");
+        yield return new(new[] { "--min-size", "abc" }, "Could not parse abc as Double");
+        yield return new(new[] { "--color", "abc" }, "Could not parse abc as Color");
+        yield return new(new[] { "--height", "abc" }, "Could not parse abc as Int32");
+        yield return new(new[] { "--width", "abc" }, "Could not parse abc as Int32");
+        yield return new(new[] { "--smoothing-mode", "abc" }, "Could not parse abc as SmoothingMode");
     }
 
     public record IncorrectArg(string[] Args, string Why);
