@@ -1,15 +1,14 @@
 ﻿using NUnit.Framework;
 using TagsCloudContainer.Parsers;
 
-namespace TagsCloudContainerTests.ParserTests
+namespace TagsCloudContainerTests.ParserTests;
+
+internal class TxtParserTests : ParserTests
 {
-    internal class TxtParserTests : ParserTests
+    [OneTimeSetUp]
+    public void SetUp()
     {
-        [OneTimeSetUp]
-        public void SetUp()
-        {
-            parser = new TxtParser();
-            format = "txt";
-        }
+        parser = new TxtParser();
+        format = "txt";
     }
 }

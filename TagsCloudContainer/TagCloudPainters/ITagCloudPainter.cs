@@ -1,9 +1,8 @@
 ﻿using TagsCloudContainer.Tags;
 
-namespace TagsCloudContainer.TagCloudPainters
+namespace TagsCloudContainer.TagCloudPainters;
+
+public interface ITagCloudPainter
 {
-    public interface ITagCloudPainter
-    {
-        Bitmap Paint(IEnumerable<CloudTag> cloudTags);
-    }
+    Bitmap Paint(IEnumerable<CloudTag> cloudTags);
 }

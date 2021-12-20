@@ -4,42 +4,41 @@ using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.TagCreators;
 using TagsCloudContainer.Tags;
 
-namespace TagsCloudContainerTests
+namespace TagsCloudContainerTests;
+
+internal class TagCreatorTests
 {
-    internal class TagCreatorTests
+    private string[] words;
+    private ITagCreator tagCreator;
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
-        private string[] words;
-        private ITagCreator tagCreator;
+        words = new[] { "music", "guitar", "string", "music" };
+    }
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            words = new[] { "music", "guitar", "string", "music" };
-        }
+    [SetUp]
+    public void SetUp()
+    {
+        tagCreator = new TagCreator();
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            tagCreator = new TagCreator();
-        }
+    [Test]
+    public void Should_Throw_OnNoTags()
+    {
+        tagCreator.CreateTags(new string[] { }).IsSuccess.Should().BeFalse();
+    }
 
-        [Test]
-        public void Should_Throw_OnNoTags()
-        {
-            tagCreator.CreateTags(new string[] { }).IsSuccess.Should().BeFalse();
-        }
+    [Test]
+    public void Should_ComposeTagsCorrectly()
+    {
+        var result = tagCreator.CreateTags(words);
+        var expected = new[] {
+            new Tag(0.5, "music"),
+            new Tag(0.25, "guitar"),
+            new Tag(0.25, "string")
+        };
 
-        [Test]
-        public void Should_ComposeTagsCorrectly()
-        {
-            var result = tagCreator.CreateTags(words);
-            var expected = new[] {
-                new Tag(0.5, "music"),
-                new Tag(0.25, "guitar"),
-                new Tag(0.25, "string")
-            };
-
-            result.Value.Should().BeEquivalentTo(expected);
-        }
+        result.Value.Should().BeEquivalentTo(expected);
     }
 }

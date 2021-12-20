@@ -1,14 +1,13 @@
-﻿namespace TagsCloudContainer.TagsCloudLayouter
-{
-    public class Cloud
-    {
-        public Point Center { get; }
-        public List<Rectangle> Rectangles { get; }
+﻿namespace TagsCloudContainer.TagsCloudLayouter;
 
-        public Cloud(Point center)
-        {
-            Center = center;
-            Rectangles = new List<Rectangle>();
-        }
+public class Cloud
+{
+    public Point Center { get; }
+    public List<Rectangle> Rectangles { get; }
+
+    public Cloud(Point center)
+    {
+        Center = center;
+        Rectangles = new List<Rectangle>();
     }
 }

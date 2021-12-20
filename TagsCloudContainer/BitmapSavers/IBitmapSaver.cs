@@ -1,7 +1,6 @@
-﻿namespace TagsCloudContainer.BitmapSavers
+﻿namespace TagsCloudContainer.BitmapSavers;
+
+public interface IBitmapSaver
 {
-    public interface IBitmapSaver
-    {
-        string SaveBitmap(Bitmap bm);
-    }
+    string SaveBitmap(Bitmap bm);
 }

@@ -3,31 +3,30 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Parsers;
 
-namespace TagsCloudContainerTests.ParserTests
+namespace TagsCloudContainerTests.ParserTests;
+
+internal abstract class ParserTests
 {
-    internal abstract class ParserTests
+    private readonly string textsFolder = Path.GetFullPath(@"..\..\..\texts");
+    protected IParser parser;
+    protected string format;
+
+    [Test]
+    public void Should_Throw_OnNonExistingFile()
     {
-        private readonly string textsFolder = Path.GetFullPath(@"..\..\..\texts");
-        protected IParser parser;
-        protected string format;
+        var path = Path.Combine(textsFolder, $"amogus.{format}");
 
-        [Test]
-        public void Should_Throw_OnNonExistingFile()
-        {
-            var path = Path.Combine(textsFolder, $"amogus.{format}");
+        parser.Parse(path).IsSuccess.Should().BeFalse();
+    }
 
-            parser.Parse(path).IsSuccess.Should().BeFalse();
-        }
+    [Test]
+    public void Should_ParseCorrectly()
+    {
+        var path = Path.Combine(textsFolder, $"parserTest.{format}");
 
-        [Test]
-        public void Should_ParseCorrectly()
-        {
-            var path = Path.Combine(textsFolder, $"parserTest.{format}");
+        var result = parser.Parse(path);
+        var expected = new[] { "this", "Is", " parser", "test " };
 
-            var result = parser.Parse(path);
-            var expected = new[] { "this", "Is", " parser", "test " };
-
-            result.Value.Should().BeEquivalentTo(expected);
-        }
+        result.Value.Should().BeEquivalentTo(expected);
     }
 }

@@ -3,18 +3,17 @@ using NUnit.Framework;
 using TagsCloudApp.Providers;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests.TagPainterTests
+namespace TagsCloudContainerTests.TagPainterTests;
+
+internal class GradientPainterTests : PainterTests
 {
-    internal class GradientPainterTests : PainterTests
+    [OneTimeSetUp]
+    public void SetUp()
     {
-        [OneTimeSetUp]
-        public void SetUp()
-        {
-            var settings = SettingsProvider.GetSettings();
-            palette = settings.Palette;
-            painter = new GradientTagPainter(settings);
-            selector = tag => Math.Abs(tag.Color.R - palette.Primary.R);
-            expected = new[] { "Third", "First", "Second" };
-        }
+        var settings = SettingsProvider.GetSettings();
+        palette = settings.Palette;
+        painter = new GradientTagPainter(settings);
+        selector = tag => Math.Abs(tag.Color.R - palette.Primary.R);
+        expected = new[] { "Third", "First", "Second" };
     }
 }

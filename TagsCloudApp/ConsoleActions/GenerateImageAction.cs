@@ -6,7 +6,7 @@ using TagsCloudContainer.TagCloudPainters;
 using TagsCloudContainer.TagCreators;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
+namespace TagsCloudApp.ConsoleActions;
 
 public class GenerateImageAction : IUIAction
 {

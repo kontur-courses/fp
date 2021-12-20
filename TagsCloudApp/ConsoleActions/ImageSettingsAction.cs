@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
+namespace TagsCloudApp.ConsoleActions;
 
 public class ImageSettingsAction : IUIAction
 {

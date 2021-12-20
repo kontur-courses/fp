@@ -1,27 +1,26 @@
 ﻿using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Preprocessors;
 
-namespace TagsCloudContainer.Appliers
+namespace TagsCloudContainer.Appliers;
+
+public class PreprocessorsApplier : IPreprocessorsApplier
 {
-    public class PreprocessorsApplier : IPreprocessorsApplier
+    private readonly IPreprocessor[] preprocessors;
+
+    public PreprocessorsApplier(Settings settings)
     {
-        private readonly IPreprocessor[] preprocessors;
+        preprocessors = settings.Preprocessors;
+    }
 
-        public PreprocessorsApplier(Settings settings)
+    public IEnumerable<string> ApplyPreprocessors(IEnumerable<string> words)
+    {
+        foreach (var word in words)
         {
-            preprocessors = settings.Preprocessors;
-        }
+            var processed = word;
+            foreach (var preprocessor in preprocessors)
+                processed = preprocessor.Preprocess(processed);
 
-        public IEnumerable<string> ApplyPreprocessors(IEnumerable<string> words)
-        {
-            foreach (var word in words)
-            {
-                var processed = word;
-                foreach (var preprocessor in preprocessors)
-                    processed = preprocessor.Preprocess(processed);
-
-                yield return processed;
-            }
+            yield return processed;
         }
     }
 }

@@ -2,35 +2,34 @@
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Tags;
 
-namespace TagsCloudContainer.TagCreators
+namespace TagsCloudContainer.TagCreators;
+
+public class TagCreator : ITagCreator
 {
-    public class TagCreator : ITagCreator
+    private Dictionary<string, int> wordStatistics = new();
+    private int wordCount;
+
+    public Result<IEnumerable<Tag>> CreateTags(IEnumerable<string> words)
     {
-        private Dictionary<string, int> wordStatistics = new();
-        private int wordCount;
+        wordStatistics = new Dictionary<string, int>();
+        CalculateStatistics(words);
 
-        public Result<IEnumerable<Tag>> CreateTags(IEnumerable<string> words)
-        {
-            wordStatistics = new Dictionary<string, int>();
-            CalculateStatistics(words);
+        if (wordCount < 1)
+            return Result.Fail<IEnumerable<Tag>>("No tags created!");
 
-            if (wordCount < 1)
-                return Result.Fail<IEnumerable<Tag>>("No tags created!");
-
-            var result = wordStatistics
-                .Select(statistic
+        var result = wordStatistics
+            .Select(statistic
                 => new Tag(
                     (double)statistic.Value / wordCount, statistic.Key));
-            return Result.Ok(result);
-        }
+        return Result.Ok(result);
+    }
 
-        private void CalculateStatistics(IEnumerable<string> words)
+    private void CalculateStatistics(IEnumerable<string> words)
+    {
+        foreach (var word in words)
         {
-            foreach (var word in words)
-            {
-                wordStatistics.Increment(word);
-                wordCount++;
-            }
+            wordStatistics.Increment(word);
+            wordCount++;
         }
     }
 }

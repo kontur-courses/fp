@@ -1,34 +1,33 @@
 ﻿using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudContainer.Spirals
+namespace TagsCloudContainer.Spirals;
+
+public class OvalSpiral : ISpiral
 {
-    public class OvalSpiral : ISpiral
+    public string Name => "Oval spiral";
+    private readonly double spiralCoef;
+    private readonly double angleDelta;
+    private readonly Settings settings;
+    private double currentAngle;
+
+    public OvalSpiral(Settings settings)
     {
-        public string Name => "Oval spiral";
-        private readonly double spiralCoef;
-        private readonly double angleDelta;
-        private readonly Settings settings;
-        private double currentAngle;
+        this.settings = settings;
+        spiralCoef = 1;
+        angleDelta = Math.PI / 360;
+    }
 
-        public OvalSpiral(Settings settings)
-        {
-            this.settings = settings;
-            spiralCoef = 1;
-            angleDelta = Math.PI / 360;
-        }
+    public Point GetNext()
+    {
+        var center = settings.Center;
+        var x = Math.Round(2 * spiralCoef * currentAngle * Math.Cos(currentAngle)) + center.X;
+        var y = Math.Round(spiralCoef * currentAngle * Math.Sin(currentAngle)) + center.Y;
+        currentAngle += angleDelta;
+        return new Point((int)x, (int)y);
+    }
 
-        public Point GetNext()
-        {
-            var center = settings.Center;
-            var x = Math.Round(2 * spiralCoef * currentAngle * Math.Cos(currentAngle)) + center.X;
-            var y = Math.Round(spiralCoef * currentAngle * Math.Sin(currentAngle)) + center.Y;
-            currentAngle += angleDelta;
-            return new Point((int)x, (int)y);
-        }
-
-        public void Reset()
-        {
-            currentAngle = 0;
-        }
+    public void Reset()
+    {
+        currentAngle = 0;
     }
 }

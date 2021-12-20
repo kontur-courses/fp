@@ -1,4 +1,4 @@
-﻿using TagsCloudApp.ConsoleInterface.ConsoleActions;
+﻿using TagsCloudApp.ConsoleActions;
 
 namespace TagsCloudApp.ConsoleInterface;
 

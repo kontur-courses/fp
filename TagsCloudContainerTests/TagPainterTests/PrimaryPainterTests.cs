@@ -2,17 +2,16 @@
 using TagsCloudApp.Providers;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests.TagPainterTests
+namespace TagsCloudContainerTests.TagPainterTests;
+
+internal class PrimaryPainterTests : PainterTests
 {
-    internal class PrimaryPainterTests : PainterTests
+    [OneTimeSetUp]
+    public void SetUp()
     {
-        [OneTimeSetUp]
-        public void SetUp()
-        {
-            var settings = SettingsProvider.GetSettings();
-            painter = new PrimaryTagPainter(settings);
-            selector = tag => tag.Color.A;
-            expected = new[] { "First", "Second", "Third" };
-        }
+        var settings = SettingsProvider.GetSettings();
+        painter = new PrimaryTagPainter(settings);
+        selector = tag => tag.Color.A;
+        expected = new[] { "First", "Second", "Third" };
     }
 }

@@ -1,24 +1,23 @@
 ﻿using TagsCloudContainer.Filters;
 using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudContainer.Appliers
+namespace TagsCloudContainer.Appliers;
+
+public class FiltersApplier : IFiltersApplier
 {
-    public class FiltersApplier : IFiltersApplier
+    private readonly IFilter[] filters;
+
+    public FiltersApplier(Settings settings)
     {
-        private readonly IFilter[] filters;
+        filters = settings.Filters;
+    }
 
-        public FiltersApplier(Settings settings)
+    public IEnumerable<string> ApplyFilters(IEnumerable<string> words)
+    {
+        foreach (var word in words)
         {
-            filters = settings.Filters;
-        }
-
-        public IEnumerable<string> ApplyFilters(IEnumerable<string> words)
-        {
-            foreach (var word in words)
-            {
-                if (filters.All(filter => filter.Allows(word)))
-                    yield return word;
-            }
+            if (filters.All(filter => filter.Allows(word)))
+                yield return word;
         }
     }
 }

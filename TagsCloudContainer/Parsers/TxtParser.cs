@@ -1,30 +1,29 @@
 ﻿using TagsCloudContainer.Infrastructure;
 
-namespace TagsCloudContainer.Parsers
+namespace TagsCloudContainer.Parsers;
+
+public class TxtParser : IParser
 {
-    public class TxtParser : IParser
+    public string[] GetFormats()
     {
-        public string[] GetFormats()
-        {
-            return new[] { "txt" };
-        }
+        return new[] { "txt" };
+    }
 
-        public Result<IEnumerable<string>> Parse(string path)
-        {
-            if (!File.Exists(path))
-                return Result.Fail<IEnumerable<string>>("Passed file doesn't exist!");
-            return Result.Ok(ParseFile(path));
-        }
+    public Result<IEnumerable<string>> Parse(string path)
+    {
+        if (!File.Exists(path))
+            return Result.Fail<IEnumerable<string>>("Passed file doesn't exist!");
+        return Result.Ok(ParseFile(path));
+    }
 
-        private IEnumerable<string> ParseFile(string path)
+    private IEnumerable<string> ParseFile(string path)
+    {
+        using var reader = new StreamReader(path);
+        while (!reader.EndOfStream)
         {
-            using var reader = new StreamReader(path);
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                if (line is not null)
-                    yield return line;
-            }
+            var line = reader.ReadLine();
+            if (line is not null)
+                yield return line;
         }
     }
 }

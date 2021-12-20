@@ -2,17 +2,16 @@
 using TagsCloudApp.Providers;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainerTests.TagPainterTests
+namespace TagsCloudContainerTests.TagPainterTests;
+
+internal class FrequencyPainterTests : PainterTests
 {
-    internal class FrequencyPainterTests : PainterTests
+    [OneTimeSetUp]
+    public void SetUp()
     {
-        [OneTimeSetUp]
-        public void SetUp()
-        {
-            var settings = SettingsProvider.GetSettings();
-            painter = new FrequencyTagPainter(settings);
-            selector = tag => tag.Color.A;
-            expected = new[] { "Second", "First", "Third" };
-        }
+        var settings = SettingsProvider.GetSettings();
+        painter = new FrequencyTagPainter(settings);
+        selector = tag => tag.Color.A;
+        expected = new[] { "Second", "First", "Third" };
     }
 }
