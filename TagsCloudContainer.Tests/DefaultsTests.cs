@@ -78,21 +78,21 @@ public class DefaultsTests
     public void StemNormilizer_ShouldCorrectlyTakeStemFromWord()
     {
         var text = new[] { "кот", "коты", "котов" };
-        var expectedReuslt = new[] { "кот", "кот", "кот" };
+        var expectedResult = new[] { "кот", "кот", "кот" };
 
         var myStem = new MyStem();
 
         var stemNormalizer = new StemNormalizer(myStem);
         var actualResult = text.Select(stemNormalizer.Normalize).Select(x => x.GetValueOrThrow()).ToArray();
 
-        actualResult.Should().BeEquivalentTo(expectedReuslt);
+        actualResult.Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
     public void SpeechPartFilter_ShouldCorrectlyFilterOutSpecifiedParts()
     {
         var text = new[] { "кот", "коты", "котов" };
-        var expectedReuslt = Array.Empty<string>();
+        var expectedResult = Array.Empty<string>();
 
         var myStem = new MyStem();
         var settings = ParseSettings(new SpeechPartFilterSettings(), "--add-parts", "S");
@@ -100,7 +100,7 @@ public class DefaultsTests
 
         var actualResult = text.Where(filter.IsValid);
 
-        actualResult.Should().BeEquivalentTo(expectedReuslt);
+        actualResult.Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
