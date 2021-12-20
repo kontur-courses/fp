@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Infrastructure.Tags;
+using TagsCloudContainer.TagCreators;
+using TagsCloudContainer.Tags;
 
 namespace TagsCloudContainerTests
 {

@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
+﻿using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
 
@@ -10,8 +10,10 @@ namespace TagsCloudApp.ConsoleInterface.ConsoleActions
         private readonly Dictionary<string, ITagPainter> painterSelector;
         private readonly Dictionary<string, ISpiral> spiralSelector;
 
-        public CloudSettingsAction(CloudSettings cloudSettings,
-            ITagPainter[] painters, ISpiral[] spirals)
+        public CloudSettingsAction(
+            CloudSettings cloudSettings,
+            ITagPainter[] painters, 
+            ISpiral[] spirals)
         {
             this.cloudSettings = cloudSettings;
 

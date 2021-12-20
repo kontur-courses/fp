@@ -1,7 +1,8 @@
 ﻿using TagsCloudContainer.Extensions;
-using TagsCloudContainer.Infrastructure.Tags;
+using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Tags;
 
-namespace TagsCloudContainer.Infrastructure
+namespace TagsCloudContainer.TagCreators
 {
     public class TagCreator : ITagCreator
     {

@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer.Infrastructure.Tags;
+﻿using TagsCloudContainer.Tags;
 
 namespace TagsCloudContainer.TagPainters;
 

@@ -1,7 +1,9 @@
 ﻿using TagsCloudContainer.Appliers;
+using TagsCloudContainer.BitmapSavers;
 using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Parsers;
+using TagsCloudContainer.TagCloudPainters;
+using TagsCloudContainer.TagCreators;
 using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
@@ -13,15 +15,19 @@ public class GenerateImageAction : IUIAction
     private readonly IPreprocessorsApplier preprocessorsApplier;
     private readonly ITagCreator tagCreator;
     private readonly ITagPainter tagPainter;
-    private readonly CloudTagCreator cloudTagCreator;
-    private readonly TagCloudPainter cloudPainter;
-    private readonly CloudBitmapSaver bitmapSaver;
+    private readonly ICloudTagCreator cloudTagCreator;
+    private readonly ITagCloudPainter cloudPainter;
+    private readonly IBitmapSaver bitmapSaver;
 
-    public GenerateImageAction(TagCloudPainter cloudPainter,
-        IFiltersApplier filtersApplier, ITagCreator tagCreator,
-        CloudSettings cloudSettings, IParser[] parsers,
-        IPreprocessorsApplier preprocessorsApplier, 
-        CloudTagCreator cloudTagCreator, CloudBitmapSaver bitmapSaver)
+    public GenerateImageAction(
+        ITagCloudPainter cloudPainter,
+        IFiltersApplier filtersApplier, 
+        ITagCreator tagCreator,
+        CloudSettings cloudSettings, 
+        IParser[] parsers,
+        IPreprocessorsApplier preprocessorsApplier,
+        ICloudTagCreator cloudTagCreator,
+        IBitmapSaver bitmapSaver)
     {
         this.preprocessorsApplier = preprocessorsApplier;
         this.filtersApplier = filtersApplier;

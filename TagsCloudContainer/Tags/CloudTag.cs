@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.Infrastructure.Tags;
+﻿namespace TagsCloudContainer.Tags;
 
 public record CloudTag : PaintedTag
 {

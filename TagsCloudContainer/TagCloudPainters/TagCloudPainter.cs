@@ -1,13 +1,14 @@
-﻿using TagsCloudContainer.Infrastructure.Tags;
+﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Tags;
 
-namespace TagsCloudContainer.Infrastructure;
+namespace TagsCloudContainer.TagCloudPainters;
 
-public class TagCloudPainter
+public class TagCloudPainter : ITagCloudPainter
 {
     private const int AddedImageSize = 300;
-    private readonly Settings.Settings settings;
+    private readonly Settings settings;
 
-    public TagCloudPainter(Settings.Settings settings)
+    public TagCloudPainter(Settings settings)
     {
         this.settings = settings;
     }

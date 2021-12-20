@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Infrastructure.Settings;
 
 namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
 
@@ -13,8 +12,12 @@ public class ImageSettingsAction : IUIAction
     private readonly Settings settings;
     private readonly Dictionary<string, FontStyle> styleSelector;
 
-    public ImageSettingsAction(Settings settings, Color[] colors,
-        FontFamily[] fonts, FontStyle[] styles, ImageFormat[] formats)
+    public ImageSettingsAction(
+        Settings settings, 
+        Color[] colors,
+        FontFamily[] fonts, 
+        FontStyle[] styles, 
+        ImageFormat[] formats)
     {
         this.settings = settings;
 

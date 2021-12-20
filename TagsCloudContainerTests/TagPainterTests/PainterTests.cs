@@ -2,9 +2,9 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Infrastructure.Tags;
+using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.TagPainters;
+using TagsCloudContainer.Tags;
 
 namespace TagsCloudContainerTests.TagPainterTests
 {

@@ -1,5 +1,5 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
-using TagsCloudContainer.Infrastructure.Tags;
+﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Tags;
 
 namespace TagsCloudContainer.TagPainters;
 

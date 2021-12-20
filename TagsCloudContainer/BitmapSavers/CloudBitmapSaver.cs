@@ -1,10 +1,12 @@
-﻿namespace TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure;
 
-public class CloudBitmapSaver
+namespace TagsCloudContainer.BitmapSavers;
+
+public class CloudBitmapSaver : IBitmapSaver
 {
-    private readonly Settings.Settings settings;
+    private readonly Settings settings;
 
-    public CloudBitmapSaver(Settings.Settings settings)
+    public CloudBitmapSaver(Settings settings)
     {
         this.settings = settings;
     }

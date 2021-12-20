@@ -2,7 +2,7 @@
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.Preprocessors;
 
-namespace TagsCloudContainer.Infrastructure.Settings
+namespace TagsCloudContainer.Infrastructure
 {
     public class Settings
     {

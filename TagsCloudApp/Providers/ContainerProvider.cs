@@ -2,9 +2,12 @@
 using TagsCloudApp.ConsoleInterface;
 using TagsCloudApp.ConsoleInterface.ConsoleActions;
 using TagsCloudContainer.Appliers;
+using TagsCloudContainer.BitmapSavers;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Parsers;
 using TagsCloudContainer.Spirals;
+using TagsCloudContainer.TagCloudPainters;
+using TagsCloudContainer.TagCreators;
 using TagsCloudContainer.TagPainters;
 using TagsCloudContainer.TagsCloudLayouter;
 
@@ -22,9 +25,9 @@ namespace TagsCloudApp.Providers
             container.Register<IFiltersApplier, FiltersApplier>();
             container.Register<ITagCreator, TagCreator>();
             container.Register<ICloudLayouter, OvalCloudLayouter>();
-            container.Register<CloudTagCreator>();
-            container.Register<TagCloudPainter>();
-            container.Register<CloudBitmapSaver>();
+            container.Register<ICloudTagCreator, CloudTagCreator>();
+            container.Register<ITagCloudPainter, TagCloudPainter>();
+            container.Register<IBitmapSaver, CloudBitmapSaver>();
 
             container.RegisterInstance(SettingsProvider.GetSettings());
             RegisterImageSettings(container);

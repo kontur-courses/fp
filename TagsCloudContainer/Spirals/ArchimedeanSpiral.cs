@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
+﻿using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.Spirals
 {

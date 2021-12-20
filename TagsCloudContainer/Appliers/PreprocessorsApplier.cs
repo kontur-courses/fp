@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer.Infrastructure.Settings;
+﻿using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Preprocessors;
 
 namespace TagsCloudContainer.Appliers

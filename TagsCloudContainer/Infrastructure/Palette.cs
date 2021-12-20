@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.Infrastructure.Settings;
+﻿namespace TagsCloudContainer.Infrastructure;
 
 public class Palette
 {

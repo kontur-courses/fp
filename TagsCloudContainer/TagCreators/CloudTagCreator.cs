@@ -1,14 +1,15 @@
-﻿using TagsCloudContainer.Infrastructure.Tags;
+﻿using TagsCloudContainer.Infrastructure;
+using TagsCloudContainer.Tags;
 using TagsCloudContainer.TagsCloudLayouter;
 
-namespace TagsCloudContainer.Infrastructure;
-public class CloudTagCreator
+namespace TagsCloudContainer.TagCreators;
+public class CloudTagCreator : ICloudTagCreator
 {
     private readonly ICloudLayouter layouter;
-    private readonly Settings.Settings settings;
+    private readonly Settings settings;
 
     public CloudTagCreator(ICloudLayouter layouter,
-        Settings.Settings settings)
+        Settings settings)
     {
         this.layouter = layouter;
         this.settings = settings;

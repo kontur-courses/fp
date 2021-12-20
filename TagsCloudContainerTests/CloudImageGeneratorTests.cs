@@ -4,8 +4,11 @@ using NUnit.Framework;
 using System.IO;
 using TagsCloudApp.Providers;
 using TagsCloudContainer.Appliers;
+using TagsCloudContainer.BitmapSavers;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Parsers;
+using TagsCloudContainer.TagCloudPainters;
+using TagsCloudContainer.TagCreators;
 using TagsCloudContainer.TagPainters;
 
 namespace TagsCloudContainerTests
@@ -22,9 +25,9 @@ namespace TagsCloudContainerTests
             var filtersApplier = container.GetInstance<IFiltersApplier>();
             var tagCreator = container.GetInstance<ITagCreator>();
             var tagPainter = container.GetInstance<ITagPainter>("1");
-            var cloudTagCreator = container.GetInstance<CloudTagCreator>();
-            var cloudPainter = container.GetInstance<TagCloudPainter>();
-            var bitmapSaver = container.GetInstance<CloudBitmapSaver>();
+            var cloudTagCreator = container.GetInstance<ICloudTagCreator>();
+            var cloudPainter = container.GetInstance<ITagCloudPainter>();
+            var bitmapSaver = container.GetInstance<IBitmapSaver>();
             var path = parser.Parse(textPath)
                 .Then(preprocessorsApplier.ApplyPreprocessors)
                 .Then(filtersApplier.ApplyFilters)
