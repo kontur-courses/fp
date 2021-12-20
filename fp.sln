@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudLayouter", "CircularCloudLayouter\CloudLayouter.csproj", "{424AD14C-35D2-4687-8208-D8E06964B6DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudLayouter", "CloudLayouter\CloudLayouter.csproj", "{424AD14C-35D2-4687-8208-D8E06964B6DD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{95D773E7-4B91-42A6-9468-3711FD2D33A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Results", "Results\Results.csproj", "{668C0AE9-A672-4525-A8F0-0E564EB62ED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultTests", "ResultTests\ResultTests.csproj", "{E9385D87-8C2A-4DAC-B2D5-72EE2B3DD1BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultTests", "ResultTests\ResultTests.csproj", "{E9385D87-8C2A-4DAC-B2D5-72EE2B3DD1BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContainerTests", "ContainerTests\ContainerTests.csproj", "{327AFC97-91C5-4200-8A62-A3177EBD2A44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudLayouter.Tests", "CloudLayouter.Tests\CloudLayouter.Tests.csproj", "{D728305F-590E-426E-9668-1D568BA71155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{327AFC97-91C5-4200-8A62-A3177EBD2A44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{327AFC97-91C5-4200-8A62-A3177EBD2A44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{327AFC97-91C5-4200-8A62-A3177EBD2A44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D728305F-590E-426E-9668-1D568BA71155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D728305F-590E-426E-9668-1D568BA71155}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D728305F-590E-426E-9668-1D568BA71155}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D728305F-590E-426E-9668-1D568BA71155}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
