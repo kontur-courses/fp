@@ -15,11 +15,11 @@ public class TagPacker : ITagPacker
     {
         var stats = textAnalyzer.AnalyzeText();
 
-        foreach (var pair in stats.Statistics.OrderByDescending(x => x.Value))
+        foreach (var (word, count) in stats.Statistics.OrderByDescending(x => x.Value))
         {
-            var relativeSize = (double)pair.Value / stats.TotalWordCount;
+            var relativeSize = (double)count / stats.TotalWordCount;
 
-            var tag = new Tag(pair.Key, relativeSize);
+            var tag = new Tag(word, relativeSize);
 
             yield return tag;
         }
