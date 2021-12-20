@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace TagsCloudVisualization.WordsProvider.FileReader
 {
@@ -6,6 +7,6 @@ namespace TagsCloudVisualization.WordsProvider.FileReader
     {
         public bool IsSupportedFileExtension(string extension) => extension == ".txt";
 
-        public string GetFileContent(string path) => File.ReadAllText(path);
+        public IEnumerable<string> GetFileContent(string path) => File.ReadLines(path);
     }
 }

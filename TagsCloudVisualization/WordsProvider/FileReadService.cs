@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ResultMonad;
 using TagsCloudVisualization.WordsProvider.FileReader;
 
 namespace TagsCloudVisualization.WordsProvider
@@ -18,25 +18,19 @@ namespace TagsCloudVisualization.WordsProvider
         public FileReadService(string path, IEnumerable<IWordsReader> readers)
         {
             this.path = path;
-            CheckFileExistsAndThrowArgumentExceptionIfNot();
             this.readers = readers;
             extension = Path.GetExtension(path);
         }
 
-        public IEnumerable<string> GetFileContent()
+        public Result<IEnumerable<string>> GetFileContent()
         {
-            var reader = readers.FirstOrDefault(reader => reader.IsSupportedFileExtension(extension));
-            if (reader == null)
-                throw new ArgumentException($"Unsupported file extension: {extension}");
-            CheckFileExistsAndThrowArgumentExceptionIfNot();
-            var text = reader.GetFileContent(path);
-            return wordsSplit.Split(text);
-        }
-
-        private void CheckFileExistsAndThrowArgumentExceptionIfNot()
-        {
-            if (!File.Exists(path))
-                throw new ArgumentException($"File {path} doesn't exists");
+            return path
+                .AsResult()
+                .Validate(File.Exists, $"File {path} not found")
+                .Then(_ => readers.FirstOrDefault(reader => reader.IsSupportedFileExtension(extension)))
+                .Validate(reader => reader != null, $"Unsupported file extension: {extension}")
+                .Then(reader => reader.GetFileContent(path))
+                .Then(x => x.SelectMany(y => wordsSplit.Split(y)));
         }
     }
 }

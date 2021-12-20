@@ -1,8 +1,10 @@
-﻿namespace TagsCloudVisualization.WordsProvider.FileReader
+﻿using System.Collections.Generic;
+
+namespace TagsCloudVisualization.WordsProvider.FileReader
 {
     public interface IWordsReader
     {
         bool IsSupportedFileExtension(string extension);
-        string GetFileContent(string path);
+        IEnumerable<string> GetFileContent(string path);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultMonad;
 
 namespace TagsCloudVisualization.WordsProvider
 {
     public interface IFileReadService
     {
-        IEnumerable<string> GetFileContent();
+        Result<IEnumerable<string>> GetFileContent();
     }
 }
