@@ -7,12 +7,12 @@ using TagsCloud.Visualization.WordsReaders.FileReaders;
 
 namespace TagsCloud.Visualization.WordsReaders
 {
-    public class FileReadService : IWordsReadService
+    public class FileProvider : IWordsProvider
     {
         private readonly string fileName;
         private readonly IEnumerable<IFileReader> fileReaders;
 
-        public FileReadService(string fileName, IEnumerable<IFileReader> fileReaders)
+        public FileProvider(string fileName, IEnumerable<IFileReader> fileReaders)
         {
             this.fileName = fileName;
             this.fileReaders = fileReaders;

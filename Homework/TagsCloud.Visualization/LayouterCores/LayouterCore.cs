@@ -24,9 +24,9 @@ namespace TagsCloud.Visualization.LayouterCores
             this.drawer = drawer;
         }
 
-        public Result<Image> GenerateImage(IWordsReadService wordsReadService)
+        public Result<Image> GenerateImage(IWordsProvider wordsProvider)
         {
-            return wordsService.GetWords(wordsReadService)
+            return wordsService.GetWords(wordsProvider)
                 .Then(words => wordsContainerBuilder.AddWords(words,
                     words.Min(x => x.Count),
                     words.Max(x => x.Count)))

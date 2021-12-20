@@ -6,6 +6,6 @@ namespace TagsCloud.Visualization.LayouterCores
 {
     public interface ILayouterCore
     {
-        Result<Image> GenerateImage(IWordsReadService wordsReadService);
+        Result<Image> GenerateImage(IWordsProvider wordsProvider);
     }
 }

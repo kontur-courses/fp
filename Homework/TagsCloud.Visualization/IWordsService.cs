@@ -6,6 +6,6 @@ namespace TagsCloud.Visualization
 {
     public interface IWordsService
     {
-        Result<Word[]> GetWords(IWordsReadService wordsReadService);
+        Result<Word[]> GetWords(IWordsProvider wordsProvider);
     }
 }

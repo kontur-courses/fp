@@ -2,7 +2,7 @@
 
 namespace TagsCloud.Visualization.WordsReaders
 {
-    public interface IWordsReadService
+    public interface IWordsProvider
     {
         Result<string> Read();
     }

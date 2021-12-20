@@ -39,9 +39,9 @@ namespace TagsCloud.Words
             builder.RegisterType<DocFileReader>().As<IFileReader>();
             builder.RegisterType<PdfFileReader>().As<IFileReader>();
 
-            builder.Register(ctx => new FileReadService(settings.InputWordsFile,
+            builder.Register(ctx => new FileProvider(settings.InputWordsFile,
                     ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsReadService>();
+                .As<IWordsProvider>();
             RegisterBoringWordsFilter(builder, settings);
 
             builder.RegisterType<CliLayouterCore>().AsSelf();
@@ -54,7 +54,7 @@ namespace TagsCloud.Words
             if (settings.BoringWordsFile == null)
                 builder.Register(_ => new BoringWordsFilter()).As<IWordsFilter>();
             else
-                builder.Register(ctx => new BoringWordsFilter(new FileReadService(settings.BoringWordsFile,
+                builder.Register(ctx => new BoringWordsFilter(new FileProvider(settings.BoringWordsFile,
                     ctx.Resolve<IEnumerable<IFileReader>>()))).As<IWordsFilter>();
         }
     }

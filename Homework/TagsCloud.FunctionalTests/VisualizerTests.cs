@@ -24,7 +24,7 @@ namespace TagsCloud.FunctionalTests
             using var container = CreateContainer(settings, extension);
 
             var visualizer = container.Resolve<ILayouterCore>();
-            visualizer.GenerateImage(container.Resolve<IWordsReadService>())
+            visualizer.GenerateImage(container.Resolve<IWordsProvider>())
                 .Then(x => x.Dispose());
         }
 
@@ -45,9 +45,9 @@ namespace TagsCloud.FunctionalTests
             builder.RegisterType<PdfFileReader>().As<IFileReader>();
 
             builder.Register(ctx =>
-                    new FileReadService(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
+                    new FileProvider(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
                         ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsReadService>();
+                .As<IWordsProvider>();
 
             return builder.Build();
         }

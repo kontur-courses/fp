@@ -2,12 +2,12 @@
 
 namespace TagsCloud.Visualization.WordsReaders
 {
-    public class SimpleTextReader : IWordsReadService
+    public class SimpleTextReader : IWordsProvider
     {
-        private readonly string words;
+        private readonly string text;
 
-        public SimpleTextReader(string words) => this.words = words;
+        public SimpleTextReader(string words) => text = words;
 
-        public Result<string> Read() => words;
+        public Result<string> Read() => text;
     }
 }

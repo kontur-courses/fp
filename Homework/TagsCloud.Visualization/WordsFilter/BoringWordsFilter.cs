@@ -23,12 +23,12 @@ namespace TagsCloud.Visualization.WordsFilter
         {
         }
 
-        public BoringWordsFilter(IWordsReadService wordsReadService)
+        public BoringWordsFilter(IWordsProvider wordsProvider)
         {
-            if (wordsReadService == null)
+            if (wordsProvider == null)
                 boringWords = baseBoringWords;
             else
-                boringWords = wordsReadService.Read()
+                boringWords = wordsProvider.Read()
                     .RefineError("Can not read boring words file")
                     .GetValueOrThrow()
                     .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)

@@ -14,9 +14,9 @@ namespace TagsCloud.Visualization
 
         public WordsService(IWordsParser wordsParser) => this.wordsParser = wordsParser;
 
-        public Result<Word[]> GetWords(IWordsReadService wordsReadService)
+        public Result<Word[]> GetWords(IWordsProvider wordsProvider)
         {
-            return wordsReadService.Read()
+            return wordsProvider.Read()
                 .Then(t => wordsParser.CountWordsFrequency(t))
                 .Then(TransformToWords);
         }
