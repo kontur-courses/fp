@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TagsCloudContainer.Common;
 
 namespace TagsCloudContainer.Preprocessors
@@ -19,9 +19,14 @@ namespace TagsCloudContainer.Preprocessors
                 .ToArray();
         }
 
-        public List<SimpleTag> Process(IEnumerable<SimpleTag> tags) 
-            => preprocessors.Aggregate
-                (tags, (current, preprocessor) => preprocessor.Process(current))
+        public List<SimpleTag> Process(IEnumerable<SimpleTag> tags)
+        {
+            var processedTags = preprocessors.Aggregate
+                    (tags, (current, preprocessor) => preprocessor.Process(current))
                 .ToList();
+            if (processedTags.Count == 0)
+                throw new Exception("With this preprocessors, you can`t get any tags, and then can`t visualize it");
+            return processedTags;
+        }
     }
 }

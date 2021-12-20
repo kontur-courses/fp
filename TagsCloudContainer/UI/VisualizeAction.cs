@@ -22,7 +22,7 @@ namespace TagsCloudContainer.UI
             {
                 case "y":
                     var container = builder.Build();
-                    Program.Visualize(container);
+                    Program.Visualize(container, handler);
                     Environment.Exit(0);
                     return;
                 case "n":

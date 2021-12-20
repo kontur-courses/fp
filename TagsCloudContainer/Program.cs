@@ -26,7 +26,7 @@ namespace TagsCloudContainer
             SetUpUi(preContainer);
         }
 
-        internal static void Visualize(IContainer container)
+        internal static void Visualize(IContainer container, IResultHandler handler)
         {
             var minHeight = 12;
             var maxScale = 10;
@@ -40,12 +40,19 @@ namespace TagsCloudContainer
                 var visualizator = scope.Resolve<IVisualizator<ITag>>();
                 var settings = ResolveSettings(scope);
 
-                var text = reader.Read(AppSettings.TextFilename);
-                var tags = parser.Parse(text);
-                tags = preprocessor.Process(tags);
-                var cloud = layouter.PlaceTagsInCloud(tags, minHeight, maxScale);
-                painter.SetPalettes(cloud.Elements);
-                visualizator.Visualize(settings, cloud);
+                Result.Of(() => reader.Read(AppSettings.TextFilename), 
+                        "File not exist, or unavailable")
+                    .Then(text => parser.Parse(text))
+                    .Then(tags => preprocessor.Process(tags))
+                    .Then(tags => layouter.PlaceTagsInCloud(tags, minHeight, maxScale))
+                    .Then(cloud =>
+                    {                        
+                        painter.SetPalettes(cloud.Elements);
+                        return cloud;
+                    })
+                    .Then(cloud => visualizator.Visualize(settings, cloud))
+                    .RefineError("Can`t end visualizing tags")
+                    .OnFail(handler.AddHandledText);
             }
         }
 

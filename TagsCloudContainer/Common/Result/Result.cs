@@ -51,25 +51,28 @@ namespace TagsCloudContainer.Common.Result
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
+            Func<TInput, TOutput> continuation,
+            string error = null)
         {
-            return input.Then(inp => Of(() => continuation(inp)));
+            return input.Then(inp => Of(() => continuation(inp), error));
         }
 
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
-            Action<TInput> continuation)
+            Action<TInput> continuation,
+            string error = null)
         {
-            return input.Then(inp => OfAction(() => continuation(inp)));
+            return input.Then(inp => OfAction(() => continuation(inp), error));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
+            Func<TInput, Result<TOutput>> continuation,
+            string error = null)
         {
             return input.IsSuccess
                 ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
+                : Fail<TOutput>(error ?? input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(

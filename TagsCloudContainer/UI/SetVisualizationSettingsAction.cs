@@ -32,6 +32,8 @@ namespace TagsCloudContainer.UI
                 var width = handler.GetText();
                 if (!int.TryParse(width, out var w)) 
                     throw new Exception("Width should be int!");
+                if(w < 0)
+                    throw new Exception("Width should positive");
                 size.Width = w;
             }
             void SetHeight()
@@ -39,6 +41,8 @@ namespace TagsCloudContainer.UI
                 var height = handler.GetText();
                 if (!int.TryParse(height, out var h))
                     throw new Exception("Height should be int!");
+                if (h < 0)
+                    throw new Exception("Height should positive");
                 size.Height = h;
             }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TagsCloudContainer.Common;
 using TagsCloudContainer.Extensions;
@@ -14,9 +15,12 @@ namespace TagsCloudContainer
                 .Where(w => w.Length != 0);
             foreach (var word in words) 
                 wordsCount.AddOrIncreaseCount(word);
-            return wordsCount.Keys
+            var tags = wordsCount.Keys
                 .Select(word => new SimpleTag(word, wordsCount[word]))
                 .ToList();
+            if (tags.Count == 0)
+                throw new Exception("Parser not find any words, you can`t visualize it");
+            return tags;
         }
     }
 }
