@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.Visualization.Extensions;
+using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsParser;
 
@@ -19,7 +20,7 @@ namespace TagsCloud.Tests
         }
 
         [TestCaseSource(typeof(TestDataGenerator))]
-        public void CountWordsFrequency_Should_ParseCorrectly_When(string text, Dictionary<string, int> expectedResult)
+        public void CountWordsFrequency_Should_ParseCorrectly_When(string text, List<Word> expectedResult)
         {
             sut.CountWordsFrequency(text)
                 .Then(x => x.Should().Equal(expectedResult));
@@ -36,25 +37,25 @@ namespace TagsCloud.Tests
     {
         public IEnumerator<TestCaseData> GetEnumerator()
         {
-            yield return new TestCaseData("", new Dictionary<string, int>()).SetName("Empty text");
-            yield return new TestCaseData("    ", new Dictionary<string, int>()).SetName("Whitespace text");
-            yield return new TestCaseData(", , , , ,", new Dictionary<string, int>()).SetName("Only commas");
-            yield return new TestCaseData("test test test", new Dictionary<string, int> {{"test", 3}}).SetName(
+            yield return new TestCaseData("", new List<Word>()).SetName("Empty text");
+            yield return new TestCaseData("    ", new List<Word>()).SetName("Whitespace text");
+            yield return new TestCaseData(", , , , ,", new List<Word>()).SetName("Only commas");
+            yield return new TestCaseData("test test test", new List<Word> {new("test", 3)}).SetName(
                 "Simple text");
-            yield return new TestCaseData("test Test TEST", new Dictionary<string, int> {{"test", 3}}).SetName(
+            yield return new TestCaseData("test Test TEST", new List<Word> {new("test", 3)}).SetName(
                 "Different case");
-            yield return new TestCaseData("test,test,test", new Dictionary<string, int> {{"test", 3}}).SetName(
+            yield return new TestCaseData("test,test,test", new List<Word> {new("test", 3)}).SetName(
                 "Separated by comma");
-            yield return new TestCaseData("test\ntest\ntest", new Dictionary<string, int> {{"test", 3}}).SetName(
+            yield return new TestCaseData("test\ntest\ntest", new List<Word> {new("test", 3)}).SetName(
                 "Separated by new line");
             yield return new TestCaseData("hello world hello world",
-                    new Dictionary<string, int> {{"hello", 2}, {"world", 2}})
+                    new List<Word> {new("hello", 2), new("world", 2)})
                 .SetName("Two different words");
-            yield return new TestCaseData("тест test", new Dictionary<string, int> {{"test", 1}, {"тест", 1}})
+            yield return new TestCaseData("тест test", new List<Word> {new("test", 1), new("тест", 1)})
                 .SetName("Different languages");
-            yield return new TestCaseData("1234 1234", new Dictionary<string, int> {{"1234", 2}}).SetName("Digits");
+            yield return new TestCaseData("1234 1234", new List<Word> {new("1234", 2)}).SetName("Digits");
             yield return new TestCaseData("Another brick in the wall",
-                    new Dictionary<string, int> {{"another", 1}, {"brick", 1}, {"wall", 1}})
+                    new List<Word> {new("another", 1), new("brick", 1), new("wall", 1)})
                 .SetName("Boring words");
         }
 

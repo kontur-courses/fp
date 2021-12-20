@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagsCloud.Visualization.Extensions;
+using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsFilter;
 
@@ -14,19 +15,19 @@ namespace TagsCloud.Visualization.WordsParser
 
         public WordsParser(IEnumerable<IWordsFilter> wordsFilters) => this.wordsFilters = wordsFilters;
 
-        public Result<Dictionary<string, int>> CountWordsFrequency(string text)
+        public Result<IEnumerable<Word>> CountWordsFrequency(string text)
         {
             return text.AsResult()
                 .Validate(t => !string.IsNullOrEmpty(t), nameof(text))
-                .Then(ConstructDictionary);
+                .Then(ConstructWords);
         }
 
-        private Dictionary<string, int> ConstructDictionary(string text)
+        private IEnumerable<Word> ConstructWords(string text)
         {
             return Regex.Split(text.ToLower(), WordsPattern)
                 .Where(word => word.Length > 1 && wordsFilters.All(x => x.IsWordValid(word)))
                 .GroupBy(word => word)
-                .ToDictionary(x => x.Key, x => x.Count());
+                .Select(x => new Word(x.Key, x.Count()));
         }
     }
 }

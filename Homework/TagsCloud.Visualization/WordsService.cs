@@ -18,14 +18,13 @@ namespace TagsCloud.Visualization
         {
             return wordsProvider.Read()
                 .Then(t => wordsParser.CountWordsFrequency(t))
-                .Then(TransformToWords);
+                .Then(ProcessToWords)
+                .Then(x => x.ToArray());
         }
 
-        private Word[] TransformToWords(Dictionary<string, int> parsedWords)
+        private IEnumerable<Word> ProcessToWords(IEnumerable<Word> parsedWords)
             => parsedWords
-                .Where(x => x.Value > 1)
-                .OrderByDescending(x => x.Value)
-                .Select(x => new Word(x.Key, x.Value))
-                .ToArray();
+                .Where(x => x.Count > 1)
+                .OrderByDescending(x => x.Count);
     }
 }
