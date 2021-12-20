@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using TagCloud.App.UI;
-using TagCloud.App.UI.Console;
-using TagCloud.App.UI.Console.Common;
 using TagCloud.Infrastructure.FileReader;
 using TagCloud.Infrastructure.Filter;
 using TagCloud.Infrastructure.Layouter;
 using TagCloud.Infrastructure.Lemmatizer;
 using TagCloud.Infrastructure.Monad;
 using TagCloud.Infrastructure.Painter;
+using TagCloud.Infrastructure.Pipeline;
+using TagCloud.Infrastructure.Pipeline.Common;
 using TagCloud.Infrastructure.Saver;
 using TagCloud.Infrastructure.Weigher;
 
-namespace TagCloudTests.App.UI;
+namespace TagCloudTests.Infrastructure.Pipeline;
 
-internal class ConsoleUITests
+internal class ImagePipelineTests
 {
     private IAppSettings settings;
-    private IUserInterface sut;
+    private IImagePipeline sut;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -29,7 +28,7 @@ internal class ConsoleUITests
         var layouter = new CircularCloudLayouter(settings);
         var factory = new CloudLayouterFactory(new ICloudLayouter[] { layouter }, layouter);
         var painter = new Painter(new RandomPalette(), factory, settings);
-        sut = new ConsoleUI(new FakeFileReaderFactory(), painter, new WordWeigher(), new ImageSaver(), new RussianLemmatizer(), new Filter());
+        sut = new ImageProcessor(new FakeFileReaderFactory(), painter, new WordWeigher(), new ImageSaver(), new RussianLemmatizer(), new Filter());
     }
 
     [Test]

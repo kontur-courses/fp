@@ -19,13 +19,13 @@ public class Filter : IFilter
 
     public IEnumerable<string> FilterWords(IEnumerable<string> words)
     {
-        return words.Where(word => stringFilters.All(x => x.Invoke(word)));
+        return words.Where(word => stringFilters.All(filter => filter(word)));
     }
 
     public IEnumerable<string> FilterWords(IEnumerable<Lemma> lemmas)
     {
         return lemmas
-            .Where(lemma => stringFilters.All(x => x.Invoke(lemma.Word)) && lemmaFilters.All(x => x.Invoke(lemma)))
+            .Where(lemma => stringFilters.All(lemmaFilter => lemmaFilter(lemma.Word)) && lemmaFilters.All(filter => filter(lemma)))
             .Select(x => x.Word);
     }
 

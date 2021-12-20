@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using TagCloud.App.UI.Console.Common;
 using TagCloud.Infrastructure.Layouter;
 using TagCloud.Infrastructure.Painter;
+using TagCloud.Infrastructure.Pipeline.Common;
 
 namespace TagCloudTests.Infrastructure;
 
@@ -55,5 +54,17 @@ internal class PainterTests
 
         actual.IsSuccess.Should().BeFalse();
         actual.Error.Should().Be("Impossible to save an empty tag cloud");
+    }
+
+    [Test]
+    public void CreateImage_ShouldReturFail_WhenFontIsNotExists()
+    {
+        var invalidSettings = new AppSettings {FontName = "NotExistingFont" };
+        var painter = new Painter(palette, layouterFactory, invalidSettings);
+
+        var actual = painter.CreateImage(new Dictionary<string, int> { { "test", 1 } });
+
+        actual.IsSuccess.Should().BeFalse();
+        actual.Error.Should().Be($"Font not installed: {invalidSettings.FontName}");
     }
 }

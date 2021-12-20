@@ -1,4 +1,4 @@
-﻿namespace TagCloud.App.UI.Console.Common;
+﻿namespace TagCloud.Infrastructure.Pipeline.Common;
 
 public interface IOutputPathProvider
 {

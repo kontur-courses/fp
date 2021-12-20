@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
-using TagCloud.App.UI.Console.Common;
 using TagCloud.Infrastructure.Monad;
+using TagCloud.Infrastructure.Pipeline.Common;
 
 namespace TagCloud.Infrastructure.Layouter;
 

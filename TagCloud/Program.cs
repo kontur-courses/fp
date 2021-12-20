@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using TagCloud.App.UI;
-using TagCloud.App.UI.Console.Common;
+using TagCloud.Infrastructure.Pipeline;
+using TagCloud.Infrastructure.Pipeline.Common;
 
 namespace TagCloud;
 
@@ -15,7 +15,7 @@ public static class Program
             .ConfigureConsoleClient(appSettings)
             .Build();
         container
-            .Resolve<IUserInterface>()
+            .Resolve<IImagePipeline>()
             .Run(appSettings);
     }
 }

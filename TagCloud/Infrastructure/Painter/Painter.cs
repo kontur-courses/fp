@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using TagCloud.App.UI.Console.Common;
 using TagCloud.Infrastructure.Layouter;
 using TagCloud.Infrastructure.Monad;
+using TagCloud.Infrastructure.Pipeline.Common;
 
 namespace TagCloud.Infrastructure.Painter;
 
@@ -20,11 +20,11 @@ public class Painter : IPainter
 
     public Result<Bitmap> CreateImage(Dictionary<string, int> weightedWords)
     {
+        if (!IsSettingsValid(out var error))
+            return Result.Fail<Bitmap>(error);
+
         if (!weightedWords.Any())
             return Result.Fail<Bitmap>("Impossible to save an empty tag cloud");
-
-        if (!IsValidSizes(settings))
-            return Result.Fail<Bitmap>($"Image sizes must be great than zero, but was {settings.ImageWidth}x{settings.ImageHeight}");
 
         var bitmap = new Bitmap(settings.ImageWidth, settings.ImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
@@ -45,6 +45,25 @@ public class Painter : IPainter
         }
 
         return Result.Ok(bitmap);
+    }
+
+    private bool IsSettingsValid(out string? error)
+    {
+        error = null;
+
+        if (!IsValidSizes(settings))
+        {
+            error = $"Image sizes must be great than zero, but was {settings.ImageWidth}x{settings.ImageHeight}";
+            return false;
+        }
+
+        if (!IsFontExist(settings.FontName))
+        {
+            error = $"Font not installed: {settings.FontName}";
+            return false;
+        }
+
+        return true;
     }
 
     private Result<List<Tag>> GetTags(Dictionary<string, int> weightedWords, Graphics graphics)
@@ -99,5 +118,12 @@ public class Painter : IPainter
         var height = maxY - minY;
 
         return new Size(width, height);
+    }
+
+    private static bool IsFontExist(string fontFamily)
+    {
+        using var font = new Font(fontFamily, 14);
+
+        return string.Equals(font.Name, fontFamily, StringComparison.InvariantCultureIgnoreCase);
     }
 }

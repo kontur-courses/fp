@@ -28,8 +28,7 @@ public class CloudLayouterFactory : ICloudLayouterFactory
         foreach (var layouter in layouters)
         {
             var layouterName = layouter.GetType().Name.ToLowerInvariant();
-            var position = layouterName.IndexOf("cloudlayouter", StringComparison.Ordinal);
-            dictionary[layouterName[..position]] = layouter;
+            dictionary[layouterName] = layouter;
         }
 
         return dictionary;

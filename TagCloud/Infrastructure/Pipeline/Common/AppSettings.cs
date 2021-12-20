@@ -1,6 +1,7 @@
 ﻿using CommandLine;
+using TagCloud.Infrastructure.Layouter;
 
-namespace TagCloud.App.UI.Console.Common;
+namespace TagCloud.Infrastructure.Pipeline.Common;
 
 public class AppSettings : IAppSettings
 {
@@ -10,20 +11,20 @@ public class AppSettings : IAppSettings
     [Option('h', "imageHeight", Default = 1000, HelpText = "Height of output image")]
     public int ImageHeight { get; set; } = 1000;
 
-    [Option('i', "inputPath", Required = true, HelpText = "Path of input text")]
+    [Option('i', "inputPath", Required = true, HelpText = "Path to input text")]
     public string InputPath { get; set; } = "input.txt";
 
-    [Option('o', "outputPath", Default = "output", HelpText = "Path of output image")]
+    [Option('o', "outputPath", Default = "output", HelpText = "Path to output image")]
     public string OutputPath { get; set; } = "output.png";
 
     [Option('e', "outputFormat", Default = "png", HelpText = "Extension of output image")]
     public string OutputFormat { get; set; } = "png";
 
-    [Option('f', "fontName", Default = "Roboto", HelpText = "Font used to display words")]
-    public string FontName { get; set; } = "Roboto";
+    [Option('f', "fontName", Default = "Arial", HelpText = "Font used to display words")]
+    public string FontName { get; set; } = "Arial";
 
-    [Option('l', "layouterName", Default = "Circular", HelpText = "Layouter used to place words")]
-    public string LayouterName { get; set; } = "Circular";
+    [Option('l', "layouterName", Default = nameof(CircularCloudLayouter), HelpText = "Layouter used to place words")]
+    public string LayouterName { get; set; } = nameof(CircularCloudLayouter);
 
     public static AppSettings Parse(string[] args)
     {

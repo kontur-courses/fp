@@ -20,8 +20,8 @@ internal class CloudLayouterFactoryTests
         sut = new CloudLayouterFactory(new ICloudLayouter[] { circularLayouter, mockLayouter }, circularLayouter);
     }
 
-    [TestCase("circular", typeof(CircularCloudLayouter))]
-    [TestCase("fake", typeof(FakeCloudLayouter))]
+    [TestCase("circularcloudlayouter", typeof(CircularCloudLayouter))]
+    [TestCase("fakecloudlayouter", typeof(FakeCloudLayouter))]
     [TestCase("unknown", typeof(CircularCloudLayouter))]
     public void Create_ShouldReturnCorrectLayouter(string layouterName, Type expectedType)
     {
