@@ -31,7 +31,7 @@ namespace TagsCloud.Visualization.Extensions
             this Result<TInput> input,
             Action<TInput> continuation)
         {
-            return input.Then(inp => Result.OfAction(() => continuation(inp)));
+            return input.Then(inp => Result.Of(() => continuation(inp)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(

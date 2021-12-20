@@ -4,7 +4,7 @@ namespace TagsCloud.Visualization.Utils
 {
     public readonly struct Result<T>
     {
-        public Result(string error, T value = default)
+        public Result(T value, string error)
         {
             Error = error;
             Value = value;
@@ -28,11 +28,11 @@ namespace TagsCloud.Visualization.Utils
     {
         public static Result<T> AsResult<T>(this T value) => Ok(value);
 
-        public static Result<T> Ok<T>(T value) => new(null, value);
+        public static Result<T> Ok<T>(T value) => new(value, null);
 
         public static Result<None> Ok() => Ok<None>(null);
 
-        public static Result<T> Fail<T>(string e) => new(e);
+        public static Result<T> Fail<T>(string e) => new(default, e);
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
@@ -46,7 +46,7 @@ namespace TagsCloud.Visualization.Utils
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> Of(Action f, string error = null)
         {
             try
             {
