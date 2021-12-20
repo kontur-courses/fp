@@ -19,8 +19,7 @@ namespace TagsCloud.Words
             if (result.Errors.Any())
                 return;
 
-            new SettingsCreator()
-                .Parse(result.Value)
+            SettingsCreator.CreateFrom(result.Value)
                 .OnFail(x => Console.WriteLine(x, Console.Error))
                 .Then(s =>
                 {

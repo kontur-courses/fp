@@ -11,9 +11,9 @@ using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Words
 {
-    public class SettingsCreator
+    public static class SettingsCreator
     {
-        public Result<TagsCloudModuleSettings> Parse(Options options) =>
+        public static Result<TagsCloudModuleSettings> CreateFrom(Options options) =>
             from fontSettings in ParseFont(options)
             from saveSettings in ParseSaveSettings(options)
             from layouterType in ParseLayouter(options.Algorithm)
@@ -28,7 +28,7 @@ namespace TagsCloud.Words
                 LayoutVisitor = CreateDrawerVisitorFromName(options.Color)
             };
 
-        private Result<FontSettings> ParseFont(Options options) =>
+        private static Result<FontSettings> ParseFont(Options options) =>
             from fontStyle in ParseFontStyle(options.FontStyle)
             from fontName in ParseFontName(options.FamilyName)
             select new FontSettings
@@ -38,7 +38,7 @@ namespace TagsCloud.Words
                 FontStyle = fontStyle
             };
 
-        private Result<SaveSettings> ParseSaveSettings(Options options) =>
+        private static Result<SaveSettings> ParseSaveSettings(Options options) =>
             new SaveSettings
             {
                 OutputDirectory = options.OutputDirectory ?? GetDirectoryForSavingExamples(),
@@ -46,7 +46,7 @@ namespace TagsCloud.Words
                 Extension = options.Extension
             };
 
-        private Result<FontStyle> ParseFontStyle(string fontStyleName)
+        private static Result<FontStyle> ParseFontStyle(string fontStyleName)
         {
             return Enum.TryParse<FontStyle>(fontStyleName, true, out var style) switch
             {
@@ -55,7 +55,7 @@ namespace TagsCloud.Words
             };
         }
 
-        private Result<string> ParseFontName(string fontName)
+        private static Result<string> ParseFontName(string fontName)
         {
             using var testFont = new Font(fontName, 8);
             return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase)
@@ -63,7 +63,7 @@ namespace TagsCloud.Words
                 : Result.Fail<string>($"font with name {fontName} doesn't exists");
         }
 
-        private Result<Type> ParseLayouter(string layouterName)
+        private static Result<Type> ParseLayouter(string layouterName)
         {
             return layouterName switch
             {
@@ -72,7 +72,7 @@ namespace TagsCloud.Words
             };
         }
 
-        private IContainerVisitor CreateDrawerVisitorFromName(string textColor)
+        private static IContainerVisitor CreateDrawerVisitorFromName(string textColor)
         {
             if (textColor == "random")
                 return new RandomColorDrawerVisitor();
@@ -81,7 +81,7 @@ namespace TagsCloud.Words
             return new ConcreteColorDrawerVisitor(new ImageSettings {Color = color});
         }
 
-        private string GetDirectoryForSavingExamples()
+        private static string GetDirectoryForSavingExamples()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "Examples");
             if (!Directory.Exists(path))
