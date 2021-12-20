@@ -2,6 +2,6 @@
 {
     public interface ISaver
     {
-        string GetSavePath();
+        Result<string> GetSavePath();
     }
 }

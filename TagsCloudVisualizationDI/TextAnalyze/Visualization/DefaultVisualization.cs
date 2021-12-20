@@ -59,7 +59,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
             TextFont.Dispose();
         }
 
-        public List<RectangleWithWord> FindSizeForElements(Dictionary<string, RectangleWithWord> formedElements)
+        public Result<List<RectangleWithWord>> FindSizeForElements(Dictionary<string, RectangleWithWord> formedElements)
         {
             var result = new List<RectangleWithWord>();
 
@@ -70,7 +70,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
 
 
                 var fontSize = element.WordElement.CntOfWords * SizeMultiplier;
-                var font = new Font("Times", fontSize);
+                var font = new Font(TextFont.Name, fontSize);
 
 
                 var newSize = graphics.MeasureString(element.WordElement.WordText, font);
@@ -80,7 +80,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
                 result.Add(sizedElement);
             }
 
-            return result;
+            return result.AsResult();
         }
     }
 }

@@ -2,9 +2,9 @@
 {
     public class DefaultNormalizer : INormalizer
     {
-        public string Normalize(string str)
+        public Result<string> Normalize(string str)
         {
-            return str.ToLower();
+            return Result.Of(() => str.ToLower());
         }
     }
 }

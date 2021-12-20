@@ -20,6 +20,10 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
         private void InvokeMystemAnalyze()
         {
+            Checker.CheckPathToFile(FilePath);
+            Checker.CheckPathToFile(MystemPath);
+            Checker.CheckPathToFile(SaveAnalyzePath);
+
             var process = Process.Start(new ProcessStartInfo
             {
                 FileName = MystemPath,

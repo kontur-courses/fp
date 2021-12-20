@@ -54,7 +54,7 @@ namespace TagsCloudVisualizationDITests
 
             var formedElements = filler.FormStatisticElements(elementSize, normalyzedWords);
             var sizedElements = visualization.FindSizeForElements(formedElements);
-            var sortedElements = sizedElements.
+            var sortedElements = sizedElements.GetValueOrThrow().
                 OrderByDescending(el => el.WordElement.CntOfWords).ToList();
             var positionedElements = filler.MakePositionElements(sortedElements);
             _expectedSizes = new List<Size>
@@ -70,7 +70,7 @@ namespace TagsCloudVisualizationDITests
                 new Point(-76, -82),
             };
             _formedElements = formedElements;
-            _sizedElements = sizedElements;
+            _sizedElements = sizedElements.GetValueOrThrow();
             _positionedElements = positionedElements;
         }
 

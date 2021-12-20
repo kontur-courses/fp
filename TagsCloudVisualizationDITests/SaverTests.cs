@@ -15,7 +15,7 @@ namespace TagsCloudVisualizationDITests
             var savePath = "C:\\savePath\testfile";
             var saver = new DefaultSaver(savePath, ImageFormat.Png);
             var expectedAnswer = "C:\\savePath\testfile.Png";
-            saver.GetSavePath().Should().Be(expectedAnswer);
+            saver.GetSavePath().GetValueOrThrow().Should().Be(expectedAnswer);
         }
 
         [Test]

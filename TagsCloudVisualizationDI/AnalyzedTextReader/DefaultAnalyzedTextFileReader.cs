@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace TagsCloudVisualizationDI.AnalyzedTextReader
@@ -16,9 +17,9 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
         private Encoding ReadingEncoding { get; }
 
 
-        public Result<IEnumerable<string>> ReadText()
+        public Result<List<string>> ReadText()
         {
-            return File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding);
+            return Result.Of(() => File.ReadAllLines(PreAnalyzedTextPath, ReadingEncoding).ToList());
         }
     }
 }

@@ -7,6 +7,6 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Visualization
     public interface IVisualization : IDisposable
     {
         Result<None> DrawAndSaveImage(List<RectangleWithWord> elements, string savePath, ImageFormat format);
-        List<RectangleWithWord> FindSizeForElements(Dictionary<string, RectangleWithWord> formedElements);
+        Result<List<RectangleWithWord>> FindSizeForElements(Dictionary<string, RectangleWithWord> formedElements);
     }
 }

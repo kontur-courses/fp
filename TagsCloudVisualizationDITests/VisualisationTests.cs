@@ -21,7 +21,7 @@ namespace TagsCloudVisualizationDITests
             var saver = new DefaultSaver(savePath, ImageFormat.Png);
             var visualization = new DefaultVisualization(new SolidBrush(Color.AliceBlue), new Font("times", 15),
                 new Size(10, 10), 10);
-            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath(), ImageFormat.Png);
+            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png).GetValueOrThrow();
             act.Should().NotThrow();
         }
 
@@ -30,8 +30,8 @@ namespace TagsCloudVisualizationDITests
         {
             var visualization = new DefaultVisualization(new SolidBrush(Color.AliceBlue), new Font("times", 15),
                 new Size(10, 10), 10);
-            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "G:\\", ImageFormat.Png);
-            act.Should().Throw<FileNotFoundException>();
+            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "G:\\", ImageFormat.Png).GetValueOrThrow();
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
@@ -42,8 +42,8 @@ namespace TagsCloudVisualizationDITests
             var visualization =
                 new DefaultVisualization(new SolidBrush(Color.AliceBlue), new Font("times", 15),
                     new Size(10, 10), 10);
-            visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath(), ImageFormat.Png);
-            File.Exists(saver.GetSavePath()).Should().BeTrue();
+            visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png);
+            File.Exists(saver.GetSavePath().GetValueOrThrow()).Should().BeTrue();
         }
     }
 }

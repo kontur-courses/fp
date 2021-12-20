@@ -5,6 +5,6 @@ namespace TagsCloudVisualizationDI.AnalyzedTextReader
 {
     public interface IAnalyzedTextFileReader
     {
-        Result<IEnumerable<string>> ReadText();
+        Result<List<string>> ReadText();
     }
 }

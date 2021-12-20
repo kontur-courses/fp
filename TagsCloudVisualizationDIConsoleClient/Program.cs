@@ -20,8 +20,8 @@ namespace TagsCloudVisualizationDIConsoleClient
             Result.OnFalse(!(args.Length < 2 || args.Length > 3), (er) => PrintAboutFail(er), $"Incorrect number of arguments ({args.Length})" +
                 "but should be between 2 and 3");
 
-            var pathToFile = args.ElementAtOrDefault(0);
-            var pathToSave = args.ElementAtOrDefault(1);
+            var pathToFile = args.ElementAt(0);
+            var pathToSave = args.ElementAt(1);
 
 
             var lastDotIndex = pathToSave.LastIndexOf('.');

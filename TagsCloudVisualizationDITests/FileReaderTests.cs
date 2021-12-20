@@ -17,7 +17,7 @@ namespace TagsCloudVisualizationDITests
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex1.TXT";
             var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
-            Action read = () => fileReader.ReadText();
+            Action read = () => fileReader.ReadText().GetValueOrThrow();
             read.Should().NotThrow();
         }
 
@@ -26,8 +26,8 @@ namespace TagsCloudVisualizationDITests
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "abraccadabras";
             var fileReader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8);
-            Action read = () => fileReader.ReadText();
-            read.Should().Throw<FileNotFoundException>();
+            Action read = () => fileReader.ReadText().GetValueOrThrow();
+            read.Should().Throw<InvalidOperationException>();
         }
 
         [Test]

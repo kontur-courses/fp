@@ -2,6 +2,6 @@
 {
     public interface INormalizer
     {
-        string Normalize(string stringWord);
+        Result<string> Normalize(string stringWord);
     }
 }

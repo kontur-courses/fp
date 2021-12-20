@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/*
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -70,3 +71,4 @@ namespace TagsCloudVisualizationDI.Settings
         public IContentFiller Filler => new CircularCloudLayouterForRectanglesWithText(LayouterCenter);
     }
 }
+*/

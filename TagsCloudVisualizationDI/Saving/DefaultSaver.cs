@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System;
+using System.Drawing.Imaging;
 
 namespace TagsCloudVisualizationDI.Saving
 {
@@ -11,8 +12,10 @@ namespace TagsCloudVisualizationDI.Saving
             SavePath = savePath + '.' + imageFormat;
         }
 
-        public string GetSavePath()
+        public Result<string> GetSavePath()
         {
+            Checker.CheckPathToDirectory(SavePath
+                .Substring(0, SavePath.LastIndexOf("\\", StringComparison.InvariantCulture)+1));
             return SavePath;
         }
     }

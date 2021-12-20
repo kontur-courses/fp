@@ -53,6 +53,9 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
         public IEnumerable<Word> GetAnalyzedWords(IEnumerable<string> words)
         {
+
+            //throw new Exception(words.ToList().Count().ToString());
+
             foreach (var word in words)
             {
                 if (CheckWord(word, out string content, out PartsOfSpeech.SpeechPart type))

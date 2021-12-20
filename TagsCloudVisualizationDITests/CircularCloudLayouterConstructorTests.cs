@@ -4,7 +4,7 @@ using System;
 using System.Drawing;
 using TagsCloudVisualizationDI.Layouter.Filler;
 
-namespace TagsCloudVisualizationTests
+namespace TagsCloudVisualizationDITests
 {
     [TestFixture]
     public class CircularCloudLayouterConstructorTests

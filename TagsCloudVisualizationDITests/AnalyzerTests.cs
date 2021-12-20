@@ -2,23 +2,35 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TagsCloudVisualizationDI;
-using TagsCloudVisualizationDI.Settings;
+using TagsCloudVisualizationDI.AnalyzedTextReader;
+using TagsCloudVisualizationDI.TextAnalyze;
+using TagsCloudVisualizationDI.TextAnalyze.Analyzer;
 
 namespace TagsCloudVisualizationDITests
 {
     [TestFixture]
     public class AnalyzerTests
     {
+        private const string Arguments = "-lndw -ig";
+        private static readonly PartsOfSpeech.SpeechPart[] ExcludedSpeechParts = new[]
+        {
+            PartsOfSpeech.SpeechPart.CONJ, PartsOfSpeech.SpeechPart.INTJ,
+            PartsOfSpeech.SpeechPart.PART, PartsOfSpeech.SpeechPart.PR,
+        };
+        private static readonly string MyStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
+
         [Test]
         public void ShouldNotThrowWhenPathsAreValid()
         {
-            var settings = new DefaultSettingsConfiguration(string.Empty, string.Empty, ImageFormat.Png, null);
-            var analyzer = ((ISettingsConfiguration)settings).Analyzer;
-            Action invoking = () => analyzer.InvokeMystemAnalizationResult();
+            var path = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex2.TXT";
+            var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT";
+            var analyzer = new DefaultAnalyzer(ExcludedSpeechParts, new List<string>(), path, 
+                savePath, MyStemPath, Arguments) as IAnalyzer;
+            Action invoking = () => analyzer.InvokeMystemAnalizationResult().GetValueOrThrow();
             invoking.Should().NotThrow();
 
         }
@@ -29,11 +41,12 @@ namespace TagsCloudVisualizationDITests
             var path = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\ex2.TXT";
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT";
 
-            var settings = (ISettingsConfiguration)new DefaultSettingsConfiguration(path, savePath, ImageFormat.Png, null);
-            var analyzer = settings.Analyzer;
-            var reader = settings.FileReader;
+            var analyzer = new DefaultAnalyzer(ExcludedSpeechParts, new List<string>(), path,
+                savePath, MyStemPath, Arguments) as IAnalyzer;
+            var reader = new DefaultAnalyzedTextFileReader(savePath, Encoding.UTF8) as IAnalyzedTextFileReader;
             analyzer.InvokeMystemAnalizationResult();
             var words = reader.ReadText();
+
             var result = analyzer.GetAnalyzedWords(words.GetValueOrThrow()).ToList();
             var expectedResult = new List<Word>
             {
