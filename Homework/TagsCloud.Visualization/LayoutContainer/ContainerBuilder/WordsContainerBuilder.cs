@@ -13,7 +13,7 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
     {
         private readonly IFontFactory fontFactory;
         private readonly ICloudLayouter layouter;
-        private readonly List<WordWithBorder> words = new();
+        private readonly List<Tag> words = new();
         private readonly IWordsSizeService wordsSizeService;
 
         public WordsContainerBuilder(
@@ -26,20 +26,20 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
             this.fontFactory = fontFactory;
         }
 
-        public override WordsContainer Build() => new()
+        public override TagsContainer Build() => new()
         {
             Items = words,
             Size = CalculateSize(),
             Center = words.First().Border.GetCenter()
         };
-        
+
         protected override WordsContainerBuilder AddWord(Word word, int minCount, int maxCount)
         {
             var font = fontFactory.GetFont(word, minCount, maxCount);
             var size = wordsSizeService.CalculateSize(word, font);
 
             layouter.PutNextRectangle(size)
-                .Then(rectangle => words.Add(new WordWithBorder(word, font, rectangle)));
+                .Then(rectangle => words.Add(new Tag(word, font, rectangle)));
 
             return this;
         }

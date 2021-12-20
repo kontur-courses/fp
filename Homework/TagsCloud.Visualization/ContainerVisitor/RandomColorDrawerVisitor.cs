@@ -15,7 +15,7 @@ namespace TagsCloud.Visualization.ContainerVisitor
             graphics.DrawRectangles(pen, cont.Items.ToArray());
         }
 
-        public void Visit(Graphics graphics, WordsContainer container)
+        public void Visit(Graphics graphics, TagsContainer container)
         {
             foreach (var (word, fontDecorator, rectangle) in container.Items)
             {

@@ -5,7 +5,7 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
 {
     public abstract class AbstractWordsContainerBuilder
     {
-        public abstract WordsContainer Build();
+        public abstract TagsContainer Build();
         protected abstract WordsContainerBuilder AddWord(Word word, int minCount, int maxCount);
 
         public AbstractWordsContainerBuilder AddWords(IEnumerable<Word> wordsToBuild, int minCount, int maxCount)
