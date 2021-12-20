@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.Utils;
@@ -23,6 +26,13 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
             this.fontFactory = fontFactory;
         }
 
+        public override WordsContainer Build() => new()
+        {
+            Items = words,
+            Size = CalculateSize(),
+            Center = words.First().Border.GetCenter()
+        };
+        
         protected override WordsContainerBuilder AddWord(Word word, int minCount, int maxCount)
         {
             var font = fontFactory.GetFont(word, minCount, maxCount);
@@ -34,6 +44,6 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
             return this;
         }
 
-        public override WordsContainer Build() => new() {Items = words};
+        private Size CalculateSize() => words.Select(x => x.Border).GetSize();
     }
 }

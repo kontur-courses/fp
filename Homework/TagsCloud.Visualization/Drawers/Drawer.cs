@@ -19,9 +19,10 @@ namespace TagsCloud.Visualization.Drawers
             if (!layoutContainer.Items.Any())
                 return Result.Fail<Image>("rectangles array can't be empty");
 
-            var (width, height) = layoutContainer.GetWidthAndHeight();
-            var (widthWithOffset, heightWithOffset) = (width + OffsetX, height + OffsetY);
-            var center = layoutContainer.GetCenter();
+            var (widthWithOffset, heightWithOffset) = (layoutContainer.Size.Width + OffsetX,
+                layoutContainer.Size.Height + OffsetY);
+
+            var center = layoutContainer.Center;
             var bitmap = new Bitmap(widthWithOffset, heightWithOffset);
             using var graphics = Graphics.FromImage(bitmap);
 

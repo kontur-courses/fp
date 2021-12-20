@@ -5,8 +5,8 @@ namespace TagsCloud.Visualization.LayoutContainer
 {
     public interface ILayoutContainer<out T> : IVisitable
     {
-        IEnumerable<T> Items { get; }
-        (int width, int height) GetWidthAndHeight();
-        Point GetCenter();
+        IReadOnlyList<T> Items { get; }
+        Size Size { get; }
+        Point Center { get; }
     }
 }

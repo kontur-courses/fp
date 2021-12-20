@@ -38,7 +38,12 @@ namespace TagsCloud.Tests
                 && rectangles.Count > 0)
             {
                 var testName = TestContext.CurrentContext.Test.Name;
-                var rectanglesContainer = new RectanglesContainer {Items = rectangles};
+                var rectanglesContainer = new RectanglesContainer
+                {
+                    Items = rectangles,
+                    Size = rectangles.GetSize(),
+                    Center = rectangles.First().GetCenter()
+                };
                 using var image = drawer.Draw(rectanglesContainer).GetValueOrThrow();
                 var path = Path.Combine(GetDirectoryForSavingFailedTest(), $"{testName}.png");
                 image.Save(path);
