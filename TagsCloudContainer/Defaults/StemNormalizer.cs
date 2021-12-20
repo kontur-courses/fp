@@ -17,6 +17,6 @@ public class StemNormalizer : IWordNormalizer
     {
         return myStem.AnalyzeWord(word)
             .Then(stat=>stat.Stem)
-            .RefineError($"Could not normilize word '{word}'");
+            .RefineError($"Could not normalize word '{word}'");
     }
 }
