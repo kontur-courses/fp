@@ -1,34 +1,29 @@
 ﻿using TagsCloudContainer.Infrastructure.Tags;
-using TagsCloudContainer.TagsCloudLayouter;
 
 namespace TagsCloudContainer.Infrastructure;
 
 public class TagCloudPainter
 {
     private const int AddedImageSize = 300;
-    private readonly ICloudLayouter layouter;
     private readonly Settings.Settings settings;
 
-    public TagCloudPainter(ICloudLayouter layouter,
-        Settings.Settings settings)
+    public TagCloudPainter(Settings.Settings settings)
     {
-        this.layouter = layouter;
         this.settings = settings;
     }
 
-    public string Paint(IEnumerable<PaintedTag> tags)
+    public Bitmap Paint(IEnumerable<CloudTag> cloudTags)
     {
-        var cloudTags = PutCloudTags(tags.ToList()).ToList();
         var neededSize = CalculateCoverageSize(cloudTags
                              .Select(tag => tag.Rectangle).ToArray())
-            + new Size(AddedImageSize, AddedImageSize);
+                         + new Size(AddedImageSize, AddedImageSize);
         var imageOffset = neededSize / 2 - new Size(settings.Center);
         var scaleX = settings.ImageSize.Width / (float)neededSize.Width;
         var scaleY = settings.ImageSize.Height / (float)neededSize.Height;
         return DrawTags(scaleX, scaleY, cloudTags, imageOffset);
     }
 
-    private string DrawTags(float scaleX, float scaleY,
+    private Bitmap DrawTags(float scaleX, float scaleY,
         IEnumerable<CloudTag> cloudTags, Size imageOffset)
     {
         var bm = new Bitmap(settings.ImageSize.Height, settings.ImageSize.Width);
@@ -43,38 +38,7 @@ public class TagCloudPainter
                 new SolidBrush(tag.Color), tag.Rectangle);
         }
 
-        return SaveBitmap(bm);
-    }
-
-    private string SaveBitmap(Bitmap bm)
-    {
-        var layoutsPath = Path.Combine(Path.GetFullPath(@"..\..\..\"), "layouts");
-        if (!Directory.Exists(layoutsPath))
-            Directory.CreateDirectory(layoutsPath);
-        var savePath = $"{layoutsPath}\\layout_{DateTime.Now:HHmmssddMM}.{settings.Format}";
-        bm.Save(savePath, settings.Format);
-        return savePath;
-    }
-
-    private IEnumerable<CloudTag> PutCloudTags(List<PaintedTag> tags)
-    {
-        var averageFrequency = tags.Select(tag => tag.Frequency).Sum()
-            / tags.Count;
-
-        foreach (var tag in tags)
-        {
-            var fontSize = (float)(tag.Frequency / averageFrequency) * settings.Font.Size;
-            var label = new Label { AutoSize = true };
-            label.Font = new Font(settings.Font.FontFamily, fontSize, settings.Font.Style);
-            label.Text = tag.Text;
-            var size = label.GetPreferredSize(settings.ImageSize);
-            var result = layouter.PutNextRectangle(size);
-            if (!result.IsSuccess)
-                continue;
-            yield return new CloudTag(tag, label, result.Value);
-        }
-
-        layouter.Reset();
+        return bm;
     }
 
     private static Size CalculateCoverageSize(Rectangle[] rectangles)
