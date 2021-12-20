@@ -87,5 +87,19 @@ namespace CLI
             config.ImageCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
             return config.AsResult();
         }
+
+        private Result<CommandLineConfig> UseFontParamsFrom(CommandLineConfig config,
+    Options options)
+        {
+            config.TagsFontName = options.FontName;
+            config.TagsFontSize = options.FontSize;
+            return CheckUsedArg(config, CheckFontParams, "Font name is unknown!");
+        }
+
+        private bool CheckFontParams(CommandLineConfig config)
+        {
+            using (var font = new Font(config.TagsFontName, config.TagsFontSize))
+                return font.Name == config.TagsFontName;
+        }
     }
 }
