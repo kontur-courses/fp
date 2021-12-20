@@ -21,7 +21,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void StringReader_Should_CorrectlyReadText()
+    public void StringReader_ShouldCorrectlyReadText()
     {
         var text = $"abcd{Environment.NewLine}efg{Environment.NewLine}hkl";
         var expectedResult = text.Split(Environment.NewLine, StringSplitOptions.TrimEntries);
@@ -34,7 +34,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void FileReader_Should_CorrectlyReadText()
+    public void FileReader_ShouldCorrectlyReadText()
     {
         var text = $"abcd{Environment.NewLine}efg{Environment.NewLine}hkl";
         var path = Path.GetTempFileName();
@@ -50,7 +50,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void TextAnalyzer_Should_CorrectlyCollectTextStats()
+    public void TextAnalyzer_ShouldCorrectlyCollectTextStats()
     {
         var text = new[] { "abcd", "efg", "hkl" };
         var fakeStats = GetTextStats(text);
@@ -75,7 +75,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void StemNormilizer_Should_CorrectlyTakeStemFromWord()
+    public void StemNormilizer_ShouldCorrectlyTakeStemFromWord()
     {
         var text = new[] { "кот", "коты", "котов" };
         var expectedReuslt = new[] { "кот", "кот", "кот" };
@@ -89,7 +89,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void SpeechPartFilter_Should_CorrectlyFilterOutSpecifiedParts()
+    public void SpeechPartFilter_ShouldCorrectlyFilterOutSpecifiedParts()
     {
         var text = new[] { "кот", "коты", "котов" };
         var expectedReuslt = Array.Empty<string>();
@@ -104,7 +104,7 @@ public class DefaultsTests
     }
 
     [Test]
-    public void TagPacker_Should_CorrectlyAssembleTags()
+    public void TagPacker_ShouldCorrectlyAssembleTags()
     {
         var text = new[] { "кот", "коты", "котов" };
 

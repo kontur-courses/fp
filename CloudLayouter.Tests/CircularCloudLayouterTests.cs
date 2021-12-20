@@ -1,5 +1,4 @@
-﻿using CloudLayouter;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -177,7 +176,7 @@ public class CircularCloudLayouterTests
     }
 
     [TestCase(20)]
-    public void PuttingRectanglesShouldBeFast(int seconds)
+    public void PuttingRectangles_ShouldBeFast(int seconds)
     {
         layouter = new CachedCircularLayouter(Point.Empty);
         var size = new Size(10, 11);

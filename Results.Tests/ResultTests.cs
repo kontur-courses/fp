@@ -5,13 +5,13 @@ using ResultExtensions;
 using ResultOf;
 using System;
 
-namespace ResultOfTask;
+namespace Results.Tests;
 
 [TestFixture]
-public class Result_Should
+public class ResultTests
 {
     [Test]
-    public void Create_Ok()
+    public void ShouldCreate_Ok()
     {
         var r = Result.Ok(42);
         r.IsSuccess.Should().BeTrue();
@@ -19,7 +19,7 @@ public class Result_Should
     }
 
     [Test]
-    public void Create_Fail()
+    public void ShouldCreate_Fail()
     {
         var r = Result.Fail<int>("123");
 
@@ -28,7 +28,7 @@ public class Result_Should
     }
 
     [Test]
-    public void ReturnsFail_FromResultOf_OnException()
+    public void ShouldReturnFail_FromResultOf_OnException()
     {
         var res = Result.Of<int>(() => { throw new Exception("123"); });
 
@@ -36,7 +36,7 @@ public class Result_Should
     }
 
     [Test]
-    public void ReturnsFailWithCustomMessage_FromResultOf_OnException()
+    public void ShouldReturnFailWithCustomMessage_FromResultOf_OnException()
     {
         var res = Result.Of<int>(() => { throw new Exception("123"); }, "42");
 
@@ -44,7 +44,7 @@ public class Result_Should
     }
 
     [Test]
-    public void ReturnsOk_FromResultOf_WhenNoException()
+    public void ShouldReturnOk_FromResultOf_WhenNoException()
     {
         var res = Result.Of(() => 42);
 
@@ -52,7 +52,7 @@ public class Result_Should
     }
 
     [Test]
-    public void RunThen_WhenOk()
+    public void ShouldRunThen_WhenOk()
     {
         var res = Result.Ok(42)
             .Then(n => n + 10);
@@ -60,7 +60,7 @@ public class Result_Should
     }
 
     [Test]
-    public void RunThen_WhenContinuationIsOk()
+    public void ShouldRunThen_WhenContinuationIsOk()
     {
         var res = Result.Ok(42)
             .Then(n => Result.Ok(n + 10));
@@ -68,7 +68,7 @@ public class Result_Should
     }
 
     [Test]
-    public void SkipThen_WhenFail()
+    public void ShouldSkipThen_WhenFail()
     {
         var fail = Result.Fail<int>("������");
         var called = false;
@@ -81,7 +81,7 @@ public class Result_Should
     }
 
     [Test]
-    public void Then_ReturnsFail_OnException()
+    public void Then_ShouldReturnFail_OnException()
     {
         Func<int, int> continuation = n => throw new Exception("123");
         var res = Result.Ok(42)
@@ -90,7 +90,7 @@ public class Result_Should
     }
 
     [Test]
-    public void Then_ReturnsFail_OnFailedContinuation()
+    public void Then_ShouldReturnFail_OnFailedContinuation()
     {
         Func<int, Result<int>> continuation = n => Result.Fail<int>("123");
         var res = Result.Ok(42)
@@ -99,7 +99,7 @@ public class Result_Should
     }
 
     [Test]
-    public void RunOnFail_WhenFail()
+    public void ShouldRunOnFail_WhenFail()
     {
         var fail = Result.Fail<int>("������");
         var errorHandler = A.Fake<Action<string>>();
@@ -111,7 +111,7 @@ public class Result_Should
     }
 
     [Test]
-    public void SkipOnFail_WhenOk()
+    public void ShouldSkipOnFail_WhenOk()
     {
         var ok = Result.Ok(42);
 
@@ -121,7 +121,7 @@ public class Result_Should
     }
 
     [Test]
-    public void RunThen_WhenOk_Scenario()
+    public void ShouldRunThen_WhenOk_OnSimpleScenario()
     {
         var res =
             Result.Ok("1358571172")
@@ -132,7 +132,7 @@ public class Result_Should
     }
 
     [Test]
-    public void RunThen_WhenOk_ComplexScenario()
+    public void ShouldRunThen_WhenOk_OnComplexScenario()
     {
         var parsed = Result.Ok("1358571172").Then(int.Parse);
         var res = parsed

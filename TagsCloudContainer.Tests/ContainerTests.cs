@@ -4,7 +4,6 @@ using ResultOf;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using TagsCloudContainer;
 using TagsCloudContainer.Abstractions;
 using TagsCloudContainer.Defaults;
 using TagsCloudContainer.Registrations;
@@ -15,7 +14,7 @@ public class ContainerTests
 {
 
     [Test]
-    public void CanChangeUsableImplementations()
+    public void ShouldUseSpecificImplementation_WhenArgumentProvided()
     {
         var args = new[] { "--assemblies", Assembly.GetExecutingAssembly().Location, "--implement-with", $"{nameof(IRunner)} {nameof(ThrowingRunner)}" };
         var result = InitializationHelper.RunWithArgs(args);
@@ -70,7 +69,7 @@ public class ContainerTests
     }
 
     [Test]
-    public void ServiceIndex_Should_CorrectlyIndexAvailableServicesAndImplementationsFromAssemblies()
+    public void ServiceIndex_ShouldCorrectlyIndexAvailableServicesAndImplementationsFromAssemblies()
     {
         var serviceIndex = new ServiceIndex();
 

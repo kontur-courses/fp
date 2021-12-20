@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer", "TagsC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Results", "Results\Results.csproj", "{668C0AE9-A672-4525-A8F0-0E564EB62ED3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultTests", "ResultTests\ResultTests.csproj", "{E9385D87-8C2A-4DAC-B2D5-72EE2B3DD1BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Results.Tests", "Results.Tests\Results.Tests.csproj", "{E9385D87-8C2A-4DAC-B2D5-72EE2B3DD1BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer.Tests", "TagsCloudContainer.Tests\TagsCloudContainer.Tests.csproj", "{327AFC97-91C5-4200-8A62-A3177EBD2A44}"
 EndProject
