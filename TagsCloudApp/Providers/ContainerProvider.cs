@@ -1,13 +1,14 @@
 ﻿using LightInject;
+using TagsCloudApp.ConsoleInterface;
+using TagsCloudApp.ConsoleInterface.ConsoleActions;
 using TagsCloudContainer.Appliers;
-using TagsCloudContainer.ConsoleInterface;
-using TagsCloudContainer.ConsoleInterface.ConsoleActions;
+using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Parsers;
 using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
 using TagsCloudContainer.TagsCloudLayouter;
 
-namespace TagsCloudContainer.Infrastructure.Providers
+namespace TagsCloudApp.Providers
 {
     public static class ContainerProvider
     {
@@ -21,7 +22,9 @@ namespace TagsCloudContainer.Infrastructure.Providers
             container.Register<IFiltersApplier, FiltersApplier>();
             container.Register<ITagCreator, TagCreator>();
             container.Register<ICloudLayouter, OvalCloudLayouter>();
+            container.Register<CloudTagCreator>();
             container.Register<TagCloudPainter>();
+            container.Register<CloudBitmapSaver>();
 
             container.RegisterInstance(SettingsProvider.GetSettings());
             RegisterImageSettings(container);

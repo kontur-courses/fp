@@ -1,4 +1,4 @@
-﻿namespace TagsCloudContainer.ConsoleInterface.ConsoleActions
+﻿namespace TagsCloudApp.ConsoleInterface.ConsoleActions
 {
     public interface IUIAction
     {

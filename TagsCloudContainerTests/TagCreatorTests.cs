@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Infrastructure.Tags;
 

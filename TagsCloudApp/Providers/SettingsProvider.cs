@@ -1,15 +1,16 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Preprocessors;
 
-namespace TagsCloudContainer.Infrastructure.Providers
+namespace TagsCloudApp.Providers
 {
     public static class SettingsProvider
     {
-        public static Settings.Settings GetSettings()
+        public static Settings GetSettings()
         {
-            return new Settings.Settings
+            return new Settings
             {
                 Palette = palette,
                 Font = font,

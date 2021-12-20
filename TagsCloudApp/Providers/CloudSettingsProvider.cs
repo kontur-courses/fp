@@ -2,7 +2,7 @@
 using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainer.Infrastructure.Providers
+namespace TagsCloudApp.Providers
 {
     public static class CloudSettingsProvider
     {

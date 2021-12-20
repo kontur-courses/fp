@@ -2,9 +2,8 @@
 using NUnit.Framework;
 using System.IO;
 using System.Linq;
-using TagsCloudContainer;
+using TagsCloudApp.Providers;
 using TagsCloudContainer.Appliers;
-using TagsCloudContainer.Infrastructure.Providers;
 using TagsCloudContainer.Parsers;
 
 namespace TagsCloudContainerTests

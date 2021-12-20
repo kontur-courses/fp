@@ -5,8 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloudContainer;
-using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudApp.Providers;
 using TagsCloudContainer.TagsCloudLayouter;
 
 namespace TagsCloudContainerTests

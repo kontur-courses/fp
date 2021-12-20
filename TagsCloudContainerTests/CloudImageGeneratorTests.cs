@@ -2,10 +2,9 @@
 using LightInject;
 using NUnit.Framework;
 using System.IO;
-using TagsCloudContainer;
+using TagsCloudApp.Providers;
 using TagsCloudContainer.Appliers;
 using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Infrastructure.Providers;
 using TagsCloudContainer.Parsers;
 using TagsCloudContainer.TagPainters;
 
@@ -18,14 +17,22 @@ namespace TagsCloudContainerTests
         {
             var container = ContainerProvider.GetContainer();
             var textPath = Path.Combine(Path.GetFullPath(@"..\..\..\texts"), "test.txt");
-            var parsed = container.GetInstance<IParser>("1").Parse(textPath);
-            var preprocessed = container.GetInstance<IPreprocessorsApplier>()
-                .ApplyPreprocessors(parsed.Value);
-            var tags = container.GetInstance<ITagCreator>().CreateTags(preprocessed);
-            var painted = container.GetInstance<ITagPainter>("1").PaintTags(tags.Value);
+            var parser = container.GetInstance<IParser>("1");
+            var preprocessorsApplier = container.GetInstance<IPreprocessorsApplier>();
+            var filtersApplier = container.GetInstance<IFiltersApplier>();
+            var tagCreator = container.GetInstance<ITagCreator>();
+            var tagPainter = container.GetInstance<ITagPainter>("1");
+            var cloudTagCreator = container.GetInstance<CloudTagCreator>();
             var cloudPainter = container.GetInstance<TagCloudPainter>();
-
-            var path = cloudPainter.Paint(painted);
+            var bitmapSaver = container.GetInstance<CloudBitmapSaver>();
+            var path = parser.Parse(textPath)
+                .Then(preprocessorsApplier.ApplyPreprocessors)
+                .Then(filtersApplier.ApplyFilters)
+                .Then(tagCreator.CreateTags)
+                .Then(tagPainter.PaintTags)
+                .Then(cloudTagCreator.CreateCloudTags)
+                .Then(cloudPainter.Paint)
+                .Then(bitmapSaver.SaveBitmap).Value;
 
             File.Exists(path).Should().BeTrue();
             File.Delete(path);

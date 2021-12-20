@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using TagsCloudContainer;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.TagsCloudLayouter;
 

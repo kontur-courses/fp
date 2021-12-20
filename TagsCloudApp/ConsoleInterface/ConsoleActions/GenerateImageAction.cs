@@ -4,27 +4,32 @@ using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Parsers;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainer.ConsoleInterface.ConsoleActions;
+namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
 
 public class GenerateImageAction : IUIAction
 {
-    private readonly TagCloudPainter cloudPainter;
     private readonly IFiltersApplier filtersApplier;
     private readonly Dictionary<string, IParser> parserSelector;
     private readonly IPreprocessorsApplier preprocessorsApplier;
     private readonly ITagCreator tagCreator;
     private readonly ITagPainter tagPainter;
+    private readonly CloudTagCreator cloudTagCreator;
+    private readonly TagCloudPainter cloudPainter;
+    private readonly CloudBitmapSaver bitmapSaver;
 
     public GenerateImageAction(TagCloudPainter cloudPainter,
         IFiltersApplier filtersApplier, ITagCreator tagCreator,
         CloudSettings cloudSettings, IParser[] parsers,
-        IPreprocessorsApplier preprocessorsApplier)
+        IPreprocessorsApplier preprocessorsApplier, 
+        CloudTagCreator cloudTagCreator, CloudBitmapSaver bitmapSaver)
     {
         this.preprocessorsApplier = preprocessorsApplier;
         this.filtersApplier = filtersApplier;
         tagPainter = cloudSettings.Painter;
         this.tagCreator = tagCreator;
+        this.cloudTagCreator = cloudTagCreator;
         this.cloudPainter = cloudPainter;
+        this.bitmapSaver = bitmapSaver;
         parserSelector = new Dictionary<string, IParser>();
         for (var i = 1; i <= parsers.Length; i++)
         {
@@ -94,6 +99,8 @@ public class GenerateImageAction : IUIAction
             .Then(filtersApplier.ApplyFilters)
             .Then(tagCreator.CreateTags)
             .Then(tagPainter.PaintTags)
-            .Then(cloudPainter.Paint);
+            .Then(cloudTagCreator.CreateCloudTags)
+            .Then(cloudPainter.Paint)
+            .Then(bitmapSaver.SaveBitmap);
     }
 }

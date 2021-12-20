@@ -1,6 +1,7 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 
-namespace TagsCloudContainer.Infrastructure.Providers;
+namespace TagsCloudApp.Providers;
 
 public static class ImageSettingsProvider
 {

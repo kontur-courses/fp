@@ -2,7 +2,7 @@
 using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagPainters;
 
-namespace TagsCloudContainer.ConsoleInterface.ConsoleActions
+namespace TagsCloudApp.ConsoleInterface.ConsoleActions
 {
     public class CloudSettingsAction : IUIAction
     {

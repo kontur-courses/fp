@@ -1,9 +1,8 @@
 ﻿using LightInject;
-using TagsCloudContainer.ConsoleInterface;
-using TagsCloudContainer.Infrastructure;
-using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudApp.ConsoleInterface;
+using TagsCloudApp.Providers;
 
-namespace TagsCloudContainer
+namespace TagsCloudApp
 {
     class Program
     {

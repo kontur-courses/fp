@@ -1,8 +1,9 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Infrastructure.Settings;
 
-namespace TagsCloudContainer.ConsoleInterface.ConsoleActions;
+namespace TagsCloudApp.ConsoleInterface.ConsoleActions;
 
 public class ImageSettingsAction : IUIAction
 {

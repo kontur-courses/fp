@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudApp.Providers;
 using TagsCloudContainer.Spirals;
 
 namespace TagsCloudContainerTests.SpiralTests

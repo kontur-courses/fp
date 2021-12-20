@@ -4,18 +4,11 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Exe</OutputType>
-    <StartupObject>TagsCloudContainer.Program</StartupObject>
-    <UseWindowsForms>True</UseWindowsForms>
+    <OutputType>Library</OutputType>
+	  <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="UIActions\**" />
-    <EmbeddedResource Remove="UIActions\**" />
-    <None Remove="UIActions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+	<ItemGroup>
     <COMReference Include="Microsoft.Office.Interop.Word">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>7</VersionMinor>

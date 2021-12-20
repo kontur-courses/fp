@@ -2,7 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Infrastructure.Providers;
+using TagsCloudApp.Providers;
 using TagsCloudContainer.Infrastructure.Settings;
 using TagsCloudContainer.Infrastructure.Tags;
 using TagsCloudContainer.TagPainters;

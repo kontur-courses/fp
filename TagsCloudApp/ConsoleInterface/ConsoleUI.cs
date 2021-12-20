@@ -1,6 +1,6 @@
-﻿using TagsCloudContainer.ConsoleInterface.ConsoleActions;
+﻿using TagsCloudApp.ConsoleInterface.ConsoleActions;
 
-namespace TagsCloudContainer.ConsoleInterface;
+namespace TagsCloudApp.ConsoleInterface;
 
 public class ConsoleUI : IUI
 {
