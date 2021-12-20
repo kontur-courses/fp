@@ -20,7 +20,7 @@ namespace TagsCloudContainer.ClientsInterfaces
         Size ImageSize { get; set; }
         Point ImageCenter { get; set; }
         ISpiral Spiral { get; set; }
-        IColorScheme TagsColors { get; set; }
+        IColorScheme ColorScheme { get; set; }
         ISourceReader SourceReader { get; set; }
         IHandlerConveyor HandlerConveyor { get; set; }
         ITextParser TextParser { get; set; }

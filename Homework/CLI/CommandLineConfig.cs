@@ -22,7 +22,7 @@ namespace CLI
         public Size ImageSize { get; set; }
         public Point ImageCenter { get; set; }
         public ISpiral Spiral { get; set; }
-        public IColorScheme TagsColors { get; set; }
+        public IColorScheme ColorScheme { get; set; }
         public ISourceReader SourceReader { get; set; }
         public IHandlerConveyor HandlerConveyor { get; set; }
         public ITextParser TextParser { get; set; }

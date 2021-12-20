@@ -16,8 +16,7 @@ namespace CloudContainerTests
                 (word, dict) =>
                 {
                     if (word == "") return;
-                    if (!dict.TryGetValue(word, out _))
-                        dict.Add(word, 0);
+                    if (!dict.TryGetValue(word, out _)) dict.Add(word, 0);
                     dict[word]++;
                 };
 

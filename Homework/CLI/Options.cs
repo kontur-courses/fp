@@ -1,18 +1,26 @@
-﻿using CommandLine;
+﻿using System;
+using CommandLine;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Mime;
 
 namespace CLI
 {
     public class Options
     {
-        [Option("input", Default = null, HelpText = "path to input file")]
+        [Option("input", Default = null, 
+            HelpText = "set path to input file " +
+                       "(in other case you should list words after --words key)")]
         public string Input { get; set; }
 
-        [Option("words", Default = null, HelpText = "tags set")]
+        [Option("words", Default = null, 
+            HelpText = "set list of words to be paint in the cloud" + 
+                       "(in other case you should set words file path after --input key)")]
         public IEnumerable<string> Tags { get; set; }
 
-        [Option('o', "output", Default = "tagcloud", HelpText = "path to output file directory")]
-        public string Output { get; set; }
+        [Option('o', "output", 
+            HelpText = "set path to output file directory (application local directory by default)")]
+        public string OutputFilePath { get; set; } = Directory.GetCurrentDirectory();
 
         [Option('w', "width", Default = 1000, HelpText = "tag cloud image width")]
         public int Width { get; set; }

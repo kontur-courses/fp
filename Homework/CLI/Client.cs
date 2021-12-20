@@ -52,7 +52,7 @@ namespace CLI
                 .Then(UseColorSchemeFrom, options)
                 .Then(UseSpiralFrom, options)
                 .Then(UseImageFormatFrom, options)
-                .Then(UseTextFormatFrom, options)
+                .Then(UseInputFileFormatFrom, options)
                 .Then(UseSourceReaderFrom, options)
                 .Then(UseHandlerConveyorFrom, options)
                 .Then(BuildTextParser);
@@ -68,8 +68,8 @@ namespace CLI
         private Result<CommandLineConfig> UseOutputPathFrom(CommandLineConfig config,
             Options options)
         {
-            config.OutputFilePath = options.Output;
-            return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "Output directory doesn't exist!");
+            config.OutputFilePath = options.OutputFilePath;
+            return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "OutputFilePath directory doesn't exist!");
         }
 
 
@@ -105,8 +105,8 @@ namespace CLI
         private Result<CommandLineConfig> UseColorSchemeFrom(CommandLineConfig config,
             Options options)
         {
-            config.TagsColors = GetColorScheme(options);
-            return CheckUsedArg(config, c => c.TagsColors != null, "Unknown color scheme is given!");
+            config.ColorScheme = GetColorScheme(options);
+            return CheckUsedArg(config, c => c.ColorScheme != null, "Unknown color scheme is given!");
         }
 
         private IColorScheme GetColorScheme(Options options)
@@ -159,7 +159,7 @@ namespace CLI
             }
         }
 
-        private Result<CommandLineConfig> UseTextFormatFrom(CommandLineConfig config,
+        private Result<CommandLineConfig> UseInputFileFormatFrom(CommandLineConfig config,
             Options options)
         {
             config.InputFileFormat = options.InputFileFormat;
@@ -222,12 +222,12 @@ namespace CLI
 
         private Func<string, string> GetExcludingHandler(Options options)
         {
-            return s =>
+            return word =>
             {
                 var excluded = options.ExcludedWords.ToHashSet();
                 var boringWords = new BoringWords().GetWords();
-                if (excluded.Contains(s) || boringWords.Contains(s)) return "";
-                return s;
+                if (excluded.Contains(word) || boringWords.Contains(word)) return "";
+                return word;
             };
         }
 

@@ -5,7 +5,7 @@ using ContainerConfigurers;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
-using TagsCloudContainer.Client;
+using TagsCloudContainer.ClientsInterfaces;
 
 namespace CloudContainerTests
 {
@@ -16,13 +16,13 @@ namespace CloudContainerTests
         public void Create_Output_File()
         {
             var input = "input";
-            var config = new Client(new string[] {input}).UserConfig;
+            var config = new Client(new[] {input}).UserConfig;
             var container = new AutofacConfigurer(config).GetContainer();
 
             using (var scope = container.BeginLifetimeScope())
             {
                 var painter = scope.Resolve<CloudPainter>();
-                painter.Draw(scope.Resolve<IUserConfig>().OutputFile);
+                painter.Draw(scope.Resolve<IUserConfig>().OutputFilePath);
             }
 
             File.Exists("tagcloud" + ".Png").Should().BeTrue();

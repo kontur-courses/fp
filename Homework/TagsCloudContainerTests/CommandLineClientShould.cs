@@ -6,38 +6,51 @@ using System.IO;
 using CLI;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudContainer.Client;
+using TagsCloudContainer.ClientsInterfaces;
 using TagsCloudContainer.CloudLayouters;
 using TagsCloudContainer.PaintConfigs;
+using TagsCloudContainer.TextParsers;
 
 namespace CloudContainerTests
 {
     [TestFixture]
     public class CommandLineClientShould
     {
-        private static string[] commonArgs =
-        {
-            "--input", "input.txt", "-o", "tagcloud.png", "-c", "2",
-            "-h", "5000", "-w", "5000", "-i", "jpeg", "-r", "log", "-s", "20"
-        };
+        private static string[] commonArgs;
+        private static IUserConfig commonConfig;
 
-        private static IUserConfig commonConfig = new CommandLineConfig
+        static CommandLineClientShould()
         {
-            InputFile = "input.txt",
-            OutputFile = "tagcloud.png",
-            TagsColors = new CyberpunkScheme(),
-            ImageSize = new Size(5000, 5000),
-            ImageFormat = ImageFormat.Jpeg,
-            TagsFontName = "Arial",
-            Spiral = new LogarithmSpiral(new Point(2500, 2500)),
-            TagsFontSize = 20
+            using (File.Create("input.txt")) { }
+            commonArgs = new[]
+            {
+                "--input", "input.txt", "-c", "2",
+                "-h", "5000", "-w", "5000", "-i", 
+                "jpeg", "-r", "log", "-s", "20"
+            };
+            commonConfig = new CommandLineConfig
+            {
+                InputFilePath = null,
+                Tags = null,
+                OutputFilePath = Directory.GetCurrentDirectory(),
+                ColorScheme = new CyberpunkScheme(),
+                ImageSize = new Size(5000, 5000),
+                InputFileFormat = "txt",
+                ImageCenter = new Point(2500, 2500),
+                ImageFormat = ImageFormat.Jpeg,
+                TagsFontName = "Arial",
+                TagsFontSize = 20,
+                Spiral = new LogarithmSpiral(new Point(2500, 2500)),
+                SourceReader = new TxtFileReader("input.txt")
+            };
 
-        };
+        }
 
         [SetUp]
         public void CreateInput()
         {
-            using (File.Create("input.txt")) { }
+            if (!File.Exists("input.txt"))
+                using (File.Create("input.txt")) { }
         }
 
 
@@ -47,17 +60,19 @@ namespace CloudContainerTests
             File.Delete("input.txt");
         }
 
-        [TestCase("-w", "0", TestName = "width is equal zero")]
-        [TestCase("-h", "-5", TestName = "height is less than zero")]
-        [TestCase("-c", "4", TestName = "unknown color is given")]
-        [TestCase("-f", "png", TestName = "text format is not txt")]
-        [TestCase("-i", "doc", TestName = "output image format is unknown")]
-        [TestCase("-r", "big", TestName = "unknown spiral is given")]
-        [TestCase("-s", "-100", TestName = "font size is equal zero")]
-        [TestCase("-n", "Aerials", TestName = "unknown font name is given")]
+        [TestCase("--output", "false_output.txt", TestName = "Not existed output file is given")]
+        [TestCase("--words", "two words", TestName = "Both custom words and input file path are given")]
+        [TestCase("-w", "0", TestName = "Width is equal zero")]
+        [TestCase("-h", "-5", TestName = "Height is less than zero")]
+        [TestCase("-c", "4", TestName = "Unknown color scheme is given")]
+        [TestCase("-f", "png", TestName = "Text format is not txt")]
+        [TestCase("-i", "doc", TestName = "Output image format is unknown")]
+        [TestCase("-r", "big", TestName = "Unknown spiral is given")]
+        [TestCase("-s", "-100", TestName = "Font size is equal zero")]
+        [TestCase("-n", "Aerials", TestName = "Unknown font name is given")]
         public void Throw_Argument_Exception_When(string key, string arg)
         {
-            var arrayArgs = new string[] {"--input", "input.txt", key, arg};
+            var arrayArgs = new[] {"--input", "input.txt", key, arg};
 
             FluentActions.Invoking(() => new Client(arrayArgs)).Should()
                 .Throw<ArgumentException>();
@@ -70,8 +85,7 @@ namespace CloudContainerTests
 
             config.Should().BeEquivalentTo(expectedConfig, options =>
                 options.Excluding(c => c.Tags)
-                    .Excluding(c => c.ImageCenter)
-                    .Excluding(c => c.TagsColors)
+                    .Excluding(c => c.HandlerConveyor)
                     .Excluding(c => c.TextParser));
         }
 
@@ -81,27 +95,27 @@ namespace CloudContainerTests
                 commonArgs,
                 commonConfig
             ).SetName("common case is given");
-            commonArgs[11] = "png";
+            commonArgs[9] = "png";
             commonConfig.ImageFormat = ImageFormat.Png;
             yield return new TestCaseData(
                 commonArgs,
                 commonConfig
             ).SetName("image format is changed");
-            commonArgs[13] = "sqr";
+            commonArgs[11] = "sqr";
             commonConfig.Spiral = new SquareSpiral(commonConfig.ImageCenter);
             yield return new TestCaseData(
                 commonArgs,
                 commonConfig
             ).SetName("spiral is changed");
-            commonArgs[15] = "25";
+            commonArgs[13] = "25";
             commonConfig.TagsFontSize = 25;
             yield return new TestCaseData(
                 commonArgs,
                 commonConfig
             ).SetName("font size is changed");
-            commonArgs[7] = "4000";
+            commonArgs[5] = "4000";
             commonConfig.ImageSize = new Size(5000, 4000);
-            commonConfig.ImageCenter = new Point(4000 / 2, 5000 /2);
+            commonConfig.ImageCenter = new Point(5000 / 2, 4000 /2);
             yield return new TestCaseData(
                 commonArgs,
                 commonConfig

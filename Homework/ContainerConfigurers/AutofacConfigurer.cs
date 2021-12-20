@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using TagsCloudContainer;
-using TagsCloudContainer.Client;
+using TagsCloudContainer.ClientsInterfaces;
 using TagsCloudContainer.CloudLayouters;
 using TagsCloudContainer.PaintConfigs;
 using TagsCloudContainer.TextParsers;
@@ -40,7 +40,7 @@ namespace ContainerConfigurers
         private void RegisterPaintConfig()
         {
             builder.Register(c => new PaintConfig(
-                    c.Resolve<IUserConfig>().TagsColors,
+                    c.Resolve<IUserConfig>().ColorScheme,
                     c.Resolve<IUserConfig>().ImageFormat,
                     c.Resolve<IUserConfig>().TagsFontName,
                     c.Resolve<IUserConfig>().TagsFontSize,
