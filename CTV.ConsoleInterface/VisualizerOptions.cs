@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using CommandLine;
-using CTV.Common.VisualizerProcessorFactory;
+using CTV.Common.VisualizerContainer;
 
 namespace CTV.ConsoleInterface
 {

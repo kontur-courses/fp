@@ -4,30 +4,23 @@ using CTV.Common.Layouters.Spirals;
 using CTV.Common.Preprocessors;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CTV.Common.VisualizerProcessorFactory
+namespace CTV.Common.VisualizerContainer
 {
-    public static class ProcessorFactory
+    public static class VisualizerContainerFactory
     {
-        public static VisualizerProcessor CreateInstance(VisualizerFactorySettings factorySettings)
-        {
-            var container = ConfigureContainer(factorySettings);
-            return container.BuildServiceProvider().GetService<VisualizerProcessor>();
-        }
-
-        private static ServiceCollection ConfigureContainer(VisualizerFactorySettings factorySettings)
+        public static ServiceProvider CreateInstance(VisualizerFactorySettings factorySettings)
         {
             var container = new ServiceCollection();
             InitCommonObjects(container);
             InitImageSaver(container, factorySettings);
             InitFileReader(container, factorySettings);
             InitVisualizerSettings(container, factorySettings);
-            return container;
+            return container.BuildServiceProvider();
         }
 
         private static void InitCommonObjects(IServiceCollection container)
         {
             container.AddScoped<Visualizer>();
-            container.AddScoped<VisualizerProcessor>();
             container.AddScoped<IFileStreamFactory, FileStreamFactory>();
             container.AddScoped<IWordsParser, RussianWordsParser>();
             container.AddScoped<ToLowerPreprocessor>();
@@ -43,7 +36,7 @@ namespace CTV.Common.VisualizerProcessorFactory
                     }));
             container.AddScoped<ILayouter, CircularCloudLayouter>();
             container.AddScoped<ISpiral, ExpandingSquareSpiral>();
-            container.AddScoped<IWordSizer, CountingWordSizer>();
+            container.AddScoped<IWordSizer, FrequencyBasedWordSizer>();
         }
 
         private static void InitImageSaver(IServiceCollection container, VisualizerFactorySettings factorySettings)

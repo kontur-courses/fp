@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace CTV.Common.VisualizerProcessorFactory
+namespace CTV.Common.VisualizerContainer
 {
     public class VisualizerFactorySettings
     {

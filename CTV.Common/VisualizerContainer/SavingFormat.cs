@@ -1,4 +1,4 @@
-﻿namespace CTV.Common.VisualizerProcessorFactory
+﻿namespace CTV.Common.VisualizerContainer
 {
     public enum SavingFormat
     {

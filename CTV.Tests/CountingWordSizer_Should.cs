@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using CTV.Common;
+using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace CTV.Tests
 {
+    //#FIXME
     [TestFixture]
     public class CountingWordSizer_Should
     {
-        private readonly CountingWordSizer sizer = new();
+        private readonly FrequencyBasedWordSizer sizer = new();
+        private Graphics g;
+
+        [SetUp]
+        public void OnSetup()
+        {
+            g = A.Fake<Graphics>();
+        }
 
         [TestCase(0, new[] {"abc"}, TestName = "When font size is zero")]
         [TestCase(-1, new[] {"abc"}, TestName = "When font size is negative")]
@@ -17,7 +28,8 @@ namespace CTV.Tests
         [TestCase(1, new[] {(string) null}, TestName = "When words contains null")]
         public void Throw_When(float fontSize, string[] words)
         {
-            Action action = () => sizer.Convert(words, fontSize);
+            var font = CreateDefaultFont(fontSize);
+            Action action = () => sizer.Convert(words, font, g);
             action.Should().Throw<ArgumentException>();
         }
 
@@ -25,53 +37,45 @@ namespace CTV.Tests
         public void ReturnEmpty_WhenNoWordsGiven()
         {
             var words = Array.Empty<string>();
-            var fontSize = 20;
+            var font = CreateDefaultFont(20);
 
-            var result = sizer.Convert(words, fontSize);
+            var result = sizer.Convert(words, font, g);
 
             result.Should().BeEmpty();
         }
 
 
         [Test]
-        public void ReturnSizeWithWidthEqualToWordLength()
+        public void ReturnSizeFontSizeDueToFrequency()
         {
-            var words = new[] {"a", "ab", "abc", "abcdef"};
+            var words = new[] {"a", "a", "a", "b", "b", "c"};
             var fontSize = 20;
+            var font = CreateDefaultFont(fontSize);
+            var returnedSize = new Size(10, 20);
+            A.CallTo(() => g.MeasureString(null, null))
+                .WithAnyArguments()
+                .Returns(returnedSize);
 
-            var expected = new List<SizedWord>()
+            var expected = new List<SizedWord>
             {
-                new("a", 1f /4f * fontSize),
-                new("ab", 1f /4f * fontSize),
-                new("abc", 1f /4f * fontSize),
-                new("abcdef", 1f /4f * fontSize)
+                new("a", CreateDefaultFont(3f / 6f * fontSize), returnedSize),
+                new("b", CreateDefaultFont(2f / 6f * fontSize), returnedSize),
+                new("c", CreateDefaultFont(1f / 6f * fontSize), returnedSize)
             };
 
-            var result = sizer.Convert(words, fontSize);
+            var result = sizer.Convert(words, font, g);
 
             result.Should().BeEquivalentTo(
                 expected,
                 config => config.WithoutStrictOrdering());
         }
 
-        [Test]
-        public void ScaleSizeHeightDueToTheCountWord()
+        //#FIXME Добавить тесты на WordSize
+
+
+        private Font CreateDefaultFont(float size)
         {
-            var words = new[] {"a", "a", "a", "abc", "abc", "abcdef"};
-            var fontSize = 20;
-
-            var expected = new List<SizedWord>()
-            {
-                new("a", 3f / 6f * fontSize ),
-                new("abc", 2f / 6f * fontSize),
-                new("abcdef", 1f / 6f * fontSize)
-            };
-
-            var result = sizer.Convert(words, fontSize);
-
-            result.Should().BeEquivalentTo(
-                expected,
-                config => config.WithoutStrictOrdering());
+            return new Font(FontFamily.GenericSerif, size, FontStyle.Bold);
         }
     }
 }

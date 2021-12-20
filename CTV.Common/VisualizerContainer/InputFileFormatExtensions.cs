@@ -1,7 +1,7 @@
 ﻿using System;
 using CTV.Common.Readers;
 
-namespace CTV.Common.VisualizerProcessorFactory
+namespace CTV.Common.VisualizerContainer
 {
     public static class InputFileFormatExtensions
     {

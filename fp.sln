@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTV.Tests", "CTV.Tests\CTV.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTV.Common", "CTV.Common\CTV.Common.csproj", "{F132A249-B34C-4733-AD77-4A3F940F0798}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalProgrammingInfrastructure", "FunctionalProgrammingInfrastructure\FunctionalProgrammingInfrastructure.csproj", "{F1708812-E358-42ED-A6D0-0CB423C12CED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{F132A249-B34C-4733-AD77-4A3F940F0798}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F132A249-B34C-4733-AD77-4A3F940F0798}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F132A249-B34C-4733-AD77-4A3F940F0798}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1708812-E358-42ED-A6D0-0CB423C12CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1708812-E358-42ED-A6D0-0CB423C12CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1708812-E358-42ED-A6D0-0CB423C12CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1708812-E358-42ED-A6D0-0CB423C12CED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
