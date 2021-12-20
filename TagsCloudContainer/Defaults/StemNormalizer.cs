@@ -15,9 +15,8 @@ public class StemNormalizer : IWordNormalizer
 
     public Result<string> Normalize(string word)
     {
-        var result = myStem.AnalyzeWord(word);
-        return result.IsSuccess
-            ? result.GetValueOrThrow().Stem
-            : Result.Fail<string>($"Could not normilize word '{word}'");
+        return myStem.AnalyzeWord(word)
+            .Then(stat=>stat.Stem)
+            .RefineError($"Could not normilize word '{word}'");
     }
 }

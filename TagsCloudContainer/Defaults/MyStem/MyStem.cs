@@ -32,7 +32,7 @@ public class MyStem : ISingletonService, IDisposable
     public Result<WordStat> AnalyzeWord(string word)
     {
         if (disposedValue)
-            throw new InvalidOperationException("MyStem object was disposed");
+            return Result.Fail<WordStat>("MyStem object was disposed");
 
         if (word == null)
             return Result.Fail<WordStat>("Word was null");
@@ -52,12 +52,11 @@ public class MyStem : ISingletonService, IDisposable
 
         var stats = ParseWordStats(ReadAllLines(myStemProccess.StandardOutput));
         var statResult = stats.Length > 0 ? stats[0] : Result.Fail<WordStat>("MyStem could not understand a word");
-        if (statResult.IsSuccess)
+        statResult.Then(stat =>
         {
-            stat = statResult.GetValueOrThrow();
             cache[word] = stat;
             cache[stat.Stem] = stat;
-        }
+        });
 
         return statResult;
     }

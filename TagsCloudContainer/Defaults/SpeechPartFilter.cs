@@ -1,4 +1,5 @@
-﻿using TagsCloudContainer.Abstractions;
+﻿using ResultExtensions;
+using TagsCloudContainer.Abstractions;
 using TagsCloudContainer.Defaults.SettingsProviders;
 
 namespace TagsCloudContainer.Defaults;
@@ -16,10 +17,9 @@ public class SpeechPartFilter : IWordFilter
 
     public bool IsValid(string word)
     {
-        var result = myStem.AnalyzeWord(word);
-        if (!result.IsSuccess)
-            return false;
-        var part = result.GetValueOrThrow().SpeechPart;
-        return !settings.ToFilterOut.Contains(part);
+        var part = myStem.AnalyzeWord(word)
+            .Then(stat => stat.SpeechPart);
+
+        return part.IsSuccess && !settings.ToFilterOut.Contains(part.GetValueOrThrow());
     }
 }
