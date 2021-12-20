@@ -23,10 +23,7 @@ public static class InitializationHelper
             .Then(x => ParseImplementations(serviceIndex, builder, registeredServices, x))
             .Then(x => RegisterNotSpecified(builder, serviceIndex, registeredServices));
 
-        if (!leftArgs.IsSuccess)
-            return Result.Fail(leftArgs.Error);
-
-        return Result.Of(() => builder.Build())
+        return leftArgs.Then(_ => builder.Build())
             .Then(container => container.Resolve<IRunner>())
             .Then(runner => runner.Run(leftArgs.GetValueOrThrow().ToArray()))
             .RefineError("Failed to run");
@@ -59,9 +56,8 @@ public static class InitializationHelper
                 v => result = RegisterFromArgs(builder,serviceIndex, registeredServices, v) }
         };
         leftArgs = implementationsOptions.Parse(leftArgs);
-        if (result.IsSuccess)
-            return Result.Ok(leftArgs);
-        return Result.Fail<List<string>>(result.Error);
+
+        return result.Then(() => leftArgs);
     }
 
     private static Result<List<string>> ParseAssemblies(ServiceIndex serviceIndex, string[] args)
@@ -72,9 +68,8 @@ public static class InitializationHelper
             {"assemblies=",$"Specifies additional assemblies to use.",v => result = AddAssembliesFrom(serviceIndex,v.Split()) }
         };
         var leftArgs = assembliesOptions.Parse(args);
-        if (result.IsSuccess)
-            return Result.Ok(leftArgs);
-        return Result.Fail<List<string>>(result.Error);
+
+        return result.Then(() => leftArgs);
     }
 
     private static Result RegisterFromArgs(ContainerBuilder builder, ServiceIndex serviceIndex, HashSet<Type> registeredServices, string argString)

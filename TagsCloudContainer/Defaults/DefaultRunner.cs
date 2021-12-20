@@ -18,21 +18,17 @@ public class DefaultRunner : IRunner
 
     public Result Run(params string[] args)
     {
-        var parseSettingsResult = ParseSettings(args);
-        if (!parseSettingsResult.IsSuccess)
-        {
-            return parseSettingsResult.
-                RefineError($"Failed to parse arguments[{ string.Join(", ", args)}]");
-        }
+        var outputResult = ParseSettings(args)
+            .RefineError($"Failed to parse arguments[{ string.Join(", ", args)}]")
+            .Then(() => container.Resolve<OutputSettings>());
 
-        var outputResult = Result.Of(container.Resolve<OutputSettings>);
-        if (!outputResult.IsSuccess)
-            return outputResult;
-
-        var output = outputResult.GetValueOrThrow();
-        return Result.Of(container.Resolve<IVisualizer>)
+        return outputResult.Then(_ => container.Resolve<IVisualizer>())
             .Then(vis => vis.GetBitmap())
-            .Then(img => img.Save(output.OutputPath, output.ImageFormat.GetFormat()));
+            .Then(img =>
+            {
+                var output = outputResult.GetValueOrThrow();
+                img.Save(output.OutputPath, output.ImageFormat.GetFormat());
+            });
     }
 
     private Result ParseSettings(string[] args)
