@@ -1,6 +1,6 @@
-﻿using System.IO;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using System.IO;
 using TagsCloudContainer.Parsers;
 
 namespace TagsCloudContainerTests.ParserTests;

@@ -3,7 +3,6 @@ using TagsCloudApp.ConsoleActions;
 using TagsCloudApp.ConsoleInterface;
 using TagsCloudContainer.Appliers;
 using TagsCloudContainer.BitmapSavers;
-using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Parsers;
 using TagsCloudContainer.Spirals;
 using TagsCloudContainer.TagCloudPainters;

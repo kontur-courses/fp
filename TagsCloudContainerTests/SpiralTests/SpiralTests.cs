@@ -1,6 +1,6 @@
-﻿using System.Drawing;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using System.Drawing;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Spirals;
 

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.TagPainters;
 using TagsCloudContainer.Tags;

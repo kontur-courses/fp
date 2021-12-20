@@ -13,10 +13,10 @@ public class ImageSettingsAction : IUIAction
     private readonly Dictionary<string, FontStyle> styleSelector;
 
     public ImageSettingsAction(
-        Settings settings, 
+        Settings settings,
         Color[] colors,
-        FontFamily[] fonts, 
-        FontStyle[] styles, 
+        FontFamily[] fonts,
+        FontStyle[] styles,
         ImageFormat[] formats)
     {
         this.settings = settings;

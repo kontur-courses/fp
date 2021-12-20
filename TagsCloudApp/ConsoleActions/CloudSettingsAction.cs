@@ -12,7 +12,7 @@ public class CloudSettingsAction : IUIAction
 
     public CloudSettingsAction(
         CloudSettings cloudSettings,
-        ITagPainter[] painters, 
+        ITagPainter[] painters,
         ISpiral[] spirals)
     {
         this.cloudSettings = cloudSettings;

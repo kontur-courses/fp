@@ -21,9 +21,9 @@ public class GenerateImageAction : IUIAction
 
     public GenerateImageAction(
         ITagCloudPainter cloudPainter,
-        IFiltersApplier filtersApplier, 
+        IFiltersApplier filtersApplier,
         ITagCreator tagCreator,
-        CloudSettings cloudSettings, 
+        CloudSettings cloudSettings,
         IParser[] parsers,
         IPreprocessorsApplier preprocessorsApplier,
         ICloudTagCreator cloudTagCreator,

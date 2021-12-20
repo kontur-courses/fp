@@ -30,8 +30,8 @@ public class CloudTagCreator : ICloudTagCreator
     {
         foreach (var tag in tagsList)
         {
-            var fontSize = (float) (tag.Frequency / averageFrequency) * settings.Font.Size;
-            var label = new Label {AutoSize = true};
+            var fontSize = (float)(tag.Frequency / averageFrequency) * settings.Font.Size;
+            var label = new Label { AutoSize = true };
             label.Font = new Font(settings.Font.FontFamily, fontSize, settings.Font.Style);
             label.Text = tag.Text;
             var size = label.GetPreferredSize(settings.ImageSize);
