@@ -230,5 +230,24 @@ namespace CLI
                 return s;
             };
         }
+
+        private Result<CommandLineConfig> BuildTextParser(CommandLineConfig config)
+        {
+            config.TextParser = new TextParser(
+                config.SourceReader,
+                config.HandlerConveyor.GetHandlerConveyor(),
+                GetWordGrouper());
+            return config.AsResult();
+        }
+
+        private static Action<string, Dictionary<string, int>> GetWordGrouper()
+        {
+            return (word, dict) =>
+            {
+                if (word == "") return;
+                if (!dict.TryGetValue(word, out _)) dict.Add(word, 0);
+                dict[word]++;
+            };
+        }
     }
 }
