@@ -4,8 +4,8 @@ using Autofac;
 using NUnit.Framework;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 using TagsCloud.Visualization.WordsReaders.FileReaders;
 

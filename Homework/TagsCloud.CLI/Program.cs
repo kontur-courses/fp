@@ -4,7 +4,7 @@ using System.Linq;
 using Autofac;
 using CommandLine;
 using TagsCloud.Visualization;
-using TagsCloud.Visualization.Utils;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsReaders;
 using TagsCloud.Visualization.WordsReaders.FileReaders;

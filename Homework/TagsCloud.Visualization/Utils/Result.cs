@@ -2,24 +2,7 @@
 
 namespace TagsCloud.Visualization.Utils
 {
-    public static class ResultQueryExpressionExtensions
-    {
-        public static Result<TOutput> SelectMany<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation) =>
-            input.Then(continuation);
-
-        public static Result<TSelected> SelectMany<TInput, TOutput, TSelected>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation,
-            Func<TInput, TOutput, TSelected> resultSelector)
-        {
-            return input.Then(continuation)
-                .Then(o => resultSelector(input.Value, o));
-        }
-    }
-
-    public struct Result<T>
+    public readonly struct Result<T>
     {
         public Result(string error, T value = default)
         {
@@ -39,16 +22,6 @@ namespace TagsCloud.Visualization.Utils
         }
 
         public bool IsSuccess => Error == null;
-
-        public Result<T> Validate(Predicate<T> validator, string errorMessage) =>
-            Validate(validator, _ => errorMessage);
-
-        public Result<T> Validate(Predicate<T> validator, Func<T, string> errorMessage)
-        {
-            if (IsSuccess)
-                return validator(Value) ? this : Result.Fail<T>(errorMessage(Value));
-            return this;
-        }
     }
 
     public static class Result
@@ -84,48 +57,6 @@ namespace TagsCloud.Visualization.Utils
             {
                 return Fail<None>(error ?? e.Message);
             }
-        }
-
-        public static Result<TOutput> Then<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
-        {
-            return input.Then(inp => Of(() => continuation(inp)));
-        }
-
-        public static Result<None> Then<TInput>(
-            this Result<TInput> input,
-            Action<TInput> continuation)
-        {
-            return input.Then(inp => OfAction(() => continuation(inp)));
-        }
-
-        public static Result<TOutput> Then<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation) =>
-            input.IsSuccess
-                ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
-
-        public static Result<TInput> OnFail<TInput>(
-            this Result<TInput> input,
-            Action<string> handleError)
-        {
-            if (!input.IsSuccess)
-                handleError(input.Error);
-            return input;
-        }
-
-        public static Result<TInput> ReplaceError<TInput>(
-            this Result<TInput> input,
-            Func<string, string> replaceError) =>
-            input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
-
-        public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input,
-            string errorMessage)
-        {
-            return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

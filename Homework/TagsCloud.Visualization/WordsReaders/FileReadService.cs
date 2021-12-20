@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders.FileReaders;
 

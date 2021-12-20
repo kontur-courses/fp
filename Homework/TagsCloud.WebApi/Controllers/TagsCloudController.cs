@@ -2,8 +2,8 @@
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.WebApi.Controllers

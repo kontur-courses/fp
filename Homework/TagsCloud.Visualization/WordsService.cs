@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsParser;

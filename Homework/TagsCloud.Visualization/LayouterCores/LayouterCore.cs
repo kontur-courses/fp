@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using TagsCloud.Visualization.Drawers;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;

@@ -1,7 +1,7 @@
 ﻿using System;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Words

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TagsCloud.Visualization.Utils;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.WordsFilter

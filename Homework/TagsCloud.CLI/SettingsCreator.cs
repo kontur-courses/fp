@@ -4,6 +4,7 @@ using System.IO;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Drawers;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.Utils;

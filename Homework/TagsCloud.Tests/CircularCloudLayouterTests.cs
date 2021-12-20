@@ -12,7 +12,6 @@ using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayoutContainer;
 using TagsCloud.Visualization.PointGenerator;
-using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Tests
 {

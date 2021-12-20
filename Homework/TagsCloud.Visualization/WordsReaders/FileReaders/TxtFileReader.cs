@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Visualization.WordsReaders.FileReaders

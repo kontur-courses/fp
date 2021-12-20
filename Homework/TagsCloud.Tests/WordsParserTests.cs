@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloud.Visualization.Utils;
+using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.WordsFilter;
 using TagsCloud.Visualization.WordsParser;
 

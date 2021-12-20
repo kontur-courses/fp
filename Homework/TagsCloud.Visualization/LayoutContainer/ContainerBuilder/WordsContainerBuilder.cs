@@ -4,7 +4,6 @@ using System.Linq;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.FontFactory;
 using TagsCloud.Visualization.Models;
-using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsSizeServices;
 
 namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
