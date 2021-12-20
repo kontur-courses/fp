@@ -139,5 +139,31 @@ namespace CLI
                 default: return null;
             }
         }
+
+        private Result<CommandLineConfig> UseImageFormatFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.ImageFormat = GetImageFormat(options);
+            return CheckUsedArg(config, c => c.ImageFormat != null, "Unknown color scheme is given!");
+        }
+
+        private ImageFormat GetImageFormat(Options options)
+        {
+            var formatName = options.OutputFileFormat.ToLower();
+            switch (formatName)
+            {
+                case "png": return ImageFormat.Png;
+                case "bmp": return ImageFormat.Bmp;
+                case "jpeg": return ImageFormat.Jpeg;
+                default: return null;
+            }
+        }
+
+        private Result<CommandLineConfig> UseTextFormatFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.InputFileFormat = options.InputFileFormat;
+            return CheckUsedArg(config, c => c.InputFileFormat == "txt", "Unknown input file format is given!");
+        }
     }
 }
