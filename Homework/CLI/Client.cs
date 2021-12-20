@@ -180,5 +180,55 @@ namespace CLI
             if (options.Tags != null) return new TagsReader(options.Tags);
             return null;
         }
+
+        private Result<CommandLineConfig> UseHandlerConveyorFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.HandlerConveyor = GetConveyor(options);
+            return CheckUsedArg(config, CheckConfigHandlers, GetConveyorError(config));
+        }
+
+        private CommandLineHandlerConveyor GetConveyor(Options options)
+        {
+            var actualHandlers = new List<Func<string, string>>();
+            var unknownHandlers = new List<string>();
+            foreach (var handler in options.Modifications)
+            {
+                if (modifiers.ContainsKey(handler)) actualHandlers.Add(modifiers[handler]);
+                else unknownHandlers.Add(handler);
+            }
+            actualHandlers.Add(GetExcludingHandler(options));
+
+            return new CommandLineHandlerConveyor(actualHandlers, unknownHandlers);
+        }
+
+        private bool CheckConfigHandlers(CommandLineConfig config)
+        {
+            return config.HandlerConveyor.GetUnknownHandlers().Count == 0;
+        }
+
+        private string GetConveyorError(CommandLineConfig config)
+        {
+            StringBuilder message = new StringBuilder("Unknown handlers list:\n");
+            var unknowHandlers = config.HandlerConveyor.GetUnknownHandlers();
+            foreach (var handler in unknowHandlers)
+            {
+                message.Append(handler);
+                message.Append("\n");
+            }
+
+            return message.ToString();
+        }
+
+        private Func<string, string> GetExcludingHandler(Options options)
+        {
+            return s =>
+            {
+                var excluded = options.ExcludedWords.ToHashSet();
+                var boringWords = new BoringWords().GetWords();
+                if (excluded.Contains(s) || boringWords.Contains(s)) return "";
+                return s;
+            };
+        }
     }
 }
