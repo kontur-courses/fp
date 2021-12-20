@@ -9,7 +9,7 @@ using TagsCloudContainer.Defaults;
 using TagsCloudContainer.Defaults.MyStem;
 using TagsCloudContainer.Defaults.SettingsProviders;
 
-namespace ContainerTests;
+namespace TagsCloudContainer.Tests;
 
 public class DefaultsTests
 {

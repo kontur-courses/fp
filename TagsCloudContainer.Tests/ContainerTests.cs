@@ -9,7 +9,7 @@ using TagsCloudContainer.Abstractions;
 using TagsCloudContainer.Defaults;
 using TagsCloudContainer.Registrations;
 
-namespace ContainerTests;
+namespace TagsCloudContainer.Tests;
 
 public class ContainerTests
 {
