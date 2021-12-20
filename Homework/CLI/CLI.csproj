@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="CommandLineConfig.cs" />
+    <Compile Include="CommandLineHandlerConveyor.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

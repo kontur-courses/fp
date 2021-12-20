@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using ContainerConfigurers;
 using TagsCloudContainer;
-using TagsCloudContainer.Client;
+using TagsCloudContainer.ClientsInterfaces;
 
 namespace CLI
 {
@@ -14,7 +14,7 @@ namespace CLI
             using (var scope = container.BeginLifetimeScope())
             {
                 var painter = scope.Resolve<CloudPainter>();
-                painter.Draw(scope.Resolve<IUserConfig>().OutputFile);
+                painter.Draw(scope.Resolve<IUserConfig>().OutputFilePath);
             }
         }
     }

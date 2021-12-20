@@ -11,7 +11,7 @@ namespace CLI
         [Option("words", Default = null, HelpText = "tags set")]
         public IEnumerable<string> Tags { get; set; }
 
-        [Option('o', "output", Default = "tagcloud", HelpText = "path to output file")]
+        [Option('o', "output", Default = "tagcloud", HelpText = "path to output file directory")]
         public string Output { get; set; }
 
         [Option('w', "width", Default = 1000, HelpText = "tag cloud image width")]
@@ -41,12 +41,12 @@ namespace CLI
         public string Spiral { get; set; }
 
         [Option('m', "mod", Default = new[] { "lower", "trim" },
-            HelpText = "Enumerates string functions which will be apply to all tags\n" +
+            HelpText = "enumerates string functions which will be apply to all tags\n" +
                        "lower - ToLower(), trim - Trim()")]
         public IEnumerable<string> Modifications { get; set; }
 
         [Option('e', "exclude", Default = null,
-            HelpText = "tags that will be excluded from parsing result")]
+            HelpText = "words that will be excluded from parsing result")]
         public IEnumerable<string> ExcludedWords { get; set; }
     }
 }
