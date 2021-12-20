@@ -22,20 +22,19 @@ public class Visualizer : IVisualizer
     public Bitmap GetBitmap()
     {
         var bitmap = new Bitmap(settingsProvider.Width, settingsProvider.Height);
-        using (var bitmapGraphics = Graphics.FromImage(bitmap))
+        using var bitmapGraphics = Graphics.FromImage(bitmap);
+
+        bitmapGraphics.SmoothingMode = settingsProvider.SmoothingMode;
+        bitmapGraphics.Clear(Color.Black);
+        var count = 0;
+        foreach (var tag in tags.GetTags().Select(styler.Style))
         {
-            bitmapGraphics.SmoothingMode = settingsProvider.SmoothingMode;
-            bitmapGraphics.Clear(Color.Black);
-            var count = 0;
-            foreach (var tag in tags.GetTags().Select(styler.Style))
-            {
-                var size = tag.GetTrueGraphicSize(bitmapGraphics);
-                var rectangle = layouter.PutNextRectangle(size);
-                tag.DrawSelf(bitmapGraphics, rectangle);
-                count++;
-                if (settingsProvider.WordLimit != 0 && count >= settingsProvider.WordLimit)
-                    break;
-            }
+            var size = tag.GetTrueGraphicSize(bitmapGraphics);
+            var rectangle = layouter.PutNextRectangle(size);
+            tag.DrawSelf(bitmapGraphics, rectangle);
+            count++;
+            if (settingsProvider.WordLimit != 0 && count >= settingsProvider.WordLimit)
+                break;
         }
 
         return bitmap;
