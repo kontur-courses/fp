@@ -12,6 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ContentWithTargetPath Include="Examples\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\TagsCloudImageSaver\TagsCloudImageSaver.csproj"/>
         <ProjectReference Include="..\TagsCloudVisualization\TagsCloudVisualization.csproj"/>
     </ItemGroup>
