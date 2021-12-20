@@ -57,4 +57,19 @@ namespace CLI
                 .Then(UseHandlerConveyorFrom, options)
                 .Then(BuildTextParser);
         }
+
+        private Result<T> CheckUsedArg<T>(T obj, Func<T, bool> predicate, string errorMessage)
+        {
+            return predicate(obj)
+                ? Result.Ok(obj)
+                : Result.Fail<T>(errorMessage);
+        }
+
+        private Result<CommandLineConfig> UseOutputPathFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.OutputFilePath = options.Output;
+            return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "Output directory doesn't exist!");
+        }
     }
+}
