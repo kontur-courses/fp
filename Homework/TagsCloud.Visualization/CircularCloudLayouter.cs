@@ -31,14 +31,13 @@ namespace TagsCloud.Visualization
         private Rectangle GetFirstCorrectRectangle(Size rectangleSize)
         {
             var rectangleCenter = new Size(rectangleSize.Width / 2, rectangleSize.Height / 2);
-            foreach (var point in pointGenerator.GenerateNextPoint())
+            while (true)
             {
+                var point = pointGenerator.GenerateNextPoint();
                 var rectangle = new Rectangle(point - rectangleCenter, rectangleSize);
                 if (!rectangle.IntersectsWith(rectangles))
                     return rectangle;
             }
-
-            throw new Exception("point generator must generate points infinitely");
         }
 
         private Rectangle ShiftRectangleToCenter(Rectangle rectangle)
