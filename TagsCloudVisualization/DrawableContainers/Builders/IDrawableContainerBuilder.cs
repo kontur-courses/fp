@@ -1,8 +1,11 @@
-﻿namespace TagsCloudVisualization.DrawableContainers.Builders
+﻿using System.Collections.Generic;
+
+namespace TagsCloudVisualization.DrawableContainers.Builders
 {
     public interface IDrawableContainerBuilder
     {
-        void AddTag(Tag tag);
+
+        void AddTags(IEnumerable<Tag> tags);
         IDrawableContainer Build();
     }
 }

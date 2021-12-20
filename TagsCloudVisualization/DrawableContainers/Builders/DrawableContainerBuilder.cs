@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ResultMonad;
 using TagsCloudVisualization.ColorService;
 using TagsCloudVisualization.Drawable;
 using TagsCloudVisualization.FontService;
@@ -15,7 +16,7 @@ namespace TagsCloudVisualization.DrawableContainers.Builders
         private readonly ITagColorService colorService;
         private readonly ITagSizeService sizeService;
         private readonly ILayouter layouter;
-        private readonly List<Tag> tags = new();
+        private readonly List<Tag> tagContainer = new();
         private float max = float.MinValue;
         private float min = float.MaxValue;
 
@@ -28,31 +29,35 @@ namespace TagsCloudVisualization.DrawableContainers.Builders
             this.layouter = layouter;
         }
 
-        public void AddTag(Tag tag)
+        public void AddTags(IEnumerable<Tag> tags)
         {
-            max = Math.Max(max, tag.Count);
-            min = Math.Min(min, tag.Count);
-            tags.Add(tag);
+            foreach (var tag in tags)
+            {
+                max = Math.Max(max, tag.Count);
+                min = Math.Min(min, tag.Count);
+                tagContainer.Add(tag);
+            }
         }
-
         public IDrawableContainer Build()
         {
             var container = new DrawableContainer();
-            foreach (var tag in tags.OrderByDescending(tag => tag.Count))
+            foreach (var tag in tagContainer.OrderByDescending(tag => tag.Count))
             {
-                container.AddDrawable(CreateDrawableTag(tag));
+                var drawableTag = CreateDrawableTag(tag)
+                    .GetValueOrThrow();
+               container.AddDrawable(drawableTag);
             }
 
             return container;
         }
         
-        private DrawableTag CreateDrawableTag(Tag tag)
+        private Result<DrawableTag> CreateDrawableTag(Tag tag)
         {
             var font = fontService.GetFont(tag, min, max);
             var size = sizeService.GetSize(tag, font);
-            var bounds = layouter.PutNextRectangle(size);
             var color = colorService.GetColor();
-            return new DrawableTag(tag, bounds, font, color);
+            return layouter.PutNextRectangle(size)
+                .Then(rectangle => new DrawableTag(tag, rectangle, font, color));
         }
     }
 }

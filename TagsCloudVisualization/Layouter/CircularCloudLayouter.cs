@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultMonad;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointGenerators;
 
@@ -17,16 +18,17 @@ namespace TagsCloudVisualization.Layouter
             rectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
-            if (rectangleSize.Width <= 0)
-                throw new ArgumentException("Rectangle width should be > 0");
-            if (rectangleSize.Height <= 0)
-                throw new ArgumentException("Rectangle height should be > 0");
-            var rectangle = GetCorrectRectangle(rectangleSize);
-            rectangles.Add(rectangle);
-
-            return rectangle;
+            return rectangleSize.AsResult()
+                .Validate(size => size.Width > 0, "Rectangle width should be > 0")
+                .Validate(size => size.Height > 0,  "Rectangle height should be > 0")
+                .Then(GetCorrectRectangle)
+                .Then(rectangle =>
+                {
+                    rectangles.Add(rectangle);
+                    return rectangle;
+                });
         }
 
         private Rectangle GetCorrectRectangle(Size size)
