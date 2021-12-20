@@ -11,7 +11,7 @@ public class LayouterSettingsProvider : ICliSettingsProvider
     {
         var options = new OptionSet()
         {
-            {"center=", $"Coordinates of center for CircularLayouter, separated by ','. Defaults to {Center}", v => Center = Parse(v)}
+            { "center=", $"Coordinates of center for CircularLayouter, separated by ','. Defaults to {Center}", v => Center = Parse(v) }
         };
 
         return options;

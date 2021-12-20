@@ -19,9 +19,9 @@ public class StyleProvider : ICliSettingsProvider
     {
         var options = new OptionSet()
         {
-            {"font-family=", $"Sets the font family name for tags. Defaults to {FontFamilyName}", v => FontFamilyName = v },
-            {"min-size=", $"Sets the min size for tags. Defaults to {MinSize}", (double v) => MinSize = v },
-            {"color=", $"Sets the color for tags. Defaults to {BrushColor.Name}", (Color v) => BrushColor = v },
+            { "font-family=", $"Sets the font family name for tags. Defaults to {FontFamilyName}", v => FontFamilyName = v },
+            { "min-size=", $"Sets the min size for tags. Defaults to {MinSize}", (double v) => MinSize = v },
+            { "color=", $"Sets the color for tags. Defaults to {BrushColor.Name}", (Color v) => BrushColor = v },
         };
 
         return options;

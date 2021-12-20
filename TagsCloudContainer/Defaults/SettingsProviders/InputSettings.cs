@@ -19,17 +19,17 @@ public class InputSettings : IRequiredSettingsProvider
                 {"files=", $"Specifies input files separated by '|'.", v =>
                     {
                         Paths = v.Split('|');
-                        if(UseString)
+                        if (UseString)
                             throw new ArgumentException("Can't use both file and string input providers");
-                        UseFile=true;
+                        UseFile = true;
                     }
                 },
                 {"string=", $"Specifies string to read.", v =>
                     {
                         Source = v;
-                        if(UseFile)
+                        if (UseFile)
                             throw new ArgumentException("Can't use both file and string input providers");
-                        UseString=true;
+                        UseString = true;
                     }
                 }
             };

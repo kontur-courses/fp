@@ -15,10 +15,10 @@ public class VisualizerSettings : ICliSettingsProvider
     {
         var options = new OptionSet()
         {
-            {"width=", $"Set width of resulting bitmap. Defaults to {Width}", (int v) => Width = v },
-            {"height=", $"Set height of resulting bitmap. Defaults to {Height}",(int v) => Height = v },
-            {"word-limit=", $"Set word limit to use. 0 means no limit Defaults to {WordLimit}",(int v) => WordLimit = v },
-            {"smoothing-mode=",$"Set smoothing mode for resulting bitmap. Defaults to {SmoothingMode}", (SmoothingMode v) => SmoothingMode = v },
+            { "width=", $"Set width of resulting bitmap. Defaults to {Width}", (int v) => Width = v },
+            { "height=", $"Set height of resulting bitmap. Defaults to {Height}", (int v) => Height = v },
+            { "word-limit=", $"Set word limit to use. 0 means no limit Defaults to {WordLimit}", (int v) => WordLimit = v },
+            { "smoothing-mode=",$"Set smoothing mode for resulting bitmap. Defaults to {SmoothingMode}", (SmoothingMode v) => SmoothingMode = v },
         };
 
         return options;

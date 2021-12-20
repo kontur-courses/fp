@@ -20,8 +20,8 @@ public class SpeechPartFilterSettings : ICliSettingsProvider
     {
         var options = new OptionSet()
         {
-            {"add-parts=",$"Add speech parts to exclusion filter. Defaults to {string.Join(", ",toFilterOut)}",v=>AddParts(v) },
-            {"remove-parts=",$"Remove speech parts from exclusion filter. Defaults to {string.Join(", ",toFilterOut)}",v=>RemoveParts(v) }
+            { "add-parts=", $"Add speech parts to exclusion filter. Defaults to {string.Join(", ", toFilterOut)}", v => AddParts(v) },
+            { "remove-parts=", $"Remove speech parts from exclusion filter. Defaults to {string.Join(", ", toFilterOut)}", v => RemoveParts(v) }
         };
 
         return options;

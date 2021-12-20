@@ -11,8 +11,8 @@ public class OutputSettings : ICliSettingsProvider
     {
         var options = new OptionSet()
             {
-                {"output=","Name of the output image. Defaults to 'image.png'",v=>OutputPath=v},
-                {"image-format=","Format of the output image. Defaults to png", (ImageFormatType v)=>ImageFormat=v }
+                { "output=", "Name of the output image. Defaults to 'image.png'", v => OutputPath = v },
+                { "image-format=", "Format of the output image. Defaults to png", (ImageFormatType v) => ImageFormat = v }
             };
 
         return options;
