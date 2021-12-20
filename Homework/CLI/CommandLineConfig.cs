@@ -11,7 +11,7 @@ namespace CLI
 {
     public class CommandLineConfig : IUserConfig
     {
-        public string InputFile { get; set; }
+        public string InputFilePath { get; set; }
         public string InputFileFormat { get; set; }
         public string OutputFilePath { get; set; }
         public string TagsFontName { get; set; }
@@ -19,14 +19,12 @@ namespace CLI
         public string[] Tags { get; set; }
 
         public ImageFormat ImageFormat { get; set; }
-
-        public IHandlerConveyor HandlerConveyor { get; set; }
         public Size ImageSize { get; set; }
         public Point ImageCenter { get; set; }
-        public IColorScheme TagsColors { get; set; }
         public ISpiral Spiral { get; set; }
+        public IColorScheme TagsColors { get; set; }
         public ISourceReader SourceReader { get; set; }
-
+        public IHandlerConveyor HandlerConveyor { get; set; }
         public ITextParser TextParser { get; set; }
     }
 }
