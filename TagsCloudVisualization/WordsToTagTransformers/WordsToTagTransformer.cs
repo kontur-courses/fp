@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TagsCloudVisualization.WordsToTagTransformers
 {
-    public class WordsToTagTransformer : IWordsToTagTransformer
+    internal class WordsToTagTransformer : IWordsToTagTransformer
     {
         public IEnumerable<Tag> Transform(IEnumerable<string> words) =>
             words

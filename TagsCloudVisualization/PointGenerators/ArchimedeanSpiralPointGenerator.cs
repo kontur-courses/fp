@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace TagsCloudVisualization.PointGenerators
 {
-    public class ArchimedeanSpiralPointGenerator : IPointGenerator
+    internal class ArchimedeanSpiralPointGenerator : IPointGenerator
     {
         private readonly double coefficient;
         private readonly Point start;
