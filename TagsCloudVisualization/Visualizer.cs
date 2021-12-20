@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using ResultMonad;
 using TagsCloudVisualization.DrawableContainers.Builders;
 using TagsCloudVisualization.ImageCreators;
 using TagsCloudVisualization.WordsPreprocessors;
 using TagsCloudVisualization.WordsProvider;
 using TagsCloudVisualization.WordsToTagTransformers;
+
+[assembly: InternalsVisibleTo("TagsCloudTests")]
 
 namespace TagsCloudVisualization
 {
