@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using ResultMonad;
 
 namespace TagsCloudImageSaver
 {
@@ -14,13 +14,11 @@ namespace TagsCloudImageSaver
         public ImageSaver(string directory, string imageName)
         {
             this.directory = directory;
-            if (!Directory.Exists(directory))
-                throw new ArgumentException($"No such directory {directory}");
             this.imageName = imageName;
-            format = DefineFormat(imageName);
+            format = DefineFormat(imageName).GetValueOrThrow();
         }
 
-        private static ImageFormat DefineFormat(string imageName)
+        private static Result<ImageFormat> DefineFormat(string imageName)
         {
             var extension = Path.GetExtension(imageName);
             return extension switch
@@ -28,14 +26,17 @@ namespace TagsCloudImageSaver
                 ".png" => ImageFormat.Png,
                 ".jpeg" or ".jpg" => ImageFormat.Jpeg,
                 ".bmp" => ImageFormat.Bmp,
-                _ => throw new ArgumentException($"Cant save image in this {extension} format.")
+                _ => Result.Fail<ImageFormat>($"Cant save image in this {extension} format.")
             };
         }
 
         public void Save(Image image)
         {
-            var path = Path.Combine(directory, imageName);
-            image.Save(path, format);
+            directory
+                .AsResult()
+                .Validate(Directory.Exists, $"No such directory {directory}")
+                .Then(dir => Path.Combine(dir, imageName))
+                .Then(path => image.Save(path, format));
         }
     }
 }
