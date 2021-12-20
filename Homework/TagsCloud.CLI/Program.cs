@@ -26,7 +26,7 @@ namespace TagsCloud.Words
                 {
                     using var container = CreateContainer(s).BeginLifetimeScope();
 
-                    container.Resolve<CliLayouterCore>().Run();
+                    container.Resolve<CliTagsCloudVisualizer>().Run();
                 });
         }
 
@@ -44,7 +44,7 @@ namespace TagsCloud.Words
                 .As<IWordsProvider>();
             RegisterBoringWordsFilter(builder, settings);
 
-            builder.RegisterType<CliLayouterCore>().AsSelf();
+            builder.RegisterType<CliTagsCloudVisualizer>().AsSelf();
             return builder.Build();
         }
 

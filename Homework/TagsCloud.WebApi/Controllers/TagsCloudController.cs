@@ -12,14 +12,14 @@ namespace TagsCloud.WebApi.Controllers
     [Route("[controller]")]
     public class TagsCloudController : Controller
     {
-        private readonly ILayouterCore layouterCore;
+        private readonly ITagsCloudVisualizer tagsCloudVisualizer;
 
-        public TagsCloudController(ILayouterCore layouterCore) => this.layouterCore = layouterCore;
+        public TagsCloudController(ITagsCloudVisualizer tagsCloudVisualizer) => this.tagsCloudVisualizer = tagsCloudVisualizer;
 
         [HttpPost("[action]")]
         public IActionResult Create([FromBody] string text)
         {
-            var result = layouterCore.GenerateImage(new SimpleTextReader(text))
+            var result = tagsCloudVisualizer.GenerateImage(new SimpleTextReader(text))
                 .Then(image =>
                 {
                     using var ms = new MemoryStream();

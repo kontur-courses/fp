@@ -4,7 +4,7 @@ using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.LayouterCores
 {
-    public interface ILayouterCore
+    public interface ITagsCloudVisualizer
     {
         Result<Image> GenerateImage(IWordsProvider wordsProvider);
     }

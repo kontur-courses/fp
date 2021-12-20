@@ -8,13 +8,13 @@ using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Visualization.LayouterCores
 {
-    public class LayouterCore : ILayouterCore
+    public class TagsCloudVisualizer : ITagsCloudVisualizer
     {
         private readonly IDrawer drawer;
         private readonly AbstractWordsContainerBuilder wordsContainerBuilder;
         private readonly IWordsService wordsService;
 
-        public LayouterCore(
+        public TagsCloudVisualizer(
             IWordsService wordsService,
             AbstractWordsContainerBuilder wordsContainerBuilder,
             IDrawer drawer)

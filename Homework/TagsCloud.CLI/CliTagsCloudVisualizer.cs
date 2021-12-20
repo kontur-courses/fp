@@ -6,25 +6,25 @@ using TagsCloud.Visualization.WordsReaders;
 
 namespace TagsCloud.Words
 {
-    public class CliLayouterCore
+    public class CliTagsCloudVisualizer
     {
         private readonly IImageSaver imageSaver;
-        private readonly ILayouterCore layouterCore;
+        private readonly ITagsCloudVisualizer tagsCloudVisualizer;
         private readonly IWordsProvider wordsProvider;
 
-        public CliLayouterCore(
-            ILayouterCore layouterCore,
+        public CliTagsCloudVisualizer(
+            ITagsCloudVisualizer tagsCloudVisualizer,
             IImageSaver imageSaver,
             IWordsProvider wordsProvider)
         {
-            this.layouterCore = layouterCore;
+            this.tagsCloudVisualizer = tagsCloudVisualizer;
             this.imageSaver = imageSaver;
             this.wordsProvider = wordsProvider;
         }
 
         public void Run()
         {
-            layouterCore.GenerateImage(wordsProvider)
+            tagsCloudVisualizer.GenerateImage(wordsProvider)
                 .OnFail(x => Console.WriteLine(x, Console.Error))
                 .Then(x => imageSaver.Save(x))
                 .Then(x => x.Dispose());

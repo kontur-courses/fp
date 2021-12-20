@@ -36,7 +36,7 @@ namespace TagsCloud.Visualization
             builder.RegisterType<Drawer>().As<IDrawer>();
             builder.Register(_ => new ImageSaver(settings.SaveSettings)).As<IImageSaver>();
 
-            builder.RegisterType<LayouterCore>().As<ILayouterCore>();
+            builder.RegisterType<TagsCloudVisualizer>().As<ITagsCloudVisualizer>();
         }
     }
 }

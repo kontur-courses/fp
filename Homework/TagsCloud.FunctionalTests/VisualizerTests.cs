@@ -23,7 +23,7 @@ namespace TagsCloud.FunctionalTests
 
             using var container = CreateContainer(settings, extension);
 
-            var visualizer = container.Resolve<ILayouterCore>();
+            var visualizer = container.Resolve<ITagsCloudVisualizer>();
             visualizer.GenerateImage(container.Resolve<IWordsProvider>())
                 .Then(x => x.Dispose());
         }
