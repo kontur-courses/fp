@@ -119,5 +119,25 @@ namespace CLI
                 default: return null;
             }
         }
+
+        private Result<CommandLineConfig> UseSpiralFrom(CommandLineConfig config,
+           Options options)
+        {
+            config.Spiral = GetSpiral(options);
+            return CheckUsedArg(config, c => c.Spiral != null, "Unknown color scheme is given!");
+        }
+
+        private ISpiral GetSpiral(Options options)
+        {
+            var spiralName = options.Spiral.ToLower();
+            var imageCenter = new Point(options.Width / 2, options.Height / 2);
+            switch (spiralName)
+            {
+                case "log": return new LogarithmSpiral(imageCenter);
+                case "sqr": return new SquareSpiral(imageCenter);
+                case "rnd": return new RandomSpiral(imageCenter);
+                default: return null;
+            }
+        }
     }
 }
