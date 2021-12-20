@@ -71,5 +71,21 @@ namespace CLI
             config.OutputFilePath = options.Output;
             return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "Output directory doesn't exist!");
         }
+
+
+        private Result<CommandLineConfig> UseImageSizeFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.ImageSize = new Size(options.Width, options.Height);
+            return CheckUsedArg(config, c => c.ImageSize.Width > 0 && c.ImageSize.Height > 0,
+                "Image size must be greater than zero!");
+        }
+
+        private Result<CommandLineConfig> BuildImageCenter(CommandLineConfig config)
+        {
+            var imageSize = config.ImageSize;
+            config.ImageCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
+            return config.AsResult();
+        }
     }
 }
