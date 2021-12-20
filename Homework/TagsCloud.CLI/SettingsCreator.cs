@@ -5,7 +5,7 @@ using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.FontFactory;
-using TagsCloud.Visualization.ImagesSavior;
+using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Words

@@ -1,4 +1,4 @@
-﻿namespace TagsCloud.Visualization.ImagesSavior
+﻿namespace TagsCloud.Visualization.ImagesSavers
 {
     public class SaveSettings
     {

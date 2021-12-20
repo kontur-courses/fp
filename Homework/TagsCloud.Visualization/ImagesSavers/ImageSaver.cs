@@ -2,13 +2,13 @@
 using System.IO;
 using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.ImagesSavior
+namespace TagsCloud.Visualization.ImagesSavers
 {
-    public class ImageSavior : IImageSavior
+    public class ImageSaver : IImageSaver
     {
         private readonly SaveSettings settings;
 
-        public ImageSavior(SaveSettings settings) => this.settings = settings;
+        public ImageSaver(SaveSettings settings) => this.settings = settings;
 
         public Result<Image> Save(Image image)
         {

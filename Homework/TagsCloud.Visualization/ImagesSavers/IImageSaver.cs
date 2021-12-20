@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.ImagesSavior
+namespace TagsCloud.Visualization.ImagesSavers
 {
-    public interface IImageSavior
+    public interface IImageSaver
     {
         Result<Image> Save(Image image);
     }

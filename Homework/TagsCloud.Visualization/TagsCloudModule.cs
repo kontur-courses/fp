@@ -3,7 +3,7 @@ using Autofac;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.FontFactory;
-using TagsCloud.Visualization.ImagesSavior;
+using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
 using TagsCloud.Visualization.LayouterCores;
 using TagsCloud.Visualization.PointGenerator;
@@ -34,7 +34,7 @@ namespace TagsCloud.Visualization
 
             builder.Register(_ => settings.LayoutVisitor).As<IContainerVisitor>();
             builder.RegisterType<Drawer>().As<IDrawer>();
-            builder.Register(_ => new ImageSavior(settings.SaveSettings)).As<IImageSavior>();
+            builder.Register(_ => new ImageSaver(settings.SaveSettings)).As<IImageSaver>();
 
             builder.RegisterType<LayouterCore>().As<ILayouterCore>();
         }

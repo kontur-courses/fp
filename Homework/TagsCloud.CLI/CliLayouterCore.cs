@@ -1,5 +1,5 @@
 ﻿using System;
-using TagsCloud.Visualization.ImagesSavior;
+using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.LayouterCores;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsReaders;
@@ -8,17 +8,17 @@ namespace TagsCloud.Words
 {
     public class CliLayouterCore
     {
-        private readonly IImageSavior imageSavior;
+        private readonly IImageSaver imageSaver;
         private readonly ILayouterCore layouterCore;
         private readonly IWordsReadService wordsReadService;
 
         public CliLayouterCore(
             ILayouterCore layouterCore,
-            IImageSavior imageSavior,
+            IImageSaver imageSaver,
             IWordsReadService wordsReadService)
         {
             this.layouterCore = layouterCore;
-            this.imageSavior = imageSavior;
+            this.imageSaver = imageSaver;
             this.wordsReadService = wordsReadService;
         }
 
@@ -26,7 +26,7 @@ namespace TagsCloud.Words
         {
             layouterCore.GenerateImage(wordsReadService)
                 .OnFail(x => Console.WriteLine(x, Console.Error))
-                .Then(x => imageSavior.Save(x))
+                .Then(x => imageSaver.Save(x))
                 .Then(x => x.Dispose());
         }
     }
