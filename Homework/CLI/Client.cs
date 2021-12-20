@@ -165,5 +165,20 @@ namespace CLI
             config.InputFileFormat = options.InputFileFormat;
             return CheckUsedArg(config, c => c.InputFileFormat == "txt", "Unknown input file format is given!");
         }
+
+        private Result<CommandLineConfig> UseSourceReaderFrom(CommandLineConfig config,
+           Options options)
+        {
+            config.SourceReader = GetSourceReader(options);
+            return CheckUsedArg(config, c => c.SourceReader != null,
+                "You need to set input file or words list!");
+        }
+
+        private ISourceReader GetSourceReader(Options options)
+        {
+            if (options.Input != null) return new TxtFileReader(options.Input);
+            if (options.Tags != null) return new TagsReader(options.Tags);
+            return null;
+        }
     }
 }
