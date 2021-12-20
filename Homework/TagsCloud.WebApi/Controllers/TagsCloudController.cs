@@ -14,7 +14,8 @@ namespace TagsCloud.WebApi.Controllers
     {
         private readonly ITagsCloudVisualizer tagsCloudVisualizer;
 
-        public TagsCloudController(ITagsCloudVisualizer tagsCloudVisualizer) => this.tagsCloudVisualizer = tagsCloudVisualizer;
+        public TagsCloudController(ITagsCloudVisualizer tagsCloudVisualizer)
+            => this.tagsCloudVisualizer = tagsCloudVisualizer;
 
         [HttpPost("[action]")]
         public IActionResult Create([FromBody] string text)
