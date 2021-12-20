@@ -46,18 +46,17 @@ public class DefaultRunner : IRunner
         };
         allOptions.Add(helperOptions);
 
-        try
+        foreach (var item in allOptions)
         {
-            foreach (var item in allOptions)
-            {
-                argsList = item.Parse(argsList);
-                if (!argsList.Any())
-                    break;
-            }
+            argsList = item.Parse(argsList);
+            if (!argsList.Any())
+                break;
         }
-        catch (Exception ex)
+
+        foreach (var provider in allSettingsProviders)
         {
-            return Result.Fail(ex.Message);
+            if (!provider.State.IsSuccess)
+                return provider.State;
         }
 
         if (argsList.Any())

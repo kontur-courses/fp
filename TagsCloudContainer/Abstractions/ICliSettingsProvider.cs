@@ -6,4 +6,6 @@ namespace TagsCloudContainer.Abstractions;
 public interface ICliSettingsProvider : ISingletonService
 {
     OptionSet GetCliOptions();
+
+    ResultOf.Result State { get; }
 }
