@@ -56,7 +56,7 @@ namespace TagsCloud.Tests
         [TestCase(0, 1, TestName = "Only one is zero")]
         [TestCase(0, 0, TestName = "Both coordinates are zero")]
         [TestCase(-1, 3, TestName = "Negative width")]
-        public void PutNextRectangle_Should_ReturnFalseResult_WhenSizeNotPositive(int width, int height)
+        public void PutNextRectangle_ShouldReturnFalseResult_WhenSizeNotPositive(int width, int height)
         {
             var size = new Size(width, height);
 
@@ -74,7 +74,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void PutNextRectangle_ShouldNot_ChangeSize()
+        public void PutNextRectangle_ShouldNotChangeSize()
         {
             var size = new Size(12, 34);
 
@@ -86,7 +86,7 @@ namespace TagsCloud.Tests
         [TestCase(10, 1)]
         [TestCase(123, 45)]
         [TestCase(1, 200)]
-        public void PutNextRectangle_FirstRectangle_Should_BePlacedInCenter(int width, int height)
+        public void PutNextRectangle_FirstRectangle_ShouldBePlacedInCenter(int width, int height)
         {
             var rectangle = sut.PutNextRectangle(new Size(width, height));
 
@@ -96,7 +96,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void PutNextRectangle_Rectangles_Should_HaveDifferentCentres()
+        public void PutNextRectangle_Rectangles_ShouldHaveDifferentCentres()
         {
             rectangles = PutRandomRectangles(10);
 
@@ -104,7 +104,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void PutNextRectangle_Should_PlaceRectangles_WithoutIntersection()
+        public void PutNextRectangle_ShouldPlaceRectangles_WithoutIntersection()
         {
             rectangles = PutRandomRectangles(20);
 
@@ -114,7 +114,7 @@ namespace TagsCloud.Tests
 
         [TestCase(200, TestName = "Big count")]
         [TestCase(5, TestName = "Little count")]
-        public void PutNextRectangle_Should_PlaceRectangles_CloseToRoundForm(int count)
+        public void PutNextRectangle_ShouldPlaceRectangles_CloseToRoundForm(int count)
         {
             var random = new Random();
             var width = random.Next(300);
@@ -135,7 +135,7 @@ namespace TagsCloud.Tests
 
         [TestCase(1000, TestName = "Big count")]
         [TestCase(5, TestName = "Little count")]
-        public void PutNextRectangle_Should_PlaceRectangles_Tightly(int count)
+        public void PutNextRectangle_ShouldPlaceRectangles_Tightly(int count)
         {
             rectangles = PutRandomRectangles(count);
 

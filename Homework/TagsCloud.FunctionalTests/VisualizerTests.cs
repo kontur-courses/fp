@@ -17,7 +17,7 @@ namespace TagsCloud.FunctionalTests
         [TestCase("doc", TestName = "doc")]
         [TestCase("docx", TestName = "docx")]
         [TestCase("pdf", TestName = "pdf")]
-        public void Should_ReadWords_From(string extension)
+        public void ShouldReadWords_From(string extension)
         {
             var settings = GenerateDefaultSettings();
 
