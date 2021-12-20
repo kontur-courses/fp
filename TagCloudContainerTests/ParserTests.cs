@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
@@ -12,9 +13,10 @@ namespace TagCloudContainerTests
         private WordsCountParser parser = new WordsCountParser();
 
         [Test]
-        public void ReturnEmptyTags_WhenGetEmptyString()
+        public void ThrowsException_WhenGetEmptyString()
         {
-            parser.Parse("").Should().BeEmpty();
+            Assert.Throws<Exception>(() =>
+                    parser.Parse(""));
         }
 
         [Test]
