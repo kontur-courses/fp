@@ -8,7 +8,7 @@ namespace TagCloud.TextHandlers.Converters
     {
         private readonly List<Func<string, Result<string>>> converters;
 
-        public ConvertersPool(IConverter[] converters)
+        public ConvertersPool(IEnumerable<IConverter> converters)
         {
             this.converters = new List<Func<string, Result<string>>>();
             foreach (var converter in converters)
@@ -33,13 +33,9 @@ namespace TagCloud.TextHandlers.Converters
 
         public Result<string> Convert(string word)
         {
-            var converted = word.AsResult();
-            foreach (var converter in converters)
-            {
-                converted.Then(converter);
-            }
+            var source = word.AsResult();
 
-            return converted;
+            return converters.Aggregate(source, (current, converter) => current.Then(converter));
         }
     }
 }

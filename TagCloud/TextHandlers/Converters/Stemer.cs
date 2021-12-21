@@ -11,7 +11,7 @@ namespace TagCloud.TextHandlers.Converters
         {
             return original.AsResult()
                 .Then(w => hunspell.Stem(w).FirstOrDefault() ?? w)
-                .ReplaceError(e => "Hunspell error");
+                .ReplaceError(_ => "Hunspell error");
         }
     }
 }

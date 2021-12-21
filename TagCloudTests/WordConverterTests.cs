@@ -15,9 +15,7 @@ namespace TagCloudTests
             const string? text = "TeSt";
             var expected = text.ToLower().AsResult();
             var sut = new ConvertersPool(Array.Empty<IConverter>())
-                .Using(s => s.ToLower())
-                .Using(s => s.Substring(1));
-
+                .Using(s => s.ToLower());
             var converted = sut.Convert(text);
 
             converted.Should().BeEquivalentTo(expected);
