@@ -42,7 +42,7 @@ public static class ResultExtensions
         this Result input,
         Action continuation)
     {
-        return input.Then(() => Result.OfAction(() => continuation()));
+        return input.Then(() => Result.OfAction(continuation));
     }
 
     public static Result<TOutput> Then<TOutput>(
@@ -51,7 +51,7 @@ public static class ResultExtensions
     {
         return input.IsSuccess
             ? Result.Of(continuation)
-            : Result.Fail<TOutput>(input.Error!);
+            : Result.Fail<TOutput>(input.Error);
     }
 
     public static Result<TOutput> Then<TInput, TOutput>(
@@ -60,7 +60,7 @@ public static class ResultExtensions
     {
         return input.IsSuccess
             ? continuation(input.Value!)
-            : Result.Fail<TOutput>(input.Error!);
+            : Result.Fail<TOutput>(input.Error);
     }
 
     public static Result Then<TInput>(
@@ -69,7 +69,7 @@ public static class ResultExtensions
     {
         return input.IsSuccess
             ? continuation(input.Value!)
-            : Result.Fail(input.Error!);
+            : Result.Fail(input.Error);
     }
 
     public static Result<TInput> OnFail<TInput>(
@@ -77,7 +77,7 @@ public static class ResultExtensions
         Action<string> handleError)
     {
         if (!input.IsSuccess)
-            handleError(input.Error!);
+            handleError(input.Error);
         return input;
     }
 
@@ -86,7 +86,7 @@ public static class ResultExtensions
         Action<string> handleError)
     {
         if (!input.IsSuccess)
-            handleError(input.Error!);
+            handleError(input.Error);
         return input;
     }
 
@@ -96,7 +96,7 @@ public static class ResultExtensions
     {
         if (input.IsSuccess)
             return input;
-        return Result.Fail<TInput>(replaceError(input.Error!));
+        return Result.Fail<TInput>(replaceError(input.Error));
     }
 
     public static Result ReplaceError(
@@ -105,7 +105,7 @@ public static class ResultExtensions
     {
         if (input.IsSuccess)
             return input;
-        return Result.Fail(replaceError(input.Error!));
+        return Result.Fail(replaceError(input.Error));
     }
 
     public static Result RefineError(
