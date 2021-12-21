@@ -181,9 +181,21 @@ namespace CLI
 
         private ISourceReader GetSourceReader(Options options)
         {
-            if (options.Input != null) return new TxtFileReader(options.Input);
-            if (options.Tags != null) return new TagsReader(options.Tags);
-            return null;
+            var inputFile = options.Input;
+            var firstTag = options.Tags.FirstOrDefault();
+            if (AreBothGiven(inputFile, firstTag) || AreBothEmpty(inputFile, firstTag)) return null;
+            if (inputFile != null) return new TxtFileReader(options.Input);
+            return new TagsReader(options.Tags);
+        }
+
+        private static bool AreBothEmpty(string inputFile, string firstTag)
+        {
+            return string.IsNullOrEmpty(inputFile) && string.IsNullOrEmpty(firstTag);
+        }
+
+        private static bool AreBothGiven(string inputFile, string firstTag)
+        {
+            return !string.IsNullOrEmpty(inputFile) && !string.IsNullOrEmpty(firstTag);
         }
 
         private Result<CommandLineConfig> UseHandlerConveyorFrom(CommandLineConfig config,
