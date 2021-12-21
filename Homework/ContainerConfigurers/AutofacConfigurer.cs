@@ -28,7 +28,19 @@ namespace ContainerConfigurers
 
         private void RegisterCloudPainter()
         {
-            builder.RegisterType<CloudPainter>().AsSelf().SingleInstance();
+            builder.Register(c => new CloudPainter(
+                    c.Resolve<ICloudLayouter>(),
+                    c.Resolve<IPaintConfig>(),
+                    c.Resolve<ITextParser>(),
+                    ResolveFullSavePath(c)
+                )).AsSelf()
+                .SingleInstance();
+        }
+
+        private string ResolveFullSavePath(IComponentContext c)
+        {
+            return c.Resolve<IUserConfig>().OutputFilePath +
+                   "\\" + c.Resolve<IUserConfig>().OutputFileName;
         }
 
         private void RegisterTextParser()

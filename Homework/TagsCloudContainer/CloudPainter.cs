@@ -13,17 +13,19 @@ namespace TagsCloudContainer
         private readonly ICloudLayouter cloudLayouter;
         private readonly IPaintConfig config;
         private readonly ITextParser parser;
+        private readonly string savePath;
         private const int WordsBorder = 2;
 
         public CloudPainter(ICloudLayouter cloudLayouter, IPaintConfig config,
-            ITextParser parser)
+            ITextParser parser, string savePath)
         {
             this.cloudLayouter = cloudLayouter;
             this.config = config;
             this.parser = parser;
+            this.savePath = savePath;
         }
 
-        public void Draw(string pathToSaving)
+        public void Draw()
         {
             var imageSize = config.ImageSize;
             using (var image = new Bitmap(imageSize.Width, imageSize.Height))
@@ -32,7 +34,7 @@ namespace TagsCloudContainer
                 graphics.Clear(Color.DarkKhaki);
                 foreach (var wordCount in parser.GetWordsCounts())
                     DrawWord(wordCount, graphics);
-                var savingName = pathToSaving + "\\tagcloud" + "." + config.ImageFormat;
+                var savingName = savePath + "." + config.ImageFormat;
                 image.Save(savingName, config.ImageFormat);
             }
         }

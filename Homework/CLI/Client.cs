@@ -51,6 +51,7 @@ namespace CLI
             var config = new CommandLineConfig();
             return config.AsResult()
                 .Then(UseOutputPathFrom, options)
+                .Then(UseOutputFileNameFrom, options)
                 .Then(UseImageSizeFrom, options)
                 .Then(BuildImageCenter)
                 .Then(UseFontParamsFrom, options)
@@ -77,6 +78,12 @@ namespace CLI
             return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "OutputFilePath directory doesn't exist!");
         }
 
+        private Result<CommandLineConfig> UseOutputFileNameFrom(CommandLineConfig config,
+            Options options)
+        {
+            config.OutputFileName = options.OutputFileName;
+            return config.AsResult();
+        }
 
         private Result<CommandLineConfig> UseImageSizeFrom(CommandLineConfig config,
             Options options)

@@ -16,7 +16,7 @@ namespace CLI
             using (var scope = container.BeginLifetimeScope())
             {
                 var painter = scope.Resolve<CloudPainter>();
-                painter.Draw(scope.Resolve<IUserConfig>().OutputFilePath);
+                painter.Draw();
             }
         }
     }

@@ -14,6 +14,7 @@ namespace CLI
         public string InputFilePath { get; set; }
         public string InputFileFormat { get; set; }
         public string OutputFilePath { get; set; }
+        public string OutputFileName { get; set; }
         public string TagsFontName { get; set; }
         public int TagsFontSize { get; set; }
         public string[] Tags { get; set; }

@@ -11,6 +11,7 @@ namespace TagsCloudContainer.ClientsInterfaces
         string InputFilePath { get; set; }
         string InputFileFormat { get; set; }
         string OutputFilePath { get; set; }
+        string OutputFileName { get; set; }
         string TagsFontName { get; set; }
         int TagsFontSize { get; set; }
         string[] Tags { get; set; }
