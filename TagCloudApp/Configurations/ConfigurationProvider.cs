@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using CommandLine;
+using TagCloud;
+using TagCloud.Configurations;
 using TagCloud.PointGenerator;
 using TagCloud.Templates.Colors;
 
-namespace TagCloud.Configurations
+namespace TagCloudApp.Configurations
 {
     public static class CommandLineConfigurationProvider
     {

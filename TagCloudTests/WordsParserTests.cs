@@ -10,13 +10,13 @@ namespace TagCloudTests
     [TestFixture]
     public class WordsParserTests
     {
-        private static string[] words = { "abc", "abcd", "1234", "test" };
-        private static string filename = "TestWords.doc";
+        private static readonly string[] Words = { "abc", "abcd", "1234", "test" };
+        private const string Filename = "TestWords";
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            File.WriteAllText(filename, string.Join(Environment.NewLine, words));
+            File.WriteAllText($"{Filename}.txt", string.Join(Environment.NewLine, Words));
         }
 
         [Test]
@@ -24,9 +24,9 @@ namespace TagCloudTests
         {
             var sut = new WordsByLineParser();
 
-            var actualWords = sut.GetWords(filename);
+            var actualWords = sut.GetWords($"{Filename}.txt");
 
-            actualWords.Should().BeEquivalentTo(words.AsResult());
+            actualWords.Should().BeEquivalentTo(Words.AsResult());
         }
 
         [TestCase("doc")]
@@ -34,12 +34,13 @@ namespace TagCloudTests
         [TestCase("txt")]
         public void GetWords_CanReadOtherFormats(string fileExtension)
         {
-            File.WriteAllText($"test.{fileExtension}", string.Join(Environment.NewLine, words));
+            var filenameWithExtension = $"{Filename}.{fileExtension}";
+            File.WriteAllText(filenameWithExtension, string.Join(Environment.NewLine, Words));
             var sut = new WordsByLineParser();
 
-            var actualWords = sut.GetWords(filename);
+            var actualWords = sut.GetWords(filenameWithExtension);
 
-            actualWords.Should().BeEquivalentTo(words.AsResult());
+            actualWords.Should().BeEquivalentTo(Words.AsResult());
         }
     }
 }

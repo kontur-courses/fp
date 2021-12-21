@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Autofac;
+using TagCloud;
 using TagCloud.Apps;
 using TagCloud.CloudLayouter;
 using TagCloud.Configurations;
@@ -11,10 +12,11 @@ using TagCloud.TextHandlers;
 using TagCloud.TextHandlers.Converters;
 using TagCloud.TextHandlers.Filters;
 using TagCloud.TextHandlers.Parser;
+using TagCloudApp.Configurations;
 using IContainer = Autofac.IContainer;
 
 
-namespace TagCloud
+namespace TagCloudApp
 {
     public static class Program
     {
@@ -25,7 +27,7 @@ namespace TagCloud
             var configuration = CommandLineConfigurationProvider.GetConfiguration(args);
             configuration.Then(CompositionRootInitialize)
                 .OnFail(Console.WriteLine);
-            
+            if (!configuration.IsSuccess) return;
             var app = container.Resolve<IApp>();
             app.Run(configuration.Value);
         }
@@ -75,7 +77,7 @@ namespace TagCloud
         {
             builder.RegisterType<Cache>().As<ICache>();
             builder.Register(_ => configuration.PointGenerator).As<IPointGenerator>();
-            builder.RegisterType<CloudLayouter.CloudLayouter>().AsSelf().As<ICloudLayouter>();
+            builder.RegisterType<CloudLayouter>().AsSelf().As<ICloudLayouter>();
         }
     }
 }

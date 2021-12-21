@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
 using CommandLine;
 
-namespace TagCloud.Configurations
+namespace TagCloudApp.Configurations
 {
     public class Options
     {
+#pragma warning disable 8618
+
         [Option('i', "input", Required = true, HelpText = "File with words to draw")]
         public string Filename { get; set; }
 
@@ -28,5 +30,6 @@ namespace TagCloud.Configurations
 
         [Option('g', "form of cloud (spiral, circle)", Required = false, HelpText = "You can configure form of cloud")]
         public string CloudForm { get; set; }
+#pragma warning restore 8618
     }
 }
