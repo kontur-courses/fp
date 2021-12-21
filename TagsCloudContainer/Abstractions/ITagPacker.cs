@@ -1,8 +1,9 @@
-﻿using TagsCloudContainer.Registrations;
+﻿using ResultOf;
+using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer.Abstractions;
 
 public interface ITagPacker : IService
 {
-    IEnumerable<ITag> GetTags();
+    Result<IEnumerable<ITag>> GetTags();
 }

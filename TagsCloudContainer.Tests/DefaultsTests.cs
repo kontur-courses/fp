@@ -1,6 +1,7 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 using System;
 using System.IO;
 using System.Linq;
@@ -60,7 +61,7 @@ public class DefaultsTests
 
         var textAnalyzer = new AnalyzerWrapper(fakeReader, Array.Empty<IWordNormalizer>(), Array.Empty<IWordFilter>(), new[] { ' ', ',', '.' });
 
-        var actualResult = textAnalyzer.AnalyzeText();
+        var actualResult = textAnalyzer.AnalyzeText().GetValueOrThrow();
 
         actualResult.Statistics.Should().BeEquivalentTo(fakeStats.Statistics);
         actualResult.TotalWordCount.Should().Be(fakeStats.TotalWordCount);
@@ -98,7 +99,7 @@ public class DefaultsTests
         var settings = ParseSettings(new SpeechPartFilterSettings(), "--add-parts", "S");
         var filter = new SpeechPartFilter(settings, myStem);
 
-        var actualResult = text.Where(filter.IsValid);
+        var actualResult = text.Where(x => filter.IsValid(x).GetValueOrThrow());
 
         actualResult.Should().BeEquivalentTo(expectedResult);
     }
@@ -111,7 +112,7 @@ public class DefaultsTests
         var fakeStats = GetTextStats(text);
 
         var fakeAnalyzer = A.Fake<ITextAnalyzer>();
-        A.CallTo(() => fakeAnalyzer.AnalyzeText()).Returns(fakeStats);
+        A.CallTo(() => fakeAnalyzer.AnalyzeText()).Returns(Result.Ok(fakeStats));
 
         var fakeTags = fakeStats.Statistics.Select(x =>
         {
@@ -123,7 +124,7 @@ public class DefaultsTests
 
         var packer = new TagPacker(fakeAnalyzer);
 
-        var actualResult = packer.GetTags();
+        var actualResult = packer.GetTags().GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(fakeTags);
     }

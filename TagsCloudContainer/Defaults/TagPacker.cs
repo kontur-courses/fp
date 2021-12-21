@@ -1,4 +1,6 @@
-﻿using TagsCloudContainer.Abstractions;
+﻿using ResultExtensions;
+using ResultOf;
+using TagsCloudContainer.Abstractions;
 
 namespace TagsCloudContainer.Defaults;
 
@@ -11,10 +13,13 @@ public class TagPacker : ITagPacker
         this.textAnalyzer = textAnalyzer;
     }
 
-    public IEnumerable<ITag> GetTags()
+    public Result<IEnumerable<ITag>> GetTags()
     {
-        var stats = textAnalyzer.AnalyzeText();
+        return textAnalyzer.AnalyzeText().Then(PackTags);
+    }
 
+    private IEnumerable<ITag> PackTags(ITextStats stats)
+    {
         foreach (var (word, count) in stats.Statistics.OrderByDescending(x => x.Value))
         {
             var relativeSize = (double)count / stats.TotalWordCount;

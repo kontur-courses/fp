@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using ResultExtensions;
+using ResultOf;
 using TagsCloudContainer.Abstractions;
 using TagsCloudContainer.Defaults.SettingsProviders;
 
@@ -24,35 +26,54 @@ public class TextAnalyzer : ITextAnalyzer
         this.wordSeparators = wordSeparators;
     }
 
-    public ITextStats AnalyzeText()
+    public Result<ITextStats> AnalyzeText()
     {
-        var result = new TextStats();
+        var stats = new TextStats();
         foreach (var line in textReader.ReadLines())
         {
             var words = line
                 .Split(wordSeparators)
                 .Where(x => !string.IsNullOrWhiteSpace(x) && x.Any(y => char.IsLetter(y)));
-            foreach (var word in ApplyNormalizingAndFiltering(words))
+            foreach (var word in words)
             {
-                result.UpdateWord(word);
+                var normalized = Normalize(word);
+                var isValid = normalized.Then(IsValid)
+                    .Then(isValid =>
+                    {
+                        if (isValid)
+                            stats.UpdateWord(normalized.GetValueOrThrow());
+                    });
+
+                if (!isValid.IsSuccess)
+                    return Result.Fail<ITextStats>(isValid.Error);
             }
+        }
+
+        return stats;
+    }
+
+    private Result<string> Normalize(string word)
+    {
+        var result = Result.Ok(word);
+        foreach (var normalizer in wordNormalizers)
+        {
+            result = result.Then(normalizer.Normalize);
+            if (!result.IsSuccess)
+                return result;
         }
 
         return result;
     }
 
-    private IEnumerable<string> ApplyNormalizingAndFiltering(IEnumerable<string> words)
+    private Result<bool> IsValid(string word)
     {
-        foreach (var normalizer in wordNormalizers)
-        {
-            words = words.Select(normalizer.Normalize).Where(x => x.IsSuccess).Select(x => x.GetValueOrThrow());
-        }
-
         foreach (var filter in wordFilters)
         {
-            words = words.Where(filter.IsValid);
+            var result = filter.IsValid(word);
+            if (!result.IsSuccess || !result.GetValueOrThrow())
+                return result;
         }
 
-        return words;
+        return true;
     }
 }

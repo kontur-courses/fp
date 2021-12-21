@@ -1,9 +1,10 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System.Drawing;
 using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer.Abstractions;
 
 public interface IVisualizer : IService
 {
-    Bitmap GetBitmap();
+    Result<Bitmap> GetBitmap();
 }

@@ -1,8 +1,9 @@
-﻿using TagsCloudContainer.Registrations;
+﻿using ResultOf;
+using TagsCloudContainer.Registrations;
 
 namespace TagsCloudContainer.Abstractions;
 
 public interface IWordFilter : IService
 {
-    bool IsValid(string word);
+    Result<bool> IsValid(string word);
 }
