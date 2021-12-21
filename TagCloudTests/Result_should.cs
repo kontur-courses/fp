@@ -173,5 +173,15 @@ namespace TagCloudTests
                 .RefineError("Posting results to db")
                 .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
+
+        [Test]
+        public void Validate_InputAndThrowIfFalse()
+        {
+            const string? value = "123";
+
+            var result = value.AsResult().Validate(v => v.Length > 5);
+
+            result.IsSuccess.Should().BeFalse();
+        }
     }
 }

@@ -104,6 +104,13 @@ namespace TagCloud
                 : Fail<TOutput>(input.Error);
         }
 
+        public static Result<T> Validate<T>(this Result<T> input, Predicate<T> condition)
+        {
+            return condition(input.Value)
+                ? input
+                : Fail<T>("Validation error");
+        }
+
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
