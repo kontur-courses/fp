@@ -21,13 +21,6 @@ namespace TagCloud.Apps
 
         public void Run(Configuration configuration)
         {
-            /*var words = reader.Read(configuration.WordsFilename);
-            if (words.Length == 0)
-            {
-                Console.WriteLine($"File {configuration.WordsFilename} is empty");
-                return;
-            }*/
-
             reader
                 .Read(configuration.WordsFilename)
                 .Then(templateCreator.GetTemplate)

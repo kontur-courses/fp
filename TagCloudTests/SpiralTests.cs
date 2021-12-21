@@ -3,9 +3,10 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud;
 using TagCloud.PointGenerator;
 
-namespace TagCloud.Tests
+namespace TagCloudTests
 {
     [TestFixture]
     public class SpiralTests

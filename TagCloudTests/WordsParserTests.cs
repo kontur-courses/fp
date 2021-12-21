@@ -2,9 +2,10 @@
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud;
 using TagCloud.TextHandlers.Parser;
 
-namespace TagCloud.Tests
+namespace TagCloudTests
 {
     [TestFixture]
     public class WordsParserTests
@@ -25,7 +26,7 @@ namespace TagCloud.Tests
 
             var actualWords = sut.GetWords(filename);
 
-            actualWords.Should().BeEquivalentTo(words);
+            actualWords.Should().BeEquivalentTo(words.AsResult());
         }
 
         [TestCase("doc")]
@@ -38,7 +39,7 @@ namespace TagCloud.Tests
 
             var actualWords = sut.GetWords(filename);
 
-            actualWords.Should().BeEquivalentTo(words);
+            actualWords.Should().BeEquivalentTo(words.AsResult());
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud;
 using TagCloud.TextHandlers.Converters;
 
-namespace TagCloud.Tests
+namespace TagCloudTests
 {
     [TestFixture]
     public class WordConverterTests
@@ -11,13 +12,15 @@ namespace TagCloud.Tests
         [Test]
         public void Convert_ShouldConvertWord()
         {
+            const string? text = "TeSt";
+            var expected = text.ToLower().AsResult();
             var sut = new ConvertersPool(Array.Empty<IConverter>())
                 .Using(s => s.ToLower())
                 .Using(s => s.Substring(1));
 
-            var converted = sut.Convert("AaAaaaA");
+            var converted = sut.Convert(text);
 
-            converted.Should().BeEquivalentTo("aaaaaa");
+            converted.Should().BeEquivalentTo(expected);
         }
     }
 }

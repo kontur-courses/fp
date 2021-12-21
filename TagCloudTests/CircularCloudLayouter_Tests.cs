@@ -7,12 +7,12 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.PointGenerator;
 
-namespace TagCloud.Tests
+namespace TagCloudTests
 {
     [TestFixture]
     class CircularCloudLayouterTests
     {
-        private CloudLayouter.CloudLayouter sut;
+        private TagCloud.CloudLayouter.CloudLayouter sut;
         private const string FailedTestsData = "TestsImg";
 
         public CircularCloudLayouterTests()
@@ -26,7 +26,7 @@ namespace TagCloud.Tests
         [SetUp]
         public void SetUp()
         {
-            sut = new CloudLayouter.CloudLayouter(new Circle(0.01f, 1, new PointF(), new Cache()));
+            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.01f, 1, new PointF(), new Cache()));
         }
 
         [TestCase(0, 1, TestName = "Width is zero")]
@@ -66,7 +66,7 @@ namespace TagCloud.Tests
             int width,
             int height)
         {
-            sut = new CloudLayouter.CloudLayouter(new Circle(0.2f, 1, new Point(xCloudPosition, yCloudPosition),
+            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.2f, 1, new Point(xCloudPosition, yCloudPosition),
                 new Cache()));
 
             var tag = sut.PutNextRectangle(new Size(width, height));
@@ -89,7 +89,7 @@ namespace TagCloud.Tests
             density.Should().BeGreaterThan((Math.PI / 4) * densityCoefficient).And.BeLessThan(Math.PI / 4);
         }
 
-        private double GetDensity(CloudLayouter.CloudLayouter cloudLayouter)
+        private double GetDensity(TagCloud.CloudLayouter.CloudLayouter cloudLayouter)
         {
             var union = cloudLayouter.CloudRectangle;
             var unionRectsArea = union.Height * union.Width;

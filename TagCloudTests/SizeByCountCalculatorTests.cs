@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using TagCloud.Templates;
 
-namespace TagCloud.Tests
+namespace TagCloudTests
 {
     [TestFixture]
     public class SizeByCountCalculatorTests

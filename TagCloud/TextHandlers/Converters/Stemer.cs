@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using NHunspell;
 
 namespace TagCloud.TextHandlers.Converters
