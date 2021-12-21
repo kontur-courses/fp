@@ -29,7 +29,7 @@ public class StyleProvider : ICliSettingsProvider
         {
             { "font-family=", $"Sets the font family name for tags. Defaults to {defaultFont}", v => FontFamilyName = v },
             { "min-size=", $"Sets the min size for tags. Defaults to {defaultSize}", v => State = ParseDouble(v).Then(size => MinSize = size) },
-            { "color=", $"Sets the color for tags. Defaults to {defaultColor.Name}",  
+            { "color=", $"Sets the color for tags. Defaults to {defaultColor.Name}",
                 v => State = Result.Of(() => ColorTranslator.FromHtml(v)).ReplaceError(_ => $"Could not parse {v} as {nameof(Color)}").Then(c => BrushColor = c) },
         };
 

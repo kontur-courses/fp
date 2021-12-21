@@ -19,14 +19,14 @@ public class OutputSettings : ICliSettingsProvider
         var options = new OptionSet()
             {
                 { "output=", $"Name of the output image. Defaults to '{defaultOutput}'", v => OutputPath = v },
-                { "image-format=", $"Format of the output image. Defaults to {defaultType}", 
+                { "image-format=", $"Format of the output image. Defaults to {defaultType}",
                     v => State = Parse(v).Then(type => ImageFormat = type) }
             };
 
         return options;
     }
 
-    static Result<ImageFormatType> Parse(string v)
+    private static Result<ImageFormatType> Parse(string v)
     {
         return Enum.TryParse<ImageFormatType>(v, true, out var type) ? type : Result.Fail<ImageFormatType>($"Could not parse {v} as {nameof(ImageFormatType)}");
     }
