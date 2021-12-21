@@ -36,6 +36,7 @@ namespace TagsCloudContainer
                     DrawWord(wordCount, graphics);
                 var savingName = savePath + "." + config.ImageFormat;
                 image.Save(savingName, config.ImageFormat);
+                Console.WriteLine($"Image successfully saved in {savingName}");
             }
         }
 
