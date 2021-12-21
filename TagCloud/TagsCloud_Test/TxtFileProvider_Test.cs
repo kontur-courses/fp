@@ -29,9 +29,12 @@ namespace TagsCloud_Test
         public void GetTxtFilePath_IsSuccess_WhenFileExist()
         {
             var path = Path.Combine(Path.GetTempPath(), "test.txt");
-            using var writer = new StreamWriter(path, false, Encoding.UTF8);
-            writer.WriteLine("Новый тестовый файл txt");
-            _fileProvider.GetTxtFilePath(path).IsSuccess.Should().BeTrue();
+            using (var writer = new StreamWriter(path, false, Encoding.UTF8))
+            {
+                writer.WriteLine("Новый тестовый файл txt");
+                _fileProvider.GetTxtFilePath(path).IsSuccess.Should().BeTrue();
+            }
+
             File.Delete(path);
         }
     }
