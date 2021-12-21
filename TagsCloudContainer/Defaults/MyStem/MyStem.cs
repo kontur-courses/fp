@@ -20,6 +20,7 @@ public class MyStem : ISingletonService, IDisposable
     private readonly Process myStemProccess;
     private bool isStarted = false;
     private readonly Dictionary<string, WordStat> cache = new();
+    private Result state = Result.Ok();
 
     public MyStem()
     {
@@ -31,6 +32,9 @@ public class MyStem : ISingletonService, IDisposable
 
     public Result<WordStat> AnalyzeWord(string word)
     {
+        if (!state.IsSuccess)
+            return Result.Fail<WordStat>(state.Error);
+
         if (disposedValue)
             return Result.Fail<WordStat>("MyStem object was disposed");
 
@@ -91,7 +95,7 @@ public class MyStem : ISingletonService, IDisposable
 
     private void HandleErrorData(object sender, DataReceivedEventArgs e)
     {
-        throw new InvalidOperationException($"mystem.exe proccess produced an error: {e.Data}");
+        state = Result.Fail($"mystem.exe proccess produced an error: {e.Data}");
     }
 
     protected virtual void Dispose(bool disposing)
