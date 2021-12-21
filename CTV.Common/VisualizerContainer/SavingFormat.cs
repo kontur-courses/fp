@@ -4,6 +4,7 @@
     {
         Png, 
         Jpeg,
+        Jpg,
         Bmp
     }
 }

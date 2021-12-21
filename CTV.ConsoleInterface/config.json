@@ -1,0 +1,13 @@
+﻿{
+  "InputFile": "Samples\\input.txt",
+  "OutputFile": "result.png",
+  "TextFormat": "txt",
+  "ImageFormat": "png",
+  "BackgroundColor": "2F2F2F",
+  "TextColor": "D2F898",
+  "StrokeColor": "0000FF",
+  "Width": 1920,
+  "Height": 1080,
+  "FontName": "Arial",
+  "FontSize": 240
+}

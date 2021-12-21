@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CommandLine;
 using CTV.Common.VisualizerContainer;
+using CTV.ConsoleInterface.ConsoleCommands;
+using CTV.ConsoleInterface.Options;
 
 namespace CTV.ConsoleInterface
 {
@@ -10,7 +14,7 @@ namespace CTV.ConsoleInterface
         {
             args = new[]
             {
-                "visualize", "--textToVisualize", "Samples\\input.txt", "--pathToSaveImage", "result.png"
+                "visualizeFromConfig",
             };
             ParseDefaultOptions(args);
         }
@@ -19,18 +23,20 @@ namespace CTV.ConsoleInterface
         {
             Parser
                 .Default
-                .ParseArguments<VisualizerOptions, ShowDemoOptions>(args)
-                .WithParsed<VisualizerOptions>(VisualizeOnce)
-                .WithParsed<ShowDemoOptions>(ShowDemo);
+                .ParseArguments<VisualizeCommand, VisualizeFromConfigCommand, StartLoopCommand>(args)
+                .WithParsed<VisualizeCommand>(command => VisualizeOnce(command.ToVisualizerOptions()))
+                .WithParsed<VisualizeFromConfigCommand>(command => VisualizeOnce(command.ReadConfig()))
+                .WithParsed<StartLoopCommand>(StartLoop);
         }
         
-        private static void ParseDemoOptions(string[] args)
+        private static void ParseLoopOptions(string[] args)
         {
             Parser
                 .Default
-                .ParseArguments<VisualizerOptions, ExitOptions>(args)
-                .WithParsed<VisualizerOptions>(VisualizeOnce)
-                .WithParsed<ExitOptions>(ExitDemo);
+                .ParseArguments<VisualizeCommand, VisualizeFromConfigCommand, ExitLoopCommand>(args)
+                .WithParsed<VisualizeCommand>(command => VisualizeOnce(command.ToVisualizerOptions()))
+                .WithParsed<VisualizeFromConfigCommand>(command => VisualizeOnce(command.ReadConfig()))
+                .WithParsed<ExitLoopCommand>(command => command.ExitLoop());
         }
 
         private static void VisualizeOnce(VisualizerOptions options)
@@ -39,7 +45,7 @@ namespace CTV.ConsoleInterface
             consoleProcessor.Run(options);
         }
 
-        private static void ShowDemo(ShowDemoOptions options)
+        private static void StartLoop(StartLoopCommand commands)
         {
             Console.WriteLine("--help to see commands");
             while (true)
@@ -48,14 +54,8 @@ namespace CTV.ConsoleInterface
                     .ReadLine()?
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                ParseDemoOptions(args);
+                ParseLoopOptions(args);
             }
-        }
-
-        private static void ExitDemo(ExitOptions options)
-        {
-            Console.WriteLine("Exiting demo");
-            Environment.Exit(0);
         }
     }
 }

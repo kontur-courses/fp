@@ -3,6 +3,7 @@ using CTV.Common.ImageSavers;
 using CTV.Common.Preprocessors;
 using CTV.Common.Readers;
 using CTV.Common.VisualizerContainer;
+using CTV.ConsoleInterface.Options;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CTV.ConsoleInterface
@@ -19,7 +20,7 @@ namespace CTV.ConsoleInterface
             var visualizer = container.GetService<Visualizer>();
             var imageSaver = container.GetService<IImageSaver>();
             
-            using var inStream = fileStreamFactory.OpenOnReading(options.PathToFileWithWords);
+            using var inStream = fileStreamFactory.OpenOnReading(options.InputFile);
             
             var content = fileReader.ReadToEnd(inStream);
             var words = wordsParser.Parse(content);
@@ -27,7 +28,7 @@ namespace CTV.ConsoleInterface
 
             var visualizedImage = visualizer.Visualize(preprocessesWords);
 
-            using var oStream = fileStreamFactory.OpenOnWriting(options.PathToSaveImage);
+            using var oStream = fileStreamFactory.OpenOnWriting(options.OutputFile);
             imageSaver.Save(visualizedImage, oStream);
         }
 

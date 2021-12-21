@@ -8,12 +8,12 @@ namespace CTV.Common
 {
     public class FrequencyBasedWordSizer : IWordSizer
     {
-        public List<SizedWord> Convert(string[] words, Font font, Graphics g)
+        public List<SizedWord> Convert(string[] words, Font font, Func<string, Font, Size> getWordSize)
         {
             if (font == null)
                 throw new ArgumentNullException(nameof(font));
             if (words == null)
-                throw new ArgumentNullException($"{nameof(words)} can not be null");
+                throw new ArgumentNullException(nameof(words));
 
             var wordToFrequency = CalculateWordsFrequency(words);
             var wordToCustomFont = CalculateFontSizes(wordToFrequency, font);
@@ -22,7 +22,7 @@ namespace CTV.Common
                     new SizedWord(
                         kv.Key,
                         kv.Value,
-                        Size.Round(g.MeasureString(kv.Key, kv.Value))))
+                        getWordSize(kv.Key, kv.Value)))
                 .ToList();
         }
 

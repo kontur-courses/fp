@@ -9,28 +9,33 @@ using NUnit.Framework;
 
 namespace CTV.Tests
 {
-    //#FIXME
     [TestFixture]
     public class CountingWordSizer_Should
     {
         private readonly FrequencyBasedWordSizer sizer = new();
-        private Graphics g;
+        private Func<string, Font, Size> getWordSize;
 
         [SetUp]
         public void OnSetup()
         {
-            g = A.Fake<Graphics>();
+            getWordSize = A.Fake<Func<string, Font, Size>>();
         }
 
-        [TestCase(0, new[] {"abc"}, TestName = "When font size is zero")]
-        [TestCase(-1, new[] {"abc"}, TestName = "When font size is negative")]
         [TestCase(1, null, TestName = "When input words array is null")]
         [TestCase(1, new[] {(string) null}, TestName = "When words contains null")]
         public void Throw_When(float fontSize, string[] words)
         {
             var font = CreateDefaultFont(fontSize);
-            Action action = () => sizer.Convert(words, font, g);
+            Action action = () => sizer.Convert(words, font, getWordSize);
             action.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void ThrowArgumentNullException_WhenFontIsNull()
+        {
+            var words = new[] {"hello", "world"};
+            Action action = () => sizer.Convert(words, null, getWordSize);
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Test]
@@ -39,20 +44,20 @@ namespace CTV.Tests
             var words = Array.Empty<string>();
             var font = CreateDefaultFont(20);
 
-            var result = sizer.Convert(words, font, g);
+            var result = sizer.Convert(words, font, getWordSize);
 
             result.Should().BeEmpty();
         }
 
 
         [Test]
-        public void ReturnSizeFontSizeDueToFrequency()
+        public void ReturnFontSizeDueToFrequency()
         {
             var words = new[] {"a", "a", "a", "b", "b", "c"};
-            var fontSize = 20;
+            var fontSize = 20f;
             var font = CreateDefaultFont(fontSize);
             var returnedSize = new Size(10, 20);
-            A.CallTo(() => g.MeasureString(null, null))
+            A.CallTo(() => getWordSize(null, null))
                 .WithAnyArguments()
                 .Returns(returnedSize);
 
@@ -63,15 +68,40 @@ namespace CTV.Tests
                 new("c", CreateDefaultFont(1f / 6f * fontSize), returnedSize)
             };
 
-            var result = sizer.Convert(words, font, g);
+            var result = sizer.Convert(words, font, getWordSize);
 
             result.Should().BeEquivalentTo(
                 expected,
                 config => config.WithoutStrictOrdering());
         }
 
-        //#FIXME Добавить тесты на WordSize
+        [Test]
+        public void CallGetWordSizeFunctionWithChangedSize()
+        {
+            var words = new[] {"a", "a", "a", "b", "b", "c"};
+            var fontSize = 20f;
+            var font = CreateDefaultFont(fontSize);
+            var returnedSize = new Size(10, 20);
+            A.CallTo(() => getWordSize("a", CreateDefaultFont(3f / 6f * fontSize)))
+                .Returns(returnedSize);
+            A.CallTo(() => getWordSize("b", CreateDefaultFont(2f / 6f * fontSize)))
+                .Returns(returnedSize);
+            A.CallTo(() => getWordSize("c", CreateDefaultFont(1f / 6f * fontSize)))
+                .Returns(returnedSize);
 
+            var expected = new List<SizedWord>
+            {
+                new("a", CreateDefaultFont(3f / 6f * fontSize), returnedSize),
+                new("b", CreateDefaultFont(2f / 6f * fontSize), returnedSize),
+                new("c", CreateDefaultFont(1f / 6f * fontSize), returnedSize)
+            };
+
+            var result = sizer.Convert(words, font, getWordSize);
+
+            result.Should().BeEquivalentTo(
+                expected,
+                config => config.WithoutStrictOrdering());
+        }
 
         private Font CreateDefaultFont(float size)
         {

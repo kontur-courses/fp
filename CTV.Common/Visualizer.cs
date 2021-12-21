@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Text;
-using CTV.Common;
 using CTV.Common.Layouters;
 
 namespace CTV.Common
@@ -27,7 +25,10 @@ namespace CTV.Common
             var imageSize = settings.ImageSize;
             using var bmp = new Bitmap(imageSize.Width, imageSize.Height);
             using var g = Graphics.FromImage(bmp);
-            var sizedWords = wordSizer.Convert(words, settings.TextFont, g);
+            var sizedWords = wordSizer.Convert(
+                words,
+                settings.TextFont,
+                (word, font) => Size.Round(g.MeasureString(word, font)));
             
             DrawBackground(g);
             DrawWords(sizedWords, g);
