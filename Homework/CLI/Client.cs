@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,7 +37,11 @@ namespace CLI
             var config = new Result<CommandLineConfig>();
             var result = Parser.Default.ParseArguments<Options>(args);
             result.WithParsed(options => config = GetConfigResult(options))
-                .WithNotParsed(errs => throw new Exception($"Failed with errors:\n{string.Join("\n", errs)}"));
+                .WithNotParsed(errs =>
+                {
+                    if (!errs.IsHelp() && !errs.IsVersion()) 
+                        throw new Exception($"Failed with errors:\n{string.Join("\n", errs)}");
+                });
 
             return config;
         }

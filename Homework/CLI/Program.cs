@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using ContainerConfigurers;
 using TagsCloudContainer;
 using TagsCloudContainer.ClientsInterfaces;
@@ -10,6 +11,7 @@ namespace CLI
         static void Main(string[] args)
         {
             var config = new Client(args).UserConfig;
+            if (config == null) return;
             var container = new AutofacConfigurer(config).GetContainer();
             using (var scope = container.BeginLifetimeScope())
             {
