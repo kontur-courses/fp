@@ -26,10 +26,10 @@ namespace TagCloudApp.Configurations
         public Color Color { get; set; } = Color.Empty;
 
         [Option('f', "font-family", Required = false, HelpText = "Words font-family")]
-        public FontFamily FontFamily { get; set; }
+        public FontFamily? FontFamily { get; set; }
 
         [Option('g', "form of cloud (spiral, circle)", Required = false, HelpText = "You can configure form of cloud")]
-        public string CloudForm { get; set; }
+        public string? CloudForm { get; set; }
 #pragma warning restore 8618
     }
 }

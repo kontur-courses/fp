@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using CommandLine;
 using TagCloud;
-using TagCloud.Configurations;
 using TagCloud.PointGenerator;
 using TagCloud.Templates.Colors;
 
@@ -16,6 +15,7 @@ namespace TagCloudApp.Configurations
         {
             return args.AsResult()
                 .Then(a => Parser.Default.ParseArguments<Options>(a).Value)
+                .Validate(o => o != null)
                 .Then(CheckArguments)
                 .Then(CreateConfiguration);
         }

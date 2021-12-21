@@ -2,9 +2,7 @@
 using System.Drawing;
 using Autofac;
 using TagCloud;
-using TagCloud.Apps;
 using TagCloud.CloudLayouter;
-using TagCloud.Configurations;
 using TagCloud.PointGenerator;
 using TagCloud.Templates;
 using TagCloud.Templates.Colors;
@@ -12,6 +10,7 @@ using TagCloud.TextHandlers;
 using TagCloud.TextHandlers.Converters;
 using TagCloud.TextHandlers.Filters;
 using TagCloud.TextHandlers.Parser;
+using TagCloudApp.Apps;
 using TagCloudApp.Configurations;
 using IContainer = Autofac.IContainer;
 
@@ -20,20 +19,18 @@ namespace TagCloudApp
 {
     public static class Program
     {
-        private static IContainer container;
-
         public static void Main(string[] args)
         {
             var configuration = CommandLineConfigurationProvider.GetConfiguration(args);
-            configuration.Then(CompositionRootInitialize)
+            configuration
+                .Then(CompositionRootInitialize)
+                .Then(c => c.Resolve<IApp>())
+                .Then(a=>a.Run(configuration.Value))
                 .OnFail(Console.WriteLine);
-            if (!configuration.IsSuccess) return;
-            var app = container.Resolve<IApp>();
-            app.Run(configuration.Value);
         }
 
 
-        private static void CompositionRootInitialize(Configuration configuration)
+        private static IContainer CompositionRootInitialize(Configuration configuration)
         {
             var builder = new ContainerBuilder();
             RegisterTextHandlers(builder);
@@ -41,7 +38,7 @@ namespace TagCloudApp
             RegisterTemplateHandlers(builder, configuration);
             builder.RegisterType<ConsoleApp>().As<IApp>();
             builder.RegisterType<Visualizer>().As<IVisualizer>();
-            container = builder.Build();
+            return builder.Build();
         }
 
         private static void RegisterTextHandlers(ContainerBuilder builder)

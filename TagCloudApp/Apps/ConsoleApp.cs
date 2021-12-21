@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq;
-using TagCloud.Configurations;
+using TagCloud;
 using TagCloud.Templates;
 using TagCloud.TextHandlers;
+using TagCloudApp.Configurations;
 
-namespace TagCloud.Apps
+namespace TagCloudApp.Apps
 {
     public class ConsoleApp : IApp
     {

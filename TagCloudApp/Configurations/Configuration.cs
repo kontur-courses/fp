@@ -2,7 +2,7 @@
 using TagCloud.PointGenerator;
 using TagCloud.Templates.Colors;
 
-namespace TagCloud.Configurations
+namespace TagCloudApp.Configurations
 {
     public class Configuration
     {

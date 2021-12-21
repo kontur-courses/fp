@@ -1,6 +1,6 @@
-﻿using TagCloud.Configurations;
+﻿using TagCloudApp.Configurations;
 
-namespace TagCloud.Apps
+namespace TagCloudApp.Apps
 {
     public interface IApp
     {
