@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.Text;
 
 namespace TagsCloudVisualization.Default
 {
-    public class TxtFileReader : IFileReader
+    public class TxtTextReader : ITextReader
     {
         public bool CanReadFile(FileInfo file)
         {

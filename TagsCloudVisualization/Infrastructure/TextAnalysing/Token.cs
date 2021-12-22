@@ -1,4 +1,4 @@
-﻿namespace TagsCloudVisualization.Infrastructure
+﻿namespace TagsCloudVisualization.Infrastructure.TextAnalysing
 {
     public class Token
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.Infrastructure;
 
-namespace TagsCloudVisualization
+namespace TagsCloudVisualization.Default
 {
     public class CircularCloudMaker : ICloudMaker
     {

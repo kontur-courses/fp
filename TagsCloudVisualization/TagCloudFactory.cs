@@ -4,6 +4,9 @@ using System.Drawing;
 using Autofac;
 using TagsCloudVisualization.Default;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.Text;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
+using TagsCloudVisualization.Infrastructure.Visualisation;
 
 namespace TagsCloudVisualization
 {
@@ -24,11 +27,11 @@ namespace TagsCloudVisualization
                 return Result.Fail<TagCloud>("Unknown order");
             var orderer = Orders[order];
             var builder = new ContainerBuilder();
-            builder.RegisterType<TxtFileReader>().As<IFileReader>();
-            builder.RegisterType<RandomTagColor>().As<ITokenColorChooser>();
+            builder.RegisterType<TxtTextReader>().As<ITextReader>();
+            builder.RegisterType<RandomTagColor>().As<ITagColorChooser>();
             builder.RegisterType<WordCounter>().As<ITokenWeigher>();
             builder.RegisterType<WordSelector>().UsingConstructor().As<IWordSelector>();
-            builder.RegisterType<FileReader>();
+            builder.RegisterType<ReaderContainer>();
             builder.RegisterType<TokenGenerator>();
             builder.RegisterType<TagCloudMaker>();
             builder.RegisterType<TagCloudVisualiser>();

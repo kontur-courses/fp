@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
 
 namespace TagsCloudVisualization.Infrastructure
 {
     public class TagCloudMaker
     {
         private readonly ICloudMaker cloudMaker; 
-        private readonly ITokenColorChooser tokenColorChooser;
+        private readonly ITagColorChooser tagColorChooser;
         private readonly Graphics graphics = Graphics.FromImage(new Bitmap(1,1));
 
-        public TagCloudMaker(ICloudMaker cloudMaker, ITokenColorChooser tokenColorChooser)
+        public TagCloudMaker(ICloudMaker cloudMaker, ITagColorChooser tagColorChooser)
         {
             this.cloudMaker = cloudMaker;
-            this.tokenColorChooser = tokenColorChooser;
+            this.tagColorChooser = tagColorChooser;
             graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
         }
 
@@ -25,7 +26,7 @@ namespace TagsCloudVisualization.Infrastructure
             {
                 var size = GetSize(token, font);
                 var rect = cloudMaker.PutRectangle(size.tagSize);
-                var color = tokenColorChooser.GetTokenColor(token);
+                var color = tagColorChooser.GetTokenColor(token);
                 tags.Add(new Tag(token.Value, font, color, rect, size.FontSize));
             }
             return tags.ToArray(); 

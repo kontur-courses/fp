@@ -5,6 +5,7 @@ using NUnit.Framework;
 using TagsCloudVisualization;
 using TagsCloudVisualization.Default;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
 
 namespace TagCloudTests
 {

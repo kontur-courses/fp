@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TagsCloudVisualization.Infrastructure
+namespace TagsCloudVisualization.Infrastructure.TextAnalysing
 {
-    public class TokenGenerator
+    public class TokenGenerator : ITokenGenerator
     {
         private readonly IWordSelector wordSelector;
         private readonly ITokenWeigher tokenWeigher;

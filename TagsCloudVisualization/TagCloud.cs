@@ -2,22 +2,24 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.Text;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
+using TagsCloudVisualization.Infrastructure.Visualisation;
 
 namespace TagsCloudVisualization
 {
     public class TagCloud
     {
-        private readonly FileReader fileReader;
-        private readonly TokenGenerator tokenGenerator;
+        private readonly ReaderContainer readerContainer;
+        private readonly ITokenGenerator tokenGenerator;
         private readonly TagCloudMaker tagCloudMaker;
-        private readonly TagCloudVisualiser tagCloudVisualiser;
+        private readonly ITagCloudVisualiser tagCloudVisualiser;
 
-        public TagCloud(FileReader fileReader, TokenGenerator tokenGenerator,
-            TagCloudMaker tagCloudMaker, TagCloudVisualiser tagCloudVisualiser)
+        public TagCloud(ReaderContainer readerContainer, ITokenGenerator tokenGenerator,
+            TagCloudMaker tagCloudMaker, ITagCloudVisualiser tagCloudVisualiser)
         {
-            this.fileReader = fileReader;
+            this.readerContainer = readerContainer;
             this.tagCloudMaker = tagCloudMaker;
             this.tagCloudVisualiser = tagCloudVisualiser;
             this.tokenGenerator = tokenGenerator;
@@ -29,7 +31,7 @@ namespace TagsCloudVisualization
             var source = ParseSource(sourcePath);
             if (!source.IsSuccess)
                 return Result.Fail<None>(source.Error);
-            var tokensResult = fileReader.ReadFile(source.Value)
+            var tokensResult = readerContainer.ReadFile(source.Value)
                 .Then(text => tokenGenerator.GetTokens(text, maxTagCount));
             if (!tokensResult.IsSuccess)
                 return Result.Fail<None>(tokensResult.Error);
@@ -40,8 +42,9 @@ namespace TagsCloudVisualization
                 return Result.Fail<None>("Resolution must be positive");
             var image = tagCloudVisualiser.Render(tags, resolution, background);
             var format = ParseImageFormat(resultPath);
-            return format.IsSuccess ?  Result.Of(() => image.Save(resultPath, format.Value)) :
-                Result.Fail<None>(format.Error);
+            return format.IsSuccess 
+                ? Result.Of(() => image.Save(resultPath, format.Value)) 
+                : Result.Fail<None>(format.Error);
         }
 
         public Result<None> CreateTagCloudFromFile(string sourcePath, string resultPath, string fontName,
@@ -63,7 +66,7 @@ namespace TagsCloudVisualization
         public static Result<Font> ParseFont(string fontName)
         {
             var font = new Font(fontName, 10);
-            return font.Name == fontName  ? font.AsResult() : Result.Fail<Font>("Unknown Font " + fontName);
+            return font.Name == fontName ? font.AsResult() : Result.Fail<Font>("Unknown Font " + fontName);
         }
 
         public static Result<Color> ParseColor(string colorName)
@@ -80,8 +83,9 @@ namespace TagsCloudVisualization
 
         public static Result<Size> ParseResolution(int width, int height)
         {
-            return height > 0 && width > 0 ? new Size(width, height).AsResult() : 
-                Result.Fail<Size>("Resolution must be positive");
+            return height > 0 && width > 0 
+                ? new Size(width, height).AsResult() 
+                : Result.Fail<Size>("Resolution must be positive");
         }
         
         public static Result<ImageFormat> ParseImageFormat(string path)

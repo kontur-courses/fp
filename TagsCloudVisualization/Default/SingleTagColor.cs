@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
 
 namespace TagsCloudVisualization.Default
 {
-    public class SingleTagColor : ITokenColorChooser
+    public class SingleTagColor : ITagColorChooser
     {
         private readonly Color color;
 

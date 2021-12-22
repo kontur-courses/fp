@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloudVisualization.Infrastructure
+namespace TagsCloudVisualization.Infrastructure.Visualisation
 {
     public interface ITagCloudVisualiser
     {

@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization;
+using TagsCloudVisualization.Default;
 
 namespace TagCloudTests
 {

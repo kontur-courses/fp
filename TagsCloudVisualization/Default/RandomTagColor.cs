@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Infrastructure.TextAnalysing;
 
 namespace TagsCloudVisualization.Default
 {
-    public class RandomTagColor : ITokenColorChooser
+    public class RandomTagColor : ITagColorChooser
     {
         private Random random = new Random();
         public Color GetTokenColor(Token token)
