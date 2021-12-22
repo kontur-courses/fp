@@ -34,7 +34,7 @@ namespace TagCloud.Layouters
         {
             if (tag.Size.Height <= 0 || tag.Size.Width <= 0)
             {
-                Result.Fail<Tag>("Size Should be positive but was: " +
+                return Result.Fail<Tag>("Size Should be positive but was: " +
                                             $"Height: {tag.Size.Height}" +
                                             $"Width: {tag.Size.Width}");
             }

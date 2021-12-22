@@ -22,7 +22,7 @@ namespace TagCloudTests
         {
             var bitmap = new Bitmap(300, 300);
 
-            writer.Write(bitmap, "test.png", "png");
+            writer.Write(bitmap, "test.png", "png", Environment.CurrentDirectory);
 
             var fileInfo = new FileInfo(Environment.CurrentDirectory + "\\test.png");
             fileInfo.Exists.Should().BeTrue();

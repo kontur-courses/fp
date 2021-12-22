@@ -63,10 +63,9 @@ namespace TagCloudTests
         [TestCaseSource(nameof(CasesForPutNextRectangleThrows))]
         public void PutNextRectangle_ShouldThrows(Tag tag)
         {
-            var tags = new Tag[1];
-            tags[0] = tag;
+            var tags = new[] {tag};
 
-            Assert.Throws<ArgumentException>(() => layouter.PutTags(tags).First());
+            Assert.Throws<InvalidOperationException>(() => layouter.PutTags(tags));
         }
 
         private static IEnumerable<TestCaseData> CasesForPutNextRectangleThrows

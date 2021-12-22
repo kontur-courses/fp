@@ -18,9 +18,8 @@ namespace TagCloud.Writers
 
         private ImageFormat GetImageFormatByExtension(string extension)
         {
-            var type = typeof(ImageFormat);
-            var property = type
-                .GetProperty(extension, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            var property = typeof(ImageFormat).GetProperty(extension, 
+                    BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             if (property == null)
                 return null;
             return (ImageFormat)property.GetValue(extension, null);

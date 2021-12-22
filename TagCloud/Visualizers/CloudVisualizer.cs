@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.Creators;
@@ -37,6 +38,9 @@ namespace TagCloud.Visualizers
                 return Result.Fail<Bitmap>(tagColoringAlgorithm.Error);
 
             var backgroundBrush = Color.FromName(drawingSettings.BackgroundColor);
+            if (!backgroundBrush.IsKnownColor)
+                return Result.Fail<Bitmap>("Wrong background color name");
+
             graph.Clear(backgroundBrush);
 
             foreach (var tag in tags)
@@ -64,7 +68,7 @@ namespace TagCloud.Visualizers
         {
             var parsedColors = colors.Select(Color.FromName);
             return !parsedColors.Select(c => c.Name).SequenceEqual(colors)
-                ? Result.Fail<IEnumerable<Color>>("Wrong name color") 
+                ? Result.Fail<IEnumerable<Color>>("Wrong color name") 
                 : parsedColors.AsResult();
         }
     }

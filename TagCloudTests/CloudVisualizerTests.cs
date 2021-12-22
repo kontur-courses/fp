@@ -4,36 +4,26 @@ using TagCloud.Visualizers;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.Creators;
+using TagCloud.Settings;
 
 namespace TagCloudTests
 {
     public class CloudVisualizatorTests
     {
         private IVisualizer visualizer;
-        private DrawingSettings drawingSettings;
+        private IDrawingSettings processorSettings;
 
         [SetUp]
         public void SetUp()
         {
-            //var settings = new DrawingSettings(new[] { Color.Blue },
-            //    Color.CornflowerBlue,
-            //    new Font(FontFamily.GenericSansSerif, 8),
-            //    200,
-            //    200,
-            //    "alt");
-            drawingSettings = new DrawingSettings(new[] { Color.Blue },
-                Color.CornflowerBlue,
-                new Font(FontFamily.GenericSansSerif, 8),
+            processorSettings = new ProcessorSettings(new[] { "Blue" },
+                "CornflowerBlue",
+                "Microsoft Serif Sans",
+                8,
                 200,
                 200,
-                "alt");
-            visualizer = new CloudVisualizer(drawingSettings);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            drawingSettings.Dispose();
+                "alt", "", "", "", "");
+            visualizer = new CloudVisualizer(processorSettings);
         }
 
         [TestCase(0, 1, TestName = "When Zero Width")]
@@ -44,10 +34,13 @@ namespace TagCloudTests
         [TestCase(-1, -1, TestName = "When Negative Width And Height")]
         public void DrawCloud_ShouldReturns_FailResult(int width, int height)
         {
-            var settings = new DrawingSettings(new[] {Color.Blue},
-                Color.CornflowerBlue,
-                new Font(FontFamily.GenericSansSerif, 8),
-                width, height, "alt");
+            var settings = new ProcessorSettings(new[] { "Blue" },
+                "CornflowerBlue",
+                "Microsoft Serif Sans",
+                8,
+                width,
+                height,
+                "alt", "", "", "", "");
             var visualizer = new CloudVisualizer(settings);
 
             visualizer.DrawCloud(null, null).IsSuccess.Should().BeFalse();

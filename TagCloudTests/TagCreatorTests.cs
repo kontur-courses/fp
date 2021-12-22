@@ -4,17 +4,23 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.Creators;
+using TagCloud.Settings;
 
 namespace TagCloudTests
 {
     public class TagCreatorTests
     {
         private ITagCreator tagCreator;
+        private ITagCreatorSettings settings;
 
         [SetUp]
         public void SetUp()
         {
-            tagCreator = new TagCreator(new Font("Arial", 8));
+            settings = new ProcessorSettings(new[] { "" }, "",
+                "Microsoft Sans Serif",
+                8,
+                1, 1, "", "", "", "", "");
+            tagCreator = new TagCreator(settings);
         }
 
         [Test]
@@ -22,9 +28,9 @@ namespace TagCloudTests
         {
             var words = new Dictionary<string, int>{{"a", 5}, {"b", 3}, {"c", 1}};
 
-            var tags = tagCreator.Create(words);
+            var tags = tagCreator.Create(words).GetValueOrThrow().ToArray();
 
-            var expectedSize = new Size(57, 61);
+            var expectedSize = new Size(50, 70);
             var tag = tags.First(t => t.Size == expectedSize);
             tag.Size.Should().Be(expectedSize);
             tag.Frequency.Should().Be(5);
@@ -37,7 +43,7 @@ namespace TagCloudTests
 
             var tags = tagCreator.Create(words);
 
-            tags.Count().Should().Be(0);
+            tags.GetValueOrThrow().Count().Should().Be(0);
         }
     }
 }

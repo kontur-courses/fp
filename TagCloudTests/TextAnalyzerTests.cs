@@ -2,18 +2,21 @@
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloud.Analyzers;
+using TagCloud.Provider;
 
 namespace TagCloudTests
 {
     public class TextAnalyzerTests
     {
         private ITextAnalyzer textAnalyzer;
+        private IWordProvider wordProvider;
         private BoringWordsFilter filter;
 
         [SetUp]
         public void SetUp()
         {
-            filter = new BoringWordsFilter();
+            wordProvider = new WordProvider();
+            filter = new BoringWordsFilter(wordProvider);
             textAnalyzer = new TextAnalyzer(new []{filter},
                 new []{new WordsToLowerConverter()},
                 new FrequencyAnalyzer());
@@ -24,7 +27,7 @@ namespace TagCloudTests
         {
             var text = new[] { "I", "met", "you", "a", "long", "time", "ago" };
             var boringWords = new HashSet<string> { "i", "you", "a", "ago" };
-            filter.AddWords(boringWords);
+            wordProvider.AddWords(boringWords);
 
             var analyzedWords = textAnalyzer.Analyze(text);
 
