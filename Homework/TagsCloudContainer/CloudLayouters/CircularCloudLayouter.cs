@@ -7,19 +7,19 @@ namespace TagsCloudContainer.CloudLayouters
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
-        private readonly List<Rectangle> _rectangles;
-        private readonly Point _cloudCenter;
+        private readonly List<Rectangle> rectangles;
+        private readonly Point cloudCenter;
         private readonly ISpiral spiral;
-        public IReadOnlyCollection<Rectangle> Rectangles => _rectangles;
-        public Point CloudCenter => new Point(_cloudCenter.X, _cloudCenter.Y);
-        public double EnclosingRadius => _enclosingCircleRadius;
-        private double _enclosingCircleRadius;
+        public IReadOnlyCollection<Rectangle> Rectangles => rectangles;
+        public Point CloudCenter => new Point(cloudCenter.X, cloudCenter.Y);
+        public double EnclosingRadius => enclosingCircleRadius;
+        private double enclosingCircleRadius;
 
         public CircularCloudLayouter(Point center, ISpiral spiral)
         {
-            _rectangles = new List<Rectangle>();
-            _cloudCenter = center;
-            _enclosingCircleRadius = 0;
+            rectangles = new List<Rectangle>();
+            cloudCenter = center;
+            enclosingCircleRadius = 0;
             this.spiral = spiral;
         }
 
@@ -28,8 +28,8 @@ namespace TagsCloudContainer.CloudLayouters
             CheckRectangleSizeCorrectness(rectangleSize);
             var nextRectangleCoordinates = GetNextRectangleCoordinates(rectangleSize);
             var rect = GetRectangleByCenter(nextRectangleCoordinates, rectangleSize);
-            _enclosingCircleRadius = RecalculateEnclosingCircleRadius(rect);
-            _rectangles.Add(rect);
+            enclosingCircleRadius = RecalculateEnclosingCircleRadius(rect);
+            rectangles.Add(rect);
             return rect;
         }
 
@@ -78,7 +78,7 @@ namespace TagsCloudContainer.CloudLayouters
         }
 
         private bool DoesRectIntersectAnyOther(Rectangle rect)
-            => _rectangles.Any(r => r != rect && rect.IntersectsWith(r));
+            => rectangles.Any(r => r != rect && rect.IntersectsWith(r));
 
         private Point GetSuitableRectCenterInDirection(Point rectCenter, Size rectSize,
             Point directionPoint)
@@ -114,7 +114,7 @@ namespace TagsCloudContainer.CloudLayouters
             var edgeDistancesToCenter = rectEdges
                 .Select(p => p.GetDistanceTo(CloudCenter))
                 .Max();
-            return Math.Max(_enclosingCircleRadius, edgeDistancesToCenter);
+            return Math.Max(enclosingCircleRadius, edgeDistancesToCenter);
         }
     }
 }
