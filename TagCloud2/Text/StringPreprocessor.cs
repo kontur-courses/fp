@@ -6,7 +6,7 @@ namespace TagCloud2
     {
         private readonly ISillyWordsFilter sillyRemover;
         private readonly ISillyWordSelector sillySelector;
-        public Result<string> PreprocessString(string input)
+        public string PreprocessString(string input)
         {
             return sillyRemover.FilterSillyWords(input, sillySelector);
         }

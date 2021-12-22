@@ -4,6 +4,7 @@ using TagCloud2.Text;
 using System.Collections.Generic;
 using Autofac;
 using TagCloud2.Cloud;
+using ResultOf;
 
 namespace TagCloud2
 {
@@ -47,7 +48,7 @@ namespace TagCloud2
             };
         }
 
-        public void RegisterTypes(IOptions options)
+        public Result<None> RegisterTypes(IOptions options)
         {
             var type = options.GetType();
             var props = type.GetProperties();
@@ -55,16 +56,11 @@ namespace TagCloud2
             {
                 if (dictionary.ContainsKey(property.Name))
                 {
-                    try
-                    {
-                        dictionary[property.Name][property.GetValue(options)].Invoke();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ArgumentException("Some of parameters are incorrect!\n" + e.Message);
-                    }
+                    dictionary[property.Name][property.GetValue(options)].Invoke();
                 }
             }
+
+            return Result.Ok();
         }
     }
 }

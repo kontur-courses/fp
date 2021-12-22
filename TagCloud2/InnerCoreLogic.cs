@@ -1,5 +1,10 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
+using System.Xml.XPath;
 using TagCloud2.Image;
 using TagCloud2.TextGeometry;
 using TagCloudVisualisation;
@@ -19,28 +24,49 @@ namespace TagCloud2
         private readonly IFileGenerator fileGenerator;
         private readonly IImageFormatter formatter;
 
-        public void Run(IOptions options)
+        public Result<None> Run(IOptions options)
         {
-            var fontF = new FontFamily(options.FontName);
-            var font = new Font(fontF, options.FontSize);
-            var input = reader.ReadFile(options.Path);
-            var lines = wordReader.GetUniqueLowercaseWords(input);
-            var words = lines
-                .Select(x => preprocessor.PreprocessString(x))
-                .Where(x => x != "")
-                .Select(x => new ColoredSizedWord(x, font))
-                .ToArray();
-
-            var rectangles = words.Select(x => sizeConverter.Convert(x.Word, x.Font)).ToArray();
-            foreach (var size in rectangles)
+            var colored = new ColoredCloud();
+            var fontCollection = new InstalledFontCollection();
+            if (!fontCollection.Families.Select(x => x.Name).Contains(options.FontName))
             {
-                layouter.PutNewRectangle(size);
+                return Result.Fail<None>("No such font!");
             }
 
-            var colored = new ColoredCloud();
-            colored.AddColoredWordsFromCloudLayouter(words, layouter, coloringAlgorithm);
-            var image = converterToImage.GetImage(colored, options.X, options.Y);
-            fileGenerator.GenerateFile(options.OutputName, formatter, image);
+            var fontF = new FontFamily(options.FontName);
+            var font = new Font(fontF, options.FontSize);
+            
+            return reader.ReadFile(options.Path)
+                .Then(input => wordReader.GetUniqueLowercaseWords(input))
+                .Then(lines => lines
+                    .Select(x => preprocessor.PreprocessString(x))
+                    .Where(x => x != "")
+                    .Select(x => new ColoredSizedWord(x, font)))
+                .Then(x => Tuple.Create(x.Select(word => layouter.PutNewRectangle(sizeConverter.Convert(word.Word, word.Font))), x))
+                .Then(x => colored.AddColoredWordsFromCloudLayouter(x.Item2.ToArray(), layouter, coloringAlgorithm))
+                .Then(x => converterToImage.GetImage(colored, options.X, options.Y))
+                .Then(image => fileGenerator.GenerateFile(options.OutputName, formatter, image));
+
+
+            //var input = reader.ReadFile(options.Path);
+            //var lines = wordReader.GetUniqueLowercaseWords(input);
+            //var words = lines
+            //    .Select(x => preprocessor.PreprocessString(x))
+            //    .Where(x => x != "")
+            //    .Select(x => new ColoredSizedWord(x, font))
+            //    .ToArray();
+
+            //var rectangles = Words.Select(x => sizeConverter.Convert(x.Word, x.Font)).ToArray();
+            //foreach (var size in rectangles)
+            //{
+            //    layouter.PutNewRectangle(size);
+            //}
+
+            
+            //colored.AddColoredWordsFromCloudLayouter(Words, layouter, coloringAlgorithm);
+            //var image = converterToImage.GetImage(colored, options.X, options.Y);
+            //fileGenerator.GenerateFile(options.OutputName, formatter, image);
+            //return Result.Ok();
         }
 
         public InnerCoreLogic(IFileReader reader, IWordReader wordReader, IStringPreprocessor preprocessor, IStringToSizeConverter sizeConverter,

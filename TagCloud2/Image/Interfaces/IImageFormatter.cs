@@ -1,10 +1,11 @@
-﻿using System.Drawing.Imaging;
+﻿using ResultOf;
+using System.Drawing.Imaging;
 
 namespace TagCloud2
 {
     public interface IImageFormatter
     {
-        ImageCodecInfo Codec { get; }
+        Result<ImageCodecInfo> Codec { get; }
         EncoderParameters Parameters { get; }
     }
 }

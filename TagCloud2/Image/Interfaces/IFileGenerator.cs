@@ -1,7 +1,9 @@
-﻿namespace TagCloud2
+﻿using ResultOf;
+
+namespace TagCloud2
 {
     public interface IFileGenerator
     {
-        void GenerateFile(string name, IImageFormatter formatter, System.Drawing.Image image);
+        Result<None> GenerateFile(string name, IImageFormatter formatter, System.Drawing.Image image);
     }
 }

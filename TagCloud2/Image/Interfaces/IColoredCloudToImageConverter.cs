@@ -1,7 +1,9 @@
-﻿namespace TagCloud2.Image
+﻿using ResultOf;
+
+namespace TagCloud2.Image
 {
     public interface IColoredCloudToImageConverter
     {
-        System.Drawing.Image GetImage(IColoredCloud cloud, int xSize, int ySize);
+        Result<System.Drawing.Image> GetImage(IColoredCloud cloud, int xSize, int ySize);
     }
 }

@@ -10,13 +10,13 @@ namespace TagCloud2Tests
         [Test]
         public void GetEncoderInfo_OnJpeg_ShouldReturnJpeg()
         {
-            ImageFormatterHelper.GetEncoderInfo("image/jpeg").CodecName.Should().Be("Built-in JPEG Codec");
+            ImageFormatterHelper.GetEncoderInfo("image/jpeg").GetValueOrThrow().CodecName.Should().Be("Built-in JPEG Codec");
         }
 
         [Test]
         public void GetEncoderInfo_OnPng_ShouldReturnPng()
         {
-            ImageFormatterHelper.GetEncoderInfo("image/png").CodecName.Should().Be("Built-in PNG Codec");
+            ImageFormatterHelper.GetEncoderInfo("image/png").GetValueOrThrow().CodecName.Should().Be("Built-in PNG Codec");
         }
 
         [Test]

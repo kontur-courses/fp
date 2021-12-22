@@ -5,7 +5,7 @@ namespace ConsoleRunner
 {
     public class Options : IOptions
     {   
-        [Option('p', "path", Required = true, HelpText = "Path to input file with text")]
+        [Option('p', "path", Required = false, HelpText = "Path to input file with text", Default = "input.txt")]
         public string Path { get; set; }
 
         [Option('f', "inputformat", Required = false, HelpText = "Format of input file", Default = "txt")]

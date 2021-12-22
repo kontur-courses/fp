@@ -1,7 +1,9 @@
-﻿namespace TagCloud2
+﻿using ResultOf;
+
+namespace TagCloud2
 {
     public interface ISillyWordSelector
     {
-        public Result<bool> IsWordSilly(string word);
+        public bool IsWordSilly(string word);
     }
 }

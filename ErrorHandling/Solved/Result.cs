@@ -22,6 +22,7 @@ namespace ResultOf
         }
 
         public string Error { get; }
+
         internal T Value { get; }
         public T GetValueOrThrow()
         {
@@ -33,6 +34,7 @@ namespace ResultOf
 
     public static class Result
     {
+
         public static Result<T> AsResult<T>(this T value)
         {
             return Ok(value);
@@ -40,7 +42,8 @@ namespace ResultOf
 
         public static Result<T> Ok<T>(T value)
         {
-            return new Result<T>(null, value);
+            var res = new Result<T>(null, value);
+            return res;
         }
         public static Result<None> Ok()
         {
@@ -49,18 +52,21 @@ namespace ResultOf
 
         public static Result<T> Fail<T>(string e)
         {
-            return new Result<T>(e);
+            var res = new Result<T>(e);
+            return res;
         }
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {
             try
             {
-                return Ok(f());
+                var ok = Ok(f());
+                return ok;
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message);
+                var fail = Fail<T>(error ?? e.Message);
+                return fail;
             }
         }
 
@@ -69,7 +75,8 @@ namespace ResultOf
             try
             {
                 f();
-                return Ok();
+                var ok = Ok();
+                return ok;
             }
             catch (Exception e)
             {

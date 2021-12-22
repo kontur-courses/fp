@@ -6,7 +6,7 @@ namespace TagCloud2
 {
     public class LinesWordReader : IWordReader
     {
-        public Result<string[]> GetUniqueLowercaseWords(string input)
+        public string[] GetUniqueLowercaseWords(string input)
         {
             return input
                 .ToLower()

@@ -9,14 +9,12 @@ namespace TagCloud2
     {
         public Result<string> ReadFile(string path)
         {
-            try
+            if (!File.Exists(path))
             {
-                return File.ReadAllText(path);
+                return Result.Fail<string>("No such file to open");
             }
-            catch
-            {
-                return Result.Fail<string>("Файл не найден или недоступен!");
-            }
+
+            return Result.Ok<string>(File.ReadAllText(path));
         }
     }
 }
