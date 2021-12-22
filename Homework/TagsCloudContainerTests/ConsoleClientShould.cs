@@ -6,6 +6,7 @@ using System.IO;
 using CLI;
 using FluentAssertions;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using TagsCloudContainer.ClientsInterfaces;
 using TagsCloudContainer.CloudLayouters;
 using TagsCloudContainer.PaintConfigs;
@@ -77,6 +78,17 @@ namespace CloudContainerTests
 
             FluentActions.Invoking(() => new Client(arrayArgs)).Should()
                 .Throw<ArgumentException>();
+        }
+
+
+        [TestCase("--help", TestName = "help key")]
+        [TestCase("--version", TestName = "value key")]
+        public void Not_Throw_When_Only_Help_Or_Version_Key_Is_Given(string arg)
+        {
+            var arrayArgs = new[] { arg };
+
+            FluentActions.Invoking(() => new Client(arrayArgs)).Should()
+                .NotThrow<ArgumentException>();
         }
 
         [TestCaseSource(nameof(Args))]
