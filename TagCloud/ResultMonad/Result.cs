@@ -4,7 +4,7 @@ namespace TagCloud.ResultMonad
 {
     public readonly struct Result<T>
     {
-        public Result(string error, T value = default(T))
+        public Result(string error, T value = default)
         {
             Error = error;
             Value = value;
@@ -53,7 +53,7 @@ namespace TagCloud.ResultMonad
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message + e.StackTrace);
+                return Fail<T>(error ?? e.Message);
             }
         }
 
@@ -66,7 +66,7 @@ namespace TagCloud.ResultMonad
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message + e.StackTrace);
+                return Fail<None>(error ?? e.Message);
             }
         }
 
