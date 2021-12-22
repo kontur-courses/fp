@@ -18,7 +18,8 @@ namespace TagCloud.Visualizers
             if (factory.TryGetValue(algorithmName, out var algorithm))
                 return Result.Ok(algorithm(colors));
             return Result.Fail<ITagColoring>("Wrong coloring algorithm name." +
-                                             $" Please use one of this {factory.Keys}");
+                                             " Please use one of this names: "+
+                                             string.Join(" ", factory.Keys));
         }
     }
 }

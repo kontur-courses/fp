@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using Autofac;
 using TagCloud.Analyzers;
 using TagCloud.Creators;
 using TagCloud.Layouters;
+using TagCloud.Processor;
+using TagCloud.Provider;
 using TagCloud.Readers;
+using TagCloud.Settings;
 using TagCloud.Visualizers;
 using TagCloud.Writers;
 
@@ -19,14 +20,18 @@ namespace TagCloud.UI.Console
             var drawingSettings = GetDrawingSettings(options);
             var center = new Point(drawingSettings.Width / 2, drawingSettings.Height / 2);
 
-            builder.RegisterInstance(drawingSettings).AsSelf().SingleInstance();
+            builder.RegisterInstance(drawingSettings)
+                .As<IProcessorSettings>()
+                .As<IDrawingSettings>()
+                .As<ITagCreatorSettings>().SingleInstance();
 
             builder.RegisterType<FileReaderFactory>().As<IFileReaderFactory>().SingleInstance();
             builder.RegisterType<TextAnalyzer>().As<ITextAnalyzer>().SingleInstance();
             builder.RegisterType<FrequencyAnalyzer>().As<IFrequencyAnalyzer>().SingleInstance();
-            
+            builder.RegisterType<WordProvider>().As<IWordProvider>().SingleInstance();
+
             builder.RegisterType<TagCreator>().As<ITagCreator>()
-                .WithParameter(new TypedParameter(typeof(Font), drawingSettings.Font))
+                //.WithParameter(new TypedParameter(typeof(Font), drawingSettings.Font))
                 .SingleInstance();
 
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>()
@@ -35,34 +40,29 @@ namespace TagCloud.UI.Console
 
             builder.RegisterType<CloudVisualizer>().As<IVisualizer>().SingleInstance();
             builder.RegisterType<BitmapWriter>().As<IFileWriter>().SingleInstance();
+            
             builder.RegisterType<WordsToLowerConverter>().As<IWordConverter>().SingleInstance();
-            builder.RegisterType<BoringWordsFilter>()
-                .As<IWordFilter>()
-                .As<BoringWordsFilter>()
-                .SingleInstance();
+            builder.RegisterType<BoringWordsFilter>().As<IWordFilter>().SingleInstance();
+            
             builder.RegisterType<TagColoringFactory>().As<ITagColoringFactory>().SingleInstance();
 
-            builder.RegisterType<ConsoleUI>().As<IUserInterface>().SingleInstance();
+            builder.RegisterType<TagCloudProcessor>().As<ITagCloudProcessor>().SingleInstance();
             return builder.Build();
         }
 
-        private static DrawingSettings GetDrawingSettings(Options options)
+        private static ProcessorSettings GetDrawingSettings(Options options)
         {
-            var backgroundColor = Color.FromName(options.BackgroundColor);
-            var penColors = ParseColors(options.WordColors);
-            var font = new Font(options.FontName, options.FontSize);
-            
-            return new DrawingSettings(penColors,
-                backgroundColor,
-                font,
+            return new ProcessorSettings(options.WordColors,
+                options.BackgroundColor,
+                options.FontName,
+                options.FontSize,
                 options.Width,
                 options.Height,
-                options.TagColoring);
-        }
-
-        private static IEnumerable<Color> ParseColors(IEnumerable<string> colors)
-        {
-            return colors.Select(Color.FromName);
+                options.TagColoring,
+                options.ExcludedWordsFile,
+                options.InputFilename,
+                options.OutputFilename,
+                options.TargetDirectory);
         }
     }
 }

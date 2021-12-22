@@ -22,8 +22,8 @@ namespace TagCloud.Readers
                 return Result.Fail<IFileReader>("The tag cloud generator does not " +
                                                 "support the input file with the extension " +
                                                 $"\"{fileExtension}\".\n" +
-                                                $"Please make an introductory file with one of these extensions:" +
-                                                $"{fileReadersFactory.Keys.ToArray()}");
+                                                "Please make an introductory file with one of these extensions:" +
+                                                string.Join(" ", fileReadersFactory.Keys.ToArray()));
             return reader.AsResult();
         }
     }

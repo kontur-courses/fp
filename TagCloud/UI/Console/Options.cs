@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CommandLine;
 
 namespace TagCloud.UI.Console
@@ -30,7 +31,7 @@ namespace TagCloud.UI.Console
         [Option('o', "output", Required = true, HelpText = "output file to draw image")]
         public string OutputFilename { get; set; }
 
-        [Option('f', "font", Default = "GenericSansSerif", HelpText = "font for words")]
+        [Option('f', "font", Default = "Microsoft Sans Serif", HelpText = "font for words")]
         public string FontName { get; set; }
 
         [Option('s', "font-size", Default = 8, HelpText = "basic font size for words")]
@@ -39,5 +40,9 @@ namespace TagCloud.UI.Console
         [Option('a', "tag-coloring", Default = "alt", HelpText = "Tag coloring algorithm." +
                                                                  "Possible variants: alt, random")]
         public string TagColoring { get; set; }
+
+        [Option('d', "target-directory", Required = false,
+            HelpText = "output directory, where file will be saved")]
+        public string TargetDirectory { get; set; } = Environment.CurrentDirectory;
     }
 }

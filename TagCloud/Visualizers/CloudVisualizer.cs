@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagCloud.Creators;
 using TagCloud.Layouters;
 using TagCloud.ResultMonad;
+using TagCloud.Settings;
 
 namespace TagCloud.Visualizers
 {
     public class CloudVisualizer : IVisualizer
     {
-        private readonly DrawingSettings drawingSettings;
+        private readonly IDrawingSettings drawingSettings;
 
-        public CloudVisualizer(DrawingSettings drawingSettings)
+        public CloudVisualizer(IDrawingSettings drawingSettings)
         {
             this.drawingSettings = drawingSettings;
         }
@@ -26,31 +27,45 @@ namespace TagCloud.Visualizers
             var bitmap = new Bitmap(drawingSettings.Width, drawingSettings.Height);
             using var graph = Graphics.FromImage(bitmap);
 
-            var tagColoringAlgorithm = tagColoringFactory
-                .Create(drawingSettings.AlgorithmName, drawingSettings.PenColors);
+            var penColors = ParseColors(drawingSettings.PenColors);
+            if (!penColors.IsSuccess)
+                return Result.Fail<Bitmap>(penColors.Error);
 
+            var tagColoringAlgorithm = tagColoringFactory
+                .Create(drawingSettings.AlgorithmName, penColors.Value);
             if (!tagColoringAlgorithm.IsSuccess)
                 return Result.Fail<Bitmap>(tagColoringAlgorithm.Error);
 
-            var backgroundBrush = drawingSettings.BackgroundColor;
+            var backgroundBrush = Color.FromName(drawingSettings.BackgroundColor);
             graph.Clear(backgroundBrush);
 
             foreach (var tag in tags)
             {
+                if (tag.Frequency == 0)
+                    continue;
+                
                 if (!tag.ContainingRectangle.InsideSize(bitmap.Size))
                     return Result.Fail<Bitmap>("Tag is out of image");
                 var color = tagColoringAlgorithm.Value.GetNextColor();
                 using var brush = new SolidBrush(color);
-                DrawTag(tag, graph, drawingSettings.Font, brush);
+                DrawTag(tag, graph, brush);
             }
-
             return bitmap.AsResult();
         }
 
-        private void DrawTag(Tag tag, Graphics graph, Font font, Brush pen)
+        private void DrawTag(Tag tag, Graphics graph, Brush pen)
         {
-            using var drawFont = new Font(font.FontFamily, font.Size * tag.Frequency);
+            using var drawFont = new Font(drawingSettings.FontName, 
+                drawingSettings.FontSize * tag.Frequency);
             graph.DrawString(tag.Value, drawFont, pen, tag.ContainingRectangle);
+        }
+
+        private static Result<IEnumerable<Color>> ParseColors(IEnumerable<string> colors)
+        {
+            var parsedColors = colors.Select(Color.FromName);
+            return !parsedColors.Select(c => c.Name).SequenceEqual(colors)
+                ? Result.Fail<IEnumerable<Color>>("Wrong name color") 
+                : parsedColors.AsResult();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.Creators;
@@ -22,24 +21,28 @@ namespace TagCloud.Layouters
 
         public Result<IEnumerable<Tag>> PutTags(IEnumerable<Tag> tags)
         {
-            return Result.Of(() => tags
-                .OrderByDescending(tag => tag.Frequency)
-                .Select(PutNextTag));
+            var enumerable = tags as Tag[] ?? tags.ToArray();
+            var results = enumerable.OrderByDescending(tag => tag.Frequency)
+                .Select(PutNextTag)
+                .ToArray();
+            return results.All(result => result.IsSuccess)
+                ? results.Select(r => r.Value).AsResult()
+                : Result.Fail<IEnumerable<Tag>>(results.First(result => !result.IsSuccess).Error);
         }
 
-        private Tag PutNextTag(Tag tag)
+        private Result<Tag> PutNextTag(Tag tag)
         {
             if (tag.Size.Height <= 0 || tag.Size.Width <= 0)
             {
-                throw new ArgumentException("Size Should be positive but was: " +
+                Result.Fail<Tag>("Size Should be positive but was: " +
                                             $"Height: {tag.Size.Height}" +
                                             $"Width: {tag.Size.Width}");
             }
-
             if (TryPutTagInCenter(tag, out var placedTag))
                 return placedTag;
             
             var tagToPlace = GetNearestTag(tag);
+
             return tagToPlace;
         }
 

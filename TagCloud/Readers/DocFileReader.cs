@@ -11,8 +11,7 @@ namespace TagCloud.Readers
             var doc = Result.Of(() => DocX.Load(filename));
             return doc.IsSuccess 
                 ? doc.Value.Paragraphs.Select(p => p.Text).ToArray()
-                : Result.Fail<string[]>($"File {filename} not found." +
-                                        $" Please check that file exists");
+                : Result.Fail<string[]>(doc.Error);
         }
     }
 }

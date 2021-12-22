@@ -12,8 +12,8 @@ namespace TagCloud.Readers
             var text = new List<string>();
             var loadResult = Result.OfAction(() => doc.Load(filename));
             if (!loadResult.IsSuccess)
-                return Result.Fail<string[]>($"File {filename} not found." +
-                                             $" Please check that file exists");
+                return Result.Fail<string[]>(loadResult.Error);
+
             if (doc.DocumentElement == null)
                 return Result.Fail<string[]>("Invalid content format");
 

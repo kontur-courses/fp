@@ -53,7 +53,7 @@ namespace TagCloud.ResultMonad
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message);
+                return Fail<T>(error ?? e.Message + e.StackTrace);
             }
         }
 
@@ -66,7 +66,7 @@ namespace TagCloud.ResultMonad
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message);
+                return Fail<None>(error ?? e.Message + e.StackTrace);
             }
         }
 

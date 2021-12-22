@@ -1,31 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using TagCloud.ResultMonad;
+using TagCloud.Settings;
 
 namespace TagCloud.Creators
 {
     public class TagCreator : ITagCreator
     {
-        private readonly Font font;
+        private readonly ITagCreatorSettings drawingSettings;
 
-        public TagCreator(Font font)
+        public TagCreator(ITagCreatorSettings settings)
         {
-            this.font = font;
+            drawingSettings = settings;
         }
 
-        public Tag Create(string value, int frequency)
+        public Tag Create(string value, int frequency, Graphics graphics)
         {
-            Size size;
-            using (var renderFont = new Font(font.FontFamily, font.Size * frequency))
-                size = TextRenderer.MeasureText(value, renderFont);
-            
+            var font = new Font(drawingSettings.FontName,
+                drawingSettings.FontSize * frequency + 2);
+            var size = graphics.MeasureString(value, font).ToSize();
             return new Tag(value, frequency, size);
         }
 
-        public IEnumerable<Tag> Create(Dictionary<string, int> wordsWithFrequency)
+        public Result<IEnumerable<Tag>> Create(Dictionary<string, int> wordsWithFrequency)
         {
-            return wordsWithFrequency.Select(pair => Create(pair.Key, pair.Value));
+            var graphics = Graphics.FromHwnd(new IntPtr());
+            var renderFont = new Font(drawingSettings.FontName, drawingSettings.FontSize);
+            if (renderFont.Name != drawingSettings.FontName)
+                return Result.Fail<IEnumerable<Tag>>("Font not found");
+            return wordsWithFrequency.Select(pair => Create(pair.Key, pair.Value, graphics))
+                .AsResult();
         }
     }
 }

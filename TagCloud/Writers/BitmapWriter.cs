@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
 
@@ -7,14 +6,11 @@ namespace TagCloud.Writers
 {
     public class BitmapWriter : IFileWriter
     {
-        public void Write(Bitmap bitmap, string filename, string extension)
+        public void Write(Bitmap bitmap, string filename, string extension, string targetDirectory)
         {
-            using (bitmap)
-            {
-                var format = GetImageFormatByExtension(extension);
-                var env = Environment.CurrentDirectory + "\\";
-                bitmap.Save(env + filename, format);
-            }
+            var format = GetImageFormatByExtension(extension);
+            var env = targetDirectory + "\\";
+            bitmap.Save(env + filename, format);
         }
 
         private ImageFormat GetImageFormatByExtension(string extension)
