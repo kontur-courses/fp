@@ -7,7 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagsCloud.Visualization;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayoutContainer;
@@ -17,7 +17,7 @@ namespace TagsCloud.Tests
 {
     public class CircularCloudLayouterTests
     {
-        private readonly Drawer drawer = new(new RandomColorDrawerVisitor());
+        private readonly Drawer drawer = new(new ConcreteColorGenerator(Color.Chocolate));
         private Point center;
         private List<Rectangle> rectangles;
         private CircularCloudLayouter sut;

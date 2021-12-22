@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.Models;
 
 namespace TagsCloud.Visualization.LayoutContainer
@@ -11,9 +11,19 @@ namespace TagsCloud.Visualization.LayoutContainer
         public Size Size { get; init; }
         public Point Center { get; init; }
 
-        public void Accept(Graphics graphics, IContainerVisitor visitor)
+        public void Draw(Graphics graphics, IColorGenerator colorGenerator)
         {
-            visitor.Visit(graphics, this);
+            foreach (var (word, fontDecorator, rectangle) in Items)
+            {
+                var drawFormat = new StringFormat
+                {
+                    Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center
+                };
+                using var brush = new SolidBrush(colorGenerator.Generate());
+                using var font = fontDecorator.Build();
+                graphics.DrawString(word.Content,
+                    font, brush, rectangle, drawFormat);
+            }
         }
     }
 }

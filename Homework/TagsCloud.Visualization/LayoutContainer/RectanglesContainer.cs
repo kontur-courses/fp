@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using TagsCloud.Visualization.ContainerVisitor;
+using System.Linq;
+using TagsCloud.Visualization.ColorGenerators;
 
 namespace TagsCloud.Visualization.LayoutContainer
 {
@@ -10,9 +11,10 @@ namespace TagsCloud.Visualization.LayoutContainer
         public Size Size { get; init; }
         public Point Center { get; init; }
 
-        public void Accept(Graphics graphics, IContainerVisitor visitor)
+        public void Draw(Graphics graphics, IColorGenerator colorGenerator)
         {
-            visitor.Visit(graphics, this);
+            using var pen = new Pen(colorGenerator.Generate());
+            graphics.DrawRectangles(pen, Items.ToArray());
         }
     }
 }

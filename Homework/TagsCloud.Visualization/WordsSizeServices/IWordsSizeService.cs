@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using TagsCloud.Visualization.FontFactory;
+using TagsCloud.Visualization.FontFactories;
 using TagsCloud.Visualization.Models;
 
 namespace TagsCloud.Visualization.WordsSizeServices

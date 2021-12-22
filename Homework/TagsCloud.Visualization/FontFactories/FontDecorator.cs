@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloud.Visualization.FontFactory
+namespace TagsCloud.Visualization.FontFactories
 {
     public class FontDecorator
     {

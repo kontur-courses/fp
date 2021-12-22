@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.Drawers;
-using TagsCloud.Visualization.FontFactory;
+using TagsCloud.Visualization.FontFactories;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
 using TagsCloud.Visualization.PointGenerator;
@@ -27,14 +27,14 @@ namespace TagsCloud.Visualization
             builder.RegisterType<WordLengthFilter>().As<IWordsFilter>();
             builder.RegisterType<WordsParser>().As<IWordsParser>();
 
-            builder.Register(_ => new FontFactory.FontFactory(settings.FontSettings)).As<IFontFactory>();
+            builder.Register(_ => new FontFactory(settings.FontSettings ?? new FontSettings())).As<IFontFactory>();
             builder.RegisterType<WordsSizeService>().As<IWordsSizeService>();
             builder.RegisterType<TagsContainerBuilder>().As<AbstractTagsContainerBuilder>();
 
             builder.Register(_ => new ArchimedesSpiralPointGenerator(settings.Center)).As<IPointGenerator>();
             builder.RegisterType(settings.LayouterType).As<ICloudLayouter>();
 
-            builder.Register(_ => settings.LayoutVisitor).As<IContainerVisitor>();
+            builder.Register(_ => settings.ColorGenerator).As<IColorGenerator>();
             builder.RegisterType<Drawer>().As<IDrawer>();
             builder.Register(_ => new ImageSaver(settings.SaveSettings)).As<IImageSaver>();
 

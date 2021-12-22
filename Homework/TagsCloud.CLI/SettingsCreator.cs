@@ -2,10 +2,9 @@
 using System.Drawing;
 using System.IO;
 using TagsCloud.Visualization;
-using TagsCloud.Visualization.ContainerVisitor;
-using TagsCloud.Visualization.Drawers;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.FontFactory;
+using TagsCloud.Visualization.FontFactories;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Words.Options;
@@ -26,7 +25,7 @@ namespace TagsCloud.Words
                 FontSettings = fontSettings,
                 SaveSettings = saveSettings,
                 LayouterType = layouterType,
-                LayoutVisitor = CreateDrawerVisitorFromName(options.Color)
+                ColorGenerator = CreateColorGeneratorFromName(options.Color)
             };
 
         private static Result<FontSettings> ParseFont(CreateCloudCommand options) =>
@@ -73,13 +72,13 @@ namespace TagsCloud.Words
             };
         }
 
-        private static IContainerVisitor CreateDrawerVisitorFromName(string textColor)
+        private static IColorGenerator CreateColorGeneratorFromName(string textColor)
         {
             if (textColor == "random")
-                return new RandomColorDrawerVisitor();
+                return new RandomColorGenerator();
 
             var color = Color.FromName(textColor);
-            return new ConcreteColorDrawerVisitor(new ImageSettings {Color = color});
+            return new ConcreteColorGenerator(color);
         }
 
         private static string GetDirectoryForSavingExamples()

@@ -1,6 +1,6 @@
 ﻿using TagsCloud.Visualization.Models;
 
-namespace TagsCloud.Visualization.FontFactory
+namespace TagsCloud.Visualization.FontFactories
 {
     public interface IFontFactory
     {

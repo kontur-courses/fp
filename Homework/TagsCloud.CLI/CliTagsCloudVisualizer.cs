@@ -1,8 +1,8 @@
-﻿using System;
-using TagsCloud.Visualization.Extensions;
+﻿using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.TagsCloudVisualizers;
 using TagsCloud.Visualization.TextProviders;
+using TagsCloud.Visualization.Utils;
 
 namespace TagsCloud.Words
 {
@@ -22,10 +22,9 @@ namespace TagsCloud.Words
             this.textProvider = textProvider;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            tagsCloudVisualizer.GenerateImage(textProvider)
-                .OnFail(x => Console.WriteLine(x, Console.Error))
+            return tagsCloudVisualizer.GenerateImage(textProvider)
                 .Then(x => imageSaver.Save(x))
                 .Then(x => x.Dispose());
         }

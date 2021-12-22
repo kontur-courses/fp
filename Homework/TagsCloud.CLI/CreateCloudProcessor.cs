@@ -17,13 +17,13 @@ namespace TagsCloud.Words
             try
             {
                 var result = SettingsCreator.CreateFrom(options)
-                    .OnFail(x => Console.WriteLine(x, Console.Error))
                     .Then(x =>
                     {
                         using var container = CreateContainer(x).BeginLifetimeScope();
 
-                        container.Resolve<CliTagsCloudVisualizer>().Run();
-                    });
+                        return container.Resolve<CliTagsCloudVisualizer>().Run();
+                    })
+                    .OnFail(x => Console.WriteLine(x, Console.Error));
 
                 return result.IsSuccess ? 0 : 1;
             }

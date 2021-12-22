@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TagsCloud.Visualization;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.WordsFilters;
 
 namespace TagsCloud.WebApi
@@ -105,7 +105,7 @@ namespace TagsCloud.WebApi
             var settings = new TagsCloudModuleSettings
             {
                 LayouterType = typeof(CircularCloudLayouter),
-                LayoutVisitor = new RandomColorDrawerVisitor()
+                ColorGenerator = new RandomColorGenerator()
             };
 
             builder.Register(_ => new BoringWordsFilter()).As<IWordsFilter>();

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.LayoutContainer;
 using TagsCloud.Visualization.Utils;
 
@@ -10,9 +10,9 @@ namespace TagsCloud.Visualization.Drawers
     {
         private const int OffsetX = 100;
         private const int OffsetY = 100;
-        private readonly IContainerVisitor visitor;
+        private readonly IColorGenerator colorGenerator;
 
-        public Drawer(IContainerVisitor visitor) => this.visitor = visitor;
+        public Drawer(IColorGenerator colorGenerator) => this.colorGenerator = colorGenerator;
 
         public Result<Image> Draw<T>(ILayoutContainer<T> layoutContainer)
         {
@@ -28,7 +28,7 @@ namespace TagsCloud.Visualization.Drawers
 
             graphics.TranslateTransform(center.X + widthWithOffset / 2, center.Y + heightWithOffset / 2);
 
-            layoutContainer.Accept(graphics, visitor);
+            layoutContainer.Draw(graphics, colorGenerator);
 
             return bitmap;
         }

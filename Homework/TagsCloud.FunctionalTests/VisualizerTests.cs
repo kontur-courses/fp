@@ -3,7 +3,7 @@ using System.IO;
 using Autofac;
 using NUnit.Framework;
 using TagsCloud.Visualization;
-using TagsCloud.Visualization.ContainerVisitor;
+using TagsCloud.Visualization.ColorGenerators;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.TagsCloudVisualizers;
 using TagsCloud.Visualization.TextProviders;
@@ -28,14 +28,14 @@ namespace TagsCloud.FunctionalTests
                 .Then(x => x.Dispose());
         }
 
-        private TagsCloudModuleSettings GenerateDefaultSettings() =>
+        private static TagsCloudModuleSettings GenerateDefaultSettings() =>
             new()
             {
                 LayouterType = typeof(CircularCloudLayouter),
-                LayoutVisitor = new RandomColorDrawerVisitor()
+                ColorGenerator = new RandomColorGenerator()
             };
 
-        private IContainer CreateContainer(TagsCloudModuleSettings settings, string extension)
+        private static IContainer CreateContainer(TagsCloudModuleSettings settings, string extension)
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new TagsCloudModule(settings));
