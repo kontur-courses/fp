@@ -50,10 +50,10 @@ namespace TagsCloudVisualizationDITests
             _expectedFormedElements = expectedFormedElements;
 
 
-            var visualization = new DefaultVisualization(brush, elementSize, 25);
+            var visualization = new DefaultVisualization(font, brush, elementSize, 25);
 
             var formedElements = filler.FormStatisticElements(elementSize, normalyzedWords);
-            var sizedElements = visualization.FindSizeForElements(formedElements, font);
+            var sizedElements = visualization.FindSizeForElements(formedElements);
             var sortedElements = sizedElements.GetValueOrThrow().
                 OrderByDescending(el => el.WordElement.CntOfWords).ToList();
             var positionedElements = filler.MakePositionElements(sortedElements);

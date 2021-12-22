@@ -26,30 +26,26 @@ namespace TagsCloudVisualizationDI
         private static readonly Size ImageSize = new Size(5000, 5000);
         private static readonly Encoding Encoding = Encoding.UTF8;
         private static readonly Size ElementSize = new Size(100, 100);
-        private static readonly PartsOfSpeech.SpeechPart[] ExcludedSpeechParts= new[]
+        private static readonly SpeechPart[] ExcludedSpeechParts= new[]
         {
-            PartsOfSpeech.SpeechPart.CONJ, PartsOfSpeech.SpeechPart.INTJ,
-            PartsOfSpeech.SpeechPart.PART, PartsOfSpeech.SpeechPart.PR,
+            SpeechPart.CONJ, SpeechPart.INTJ,
+            SpeechPart.PART, SpeechPart.PR,
         };
        private static readonly string MyStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
        private static readonly string SaveAnalizationPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\result.TXT";
 
 
-        public static void Main(string pathToFile, string pathToSave, 
+        public static void Main(Result<string> resultPathToFile, Result<string> resultPathToSave, 
             Result<ImageFormat> imageFormat, Result<List<string>> excludedWordsList)
         {
 
             imageFormat.OnFail(error => PrintAboutFail(error));
             excludedWordsList.OnFail(error => PrintAboutFail(error));
+            resultPathToFile.OnFail(error => PrintAboutFail(error));
+            resultPathToSave.OnFail(error => PrintAboutFail(error));
 
-
-            //Checker.ResultOfGetPathToFile(pathToFile);
-
-            //Checker.CheckPathToDirectory(pathToSave
-                //.Substring(0, pathToSave.LastIndexOf("\\", StringComparison.InvariantCulture)+1));
-
-            //Checker.ResultOfGetPathToFile(MyStemPath);
-            //Checker.ResultOfGetPathToFile(SaveAnalizationPath);
+            var pathToFile = resultPathToFile.GetValueOrThrow();
+            var pathToSave = resultPathToSave.GetValueOrThrow();
 
 
             var containerBuilder = new ContainerBuilder();
@@ -74,8 +70,8 @@ namespace TagsCloudVisualizationDI
 
             containerBuilder.RegisterType<DefaultVisualization>().As<IVisualization>()
                 .WithParameter("brush", Brush)
-                .WithParameter("font", Font)
                 .WithParameter("imageSize", ImageSize)
+                .WithParameter("textFont", Font)
                 .WithParameter("sizeMultiplier", Multiplier);
 
             containerBuilder.RegisterType<DefaultAnalyzedTextFileReader>().As<IAnalyzedTextFileReader>()
@@ -87,74 +83,28 @@ namespace TagsCloudVisualizationDI
             var buildContainer = containerBuilder.Build();
 
             var analyzer = buildContainer.Resolve<IAnalyzer>();
-            var normalizer = buildContainer.Resolve<INormalizer>();
             var filler = buildContainer.Resolve<IContentFiller>();
             var reader = buildContainer.Resolve<IAnalyzedTextFileReader>();
             var saver = buildContainer.Resolve<ISaver>();
             var visualization = buildContainer.Resolve<IVisualization>();
 
-            Console.WriteLine("!");
             analyzer.InvokeMystemAnalizationResult()
                 .Then( _ => reader.ReadText())
                 .Then(analyzedWords => analyzer.GetAnalyzedWords(analyzedWords))
-                //.Then(normalizedWords => normalizedWords.Select(word => normalizer.Normalize(word.WordText)))
-                //NormalizeWords(normalizedWords, normalizer))
                 .Then(formedElement =>
                     filler.FormStatisticElements(ElementSize, formedElement.ToList()))
 
                 .Then(sizedElement =>
-                    visualization.FindSizeForElements(sizedElement, Font))
-                .Then(positionedElement => filler.MakePositionElements(positionedElement))
-
-                .Then(res => visualization.DrawAndSaveImage(res, saver.GetSavePath(), imageFormat.Value, Font))
-                //.Then(res => visualization.DrawAndSaveImage(res, "C:\\GitHub\\p3001.png", imageFormat.GetValueOrThrow(), Font))
-                .OnFail(er => PrintAboutFail(er));
-
-
-
-
-
-
-            /*
-            var invokeResult = analyzer.InvokeMystemAnalizationResult();
-
-            if (!invokeResult.IsSuccess)
-                PrintAboutFail(invokeResult.Error);
-
-            reader.ReadText()
-                .Then(analyzedWords => analyzer.GetAnalyzedWords(analyzedWords))
-
-                .Then(normalizedWords => NormalizeWords(normalizedWords, normalizer))
-
-                .Then(formedElement => 
-                    filler.FormStatisticElements(ElementSize, formedElement.ToList()))
-
-                .Then(sizedElement => 
                     visualization.FindSizeForElements(sizedElement))
-                .Then(elements => elements.OrderByDescending(el => el.WordElement.CntOfWords).ToList())
-
                 .Then(positionedElement => filler.MakePositionElements(positionedElement))
 
-                .Then(res => 
-                    visualization.DrawAndSaveImage(res, saver.GetSavePath().GetValueOrThrow(), imageFormat.GetValueOrThrow()))
+                .Then(res => visualization.DrawAndSaveImage(res, saver.GetSavePath(), imageFormat.Value))
                 .OnFail(er => PrintAboutFail(er));
-            */
         }
 
-        internal static void PrintAboutFail(string error)
+        private static void PrintAboutFail(string error)
         {
             throw new Exception(error + " NOTSYSTEM");
         }
-
-        /*
-        private static IEnumerable<Word> NormalizeWords(IEnumerable<Word> analyzedWords, INormalizer normalizer)
-        {
-            foreach (var word in analyzedWords)
-            {
-                word.WordText = normalizer.Normalize(word.WordText).OnFail((er) => PrintAboutFail(er)).Value;
-                yield return word;
-            }
-        }
-        */
     }
 }

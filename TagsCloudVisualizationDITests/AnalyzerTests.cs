@@ -16,10 +16,10 @@ namespace TagsCloudVisualizationDITests
     public class AnalyzerTests
     {
         private const string Arguments = "-lndw -ig";
-        private static readonly PartsOfSpeech.SpeechPart[] ExcludedSpeechParts = new[]
+        private static readonly SpeechPart[] ExcludedSpeechParts =
         {
-            PartsOfSpeech.SpeechPart.CONJ, PartsOfSpeech.SpeechPart.INTJ,
-            PartsOfSpeech.SpeechPart.PART, PartsOfSpeech.SpeechPart.PR,
+            SpeechPart.CONJ, SpeechPart.INTJ,
+            SpeechPart.PART, SpeechPart.PR,
         };
         private static readonly string MyStemPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\mystem.exe";
 

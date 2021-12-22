@@ -1,23 +1,20 @@
 ﻿namespace TagsCloudVisualizationDI.TextAnalyze
 {
-    public static class PartsOfSpeech
+    public enum SpeechPart
     {
-        public enum SpeechPart
-        {
-            A,
-            ADV,
-            ADVPRO,
-            ANUM,
-            APRO,
-            COM,
-            CONJ,
-            INTJ,
-            NUM,
-            PART,
-            PR,
-            S,
-            SPRO,
-            V,
-        }
+        A,
+        ADV,
+        ADVPRO,
+        ANUM,
+        APRO,
+        COM,
+        CONJ,
+        INTJ,
+        NUM,
+        PART,
+        PR,
+        S,
+        SPRO,
+        V,
     }
 }

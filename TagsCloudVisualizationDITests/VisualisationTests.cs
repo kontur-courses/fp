@@ -19,18 +19,18 @@ namespace TagsCloudVisualizationDITests
         {
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\image";
             var saver = new DefaultSaver(savePath, ImageFormat.Png);
-            var visualization = new DefaultVisualization(new SolidBrush(Color.AliceBlue),
+            var visualization = new DefaultVisualization(new Font("times", 15), new SolidBrush(Color.AliceBlue),
                 new Size(10, 10), 10);
-            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png, new Font("times", 15)).GetValueOrThrow();
+            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png).GetValueOrThrow();
             act.Should().NotThrow();
         }
 
         [Test]
         public void ShouldThrowWneInvalidPath()
         {
-            var visualization = new DefaultVisualization(new SolidBrush(Color.AliceBlue),
+            var visualization = new DefaultVisualization(new Font("times", 15), new SolidBrush(Color.AliceBlue),
                 new Size(10, 10), 10);
-            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "G:\\", ImageFormat.Png, new Font("times", 15)).GetValueOrThrow();
+            Action act = () => visualization.DrawAndSaveImage(new List<RectangleWithWord>(), "G:\\", ImageFormat.Png).GetValueOrThrow();
             act.Should().Throw<InvalidOperationException>();
         }
 
@@ -40,9 +40,9 @@ namespace TagsCloudVisualizationDITests
             var savePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "\\image";
             var saver = new DefaultSaver(savePath, ImageFormat.Png);
             var visualization =
-                new DefaultVisualization(new SolidBrush(Color.AliceBlue),
+                new DefaultVisualization(new Font("times", 15), new SolidBrush(Color.AliceBlue),
                     new Size(10, 10), 10);
-            visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png, new Font("times", 15));
+            visualization.DrawAndSaveImage(new List<RectangleWithWord>(), saver.GetSavePath().GetValueOrThrow(), ImageFormat.Png);
             File.Exists(saver.GetSavePath().GetValueOrThrow()).Should().BeTrue();
         }
     }

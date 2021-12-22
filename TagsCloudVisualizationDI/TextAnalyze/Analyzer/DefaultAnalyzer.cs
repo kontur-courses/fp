@@ -8,7 +8,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 {
     public class DefaultAnalyzer : IAnalyzer
     {
-        private readonly HashSet<PartsOfSpeech.SpeechPart> _excludedSpeechParts;
+        private readonly HashSet<SpeechPart> _excludedSpeechParts;
         private readonly IEnumerable<string> _excludedWords;
         public string FilePath { get; }
         public string SaveAnalyzePath { get; }
@@ -16,7 +16,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
         public string MystemArgs { get; }
 
 
-        public DefaultAnalyzer(IEnumerable<PartsOfSpeech.SpeechPart> excludedSpeechParts, IEnumerable<string> excludedWords,
+        public DefaultAnalyzer(IEnumerable<SpeechPart> excludedSpeechParts, IEnumerable<string> excludedWords,
             string filePath, string saveAnalyzePath, string mystemPath, string arguments)
         {
             _excludedSpeechParts = excludedSpeechParts.ToHashSet();
@@ -28,7 +28,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
         }
 
 
-        private static bool CheckWord(string inputWord, out string wordContent, out PartsOfSpeech.SpeechPart enumElementOfCurrentType)
+        private static bool CheckWord(string inputWord, out string wordContent, out SpeechPart enumElementOfCurrentType)
         {
             var wordAndPart = inputWord.Split(new[] { ' ', ',', '=' }, 3, StringSplitOptions.RemoveEmptyEntries);
             if (wordAndPart.Length < 2)
@@ -40,11 +40,11 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
             wordContent = wordAndPart[0];
             var type = wordAndPart[1];
-            enumElementOfCurrentType = (PartsOfSpeech.SpeechPart)Enum.Parse(typeof(PartsOfSpeech.SpeechPart), type);
+            enumElementOfCurrentType = (SpeechPart)Enum.Parse(typeof(SpeechPart), type);
             return (inputWord.Split(' ').Length == 1);
         }
 
-        private bool IsNotExcludedPart(PartsOfSpeech.SpeechPart enumElementOfCurrentType)
+        private bool IsNotExcludedPart(SpeechPart enumElementOfCurrentType)
         {
             var excludedParts = _excludedSpeechParts;
             if (!excludedParts.Contains(enumElementOfCurrentType))
@@ -58,7 +58,7 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
             foreach (var word in words)
             {
-                if (CheckWord(word, out string content, out PartsOfSpeech.SpeechPart type))
+                if (CheckWord(word, out var content, out var type))
                 {
                     if (IsNotExcludedPart(type) && IsNotExcludedWord(content))
                         yield return new Word(content);
@@ -73,13 +73,9 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
         public Result<None> InvokeMystemAnalyze()
         {
-            Console.WriteLine(File.Exists(FilePath));
 
             if (!File.Exists(FilePath))
-            {
-                Console.WriteLine("!!!");
                 return Result.Fail<None>($"filepath is not correct: {FilePath}");
-            }
             if (!File.Exists(SaveAnalyzePath))
                 return Result.Fail<None>($"path to temp Document is not correct: {SaveAnalyzePath}");
             if (!File.Exists(MystemPath))
@@ -92,29 +88,11 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
             });
             process.WaitForExit();
             return Result.Ok();
-            
-
-
-            /*
-            var process = Process.Start(new ProcessStartInfo
-            {
-                FileName = Checker.ResultOfGetPathToFile(MystemPath).GetValueOrThrow(),
-                Arguments = MystemArgs + ' ' + Checker.ResultOfGetPathToFile(FilePath) + ' ' + Checker.ResultOfGetPathToFile(SaveAnalyzePath),
-            });
-            process.WaitForExit();
-            */
         }
 
         public Result<None> InvokeMystemAnalizationResult()
         {
-            {
-                Console.WriteLine("!2");
-                var invokeResult = InvokeMystemAnalyze();
-                Console.WriteLine(invokeResult.Error);
-                Console.WriteLine(invokeResult.IsSuccess);
-                Console.WriteLine(invokeResult.Value);
-                return invokeResult;
-            }
+            return InvokeMystemAnalyze();
         }
     }
 }
