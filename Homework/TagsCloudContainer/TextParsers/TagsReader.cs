@@ -12,8 +12,7 @@ namespace TagsCloudContainer.TextParsers
 
         public IEnumerable<string> GetNextWord()
         {
-            foreach (var tag in tags)
-                yield return tag;
+            return tags;
         }
     }
 }

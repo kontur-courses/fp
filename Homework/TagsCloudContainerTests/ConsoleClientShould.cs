@@ -50,8 +50,8 @@ namespace CloudContainerTests
         [SetUp]
         public void CreateInput()
         {
-            if (!File.Exists("input.txt"))
-                using (File.Create("input.txt")) { }
+            if (File.Exists("input.txt")) return;
+            using (File.Create("input.txt")) { }
         }
 
 

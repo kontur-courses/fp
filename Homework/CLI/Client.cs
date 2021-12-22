@@ -41,15 +41,14 @@ namespace CLI
             result.WithParsed(options => config = GetConfigResult(options))
                 .WithNotParsed(errs =>
                 {
-                    if (IsNotHelpOrVersionCall(errs))
+                    if (IsNotHelpOrVersionCall(errs.ToList()))
                         config = Result.Fail<ConsoleConfig>("Error's describing is located above options list");
                 });
 
             return config;
         }
 
-
-        private bool IsNotHelpOrVersionCall(IEnumerable<Error> errs)
+        private bool IsNotHelpOrVersionCall(List<Error> errs)
         {
             return !errs.IsHelp() && !errs.IsVersion();
         }
@@ -224,7 +223,7 @@ namespace CLI
 
         private string GetHandlersError(ConsoleConfig config)
         {
-            StringBuilder message = new StringBuilder("Unknown handlers list:\n");
+            var message = new StringBuilder("Unknown handlers list:\n");
             var unknowHandlers = config.HandlersStorage.GetUnrecognizedHandlers();
             foreach (var handler in unknowHandlers)
             {

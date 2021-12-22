@@ -86,7 +86,7 @@ namespace CloudContainerTests
             var expectedDict = new Dictionary<string, int>
             {
                 {"Go", 1},
-                {"Please", 1},
+                {"Please", 1}
             };
 
             var tp = new TextParser(tagsReader, handlers, grouper);
@@ -115,7 +115,7 @@ namespace CloudContainerTests
             {
                 {"Go", 1},
                 {"Away", 1},
-                {"Please", 3},
+                {"Please", 3}
             };
 
             var tp = new TextParser(tagsReader, handlers, grouper);

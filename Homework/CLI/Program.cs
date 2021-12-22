@@ -5,9 +5,9 @@ using TagsCloudContainer;
 
 namespace CLI
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var config = new Client(args).UserConfig;
             if (config == null) return;

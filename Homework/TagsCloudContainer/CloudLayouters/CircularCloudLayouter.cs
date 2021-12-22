@@ -12,14 +12,13 @@ namespace TagsCloudContainer.CloudLayouters
         private readonly ISpiral spiral;
         public IReadOnlyCollection<Rectangle> Rectangles => rectangles;
         public Point CloudCenter => new Point(cloudCenter.X, cloudCenter.Y);
-        public double EnclosingRadius => enclosingCircleRadius;
-        private double enclosingCircleRadius;
+        public double EnclosingRadius { get; private set; }
 
         public CircularCloudLayouter(Point center, ISpiral spiral)
         {
             rectangles = new List<Rectangle>();
             cloudCenter = center;
-            enclosingCircleRadius = 0;
+            EnclosingRadius = 0;
             this.spiral = spiral;
         }
 
@@ -28,7 +27,7 @@ namespace TagsCloudContainer.CloudLayouters
             CheckRectangleSizeCorrectness(rectangleSize);
             var nextRectangleCoordinates = GetNextRectangleCoordinates(rectangleSize);
             var rect = GetRectangleByCenter(nextRectangleCoordinates, rectangleSize);
-            enclosingCircleRadius = RecalculateEnclosingCircleRadius(rect);
+            EnclosingRadius = RecalculateEnclosingCircleRadius(rect);
             rectangles.Add(rect);
             return rect;
         }
@@ -109,12 +108,12 @@ namespace TagsCloudContainer.CloudLayouters
                 new Point(rect.Left, rect.Bottom),
                 new Point(rect.Right, rect.Bottom),
                 new Point(rect.Left, rect.Top),
-                new Point(rect.Right, rect.Top),
+                new Point(rect.Right, rect.Top)
             };
             var edgeDistancesToCenter = rectEdges
                 .Select(p => p.GetDistanceTo(CloudCenter))
                 .Max();
-            return Math.Max(enclosingCircleRadius, edgeDistancesToCenter);
+            return Math.Max(EnclosingRadius, edgeDistancesToCenter);
         }
     }
 }
