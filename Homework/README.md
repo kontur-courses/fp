@@ -15,5 +15,3 @@
 ![third](./Examples/picture3.png)
 
 ![fourth](./Examples/picture4.png)
-
-![failExample](./FailedTestsPictures/Rectangles_ShouldNot_Intersect.png)
