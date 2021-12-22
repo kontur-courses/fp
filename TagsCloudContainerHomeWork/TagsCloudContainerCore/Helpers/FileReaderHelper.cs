@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.Helpers;
 
@@ -8,23 +9,30 @@ namespace TagsCloudContainerCore.Helpers;
 public static class FileReaderHelper
 {
     // ReSharper disable once UnusedMember.Global
-    public static IEnumerable<string> ReadLinesFromFile(string path, bool ignoreNotFileExistExc = false)
+    public static Result<IEnumerable<string>> ReadLinesFromFile(string path, bool ignoreNotFileExistExc = false)
     {
         if (ignoreNotFileExistExc && !File.Exists(path))
         {
             return ArraySegment<string>.Empty;
         }
 
-        var result = new List<string>();
-        using var fileRider = new StreamReader(path);
-        var line = fileRider.ReadLine();
-
-        while (line is not null)
+        try
         {
-            result.Add(line);
-            line = fileRider.ReadLine();
-        }
+            var result = new List<string>();
+            using var fileRider = new StreamReader(path);
+            var line = fileRider.ReadLine();
 
-        return result;
+            while (line is not null)
+            {
+                result.Add(line);
+                line = fileRider.ReadLine();
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            return ResultExtension.Fail<IEnumerable<string>>($"{e.GetType().Name} {e.Message}");
+        }
     }
 }

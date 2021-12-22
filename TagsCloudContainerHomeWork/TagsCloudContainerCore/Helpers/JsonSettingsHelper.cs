@@ -1,6 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using TagsCloudContainerCore.LayoutSettingsDir;
+using TagsCloudContainerCore.Result;
 using static System.Text.Json.JsonSerializer;
 
 namespace TagsCloudContainerCore.Helpers;
@@ -9,39 +12,64 @@ namespace TagsCloudContainerCore.Helpers;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class JsonSettingsHelper
 {
-    public static void CreateSettingsFile()
+    public static Result<None> CreateSettingsFile()
     {
-        var settings = new LayoutSettings
-        (
-            PathToExcludedWords: null,
-            // ReSharper disable once StringLiteralTypo
-            BackgroundColor: "FFFFFF",
-            PicturesFormat: "png",
-            FontName: "Arial",
-            FontColor: "000000",
-            MinAngle: 5,
-            Step: 10,
-            PictureSize: new Size(1080, 720),
-            FontMaxSize: 70,
-            FontMinSize: 5
-        );
+        try
+        {
+            var settings = new LayoutSettings
+            (
+                PathToExcludedWords: null,
+                // ReSharper disable once StringLiteralTypo
+                BackgroundColor: "FFFFFF",
+                PicturesFormat: "png",
+                FontName: "Arial",
+                FontColor: "000000",
+                MinAngle: 5,
+                Step: 10,
+                PictureSize: new Size(1080, 720),
+                FontMaxSize: 70,
+                FontMinSize: 5
+            );
 
-        var jsonSettings = Serialize(settings);
-        using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
-        fileWriter.Write(jsonSettings);
+            var jsonSettings = Serialize(settings);
+            using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
+            fileWriter.Write(jsonSettings);
+            return ResultExtension.Ok();
+        }
+        catch (Exception e)
+        {
+            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+        }
     }
 
-    public static void SaveSettingsFile(LayoutSettings settings)
+    public static Result<None> SaveSettingsFile(LayoutSettings settings)
     {
-        var jsonSettings = Serialize(settings);
-        using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
-        fileWriter.Write(jsonSettings);
+        try
+        {
+            var jsonSettings = Serialize(settings);
+            using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
+            fileWriter.Write(jsonSettings);
+            return ResultExtension.Ok();
+        }
+        catch (Exception e)
+        {
+            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+        }
     }
 
-    public static LayoutSettings GetLayoutSettings()
+    public static Result<None> TryGetLayoutSettings(out LayoutSettings settings)
     {
-        using var fileReader = new StreamReader("./TagsCloudSettings.json");
-        var jsonSettings = fileReader.ReadToEnd();
-        return Deserialize<LayoutSettings>(jsonSettings);
+        try
+        {
+            using var fileReader = new StreamReader("./TagsCloudSettings.json");
+            var jsonSettings = fileReader.ReadToEnd();
+            settings = Deserialize<LayoutSettings>(jsonSettings);
+            return ResultExtension.Ok();
+        }
+        catch (Exception e)
+        {
+            settings = default;
+            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+        }
     }
 }

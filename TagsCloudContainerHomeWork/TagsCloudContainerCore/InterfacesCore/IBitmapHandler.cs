@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.InterfacesCore;
 
@@ -6,5 +7,5 @@ namespace TagsCloudContainerCore.InterfacesCore;
 public interface IBitmapHandler
 {
     // ReSharper disable once UnusedMember.Global
-    public void Handle(Bitmap bitmap, string outPath, string format);
+    public Result<None> Handle(Bitmap bitmap, string outPath, string format);
 }

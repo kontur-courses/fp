@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.InterfacesCore;
 
@@ -7,5 +8,5 @@ namespace TagsCloudContainerCore.InterfacesCore;
 public interface IPainter
 {
     // ReSharper disable once UnusedMember.Global
-    public Bitmap Paint(IEnumerable<TagToRender> tags);
+    public Result<Bitmap> Paint(IEnumerable<TagToRender> tags);
 }

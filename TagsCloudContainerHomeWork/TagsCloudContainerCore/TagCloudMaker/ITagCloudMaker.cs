@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.TagCloudMaker;
 
 public interface ITagCloudMaker
 {
     // ReSharper disable once UnusedMember.Global
-    public IEnumerable<TagToRender> GetTagsToRender(IEnumerable<string> tags);
+    public Result<IEnumerable<TagToRender>> GetTagsToRender(IEnumerable<string> tags);
 }

@@ -4,6 +4,7 @@ using System.Globalization;
 using TagsCloudContainerCore;
 using TagsCloudContainerCore.CircularLayouter;
 using TagsCloudContainerCore.InterfacesCore;
+using TagsCloudContainerCore.LayoutSettingsDir;
 using TagsCloudContainerCore.StatisticMaker;
 
 namespace WinCloudLayouterConsoleUI.WindowsDependencies;

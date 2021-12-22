@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using TagsCloudContainerCore.InterfacesCore;
+using TagsCloudContainerCore.Result;
 
 namespace WinCloudLayouterConsoleUI.WindowsDependencies;
 
@@ -19,22 +20,24 @@ public class WinSaver : IBitmapHandler
 
     private static readonly Regex NameRegex = new(@"(?<=[\\\/])[^\\\/]+?\.(.+)$", RegexOptions.Compiled);
 
-    public void Handle(Bitmap picture, string outPath, string format)
+    public Result<None> Handle(Bitmap picture, string outPath, string format)
     {
-        if (!NameRegex.IsMatch(outPath))
-        {
-            var name = DateTime.Now.ToString("dd-MMMM-yyyy-hh-mm") + ".png";
-
-            picture.Save((outPath + "\\" + name).Replace("\"", ""), ImageFormat.Png);
-
-            return;
-        }
+        var name = DateTime.Now.ToString("dd-MMMM-yyyy-hh-mm") + ".png";
+        outPath = NameRegex.IsMatch(outPath) ? outPath : (outPath + "\\" + name).Replace("\"", "");
 
         if (!SupportedFormats.ContainsKey(format))
         {
-            throw new FormatException("Неподдерживаемый формат изображения");
+            return ResultExtension.Fail<None>("Неподдерживаемый формат изображения");
         }
 
-        picture.Save(outPath, SupportedFormats[format]);
+        try
+        {
+            picture.Save(outPath, SupportedFormats[format]);
+            return ResultExtension.Ok();
+        }
+        catch (Exception e)
+        {
+            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+        }
     }
 }

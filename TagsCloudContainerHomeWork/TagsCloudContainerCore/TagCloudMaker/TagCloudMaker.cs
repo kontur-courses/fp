@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TagsCloudContainerCore.InterfacesCore;
+using TagsCloudContainerCore.Result;
 using TagsCloudContainerCore.StatisticMaker;
 
 namespace TagsCloudContainerCore.TagCloudMaker;
@@ -19,15 +21,17 @@ public class TagCloudMaker : ITagCloudMaker
         this.tagMaker = tagMaker;
     }
 
-    public IEnumerable<TagToRender> GetTagsToRender(IEnumerable<string> tags)
+    public Result<IEnumerable<TagToRender>> GetTagsToRender(IEnumerable<string> tags)
     {
-        statisticMaker.AddTagValues(tags);
+        var statisticResult = statisticMaker.AddTagValues(tags);
 
-        foreach (var rawTag in statisticMaker.CountedTags)
+        if (!statisticResult.IsSuccess)
         {
-            var tag = tagMaker.MakeTag(rawTag, statisticMaker);
-
-            yield return tag;
+            return ResultExtension.Fail<IEnumerable<TagToRender>>(statisticResult.Error);
         }
+
+        return ResultExtension.Ok(statisticMaker
+            .CountedTags
+            .Select(t => tagMaker.MakeTag(t, statisticMaker)));
     }
 }

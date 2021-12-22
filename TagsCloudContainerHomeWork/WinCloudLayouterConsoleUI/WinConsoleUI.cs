@@ -1,23 +1,24 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using Autofac;
 using CommandDotNet;
 using TagsCloudContainerCore.Helpers;
 using TagsCloudContainerCore.InterfacesCore;
+using TagsCloudContainerCore.LayoutSettingsDir;
+using TagsCloudContainerCore.Result;
 using TagsCloudContainerCore.TagCloudMaker;
+using WinCloudLayouterConsoleUI.DI;
 using WinCloudLayouterConsoleUI.WindowsDependencies;
 
 namespace WinCloudLayouterConsoleUI;
 
 // ReSharper disable once InconsistentNaming
 // ReSharper disable once ClassNeverInstantiated.Global
-[SuppressMessage("Interoperability", "CA1416", MessageId = "Проверка совместимости платформы")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("Performance", "CA1822", MessageId = "Пометьте члены как статические")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
-public class WinConsoleUI
+internal class WinConsoleUI
 {
     public static void Main(string[] args)
     {
@@ -29,104 +30,50 @@ public class WinConsoleUI
         new AppRunner<WinConsoleUI>().Run(args);
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     [Command("font",
         Description = "Настройка шрифта для отрисовки облака",
-        Usage = "%AppName% font --name <string>\"font name\" --size <int> --color <HEX>")]
+        Usage = "%AppName% font --name <string> --minsize <float> --maxsize <float> --color <HEX>")]
     public void SetFont(
         [Named("name", Description = "Имя используемого шрифта")]
         string? name = null,
         [Named("maxsize", Description = "Максимальный размер шрифта")]
-        int? maxSize = null,
-        // ReSharper disable once StringLiteralTypo
+        float? maxSize = null,
         [Named("minsize", Description = "Минимальный размер шрифта")]
-        int? minSize = null,
+        float? minSize = null,
         [Named("color", Description = "Цвет шрифта")]
         string? color = null
     )
     {
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-        var fontName = settings.FontName;
-        var fontColor = settings.FontColor;
-        var fontMaxSize = settings.FontMaxSize;
-        var fontMinSize = settings.FontMinSize;
-        if (!string.IsNullOrEmpty(name))
-        {
-            using var checkFont = new Font(name, 10);
-
-            if (!checkFont.Name.Equals(name))
-            {
-                throw new ArgumentException($"Шрифт {name} не установлен в системе\n{checkFont.Name}");
-            }
-
-            fontName = name;
-            Console.WriteLine($"Установлен шрифт \"{name}\"\n");
-        }
-
-        if (!string.IsNullOrEmpty(color))
-        {
-            var colorRegex = new Regex("^[0-1a-fA-F]{6}$");
-            if (!colorRegex.IsMatch(color))
-            {
-                throw new ArgumentException("Вы ввели не правильную кодировку цвета.\n" +
-                                            " Используйте представление HEX, например \"FF01AB\"");
-            }
-
-            fontColor = color.ToUpperInvariant();
-            Console.WriteLine($"Установлен цвет шрифта: \"{color}\"\n");
-        }
-
-        if (maxSize != null)
-        {
-            if (maxSize is <= 0 or > 200)
-            {
-                throw new ArgumentException("Размер шрифта должен быть больше 0 и не превышать 200");
-            }
-
-            fontMaxSize = maxSize.Value;
-            Console.WriteLine($"Установлен максимальный размер шрифта: \"{settings.FontMaxSize}\"\n");
-        }
-
-        if (minSize != null)
-        {
-            if (minSize is <= 0 or > 200)
-            {
-                throw new ArgumentException("Размер шрифта должен быть больше 0 и не превышать 200");
-            }
-
-            fontMinSize = minSize.Value;
-            Console.WriteLine($"Установлен максимальный размер шрифта: \"{settings.FontMaxSize}\"\n");
-        }
-
-        settings = settings with
-        {
-            FontMaxSize = fontMaxSize,
-            FontMinSize = fontMinSize,
-            FontColor = fontColor,
-            FontName = fontName
-        };
-
-        JsonSettingsHelper.SaveSettingsFile(settings);
-        PrintSettings();
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => DICloudLayouterContainerFactory.GetContainer(settings))
+            .TryResolve(out IFontChecker fontChecker)
+            .Then(_ => settings)
+            .SetFontColor(color)
+            .SetFontName(name, fontChecker)
+            .SetFontSize(maxSize)
+            .SetFontSize(minSize, true)
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, settings.ToString());
     }
 
 
     [Command("settings", Description = "Выводит текущие настройки")]
     public void PrintSettings()
     {
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-        Console.WriteLine("\n" + settings);
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, "\n" + settings);
     }
 
 
     [Command("reset", Description = "Сбрасывает все настройки до начальных")]
     public void ResetSettings()
     {
-        JsonSettingsHelper.CreateSettingsFile();
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("\n[Настройки сброшены]".ToUpper());
-        Console.ResetColor();
-        PrintSettings();
-        Console.ResetColor();
+        JsonSettingsHelper.CreateSettingsFile()
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, "[НАСТРОЙКИ СБРОШЕНЫ]");
     }
 
     [Command("circle", Description = "Настройки алгоритма")]
@@ -137,33 +84,13 @@ public class WinConsoleUI
         [Named("step", Description = "Шаг, на который будем увеличивать радиус. Должен быть > 0")]
         int? step = null)
     {
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-
-        if (minAngle != null)
-        {
-            if (minAngle < 0)
-            {
-                throw new ArgumentException("Угол должен быть положительным");
-            }
-
-            settings = settings with { MinAngle = minAngle.Value };
-            Console.WriteLine($"Минимальный угол установлен на {minAngle.Value} градусов");
-        }
-
-        if (step != null)
-        {
-            if (step < 0)
-            {
-                throw new ArgumentException("Размер шага должен быть положительным");
-            }
-
-            settings = settings with { Step = step.Value };
-            Console.WriteLine($"Шаг радиуса установлен на {step.Value} пикселей");
-        }
-
-        JsonSettingsHelper.SaveSettingsFile(settings);
-
-        PrintSettings();
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => settings)
+            .SetStep(step)
+            .SetMinAngle(minAngle)
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnSuccess(SuccessHandle, settings.ToString())
+            .OnFail(ExceptionHandle);
     }
 
     // ReSharper disable once StringLiteralTypo
@@ -175,20 +102,18 @@ public class WinConsoleUI
     {
         if (width <= 0 || height <= 0)
         {
-            throw new ArgumentException("Длина и ширина должны быть положительными числами");
+            ExceptionHandle("Длина и ширина должны быть положительными числами");
+            return;
         }
 
         var size = new Size(width, height);
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-
-        settings = settings with { PictureSize = size };
-
-        Console.WriteLine($"Установлен размер изображения {size}");
-
-        JsonSettingsHelper.SaveSettingsFile(settings);
-
-        PrintSettings();
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => { settings = settings with { PictureSize = size }; })
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, $"Установлен размер {size}");
     }
+
 
     [Command("background", Description = "Устанавливает цвет заднего фона")]
     public void SetBackgroundColor(
@@ -197,15 +122,17 @@ public class WinConsoleUI
         var colorRegex = new Regex("^[0-1a-fA-F]{6}$");
         if (!colorRegex.IsMatch(color))
         {
-            throw new ArgumentException("Вы ввели не правильную кодировку цвета.\n" +
-                                        " Используйте преставление HEX, например \"FF01AB\"");
+            ExceptionHandle("Вы ввели не правильную кодировку цвета.\n" +
+                            " Используйте преставление HEX, например \"FF01AB\"");
         }
 
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-        settings = settings with { BackgroundColor = color };
-        JsonSettingsHelper.SaveSettingsFile(settings);
-        Console.WriteLine($"Установлен цвет фона: \"{color}\"\n");
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => { settings = settings with { BackgroundColor = color }; })
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, $"Установлен цвет фона: \"{color}\"\n");
     }
+
 
     [Command("exclude", Description = "Добавляем файл с исключёнными словами. " +
                                       "Файл должен содержать слова записанные через пробел")]
@@ -215,14 +142,15 @@ public class WinConsoleUI
     {
         if (!File.Exists(path))
         {
-            throw new ArgumentException($"Файл {path} не существует");
+            ExceptionHandle($"Файл {path} не существует");
+            return;
         }
 
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-        settings = settings with { PathToExcludedWords = path };
-
-        JsonSettingsHelper.SaveSettingsFile(settings);
-        PrintSettings();
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => { settings = settings with { PathToExcludedWords = path }; })
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, settings.ToString());
     }
 
     [Command("format", Description = "Устанавливает формат выходного изображения")]
@@ -230,13 +158,15 @@ public class WinConsoleUI
     {
         if (!WinSaver.SupportedFormats.ContainsKey(format))
         {
-            throw new FormatException($"Неподдерживаемый формат: {format}\nПоддерживаемые: jpeg, png, bmp");
+            ExceptionHandle($"Неподдерживаемый формат: {format}\nПоддерживаемые: jpeg, png, bmp");
+            return;
         }
 
-        var settings = JsonSettingsHelper.GetLayoutSettings();
-        settings = settings with { PicturesFormat = format };
-
-        JsonSettingsHelper.SaveSettingsFile(settings);
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => { settings = settings with { PicturesFormat = format }; })
+            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .OnFail(ExceptionHandle)
+            .OnSuccess(SuccessHandle, settings.ToString());
     }
 
     [DefaultCommand]
@@ -246,23 +176,34 @@ public class WinConsoleUI
         [Named("out", Description = "Путь к файлу, куда сохранить изображение")]
         string pathOut)
     {
-        var settings = JsonSettingsHelper.GetLayoutSettings();
+        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+            .Then(_ => DICloudLayouterContainerFactory.GetContainer(settings))
+            .TryResolve(out ITagCloudMaker cloudMaker)
+            .TryResolve(out IPainter painter)
+            .TryResolve(out IBitmapHandler bitmapHandler)
+            .Then(_ => FileReaderHelper.ReadLinesFromFile(pathIn))
+            .Then(words => cloudMaker.GetTagsToRender(words))
+            .Then(tags => painter.Paint(tags))
+            .Then(pic => bitmapHandler.Handle(pic, pathOut, settings.PicturesFormat))
+            .OnSuccess(SuccessHandle, $"\nСохранено в:\n{pathOut}")
+            .OnFail(ExceptionHandle);
+    }
 
-        var container = DICloudLayouterContainerFactory.GetContainer(settings);
+    private static void ExceptionHandle(string information)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\n[ОШИБКА]\n");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(information);
+        Console.ResetColor();
+    }
 
-        var layouter = container.Resolve<ITagCloudMaker>();
-        var painter = container.Resolve<IPainter>();
-
-        var rawTags = FileReaderHelper.ReadLinesFromFile(pathIn);
-        var tagsToRender = layouter.GetTagsToRender(rawTags);
-
-        using var picture = painter.Paint(tagsToRender);
-
-        var bmpHandler = container.Resolve<IBitmapHandler>();
-        bmpHandler.Handle(picture, pathOut, settings.PicturesFormat);
-
+    private static void SuccessHandle(string information = "")
+    {
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("\n[ГОТОВО]\n");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(information);
         Console.ResetColor();
     }
 }

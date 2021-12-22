@@ -2,6 +2,8 @@
 using System.Drawing;
 using TagsCloudContainerCore;
 using TagsCloudContainerCore.InterfacesCore;
+using TagsCloudContainerCore.LayoutSettingsDir;
+using TagsCloudContainerCore.Result;
 
 namespace WinCloudLayouterConsoleUI.WindowsDependencies;
 
@@ -17,29 +19,36 @@ public class WinPainter : IPainter
         this.settings = settings;
     }
 
-    public Bitmap Paint(
+    public Result<Bitmap> Paint(
         IEnumerable<TagToRender> tags)
     {
-        var imageSize = settings.PictureSize;
-        var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
-        using var graphics = Graphics.FromImage(bitmap);
-        var bitmapCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
-
-        using (var brush = new SolidBrush(Color.FromArgb(backgroundColorHex)))
+        try
         {
-            graphics.FillRectangle(brush, new Rectangle(0, 0, imageSize.Width, imageSize.Height));
+            var imageSize = settings.PictureSize;
+            var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
+            using var graphics = Graphics.FromImage(bitmap);
+            var bitmapCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
+
+            using (var brush = new SolidBrush(Color.FromArgb(backgroundColorHex)))
+            {
+                graphics.FillRectangle(brush, new Rectangle(0, 0, imageSize.Width, imageSize.Height));
+            }
+
+            graphics.TranslateTransform(bitmapCenter.X, bitmapCenter.Y);
+
+            foreach (var tag in tags)
+            {
+                var color = Color.FromArgb(tag.ColorHex);
+                using var font = new Font(tag.FontName, tag.FontSize);
+                using var fontBrush = new SolidBrush(color);
+                graphics.DrawString(tag.Value, font, fontBrush, tag.Location);
+            }
+
+            return bitmap;
         }
-
-        graphics.TranslateTransform(bitmapCenter.X, bitmapCenter.Y);
-
-        foreach (var tag in tags)
+        catch (Exception e)
         {
-            var color = Color.FromArgb(tag.ColorHex);
-            using var font = new Font(tag.FontName, tag.FontSize);
-            using var fontBrush = new SolidBrush(color);
-            graphics.DrawString(tag.Value, font, fontBrush, tag.Location);
+            return ResultExtension.Fail<Bitmap>($"{e.GetType().Name} {e.Message}");
         }
-
-        return bitmap;
     }
 }

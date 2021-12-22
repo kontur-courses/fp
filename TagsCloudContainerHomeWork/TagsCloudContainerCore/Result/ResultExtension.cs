@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainerCore.Result;
 
-public static class Result
+public static class ResultExtension
 {
     public static Result<T> AsResult<T>(this T value)
     {
@@ -77,6 +77,16 @@ public static class Result
         return input.IsSuccess
             ? continuation(input.Value)
             : Fail<TOutput>(input.Error);
+    }
+
+    public static Result<TInput> OnSuccess<TInput>(
+        this Result<TInput> input,
+        Action<string> handleSuccess,
+        string information = ""
+    )
+    {
+        if (input.IsSuccess) handleSuccess(information);
+        return input;
     }
 
     public static Result<TInput> OnFail<TInput>(

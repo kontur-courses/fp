@@ -12,7 +12,7 @@ public readonly struct Result<T>
 
     public static implicit operator Result<T>(T v)
     {
-        return Result.Ok(v);
+        return ResultExtension.Ok(v);
     }
 
     public string Error { get; }

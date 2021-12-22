@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagsCloudContainerCore.Result;
 using TagsCloudContainerCore.WordFilter;
 
 namespace TagsCloudContainerCore.StatisticMaker;
@@ -46,12 +47,22 @@ public class TagStatisticMaker : IStatisticMaker
         return orderedPairs[^1];
     }
 
-    public void AddTagValues(IEnumerable<string> words)
+    public Result<None> AddTagValues(IEnumerable<string> words)
     {
-        foreach (var tag in wordSelector.SelectWords(words))
+        // ReSharper disable once PossibleMultipleEnumeration
+        var selectWordsRes = wordSelector.SelectWords(words);
+
+        if (!selectWordsRes.IsSuccess)
+        {
+            return ResultExtension.Fail<None>(selectWordsRes.Error);
+        }
+
+        foreach (var tag in selectWordsRes.Value)
         {
             AddTag(tag);
         }
+
+        return ResultExtension.Ok();
     }
 
     private void AddTag(string tag)

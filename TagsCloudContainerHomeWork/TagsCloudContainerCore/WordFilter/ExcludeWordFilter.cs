@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.WordFilter;
 
@@ -13,7 +15,16 @@ public class ExcludeWordFilter : IWordSelector
         excludedWords.UnionWith(excludeWords.Select(word => word.ToLowerInvariant()));
     }
 
-    public IEnumerable<string> SelectWords(IEnumerable<string> words)
-        => words.Select(word => word.ToLowerInvariant())
-            .Where(word => !excludedWords.Contains(word));
+    public Result<IEnumerable<string>> SelectWords(IEnumerable<string> words)
+    {
+        try
+        {
+            return ResultExtension.Ok(words.Select(word => word.ToLowerInvariant())
+                .Where(word => !excludedWords.Contains(word)));
+        }
+        catch (ArgumentNullException e)
+        {
+            return ResultExtension.Fail<IEnumerable<string>>($"{e.Message}");
+        }
+    }
 }

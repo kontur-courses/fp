@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.WordFilter;
 
 public interface IWordSelector
 {
-    public IEnumerable<string> SelectWords(IEnumerable<string> words);
+    public Result<IEnumerable<string>> SelectWords(IEnumerable<string> words);
 }

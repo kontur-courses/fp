@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 
-namespace TagsCloudContainerCore;
+namespace TagsCloudContainerCore.LayoutSettingsDir;
 
 [Serializable]
 public record LayoutSettings(string FontName,
     float FontMaxSize,
-    int FontMinSize,
+    float FontMinSize,
     int Step,
     Size PictureSize,
     string BackgroundColor,
