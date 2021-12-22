@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Infrastructure.Text;
 
 namespace TagsCloudVisualization.Default

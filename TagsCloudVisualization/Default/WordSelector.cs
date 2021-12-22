@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Infrastructure.TextAnalysing;
 
 namespace TagsCloudVisualization.Default
