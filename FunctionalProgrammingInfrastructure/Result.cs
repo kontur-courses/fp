@@ -116,6 +116,13 @@ namespace FunctionalProgrammingInfrastructure
             return input;
         }
 
+        public static Result<TInput> InAnyCase<TInput>(this Result<TInput> input,
+            Action action)
+        {
+            action();
+            return input;
+        } 
+
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError)
@@ -139,6 +146,44 @@ namespace FunctionalProgrammingInfrastructure
             
             input.RefineError(errorMessage);
             throw new Exception(input.Error);
+        }
+
+        public static Result<TInput> InitVariable<TInput, TVariable>(this Result<TInput> input,
+            Func<TVariable> func,
+            out TVariable variable)
+        {
+            variable = default;
+            
+            if (!input.IsSuccess)
+                return input;
+            
+            try
+            {
+                variable = func();
+                return input;
+            }
+            catch (Exception e)
+            {
+                return Fail<TInput>(e.Message);
+            }
+        }
+        
+        public static Result<TInput> InitVariable<TInput, TVariable>(this Result<TInput> input,
+            Func<Result<TVariable>> func,
+            out TVariable variable)
+        {
+            variable = default;
+
+            if (!input.IsSuccess)
+                return input;
+            
+            var funcResult = func();
+            if (!funcResult.IsSuccess)
+                return Fail<TInput>(funcResult.Error);
+            
+            variable = funcResult.GetValueOrThrow();
+            return input;
+
         }
     }
 }

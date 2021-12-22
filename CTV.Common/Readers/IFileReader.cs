@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common.Readers
 {
     public interface IFileReader
     {
-        public string ReadToEnd(Stream inputSteam);
+        public Result<string> ReadToEnd(Stream inputSteam);
     }
 }

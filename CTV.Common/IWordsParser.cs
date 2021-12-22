@@ -1,7 +1,9 @@
-﻿namespace CTV.Common
+﻿using FunctionalProgrammingInfrastructure;
+
+namespace CTV.Common
 {
     public interface IWordsParser
     {
-        public string[] Parse(string fullString);
+        public Result<string[]> Parse(string fullString);
     }
 }

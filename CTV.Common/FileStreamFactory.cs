@@ -1,18 +1,22 @@
 ﻿using System.IO;
-using CTV.Common;
+using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common
 {
     public class FileStreamFactory : IFileStreamFactory
     {
-        public Stream OpenOnWriting(string path)
+        public Result<Stream> OpenOnWriting(string path)
         {
-            return new FileStream(path, FileMode.OpenOrCreate);
+            return Result
+                .Of(() => new FileStream(path, FileMode.OpenOrCreate))
+                .Then(stream => stream as Stream);
         }
 
-        public Stream OpenOnReading(string path)
+        public Result<Stream> OpenOnReading(string path)
         {
-            return new FileStream(path, FileMode.Open);
+            return Result
+                .Of(() => new FileStream(path, FileMode.Open))
+                .Then(fileStream => fileStream as Stream);
         }
     }
 }

@@ -1,12 +1,15 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace CTV.Common
 {
     public static class SizeFExtensions
     {
-        public static Size ToRoundSize(this SizeF sizeF)
+        public static Size ToCeilSize(this SizeF sizeF)
         {
-            return Size.Round(sizeF);
+            return new Size(
+                (int) Math.Ceiling(sizeF.Width),
+                (int ) Math.Ceiling(sizeF.Height));
         }
     }
 }

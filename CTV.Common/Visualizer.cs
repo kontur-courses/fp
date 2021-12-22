@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using CTV.Common.Layouters;
+using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common
 {
@@ -20,50 +22,64 @@ namespace CTV.Common
             this.layouter = layouter;
         }
 
-        public Bitmap Visualize(string[] words)
+        public Result<Bitmap> Visualize(string[] words)
         {
-            var imageSize = settings.ImageSize;
-            using var bmp = new Bitmap(imageSize.Width, imageSize.Height);
-            using var g = Graphics.FromImage(bmp);
-            var sizedWords = wordSizer.Convert(
-                words,
-                settings.TextFont,
-                (word, font) => Size.Round(g.MeasureString(word, font)));
-            
-            DrawBackground(g);
-            DrawWords(sizedWords, g);
-            return new Bitmap(bmp, bmp.Size);
+            return Result.Ok()
+                .InitVariable(() => settings.ImageSize, out var imageSize)
+                .InitVariable(() => new Bitmap(imageSize.Width, imageSize.Height), out var bmp)
+                .InitVariable(() => Graphics.FromImage(bmp), out var g)
+                .Then(_ => DrawBackground(g))
+                .Then(_ => wordSizer.Convert(
+                    words,
+                    settings.TextFont,
+                    (word, font) => g.MeasureString(word, font).ToCeilSize()))
+                .Then(sizedWords => DrawWords(sizedWords, imageSize, g))
+                .Then(_ => new Bitmap(bmp, bmp.Size));
         }
 
-        private void DrawWords(List<SizedWord> sizedWords, Graphics g)
+        private Result<Graphics> DrawWords(List<SizedWord> sizedWords, Size imageSize, Graphics g)
         {
             layouter.Center = (Point) (settings.ImageSize / 2);
 
-            foreach (var sizedWord in sizedWords)
-            {
-                var wordLocation = layouter.PutNextRectangle(sizedWord.WordSize);
-                DrawStroke(wordLocation, g);
-                DrawWord(sizedWord, wordLocation, g);
-            }
+            return sizedWords.OrderBy(x => x.ScaledFont.SizeInPoints)
+                .Aggregate(Result.Ok(g),
+                    (current, word) => current
+                        .InitVariable(() => layouter.PutNextRectangle(word.WordSize), out var wordLocation)
+                        .Then(_ => ValidateWordIsInsideImageBorders(imageSize, wordLocation))
+                        .Then(_ => DrawStroke(wordLocation, g))
+                        .Then(graphics => DrawWord(word, wordLocation, graphics)));
         }
 
-        private void DrawWord(SizedWord sizedWord, Rectangle wordLocation, Graphics g)
+        private Result<Graphics> DrawWord(SizedWord sizedWord, Rectangle wordLocation, Graphics g)
         {
             var textBrush = new SolidBrush(settings.TextColor);
             var (word, font, _) = sizedWord;
-            g.DrawString(word, font, textBrush, wordLocation);
-        }
-        
-        private void DrawStroke(Rectangle wordLocation, Graphics g)
-        {
-            var strokePen = new Pen(settings.StrokeColor);
-            g.DrawRectangle(strokePen, wordLocation);
+            return Result
+                .OfAction(() => g.DrawString(word, font, textBrush, wordLocation))
+                .Then(_ => g);
         }
 
-        private void DrawBackground(Graphics g)
+        private Result<Graphics> DrawStroke(Rectangle wordLocation, Graphics g)
         {
-            g.FillRectangle(new SolidBrush(settings.BackgroundColor),
-                new Rectangle(Point.Empty, settings.ImageSize));
+            return Result.Ok(new Pen(settings.StrokeColor))
+                .Then(pen => g.DrawRectangle(pen, wordLocation))
+                .Then(_ => g);
+        }
+
+        private Result<Graphics> DrawBackground(Graphics g)
+        {
+            return Result.OfAction(() => g.FillRectangle(new SolidBrush(settings.BackgroundColor),
+                    new Rectangle(Point.Empty, settings.ImageSize)))
+                .Then(_ => g);
+        }
+
+        private static Result<None> ValidateWordIsInsideImageBorders(Size imageSize, Rectangle wordLocation)
+        {
+            var imageSizeAsRectangle = new Rectangle(new Point(), imageSize);
+            return imageSizeAsRectangle.Contains(wordLocation)
+                ? Result.Ok()
+                : Result.Fail<None>("Part of word was drawn outside the image");
+
         }
     }
 }
