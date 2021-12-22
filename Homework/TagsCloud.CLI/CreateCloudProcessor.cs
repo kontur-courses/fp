@@ -27,7 +27,7 @@ namespace TagsCloud.Words
 
                 return result.IsSuccess ? 0 : 1;
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 return 1;
             }
@@ -45,6 +45,7 @@ namespace TagsCloud.Words
             builder.Register(ctx => new FileSystemTextProvider(settings.InputWordsFile,
                     ctx.Resolve<IEnumerable<IFileReader>>()))
                 .As<ITextProvider>();
+
             RegisterBoringWordsFilter(builder, settings);
 
             builder.RegisterType<CliTagsCloudVisualizer>().AsSelf();
@@ -57,8 +58,17 @@ namespace TagsCloud.Words
             if (settings.BoringWordsFile == null)
                 builder.Register(_ => new BoringWordsFilter()).As<IWordsFilter>();
             else
-                builder.Register(ctx => new BoringWordsFilter(new FileSystemTextProvider(settings.BoringWordsFile,
-                    ctx.Resolve<IEnumerable<IFileReader>>()))).As<IWordsFilter>();
+                builder.Register(ctx =>
+                    {
+                        var fileReader = new FileSystemTextProvider(settings.BoringWordsFile,
+                            ctx.Resolve<IEnumerable<IFileReader>>());
+
+                        var boringWords = fileReader.Read()
+                            .Then(x => new BoringWordsFilter(x));
+
+                        return boringWords.IsSuccess ? boringWords.GetValueOrThrow() : new BoringWordsFilter();
+                    }
+                ).As<IWordsFilter>().SingleInstance();
         }
     }
 }

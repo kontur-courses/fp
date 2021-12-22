@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.TextProviders;
 
 namespace TagsCloud.Visualization.WordsFilters
 {
@@ -19,20 +17,13 @@ namespace TagsCloud.Visualization.WordsFilters
 
         private readonly HashSet<string> boringWords;
 
-        public BoringWordsFilter() : this(null)
-        {
-        }
+        public BoringWordsFilter() => boringWords = baseBoringWords;
 
-        public BoringWordsFilter(ITextProvider textProvider)
+        public BoringWordsFilter(string text)
         {
-            if (textProvider == null)
-                boringWords = baseBoringWords;
-            else
-                boringWords = textProvider.Read()
-                    .RefineError("Can not read boring words file")
-                    .GetValueOrThrow()
-                    .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)
-                    .ToHashSet();
+            boringWords = text
+                .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)
+                .ToHashSet();
         }
 
         public bool IsWordValid(string word) => !boringWords.Contains(word);
