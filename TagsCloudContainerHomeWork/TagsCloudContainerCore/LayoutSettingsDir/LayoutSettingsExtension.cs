@@ -16,14 +16,15 @@ public static class LayoutSettingsExtension
             return settings;
         }
 
-        var colorRegex = new Regex("^[0-1a-fA-F]{6}$");
+        var colorRegex = new Regex("^[0-9a-fA-F]{6}$");
+
         if (!colorRegex.IsMatch(fontColor))
         {
             return ResultExtension.Fail<LayoutSettings>("Вы ввели не правильную кодировку цвета.\n" +
                                                         " Используйте представление HEX, например \"FF01AB\"");
         }
 
-        return settings.GetValueOrThrow() with { FontColor = fontColor };
+        return ResultExtension.Ok(settings.GetValueOrThrow() with { FontColor = fontColor });
     }
 
     public static Result<LayoutSettings> SetFontSize(this Result<LayoutSettings> settings,
@@ -54,12 +55,9 @@ public static class LayoutSettingsExtension
             return settings;
         }
 
-        if (!fontChecker.IsFontInstalled(name))
-        {
-            return ResultExtension.Fail<LayoutSettings>($"Шрифт \"{name}\" не установлен в системе");
-        }
-
-        return settings.GetValueOrThrow() with { FontName = name };
+        return !fontChecker.IsFontInstalled(name)
+            ? ResultExtension.Fail<LayoutSettings>($"Шрифт \"{name}\" не установлен в системе")
+            : ResultExtension.Ok(settings.GetValueOrThrow() with { FontName = name });
     }
 
     public static Result<LayoutSettings> SetMinAngle(this Result<LayoutSettings> settings, float? angle)
@@ -69,12 +67,9 @@ public static class LayoutSettingsExtension
             return settings;
         }
 
-        if (angle <= 0)
-        {
-            return ResultExtension.Fail<LayoutSettings>("Угол должен быть больше 0");
-        }
-
-        return settings.GetValueOrThrow() with { MinAngle = angle.Value };
+        return angle <= 0
+            ? ResultExtension.Fail<LayoutSettings>("Угол должен быть больше 0")
+            : ResultExtension.Ok(settings.GetValueOrThrow() with { MinAngle = angle.Value });
     }
 
     public static Result<LayoutSettings> SetStep(this Result<LayoutSettings> settings, int? step)
@@ -84,11 +79,8 @@ public static class LayoutSettingsExtension
             return settings;
         }
 
-        if (step <= 0)
-        {
-            return ResultExtension.Fail<LayoutSettings>("Шаг должен быть положительным числом");
-        }
-
-        return settings.GetValueOrThrow() with { Step = step.Value };
+        return step <= 0
+            ? ResultExtension.Fail<LayoutSettings>("Шаг должен быть положительным числом")
+            : ResultExtension.Ok(settings.GetValueOrThrow() with { Step = step.Value });
     }
 }

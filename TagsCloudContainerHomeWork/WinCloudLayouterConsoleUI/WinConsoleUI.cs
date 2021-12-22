@@ -53,9 +53,9 @@ internal class WinConsoleUI
             .SetFontName(name, fontChecker)
             .SetFontSize(maxSize)
             .SetFontSize(minSize, true)
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+            .SaveSettingsFile()
             .OnFail(ExceptionHandle)
-            .OnSuccess(SuccessHandle, settings.ToString());
+            .OnSuccess(SuccessHandle);
     }
 
 
@@ -88,8 +88,8 @@ internal class WinConsoleUI
             .Then(_ => settings)
             .SetStep(step)
             .SetMinAngle(minAngle)
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
-            .OnSuccess(SuccessHandle, settings.ToString())
+            .SaveSettingsFile()
+            .OnSuccess(SuccessHandle)
             .OnFail(ExceptionHandle);
     }
 
@@ -150,7 +150,7 @@ internal class WinConsoleUI
             .Then(_ => { settings = settings with { PathToExcludedWords = path }; })
             .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
             .OnFail(ExceptionHandle)
-            .OnSuccess(SuccessHandle, settings.ToString());
+            .OnSuccess(SuccessHandle);
     }
 
     [Command("format", Description = "Устанавливает формат выходного изображения")]
@@ -166,7 +166,7 @@ internal class WinConsoleUI
             .Then(_ => { settings = settings with { PicturesFormat = format }; })
             .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
             .OnFail(ExceptionHandle)
-            .OnSuccess(SuccessHandle, settings.ToString());
+            .OnSuccess(SuccessHandle);
     }
 
     [DefaultCommand]

@@ -12,7 +12,7 @@ public class TagStatisticMaker : IStatisticMaker
 
     private readonly IWordSelector wordSelector;
 
-    private IList<KeyValuePair<string, int>> orderedPairs;
+    private IList<KeyValuePair<string, int>> orderedPairs = new List<KeyValuePair<string, int>>();
 
     private bool isChangeTags;
 

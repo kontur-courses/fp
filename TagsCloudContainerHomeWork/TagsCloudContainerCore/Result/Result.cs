@@ -4,7 +4,7 @@ namespace TagsCloudContainerCore.Result;
 
 public readonly struct Result<T>
 {
-    public Result(string error, T value = default(T))
+    public Result(string error, T value)
     {
         Error = error;
         Value = value;

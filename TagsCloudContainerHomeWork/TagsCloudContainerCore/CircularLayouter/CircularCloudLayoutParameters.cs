@@ -24,6 +24,7 @@ public class CircularCloudLayoutParameters
         this.minAngle = minAngle;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public CircularCloudLayoutParameters(LayoutSettings settings)
     {
         minAngle = settings.MinAngle;
@@ -39,7 +40,11 @@ public class CircularCloudLayoutParameters
     private int stepCount;
 
     public int Radius { get; private set; }
+
+    // ReSharper disable once MemberCanBePrivate.Global
     public float StepAngle { get; private set; }
+
+    // ReSharper disable once MemberCanBePrivate.Global
     public float NextAngle => StepAngle * NextStep;
     public float Angle => stepCount * StepAngle;
 

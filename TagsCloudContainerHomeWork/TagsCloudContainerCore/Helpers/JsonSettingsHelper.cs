@@ -12,13 +12,13 @@ namespace TagsCloudContainerCore.Helpers;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class JsonSettingsHelper
 {
-    public static Result<None> CreateSettingsFile()
+    public static Result<LayoutSettings> CreateSettingsFile()
     {
         try
         {
             var settings = new LayoutSettings
             (
-                PathToExcludedWords: null,
+                PathToExcludedWords: "",
                 // ReSharper disable once StringLiteralTypo
                 BackgroundColor: "FFFFFF",
                 PicturesFormat: "png",
@@ -34,42 +34,50 @@ public static class JsonSettingsHelper
             var jsonSettings = Serialize(settings);
             using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
             fileWriter.Write(jsonSettings);
-            return ResultExtension.Ok();
+            return settings;
         }
         catch (Exception e)
         {
-            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+            return ResultExtension.Fail<LayoutSettings>($"{e.GetType().Name} {e.Message}");
         }
     }
 
-    public static Result<None> SaveSettingsFile(LayoutSettings settings)
+    public static Result<LayoutSettings> SaveSettingsFile(this Result<LayoutSettings> settings)
     {
+        if (!settings.IsSuccess)
+        {
+            return ResultExtension.Fail<LayoutSettings>(settings.Error);
+        }
+
         try
         {
-            var jsonSettings = Serialize(settings);
+            var jsonSettings = Serialize(settings.Value);
             using var fileWriter = new StreamWriter("./TagsCloudSettings.json");
             fileWriter.Write(jsonSettings);
-            return ResultExtension.Ok();
+            return settings;
         }
         catch (Exception e)
         {
-            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+            return ResultExtension.Fail<LayoutSettings>($"{e.GetType().Name} {e.Message}");
         }
     }
 
-    public static Result<None> TryGetLayoutSettings(out LayoutSettings settings)
+    public static Result<LayoutSettings> TryGetLayoutSettings(out LayoutSettings settings)
     {
         try
         {
             using var fileReader = new StreamReader("./TagsCloudSettings.json");
             var jsonSettings = fileReader.ReadToEnd();
-            settings = Deserialize<LayoutSettings>(jsonSettings);
-            return ResultExtension.Ok();
+
+            settings = Deserialize<LayoutSettings>(jsonSettings)
+                       ?? throw new Exception("Ошибка при получении настроек");
+
+            return settings;
         }
         catch (Exception e)
         {
-            settings = default;
-            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+            settings = default!;
+            return ResultExtension.Fail<LayoutSettings>($"{e.GetType().Name} {e.Message}");
         }
     }
 }

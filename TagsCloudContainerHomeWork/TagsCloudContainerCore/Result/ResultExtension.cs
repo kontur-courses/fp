@@ -8,17 +8,17 @@ public static class ResultExtension
 {
     public static Result<T> Ok<T>(T value)
     {
-        return new Result<T>(null, value);
+        return new Result<T>(null!, value);
     }
 
     public static Result<None> Ok()
     {
-        return Ok<None>(null);
+        return Ok<None>(null!);
     }
 
     public static Result<T> Fail<T>(string e)
     {
-        return new Result<T>(e);
+        return new Result<T>(e, default(T)!);
     }
 
     public static Result<TOutput> Then<TInput, TOutput>(
@@ -72,7 +72,7 @@ public static class ResultExtension
         return input;
     }
 
-    private static Result<T> Of<T>(Func<T> f, string error = null)
+    private static Result<T> Of<T>(Func<T> f, string? error = null)
     {
         try
         {
@@ -84,7 +84,7 @@ public static class ResultExtension
         }
     }
 
-    private static Result<None> OfAction(Action f, string error = null)
+    private static Result<None> OfAction(Action f, string? error = null)
     {
         try
         {

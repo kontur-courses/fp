@@ -13,12 +13,13 @@ public class CircularCloudLayouter : ILayouter
     private readonly HashSet<Point> usedPoints = new();
     private readonly CircularCloudLayoutParameters layoutParameters;
 
-    public CircularCloudLayouter(Point center, CircularCloudLayoutParameters parameters = null)
+    public CircularCloudLayouter(Point center, CircularCloudLayoutParameters? parameters = null)
     {
         Center = center;
         layoutParameters = parameters ?? new CircularCloudLayoutParameters();
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public Point Center { get; }
 
     public IReadOnlyList<Rectangle> GetRectangles()
