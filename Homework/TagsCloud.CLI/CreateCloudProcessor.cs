@@ -5,7 +5,7 @@ using TagsCloud.Visualization;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.TextProviders;
 using TagsCloud.Visualization.TextProviders.FileReaders;
-using TagsCloud.Visualization.WordsFilter;
+using TagsCloud.Visualization.WordsFilters;
 using TagsCloud.Words.Options;
 
 namespace TagsCloud.Words

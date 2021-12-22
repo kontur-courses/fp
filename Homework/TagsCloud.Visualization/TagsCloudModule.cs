@@ -7,6 +7,7 @@ using TagsCloud.Visualization.ImagesSavers;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
 using TagsCloud.Visualization.PointGenerator;
 using TagsCloud.Visualization.TagsCloudVisualizers;
+using TagsCloud.Visualization.WordsFilters;
 using TagsCloud.Visualization.WordsParsers;
 using TagsCloud.Visualization.WordsSizeServices;
 
@@ -23,6 +24,7 @@ namespace TagsCloud.Visualization
         {
             builder.RegisterType<WordsService>().As<IWordsService>();
 
+            builder.RegisterType<WordLengthFilter>().As<IWordsFilter>();
             builder.RegisterType<WordsParser>().As<IWordsParser>();
 
             builder.Register(_ => new FontFactory.FontFactory(settings.FontSettings)).As<IFontFactory>();

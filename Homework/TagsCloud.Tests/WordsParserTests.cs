@@ -3,7 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Models;
-using TagsCloud.Visualization.WordsFilter;
+using TagsCloud.Visualization.WordsFilters;
 using TagsCloud.Visualization.WordsParsers;
 
 namespace TagsCloud.Tests

@@ -4,7 +4,7 @@ using System.Linq;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.TextProviders;
 
-namespace TagsCloud.Visualization.WordsFilter
+namespace TagsCloud.Visualization.WordsFilters
 {
     public class BoringWordsFilter : IWordsFilter
     {

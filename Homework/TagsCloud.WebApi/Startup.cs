@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
-using TagsCloud.Visualization.WordsFilter;
+using TagsCloud.Visualization.WordsFilters;
 
 namespace TagsCloud.WebApi
 {

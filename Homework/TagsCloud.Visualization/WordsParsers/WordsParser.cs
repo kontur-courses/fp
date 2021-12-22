@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.Utils;
-using TagsCloud.Visualization.WordsFilter;
+using TagsCloud.Visualization.WordsFilters;
 
 namespace TagsCloud.Visualization.WordsParsers
 {
@@ -25,7 +25,7 @@ namespace TagsCloud.Visualization.WordsParsers
         private IEnumerable<Word> ConstructWords(string text)
         {
             return Regex.Split(text.ToLower(), WordsPattern)
-                .Where(word => word.Length > 1 && wordsFilters.All(x => x.IsWordValid(word)))
+                .Where(word => wordsFilters.All(x => x.IsWordValid(word)))
                 .GroupBy(word => word)
                 .Select(x => new Word(x.Key, x.Count()));
         }

@@ -1,4 +1,4 @@
-﻿namespace TagsCloud.Visualization.WordsFilter
+﻿namespace TagsCloud.Visualization.WordsFilters
 {
     public interface IWordsFilter
     {
