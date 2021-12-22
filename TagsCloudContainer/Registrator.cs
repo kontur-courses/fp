@@ -29,7 +29,7 @@ namespace TagsCloudContainer
         private void RegisterLibraryDependencies()
         {
             builder.RegisterType<Cloud>()
-                .As<ICloud<ITag>>()
+                .As<ICloud>()
                 .WithParameter("center", new PointF());
 
             builder.RegisterType<Spiral>()
@@ -45,7 +45,7 @@ namespace TagsCloudContainer
                 .As<ICloudLayouter>();
 
             builder.RegisterType<TagsVisualizator>()
-                .As<IVisualizator<ITag>>();
+                .As<IVisualizator>();
 
             builder.RegisterType<TagsVisualizatorSettings>()
                 .As<IVisualizatorSettings>();

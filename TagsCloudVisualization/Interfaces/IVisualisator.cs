@@ -1,7 +1,7 @@
 ﻿namespace TagsCloudVisualization.Interfaces
 {
-    public interface IVisualizator<TElement>
+    public interface IVisualizator
     {
-        public void Visualize(IVisualizatorSettings settings, ICloud<TElement> cloud);
+        public void Visualize(IVisualizatorSettings settings, ICloud cloud);
     }
 }

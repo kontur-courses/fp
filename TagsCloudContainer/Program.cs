@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using Autofac;
-using TagsCloudContainer.Common;
 using TagsCloudContainer.Common.Result;
-using TagsCloudContainer.Extensions;
-using TagsCloudContainer.Layouters;
-using TagsCloudContainer.Painting;
-using TagsCloudContainer.Preprocessors;
 using TagsCloudContainer.UI;
 using TagsCloudContainer.UI.Menu;
-using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudContainer
 {
@@ -25,61 +17,7 @@ namespace TagsCloudContainer
             new Registrator(builder).RegisterDependencies();
             SetUpUi(preContainer);
         }
-
-        internal static void Visualize(IContainer container, IResultHandler handler)
-        {
-            var minHeight = 12;
-            var maxScale = 10;
-            using (var scope = container.BeginLifetimeScope())
-            {
-                var reader = scope.Resolve<TagReader>();
-                var parser = scope.Resolve<WordsCountParser>();
-                var preprocessor = scope.Resolve<TagsPreprocessor>();
-                var layouter = scope.Resolve<TagLayouter>();
-                var painter = scope.Resolve<TagPainter>();
-                var visualizator = scope.Resolve<IVisualizator<ITag>>();
-                var settings = ResolveSettings(scope);
-
-                Result.Of(() => reader.Read(AppSettings.TextFilename), 
-                        "File not exist, or unavailable")
-                    .Then(text => parser.Parse(text))
-                    .Then(tags => preprocessor.Process(tags))
-                    .Then(tags => layouter.PlaceTagsInCloud(tags, minHeight, maxScale))
-                    .Then(cloud =>
-                    {                        
-                        painter.SetPalettes(cloud.Elements);
-                        return cloud;
-                    })
-                    .Then(cloud => visualizator.Visualize(settings, cloud))
-                    .RefineError("Can`t end visualizing tags")
-                    .OnFail(handler.AddHandledText);
-            }
-        }
-
-        private static IVisualizatorSettings ResolveSettings(ILifetimeScope scope)
-        {
-            var settingParams = GetVisualizatorSettingsParams()
-                .ToContainerParameters();
-            return scope.Resolve<IVisualizatorSettings>(settingParams);
-        }
-
-        private static Dictionary<string, object> GetVisualizatorSettingsParams()
-        {
-            var dict = new Dictionary<string, object>();
-            dict["filename"] = AppSettings.ImageFilename;
-            if(AppSettings.ImageSize != new Size())
-                dict["bitmapSize"] = AppSettings.ImageSize;
-            if (AppSettings.BackgroundColor != new Color())
-                dict["backgroundColor"] = AppSettings.BackgroundColor;
-            if (AppSettings.FontFamily != null)
-                dict["family"] = AppSettings.FontFamily;
-            if (AppSettings.MinMargin != 0)
-                dict["minMargin"] = AppSettings.MinMargin;
-            if (AppSettings.FillTags)
-                dict["fillTags"] = AppSettings.FillTags;
-            return dict;
-        }
-
+        
         private static ContainerBuilder RegisterDependensiesInPreContainer(ContainerBuilder builder)
         {
             var preBuilder = new ContainerBuilder();

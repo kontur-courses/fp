@@ -12,5 +12,8 @@ namespace TagsCloudContainer
         public static Color BackgroundColor { get; set; }
         public static float MinMargin { get; set; }
         public static bool FillTags { get; set; }
+
+        public static int MinTagHeight { get; set; } = 12;
+        public static float MaxTagSizeScale { get; set; } = 10;
     }
 }

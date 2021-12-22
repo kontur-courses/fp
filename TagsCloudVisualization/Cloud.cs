@@ -7,7 +7,7 @@ using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudVisualization
 {
-    public class Cloud : ICloud<ITag>
+    public class Cloud : ICloud
     {
         private readonly List<ITag> elements;
         public IReadOnlyList<ITag> Elements => elements;
@@ -19,7 +19,7 @@ namespace TagsCloudVisualization
             elements = new List<ITag>();
         }
 
-        void ICloud<ITag>.AddTag(ITag tag) 
+        void ICloud.AddTag(ITag tag) 
             => elements.Add(tag);
 
         public RectangleF GetCloudBoundingRectangle()

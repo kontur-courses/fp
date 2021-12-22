@@ -9,10 +9,10 @@ namespace TagsCloudVisualization
 {
     public class CircularCloudLayouter : ICloudLayouter
     {
-        public ICloud<ITag> Cloud { get; }
+        public ICloud Cloud { get; }
         private readonly ISpiral spiral;
         
-        public CircularCloudLayouter(ICloud<ITag> cloud, ISpiral spiral)
+        public CircularCloudLayouter(ICloud cloud, ISpiral spiral)
         {
             Cloud = cloud;
             this.spiral = spiral;

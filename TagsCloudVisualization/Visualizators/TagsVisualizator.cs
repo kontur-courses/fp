@@ -5,29 +5,29 @@ using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudVisualization.Visualizators
 {
-    public class TagsVisualizator : IVisualizator<ITag>
+    public class TagsVisualizator : IVisualizator
     {
-        public void Visualize(IVisualizatorSettings settings, ICloud<ITag> cloud)
+        public void Visualize(IVisualizatorSettings settings, ICloud cloud)
         {
             var bitmapSize = settings.BitmapSize;
             var bitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
-            var gr = Graphics.FromImage(bitmap);
+            var graphics = Graphics.FromImage(bitmap);
             var k = CalculateScaleModifier(cloud, bitmapSize, settings.MinMargin);
 
-            gr.TranslateTransform(bitmapSize.Width / 2, bitmapSize.Height / 2);
-            gr.ScaleTransform(k, k);
+            graphics.TranslateTransform(bitmapSize.Width / 2, bitmapSize.Height / 2);
+            graphics.ScaleTransform(k, k);
 
-            gr.Clear(settings.BackgroundColor);
+            graphics.Clear(settings.BackgroundColor);
 
             if (settings.FillTags)
-                DrawTagRectangles(cloud, gr);
-            VisualizeCenter(cloud, gr);
-            DrawTagTexts(settings, cloud, gr);
+                DrawTagRectangles(cloud, graphics);
+            VisualizeCenter(cloud, graphics);
+            DrawTagTexts(settings, cloud, graphics);
 
             bitmap.Save(settings.Filename);
         }
 
-        private float CalculateScaleModifier(ICloud<ITag> cloud, Size bitmapSize, float minMargin)
+        private float CalculateScaleModifier(ICloud cloud, Size bitmapSize, float minMargin)
         {
             var cloudBoundingRectangle = cloud.GetCloudBoundingRectangle();
             var imageBoundingRectangle = RectangleFExtensions
@@ -41,36 +41,36 @@ namespace TagsCloudVisualization.Visualizators
                 bitmapSize.Height / (bitmapSize.Height + 2 * offsetHeight)));
         }
 
-        private void VisualizeCenter(ICloud<ITag> cloud,Graphics gr)
+        private void VisualizeCenter(ICloud cloud,Graphics graphics)
         {
             var brush = new SolidBrush(Color.Gray);
             var centerRect = RectangleFExtensions
                 .GetRectangleByCenter(new Size(8, 8), cloud.Center);
-            gr.FillEllipse(brush, centerRect);
+            graphics.FillEllipse(brush, centerRect);
         }
 
-        private void DrawTagRectangles(ICloud<ITag> cloud, Graphics gr)
+        private void DrawTagRectangles(ICloud cloud, Graphics graphics)
         {
             foreach (var tag in cloud.Elements) 
-                gr.FillRectangle(tag.Palette.BackgroundColor, tag.Layout);
+                graphics.FillRectangle(tag.Palette.BackgroundColor, tag.Layout);
         }
 
-        private void DrawTagTexts(IVisualizatorSettings settings, ICloud<ITag> cloud, Graphics gr)
+        private void DrawTagTexts(IVisualizatorSettings settings, ICloud cloud, Graphics graphics)
         {
             foreach (var tag in cloud.Elements)
             {
                 var font = new Font(settings.FontFamily, 12);
-                font = GetScaledFont(tag.Text, font, tag.Layout.Size, gr);
+                font = GetScaledFont(tag.Text, font, tag.Layout.Size, graphics);
                 var format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
                 format.Alignment = StringAlignment.Center;
-                gr.DrawString(tag.Text, font, tag.Palette.TextColor, tag.Layout, format);
+                graphics.DrawString(tag.Text, font, tag.Palette.TextColor, tag.Layout, format);
             }
         }
 
-        private Font GetScaledFont(string text, Font font, SizeF layout, Graphics gr)
+        private Font GetScaledFont(string text, Font font, SizeF layout, Graphics graphics)
         {
-            var size = gr.MeasureString(text, font);
+            var size = graphics.MeasureString(text, font);
             var width = Math.Min(layout.Width, size.Width);
             var height = Math.Min(layout.Height, size.Height);
             var fontSizeScale = Math.Min(layout.Width / width, layout.Height / height);

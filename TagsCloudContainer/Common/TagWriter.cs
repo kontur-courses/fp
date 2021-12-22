@@ -1,6 +1,6 @@
 ﻿namespace TagsCloudContainer.Common
 {
-    public class TagWriter
+    public class TagWriter : IWriter
     {
         private readonly IBlobStorage storage;
         private readonly ISerializer serializer;

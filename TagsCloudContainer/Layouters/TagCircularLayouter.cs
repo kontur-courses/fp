@@ -12,7 +12,7 @@ namespace TagsCloudContainer.Layouters
         {
         }
 
-        public override ICloud<ITag> PlaceTagsInCloud
+        public override ICloud PlaceTagsInCloud
             (List<SimpleTag> tags, float minHeight, float maxScale)
         {
             SetWordsCounts(tags);

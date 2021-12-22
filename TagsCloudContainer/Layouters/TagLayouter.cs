@@ -20,7 +20,7 @@ namespace TagsCloudContainer.Layouters
             this.factory = factory;
         }
 
-        public abstract ICloud<ITag> PlaceTagsInCloud
+        public abstract ICloud PlaceTagsInCloud
             (List<SimpleTag> tags, float minHeight, float maxScale);
 
         protected void SetWordsCounts(List<SimpleTag> tags)

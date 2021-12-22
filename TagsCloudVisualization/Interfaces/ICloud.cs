@@ -3,9 +3,9 @@ using System.Drawing;
 
 namespace TagsCloudVisualization.Interfaces
 {
-    public interface ICloud<TElement>
+    public interface ICloud
     {
-        IReadOnlyList<TElement> Elements { get; }
+        IReadOnlyList<ITag> Elements { get; }
         PointF Center { get; }
 
         internal void AddTag(ITag tag);

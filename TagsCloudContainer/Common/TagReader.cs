@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.Common
 {
-    public class TagReader
+    public class TagReader : IReader
     {
         private readonly IBlobStorage storage;
         private readonly ISerializer serializer;
