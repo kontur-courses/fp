@@ -138,16 +138,6 @@ namespace FunctionalProgrammingInfrastructure
             return input.ReplaceError(err => errorMessage + ". " + err);
         }
 
-        public static Result<TInput> RefineErrorAndThrow<TInput>(
-            this Result<TInput> input,
-            string errorMessage)
-        {
-            if (input.IsSuccess) return input;
-            
-            input.RefineError(errorMessage);
-            throw new Exception(input.Error);
-        }
-
         public static Result<TInput> InitVariable<TInput, TVariable>(this Result<TInput> input,
             Func<TVariable> func,
             out TVariable variable)

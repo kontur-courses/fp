@@ -5,6 +5,6 @@ namespace CTV.Common.Readers
 {
     public interface IFileReader
     {
-        public Result<string> ReadToEnd(Stream inputSteam);
+        public Result<string> ReadToEnd(Stream inputStream);
     }
 }

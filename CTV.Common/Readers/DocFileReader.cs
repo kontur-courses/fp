@@ -9,10 +9,10 @@ namespace CTV.Common.Readers
 {
     public class DocFileReader: IFileReader
     {
-        public Result<string> ReadToEnd(Stream inputSteam)
+        public Result<string> ReadToEnd(Stream inputStream)
         {
             return Result
-                .Of(() => new Document(inputSteam))
+                .Of(() => new Document(inputStream))
                 .Then(JoinParagraphs);
         }
 

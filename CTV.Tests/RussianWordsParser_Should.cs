@@ -1,5 +1,6 @@
 ﻿using CTV.Common;
 using FluentAssertions;
+using FunctionalProgrammingInfrastructure;
 using NUnit.Framework;
 
 namespace CTV.Tests
@@ -16,10 +17,12 @@ namespace CTV.Tests
         [TestCase("...привет...", new [] {"привет"}, TestName = "When word been separated from two sides")]
         public void ReturnExpected_When(string fullString, string[] expected)
         {
+            var expectedResult = expected.AsResult();
+            
             var result = parser.Parse(fullString);
 
-            result.Should().BeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expectedResult,
+                config => config.ComparingByMembers<Result<string[]>>());
         }
-        
     }
 }

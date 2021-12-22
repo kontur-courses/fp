@@ -5,10 +5,10 @@ namespace CTV.Common.Readers
 {
     public class TxtFileReader: IFileReader
     {
-        public Result<string> ReadToEnd(Stream inputSteam)
+        public Result<string> ReadToEnd(Stream inputStream)
         {
-            var textSteam = new StreamReader(inputSteam);
-            return textSteam.ReadToEnd();
+            return Result.Of(() => new StreamReader(inputStream))
+                .Then(reader => reader.ReadToEnd());
         }
     }
 }
