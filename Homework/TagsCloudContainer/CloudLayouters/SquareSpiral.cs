@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 namespace TagsCloudContainer.CloudLayouters
 {
-    public class SquareSpiral : ISpiral
+    internal class SquareSpiral : ISpiral
     {
         private readonly Point RightShift; 
         private readonly Point LeftShift; 

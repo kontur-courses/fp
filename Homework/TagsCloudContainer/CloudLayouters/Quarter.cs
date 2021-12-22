@@ -1,6 +1,6 @@
 ﻿namespace TagsCloudContainer.CloudLayouters
 {
-    public enum Quarter
+    internal enum Quarter
     {
         First,
         Second,

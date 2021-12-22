@@ -9,7 +9,7 @@ using TagsCloudContainer;
 namespace CloudContainerTests
 {
     [TestFixture]
-    public class ApplicationShould
+    internal class ApplicationShould
     {
         [Test]
         public void Create_Output_File()

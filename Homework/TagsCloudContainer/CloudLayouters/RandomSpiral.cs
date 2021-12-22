@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace TagsCloudContainer.CloudLayouters
 {
-    public class RandomSpiral : ISpiral
+    internal class RandomSpiral : ISpiral
     {
         private Quarter previuosQuarter;
         private Point currentPoint;

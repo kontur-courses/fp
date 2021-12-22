@@ -25,9 +25,9 @@ namespace CLI
             UserConfig = ParseArguments().GetValueOrThrow();
         }
 
-        private Result<CommandLineConfig> ParseArguments()
+        private Result<ConsoleConfig> ParseArguments()
         {
-            var config = new Result<CommandLineConfig>();
+            var config = new Result<ConsoleConfig>();
             var result = Parser.Default.ParseArguments<Options>(args);
             result.WithParsed(options => config = GetConfigResult(options))
                 .WithNotParsed(errs =>
@@ -39,9 +39,9 @@ namespace CLI
             return config;
         }
 
-        private Result<CommandLineConfig> GetConfigResult(Options options)
+        private Result<ConsoleConfig> GetConfigResult(Options options)
         {
-            var config = new CommandLineConfig();
+            var config = new ConsoleConfig();
             return config.AsResult()
                 .Then(UseOutputPathFrom, options)
                 .Then(UseOutputFileNameFrom, options)
@@ -64,21 +64,21 @@ namespace CLI
                 : Result.Fail<T>(errorMessage);
         }
 
-        private Result<CommandLineConfig> UseOutputPathFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseOutputPathFrom(ConsoleConfig config,
             Options options)
         {
             config.OutputFilePath = options.OutputFilePath;
             return CheckUsedArg(config, c => Directory.Exists(c.OutputFilePath), "OutputFilePath directory doesn't exist!");
         }
 
-        private Result<CommandLineConfig> UseOutputFileNameFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseOutputFileNameFrom(ConsoleConfig config,
             Options options)
         {
             config.OutputFileName = options.OutputFileName;
             return config.AsResult();
         }
 
-        private Result<CommandLineConfig> UseImageSizeFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseImageSizeFrom(ConsoleConfig config,
             Options options)
         {
             config.ImageSize = new Size(options.Width, options.Height);
@@ -86,14 +86,14 @@ namespace CLI
                 "Image size must be greater than zero!");
         }
 
-        private Result<CommandLineConfig> BuildImageCenter(CommandLineConfig config)
+        private Result<ConsoleConfig> BuildImageCenter(ConsoleConfig config)
         {
             var imageSize = config.ImageSize;
             config.ImageCenter = new Point(imageSize.Width / 2, imageSize.Height / 2);
             return config.AsResult();
         }
 
-        private Result<CommandLineConfig> UseFontParamsFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseFontParamsFrom(ConsoleConfig config,
     Options options)
         {
             config.TagsFontName = options.FontName;
@@ -101,13 +101,13 @@ namespace CLI
             return CheckUsedArg(config, CheckFontParams, "Font name is unknown!");
         }
 
-        private bool CheckFontParams(CommandLineConfig config)
+        private bool CheckFontParams(ConsoleConfig config)
         {
             using (var font = new Font(config.TagsFontName, config.TagsFontSize))
                 return font.Name == config.TagsFontName;
         }
 
-        private Result<CommandLineConfig> UseColorSchemeFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseColorSchemeFrom(ConsoleConfig config,
             Options options)
         {
             config.ColorScheme = GetColorScheme(options);
@@ -125,7 +125,7 @@ namespace CLI
             }
         }
 
-        private Result<CommandLineConfig> UseSpiralFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseSpiralFrom(ConsoleConfig config,
            Options options)
         {
             config.Spiral = GetSpiral(options);
@@ -145,7 +145,7 @@ namespace CLI
             }
         }
 
-        private Result<CommandLineConfig> UseImageFormatFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseImageFormatFrom(ConsoleConfig config,
             Options options)
         {
             config.ImageFormat = GetImageFormat(options);
@@ -164,14 +164,14 @@ namespace CLI
             }
         }
 
-        private Result<CommandLineConfig> UseInputFileFormatFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseInputFileFormatFrom(ConsoleConfig config,
             Options options)
         {
             config.InputFileFormat = options.InputFileFormat;
             return CheckUsedArg(config, c => c.InputFileFormat == "txt", "Unknown input file format is given!");
         }
 
-        private Result<CommandLineConfig> UseSourceReaderFrom(CommandLineConfig config,
+        private Result<ConsoleConfig> UseSourceReaderFrom(ConsoleConfig config,
            Options options)
         {
             config.SourceReader = GetSourceReader(options);
@@ -194,7 +194,7 @@ namespace CLI
         private static bool AreBothGiven(string inputFile, string firstTag)
             => !string.IsNullOrEmpty(inputFile) && !string.IsNullOrEmpty(firstTag);
 
-        private Result<CommandLineConfig> UseHandlersFrom(CommandLineConfig config, Options options)
+        private Result<ConsoleConfig> UseHandlersFrom(ConsoleConfig config, Options options)
         {
             var wordExcludingHandler = GetExcludingHandler(options);
             config.HandlersStorage = new HandlersStorage(options.Modifications);
@@ -202,12 +202,12 @@ namespace CLI
             return CheckUsedArg(config, CheckConfigHandlers, GetHandlersError(config));
         }
 
-        private bool CheckConfigHandlers(CommandLineConfig config)
+        private bool CheckConfigHandlers(ConsoleConfig config)
         {
             return config.HandlersStorage.GetUnrecognizedHandlers().Count == 0;
         }
 
-        private string GetHandlersError(CommandLineConfig config)
+        private string GetHandlersError(ConsoleConfig config)
         {
             StringBuilder message = new StringBuilder("Unknown handlers list:\n");
             var unknowHandlers = config.HandlersStorage.GetUnrecognizedHandlers();
@@ -231,7 +231,7 @@ namespace CLI
             };
         }
 
-        private Result<CommandLineConfig> BuildTextParser(CommandLineConfig config)
+        private Result<ConsoleConfig> BuildTextParser(ConsoleConfig config)
         {
             config.TextParser = new TextParser(
                 config.SourceReader,

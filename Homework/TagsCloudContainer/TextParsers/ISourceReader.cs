@@ -5,6 +5,5 @@ namespace TagsCloudContainer.TextParsers
     public interface ISourceReader
     {
         IEnumerable<string> GetNextWord();
-
     }
 }

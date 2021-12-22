@@ -7,7 +7,7 @@ using TagsCloudContainer.TextParsers;
 
 namespace CLI
 {
-    public class CommandLineConfig : IUserConfig
+    public class ConsoleConfig : IUserConfig
     {
         public string InputFilePath { get; set; }
         public string InputFileFormat { get; set; }

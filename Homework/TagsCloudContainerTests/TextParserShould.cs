@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Runtime.Remoting.Messaging;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.TextParsers;
 namespace CloudContainerTests
 {
     [TestFixture]
-    public class TextParserShould
+    internal class TextParserShould
     {
         private TagsReader tagsReader = new TagsReader(new string[0]);
         private List<Func<string, string>> handlers = new List<Func<string, string>>();

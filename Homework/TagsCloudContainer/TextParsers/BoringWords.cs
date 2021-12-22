@@ -2,7 +2,7 @@
 
 namespace TagsCloudContainer.TextParsers
 {
-    public class BoringWords : IExcludingWords
+    internal class BoringWords : IExcludingWords
     {
         private readonly HashSet<string> Words;
 

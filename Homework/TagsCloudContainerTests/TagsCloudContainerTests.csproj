@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CloudContainerTests</RootNamespace>
-    <AssemblyName>CloudContainerTests</AssemblyName>
+    <AssemblyName>TagsCloudContainerTests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationShould.cs" />
-    <Compile Include="CommandLineClientShould.cs" />
+    <Compile Include="ConsoleClientShould.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextParserShould.cs" />
   </ItemGroup>

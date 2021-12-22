@@ -1,8 +1,6 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using ContainerConfigurers;
 using TagsCloudContainer;
-using TagsCloudContainer.ClientsInterfaces;
 
 namespace CLI
 {

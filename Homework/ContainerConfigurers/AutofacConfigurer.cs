@@ -7,7 +7,7 @@ using TagsCloudContainer.TextParsers;
 
 namespace ContainerConfigurers
 {
-    public class AutofacConfigurer
+    internal class AutofacConfigurer
     {
         private readonly ContainerBuilder builder;
 

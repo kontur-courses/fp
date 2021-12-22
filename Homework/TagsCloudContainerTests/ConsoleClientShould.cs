@@ -14,12 +14,12 @@ using TagsCloudContainer.TextParsers;
 namespace CloudContainerTests
 {
     [TestFixture]
-    public class CommandLineClientShould
+    internal class ConsoleClientShould
     {
-        private static string[] commonArgs;
-        private static IUserConfig commonConfig;
+        private static readonly string[] commonArgs;
+        private static readonly IUserConfig commonConfig;
 
-        static CommandLineClientShould()
+        static ConsoleClientShould()
         {
             using (File.Create("input.txt")) { }
             commonArgs = new[]
@@ -28,7 +28,7 @@ namespace CloudContainerTests
                 "-h", "5000", "-w", "5000", "-i", 
                 "jpeg", "-r", "log", "-s", "20"
             };
-            commonConfig = new CommandLineConfig
+            commonConfig = new ConsoleConfig
             {
                 InputFilePath = null,
                 Tags = null,
