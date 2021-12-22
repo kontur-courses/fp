@@ -7,7 +7,6 @@ namespace TagCloud.Analyzers
     public class BoringWordsFilter : IWordFilter
     {
         private readonly IWordProvider wordProvider;
-        //private readonly HashSet<string> boringWords = new();
 
         public BoringWordsFilter(IWordProvider wordProvider)
         {

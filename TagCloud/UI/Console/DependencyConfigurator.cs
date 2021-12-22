@@ -31,7 +31,6 @@ namespace TagCloud.UI.Console
             builder.RegisterType<WordProvider>().As<IWordProvider>().SingleInstance();
 
             builder.RegisterType<TagCreator>().As<ITagCreator>()
-                //.WithParameter(new TypedParameter(typeof(Font), drawingSettings.Font))
                 .SingleInstance();
 
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>()

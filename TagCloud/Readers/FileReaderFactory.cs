@@ -16,8 +16,6 @@ namespace TagCloud.Readers
         
         public Result<IFileReader> Create(string fileExtension)
         {
-            //var fileExtension = GetExtensionsFromFileName(filename);
-
             if (!fileReadersFactory.TryGetValue(fileExtension, out var reader))
                 return Result.Fail<IFileReader>("The tag cloud generator does not " +
                                                 "support the input file with the extension " +
