@@ -1,14 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TagsCloudContainerCore.Result;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class ResultExtension
 {
-    public static Result<T> AsResult<T>(this T value)
-    {
-        return Ok(value);
-    }
-
     public static Result<T> Ok<T>(T value)
     {
         return new Result<T>(null, value);
@@ -24,31 +21,6 @@ public static class ResultExtension
         return new Result<T>(e);
     }
 
-    public static Result<T> Of<T>(Func<T> f, string error = null)
-    {
-        try
-        {
-            return Ok(f());
-        }
-        catch (Exception e)
-        {
-            return Fail<T>(error ?? e.Message);
-        }
-    }
-
-    public static Result<None> OfAction(Action f, string error = null)
-    {
-        try
-        {
-            f();
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return Fail<None>(error ?? e.Message);
-        }
-    }
-
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
         Func<TInput, TOutput> continuation)
@@ -56,6 +28,7 @@ public static class ResultExtension
         return input.Then(inp => Of(() => continuation(inp)));
     }
 
+    // ReSharper disable once UnusedTypeParameter
     public static Result<None> Then<TInput, TOutput>(
         this Result<TInput> input,
         Action<TInput> continuation)
@@ -69,6 +42,8 @@ public static class ResultExtension
     {
         return input.Then(inp => OfAction(() => continuation(inp)));
     }
+
+    // ReSharper disable once MemberCanBePrivate.Global
 
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
@@ -97,18 +72,28 @@ public static class ResultExtension
         return input;
     }
 
-    public static Result<TInput> ReplaceError<TInput>(
-        this Result<TInput> input,
-        Func<string, string> replaceError)
+    private static Result<T> Of<T>(Func<T> f, string error = null)
     {
-        if (input.IsSuccess) return input;
-        return Fail<TInput>(replaceError(input.Error));
+        try
+        {
+            return Ok(f());
+        }
+        catch (Exception e)
+        {
+            return Fail<T>(error ?? e.Message);
+        }
     }
 
-    public static Result<TInput> RefineError<TInput>(
-        this Result<TInput> input,
-        string errorMessage)
+    private static Result<None> OfAction(Action f, string error = null)
     {
-        return input.ReplaceError(err => errorMessage + ". " + err);
+        try
+        {
+            f();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Fail<None>(error ?? e.Message);
+        }
     }
 }
