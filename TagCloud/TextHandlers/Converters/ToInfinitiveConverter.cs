@@ -3,7 +3,7 @@ using NHunspell;
 
 namespace TagCloud.TextHandlers.Converters
 {
-    public class Stemer : IConverter
+    public class ToInfinitiveConverter : IConverter
     {
         private readonly Hunspell hunspell = new("ru_ru.aff", "ru_ru.dic");
 
@@ -11,7 +11,7 @@ namespace TagCloud.TextHandlers.Converters
         {
             return original.AsResult()
                 .Then(w => hunspell.Stem(w).FirstOrDefault() ?? w)
-                .ReplaceError(_ => "Hunspell error");
+                .RefineError("Hunspell error");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using FluentAssertions;
 using TagCloud.CloudLayouter;
@@ -15,7 +16,7 @@ namespace TagCloud.Templates
         private readonly IColorGenerator colorGenerator;
         private readonly ICloudLayouter cloudLayouter;
 
-        public TemplateCreator(FontFamily fontFamily, Color backgroundColor, Size size, 
+        public TemplateCreator(FontFamily fontFamily, Color backgroundColor, Size size,
             IFontSizeCalculator fontSizeCalculator, IColorGenerator colorGenerator, ICloudLayouter cloudLayouter)
         {
             this.fontFamily = fontFamily;
@@ -24,6 +25,12 @@ namespace TagCloud.Templates
             this.fontSizeCalculator = fontSizeCalculator;
             this.colorGenerator = colorGenerator;
             this.cloudLayouter = cloudLayouter;
+        }
+
+        public TemplateCreator(TemplateConfiguration templateConfiguration, IFontSizeCalculator fontSizeCalculator, IColorGenerator colorGenerator, ICloudLayouter cloudLayouter)
+            : this(templateConfiguration.FontFamily, templateConfiguration.BackgroundColor, templateConfiguration.Size,
+                fontSizeCalculator, colorGenerator, cloudLayouter)
+        {
         }
 
         public ITemplate GetTemplate(IEnumerable<string> words)

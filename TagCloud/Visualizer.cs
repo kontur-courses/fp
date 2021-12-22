@@ -5,7 +5,7 @@ namespace TagCloud
 {
     public class Visualizer : IVisualizer
     {
-        public void Draw(ITemplate template, string filename)
+        public Bitmap Draw(ITemplate template)
         {
             using var bitmap = new Bitmap(template.Size.Width, template.Size.Height);
             using var graphics = Graphics.FromImage(bitmap);
@@ -20,7 +20,7 @@ namespace TagCloud
                     rectangleF);
             }
 
-            bitmap.Save(filename);
+            return bitmap;
         }
     }
 }

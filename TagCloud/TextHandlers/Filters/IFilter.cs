@@ -2,6 +2,6 @@
 {
     public interface IFilter
     {
-        bool IsSuit(string word);
+        bool IsCorrectWord(string word);
     }
 }

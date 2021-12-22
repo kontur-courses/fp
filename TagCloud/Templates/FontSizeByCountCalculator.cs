@@ -37,14 +37,8 @@ namespace TagCloud.Templates
             var wordToCount = new Dictionary<string, int>();
             foreach (var word in words)
             {
-                if (wordToCount.ContainsKey(word))
-                {
-                    wordToCount[word] += 1;
-                }
-                else
-                {
-                    wordToCount[word] = 1;
-                }
+                wordToCount.TryGetValue(word, out var currentCount);
+                wordToCount[word] = currentCount + 1;
             }
 
             return wordToCount;

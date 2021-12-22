@@ -26,7 +26,7 @@ namespace TagCloud.PointGenerator
             foreach (var polar in ArchimedeanSpiral.GetArchimedeanSpiral(cache.SafeGetParameter(size),
                 anglePitch, spiralPitch))
             {
-                cache.UpdateParameter(size, polar.Angle);
+                cache.SafeUpdate(size, polar.Angle);
                 var cartesianPoint = polar.ToCartesian();
                 yield return new PointF(cartesianPoint.X + Center.X, cartesianPoint.Y + Center.Y);
             }

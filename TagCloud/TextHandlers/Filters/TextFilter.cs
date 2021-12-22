@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 
 namespace TagCloud.TextHandlers.Filters
 {
     public class TextFilter : ITextFilter
     {
-        private readonly List<Func<string, bool>> filters = new();
+        private readonly List<Predicate<string>> filters = new();
 
         public TextFilter()
         {
@@ -16,22 +15,14 @@ namespace TagCloud.TextHandlers.Filters
         public TextFilter(params IFilter[] filters)
         {
             foreach (var filter in filters)
-            {
-                Using(filter.IsSuit);
-            }
-        }
-
-        public TextFilter Using(Func<string, bool> filter)
-        {
-            filters.Add(filter);
-            return this;
+                this.filters.Add(filter.IsCorrectWord);
         }
 
         public Result<IEnumerable<string>> Filter(IEnumerable<string> words)
         {
             return words
-                .Where(word => filters.All(f => f(word)))
                 .AsResult()
+                .Then(w => w.Where(word => filters.All(f => f(word))))
                 .ReplaceError(_ => "Filter error");
         }
     }

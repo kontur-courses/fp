@@ -5,5 +5,6 @@ namespace TagCloud.TextHandlers.Converters
     public interface IConvertersPool
     {
         Result<IEnumerable<string>> Convert(IEnumerable<string> words);
+        Result<string> Convert(string word);
     }
 }

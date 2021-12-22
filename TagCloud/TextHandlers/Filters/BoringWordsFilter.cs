@@ -2,7 +2,7 @@
 {
     public class BoringWordsFilter : IFilter
     {
-        public bool IsSuit(string word)
+        public bool IsCorrectWord(string word)
         {
             return word.Length > 3;
         }

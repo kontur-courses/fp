@@ -17,17 +17,12 @@ namespace TagCloud.TextHandlers.Converters
             }
         }
 
-        public ConvertersPool Using(Func<string, Result<string>> converter)
-        {
-            converters.Add(converter);
-            return this;
-        }
-
         public Result<IEnumerable<string>> Convert(IEnumerable<string> words)
         {
             return words
                 .AsResult()
                 .Then(w => w.Select(Convert))
+                .Then(w => w.Where(r => r.IsSuccess))
                 .Then(results => results.Select(w => w.Value));
         }
 

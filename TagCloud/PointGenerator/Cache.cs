@@ -14,7 +14,7 @@ namespace TagCloud.PointGenerator
             return sizeToCircleParameter[size];
         }
 
-        public void UpdateParameter(SizeF size, float radius)
+        public void SafeUpdate(SizeF size, float radius)
         {
             sizeToCircleParameter[size] = radius;
         }

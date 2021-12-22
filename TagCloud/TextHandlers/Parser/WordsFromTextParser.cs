@@ -12,7 +12,7 @@ namespace TagCloud.TextHandlers.Parser
         {
             return File.ReadAllText(path)
                 .AsResult()
-                .Then(i => Regex.Matches(i, @"\b[\w']*\b"))
+                .Then(i => Regex.Matches(i, @"\b\w*\b"))
                 .Then(m => m.Cast<Match>())
                 .Then(e => e.Where(m => !string.IsNullOrEmpty(m.Value)))
                 .Then(e => e.Select(m => m.Value))

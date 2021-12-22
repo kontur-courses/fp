@@ -1,9 +1,10 @@
-﻿using TagCloud.Templates;
+﻿using System.Drawing;
+using TagCloud.Templates;
 
 namespace TagCloud
 {
     public interface IVisualizer
     {
-        void Draw(ITemplate template, string filename);
+        Bitmap Draw(ITemplate template);
     }
 }

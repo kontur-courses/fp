@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TagCloud.PointGenerator
 {
-    public class ArchimedeanSpiral
+    internal class ArchimedeanSpiral
     {
         public static IEnumerable<PolarCoordinates> GetArchimedeanSpiral(float startAngle, float spiralPitch,
             float anglePitch)

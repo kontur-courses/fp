@@ -33,5 +33,6 @@ namespace TagCloudApp.Configurations
             WordsFilename = wordsFilename;
             OutputFilename = outputFilename;
         }
+        
     }
 }
