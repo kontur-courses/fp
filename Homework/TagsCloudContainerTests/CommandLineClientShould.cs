@@ -33,6 +33,7 @@ namespace CloudContainerTests
                 InputFilePath = null,
                 Tags = null,
                 OutputFilePath = Directory.GetCurrentDirectory(),
+                OutputFileName = "tagcloud",
                 ColorScheme = new CyberpunkScheme(),
                 ImageSize = new Size(5000, 5000),
                 InputFileFormat = "txt",

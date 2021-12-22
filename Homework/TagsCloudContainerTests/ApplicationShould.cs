@@ -14,8 +14,7 @@ namespace CloudContainerTests
         [Test]
         public void Create_Output_File()
         {
-            var input = "input";
-            var config = new Client(new[] {input}).UserConfig;
+            var config = new Client(new[] {"--words", "hi"}).UserConfig;
             var container = new AutofacConfigurer(config).GetContainer();
 
             using (var scope = container.BeginLifetimeScope())
