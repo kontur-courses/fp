@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TagCloud.TextHandlers
+namespace TagCloud.TextHandlers;
+
+public interface IReader
 {
-    public interface IReader
-    {
-        public Result<IEnumerable<string>> Read(string filename);
-    }
+    public Result<IEnumerable<string>> Read(string filename);
 }

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TagCloud.PointGenerator
+namespace TagCloud.PointGenerator;
+
+internal static class ArchimedeanSpiral
 {
-    public class ArchimedeanSpiral
+    public static IEnumerable<PolarCoordinates> GetArchimedeanSpiral(float startAngle, float spiralPitch,
+        float anglePitch)
     {
-        public static IEnumerable<PolarCoordinates> GetArchimedeanSpiral(float startAngle, float spiralPitch,
-            float anglePitch)
+        while (true)
         {
-            while (true)
-            {
-                var radius = (float)(spiralPitch * startAngle / (2 * Math.PI));
-                yield return new PolarCoordinates(radius, startAngle);
-                startAngle += anglePitch;
-            }
-            // ReSharper disable once IteratorNeverReturns
+            var radius = (float)(spiralPitch * startAngle / (2 * Math.PI));
+            yield return new PolarCoordinates(radius, startAngle);
+            startAngle += anglePitch;
         }
+        // ReSharper disable once IteratorNeverReturns
     }
 }

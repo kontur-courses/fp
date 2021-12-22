@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TagCloud.Templates
+namespace TagCloud.Templates;
+
+public interface IFontSizeCalculator
 {
-    public interface IFontSizeCalculator
-    {
-        Dictionary<string, float> GetFontSizes(IEnumerable<string> words);
-    }
+    Dictionary<string, float> GetFontSizes(IEnumerable<string> words);
 }

@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace TagCloud.Templates
+namespace TagCloud.Templates;
+
+public interface ITemplate
 {
-    public interface ITemplate
-    {
-        void Add(WordParameter wordParameter);
-        IEnumerable<WordParameter> GetWordParameters();
-        Size Size { get; set; }
-        PointF Center { get; set; }
-        Color BackgroundColor { get; set; }
-    }
+    IEnumerable<WordParameter> GetWordParameters();
+    Size Size { get; }
+    PointF Center { get; }
+    Color BackgroundColor { get; }
 }

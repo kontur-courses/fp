@@ -13,15 +13,6 @@ namespace TagCloudTests
     class CircularCloudLayouterTests
     {
         private TagCloud.CloudLayouter.CloudLayouter sut;
-        private const string FailedTestsData = "TestsImg";
-
-        public CircularCloudLayouterTests()
-        {
-            if (!Directory.Exists(FailedTestsData))
-            {
-                Directory.CreateDirectory(FailedTestsData);
-            }
-        }
 
         [SetUp]
         public void SetUp()
@@ -66,7 +57,8 @@ namespace TagCloudTests
             int width,
             int height)
         {
-            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.2f, 1, new Point(xCloudPosition, yCloudPosition),
+            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.2f, 1,
+                new Point(xCloudPosition, yCloudPosition),
                 new Cache()));
 
             var tag = sut.PutNextRectangle(new Size(width, height));

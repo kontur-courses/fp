@@ -1,10 +1,9 @@
 ﻿using System.Drawing;
 
-namespace TagCloud.PointGenerator
+namespace TagCloud.PointGenerator;
+
+public interface ICache
 {
-    public interface ICache
-    {
-        float SafeGetParameter(SizeF size);
-        void UpdateParameter(SizeF size, float radius);
-    }
+    float SafeGetParameter(SizeF size);
+    void SafeUpdate(SizeF size, float radius);
 }

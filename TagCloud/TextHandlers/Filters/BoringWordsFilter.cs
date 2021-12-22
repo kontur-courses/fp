@@ -1,10 +1,9 @@
-﻿namespace TagCloud.TextHandlers.Filters
+﻿namespace TagCloud.TextHandlers.Filters;
+
+public class BoringWordsFilter : IFilter
 {
-    public class BoringWordsFilter : IFilter
+    public bool IsCorrectWord(string word)
     {
-        public bool IsSuit(string word)
-        {
-            return word.Length > 3;
-        }
+        return word.Length > 3;
     }
 }

@@ -1,12 +1,8 @@
 ﻿using System.Drawing;
 
-namespace TagCloud.CloudLayouter
+namespace TagCloud.CloudLayouter;
+
+public interface ICloudLayouter
 {
-    public interface ICloudLayouter
-    {
-        SizeF SizeF { get;}
-        PointF Center { get; }
-        RectangleF PutNextRectangle(SizeF rectangleSize);
-        RectangleF[] GetCloud();
-    }
+    RectangleF PutNextRectangle(SizeF rectangleSize);
 }

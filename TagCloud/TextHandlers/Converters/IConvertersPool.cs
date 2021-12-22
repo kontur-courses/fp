@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace TagCloud.TextHandlers.Converters
+namespace TagCloud.TextHandlers.Converters;
+
+public interface IConvertersPool
 {
-    public interface IConvertersPool
-    {
-        Result<IEnumerable<string>> Convert(IEnumerable<string> words);
-    }
+    Result<IEnumerable<string>> Convert(IEnumerable<string> words);
+    Result<string> Convert(string word);
 }

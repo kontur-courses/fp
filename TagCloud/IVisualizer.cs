@@ -1,9 +1,9 @@
-﻿using TagCloud.Templates;
+﻿using System.Drawing;
+using TagCloud.Templates;
 
-namespace TagCloud
+namespace TagCloud;
+
+public interface IVisualizer
 {
-    public interface IVisualizer
-    {
-        void Draw(ITemplate template, string filename);
-    }
+    Bitmap Draw(ITemplate template);
 }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TagCloud.Templates
+namespace TagCloud.Templates;
+
+public interface ITemplateCreator
 {
-    public interface ITemplateCreator
-    {
-        public ITemplate GetTemplate(IEnumerable<string> words);
-    }
+    public ITemplate GetTemplate(IEnumerable<string> words);
 }

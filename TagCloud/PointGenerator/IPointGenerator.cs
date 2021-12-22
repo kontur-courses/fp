@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace TagCloud.PointGenerator
+namespace TagCloud.PointGenerator;
+
+public interface IPointGenerator
 {
-    public interface IPointGenerator
-    {
-        IEnumerable<PointF> GetPoints(SizeF size);
-        PointF Center { get; }
-    }
+    IEnumerable<PointF> GetPoints(SizeF size);
+    PointF Center { get; }
 }

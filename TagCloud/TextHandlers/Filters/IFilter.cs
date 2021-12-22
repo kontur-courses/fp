@@ -1,7 +1,6 @@
-﻿namespace TagCloud.TextHandlers.Filters
+﻿namespace TagCloud.TextHandlers.Filters;
+
+public interface IFilter
 {
-    public interface IFilter
-    {
-        bool IsSuit(string word);
-    }
+    bool IsCorrectWord(string word);
 }

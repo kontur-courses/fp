@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 
-namespace TagCloud.Templates.Colors
+namespace TagCloud.Templates.Colors;
+
+public interface IColorGenerator
 {
-    public interface IColorGenerator
-    {
-        public Color GetColor(string word);
-    }
+    public Color GetColor(string word);
 }

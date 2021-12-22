@@ -1,10 +1,9 @@
-﻿namespace TagCloud.TextHandlers.Converters
+﻿namespace TagCloud.TextHandlers.Converters;
+
+public class ToLowerConverter : IConverter
 {
-    public class ToLowerConverter : IConverter
+    public Result<string> Convert(string word)
     {
-        public Result<string> Convert(string word)
-        {
-            return word.AsResult().Then(w => w.ToLower());
-        }
+        return word.AsResult().Then(w => w.ToLower());
     }
 }
