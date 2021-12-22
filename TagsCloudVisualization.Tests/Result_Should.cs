@@ -157,7 +157,7 @@ namespace TagsCloudVisualization.Tests
             var calculation = Result.Fail<None>("No connection");
             calculation
                 .RefineError("Posting results to db")
-                .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
+                .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db No connection"));
         }
     }
 }

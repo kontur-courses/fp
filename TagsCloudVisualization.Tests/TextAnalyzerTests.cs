@@ -22,7 +22,7 @@ namespace TagsCloudVisualization.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            textAnalyzer = ConfigureContainer().Resolve<ITextAnalyzer>();
+            textAnalyzer = ContainerConfig.ConfigureContainer().GetValueOrThrow().Resolve<ITextAnalyzer>();
         }
 
         [TestCase("облако облака облаком облаках облаке", "облако", 5,
@@ -46,32 +46,6 @@ namespace TagsCloudVisualization.Tests
             var wordStatistics = textAnalyzer.GetWordStatistics(text);
 
             wordStatistics.Should().OnlyContain(stat => stat.Text == expectedStem && stat.Count == stemCount);
-        }
-
-        private static IContainer ConfigureContainer()
-        {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterType<TextFileReader>().As<IFileReader>().AsSelf();
-            builder.RegisterInstance(new Hunspell(DictRuAff, DictRuDic)).SingleInstance();
-            builder.RegisterType<HunspellStemer>().As<IStemer>();
-            builder.RegisterType<PronounFilter>().As<IWordFilter>();
-            builder.RegisterType<CustomFilter>()
-                .WithParameter(new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IEnumerable<string>),
-                    (pi, ctx) => ctx.Resolve<TextFileReader>().ReadLines(DictExcludeWords)))
-                .As<IWordFilter>();
-            builder.RegisterType<ComposeFilter>()
-                .WithParameter(new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IWordFilter[]),
-                    (pi, ctx) => ctx.Resolve<IWordFilter[]>()));
-            builder.RegisterType<TextAnalyzer>()
-                .As<ITextAnalyzer>()
-                .WithParameter(new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IWordFilter),
-                    (pi, ctx) => ctx.Resolve<ComposeFilter>()));
-
-            return builder.Build();
         }
     }
 }

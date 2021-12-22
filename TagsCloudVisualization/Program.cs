@@ -10,7 +10,7 @@ namespace TagsCloudVisualization
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<CommandLineOptions, CreateCloudCommand, ShowDemoCommand>(args)
+            return Parser.Default.ParseArguments<CreateCloudCommand, ShowDemoCommand>(args)
                 .MapResult(
                     (CreateCloudCommand options) => new CreateCloudProcessor().Run(options),
                     (ShowDemoCommand options) => new ShowDemoProcessor().Run(options),

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using TagsCloudVisualization.Common.ErrorHandling;
 using TagsCloudVisualization.Common.Layouters;
 using TagsCloudVisualization.Common.Settings;
 using TagsCloudVisualization.Common.Tags;
@@ -18,7 +20,7 @@ namespace TagsCloudVisualization.Common.TagCloudPainters
             this.settings = settings;
         }
 
-        public Bitmap Paint(IEnumerable<Tag> tags)
+        public Result<Bitmap> Paint(IEnumerable<Tag> tags)
         {
             var bitmap = new Bitmap(settings.Width, settings.Height);
             using var graphics = Graphics.FromImage(bitmap);
@@ -34,7 +36,18 @@ namespace TagsCloudVisualization.Common.TagCloudPainters
                 graphics.DrawString(tag.Text, tag.Style.Font, brush, rect);
             }
 
-            return bitmap;
+            return IsLayoterOverlaped()
+                ? Result.Fail<Bitmap>("Генерируемое изображение вышло за пределы холста.")
+                : bitmap.AsResult();
+        }
+
+        private bool IsLayoterOverlaped()
+        {
+            var union = layouter.Rects.Aggregate(Rectangle.Union);
+            return union.Left < 0 ||
+                   union.Top < 0 ||
+                   union.Right > settings.Width ||
+                   union.Bottom > settings.Height;
         }
     }
 }

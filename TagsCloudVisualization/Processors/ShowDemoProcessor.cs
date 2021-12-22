@@ -33,7 +33,7 @@ namespace TagsCloudVisualization.Processors
                     .Then(stat => container.Resolve<ITagBuilder>().GetTags(stat))
                     .Then(tags => container.Resolve<ITagCloudPainter>().Paint(tags))
                     .Then(bitmap => container.Resolve<IImageWriter>().Save(bitmap, saveFilePath))
-                    .OnSuccess(value => Console.WriteLine($"Облако тегов сгенерировано и сохранено '{saveFilePath}'."))
+                    .OnSuccess(_ => Console.WriteLine($"Облако тегов сгенерировано и сохранено '{saveFilePath}'."))
                     .OnFail(Console.WriteLine);
 
                 if (!result.IsSuccess)
