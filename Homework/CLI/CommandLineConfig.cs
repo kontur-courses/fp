@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloudContainer.ClientsInterfaces;
 using TagsCloudContainer.CloudLayouters;
@@ -20,12 +18,12 @@ namespace CLI
         public string[] Tags { get; set; }
 
         public ImageFormat ImageFormat { get; set; }
+        public HandlersStorage HandlersStorage { get; set; }
         public Size ImageSize { get; set; }
         public Point ImageCenter { get; set; }
         public ISpiral Spiral { get; set; }
         public IColorScheme ColorScheme { get; set; }
         public ISourceReader SourceReader { get; set; }
-        public IHandlerConveyor HandlerConveyor { get; set; }
         public ITextParser TextParser { get; set; }
     }
 }

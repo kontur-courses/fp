@@ -1,7 +1,6 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -17,18 +16,12 @@ namespace CLI
 {
     public class Client : IClient
     {
-        private readonly Dictionary<string, Func<string, string>> modifiers;
         private readonly string[] args;
         public IUserConfig UserConfig { get; }
 
         public Client(string[] args)
         {
             this.args = args;
-            modifiers = new Dictionary<string, Func<string, string>>
-            {
-                {"lower", s => s.ToLower()},
-                {"trim", s => s.Trim()}
-            };
             UserConfig = ParseArguments().GetValueOrThrow();
         }
 
@@ -60,7 +53,7 @@ namespace CLI
                 .Then(UseImageFormatFrom, options)
                 .Then(UseInputFileFormatFrom, options)
                 .Then(UseSourceReaderFrom, options)
-                .Then(UseHandlerConveyorFrom, options)
+                .Then(UseHandlersFrom, options)
                 .Then(BuildTextParser);
         }
 
@@ -196,45 +189,28 @@ namespace CLI
         }
 
         private static bool AreBothEmpty(string inputFile, string firstTag)
-        {
-            return string.IsNullOrEmpty(inputFile) && string.IsNullOrEmpty(firstTag);
-        }
+            => string.IsNullOrEmpty(inputFile) && string.IsNullOrEmpty(firstTag);
 
         private static bool AreBothGiven(string inputFile, string firstTag)
-        {
-            return !string.IsNullOrEmpty(inputFile) && !string.IsNullOrEmpty(firstTag);
-        }
+            => !string.IsNullOrEmpty(inputFile) && !string.IsNullOrEmpty(firstTag);
 
-        private Result<CommandLineConfig> UseHandlerConveyorFrom(CommandLineConfig config,
-            Options options)
+        private Result<CommandLineConfig> UseHandlersFrom(CommandLineConfig config, Options options)
         {
-            config.HandlerConveyor = GetConveyor(options);
-            return CheckUsedArg(config, CheckConfigHandlers, GetConveyorError(config));
-        }
-
-        private CommandLineHandlerConveyor GetConveyor(Options options)
-        {
-            var actualHandlers = new List<Func<string, string>>();
-            var unknownHandlers = new List<string>();
-            foreach (var handler in options.Modifications)
-            {
-                if (modifiers.ContainsKey(handler)) actualHandlers.Add(modifiers[handler]);
-                else unknownHandlers.Add(handler);
-            }
-            actualHandlers.Add(GetExcludingHandler(options));
-
-            return new CommandLineHandlerConveyor(actualHandlers, unknownHandlers);
+            var wordExcludingHandler = GetExcludingHandler(options);
+            config.HandlersStorage = new HandlersStorage(options.Modifications);
+            config.HandlersStorage.AddCustomHandler(wordExcludingHandler);
+            return CheckUsedArg(config, CheckConfigHandlers, GetHandlersError(config));
         }
 
         private bool CheckConfigHandlers(CommandLineConfig config)
         {
-            return config.HandlerConveyor.GetUnknownHandlers().Count == 0;
+            return config.HandlersStorage.GetUnrecognizedHandlers().Count == 0;
         }
 
-        private string GetConveyorError(CommandLineConfig config)
+        private string GetHandlersError(CommandLineConfig config)
         {
             StringBuilder message = new StringBuilder("Unknown handlers list:\n");
-            var unknowHandlers = config.HandlerConveyor.GetUnknownHandlers();
+            var unknowHandlers = config.HandlersStorage.GetUnrecognizedHandlers();
             foreach (var handler in unknowHandlers)
             {
                 message.Append(handler);
@@ -259,7 +235,7 @@ namespace CLI
         {
             config.TextParser = new TextParser(
                 config.SourceReader,
-                config.HandlerConveyor.GetHandlerConveyor(),
+                config.HandlersStorage.GetUsingHandlers(),
                 GetWordGrouper());
             return config.AsResult();
         }

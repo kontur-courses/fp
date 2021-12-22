@@ -85,7 +85,7 @@ namespace CloudContainerTests
 
             config.Should().BeEquivalentTo(expectedConfig, options =>
                 options.Excluding(c => c.Tags)
-                    .Excluding(c => c.HandlerConveyor)
+                    .Excluding(c => c.HandlersStorage)
                     .Excluding(c => c.TextParser));
         }
 

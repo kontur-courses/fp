@@ -7,11 +7,11 @@ namespace TagsCloudContainer.TextParsers
     {
         private readonly ISourceReader sourceReader;
         private readonly Dictionary<string, int> wordsCounts;
-        private readonly List<Func<string, string>> handlers;
+        private readonly IReadOnlyList<Func<string, string>> handlers;
         private readonly Action<string, Dictionary<string, int>> grouper;
 
         public TextParser(ISourceReader sourceReader, 
-            List<Func<string, string>> handlers,
+            IReadOnlyList<Func<string, string>> handlers,
             Action<string, Dictionary<string, int>> grouper)
         {
             this.sourceReader = sourceReader;
@@ -37,7 +37,7 @@ namespace TagsCloudContainer.TextParsers
 
         private string ProcessWord(string word)
         {
-            foreach (var handler in handlers)
+            foreach (var handler in handlers) 
                 word = handler(word);
             return word;
         }

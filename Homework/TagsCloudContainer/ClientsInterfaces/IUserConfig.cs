@@ -18,12 +18,12 @@ namespace TagsCloudContainer.ClientsInterfaces
 
 
         ImageFormat ImageFormat { get; set; }
+        HandlersStorage HandlersStorage { get; set; }
         Size ImageSize { get; set; }
         Point ImageCenter { get; set; }
         ISpiral Spiral { get; set; }
         IColorScheme ColorScheme { get; set; }
         ISourceReader SourceReader { get; set; }
-        IHandlerConveyor HandlerConveyor { get; set; }
         ITextParser TextParser { get; set; }
     }
 }

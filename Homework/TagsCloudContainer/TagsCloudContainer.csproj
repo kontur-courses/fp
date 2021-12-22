@@ -80,7 +80,6 @@
   <ItemGroup>
     <Compile Include="ClientsInterfaces\IUserConfig.cs" />
     <Compile Include="ClientsInterfaces\IClient.cs" />
-    <Compile Include="ClientsInterfaces\IHandlerConveyor.cs" />
     <Compile Include="CloudLayouters\CircularCloudLayouter.cs" />
     <Compile Include="CloudLayouters\ICloudLayouter.cs" />
     <Compile Include="CloudLayouters\ISpiral.cs" />
@@ -96,6 +95,7 @@
     <Compile Include="PaintConfigs\CamouflageScheme.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="TextParsers\BoringWords.cs" />
+    <Compile Include="TextParsers\HandlersStorage.cs" />
     <Compile Include="TextParsers\IExcludingWords.cs" />
     <Compile Include="TextParsers\ISourceReader.cs" />
     <Compile Include="TextParsers\ITextParser.cs" />
