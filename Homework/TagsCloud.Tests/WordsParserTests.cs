@@ -10,30 +10,6 @@ namespace TagsCloud.Tests
 {
     public class WordsParserTests
     {
-        private WordsParser sut;
-
-        [SetUp]
-        public void InitParser()
-        {
-            sut = new WordsParser(new IWordsFilter[] {new BoringWordsFilter()});
-        }
-
-        [TestCaseSource(typeof(TestDataGenerator), "testCases")]
-        public void CountWordsFrequency_ShouldParseCorrectly_When(string text, List<Word> expectedResult)
-        {
-            sut.CountWordsFrequency(text)
-                .Then(x => x.Should().Equal(expectedResult));
-        }
-
-        [Test]
-        public void CountWordsFrequency_ShouldReturnFalseResult_OnNullInput()
-        {
-            sut.CountWordsFrequency(null).IsSuccess.Should().Be(false);
-        }
-    }
-
-    public static class TestDataGenerator
-    {
         private static TestCaseData[] testCases =
         {
             new TestCaseData("", new List<Word>()).SetName("Empty text"),
@@ -60,5 +36,26 @@ namespace TagsCloud.Tests
                     })
                 .SetName("Boring words")
         };
+
+        private WordsParser sut;
+
+        [SetUp]
+        public void InitParser()
+        {
+            sut = new WordsParser(new IWordsFilter[] {new BoringWordsFilter()});
+        }
+
+        [TestCaseSource(nameof(testCases))]
+        public void CountWordsFrequency_ShouldParseCorrectly_When(string text, List<Word> expectedResult)
+        {
+            sut.CountWordsFrequency(text)
+                .Then(x => x.Should().Equal(expectedResult));
+        }
+
+        [Test]
+        public void CountWordsFrequency_ShouldReturnFalseResult_OnNullInput()
+        {
+            sut.CountWordsFrequency(null).IsSuccess.Should().Be(false);
+        }
     }
 }
