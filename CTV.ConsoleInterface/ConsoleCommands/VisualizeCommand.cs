@@ -35,8 +35,7 @@ namespace CTV.ConsoleInterface.Options
         [Option("fontName", Default = "Arial")]
         public string FontName { get; set; }
 
-        [Option("fontSize", Default = 240)] 
-        public int FontSize { get; set; }
+        [Option("fontSize", Default = 240)] public int FontSize { get; set; }
 
 
         public VisualizerOptions ToVisualizerOptions()

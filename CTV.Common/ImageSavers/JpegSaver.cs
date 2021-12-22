@@ -5,12 +5,11 @@ using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common.ImageSavers
 {
-    public class JpegSaver: IImageSaver
+    public class JpegSaver : IImageSaver
     {
         public Result<None> Save(Bitmap image, Stream outputStream)
         {
-            return Result.
-                OfAction(() => image.Save(outputStream, ImageFormat.Jpeg));
+            return Result.OfAction(() => image.Save(outputStream, ImageFormat.Jpeg));
         }
     }
 }

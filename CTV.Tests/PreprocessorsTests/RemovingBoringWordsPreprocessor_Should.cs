@@ -16,7 +16,7 @@ namespace CTV.Tests.PreprocessorsTests
         {
             hunspeller = A.Fake<IHunspeller>();
         }
-        
+
         [Test]
         public void Throw_WhenNullHunspellerGiven()
         {
@@ -25,7 +25,7 @@ namespace CTV.Tests.PreprocessorsTests
             action.Should().Throw<ArgumentException>();
         }
 
-        
+
         [TestCaseSource(typeof(RemovingBoringWordsTestCases), nameof(RemovingBoringWordsTestCases.SameValueCases))]
         public void ReturnSameArray_WhenHunspellerAlwaysReturnTrue(string[] words)
         {
@@ -33,7 +33,7 @@ namespace CTV.Tests.PreprocessorsTests
             A.CallTo(() => hunspeller.Check(null))
                 .WithAnyArguments()
                 .Returns(true);
-            
+
             var result = preprocessor.Preprocess(words);
 
             result.Should().BeEquivalentTo(words);
@@ -54,7 +54,7 @@ namespace CTV.Tests.PreprocessorsTests
             result.Should().BeEquivalentTo(expected);
         }
     }
-    
+
     internal class RemovingBoringWordsTestCases
     {
         public static object[] SameValueCases =

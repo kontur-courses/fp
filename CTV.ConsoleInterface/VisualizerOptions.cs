@@ -16,7 +16,7 @@ namespace CTV.ConsoleInterface
         public Color StrokeColor { get; set; }
         public SavingFormat SavingFormat { get; set; }
         public InputFileFormat InputFileFormat { get; set; }
-        
+
         public VisualizerOptions(
             string inputFile,
             string outputFile,
@@ -29,7 +29,7 @@ namespace CTV.ConsoleInterface
             string strokeColorArgb,
             string savingFormat,
             string inputFileFormat
-            )
+        )
         {
             InputFile = inputFile;
             OutputFile = outputFile;
@@ -72,14 +72,14 @@ namespace CTV.ConsoleInterface
 
         private static SavingFormat ParseSavingFormat(string format)
         {
-            if (Enum.TryParse(format, ignoreCase:true, out SavingFormat result))
+            if (Enum.TryParse(format, ignoreCase: true, out SavingFormat result))
                 return result;
             throw new ArgumentException($"Unknown saving format: {format}");
         }
-        
+
         private static InputFileFormat ParseTextFormat(string format)
         {
-            if (Enum.TryParse(format, ignoreCase:true, out InputFileFormat result))
+            if (Enum.TryParse(format, ignoreCase: true, out InputFileFormat result))
                 return result;
             throw new ArgumentException($"Unknown Input File Format: {format}");
         }

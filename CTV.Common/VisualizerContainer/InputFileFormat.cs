@@ -2,7 +2,7 @@
 {
     public enum InputFileFormat
     {
-        Txt, 
+        Txt,
         Doc
     }
 }

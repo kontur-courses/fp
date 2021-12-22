@@ -7,7 +7,7 @@ using Spire.Doc.Documents;
 
 namespace CTV.Common.Readers
 {
-    public class DocFileReader: IFileReader
+    public class DocFileReader : IFileReader
     {
         public Result<string> ReadToEnd(Stream inputStream)
         {
@@ -18,7 +18,7 @@ namespace CTV.Common.Readers
 
         private static string JoinParagraphs(Document doc)
         {
-            var sb = new StringBuilder(); 
+            var sb = new StringBuilder();
             foreach (Section section in doc.Sections)
             {
                 foreach (Paragraph paragraph in section.Paragraphs)

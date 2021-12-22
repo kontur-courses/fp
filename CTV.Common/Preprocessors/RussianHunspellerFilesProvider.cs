@@ -1,6 +1,6 @@
 ﻿namespace CTV.Common.Preprocessors
 {
-    public class RussianHunspellerFilesProvider: IHunspellerFilesProvider
+    public class RussianHunspellerFilesProvider : IHunspellerFilesProvider
     {
         public string GetDicFile()
         {

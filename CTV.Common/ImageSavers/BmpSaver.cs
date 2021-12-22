@@ -5,7 +5,7 @@ using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common.ImageSavers
 {
-    public class BmpSaver: IImageSaver
+    public class BmpSaver : IImageSaver
     {
         public Result<None> Save(Bitmap image, Stream outputStream)
         {

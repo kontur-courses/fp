@@ -7,6 +7,7 @@ namespace CTV.Common
     public class RussianWordsParser : IWordsParser
     {
         private static readonly Regex WordPattern = new Regex("[а-яА-ЯёЁ]+");
+
         public Result<string[]> Parse(string fullString)
         {
             return Result

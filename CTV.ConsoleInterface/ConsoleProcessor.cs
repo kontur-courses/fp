@@ -32,7 +32,7 @@ namespace CTV.ConsoleInterface
         }
 
         private Result<string[]> PrepareWordsToVisualize(
-            Stream inStream, 
+            Stream inStream,
             IFileReader fileReader,
             IWordsParser wordsParser,
             IWordsPreprocessor preprocessor)

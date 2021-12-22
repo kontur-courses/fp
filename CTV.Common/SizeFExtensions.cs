@@ -9,7 +9,7 @@ namespace CTV.Common
         {
             return new Size(
                 (int) Math.Ceiling(sizeF.Width),
-                (int ) Math.Ceiling(sizeF.Height));
+                (int) Math.Ceiling(sizeF.Height));
         }
     }
 }

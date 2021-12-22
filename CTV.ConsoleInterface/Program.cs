@@ -1,10 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using CommandLine;
-using CommandLine.Text;
-using CTV.Common.VisualizerContainer;
 using CTV.ConsoleInterface.ConsoleCommands;
 using CTV.ConsoleInterface.Options;
 using FunctionalProgrammingInfrastructure;
@@ -15,12 +12,7 @@ namespace CTV.ConsoleInterface
     {
         public static void Main(string[] args)
         {
-            args = new[]
-            {
-                "startLoop",
-            };
-
-            var result = Result
+            Result
                 .OfAction(() => ParseDefaultOptions(args))
                 .RefineError("Failed")
                 .OnFail(Console.Error.WriteLine);
@@ -28,15 +20,14 @@ namespace CTV.ConsoleInterface
 
         private static Result<None> ParseDefaultOptions(string[] args)
         {
-           return Parser
+            return Parser
                 .Default
                 .ParseArguments<VisualizeCommand, VisualizeFromConfigCommand, StartLoopCommand>(args)
                 .MapResult(
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (StartLoopCommand command) => Result.OfAction(() => StartLoop(command)),
-                    _ => Result
-                        .Fail<None>("Error in parsing line commands")
+                    errors => OnError(errors)
                 );
         }
 
@@ -49,9 +40,8 @@ namespace CTV.ConsoleInterface
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (ExitLoopCommand command) => Result.OfAction(ExitLoopCommand.ExitLoop),
-                    _ => Result
-                        .Fail<None>("Error in parsing line commands")
-                    );
+                    errors => OnError(errors)
+                );
         }
 
         private static Result<None> VisualizeOnce(VisualizerOptions options)
@@ -74,7 +64,7 @@ namespace CTV.ConsoleInterface
                 .ReadConfig()
                 .Then(VisualizeOnce);
         }
-        
+
         private static void StartLoop(StartLoopCommand commands)
         {
             Console.WriteLine("--help to see commands");
@@ -88,6 +78,14 @@ namespace CTV.ConsoleInterface
                     .OnFail(Console.WriteLine)
                     .OnSuccess(() => Console.WriteLine("Successfully visualized image"));
             }
+        }
+
+        private static Result<None> OnError(IEnumerable<Error> errors)
+        {
+            return errors.Any(x => x is not HelpRequestedError and not VersionRequestedError)
+                ? Result.Fail<None>("Error in parsing line commands")
+                : Result.Ok();
+
         }
     }
 }

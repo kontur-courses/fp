@@ -3,7 +3,7 @@ using FunctionalProgrammingInfrastructure;
 
 namespace CTV.Common.Readers
 {
-    public class TxtFileReader: IFileReader
+    public class TxtFileReader : IFileReader
     {
         public Result<string> ReadToEnd(Stream inputStream)
         {

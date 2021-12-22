@@ -8,12 +8,12 @@ namespace CTV.ConsoleInterface
         {
             return Color.FromArgb(red, color.G, color.B);
         }
-        
+
         public static Color WithGreen(this Color color, int green)
         {
             return Color.FromArgb(color.R, green, color.B);
         }
-        
+
         public static Color WithBlue(this Color color, int blue)
         {
             return Color.FromArgb(color.R, color.G, blue);

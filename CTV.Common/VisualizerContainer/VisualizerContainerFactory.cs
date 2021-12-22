@@ -58,7 +58,7 @@ namespace CTV.Common.VisualizerContainer
                 settings.BackgroundColor,
                 settings.StrokeColor
             );
-            
+
             container.AddSingleton(visualizerSettings);
         }
     }

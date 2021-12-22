@@ -2,7 +2,7 @@
 {
     public enum SavingFormat
     {
-        Png, 
+        Png,
         Jpeg,
         Jpg,
         Bmp

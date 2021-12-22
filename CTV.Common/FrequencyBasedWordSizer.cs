@@ -17,7 +17,7 @@ namespace CTV.Common
 
             var wordToFrequency = CalculateWordsFrequency(words);
             var wordToCustomFont = CalculateFontSizes(wordToFrequency, font);
-            
+
             return wordToCustomFont.Select(kv =>
                     new SizedWord(
                         kv.Key,

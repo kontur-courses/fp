@@ -25,7 +25,7 @@ namespace CTV.Tests.PreprocessorsTests
             var initialWords = new[] {"a", "b"};
             var resultAfterFirstPreprocessing = new[] {"aa", "bb"};
             var resultAfterSecondPreprocessing = new[] {"aa_aa", "bb_bb"};
-            
+
             A.CallTo(() => preprocessor1.Preprocess(initialWords))
                 .Returns(resultAfterFirstPreprocessing);
             A.CallTo(() => preprocessor2.Preprocess(resultAfterFirstPreprocessing))

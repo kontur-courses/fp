@@ -10,7 +10,11 @@ namespace CTV.Common
         public Color BackgroundColor { get; set; }
         public Color StrokeColor { get; set; }
 
-        public VisualizerSettings(Size imageSize, Font textFont, Color textColor, Color backgroundColor, Color strokeColor)
+        public VisualizerSettings(Size imageSize,
+            Font textFont,
+            Color textColor,
+            Color backgroundColor,
+            Color strokeColor)
         {
             ImageSize = imageSize;
             TextFont = textFont;
