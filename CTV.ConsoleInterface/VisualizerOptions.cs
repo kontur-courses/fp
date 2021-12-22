@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using CTV.Common.VisualizerContainer;
+using FunctionalProgrammingInfrastructure;
 
-namespace CTV.ConsoleInterface.Options
+namespace CTV.ConsoleInterface
 {
     public class VisualizerOptions
     {
@@ -32,8 +33,8 @@ namespace CTV.ConsoleInterface.Options
         {
             InputFile = inputFile;
             OutputFile = outputFile;
-            ImageSize = new Size(imageWidth, imageHeight);
-            Font = new Font(fontName, fontSize);
+            InitSize(imageWidth, imageHeight);
+            InitFont(fontName, fontSize);
             BackgroundColor = ColorFromHex(backgroundColorArgb);
             TextColor = ColorFromHex(textColorArgb);
             StrokeColor = ColorFromHex(strokeColorArgb);
@@ -41,35 +42,46 @@ namespace CTV.ConsoleInterface.Options
             InputFileFormat = ParseTextFormat(inputFileFormat);
         }
 
+        private void InitSize(int width, int height)
+        {
+            if (width <= 0 || height <= 0)
+                throw new Exception("Image size must be with positive width and height");
+            ImageSize = new Size(width, height);
+        }
+
+        private void InitFont(string fontName, int fontSize)
+        {
+            if (fontSize <= 0)
+                throw new Exception("font size must be positive");
+            var font = new Font(fontName, fontSize);
+            if (font.Name != fontName)
+                throw new Exception($"Was not able to find font with name {fontName}");
+            Font = font;
+
+        }
+
         private static Color ColorFromHex(string hexed)
         {
-            if (hexed.Length != 6)
-                throw new ArgumentException($"Invalid color {hexed}");
-            var red = Convert.ToInt32(hexed[0..2], 16);
-                var green = Convert.ToInt32(hexed[2..4], 16);
-                var blue = Convert.ToInt32(hexed[4..6], 16);
-                try
-                {
-                    return Color.FromArgb(red, green, blue);
-                }
-                catch (Exception e)
-                {
-                    throw new ArgumentException($"Color was in icorrect format {hexed}", e);
-                }
+            return Result.Ok(Color.FromArgb(0, 0, 0))
+                .Then(color => color.WithRed(Convert.ToInt32(hexed[..2], 16)))
+                .Then(color => color.WithGreen(Convert.ToInt32(hexed[2..4], 16)))
+                .Then(color => color.WithBlue(Convert.ToInt32(hexed[4..], 16)))
+                .ReplaceError(e => $"Invalid color {hexed}")
+                .GetValueOrThrow();
         }
 
         private static SavingFormat ParseSavingFormat(string format)
         {
             if (Enum.TryParse(format, ignoreCase:true, out SavingFormat result))
                 return result;
-            throw new ArgumentException($"Saving unknown saving format {format}");
+            throw new ArgumentException($"Unknown saving format: {format}");
         }
         
         private static InputFileFormat ParseTextFormat(string format)
         {
             if (Enum.TryParse(format, ignoreCase:true, out InputFileFormat result))
                 return result;
-            throw new ArgumentException($"Saving unknown saving format {format}");
+            throw new ArgumentException($"Unknown Input File Format: {format}");
         }
     }
 }

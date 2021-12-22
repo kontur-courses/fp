@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommandLine;
+using CommandLine.Text;
 using CTV.Common.VisualizerContainer;
 using CTV.ConsoleInterface.ConsoleCommands;
 using CTV.ConsoleInterface.Options;
+using FunctionalProgrammingInfrastructure;
 
 namespace CTV.ConsoleInterface
 {
@@ -14,37 +17,64 @@ namespace CTV.ConsoleInterface
         {
             args = new[]
             {
-                "visualizeFromConfig",
+                "startLoop",
             };
-            ParseDefaultOptions(args);
+
+            var result = Result
+                .OfAction(() => ParseDefaultOptions(args))
+                .RefineError("Failed")
+                .OnFail(Console.Error.WriteLine);
         }
 
-        private static void ParseDefaultOptions(string[] args)
+        private static Result<None> ParseDefaultOptions(string[] args)
         {
-            Parser
+           return Parser
                 .Default
                 .ParseArguments<VisualizeCommand, VisualizeFromConfigCommand, StartLoopCommand>(args)
-                .WithParsed<VisualizeCommand>(command => VisualizeOnce(command.ToVisualizerOptions()))
-                .WithParsed<VisualizeFromConfigCommand>(command => VisualizeOnce(command.ReadConfig()))
-                .WithParsed<StartLoopCommand>(StartLoop);
+                .MapResult(
+                    (VisualizeCommand command) => OnVisualizeCommand(command),
+                    (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
+                    (StartLoopCommand command) => Result.OfAction(() => StartLoop(command)),
+                    _ => Result
+                        .Fail<None>("Error in parsing line commands")
+                );
         }
-        
-        private static void ParseLoopOptions(string[] args)
+
+        private static Result<None> ParseLoopOptions(string[] args)
         {
-            Parser
+            return Parser
                 .Default
                 .ParseArguments<VisualizeCommand, VisualizeFromConfigCommand, ExitLoopCommand>(args)
-                .WithParsed<VisualizeCommand>(command => VisualizeOnce(command.ToVisualizerOptions()))
-                .WithParsed<VisualizeFromConfigCommand>(command => VisualizeOnce(command.ReadConfig()))
-                .WithParsed<ExitLoopCommand>(command => command.ExitLoop());
+                .MapResult(
+                    (VisualizeCommand command) => OnVisualizeCommand(command),
+                    (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
+                    (ExitLoopCommand command) => Result.OfAction(ExitLoopCommand.ExitLoop),
+                    _ => Result
+                        .Fail<None>("Error in parsing line commands")
+                    );
         }
 
-        private static void VisualizeOnce(VisualizerOptions options)
+        private static Result<None> VisualizeOnce(VisualizerOptions options)
         {
-            var consoleProcessor = new ConsoleProcessor();
-            consoleProcessor.Run(options);
+            return Result.Ok(new ConsoleProcessor())
+                .Then(processor => processor.Run(options))
+                .RefineError("Visualization failed");
         }
 
+        private static Result<None> OnVisualizeCommand(VisualizeCommand command)
+        {
+            return Result
+                .Of(command.ToVisualizerOptions)
+                .Then(VisualizeOnce);
+        }
+
+        private static Result<None> OnVisualizeFromConfigCommand(VisualizeFromConfigCommand command)
+        {
+            return command
+                .ReadConfig()
+                .Then(VisualizeOnce);
+        }
+        
         private static void StartLoop(StartLoopCommand commands)
         {
             Console.WriteLine("--help to see commands");
@@ -54,7 +84,9 @@ namespace CTV.ConsoleInterface
                     .ReadLine()?
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                ParseLoopOptions(args);
+                ParseLoopOptions(args)
+                    .OnFail(Console.WriteLine)
+                    .OnSuccess(() => Console.WriteLine("Successfully visualized image"));
             }
         }
     }

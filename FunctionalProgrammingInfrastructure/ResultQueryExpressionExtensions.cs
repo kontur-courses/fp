@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace FunctionalProgrammingInfrastructure
 {
     public static class ResultQueryExpressionExtensions
     {

@@ -2,7 +2,7 @@ using System;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ResultOf
+namespace FunctionalProgrammingInfrastructure
 {
     [TestFixture]
     public class ResultQueryExpression_Should
@@ -12,7 +12,7 @@ namespace ResultOf
         {
             var res =
                 "1358571172".ParseIntResult()
-                    .SelectMany(i => Convert.ToString(i, 16).AsResult())
+                    .SelectMany(i => Convert.ToString((int) i, 16).AsResult())
                     .SelectMany(hex => (hex + hex + hex + hex).ParseGuidResult());
             res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }

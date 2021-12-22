@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultOf
+namespace FunctionalProgrammingInfrastructure
 {
     public class None
     {
@@ -108,6 +108,14 @@ namespace ResultOf
             return input;
         }
 
+        public static Result<TInput> OnSuccess<TInput>(
+            this Result<TInput> input,
+            Action action)
+        {
+            if (input.IsSuccess) action();
+            return input;
+        }
+
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError)
@@ -121,6 +129,16 @@ namespace ResultOf
             string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
+        }
+
+        public static Result<TInput> RefineErrorAndThrow<TInput>(
+            this Result<TInput> input,
+            string errorMessage)
+        {
+            if (input.IsSuccess) return input;
+            
+            input.RefineError(errorMessage);
+            throw new Exception(input.Error);
         }
     }
 }

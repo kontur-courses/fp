@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CTV.Common\CTV.Common.csproj" />
+      <ProjectReference Include="..\FunctionalProgrammingInfrastructure\FunctionalProgrammingInfrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

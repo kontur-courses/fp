@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using CommandLine;
 using CTV.ConsoleInterface.Options;
+using FunctionalProgrammingInfrastructure;
 
 namespace CTV.ConsoleInterface.ConsoleCommands
 {
@@ -12,10 +13,22 @@ namespace CTV.ConsoleInterface.ConsoleCommands
         [Option("config", Default = "config.json")]
         public string PathToJsonConfig { get; set; }
 
-        public VisualizerOptions ReadConfig()
+        public Result<VisualizerOptions> ReadConfig()
         {
-            var json = File.ReadAllText(PathToJsonConfig);
-            return JsonSerializer.Deserialize<VisualizeCommand>(json).ToVisualizerOptions();
+            return ReadJson()
+                .Then(Deserialize)
+                .Then(command => command.ToVisualizerOptions());
+        }
+
+        private Result<string> ReadJson()
+        {
+            return Result.Of(() => File.ReadAllText(PathToJsonConfig))
+                .RefineError($"Can not read file {PathToJsonConfig}");
+        }
+
+        private static Result<VisualizeCommand> Deserialize(string json)
+        {
+            return Result.Of(() => JsonSerializer.Deserialize<VisualizeCommand>(json));
         }
     }
 }
