@@ -4,13 +4,13 @@ namespace TagsCloud.Visualization.Utils
 {
     public readonly struct Result<T>
     {
-        public Result(T value, string error)
+        internal Result(T value, string error)
         {
             Error = error;
             Value = value;
         }
 
-        public static implicit operator Result<T>(T v) => Result.Ok(v);
+        public static implicit operator Result<T>(T value) => Result.Ok(value);
 
         public string Error { get; }
         internal T Value { get; }
@@ -32,7 +32,7 @@ namespace TagsCloud.Visualization.Utils
 
         public static Result<None> Ok() => Ok<None>(null);
 
-        public static Result<T> Fail<T>(string e) => new(default, e);
+        public static Result<T> Fail<T>(string error) => new(default, error);
 
         public static Result<T> Of<T>(Func<T> f, string error = null)
         {

@@ -64,7 +64,8 @@ namespace TagsCloud.Words
                             ctx.Resolve<IEnumerable<IFileReader>>());
 
                         var boringWords = fileReader.Read()
-                            .Then(x => new BoringWordsFilter(x));
+                            .Then(x => new BoringWordsFilter(x))
+                            .OnFail(x => Console.WriteLine(x, Console.Error));
 
                         return boringWords.IsSuccess ? boringWords.GetValueOrThrow() : new BoringWordsFilter();
                     }
