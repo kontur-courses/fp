@@ -11,7 +11,7 @@ namespace TagsCloud.Words
         {
             Parser.Default.ParseArguments<CreateCloudCommand>(args)
                 .MapResult(
-                    command => CreateCloudProcessor.Run(command),
+                    CreateCloudProcessor.Run,
                     HandleParseError
                 );
         }

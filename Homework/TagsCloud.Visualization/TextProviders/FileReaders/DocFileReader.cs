@@ -2,7 +2,7 @@
 using TagsCloud.Visualization.Utils;
 using Xceed.Words.NET;
 
-namespace TagsCloud.Visualization.WordsReaders.FileReaders
+namespace TagsCloud.Visualization.TextProviders.FileReaders
 {
     public class DocFileReader : IFileReader
     {

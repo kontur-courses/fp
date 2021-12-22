@@ -4,7 +4,7 @@ using NUnit.Framework;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.WordsFilter;
-using TagsCloud.Visualization.WordsParser;
+using TagsCloud.Visualization.WordsParsers;
 
 namespace TagsCloud.Tests
 {

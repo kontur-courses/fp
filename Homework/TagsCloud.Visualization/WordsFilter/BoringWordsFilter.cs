@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.WordsReaders;
+using TagsCloud.Visualization.TextProviders;
 
 namespace TagsCloud.Visualization.WordsFilter
 {
@@ -23,12 +23,12 @@ namespace TagsCloud.Visualization.WordsFilter
         {
         }
 
-        public BoringWordsFilter(IWordsProvider wordsProvider)
+        public BoringWordsFilter(ITextProvider textProvider)
         {
-            if (wordsProvider == null)
+            if (textProvider == null)
                 boringWords = baseBoringWords;
             else
-                boringWords = wordsProvider.Read()
+                boringWords = textProvider.Read()
                     .RefineError("Can not read boring words file")
                     .GetValueOrThrow()
                     .Split(new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries)

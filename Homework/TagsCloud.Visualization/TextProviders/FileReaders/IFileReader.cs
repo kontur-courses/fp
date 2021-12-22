@@ -1,6 +1,6 @@
 ﻿using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.WordsReaders.FileReaders
+namespace TagsCloud.Visualization.TextProviders.FileReaders
 {
     public interface IFileReader
     {

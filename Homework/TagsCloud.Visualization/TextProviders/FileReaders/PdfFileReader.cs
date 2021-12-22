@@ -4,7 +4,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.WordsReaders.FileReaders
+namespace TagsCloud.Visualization.TextProviders.FileReaders
 {
     public class PdfFileReader : IFileReader
     {

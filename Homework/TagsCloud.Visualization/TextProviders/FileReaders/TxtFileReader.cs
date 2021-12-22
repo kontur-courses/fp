@@ -2,7 +2,7 @@
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.WordsReaders.FileReaders
+namespace TagsCloud.Visualization.TextProviders.FileReaders
 {
     public class TxtFileReader : IFileReader
     {

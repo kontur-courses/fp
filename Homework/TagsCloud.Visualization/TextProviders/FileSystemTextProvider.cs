@@ -2,17 +2,17 @@
 using System.IO;
 using System.Linq;
 using TagsCloud.Visualization.Extensions;
+using TagsCloud.Visualization.TextProviders.FileReaders;
 using TagsCloud.Visualization.Utils;
-using TagsCloud.Visualization.WordsReaders.FileReaders;
 
-namespace TagsCloud.Visualization.WordsReaders
+namespace TagsCloud.Visualization.TextProviders
 {
-    public class FileProvider : IWordsProvider
+    public class FileSystemTextProvider : ITextProvider
     {
         private readonly string fileName;
         private readonly IEnumerable<IFileReader> fileReaders;
 
-        public FileProvider(string fileName, IEnumerable<IFileReader> fileReaders)
+        public FileSystemTextProvider(string fileName, IEnumerable<IFileReader> fileReaders)
         {
             this.fileName = fileName;
             this.fileReaders = fileReaders;

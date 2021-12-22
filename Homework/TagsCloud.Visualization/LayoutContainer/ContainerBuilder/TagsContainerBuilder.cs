@@ -8,14 +8,14 @@ using TagsCloud.Visualization.WordsSizeServices;
 
 namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
 {
-    public class WordsContainerBuilder : AbstractWordsContainerBuilder
+    public class TagsContainerBuilder : AbstractTagsContainerBuilder
     {
         private readonly IFontFactory fontFactory;
         private readonly ICloudLayouter layouter;
-        private readonly List<Tag> words = new();
+        private readonly List<Tag> tags = new();
         private readonly IWordsSizeService wordsSizeService;
 
-        public WordsContainerBuilder(
+        public TagsContainerBuilder(
             ICloudLayouter layouter,
             IWordsSizeService wordsSizeService,
             IFontFactory fontFactory)
@@ -27,22 +27,22 @@ namespace TagsCloud.Visualization.LayoutContainer.ContainerBuilder
 
         public override TagsContainer Build() => new()
         {
-            Items = words,
+            Items = tags,
             Size = CalculateSize(),
-            Center = words.First().Border.GetCenter()
+            Center = tags.First().Border.GetCenter()
         };
 
-        protected override WordsContainerBuilder AddWord(Word word, int minCount, int maxCount)
+        protected override TagsContainerBuilder AddWord(Word word, int minCount, int maxCount)
         {
             var font = fontFactory.GetFont(word, minCount, maxCount);
             var size = wordsSizeService.CalculateSize(word, font);
 
             layouter.PutNextRectangle(size)
-                .Then(rectangle => words.Add(new Tag(word, font, rectangle)));
+                .Then(rectangle => tags.Add(new Tag(word, font, rectangle)));
 
             return this;
         }
 
-        private Size CalculateSize() => words.Select(x => x.Border).GetSize();
+        private Size CalculateSize() => tags.Select(x => x.Border).GetSize();
     }
 }

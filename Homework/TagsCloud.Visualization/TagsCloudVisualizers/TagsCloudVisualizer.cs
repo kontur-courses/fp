@@ -3,31 +3,31 @@ using System.Linq;
 using TagsCloud.Visualization.Drawers;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.LayoutContainer.ContainerBuilder;
+using TagsCloud.Visualization.TextProviders;
 using TagsCloud.Visualization.Utils;
-using TagsCloud.Visualization.WordsReaders;
 
-namespace TagsCloud.Visualization.LayouterCores
+namespace TagsCloud.Visualization.TagsCloudVisualizers
 {
     public class TagsCloudVisualizer : ITagsCloudVisualizer
     {
         private readonly IDrawer drawer;
-        private readonly AbstractWordsContainerBuilder wordsContainerBuilder;
+        private readonly AbstractTagsContainerBuilder tagsContainerBuilder;
         private readonly IWordsService wordsService;
 
         public TagsCloudVisualizer(
             IWordsService wordsService,
-            AbstractWordsContainerBuilder wordsContainerBuilder,
+            AbstractTagsContainerBuilder tagsContainerBuilder,
             IDrawer drawer)
         {
             this.wordsService = wordsService;
-            this.wordsContainerBuilder = wordsContainerBuilder;
+            this.tagsContainerBuilder = tagsContainerBuilder;
             this.drawer = drawer;
         }
 
-        public Result<Image> GenerateImage(IWordsProvider wordsProvider)
+        public Result<Image> GenerateImage(ITextProvider textProvider)
         {
-            return wordsService.GetWords(wordsProvider)
-                .Then(words => wordsContainerBuilder.AddWords(words,
+            return wordsService.GetWords(textProvider)
+                .Then(words => tagsContainerBuilder.AddWords(words,
                     words.Min(x => x.Count),
                     words.Max(x => x.Count)))
                 .Then(container => container.Build())

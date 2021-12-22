@@ -18,7 +18,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void GetNext_OnFirstCall_ShouldReturnCenter()
+        public void GenerateNextPoint_OnFirstCall_ShouldReturnCenter()
         {
             var point = sut.GenerateNextPoint();
 
@@ -26,7 +26,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void GetNext_ShouldReturnPoints_WithSameRadii()
+        public void GenerateNextPoint_ShouldReturnPoints_WithSameRadiuses()
         {
             var points = Enumerable
                 .Range(0, 10).Select(_ => sut.GenerateNextPoint())
@@ -39,7 +39,7 @@ namespace TagsCloud.Tests
         }
 
         [Test]
-        public void GetNext_ShouldReturnPoints_WithIncreasingRadius()
+        public void GenerateNextPoint_ShouldReturnPoints_WithIncreasingRadius()
         {
             var points = Enumerable.Range(0, 100)
                 .Select(_ => sut.GenerateNextPoint())

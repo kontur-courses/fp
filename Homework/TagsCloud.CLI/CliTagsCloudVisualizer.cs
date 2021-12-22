@@ -1,8 +1,8 @@
 ﻿using System;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.ImagesSavers;
-using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.WordsReaders;
+using TagsCloud.Visualization.TagsCloudVisualizers;
+using TagsCloud.Visualization.TextProviders;
 
 namespace TagsCloud.Words
 {
@@ -10,21 +10,21 @@ namespace TagsCloud.Words
     {
         private readonly IImageSaver imageSaver;
         private readonly ITagsCloudVisualizer tagsCloudVisualizer;
-        private readonly IWordsProvider wordsProvider;
+        private readonly ITextProvider textProvider;
 
         public CliTagsCloudVisualizer(
             ITagsCloudVisualizer tagsCloudVisualizer,
             IImageSaver imageSaver,
-            IWordsProvider wordsProvider)
+            ITextProvider textProvider)
         {
             this.tagsCloudVisualizer = tagsCloudVisualizer;
             this.imageSaver = imageSaver;
-            this.wordsProvider = wordsProvider;
+            this.textProvider = textProvider;
         }
 
         public void Run()
         {
-            tagsCloudVisualizer.GenerateImage(wordsProvider)
+            tagsCloudVisualizer.GenerateImage(textProvider)
                 .OnFail(x => Console.WriteLine(x, Console.Error))
                 .Then(x => imageSaver.Save(x))
                 .Then(x => x.Dispose());

@@ -3,8 +3,8 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.WordsReaders;
+using TagsCloud.Visualization.TagsCloudVisualizers;
+using TagsCloud.Visualization.TextProviders;
 
 namespace TagsCloud.WebApi.Controllers
 {
@@ -17,10 +17,10 @@ namespace TagsCloud.WebApi.Controllers
         public TagsCloudController(ITagsCloudVisualizer tagsCloudVisualizer)
             => this.tagsCloudVisualizer = tagsCloudVisualizer;
 
-        [HttpPost("[action]")]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] string text)
         {
-            var result = tagsCloudVisualizer.GenerateImage(new SimpleTextReader(text))
+            var result = tagsCloudVisualizer.GenerateImage(new SimpleTextProvider(text))
                 .Then(image =>
                 {
                     using var ms = new MemoryStream();

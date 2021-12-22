@@ -5,9 +5,9 @@ using NUnit.Framework;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.ContainerVisitor;
 using TagsCloud.Visualization.Extensions;
-using TagsCloud.Visualization.LayouterCores;
-using TagsCloud.Visualization.WordsReaders;
-using TagsCloud.Visualization.WordsReaders.FileReaders;
+using TagsCloud.Visualization.TagsCloudVisualizers;
+using TagsCloud.Visualization.TextProviders;
+using TagsCloud.Visualization.TextProviders.FileReaders;
 
 namespace TagsCloud.FunctionalTests
 {
@@ -24,7 +24,7 @@ namespace TagsCloud.FunctionalTests
             using var container = CreateContainer(settings, extension);
 
             var visualizer = container.Resolve<ITagsCloudVisualizer>();
-            visualizer.GenerateImage(container.Resolve<IWordsProvider>())
+            visualizer.GenerateImage(container.Resolve<ITextProvider>())
                 .Then(x => x.Dispose());
         }
 
@@ -45,9 +45,9 @@ namespace TagsCloud.FunctionalTests
             builder.RegisterType<PdfFileReader>().As<IFileReader>();
 
             builder.Register(ctx =>
-                    new FileProvider(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
+                    new FileSystemTextProvider(Path.Combine(Directory.GetCurrentDirectory(), $"test.{extension}"),
                         ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsProvider>();
+                .As<ITextProvider>();
 
             return builder.Build();
         }

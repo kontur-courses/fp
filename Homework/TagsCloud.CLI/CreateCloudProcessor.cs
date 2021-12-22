@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Autofac;
 using TagsCloud.Visualization;
 using TagsCloud.Visualization.Extensions;
+using TagsCloud.Visualization.TextProviders;
+using TagsCloud.Visualization.TextProviders.FileReaders;
 using TagsCloud.Visualization.WordsFilter;
-using TagsCloud.Visualization.WordsReaders;
-using TagsCloud.Visualization.WordsReaders.FileReaders;
 using TagsCloud.Words.Options;
 
 namespace TagsCloud.Words
@@ -42,9 +42,9 @@ namespace TagsCloud.Words
             builder.RegisterType<DocFileReader>().As<IFileReader>();
             builder.RegisterType<PdfFileReader>().As<IFileReader>();
 
-            builder.Register(ctx => new FileProvider(settings.InputWordsFile,
+            builder.Register(ctx => new FileSystemTextProvider(settings.InputWordsFile,
                     ctx.Resolve<IEnumerable<IFileReader>>()))
-                .As<IWordsProvider>();
+                .As<ITextProvider>();
             RegisterBoringWordsFilter(builder, settings);
 
             builder.RegisterType<CliTagsCloudVisualizer>().AsSelf();
@@ -57,7 +57,7 @@ namespace TagsCloud.Words
             if (settings.BoringWordsFile == null)
                 builder.Register(_ => new BoringWordsFilter()).As<IWordsFilter>();
             else
-                builder.Register(ctx => new BoringWordsFilter(new FileProvider(settings.BoringWordsFile,
+                builder.Register(ctx => new BoringWordsFilter(new FileSystemTextProvider(settings.BoringWordsFile,
                     ctx.Resolve<IEnumerable<IFileReader>>()))).As<IWordsFilter>();
         }
     }

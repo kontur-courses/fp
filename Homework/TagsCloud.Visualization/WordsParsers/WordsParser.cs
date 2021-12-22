@@ -6,7 +6,7 @@ using TagsCloud.Visualization.Models;
 using TagsCloud.Visualization.Utils;
 using TagsCloud.Visualization.WordsFilter;
 
-namespace TagsCloud.Visualization.WordsParser
+namespace TagsCloud.Visualization.WordsParsers
 {
     public class WordsParser : IWordsParser
     {

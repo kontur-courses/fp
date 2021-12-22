@@ -1,8 +1,8 @@
 ﻿using TagsCloud.Visualization.Utils;
 
-namespace TagsCloud.Visualization.WordsReaders
+namespace TagsCloud.Visualization.TextProviders
 {
-    public interface IWordsProvider
+    public interface ITextProvider
     {
         Result<string> Read();
     }

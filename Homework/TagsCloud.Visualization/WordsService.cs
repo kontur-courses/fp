@@ -2,9 +2,9 @@
 using System.Linq;
 using TagsCloud.Visualization.Extensions;
 using TagsCloud.Visualization.Models;
+using TagsCloud.Visualization.TextProviders;
 using TagsCloud.Visualization.Utils;
-using TagsCloud.Visualization.WordsParser;
-using TagsCloud.Visualization.WordsReaders;
+using TagsCloud.Visualization.WordsParsers;
 
 namespace TagsCloud.Visualization
 {
@@ -14,10 +14,10 @@ namespace TagsCloud.Visualization
 
         public WordsService(IWordsParser wordsParser) => this.wordsParser = wordsParser;
 
-        public Result<Word[]> GetWords(IWordsProvider wordsProvider)
+        public Result<Word[]> GetWords(ITextProvider textProvider)
         {
-            return wordsProvider.Read()
-                .Then(t => wordsParser.CountWordsFrequency(t))
+            return textProvider.Read()
+                .Then(text => wordsParser.CountWordsFrequency(text))
                 .Then(ProcessToWords)
                 .Then(x => x.ToArray());
         }
