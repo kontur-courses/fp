@@ -6,7 +6,6 @@ using System.IO;
 using CLI;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using TagsCloudContainer.ClientsInterfaces;
 using TagsCloudContainer.CloudLayouters;
 using TagsCloudContainer.PaintConfigs;
@@ -62,16 +61,17 @@ namespace CloudContainerTests
             File.Delete("input.txt");
         }
 
-        [TestCase("--output", "false_output.txt", TestName = "Not existed output file is given")]
-        [TestCase("--words", "two words", TestName = "Both custom words and input file path are given")]
-        [TestCase("-w", "0", TestName = "Width is equal zero")]
-        [TestCase("-h", "-5", TestName = "Height is less than zero")]
-        [TestCase("-c", "4", TestName = "Unknown color scheme is given")]
-        [TestCase("-f", "png", TestName = "Text format is not txt")]
-        [TestCase("-i", "doc", TestName = "Output image format is unknown")]
-        [TestCase("-r", "big", TestName = "Unknown spiral is given")]
-        [TestCase("-s", "-100", TestName = "Font size is equal zero")]
-        [TestCase("-n", "Aerials", TestName = "Unknown font name is given")]
+        [TestCase("--output", "F:\\", TestName = "not existed output directory is given")]
+        [TestCase("--words", "two words", TestName = "both custom words and input file path are given")]
+        [TestCase("-w", "0", TestName = "width is equal zero")]
+        [TestCase("-h", "-5", TestName = "height is less than zero")]
+        [TestCase("-c", "4", TestName = "unknown color scheme is given")]
+        [TestCase("-f", "png", TestName = "text format is not txt")]
+        [TestCase("-i", "doc", TestName = "output image format is unknown")]
+        [TestCase("-r", "big", TestName = "unknown spiral is given")]
+        [TestCase("-s", "-100", TestName = "font size is equal zero")]
+        [TestCase("-n", "Aerials", TestName = "unknown font name is given")]
+        [TestCase("-m", "stranger handlers", TestName = "unknown handlers are given")]
         public void Throw_Argument_Exception_When(string key, string arg)
         {
             var arrayArgs = new[] {"--input", "input.txt", key, arg};
@@ -97,8 +97,7 @@ namespace CloudContainerTests
             var config = new Client(args).UserConfig;
 
             config.Should().BeEquivalentTo(expectedConfig, options =>
-                options.Excluding(c => c.Tags)
-                    .Excluding(c => c.HandlersStorage)
+                options.Excluding(c => c.HandlersStorage)
                     .Excluding(c => c.TextParser));
         }
 

@@ -95,6 +95,19 @@ namespace CloudContainerTests
         }
 
         [Test]
+        public void Exclude_Boring_Words()
+        {
+            tagsReader = new TagsReader(new[] { "is", "are", "me" });
+            var boringWords = new BoringWords().GetWords();
+            handlers.Add(s => boringWords.Contains(s) ? "" : s);
+            var expectedDict = new Dictionary<string, int>();
+
+            var tp = new TextParser(tagsReader, handlers, grouper);
+
+            tp.GetWordsCounts().Should().BeEquivalentTo(expectedDict);
+        }
+
+        [Test]
         public void Count_Same_Words_Correctly()
         {
             tagsReader = new TagsReader(new[] { "Please", "Away", "Please", "Please", "Go" });

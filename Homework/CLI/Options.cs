@@ -1,8 +1,6 @@
-﻿using System;
-using CommandLine;
+﻿using CommandLine;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Mime;
 
 namespace CLI
 {
