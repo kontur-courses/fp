@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
@@ -12,25 +13,9 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
 
         IEnumerable<Word> GetAnalyzedWords(IEnumerable<string> words);
 
-        public Result<None> InvokeMystemAnalizationResult()
-        {
-            var invokeResult = Result.OfAction(() => InvokeMystemAnalyze());
-            return invokeResult;
-        }
+        public Result<None> InvokeMystemAnalizationResult();
+        
 
-        private void InvokeMystemAnalyze()
-        {
-            Checker.CheckPathToFile(FilePath);
-            Checker.CheckPathToFile(MystemPath);
-            Checker.CheckPathToFile(SaveAnalyzePath);
-
-            var process = Process.Start(new ProcessStartInfo
-            {
-                FileName = MystemPath,
-                Arguments = MystemArgs + ' ' + FilePath + ' ' + SaveAnalyzePath,
-            });
-
-            process.WaitForExit();
-        }
+        Result<None> InvokeMystemAnalyze();
     }
 }

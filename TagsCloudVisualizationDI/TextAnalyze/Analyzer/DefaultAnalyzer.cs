@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
@@ -54,8 +56,6 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
         public IEnumerable<Word> GetAnalyzedWords(IEnumerable<string> words)
         {
 
-            //throw new Exception(words.ToList().Count().ToString());
-
             foreach (var word in words)
             {
                 if (CheckWord(word, out string content, out PartsOfSpeech.SpeechPart type))
@@ -69,6 +69,52 @@ namespace TagsCloudVisualizationDI.TextAnalyze.Analyzer
         private bool IsNotExcludedWord(string word)
         {
             return !(_excludedWords.Contains(word));
+        }
+
+        public Result<None> InvokeMystemAnalyze()
+        {
+            Console.WriteLine(File.Exists(FilePath));
+
+            if (!File.Exists(FilePath))
+            {
+                Console.WriteLine("!!!");
+                return Result.Fail<None>($"filepath is not correct: {FilePath}");
+            }
+            if (!File.Exists(SaveAnalyzePath))
+                return Result.Fail<None>($"path to temp Document is not correct: {SaveAnalyzePath}");
+            if (!File.Exists(MystemPath))
+                return Result.Fail<None>($"path to mystem is not correct: {MystemPath}");
+            
+            var process = Process.Start(new ProcessStartInfo
+            {
+                FileName = MystemPath,
+                Arguments = MystemArgs + ' ' + FilePath + ' ' + SaveAnalyzePath,
+            });
+            process.WaitForExit();
+            return Result.Ok();
+            
+
+
+            /*
+            var process = Process.Start(new ProcessStartInfo
+            {
+                FileName = Checker.ResultOfGetPathToFile(MystemPath).GetValueOrThrow(),
+                Arguments = MystemArgs + ' ' + Checker.ResultOfGetPathToFile(FilePath) + ' ' + Checker.ResultOfGetPathToFile(SaveAnalyzePath),
+            });
+            process.WaitForExit();
+            */
+        }
+
+        public Result<None> InvokeMystemAnalizationResult()
+        {
+            {
+                Console.WriteLine("!2");
+                var invokeResult = InvokeMystemAnalyze();
+                Console.WriteLine(invokeResult.Error);
+                Console.WriteLine(invokeResult.IsSuccess);
+                Console.WriteLine(invokeResult.Value);
+                return invokeResult;
+            }
         }
     }
 }

@@ -9,6 +9,16 @@ namespace TagsCloudVisualizationDIConsoleClient
 {
     public class Program
     {
+        private static readonly Dictionary<string, ImageFormat> _imageFormats= new Dictionary<string, ImageFormat>()
+        {
+            [".png"] = ImageFormat.Png,
+            [".jpeg"] = ImageFormat.Jpeg,
+            [".jpg"] = ImageFormat.Jpeg,
+            [".bmp"] = ImageFormat.Bmp,
+            [".tiff"] = ImageFormat.Tiff,
+            [".ico"] = ImageFormat.Icon,
+            [".gif"] = ImageFormat.Gif,
+        };
         public static void Main(string[] args)
         {
             if (args.Contains("-h") || args.Contains("--help"))
@@ -20,8 +30,8 @@ namespace TagsCloudVisualizationDIConsoleClient
             Result.OnFalse(!(args.Length < 2 || args.Length > 3), (er) => PrintAboutFail(er), $"Incorrect number of arguments ({args.Length})" +
                 "but should be between 2 and 3");
 
-            var pathToFile = args.ElementAt(0);
-            var pathToSave = args.ElementAt(1);
+            var pathToFile = args[0];
+            var pathToSave = args[1];
 
 
             var lastDotIndex = pathToSave.LastIndexOf('.');
@@ -41,6 +51,11 @@ namespace TagsCloudVisualizationDIConsoleClient
 
         private static Result<ImageFormat> CheckPossibleFormat(string possibleFormat)
         {
+            var lowerFormat = possibleFormat.ToLower();
+            return (_imageFormats.ContainsKey(lowerFormat))
+                ? _imageFormats[lowerFormat]
+                : Result.Fail<ImageFormat>("Incorrect image format");
+            /*
             return Result.Of(() => possibleFormat.ToLower() switch
             {
                 ".png" => ImageFormat.Png,
@@ -52,6 +67,7 @@ namespace TagsCloudVisualizationDIConsoleClient
                 ".gif" => ImageFormat.Gif,
                 _ => throw new FormatException("Incorrect image format"),
             });
+            */
         }
 
         private static Result<List<string>> MakeExcludeWordList(string excludedWordsDocumentPath)

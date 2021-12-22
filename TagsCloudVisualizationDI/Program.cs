@@ -43,13 +43,13 @@ namespace TagsCloudVisualizationDI
             excludedWordsList.OnFail(error => PrintAboutFail(error));
 
 
-            //Checker.CheckPathToFile(pathToFile);
+            //Checker.ResultOfGetPathToFile(pathToFile);
 
             //Checker.CheckPathToDirectory(pathToSave
                 //.Substring(0, pathToSave.LastIndexOf("\\", StringComparison.InvariantCulture)+1));
 
-            //Checker.CheckPathToFile(MyStemPath);
-            //Checker.CheckPathToFile(SaveAnalizationPath);
+            //Checker.ResultOfGetPathToFile(MyStemPath);
+            //Checker.ResultOfGetPathToFile(SaveAnalizationPath);
 
 
             var containerBuilder = new ContainerBuilder();
@@ -93,10 +93,30 @@ namespace TagsCloudVisualizationDI
             var saver = buildContainer.Resolve<ISaver>();
             var visualization = buildContainer.Resolve<IVisualization>();
 
+            Console.WriteLine("!");
+            analyzer.InvokeMystemAnalizationResult()
+                .Then( _ => reader.ReadText())
+                .Then(analyzedWords => analyzer.GetAnalyzedWords(analyzedWords))
+                //.Then(normalizedWords => normalizedWords.Select(word => normalizer.Normalize(word.WordText)))
+                //NormalizeWords(normalizedWords, normalizer))
+                .Then(formedElement =>
+                    filler.FormStatisticElements(ElementSize, formedElement.ToList()))
+
+                .Then(sizedElement =>
+                    visualization.FindSizeForElements(sizedElement, Font))
+                .Then(positionedElement => filler.MakePositionElements(positionedElement))
+
+                .Then(res => visualization.DrawAndSaveImage(res, saver.GetSavePath(), imageFormat.Value, Font))
+                //.Then(res => visualization.DrawAndSaveImage(res, "C:\\GitHub\\p3001.png", imageFormat.GetValueOrThrow(), Font))
+                .OnFail(er => PrintAboutFail(er));
 
 
+
+
+
+
+            /*
             var invokeResult = analyzer.InvokeMystemAnalizationResult();
-
 
             if (!invokeResult.IsSuccess)
                 PrintAboutFail(invokeResult.Error);
@@ -118,13 +138,15 @@ namespace TagsCloudVisualizationDI
                 .Then(res => 
                     visualization.DrawAndSaveImage(res, saver.GetSavePath().GetValueOrThrow(), imageFormat.GetValueOrThrow()))
                 .OnFail(er => PrintAboutFail(er));
+            */
         }
 
         internal static void PrintAboutFail(string error)
         {
-            throw new Exception(error);
+            throw new Exception(error + " NOTSYSTEM");
         }
 
+        /*
         private static IEnumerable<Word> NormalizeWords(IEnumerable<Word> analyzedWords, INormalizer normalizer)
         {
             foreach (var word in analyzedWords)
@@ -133,5 +155,6 @@ namespace TagsCloudVisualizationDI
                 yield return word;
             }
         }
+        */
     }
 }
