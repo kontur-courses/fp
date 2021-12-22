@@ -28,15 +28,30 @@ namespace CLI
         private Result<ConsoleConfig> ParseArguments()
         {
             var config = new Result<ConsoleConfig>();
-            var result = Parser.Default.ParseArguments<Options>(args);
+            ParserResult<Options> result;
+            try
+            {
+                result = Parser.Default.ParseArguments<Options>(args);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<ConsoleConfig>(e.Message);
+            }
+
             result.WithParsed(options => config = GetConfigResult(options))
                 .WithNotParsed(errs =>
                 {
-                    if (!errs.IsHelp() && !errs.IsVersion()) 
-                        throw new Exception($"Failed with errors:\n{string.Join("\n", errs)}");
+                    if (IsNotHelpOrVersionCall(errs))
+                        config = Result.Fail<ConsoleConfig>("Error's describing is located above options list");
                 });
 
             return config;
+        }
+
+
+        private bool IsNotHelpOrVersionCall(IEnumerable<Error> errs)
+        {
+            return !errs.IsHelp() && !errs.IsVersion();
         }
 
         private Result<ConsoleConfig> GetConfigResult(Options options)
