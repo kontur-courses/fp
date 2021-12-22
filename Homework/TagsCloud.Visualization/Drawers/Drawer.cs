@@ -17,7 +17,7 @@ namespace TagsCloud.Visualization.Drawers
         public Result<Image> Draw<T>(ILayoutContainer<T> layoutContainer)
         {
             if (!layoutContainer.Items.Any())
-                return Result.Fail<Image>("rectangles array can't be empty");
+                return Result.Fail<Image>("layout items can't be empty");
 
             var (widthWithOffset, heightWithOffset) = (layoutContainer.Size.Width + OffsetX,
                 layoutContainer.Size.Height + OffsetY);

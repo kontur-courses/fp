@@ -32,9 +32,9 @@ namespace TagsCloud.Tests
                 .Range(0, 10).Select(_ => sut.GenerateNextPoint())
                 .ToList();
 
-            var radii = points.Select(x => x.GetDistance(center)).ToList();
+            var radiuses = points.Select(x => x.GetDistance(center)).ToList();
 
-            foreach (var (previous, current) in radii.Zip(radii.Skip(1)))
+            foreach (var (previous, current) in radiuses.Zip(radiuses.Skip(1)))
                 current.Should().BeInRange(previous, previous + 1);
         }
 
