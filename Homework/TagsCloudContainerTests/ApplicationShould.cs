@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Autofac;
 using CLI;
 using ContainerConfigurers;
@@ -25,6 +26,24 @@ namespace CloudContainerTests
 
             File.Exists("tagcloud" + ".Png").Should().BeTrue();
             File.Delete("tagcloud" + ".Png");
+        }
+
+        [Test]
+        public void Throw_When_Any_Word_Is_Outside_Image()
+        {
+            var config = new Client(new[]
+            {
+                "--words", "happy", "birthday", "mister", "president",
+                "-s", "30", "-w", "200", "-h", "200"
+            }).UserConfig;
+            var container = new AutofacConfigurer(config).GetContainer();
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var painter = scope.Resolve<CloudPainter>();
+                FluentActions.Invoking(() => painter.Draw().GetValueOrThrow())
+                    .Should().Throw<ArgumentException>();
+            }
         }
     }
 }

@@ -25,22 +25,27 @@ namespace TagsCloudContainer
             this.savePath = savePath;
         }
 
-        public void Draw()
+        public Result<string> Draw()
         {
             var imageSize = config.ImageSize;
+            var savingName = savePath + "." + config.ImageFormat;
+            var imageRect = new Rectangle(new Point(0, 0), config.ImageSize);
+            var drawingResult = $"Image successfully saved in {savingName}".AsResult();
+
             using (var image = new Bitmap(imageSize.Width, imageSize.Height))
             using (var graphics = Graphics.FromImage(image))
             {
                 graphics.Clear(Color.DarkKhaki);
                 foreach (var wordCount in parser.GetWordsCounts())
-                    DrawWord(wordCount, graphics);
-                var savingName = savePath + "." + config.ImageFormat;
+                    drawingResult = DrawWord(wordCount, graphics, drawingResult, imageRect);
                 image.Save(savingName, config.ImageFormat);
-                Console.WriteLine($"Image successfully saved in {savingName}");
             }
+
+            return drawingResult;
         }
 
-        private void DrawWord(KeyValuePair<string, int> wordCount, Graphics graphics)
+        private Result<string> DrawWord(KeyValuePair<string, int> wordCount, Graphics graphics,
+            Result<string> drawingResult, Rectangle imageRect)
         {
             var word = wordCount.Key;
             var scaledFontSize = ScaleFontSize(config.FontSize, wordCount.Value);
@@ -51,7 +56,17 @@ namespace TagsCloudContainer
                 var enclosingRectangle = cloudLayouter.PutNextRectangle(
                     new Size((int)rectSize.Width + WordsBorder, (int)rectSize.Height + WordsBorder));
                 graphics.DrawString(word, drawFont, drawBrush, enclosingRectangle);
+
+                return GetDrawingResult(drawingResult, imageRect, enclosingRectangle);
             }
+        }
+
+        private Result<string> GetDrawingResult(Result<string> drawingResult, 
+            Rectangle imageRect, Rectangle wordRect)
+        {
+            return imageRect.Contains(wordRect)
+                ? drawingResult
+                : Result.Fail<string>("One or more words are not inside the image!");
         }
 
         private int ScaleFontSize(int fontSize, int wordQuantity)

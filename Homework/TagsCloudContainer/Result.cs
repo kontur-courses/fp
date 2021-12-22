@@ -2,14 +2,14 @@
 
 namespace TagsCloudContainer
 {
-    internal class None
+    public class None
     {
         private None()
         {
         }
     }
 
-    internal struct Result<T>
+    public struct Result<T>
     {
         public Result(string error, T value = default(T))
         {
@@ -31,7 +31,7 @@ namespace TagsCloudContainer
         public bool IsSuccess => Error == null;
     }
 
-    internal static class Result
+    public static class Result
     {
         public static Result<T> AsResult<T>(this T value)
         {

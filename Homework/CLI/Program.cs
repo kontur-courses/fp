@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using ContainerConfigurers;
 using TagsCloudContainer;
 
@@ -14,7 +15,8 @@ namespace CLI
             using (var scope = container.BeginLifetimeScope())
             {
                 var painter = scope.Resolve<CloudPainter>();
-                painter.Draw();
+                var paintResult = painter.Draw();
+                Console.WriteLine(paintResult.GetValueOrThrow());
             }
         }
     }
