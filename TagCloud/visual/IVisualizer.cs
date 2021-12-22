@@ -1,10 +1,12 @@
-﻿using System.Drawing;
-using TagCloud.configurations;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using TagCloud.settings;
 
 namespace TagCloud.visual
 {
     public interface IVisualizer
     {
-        Image GetImage(IImageConfiguration imageConfiguration);
+        Result<IVisualizer> InitializeCloud(List<string> words);
+        Result<Image> GetImage(IDrawSettings drawSettings);
     }
 }

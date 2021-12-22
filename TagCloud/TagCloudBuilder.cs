@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using TagCloud.configurations;
 using TagCloud.file_readers;
 using TagCloud.layouter;
 using TagCloud.repositories;
 using TagCloud.selectors;
+using TagCloud.settings;
 using TagCloud.visual;
 
 namespace TagCloud
@@ -15,80 +15,75 @@ namespace TagCloud
     public class TagCloudBuilder
     {
         private readonly ServiceCollection container;
-        private ITagRepositoryConfiguration tagRepositoryConfiguration;
-        private IImageConfiguration imageConfiguration;
-        private IImageSaveConfiguration imageSaveConfiguration;
-        private string? filePath;
+        private IDrawSettings drawSettings;
+        private ITagSettings tagSettings;
+        private string? input;
+        private string? output;
 
         private TagCloudBuilder()
         {
-            tagRepositoryConfiguration = new TagRepositoryRepositoryConfiguration(
-                Color.Magenta,
-                FontFamily.GenericSansSerif,
-                15
+            tagSettings = new TagSettings(FontFamily.GenericSansSerif, 15);
+            drawSettings = new DrawSettings(
+                new List<Color> { Color.Magenta, Color.Aqua, Color.Azure },
+                Color.Black,
+                new Size(1500, 1500)
             );
-            imageConfiguration = new ImageConfiguration(Color.Black, 1500, 1500);
-            imageSaveConfiguration = new ImageSaveConfiguration("serious_out.png", ImageFormat.Png);
+            output = "serious_out.png";
             container = new ServiceCollection();
-            container
-                .AddSingleton<IFileReader>(new TxtReader())
-                .AddSingleton(new List<IChecker<string>> { new BoringChecker() })
-                .AddSingleton<IFilter<string>, WordFilter>()
-                .AddSingleton<IConverter<string>, ToLowerCaseConverter>()
-                .AddSingleton<List<IConverter<string>>>()
-                .AddSingleton<IConverter<IEnumerable<string>>, WordConverter>()
+            container.AddSingleton<IVisualizer, TagVisualizer>()
                 .AddSingleton<IWordHelper, WordHelper>()
-                .AddSingleton<IRepository<string>, WordRepository>()
+                .AddSingleton<IFilter<string>>(new WordFilter(new List<IChecker<string>>()))
+                .AddSingleton<IConverter<IEnumerable<string>>>(
+                    new WordConverter(new List<IConverter<string>>
+                        { new ToLowerCaseConverter() }
+                    )
+                )
+                .AddSingleton<ISaver<Image>, TagVisualizationSaver>()
                 .AddSingleton<ICloudLayouter, CircularCloudLayouter>()
-                .AddSingleton<IRepository<Tag>, TagRepository>()
-                .AddSingleton<IVisualizer, TagVisualizer>()
-                .AddSingleton<ISaver<Image>, TagVisualizationSaver>();
+                .AddSingleton<IFileReader, FileReader>();
         }
 
         public static TagCloudBuilder Create() => new TagCloudBuilder();
 
-        public TagCloudBuilder SetImageConfiguration(IImageConfiguration configuration)
+        public TagCloudBuilder SetInputFile(string filename)
         {
-            imageConfiguration = configuration;
+            input = filename;
             return this;
         }
 
-        public TagCloudBuilder SetImageSaveConfiguration(IImageSaveConfiguration configuration)
+        public TagCloudBuilder SetOutputFile(string filename)
         {
-            imageSaveConfiguration = configuration;
+            output = filename;
             return this;
         }
 
-        public TagCloudBuilder SetTagRepositoryConfiguration(ITagRepositoryConfiguration configuration)
+        public TagCloudBuilder SetDrawSettings(IDrawSettings settings)
         {
-            tagRepositoryConfiguration = configuration;
+            drawSettings = settings;
             return this;
         }
 
-        public TagCloudBuilder SetInputFilePath(string? path)
+        public TagCloudBuilder SetTagSettings(ITagSettings settings)
         {
-            filePath = path;
+            tagSettings = settings;
             return this;
         }
 
         public TagCloudBuilder Build()
         {
-            if (filePath is null)
-                throw new ArgumentException("Set filepath!");
             container
-                .AddSingleton(filePath)
-                .AddSingleton(tagRepositoryConfiguration)
-                .AddSingleton(imageSaveConfiguration);
+                .AddSingleton(tagSettings)
+                .AddSingleton(drawSettings);
             return this;
         }
 
-        public TagCloudBuilder Run()
+        public Result<None> Run()
         {
             var scope = container.BuildServiceProvider().CreateScope();
-            var visualizer = scope.ServiceProvider.GetRequiredService<IVisualizer>();
-            var saver = scope.ServiceProvider.GetRequiredService<ISaver<Image>>();
-            saver.Save(visualizer.GetImage(imageConfiguration));
-            return this;
+            return scope.ServiceProvider.GetRequiredService<IFileReader>().GetWords(input)
+                .Then(scope.ServiceProvider.GetRequiredService<IVisualizer>().InitializeCloud)
+                .Then(v => v.GetImage(drawSettings))
+                .Then(i => scope.ServiceProvider.GetRequiredService<ISaver<Image>>().Save(i, output));
         }
     }
 }

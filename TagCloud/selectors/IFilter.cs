@@ -4,6 +4,6 @@ namespace TagCloud.selectors
 {
     public interface IFilter<T>
     {
-        IEnumerable<T> Filter(IEnumerable<T> source);
+        IEnumerable<T> Filter(IEnumerable<T>? source);
     }
 }

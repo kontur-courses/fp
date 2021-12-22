@@ -1,5 +1,6 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using CommandLine;
 
 namespace TagCloudConsoleUI
@@ -7,25 +8,27 @@ namespace TagCloudConsoleUI
     [Verb("draw", HelpText = "Draw tag cloud")]
     public class DrawOptions
     {
-        [Option('s', "font-size", Required = false, HelpText = "Set minimum font size")]
-        public int FontSize { get; set; } = 15;
-
+        private List<Color> innerColors = new (){ Color.Magenta };
+        
         [Option('b', "background-color", Required = false, HelpText = "Set background color")]
         public Color BackgroundColor { get; set; } = Color.Black;
 
-        [Option('c', "color", Required = false, HelpText = "Set words color")]
-        public Color WordColor { get; set; } = Color.Magenta;
+        [Option('c', "colors", Required = false, HelpText = "Set colors for words")]
+        public IEnumerable<Color> InnerColors
+        {
+            get => innerColors;
+            set
+            {
+                var valueList = value.ToList();
+                if (valueList.Count > 0)
+                    innerColors = valueList;
+            }
+        }
 
-        [Option('f', "font-family", Required = false, HelpText = "Set font-family")]
-        public FontFamily FontFamily { get; set; } = FontFamily.GenericSansSerif;
-
-        [Option("image-size", Required = false, HelpText = "Set result image size")]
-        public Size Size { get; set; } = new(1500, 1500);
-
-        [Option("format", Required = false, HelpText = "Set result image format")]
-        public ImageFormat Format { get; set; } = ImageFormat.Png;
-
-        [Option('p', "path", Required = true, HelpText = "Set path to save image")]
-        public string? FilePath { get; set; }
+        [Option('h', "image-height", Required = false, HelpText = "Set result image height")]
+        public int Height { get; set; } = 1500;
+        
+        [Option('w', "image-width", Required = false, HelpText = "Set result image width")]
+        public int Width { get; set; } = 1500;
     }
 }

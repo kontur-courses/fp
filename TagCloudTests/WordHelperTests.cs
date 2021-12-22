@@ -38,6 +38,7 @@ namespace TagCloudTests
             A.CallTo(() => checker.IsValid("WORD")).Returns(false);
             var helper = new WordHelper(filter, null);
             helper.FilterWords(words)
+                .GetValueOrThrow()
                 .Should()
                 .NotContain("WORD")
                 .And.Contain("word");
@@ -60,7 +61,7 @@ namespace TagCloudTests
             A.CallTo(() => singleConverter.Convert("WORD")).Returns("_WORD_");
             var helper = new WordHelper(null, converter);
             var result = new List<string> { "_word_", "_WORD_" };
-            helper.ConvertWords(words)
+            helper.ConvertWords(words).GetValueOrThrow()
                 .Should()
                 .BeEquivalentTo(result);
         }

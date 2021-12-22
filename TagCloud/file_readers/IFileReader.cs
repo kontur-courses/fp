@@ -4,6 +4,6 @@ namespace TagCloud.file_readers
 {
     public interface IFileReader
     {
-        List<string> GetWords(string filename);
+        Result<List<string>> GetWords(string? filename);
     }
 }

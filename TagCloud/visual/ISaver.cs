@@ -2,6 +2,6 @@
 {
     public interface ISaver<in T>
     {
-        void Save(T obj);
+        Result<None> Save(T obj, string? filename);
     }
 }

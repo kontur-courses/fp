@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using TagCloud.selectors;
 
 namespace TagCloud.repositories
 {
     public interface IWordHelper
     {
+        Result<List<string>> FilterWords(IEnumerable<string> words);
+        Result<List<string>> ConvertWords(IEnumerable<string> words);
         IEnumerable<WordStatistic> GetWordStatistics(IEnumerable<string> words);
-
-        IEnumerable<string> FilterWords(IEnumerable<string> words);
-
-        IEnumerable<string> ConvertWords(IEnumerable<string> words);
     }
 }

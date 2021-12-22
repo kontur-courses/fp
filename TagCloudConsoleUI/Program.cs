@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
+using System.Drawing;
 using CommandLine;
 using TagCloud;
-using TagCloud.configurations;
+using System.Linq;
+using TagCloud.settings;
 
 namespace TagCloudConsoleUI
 {
@@ -13,25 +14,23 @@ namespace TagCloudConsoleUI
             var builder = TagCloudBuilder.Create();
             while (!args.Contains("exit"))
             {
-                Parser.Default.ParseArguments<TextOptions, DrawOptions>(args)
-                    .MapResult<DrawOptions, TextOptions, TagCloudBuilder>(
-                        opts =>
-                            builder.SetImageConfiguration(
-                                    new ImageConfiguration(opts.BackgroundColor, opts.Size.Width, opts.Size.Height)
-                                )
-                                .SetImageSaveConfiguration(
-                                    new ImageSaveConfiguration(opts.FilePath, opts.Format)
-                                )
-                                .SetTagRepositoryConfiguration(
-                                    new TagRepositoryRepositoryConfiguration(
-                                        opts.WordColor,
-                                        opts.FontFamily,
-                                        opts.FontSize)
-                                )
+                Parser.Default.ParseArguments<TagOptions, DrawOptions, RunOptions>(args)
+                    .MapResult<TagOptions, DrawOptions, RunOptions, TagCloudBuilder>(
+                        o => builder.SetTagSettings(new TagSettings(o.FontFamily, o.FontSize)),
+                        o => builder.SetDrawSettings(
+                            new DrawSettings(o.InnerColors.ToList(), o.BackgroundColor, new Size(o.Width, o.Height))
+                        ),
+                        o =>
+                        {
+                            var result = builder
+                                .SetInputFile(o.InputFilePath)
+                                .SetOutputFile(o.OutputFilePath)
                                 .Build()
-                                .Run(),
-                        opts => builder.SetInputFilePath(opts.FilePath),
-                        errors => null);
+                                .Run();
+                            Console.WriteLine(result.IsSuccess ? "Красота" : $"Что-то пошло не по плану: {result.Error}");
+                            return builder;
+                        },
+                errors => null!);
                 args = Console.ReadLine()!.Split();
             }
         }

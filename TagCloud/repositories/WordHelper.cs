@@ -29,8 +29,10 @@ namespace TagCloud.repositories
                 .OrderBy(s => s.Count);
         }
 
-        public IEnumerable<string> FilterWords(IEnumerable<string> words) => filter.Filter(words);
+        public Result<List<string>> FilterWords(IEnumerable<string> words) 
+            => Result.Of(() => filter.Filter(words).ToList(), ResultErrorType.FilterError);
 
-        public IEnumerable<string> ConvertWords(IEnumerable<string> words) => converter.Convert(words);
+        public Result<List<string>> ConvertWords(IEnumerable<string> words) 
+            => Result.Of(() => converter.Convert(words).ToList(), ResultErrorType.ConverterError);
     }
 }

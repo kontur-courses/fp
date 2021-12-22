@@ -7,16 +7,16 @@ using TagCloud.file_readers;
 namespace TagCloudTests
 {
     [TestFixture]
-    public class TxtReaderTests
+    public class FileReaderTests
     {
-        private TxtReader reader;
+        private FileReader reader;
         private string filename;
         private const string Dirname = "TxtReaderInput";
 
         [SetUp]
         public void SetUp()
         {
-            reader = new TxtReader();
+            reader = new FileReader();
 
             if (!Directory.Exists(Dirname))
                 Directory.CreateDirectory(Dirname);
@@ -26,16 +26,14 @@ namespace TagCloudTests
         [Test]
         public void GetWords_ThrowNullArgumentException_IfFilenameIsNull()
         {
-            Action act = () => reader.GetWords(null);
-            act.Should().Throw<ArgumentNullException>();
+            reader.GetWords(null).IsSuccess.Should().BeFalse();
         }
 
         [Test]
         public void GetWords_ThrowArgumentException_IfFileContainsSomeWordsInOneLine()
         {
             File.WriteAllText(filename, "word1 word2");
-            Action act = () => reader.GetWords(filename);
-            act.Should().Throw<ArgumentException>();
+            reader.GetWords(filename).IsSuccess.Should().BeFalse();
         }
 
         [Test]
@@ -43,6 +41,7 @@ namespace TagCloudTests
         {
             File.WriteAllText(filename, "word1\nword2\nword3");
             reader.GetWords(filename)
+                .GetValueOrThrow()
                 .Should()
                 .Contain("word1")
                 .And.Contain("word2")
@@ -54,6 +53,7 @@ namespace TagCloudTests
         {
             File.WriteAllText(filename, "");
             reader.GetWords(filename)
+                .GetValueOrThrow()
                 .Should()
                 .BeEmpty();
         }
