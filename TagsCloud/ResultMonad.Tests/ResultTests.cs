@@ -11,50 +11,50 @@ namespace ResultMonad.Tests
         [Test]
         public void Result_Should_Create_Ok()
         {
-            var r = Result.Ok(42);
-            r.IsSuccess.Should().BeTrue();
-            r.GetValueOrThrow().Should().Be(42);
+            var success = Result.Ok(42);
+            success.IsSuccess.Should().BeTrue();
+            success.GetValueOrThrow().Should().Be(42);
         }
 
         [Test]
         public void Result_Should_Create_Fail()
         {
-            var r = Result.Fail<int>("123");
+            var fail = Result.Fail<int>("123");
 
-            r.IsSuccess.Should().BeFalse();
-            r.Error.Should().Be("123");
+            fail.IsSuccess.Should().BeFalse();
+            fail.Error.Should().Be("123");
         }
 
         [Test]
         public void Result_Should_ReturnsFail_FromResultOf_OnException()
         {
-            var res = Result.Of<int>(() => { throw new Exception("123"); });
+            var fail = Result.Of<int>(() => throw new Exception("123"));
 
-            res.Should().BeEquivalentTo(Result.Fail<int>("123"));
+            fail.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
 
         [Test]
         public void Result_Should_ReturnsFailWithCustomMessage_FromResultOf_OnException()
         {
-            var res = Result.Of<int>(() => { throw new Exception("123"); }, "42");
+            var fail = Result.Of<int>(() => throw new Exception("123"), "42");
 
-            res.Should().BeEquivalentTo(Result.Fail<int>("42"));
+            fail.Should().BeEquivalentTo(Result.Fail<int>("42"));
         }
 
         [Test]
         public void Result_Should_ReturnsOk_FromResultOf_WhenNoException()
         {
-            var res = Result.Of(() => 42);
+            var success = Result.Of(() => 42);
 
-            res.Should().BeEquivalentTo(Result.Ok(42));
+            success.Should().BeEquivalentTo(Result.Ok(42));
         }
 
         [Test]
         public void Result_Should_RunThen_WhenOk()
         {
-            var res = Result.Ok(42)
+            var success = Result.Ok(42)
                 .Then(n => n + 10);
-            res.Should().BeEquivalentTo(Result.Ok(52));
+            success.Should().BeEquivalentTo(Result.Ok(52));
         }
 
         [Test]
@@ -74,9 +74,9 @@ namespace ResultMonad.Tests
         public void Result_Should_Then_ReturnsFail_OnException()
         {
             int Continuation(int n) => throw new Exception("123");
-            var res = Result.Ok(42)
+            var fail = Result.Ok(42)
                 .Then(Continuation);
-            res.Should().BeEquivalentTo(Result.Fail<int>("123"));
+            fail.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
 
         [Test]
@@ -85,10 +85,10 @@ namespace ResultMonad.Tests
             var fail = Result.Fail<int>("Не число");
             var errorHandler = A.Fake<Action<string>>();
 
-            var res = fail.OnFail(errorHandler);
+            var parseResult = fail.OnFail(errorHandler);
 
             A.CallTo(() => errorHandler(null)).WithAnyArguments().MustHaveHappened();
-            res.Should().BeEquivalentTo(fail);
+            parseResult.Should().BeEquivalentTo(fail);
         }
 
         [Test]
@@ -96,30 +96,30 @@ namespace ResultMonad.Tests
         {
             var ok = Result.Ok(42);
 
-            var res = ok.OnFail(v => { Assert.Fail("Should not be called"); });
+            var fail = ok.OnFail(_ => { Assert.Fail("Should not be called"); });
 
-            res.Should().BeEquivalentTo(ok);
+            fail.Should().BeEquivalentTo(ok);
         }
 
         [Test]
         public void Result_Should_RunThen_WhenOk_Scenario()
         {
-            var res =
+            var success =
                 Result.Ok("1358571172")
                     .Then(int.Parse)
                     .Then(i => Convert.ToString(i, 16))
                     .Then(hex => Guid.Parse(hex + hex + hex + hex));
-            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            success.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
         public void Result_Should_RunThen_WhenOk_ComplexScenario()
         {
             var parsed = Result.Ok("1358571172").Then(int.Parse);
-            var res = parsed
+            var success = parsed
                 .Then(i => Convert.ToString(i, 16))
                 .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
-            res.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+            success.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
 
         [Test]

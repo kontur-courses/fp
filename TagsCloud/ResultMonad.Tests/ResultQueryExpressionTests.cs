@@ -8,80 +8,80 @@ namespace ResultMonad.Tests
     public class ResultQueryExpressionTests
     {
         [Test]
-        public void SupportLinqMethodChaining()
+        public void SelectMany_ShouldSupportLinqMethodChaining()
         {
-            var res =
+            var parseResult =
                 "1358571172".ParseIntResult()
                     .SelectMany(i => Convert.ToString(i, 16).AsResult())
                     .SelectMany(hex => (hex + hex + hex + hex).ParseGuidResult());
-            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            parseResult.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
-        public void SupportLinqMethodChaining_WithResultSelector()
+        public void SelectMany_ShouldSupportLinqMethodChaining_WithResultSelector()
         {
-            var res =
+            var parseResult =
                 "1358571172".ParseIntResult()
-                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new { i, hex })
+                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (intResult, hex) => new { i = intResult, hex })
                     .SelectMany(t => (t.hex + t.hex + t.hex + t.hex).ParseGuidResult());
-            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            parseResult.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
-        public void SupportQueryExpressions()
+        public void SelectMany_ShouldSupportQueryExpressions()
         {
-            var res =
-                from i in "1358571172".ParseIntResult()
-                from hex in Convert.ToString(i, 16).AsResult()
+            var parseResult =
+                from intResult in "1358571172".ParseIntResult()
+                from hex in Convert.ToString(intResult, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
-            res.Should().BeOfType<Result<Guid>>();
-            res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
+            parseResult.Should().BeOfType<Result<Guid>>();
+            parseResult.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }
 
         [Test]
-        public void SupportQueryExpressions_WithComplexSelect()
+        public void SelectMany_ShouldSupportQueryExpressions_WithComplexSelect()
         {
-            var res =
-                from i in "1358571172".ParseIntResult()
-                from hex in Convert.ToString(i, 16).AsResult()
+            var parseResult =
+                from intResult in "1358571172".ParseIntResult()
+                from hex in Convert.ToString(intResult, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
-                select i + " -> " + guid;
-            res.Should().BeOfType<Result<string>>();
-            res.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
+                select intResult + " -> " + guid;
+            parseResult.Should().BeOfType<Result<string>>();
+            parseResult.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
         }
 
         [Test]
-        public void ReturnFail_FromSelectMany_WhenErrorAtTheEnd()
+        public void SelectMany_ShouldReturnFail_FromSelectMany_WhenErrorAtTheEnd()
         {
-            var res =
-                from i in "0".ParseIntResult()
-                from hex in Convert.ToString(i, 16).AsResult()
+            var parseResult =
+                from intResult in "0".ParseIntResult()
+                from hex in Convert.ToString(intResult, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult("error is here")
                 select guid;
-            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
+            parseResult.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
 
         [Test]
-        public void ReturnFail_FromSelectMany_WhenExceptionOnSomeStage()
+        public void SelectMany_ShouldReturnFail_FromSelectMany_WhenExceptionOnSomeStage()
         {
-            var res =
-                from i in "1358571172".ParseIntResult()
-                from hex in Result.Of(() => Convert.ToString(i, 100500), "error is here")
+            var parseResult =
+                from intResult in "1358571172".ParseIntResult()
+                from hex in Result.Of(() => Convert.ToString(intResult, 100500), "error is here")
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
-            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
+            parseResult.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
 
         [Test]
-        public void ReturnFail_FromSelectMany_WhenErrorAtTheBeginning()
+        public void SelectMany_ShouldReturnFail_FromSelectMany_WhenErrorAtTheBeginning()
         {
-            var res =
-                from i in "UNPARSABLE".ParseIntResult("error is here")
-                from hex in Convert.ToString(i, 16).AsResult()
+            var parseResult =
+                from intResult in "UNPARSABLE".ParseIntResult("error is here")
+                from hex in Convert.ToString(intResult, 16).AsResult()
                 from guid in (hex + hex + hex + hex).ParseGuidResult()
                 select guid;
-            res.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
+            parseResult.Should().BeEquivalentTo(Result.Fail<Guid>("error is here"));
         }
     }
 }
