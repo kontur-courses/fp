@@ -36,9 +36,9 @@ public class WinTagMaker : ITagMaker
             }
 
             var color = int.Parse("FF" + settings.FontColor, NumberStyles.HexNumber);
-            var location = putRectangle.GetValueOrThrow().Location;
+            var limRectangle = putRectangle.GetValueOrThrow();
 
-            return new TagToRender(location, raw.Key, color, fontSize, settings.FontName);
+            return new TagToRender(limRectangle, raw.Key, color, fontSize, settings.FontName);
         }
         catch (Exception e)
         {

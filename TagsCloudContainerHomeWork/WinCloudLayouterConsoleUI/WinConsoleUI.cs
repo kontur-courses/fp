@@ -176,14 +176,27 @@ internal class WinConsoleUI
         [Named("out", Description = "Путь к файлу, куда сохранить изображение")]
         string pathOut)
     {
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
+        var cloud = JsonSettingsHelper.TryGetLayoutSettings(out var settings)
             .Then(_ => DICloudLayouterContainerFactory.GetContainer(settings))
             .TryResolve(out ITagCloudMaker cloudMaker)
             .TryResolve(out IPainter painter)
             .TryResolve(out IBitmapHandler bitmapHandler)
             .Then(_ => FileReaderHelper.ReadLinesFromFile(pathIn))
             .Then(words => cloudMaker.GetTagsToRender(words))
-            .Then(tags => painter.Paint(tags))
+            .OnFail(ExceptionHandle);
+
+        if (!cloud.IsSuccess) return;
+
+        var limRectangles = cloud.GetValueOrThrow().Select(x => x.LimitingRectangle);
+        var cloudSize = GeometryHelper.GetCommonSize(limRectangles);
+
+        if (cloudSize.Height > settings.PictureSize.Height || cloudSize.Width > settings.PictureSize.Width)
+        {
+            WarningHandle("Размер облака больше размера картинки. \n" +
+                          $"Размер облака: {cloudSize}");
+        }
+
+        cloud.Then(tags => painter.Paint(tags))
             .Then(pic => bitmapHandler.Handle(pic, pathOut, settings.PicturesFormat))
             .OnSuccess(SuccessHandle, $"\nСохранено в:\n{pathOut}")
             .OnFail(ExceptionHandle);
@@ -192,7 +205,16 @@ internal class WinConsoleUI
     private static void ExceptionHandle(string information)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("\n[ОШИБКА]\n");
+        Console.WriteLine("\n[FAIL]\n");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(information);
+        Console.ResetColor();
+    }
+
+    private static void WarningHandle(string information)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("\n[WARNING]\n");
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(information);
         Console.ResetColor();
@@ -201,7 +223,7 @@ internal class WinConsoleUI
     private static void SuccessHandle(string information = "")
     {
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\n[ГОТОВО]\n");
+        Console.WriteLine("\n[SUCCESS]\n");
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(information);
         Console.ResetColor();

@@ -7,6 +7,12 @@ namespace TagsCloudContainerCore.Helpers;
 
 public static class GeometryHelper
 {
+    public static Size GetCommonSize(IEnumerable<Rectangle> rectangles)
+    {
+        var commonRectangle = rectangles.Aggregate(Rectangle.Union);
+        return commonRectangle.Size;
+    }
+
     public static float GetDistanceBetweenPoints(PointF p1, PointF p2)
     {
         var x = p2.X - p1.X;

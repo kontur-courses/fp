@@ -12,18 +12,21 @@ public class TagToRender
 
     public int ColorHex { get; }
 
-    public Point Location { get; }
 
     public float FontSize { get; }
 
     public string FontName { get; }
 
-    public TagToRender(Point location, string value, int colorHex, float fontSize, string fontName)
+    public Rectangle LimitingRectangle { get; }
+
+    public Point Location => LimitingRectangle.Location;
+
+    public TagToRender(Rectangle limitingRectangle, string value, int colorHex, float fontSize, string fontName)
     {
-        Location = location;
         Value = value;
         ColorHex = colorHex;
         FontSize = fontSize;
         FontName = fontName;
+        LimitingRectangle = limitingRectangle;
     }
 }
