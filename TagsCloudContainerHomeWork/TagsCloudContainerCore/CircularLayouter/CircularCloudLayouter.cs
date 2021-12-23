@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudContainerCore.Helpers;
+using TagsCloudContainerCore.Result;
 
 namespace TagsCloudContainerCore.CircularLayouter;
 
@@ -25,11 +25,11 @@ public class CircularCloudLayouter : ILayouter
     public IReadOnlyList<Rectangle> GetRectangles()
         => rectangles;
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
         {
-            throw new ArgumentException();
+            return ResultExtension.Fail<Rectangle>("Ширина и высота должны быть положительными");
         }
 
         var nextRectangle = GetNextRectangle(rectangleSize);

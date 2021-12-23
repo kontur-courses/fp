@@ -53,7 +53,7 @@ namespace TagCloudContainerTests.CircularCloudLayouterTests
 
             var actualRectangle = cloudLayouter.PutNextRectangle(size);
 
-            actualRectangle.Location.Should().Be(expectedLocation,
+            actualRectangle.GetValueOrThrow().Location.Should().Be(expectedLocation,
                 "The first rectangle should be in the Center");
         }
 

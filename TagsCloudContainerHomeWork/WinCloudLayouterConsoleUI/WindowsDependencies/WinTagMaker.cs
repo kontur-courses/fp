@@ -25,8 +25,9 @@ public class WinTagMaker : ITagMaker
     {
         var fontSize = GetFontSize(raw, statisticMaker);
         var tagSize = GetTagSize(raw.Key, settings.FontName, fontSize, settings.PictureSize);
-        var location = layouter.PutNextRectangle(tagSize).Location;
+        var putRectangle = layouter.PutNextRectangle(tagSize);
         var color = int.Parse("FF" + settings.FontColor, NumberStyles.HexNumber);
+        var location = putRectangle.GetValueOrThrow().Location;
 
         return new TagToRender(location, raw.Key, color, fontSize, settings.FontName);
     }
