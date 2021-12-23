@@ -22,12 +22,6 @@ namespace TagsCloudVisualization.Tests
             BoringWords = new[] { "a", "b", "c" }
         };
 
-        [OneTimeSetUp]
-        public void BeforeAll()
-        {
-            File.Create(WordsFile).Close();
-        }
-
         [OneTimeTearDown]
         public void AfterAll()
         {
