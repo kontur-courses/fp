@@ -26,14 +26,14 @@ namespace TagCloud.Creators
 
         public Result<IEnumerable<Tag>> Create(Dictionary<string, int> wordsWithFrequency)
         {
-            var graphics = Graphics.FromHwnd(new IntPtr());
+            using var graphics = Graphics.FromHwnd(new IntPtr());
             if (drawingSettings.FontSize <= 0)
                 return Result.Fail<IEnumerable<Tag>>("Non-positive font size");
             var renderFont = new Font(drawingSettings.FontName, drawingSettings.FontSize);
             if (renderFont.Name != drawingSettings.FontName)
                 return Result.Fail<IEnumerable<Tag>>("Font not found");
             return wordsWithFrequency.Select(pair => Create(pair.Key, pair.Value, graphics))
-                .AsResult();
+                .ToArray();
         }
     }
 }

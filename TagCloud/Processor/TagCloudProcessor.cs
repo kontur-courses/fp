@@ -54,10 +54,16 @@ namespace TagCloud.Processor
                 .Then(wordFrequencies => tagCreator.Create(wordFrequencies))
                 .Then(tags => layouter.PutTags(tags))
                 .Then(tags => visualizer.DrawCloud(tags, tagColoringFactory))
-                .Then(bitmap => writer.Write(bitmap,
-                    settings.OutputFilename,
-                    GetExtensionsFromFileName(settings.OutputFilename),
-                    settings.TargetDirectory))
+                .Then(bitmap =>
+                {
+                    using (bitmap)
+                    {
+                        writer.Write(bitmap,
+                            settings.OutputFilename,
+                            GetExtensionsFromFileName(settings.OutputFilename),
+                            settings.TargetDirectory);
+                    }
+                })
                 .OnFail(System.Console.WriteLine);
         }
 
