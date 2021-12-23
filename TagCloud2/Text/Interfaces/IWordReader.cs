@@ -1,6 +1,4 @@
-﻿using ResultOf;
-
-namespace TagCloud2
+﻿namespace TagCloud2
 {
     public interface IWordReader
     {

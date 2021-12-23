@@ -16,6 +16,18 @@ namespace TagCloud2
             var generatorHelper = new GeneratorHelper(builder);
             builder.RegisterType<InnerCoreLogic>().AsSelf();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
+            if (options.AngleSpeed == 0 || options.LinearSpeed == 0)
+            {
+                if (options.Path != null)
+                {
+                    return Result.Fail<None>("angle or linear speed is zero");
+                }
+                else
+                {
+                    return Result.Fail<None>("arguments are incorrect");
+                }
+            }
+
             var spiral = new ArchimedeanSpiral(new Point(options.X/2, options.Y/2), options.AngleSpeed, options.LinearSpeed);
             builder.RegisterInstance(spiral).As<ISpiral>();
             builder.RegisterType<LinesWordReader>().As<IWordReader>();
@@ -26,15 +38,9 @@ namespace TagCloud2
             builder.RegisterType<ColoredCloudToBitmap>().As<IColoredCloudToImageConverter>();
             builder.RegisterType<SillyWordsFilter>().As<ISillyWordsFilter>();
             builder.RegisterInstance(new ExcludedWordsPath() { Path = options.ExcludePath }).As<ExcludedWordsPath>();
-            //generatorHelper.RegisterTypes(options);
-            InnerCoreLogic core2 = null;
-            //var core = builder.Build().Resolve<InnerCoreLogic>();
-            //core.Run(options);
             return generatorHelper.RegisterTypes(options)
-                .Then(x => core2 = builder.Build().Resolve<InnerCoreLogic>())
-                .Then(x => core2.Run(options));
-            //return Result.Ok();
-            //return generatorHelper.RegisterTypes(options).Then(x => core.Run(options));
+                .Then(x => builder.Build().Resolve<InnerCoreLogic>())
+                .Then(x => x.Run(options));
         }
     }
 }

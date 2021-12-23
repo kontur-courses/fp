@@ -7,6 +7,7 @@ using System.Drawing;
 using TagCloud2.TextGeometry;
 using TagCloud2.Cloud;
 using FluentAssertions;
+using System.Linq;
 
 namespace TagCloud2Tests
 {
@@ -32,7 +33,7 @@ namespace TagCloud2Tests
         public void GetFromCloudLayouter_OnEmpty_ShouldWorkCorrect()
         {
             A.CallTo(() => cloud.GetRectangles()).Returns(System.Array.Empty<Rectangle>());
-            coloredCloud.AddColoredWordsFromCloudLayouter(System.Array.Empty<IColoredSizedWord>(), cloud, whiteAlgo);
+            coloredCloud.AddColoredWordsFromCloudLayouter(System.Array.Empty<IColoredSizedWord>(), cloud.GetRectangles().ToList(), whiteAlgo);
             coloredCloud.ColoredWords.Should().BeEmpty();
         }
 
@@ -43,7 +44,7 @@ namespace TagCloud2Tests
             A.CallTo(() => cloud.GetRectangles()).Returns(new Rectangle[] { rect });
             var coloredSizedWord = new ColoredSizedWord("aboba", font);
             coloredCloud.AddColoredWordsFromCloudLayouter(new ColoredSizedWord[] { coloredSizedWord },
-                cloud, whiteAlgo);
+                cloud.GetRectangles().ToList(), whiteAlgo);
 
             var expectedWord = new ColoredSizedWord(white, rect, "aboba", font);
 
@@ -62,7 +63,7 @@ namespace TagCloud2Tests
             { 
                 coloredSizedWord1,
                 coloredSizedWord2
-            }, cloud, whiteAlgo);
+            }, cloud.GetRectangles().ToList(), whiteAlgo);
 
             var expList = new List<ColoredSizedWord>
             {

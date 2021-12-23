@@ -1,5 +1,4 @@
 ﻿using ResultOf;
-using System;
 using System.Drawing.Imaging;
 
 namespace TagCloud2.Image

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using TagCloud2.TextGeometry;
-using TagCloudVisualisation;
 
 namespace TagCloud2
 {
@@ -14,9 +13,9 @@ namespace TagCloud2
             ColoredWords = new();
         }
 
-        public void AddColoredWordsFromCloudLayouter(IColoredSizedWord[] words, ICloudLayouter cloud, IColoringAlgorithm coloringAlgorithm)
+        public void AddColoredWordsFromCloudLayouter(IColoredSizedWord[] words, List<Rectangle> rectangles, IColoringAlgorithm coloringAlgorithm)
         {
-            var rectangles = cloud.GetRectangles().ToList();
+            
             for (int i = 0; i < words.Length; i++)
             {
                 var color = coloringAlgorithm.GetColor(rectangles[i]);

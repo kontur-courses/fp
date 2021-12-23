@@ -56,7 +56,14 @@ namespace TagCloud2
             {
                 if (dictionary.ContainsKey(property.Name))
                 {
-                    dictionary[property.Name][property.GetValue(options)].Invoke();
+                    if (dictionary[property.Name].ContainsKey(property.GetValue(options)))
+                    {
+                        dictionary[property.Name][property.GetValue(options)].Invoke();
+                    }
+                    else
+                    {
+                        return Result.Fail<None>("no such mode with " + property.Name);
+                    }
                 }
             }
 

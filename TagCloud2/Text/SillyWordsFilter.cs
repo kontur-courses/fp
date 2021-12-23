@@ -6,11 +6,7 @@ namespace TagCloud2.Text
     {
         public string FilterSillyWords(string input, ISillyWordSelector selector)
         {
-            if (selector.IsWordSilly(input))
-            {
-                return "";
-            }
-            return input;
+            return selector.IsWordSilly(input) ? "" : input;
         }
     }
 }

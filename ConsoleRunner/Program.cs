@@ -6,9 +6,10 @@ using TagCloud2;
 
 namespace ConsoleRunner
 {
-    internal class Program
+    public class Program
     {
-        private static void Main(string[] args)
+        public static Result<None> outResult;
+        public static void Main(string[] args)
         {
             var options = new Options();
             Parser.Default.ParseArguments<Options>(args).WithParsed(o => options = o);
@@ -18,11 +19,16 @@ namespace ConsoleRunner
             {
                 Console.WriteLine(result.Error);
             }
-            var process = new Process
+            else
             {
-                StartInfo = new ProcessStartInfo(options.OutputName) { UseShellExecute = true }
-            };
-            process.Start();
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo(options.OutputName) { UseShellExecute = true }
+                };
+                process.Start();
+            }
+
+            outResult = result;
         }
     }
 }

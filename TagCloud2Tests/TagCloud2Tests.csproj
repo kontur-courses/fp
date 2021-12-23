@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConsoleRunner\ConsoleRunner.csproj" />
     <ProjectReference Include="..\TagCloud2\TagCloud2.csproj" />
   </ItemGroup>
 

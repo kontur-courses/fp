@@ -1,10 +1,8 @@
 ﻿using ResultOf;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
-using System.Xml.XPath;
 using TagCloud2.Image;
 using TagCloud2.TextGeometry;
 using TagCloudVisualisation;
@@ -33,40 +31,23 @@ namespace TagCloud2
                 return Result.Fail<None>("No such font!");
             }
 
+            if (options.FontSize <= 0)
+            {
+                return Result.Fail<None>("FontSize is zero or negative");
+            }
+
             var fontF = new FontFamily(options.FontName);
             var font = new Font(fontF, options.FontSize);
-            
             return reader.ReadFile(options.Path)
                 .Then(input => wordReader.GetUniqueLowercaseWords(input))
                 .Then(lines => lines
                     .Select(x => preprocessor.PreprocessString(x))
                     .Where(x => x != "")
                     .Select(x => new ColoredSizedWord(x, font)))
-                .Then(x => Tuple.Create(x.Select(word => layouter.PutNewRectangle(sizeConverter.Convert(word.Word, word.Font))), x))
-                .Then(x => colored.AddColoredWordsFromCloudLayouter(x.Item2.ToArray(), layouter, coloringAlgorithm))
+                .Then(words => Tuple.Create(words.Select(word => layouter.PutNewRectangle(sizeConverter.Convert(word.Word, word.Font))), words))
+                .Then(tuple => colored.AddColoredWordsFromCloudLayouter(tuple.Item2.ToArray(), tuple.Item1.ToList(), coloringAlgorithm))
                 .Then(x => converterToImage.GetImage(colored, options.X, options.Y))
                 .Then(image => fileGenerator.GenerateFile(options.OutputName, formatter, image));
-
-
-            //var input = reader.ReadFile(options.Path);
-            //var lines = wordReader.GetUniqueLowercaseWords(input);
-            //var words = lines
-            //    .Select(x => preprocessor.PreprocessString(x))
-            //    .Where(x => x != "")
-            //    .Select(x => new ColoredSizedWord(x, font))
-            //    .ToArray();
-
-            //var rectangles = Words.Select(x => sizeConverter.Convert(x.Word, x.Font)).ToArray();
-            //foreach (var size in rectangles)
-            //{
-            //    layouter.PutNewRectangle(size);
-            //}
-
-            
-            //colored.AddColoredWordsFromCloudLayouter(Words, layouter, coloringAlgorithm);
-            //var image = converterToImage.GetImage(colored, options.X, options.Y);
-            //fileGenerator.GenerateFile(options.OutputName, formatter, image);
-            //return Result.Ok();
         }
 
         public InnerCoreLogic(IFileReader reader, IWordReader wordReader, IStringPreprocessor preprocessor, IStringToSizeConverter sizeConverter,

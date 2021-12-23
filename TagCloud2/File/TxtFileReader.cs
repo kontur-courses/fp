@@ -1,8 +1,6 @@
 ﻿using ResultOf;
 using System.IO;
 
-using ResultOf;
-
 namespace TagCloud2
 {
     public class TxtFileReader : IFileReader
@@ -14,7 +12,7 @@ namespace TagCloud2
                 return Result.Fail<string>("No such file to open");
             }
 
-            return Result.Ok<string>(File.ReadAllText(path));
+            return Result.Ok(File.ReadAllText(path));
         }
     }
 }

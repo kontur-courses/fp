@@ -11,7 +11,7 @@ namespace TagCloud2.Image
 
         private EncoderParameters GetParameters()
         {
-            var myEncoder = System.Drawing.Imaging.Encoder.Quality;
+            var myEncoder = Encoder.Quality;
             var myEncoderParameters = new EncoderParameters(1);
             var myEncoderParameter = new EncoderParameter(myEncoder, 100L);
             myEncoderParameters.Param[0] = myEncoderParameter;

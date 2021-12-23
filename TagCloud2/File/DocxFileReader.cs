@@ -19,23 +19,29 @@ namespace TagCloud2.Text
             }
 
             using var file = File.OpenRead(path);
-            using var zip = new ZipArchive(file, ZipArchiveMode.Read);
-
-            var SB = new StringBuilder();
-            var entry = zip.Entries.Where(x => x.Name == "document.xml").First();
-            NameTable nt = new();
-            XmlNamespaceManager nsManager = new(nt);
-            nsManager.AddNamespace("w", wordmlNamespace);
-            var xml = new XmlDocument(nt);
-            using var doc = entry.Open();
-            xml.Load(doc);
-            var nodes = xml.SelectNodes("//w:p", nsManager);
-            foreach (XmlNode node in nodes)
+            try
             {
-                SB.Append(node.InnerText + "\r");
-            }
+                using var zip = new ZipArchive(file, ZipArchiveMode.Read);
+                var SB = new StringBuilder();
+                var entry = zip.Entries.Where(x => x.Name == "document.xml").First();
+                NameTable nt = new();
+                XmlNamespaceManager nsManager = new(nt);
+                nsManager.AddNamespace("w", wordmlNamespace);
+                var xml = new XmlDocument(nt);
+                using var doc = entry.Open();
+                xml.Load(doc);
+                var nodes = xml.SelectNodes("//w:p", nsManager);
+                foreach (XmlNode node in nodes)
+                {
+                    SB.Append(node.InnerText + Environment.NewLine);
+                }
 
-            return Result.Ok<string>(SB.ToString());
+                return Result.Ok<string>(SB.ToString());
+            }
+            catch
+            {
+                return Result.Fail<string>("Something is wrong with docx file");
+            }
         }
     }
 }

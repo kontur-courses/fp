@@ -22,8 +22,9 @@ namespace ResultOf
         }
 
         public string Error { get; }
+        public T Value { get; }
+        public T GetValue() => Value;
 
-        internal T Value { get; }
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;

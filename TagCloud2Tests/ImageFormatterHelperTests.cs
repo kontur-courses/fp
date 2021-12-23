@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
 using TagCloud2.Image;
 
 namespace TagCloud2Tests
@@ -22,9 +21,7 @@ namespace TagCloud2Tests
         [Test]
         public void GetEncoderInfo_OnIncorrectCodec_ShouldThrow()
         {
-            Action t = () => ImageFormatterHelper.GetEncoderInfo("abobus");
-
-            t.Should().Throw<ArgumentException>();
+            ImageFormatterHelper.GetEncoderInfo("abobus").Error.Should().NotBeEmpty();
         }
     }
 }
