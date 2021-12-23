@@ -25,10 +25,10 @@ namespace TagsCloudDrawer.ImageCreator
         {
             var size = _settingsProvider.ImageSize;
             using var bitmap = new Bitmap(size.Width, size.Height);
-            using var graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(_settingsProvider.BackgroundColor);
-            return _drawer.Draw(graphics, bitmap.Size, drawables)
-                .OnSuccess(() => _saveService.Save(filename, bitmap));
+            var helper = new ImageCreatorHelper(bitmap);
+            return helper
+                .Draw(_drawer, _settingsProvider, drawables)
+                .Then(() => helper.Save(_saveService, filename));
         }
     }
 }
