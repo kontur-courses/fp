@@ -6,17 +6,12 @@ namespace TagsCloud.Utils
 {
     public static class WordSplitter
     {
+        private static readonly Regex WordPattern = new(@"\b[\w']*\b", RegexOptions.Compiled);
+
         public static IEnumerable<string> Split(string input)
         {
-            var matches = Regex.Matches(input, @"\b[\w']*\b");
-            return matches.Where(m => !string.IsNullOrEmpty(m.Value)).Select(m => TrimSuffix(m.Value));
-        }
-
-        private static string TrimSuffix(string word)
-        {
-            var apostropheLocation = word.IndexOf('\'');
-            if (apostropheLocation != -1) word = word[..apostropheLocation];
-            return word;
+            var matches = WordPattern.Matches(input);
+            return matches.Where(m => !string.IsNullOrEmpty(m.Value)).Select(m => m.Value);
         }
     }
 }
