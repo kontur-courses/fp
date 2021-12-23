@@ -46,7 +46,7 @@ namespace ResultMonad
             }
         }
 
-        public static Result<None> OfAction(Action f, string error = null)
+        public static Result<None> Of(Action f, string error = null)
         {
             try
             {
@@ -62,9 +62,6 @@ namespace ResultMonad
         public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input,
             Func<TInput, TOutput> continuation) =>
             input.Then(inp => Of(() => continuation(inp)));
-
-        public static Result<None> Then<TInput>(this Result<TInput> input, Action<TInput> continuation) =>
-            input.Then(inp => OfAction(() => continuation(inp)));
 
         public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation) =>
