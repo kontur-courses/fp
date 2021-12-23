@@ -30,8 +30,18 @@ public class TagCloudMaker : ITagCloudMaker
             return ResultExtension.Fail<IEnumerable<TagToRender>>(statisticResult.Error);
         }
 
-        return ResultExtension.Ok(statisticMaker
+        var tagResults = statisticMaker
             .CountedTags
-            .Select(t => tagMaker.MakeTag(t, statisticMaker)));
+            .Select(t => tagMaker.MakeTag(t, statisticMaker))
+            .ToList();
+
+        if (tagResults.Any(res => !res.IsSuccess))
+        {
+            return ResultExtension.Fail<IEnumerable<TagToRender>>(
+                "При получении тегов возникла ошибка\n" +
+                $"{tagResults.FirstOrDefault(t => !t.IsSuccess).Error}");
+        }
+
+        return ResultExtension.Ok(tagResults.Select(t => t.GetValueOrThrow()));
     }
 }

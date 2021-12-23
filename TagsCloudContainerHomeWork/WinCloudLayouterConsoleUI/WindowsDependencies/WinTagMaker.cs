@@ -5,6 +5,7 @@ using TagsCloudContainerCore;
 using TagsCloudContainerCore.CircularLayouter;
 using TagsCloudContainerCore.InterfacesCore;
 using TagsCloudContainerCore.LayoutSettingsDir;
+using TagsCloudContainerCore.Result;
 using TagsCloudContainerCore.StatisticMaker;
 
 namespace WinCloudLayouterConsoleUI.WindowsDependencies;
@@ -21,15 +22,28 @@ public class WinTagMaker : ITagMaker
         this.settings = settings;
     }
 
-    public TagToRender MakeTag(KeyValuePair<string, int> raw, IStatisticMaker statisticMaker)
+    public Result<TagToRender> MakeTag(KeyValuePair<string, int> raw, IStatisticMaker statisticMaker)
     {
-        var fontSize = GetFontSize(raw, statisticMaker);
-        var tagSize = GetTagSize(raw.Key, settings.FontName, fontSize, settings.PictureSize);
-        var putRectangle = layouter.PutNextRectangle(tagSize);
-        var color = int.Parse("FF" + settings.FontColor, NumberStyles.HexNumber);
-        var location = putRectangle.GetValueOrThrow().Location;
+        try
+        {
+            var fontSize = GetFontSize(raw, statisticMaker);
+            var tagSize = GetTagSize(raw.Key, settings.FontName, fontSize, settings.PictureSize);
+            var putRectangle = layouter.PutNextRectangle(tagSize);
 
-        return new TagToRender(location, raw.Key, color, fontSize, settings.FontName);
+            if (!putRectangle.IsSuccess)
+            {
+                return ResultExtension.Fail<TagToRender>($"Ошибка при получении локации тега\n{putRectangle.Error}");
+            }
+
+            var color = int.Parse("FF" + settings.FontColor, NumberStyles.HexNumber);
+            var location = putRectangle.GetValueOrThrow().Location;
+
+            return new TagToRender(location, raw.Key, color, fontSize, settings.FontName);
+        }
+        catch (Exception e)
+        {
+            return ResultExtension.Fail<TagToRender>($"Ошибка при создании тега\n{e.GetType().Name}: {e.Message}");
+        }
     }
 
     private float GetFontSize(KeyValuePair<string, int> tag, IStatisticMaker statMaker)
