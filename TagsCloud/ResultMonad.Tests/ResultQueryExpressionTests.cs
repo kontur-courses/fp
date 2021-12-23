@@ -42,8 +42,6 @@ namespace ResultMonad.Tests
         [Test]
         public void SupportQueryExpressions_WithComplexSelect()
         {
-            // ��� ��������, ���� �������� ������ ������ Query Expressions ��� Result<T>
-            // �������� �������� �� ������������� i � select
             var res =
                 from i in "1358571172".ParseIntResult()
                 from hex in Convert.ToString(i, 16).AsResult()

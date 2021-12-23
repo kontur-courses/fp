@@ -60,7 +60,7 @@ namespace ResultMonad.Tests
         [Test]
         public void Result_Should_SkipThen_WhenFail()
         {
-            var fail = Result.Fail<int>("������");
+            var fail = Result.Fail<int>("Error");
             var called = false;
             fail.Then(n =>
             {
@@ -73,9 +73,9 @@ namespace ResultMonad.Tests
         [Test]
         public void Result_Should_Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n => { throw new Exception("123"); };
+            int Continuation(int n) => throw new Exception("123");
             var res = Result.Ok(42)
-                .Then(continuation);
+                .Then(Continuation);
             res.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
 
