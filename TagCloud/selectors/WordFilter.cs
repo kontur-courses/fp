@@ -8,7 +8,7 @@ namespace TagCloud.selectors
     {
         private readonly List<IChecker<string>> checkers;
 
-        public WordFilter([NotNull]List<IChecker<string>> checkers)
+        public WordFilter([NotNull] List<IChecker<string>> checkers)
         {
             this.checkers = checkers;
         }

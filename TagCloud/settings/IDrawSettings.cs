@@ -5,7 +5,7 @@ namespace TagCloud.settings
 {
     public interface IDrawSettings
     {
-        List<Color> GetInnerColors(); 
+        List<Color> GetInnerColors();
         Color GetBackgroundColor();
         Size GetSize();
     }

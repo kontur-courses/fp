@@ -36,7 +36,7 @@ namespace TagCloud.layouter
             foreach (var point in points.ToEnumerable())
             {
                 var putResult = PutRectangleToCorners(point, rectangleSize);
-                if (!putResult.IsSuccess) 
+                if (!putResult.IsSuccess)
                     continue;
                 rectangle = putResult.Value;
                 break;
@@ -52,7 +52,7 @@ namespace TagCloud.layouter
             points.Add(new Point(rectangle.Left, rectangle.Bottom));
             points.Add(new Point(rectangle.Right, rectangle.Top));
             points.Add(new Point(rectangle.Left, rectangle.Top));
-            return Result.Ok((RectangleF) rectangle);
+            return Result.Ok((RectangleF)rectangle);
         }
 
         private Result<Rectangle> PutRectangleToCorners(Point point, Size rectangleSize)

@@ -5,7 +5,7 @@ namespace TagCloud.file_readers
 {
     public class FileReader : IFileReader
     {
-        public Result<List<string>> GetWords(string? filename) =>
+        public Result<List<string>> GetWords(string filename) =>
             Result.Of(() => new StreamReader(filename), ResultErrorType.InputFileError)
                 .Then(TryReadWords);
 
@@ -27,8 +27,8 @@ namespace TagCloud.file_readers
             return words;
         }
 
-        private Result<string> IsCorrectWord(string word) => 
-            word.Length > 0 && !word.Contains(' ') 
+        private Result<string> IsCorrectWord(string word) =>
+            word.Length > 0 && !word.Contains(' ')
                 ? word
                 : Result.Fail<string>(ResultErrorType.InputFileError);
     }

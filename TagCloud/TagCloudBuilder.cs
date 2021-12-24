@@ -29,7 +29,11 @@ namespace TagCloud
             container = new ServiceCollection();
             container.AddSingleton<ICloudVisualizer, TagCloudVisualizer>()
                 .AddSingleton<IWordHelper, WordHelper>()
-                .AddSingleton<IFilter<string>>(new WordFilter(new List<IChecker<string>>()))
+                .AddSingleton<IFilter<string>>(new WordFilter(
+                        new List<IChecker<string>>
+                            { new BoringChecker() }
+                    )
+                )
                 .AddSingleton<IConverter<IEnumerable<string>>>(
                     new WordConverter(new List<IConverter<string>>
                         { new ToLowerCaseConverter() }

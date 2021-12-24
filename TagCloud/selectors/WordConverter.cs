@@ -8,7 +8,7 @@ namespace TagCloud.selectors
     {
         private readonly List<IConverter<string>> singleConverters;
 
-        public WordConverter([NotNull]List<IConverter<string>> singleConverters)
+        public WordConverter([NotNull] List<IConverter<string>> singleConverters)
         {
             this.singleConverters = singleConverters;
         }
