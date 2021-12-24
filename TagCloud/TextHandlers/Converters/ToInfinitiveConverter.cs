@@ -11,6 +11,6 @@ public class ToInfinitiveConverter : IConverter
     {
         return original.AsResult()
             .Then(w => hunspell.Stem(w).FirstOrDefault() ?? w)
-            .RefineError("Hunspell error");
+            .RefineError("Stem error");
     }
 }

@@ -11,15 +11,17 @@ namespace TagCloudApp.Apps
         private readonly IReader reader;
         private readonly ITemplateCreator templateCreator;
         private readonly IVisualizer visualizer;
+        private readonly Configuration configuration;
 
-        public ConsoleApp(IReader reader, ITemplateCreator templateCreator, IVisualizer visualizer)
+        public ConsoleApp(IReader reader, ITemplateCreator templateCreator, IVisualizer visualizer, Configuration configuration)
         {
             this.reader = reader;
             this.templateCreator = templateCreator;
             this.visualizer = visualizer;
+            this.configuration = configuration;
         }
 
-        public void Run(Configuration configuration)
+        public void Run()
         {
             reader
                 .Read(configuration.WordsFilename)

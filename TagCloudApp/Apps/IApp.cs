@@ -4,6 +4,6 @@ namespace TagCloudApp.Apps
 {
     public interface IApp
     {
-        public void Run(Configuration configuration);
+        public void Run();
     }
 }
