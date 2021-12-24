@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TagsCloudVisualization.Common.WordFilters
 {
@@ -8,7 +9,7 @@ namespace TagsCloudVisualization.Common.WordFilters
 
         public ComposeFilter(IWordFilter[] filters = null)
         {
-            this.filters = filters ?? new IWordFilter[0];
+            this.filters = filters ?? Array.Empty<IWordFilter>();
         }
 
         public IEnumerable<string> Filter(IEnumerable<string> words)

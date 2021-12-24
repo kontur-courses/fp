@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Autofac;
 using Autofac.Core;
@@ -29,27 +30,13 @@ namespace TagsCloudVisualization
             var containerBuilder = Result.Of(() => new ContainerBuilder())
                 .And(builder => builder.RegisterType<TextFileReader>().As<IFileReader>().AsSelf(),
                     "не удалось зарегистрировать обработчик текстовых документов TextFileReader.")
-                .And(builder => builder
-                        .RegisterInstance(new Hunspell(executingPath + DictRuAff, executingPath + DictRuDic))
-                        .SingleInstance(),
-                    "не удалось зарегистрировать словарь Hunspell.")
-                .And(builder => builder.RegisterType<HunspellStemer>().As<IStemer>(),
+                .And(builder =>
+                        TryRegisterHunspellStemer(builder, executingPath + DictRuAff, executingPath + DictRuDic),
                     "не удалось зарегистрировать обработчик слов HunspellStemer.")
                 .And(builder => builder.RegisterType<PronounFilter>().As<IWordFilter>(),
                     "не удалось зарегистрировать фильтр местоимений PronounFilter.")
-                .And(builder =>
-                        builder.RegisterInstance(
-                                new CustomFilter(new TextFileReader().ReadLines(executingPath + DictExcludeWords)
-                                    .GetValueOrThrow()))
-                            .As<IWordFilter>(),
+                .And(builder => TryRegisterCustomFilter(builder, executingPath + DictExcludeWords),
                     "не удалось зарегистрировать фильтр слов CustomFilter.")
-                // .And(builder => builder.RegisterType<CustomFilter>()
-                //         .WithParameter(new ResolvedParameter(
-                //             (pi, ctx) => pi.ParameterType == typeof(IEnumerable<string>),
-                //             (pi, ctx) =>
-                //                 ctx.Resolve<TextFileReader>().ReadLines(executingPath + DictExcludeWords).GetValueOrThrow()))
-                //         .As<IWordFilter>(),
-                //     "Не удалось зарегистрировать фильтр слов CustomFilter.")
                 .And(builder => builder.RegisterType<ComposeFilter>()
                         .WithParameter(new ResolvedParameter(
                             (pi, ctx) => pi.ParameterType == typeof(IWordFilter[]),
@@ -76,6 +63,27 @@ namespace TagsCloudVisualization
                 .Then(builder => builder.Build());
 
             return containerBuilder;
+        }
+
+        private static void TryRegisterHunspellStemer(ContainerBuilder builder, string affFile, string dicFile)
+        {
+            Result.Of(() => new Hunspell(affFile, dicFile))
+                .RefineError("Не удалось зарегистрировать обработчик слов Hunspell:")
+                .OnFail(Console.WriteLine)
+                .OnSuccess(hunspell =>
+                {
+                    builder.RegisterInstance(hunspell).SingleInstance();
+                    builder.RegisterType<HunspellStemer>().As<IStemer>();
+                });
+        }
+
+        private static void TryRegisterCustomFilter(ContainerBuilder builder, string filterFile)
+        {
+            new TextFileReader().ReadLines(filterFile)
+                .Then(words => new CustomFilter(words))
+                .RefineError("Не удалось зарегистрировать фильтр слов:")
+                .OnFail(Console.WriteLine)
+                .OnSuccess(filter => builder.RegisterInstance(filter).As<IWordFilter>());
         }
     }
 }
