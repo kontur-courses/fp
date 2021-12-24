@@ -1,7 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using ResultMonad;
+using ResultMonad.Extensions;
 
 namespace TagsCloudImageSaver
 {
@@ -9,16 +11,23 @@ namespace TagsCloudImageSaver
     {
         private readonly string directory;
         private readonly string imageName;
-        private readonly ImageFormat format;
 
         public ImageSaver(string directory, string imageName)
         {
             this.directory = directory;
             this.imageName = imageName;
-            format = DefineFormat(imageName).GetValueOrThrow();
         }
-
-        private static Result<ImageFormat> DefineFormat(string imageName)
+        
+        public void Save(Image image)
+        {
+            directory.AsResult()
+                .Then(dir => GetPath(dir, imageName))
+                .SelectMany(_ => DefineFormat(imageName), (path, format) => new { path, format })
+                .Then(tuple => image.Save(tuple.path, tuple.format))
+                .OnFail(Console.WriteLine);
+        }
+        
+        private Result<ImageFormat> DefineFormat(string imageName)
         {
             var extension = Path.GetExtension(imageName);
             return extension switch
@@ -26,17 +35,14 @@ namespace TagsCloudImageSaver
                 ".png" => ImageFormat.Png,
                 ".jpeg" or ".jpg" => ImageFormat.Jpeg,
                 ".bmp" => ImageFormat.Bmp,
-                _ => Result.Fail<ImageFormat>($"Cant save image in this {extension} format.")
+                _ => Result.Fail<ImageFormat>($"Can't save image in this {extension} format")
             };
         }
 
-        public void Save(Image image)
-        {
+        private static Result<string> GetPath(string directory, string imageName) =>
             directory
                 .AsResult()
                 .Validate(Directory.Exists, $"No such directory {directory}")
-                .Then(dir => Path.Combine(dir, imageName))
-                .Then(path => image.Save(path, format));
-        }
+                .Then(dir => Path.Combine(dir, imageName));
     }
 }
