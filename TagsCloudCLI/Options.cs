@@ -19,7 +19,7 @@ namespace TagsCloudCLI
         [Option('w', "file_with_words", HelpText = "File with words", Required = true)]
         public string FileWithWords { get; set; }
 
-        [Option('s', "font_size", HelpText = "Max font size", Default = 100)]
+        [Option('s', "font_size", HelpText = "Max font size", Default = 1000)]
         public int MaxFontSize { get; set; }
 
         [Option('b', "boring_words", HelpText = "Path to file with boring words", Default = "boring.txt")]
