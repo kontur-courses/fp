@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultMonad
+namespace ResultMonad.Extensions
 {
     public static class ResultExtensions
     {
@@ -36,7 +36,11 @@ namespace ResultMonad
         public static Result<TInput> Validate<TInput>(this Result<TInput> input, Func<TInput, bool> validator,
             string errorMessage) =>
             input.Then(i => validator(i) ? Result.Ok(i) : Result.Fail<TInput>(errorMessage));
-        
+
+        public static Result<TInput> Validate<TInput>(this Result<TInput> input, bool condition,
+            string errorMessage) =>
+            input.Then(i => condition ? Result.Ok(i) : Result.Fail<TInput>(errorMessage));
+
         public static Result<None> OfAction(Action f, string error = null)
         {
             try

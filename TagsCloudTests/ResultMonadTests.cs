@@ -3,6 +3,7 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using ResultMonad;
+using ResultMonad.Extensions;
 
 namespace TagsCloudTests
 {
@@ -109,7 +110,7 @@ namespace TagsCloudTests
         [Test]
         public void RunOnFail_WhenFail()
         {
-            var fail = Result.Fail<int>("������");
+            var fail = Result.Fail<int>("fail");
             var errorHandler = A.Fake<Action<string>>();
 
             var actual = fail.OnFail(errorHandler);
