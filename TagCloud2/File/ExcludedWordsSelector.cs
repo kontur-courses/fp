@@ -24,7 +24,7 @@ namespace TagCloud2.Text
             var fileContent = fileReader
                 .ReadFile(path.Path)
                 .Then(wordReader.GetUniqueLowercaseWords);
-            wordReader.GetUniqueLowercaseWords(fileReader.ReadFile(path.Path).GetValueOrThrow()).ToHashSet();
+            excluded = wordReader.GetUniqueLowercaseWords(fileReader.ReadFile(path.Path).GetValueOrThrow()).ToHashSet();
         }
     }
 }

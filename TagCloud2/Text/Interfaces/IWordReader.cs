@@ -1,7 +1,9 @@
-﻿namespace TagCloud2
+﻿using System.Collections.Generic;
+
+namespace TagCloud2
 {
     public interface IWordReader
     {
-        string[] GetUniqueLowercaseWords(string input);
+        IEnumerable<string> GetUniqueLowercaseWords(string input);
     }
 }

@@ -6,13 +6,8 @@ namespace TagCloud2
     public class TxtFileReader : IFileReader
     {
         public Result<string> ReadFile(string path)
-        {
-            if (!File.Exists(path))
-            {
-                return Result.Fail<string>("No such file to open");
-            }
-
-            return Result.Ok(File.ReadAllText(path));
-        }
+            => File.Exists(path)
+                ? Result.Ok(File.ReadAllText(path))
+                : Result.Fail<string>("No such file to open");
     }
 }

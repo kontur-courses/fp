@@ -23,9 +23,9 @@ namespace TagCloud2.Text
             {
                 using var zip = new ZipArchive(file, ZipArchiveMode.Read);
                 var SB = new StringBuilder();
-                var entry = zip.Entries.Where(x => x.Name == "document.xml").First();
-                NameTable nt = new();
-                XmlNamespaceManager nsManager = new(nt);
+                var entry = zip.Entries.First(x => x.Name == "document.xml");
+                var nt = new NameTable();
+                var nsManager = new XmlNamespaceManager(nt);
                 nsManager.AddNamespace("w", wordmlNamespace);
                 var xml = new XmlDocument(nt);
                 using var doc = entry.Open();
@@ -36,7 +36,7 @@ namespace TagCloud2.Text
                     SB.Append(node.InnerText + Environment.NewLine);
                 }
 
-                return Result.Ok<string>(SB.ToString());
+                return Result.Ok(SB.ToString());
             }
             catch
             {

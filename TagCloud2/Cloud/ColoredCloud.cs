@@ -16,7 +16,7 @@ namespace TagCloud2
         public void AddColoredWordsFromCloudLayouter(IColoredSizedWord[] words, List<Rectangle> rectangles, IColoringAlgorithm coloringAlgorithm)
         {
             
-            for (int i = 0; i < words.Length; i++)
+            for (var i = 0; i < words.Length; i++)
             {
                 var color = coloringAlgorithm.GetColor(rectangles[i]);
                 ColoredWords.Add(new ColoredSizedWord(color, rectangles[i], words[i].Word, words[i].Font));
