@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization
 {
     public interface ITagCloudCreator
     {
-        public Bitmap CreateFromFile(string filepath);
+        public Result<Bitmap> CreateFromFile(string filepath);
     }
 }

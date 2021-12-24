@@ -8,6 +8,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.Layouters;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualizationTests
 {
@@ -50,10 +51,12 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void PutRectangles_WithoutIntersections()
         {
-            var rectangles = layouter
+            var rectanglesResult = layouter
                 .PutNextRectangles(Enumerable.Repeat(new SizeF(10, 10), RectanglesCount))
-                .ToList(); // To avoid multiple enumeration
+                .Then(x => x.ToList()); // To avoid multiple enumeration
 
+            var rectangles = rectanglesResult.GetValueOrThrow();
+            
             rectangles
                 .SelectMany(firstRect => rectangles
                     .Select(secondRect => firstRect != secondRect && firstRect.IntersectsWith(secondRect)))
@@ -74,7 +77,9 @@ namespace TagsCloudVisualizationTests
         {
             var rectangleSize = new SizeF(50, 50);
 
-            var rectangle = layouter.PutNextRectangle(rectangleSize);
+            var rectangleResult = layouter.PutNextRectangle(rectangleSize);
+
+            var rectangle = rectangleResult.GetValueOrThrow();
 
             rectangle.X.Should().BeApproximately(center.X - rectangleSize.Width / 2, Epsilon);
             rectangle.Y.Should().BeApproximately(center.Y - rectangleSize.Height / 2, Epsilon);
@@ -120,7 +125,7 @@ namespace TagsCloudVisualizationTests
 
             foreach (var rectangleSize in rectanglesSizes)
             {
-                lastRectangle = layouter.PutNextRectangle(rectangleSize);
+                lastRectangle = layouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
 
                 rectanglesArea += lastRectangle.GetArea();
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Factories;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization.Visualization.Configurator
 {
@@ -20,16 +21,18 @@ namespace TagsCloudVisualization.Visualization.Configurator
             this.fontSize = fontSize;
         }   
         
-        public IEnumerable<IVisualizingToken> Configure(IEnumerable<string> visualizingValues)
+        public Result<IEnumerable<IVisualizingToken>> Configure(IEnumerable<string> visualizingValues)
         {
             var frequencyDict = GetFrequencyDict(visualizingValues);
             var fontCoefficient = fontSize / 10 * 2;
             
-            return frequencyDict.Keys.Select(
+            return Result.Of(() => frequencyDict.Keys.Select(
                     value => tokenFactory.NewToken(value,
                         new Font(FontFamily.GenericSansSerif, fontSize + fontCoefficient * (frequencyDict[value] - 1)),
                         colorizer(value)))
-                .ToArray();
+                .ToArray())
+                .Then(x => x as IEnumerable<IVisualizingToken>)
+                .RefineError("Something wrong with colorizer");
         }
 
         private Dictionary<string, int> GetFrequencyDict(IEnumerable<string> visualizingValues)

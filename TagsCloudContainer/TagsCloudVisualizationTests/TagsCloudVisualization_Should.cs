@@ -34,7 +34,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\ChangedBgColor.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\ChangedBgColor.png");
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\AddedBoringWords.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\AddedBoringWords.png");
         }
         
         [Test]
@@ -62,7 +62,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\ChangedWordsColor.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\ChangedWordsColor.png");
         }
         
         [Test]
@@ -75,7 +75,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\ChangedFontSize.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\ChangedFontSize.png");
         }
         
         [Test]
@@ -101,7 +101,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\ChangedPreparations.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\ChangedPreparations.png");
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\ChangedImageSizeAndCenter.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\ChangedImageSizeAndCenter.png");
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace TagsCloudVisualizationTests
             
             var creator = scope.Resolve<ITagCloudCreator>();
             var img = creator.CreateFromFile(@"..\..\..\words.txt");
-            img.Save(@"..\..\..\TestVisualizations\MultipleChanges.png");
+            img.GetValueOrThrow().Save(@"..\..\..\TestVisualizations\MultipleChanges.png");
         }
     }
 }

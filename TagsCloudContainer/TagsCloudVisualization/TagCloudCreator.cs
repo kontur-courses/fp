@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.ResultOf;
 using TagsCloudVisualization.TextHandlers;
 using TagsCloudVisualization.Visualization;
 
@@ -15,11 +16,10 @@ namespace TagsCloudVisualization
             this.handler = handler;
         }
         
-        public Bitmap CreateFromFile(string filepath)
+        public Result<Bitmap> CreateFromFile(string filepath)
         {
-            var text = handler.Handle(filepath);
-
-            return visualizer.Visualize(text);
+            return handler.Handle(filepath)
+                .Then(visualizer.Visualize);
         }
     }
 }

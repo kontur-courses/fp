@@ -1,4 +1,5 @@
 ﻿using System;
+using TagsCloudVisualization.ResultOf;
 
 namespace ConsoleApp
 {
@@ -8,15 +9,9 @@ namespace ConsoleApp
         {
             var client = new Client();
 
-            try
-            {
-                client.CreateCloud();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Something went wrong: " + e);
-                throw;
-            }
+            Result.OfAction(client.CreateCloud)
+                .RefineError("Something went wrong")
+                .GetValueOrThrow(); 
         }
     }
 }

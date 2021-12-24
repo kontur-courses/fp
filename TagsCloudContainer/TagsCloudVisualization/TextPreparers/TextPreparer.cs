@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization.TextPreparers
 {
@@ -15,12 +16,14 @@ namespace TagsCloudVisualization.TextPreparers
             this.preparations = preparations;
         }
 
-        public IEnumerable<string> PrepareText(IEnumerable<string> text)
+        public Result<IEnumerable<string>> PrepareText(IEnumerable<string> text)
         {
-            return text
+            return Result.Of(() => text
                 .Where(word => !IsFiltered(word))
                 .Select(PrepareWord)
-                .ToList(); // На случай каких-то ошибок из filters или preparations
+                .ToList())
+                .Then(x => x as IEnumerable<string>)
+                .RefineError("Something went wrong when filtering or preparing words");
         }
         
         private string PrepareWord(string word) =>

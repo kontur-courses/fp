@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization.TextHandlers
 {
     public interface ITextHandler
     {
-        public IEnumerable<string> Handle(string filePath);
+        public Result<IEnumerable<string>> Handle(string filePath);
     }
 }

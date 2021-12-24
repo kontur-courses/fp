@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization.Visualization
 {
     public interface IVisualizer
     {
-        public Bitmap Visualize(IEnumerable<string> visualizingValues);
+        public Result<Bitmap> Visualize(IEnumerable<string> visualizingValues);
     }
 }

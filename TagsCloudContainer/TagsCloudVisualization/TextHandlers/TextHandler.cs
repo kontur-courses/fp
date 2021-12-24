@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TagsCloudVisualization.Parsers;
+using TagsCloudVisualization.ResultOf;
 using TagsCloudVisualization.TextPreparers;
 
 namespace TagsCloudVisualization.TextHandlers
@@ -15,11 +16,11 @@ namespace TagsCloudVisualization.TextHandlers
             this.parser = parser;
         }
         
-        public IEnumerable<string> Handle(string filePath)
+        public Result<IEnumerable<string>> Handle(string filePath)
         {
-            var words = parser.ParseWords(filePath);
-
-            return preparer.PrepareText(words);
+            return parser
+                .ParseWords(filePath)
+                .Then(preparer.PrepareText);
         }
     }
 }

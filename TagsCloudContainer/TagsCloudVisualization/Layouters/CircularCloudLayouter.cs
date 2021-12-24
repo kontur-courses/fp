@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointPlacers;
+using TagsCloudVisualization.ResultOf;
 
 namespace TagsCloudVisualization.Layouters
 {
@@ -20,11 +21,11 @@ namespace TagsCloudVisualization.Layouters
             rectangles = new HashSet<RectangleF>();
         }
 
-        public RectangleF PutNextRectangle(SizeF rectangleSize)
+        public Result<RectangleF> PutNextRectangle(SizeF rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
             {
-                throw new ArgumentException("Rectangle size should be positive floating point numbers");
+                return new Result<RectangleF>("Rectangle size should be positive floating point numbers");
             }
 
             var rect = GetNextRectanglePosition(rectangleSize);
@@ -33,9 +34,25 @@ namespace TagsCloudVisualization.Layouters
 
             return rect;
         }
-        
-        public IEnumerable<RectangleF> PutNextRectangles(IEnumerable<SizeF> rectanglesSizes)
-            => rectanglesSizes.Select(PutNextRectangle);
+
+        public Result<IEnumerable<RectangleF>> PutNextRectangles(IEnumerable<SizeF> rectanglesSizes)
+        {
+            var results = rectanglesSizes.Select(PutNextRectangle);
+
+            var puttedRectangles = new List<RectangleF>();
+
+            foreach (var result in results)
+            {
+                if (!result.IsSuccess)
+                {
+                    return new Result<IEnumerable<RectangleF>>(result.Error);
+                }
+                
+                puttedRectangles.Add(result.GetValueOrThrow());
+            }
+
+            return puttedRectangles;
+        }
 
         private RectangleF GetNextRectanglePosition(SizeF rectangleSize)
         {
