@@ -49,7 +49,7 @@ namespace TagCloudTests
         [TestCase(-100, 100)]
         [TestCase(100, 0)]
         [TestCase(-100, -100)]
-        public void TagCloud_NonPositiveResolution_Throws(int width, int height)
+        public void TagCloud_NonPositiveResolution_Fail(int width, int height)
         {
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, SystemFonts.DefaultFont,
                 new Color(), 100, new Size(width, height));
@@ -59,7 +59,7 @@ namespace TagCloudTests
         [TestCase("Comic Sans")]
         [TestCase("qwerty")]
         [TestCase("default")]
-        public void TagCloud_UnknownFont_Throws(string fontName)
+        public void TagCloud_UnknownFont_Fail(string fontName)
         {
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, fontName,
                 "Red", 100, 100, 100);
@@ -69,7 +69,7 @@ namespace TagCloudTests
         [TestCase("red")]
         [TestCase("graybol")]
         [TestCase("default")]
-        public void TagCloud_UnknownColor_Throws(string colorName)
+        public void TagCloud_UnknownColor_Fail(string colorName)
         {
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
                 colorName, 100, 100, 100);
@@ -77,7 +77,7 @@ namespace TagCloudTests
         }
         
         [Test]
-        public void TagCloud_SourceNotExist_Throws()
+        public void TagCloud_SourceNotExist_Fail()
         {
             DeleteFiles();
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
@@ -90,7 +90,7 @@ namespace TagCloudTests
         [TestCase("pdf")]
         [TestCase("png")]
         [TestCase("xyz")]
-        public void TagCloud_SourceWrongFormat_Throws(string extension)
+        public void TagCloud_SourceWrongFormat_Fail(string extension)
         {
             DeleteFiles();
             sourceFile = random.Next() + "." + extension;
@@ -101,7 +101,7 @@ namespace TagCloudTests
         }
         
         [TestCase("txt")]
-        public void TagCloud_SourceRightFormat_NotThrows(string extension)
+        public void TagCloud_SourceRightFormat_Success(string extension)
         {
             DeleteFiles();
             sourceFile = random.Next() + "." + extension;
@@ -112,7 +112,7 @@ namespace TagCloudTests
         }
         
         [Test]
-        public void TagCloud_EmptySource_Throws()
+        public void TagCloud_EmptySource_Fail()
         {
             DeleteFiles();
             CreateFile(sourceFile, "");
@@ -126,7 +126,7 @@ namespace TagCloudTests
         [TestCase("pdf")]
         [TestCase("sas")]
         [TestCase("xyz")]
-        public void TagCloud_ResultWrongFormat_Throws(string extension)
+        public void TagCloud_ResultWrongFormat_Fail(string extension)
         {
             resultFile = random.Next() + "."  + extension;
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",
@@ -139,7 +139,7 @@ namespace TagCloudTests
         [TestCase("jpeg")]
         [TestCase("tiff")]
         [TestCase("bmp")]
-        public void TagCloud_ResultRightFormat_NotThrows(string extension)
+        public void TagCloud_ResultRightFormat_Success(string extension)
         {
             resultFile = random.Next() + "."  + extension;
             var result = tagCloud.CreateTagCloudFromFile(sourceFile, resultFile, "Comic Sans MS",

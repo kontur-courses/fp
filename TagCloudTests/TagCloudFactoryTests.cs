@@ -11,7 +11,7 @@ namespace TagCloudTests
 
         [TestCase("sorted")]
         [TestCase("mixed")]
-        public void TagCloudFactory_NotThrows(string order)
+        public void TagCloudFactory_Success(string order)
         {
             var tagCloud = factory.CreateInstance(false, order);
             tagCloud.IsSuccess.Should().BeTrue();
@@ -20,7 +20,7 @@ namespace TagCloudTests
         [TestCase("qwery")]
         [TestCase("Mixed")]
         [TestCase("Shuffled")]
-        public void TagCloudFactory_UnknownOrder_Throws(string order)
+        public void TagCloudFactory_UnknownOrder_Fail(string order)
         {
             var tagCloud = factory.CreateInstance(false, order);
             tagCloud.IsSuccess.Should().BeFalse();

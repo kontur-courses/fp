@@ -31,10 +31,10 @@ namespace TagsCloudVisualization
             builder.RegisterType<RandomTagColor>().As<ITagColorChooser>();
             builder.RegisterType<WordCounter>().As<ITokenWeigher>();
             builder.RegisterType<WordSelector>().UsingConstructor().As<IWordSelector>();
+            builder.RegisterType<TokenGenerator>().As<ITokenGenerator>();
+            builder.RegisterType<TagCloudVisualiser>().As<ITagCloudVisualiser>();
             builder.RegisterType<ReaderContainer>();
-            builder.RegisterType<TokenGenerator>();
             builder.RegisterType<TagCloudMaker>();
-            builder.RegisterType<TagCloudVisualiser>();
             builder.RegisterType<TagCloud>();
             builder.RegisterInstance(orderer).As<ITokenOrderer>();
             builder.RegisterInstance(new CircularCloudMaker(Point.Empty, metric)).As<ICloudMaker>();
