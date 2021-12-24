@@ -108,7 +108,9 @@
         <Compile Include="TagsCloudVisualization\SpiralPointsGenerator.cs" />
         <Compile Include="TagsCloudWithWordsVisualization\ConsoleApplication.cs" />
         <Compile Include="TagsCloudWithWordsVisualization\FileSaver.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\Parser.cs" />
         <Compile Include="TagsCloudWithWordsVisualization\SizeRange.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\TagCloudParameters.cs" />
         <Compile Include="TagsCloudWithWordsVisualization\VisualizationParameters.cs" />
         <Compile Include="TagsCloudWithWordsVisualization\Visualizer.cs" />
         <Compile Include="Tests\CircularCloudLayouterTests.cs" />

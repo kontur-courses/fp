@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using Autofac;
 using TagsCloudContainer.TagsCloudVisualization;
 using TagsCloudContainer.TextPreparation;
@@ -17,27 +16,23 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
             using var scope = container.BeginLifetimeScope();
             while (true)
             {
-                var answer = Console.ReadLine();
-                Console.WriteLine(answer.Equals("y"));
-                ProcessDialogWithUser(scope,
-                    answer.Equals("y")
-                        ? GetDefaultSettings(scope, "../../defaultSettings.txt")
-                        : GetParametersToVisualize(scope));
+                Console.WriteLine(scope.ResolveNamed<string>("defaultSettingsMessage"));
+                var cloudParameters = Console.ReadLine()!.Equals(scope.ResolveNamed<string>("positiveAnswer"))
+                    ? GetDefaultSettings(scope, "../../defaultSettings.txt")
+                    : GetParametersToVisualize(scope);
+                ProcessDialogWithUser(scope, cloudParameters);
             }
         }
 
-        private static void ProcessDialogWithUser(ILifetimeScope scope, (List<string> wordsToVisualize, CircularCloudLayouter layouter, double reductionCoefficient,
-            VisualizationParameters parameters, string format) parameters)
+        private static void ProcessDialogWithUser(ILifetimeScope scope, TagCloudParameters parameters)
         {
             var rnd = new Random();
             var fileName = rnd.Next().ToString();
-            var filePath = "Samples/" + fileName + "." + parameters.format;
-            Visualizer.GetCloudVisualization(parameters.wordsToVisualize, parameters.layouter,
-                    parameters.reductionCoefficient, parameters.parameters)
-                .ThenDo(bitmap => FileSaver.Save(bitmap, "../../" + filePath)
-                    .GetValueOrThrow());
-
-            Console.WriteLine(scope.ResolveNamed<string>("finalMessage") + filePath);    
+            var filePath = "Samples/" + fileName + "." + parameters.SaveFormat;
+            Visualizer.GetCloudVisualization(parameters)
+                .ThenDo(bitmap => FileSaver.Save(bitmap, "../../" + filePath).GetValueOrThrow())
+                .ThenDo(_ => Console.WriteLine(scope.ResolveNamed<string>("finalMessage") + filePath))
+                .OnFail(error => Console.WriteLine("Error: " + error));
         }
 
         private static IContainer BuildContainer()
@@ -46,11 +41,12 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
             builder.Register(_ => new TxtFileReader(new WordsReader())).Named<TxtFileReader>("txtReader");
             builder.Register(_ => new DocFileReader(new WordsReader())).Named<DocFileReader>("docReader");
             builder.RegisterInstance(new DefaultWordHelper()).As<IWordsHelper>();
+            builder.Register(_ => "Print 'y' if you want to use default settings")
+                .Named<string>("defaultSettingsMessage");
             builder.Register(_ => "Print path to file with words").Named<string>("inputFileMessage");
             builder.Register(_ => "Print colors of tags separated by whitespace").Named<string>("tagColorsMessage");
             builder.Register(_ => "Print background color").Named<string>("backgroundColorMessage");
-            builder.Register(_ => new Size(30, 30)).Named<Size>("minTagSize");
-            builder.Register(_ => new Size(200, 50)).Named<Size>("maxTagSize");
+            builder.Register(_ => new SizeRange(new Size(30, 30), new Size(200, 50))).Named<SizeRange>("sizeRange");
             builder.Register(_ => "Print coordinates of center of your image separated by whitespace")
                 .Named<string>("coordinatesMessage");
             builder.Register(_ => "If you want to use default points generator, print 'y'")
@@ -69,35 +65,30 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
             return builder.Build();
         }
 
-        private static (List<string> wordsToVisualize, CircularCloudLayouter layouter, double reductionCoefficient,
-            VisualizationParameters parameters, string format) GetParametersToVisualize(ILifetimeScope scope)
+        private static (SizeRange sizeRange, double reductionCoefficient, float minFontSize, FontFamily fontFamily)
+            GetConstantParameters(ILifetimeScope scope)
         {
+            return (scope.ResolveNamed<SizeRange>("sizeRange"), scope.ResolveNamed<double>("reductionCoefficient"),
+                scope.ResolveNamed<float>("minFontSize"), scope.ResolveNamed<FontFamily>("fontFamily"));
+        }
+
+        private static TagCloudParameters GetParametersToVisualize(ILifetimeScope scope)
+        {
+            var constants = GetConstantParameters(scope);
             var path = AskUserForPath(scope);
             var wordsToVisualize = GetWordsToVisualizeByPath(scope, path);
             var colors = AskUserForTagColors(scope);
             var backgroundColor = AskUserForBackgroundColor(scope);
             var brushes = AskUserForBrushColors(scope);
-            var minTagSize = scope.ResolveNamed<Size>("minTagSize");
-            var maxTagSize = scope.ResolveNamed<Size>("maxTagSize");
             var center = AskUserForCenterOfImage(scope).GetValueOrThrow();
             var pointsGenerator = AskUserForUsingDefaultGenerator(scope)
                 ? AskUserForCustomPointsGenerator(scope, center)
                 : new SpiralPointsGenerator(center);
-            var reductionCoefficient = scope.ResolveNamed<double>("reductionCoefficient");
-            var minFontSize = scope.ResolveNamed<float>("minFontSize");
-            var fontFamily = scope.ResolveNamed<FontFamily>("fontFamily");
             var format = AskUserForSavingFormat(scope);
-            return (wordsToVisualize, new CircularCloudLayouter(pointsGenerator), reductionCoefficient,
-                new VisualizationParameters(colors, backgroundColor, new SizeRange(minTagSize, maxTagSize), fontFamily,
-                    minFontSize, brushes), format);
-        }
-
-        private static List<string> GetWordsToVisualizeByPath(ILifetimeScope scope, string path)
-        {
-            var wordsHelper = scope.Resolve<IWordsHelper>();
-            var fileReader = GetFileReaderByFilePath(scope, path).GetValueOrThrow();
-            var fileWords = fileReader.GetAllWords(path).GetValueOrThrow();
-            return  wordsHelper.GetAllWordsToVisualize(fileWords).GetValueOrThrow();    
+            return new TagCloudParameters(wordsToVisualize, new CircularCloudLayouter(pointsGenerator),
+                constants.reductionCoefficient,
+                new VisualizationParameters(colors, backgroundColor, constants.sizeRange, constants.fontFamily,
+                    constants.minFontSize, brushes), format);
         }
 
         private static string AskUserForPath(ILifetimeScope scope)
@@ -109,48 +100,25 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
         private static List<Color> AskUserForTagColors(ILifetimeScope scope)
         {
             Console.WriteLine(scope.ResolveNamed<string>("tagColorsMessage"));
-            return ParseColors(Console.ReadLine());
-        }
-
-        private static List<Color> ParseColors(string input)
-        {
-            return input.Split(' ').Select(Color.FromName).ToList();    
-        }
-
-        private static Color ParseColor(string input)
-        {
-            return Color.FromName(input ?? string.Empty);
+            return Parser.ParseColors(Console.ReadLine());
         }
 
         private static Color AskUserForBackgroundColor(ILifetimeScope scope)
         {
             Console.WriteLine(scope.ResolveNamed<string>("backgroundColorMessage"));
-            return ParseColor(Console.ReadLine());
+            return Parser.ParseColor(Console.ReadLine());
         }
 
         private static List<Brush> AskUserForBrushColors(ILifetimeScope scope)
         {
             Console.WriteLine(scope.ResolveNamed<string>("brushesMessage"));
-            return ParseBrushes(Console.ReadLine());
-        }
-
-        private static List<Brush> ParseBrushes(string input)
-        {
-            return ParseColors(input)
-                .Select(color => (Brush) new SolidBrush(color))
-                .ToList();    
+            return Parser.ParseBrushes(Console.ReadLine());
         }
 
         private static Result<Point> AskUserForCenterOfImage(ILifetimeScope scope)
         {
             Console.WriteLine(scope.ResolveNamed<string>("coordinatesMessage"));
-            return ParsePoint(Console.ReadLine());
-        }
-
-        private static Result<Point> ParsePoint(string input)
-        {
-            var coordinates = input.Split(' ').Select(int.Parse).ToList();
-            return coordinates.Count() != 2 ? Result.Fail<Point>("Point must contain only 2 coordinates and can't be null") : Result.Ok(new Point(coordinates[0], coordinates[1]));
+            return Parser.ParsePoint(Console.ReadLine());
         }
 
         private static bool AskUserForUsingDefaultGenerator(ILifetimeScope scope)
@@ -179,40 +147,40 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
             return new SpiralPointsGenerator(center, startRadius, startAngle, angleDelta, radiusDelta);
         }
 
+        private static List<string> GetWordsToVisualizeByPath(ILifetimeScope scope, string path)
+        {
+            var wordsHelper = scope.Resolve<IWordsHelper>();
+            var fileReader = GetFileReaderByFilePath(scope, path).GetValueOrThrow();
+            var fileWords = fileReader.GetAllWords(path).GetValueOrThrow();
+            return wordsHelper.GetAllWordsToVisualize(fileWords).GetValueOrThrow();
+        }
+
         private static Result<IFileReader> GetFileReaderByFilePath(ILifetimeScope scope, string path)
         {
             var format = Path.GetExtension(path);
-            if (format.Equals(".txt"))
+            return format switch
             {
-                return Result.Ok((IFileReader) scope.ResolveNamed<TxtFileReader>("txtReader"));
-            }
-
-            if (format.Equals(".docx"))
-            {
-                return Result.Ok((IFileReader) scope.ResolveNamed<DocFileReader>("docReader"));
-            }
-
-            return Result.Fail<IFileReader>("Invalid file extension");
+                ".txt" => Result.Ok((IFileReader) scope.ResolveNamed<TxtFileReader>("txtReader")),
+                ".docx" => Result.Ok((IFileReader) scope.ResolveNamed<DocFileReader>("docReader")),
+                _ => Result.Fail<IFileReader>("Invalid file extension")
+            };
         }
 
-        private static (List<string> wordsToVisualize, CircularCloudLayouter layouter, double reductionCoefficient,
-            VisualizationParameters parameters, string format) GetDefaultSettings(ILifetimeScope scope, string settingsPath)
+        private static TagCloudParameters GetDefaultSettings(ILifetimeScope scope, string settingsPath)
         {
-            using var reader = new StreamReader(settingsPath);  
+            using var reader = new StreamReader(settingsPath);
+            var constants = GetConstantParameters(scope);
             var lines = reader.ReadToEnd().Split(new[] {Environment.NewLine}, StringSplitOptions.None);
             var words = GetWordsToVisualizeByPath(scope, lines[0]);
-            var reductionCoefficient = scope.ResolveNamed<double>("reductionCoefficient");
-            var tagColors = ParseColors(lines[1]);
-            var backgroundColor = ParseColor(lines[2]);
-            var brushes = ParseBrushes(lines[3]);
-            var center = ParsePoint(lines[4]).GetValueOrThrow();
+            var tagColors = Parser.ParseColors(lines[1]);
+            var backgroundColor = Parser.ParseColor(lines[2]);
+            var brushes = Parser.ParseBrushes(lines[3]);
+            var center = Parser.ParsePoint(lines[4]).GetValueOrThrow();
             var format = lines[5];
-
-            var parameters = new VisualizationParameters(tagColors, backgroundColor,
-                new SizeRange(scope.ResolveNamed<Size>("minTagSize"), scope.ResolveNamed<Size>("maxTagSize")),
-                scope.ResolveNamed<FontFamily>("fontFamily"), scope.ResolveNamed<float>("minFontSize"), brushes);
-            return (words, new CircularCloudLayouter(new SpiralPointsGenerator(center)),
-                scope.ResolveNamed<double>("reductionCoefficient"), parameters, format);
+            var parameters = new VisualizationParameters(tagColors, backgroundColor, constants.sizeRange,
+                constants.fontFamily, constants.minFontSize, brushes);
+            return new TagCloudParameters(words, new CircularCloudLayouter(new SpiralPointsGenerator(center)),
+                constants.reductionCoefficient, parameters, format);
         }
     }
 }

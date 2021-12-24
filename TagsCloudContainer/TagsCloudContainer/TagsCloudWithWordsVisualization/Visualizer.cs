@@ -9,23 +9,24 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
 {
     public static class Visualizer
     {
-        public static Result<Bitmap> GetCloudVisualization(List<string> words, CircularCloudLayouter layouter,
-            double reductionCoefficient, VisualizationParameters parameters)
+        public static Result<Bitmap> GetCloudVisualization(TagCloudParameters parameters)
         {
-            if (words == null)
+            if (parameters.Words == null)
             {
                 return Result.Fail<Bitmap>("Words can't be null");
             }
 
-            if (parameters.TagColors == null)
+            if (parameters.VisualizationParameters.TagColors == null)
             {
                 return Result.Fail<Bitmap>("Tags colors can't be null");
             }
 
-            return GenerateRectangles(words, parameters.TagSizeRange, layouter, reductionCoefficient)
-                .Then(_ => CloudVisualizer.Draw(layouter, parameters.TagColors, parameters.BackgroundColor))
-                .ThenDo(bitmap => AddWordsToImage(bitmap, layouter.Rectangles, words, parameters.MinFontSize,
-                    parameters.FontFamily, parameters.TextBrushes));
+            return GenerateRectangles(parameters.Words, parameters.VisualizationParameters.TagSizeRange,
+                    parameters.Layouter, parameters.ReductionCoefficient)
+                .Then(_ => CloudVisualizer.Draw(parameters.Layouter, parameters.VisualizationParameters.TagColors,
+                    parameters.VisualizationParameters.BackgroundColor))
+                .ThenDo(bitmap => AddWordsToImage(bitmap, parameters.Layouter.Rectangles, parameters.Words,
+                    parameters.VisualizationParameters));
         }
 
         private static Result<None> GenerateRectangles(List<string> words, SizeRange range,
@@ -63,24 +64,24 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
         }
 
         private static Result<None> AddWordsToImage(Bitmap bitmap, List<Rectangle> rectangles, List<string> words,
-            float minFontSize, FontFamily fontFamily, List<Brush> brushes)
+            VisualizationParameters parameters)
         {
-            if (minFontSize <= 0)
+            if (parameters.MinFontSize <= 0)
             {
                 return Result.Fail<None>("Font size can't be zero or negative");
             }
 
-            if (fontFamily == null)
+            if (parameters.FontFamily == null)
             {
                 return Result.Fail<None>("Font family can't be null");
             }
 
-            if (brushes == null)
+            if (parameters.TextBrushes == null)
             {
                 return Result.Fail<None>("Brushes can't be null");
             }
 
-            if (brushes.Any(brush => brush == null))
+            if (parameters.TextBrushes.Any(brush => brush == null))
             {
                 return Result.Fail<None>("Brush can't be null");
             }
@@ -90,13 +91,13 @@ namespace TagsCloudContainer.TagsCloudWithWordsVisualization
             var result = new Result<float>();
             for (var i = 0; i < words.Count && i < rectangles.Count; i++)
             {
-                var brushIndex = brushes.Count == Math.Min(words.Count, rectangles.Count)
+                var brushIndex = parameters.TextBrushes.Count == Math.Min(words.Count, rectangles.Count)
                     ? i
-                    : rnd.Next(0, brushes.Count);
-                
-                result = result.Then(_ => GetFontSize(rectangles[i], words[i], minFontSize)
-                    .ThenDo(fontSize => graphics.DrawString(words[i], new Font(fontFamily, fontSize),
-                        brushes[brushIndex], rectangles[i])));
+                    : rnd.Next(0, parameters.TextBrushes.Count);
+
+                result = result.Then(_ => GetFontSize(rectangles[i], words[i], parameters.MinFontSize)
+                    .ThenDo(fontSize => graphics.DrawString(words[i], new Font(parameters.FontFamily, fontSize),
+                        parameters.TextBrushes[brushIndex], rectangles[i])));
             }
 
             return result.Then(_ => new None());
