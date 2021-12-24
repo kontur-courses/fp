@@ -18,14 +18,7 @@ namespace TagCloud2
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>();
             if (options.AngleSpeed == 0 || options.LinearSpeed == 0)
             {
-                if (options.Path != null)
-                {
-                    return Result.Fail<None>("angle or linear speed is zero");
-                }
-                else
-                {
-                    return Result.Fail<None>("arguments are incorrect");
-                }
+                return options.Path != null ? Result.Fail<None>("angle or linear speed is zero") : Result.Fail<None>("arguments are incorrect");
             }
 
             var spiral = new ArchimedeanSpiral(new Point(options.X/2, options.Y/2), options.AngleSpeed, options.LinearSpeed);

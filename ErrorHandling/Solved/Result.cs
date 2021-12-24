@@ -27,8 +27,7 @@ namespace ResultOf
 
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+            return IsSuccess ? Value : throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
     }
@@ -120,8 +119,7 @@ namespace ResultOf
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            if (input.IsSuccess) return input;
-            return Fail<TInput>(replaceError(input.Error));
+            return input.IsSuccess ? input : Fail<TInput>(replaceError(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(

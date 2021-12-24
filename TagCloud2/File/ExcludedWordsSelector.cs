@@ -20,10 +20,6 @@ namespace TagCloud2.Text
             {
                 throw new ArgumentException("File for exclude doesn't exists");
             }
-
-            var fileContent = fileReader
-                .ReadFile(path.Path)
-                .Then(wordReader.GetUniqueLowercaseWords);
             excluded = wordReader.GetUniqueLowercaseWords(fileReader.ReadFile(path.Path).GetValueOrThrow()).ToHashSet();
         }
     }
