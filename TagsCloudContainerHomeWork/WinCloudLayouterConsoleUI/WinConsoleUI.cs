@@ -7,7 +7,6 @@ using TagsCloudContainerCore.InterfacesCore;
 using TagsCloudContainerCore.LayoutSettingsDir;
 using TagsCloudContainerCore.Result;
 using TagsCloudContainerCore.TagCloudMaker;
-using WinCloudLayouterConsoleUI.DI;
 using WinCloudLayouterConsoleUI.WindowsDependencies;
 
 namespace WinCloudLayouterConsoleUI;
@@ -20,14 +19,23 @@ namespace WinCloudLayouterConsoleUI;
 [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
 internal class WinConsoleUI
 {
-    public static void Main(string[] args)
-    {
-        if (!File.Exists("./TagsCloudSettings.xml"))
-        {
-            JsonSettingsHelper.CreateSettingsFile();
-        }
+    private readonly IFontChecker fontChecker;
+    private readonly ITagCloudMaker cloudMaker;
+    private readonly IBitmapHandler bitmapHandler;
+    private readonly IPainter painter;
+    private LayoutSettings settings;
 
-        new AppRunner<WinConsoleUI>().Run(args);
+    public WinConsoleUI(IFontChecker fontChecker,
+        ITagCloudMaker cloudMaker,
+        IBitmapHandler bitmapHandler,
+        IPainter painter,
+        LayoutSettings settings)
+    {
+        this.fontChecker = fontChecker;
+        this.cloudMaker = cloudMaker;
+        this.bitmapHandler = bitmapHandler;
+        this.painter = painter;
+        this.settings = settings;
     }
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -45,10 +53,7 @@ internal class WinConsoleUI
         string? color = null
     )
     {
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => DICloudLayouterContainerFactory.GetContainer(settings))
-            .TryResolve(out IFontChecker fontChecker)
-            .Then(_ => settings)
+        ResultExtension.Ok(settings)
             .SetFontColor(color)
             .SetFontName(name, fontChecker)
             .SetFontSize(maxSize)
@@ -62,9 +67,7 @@ internal class WinConsoleUI
     [Command("settings", Description = "Выводит текущие настройки")]
     public void PrintSettings()
     {
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .OnFail(ExceptionHandle)
-            .OnSuccess(SuccessHandle, "\n" + settings);
+        SuccessHandle(settings.ToString());
     }
 
 
@@ -84,8 +87,7 @@ internal class WinConsoleUI
         [Named("step", Description = "Шаг, на который будем увеличивать радиус. Должен быть > 0")]
         int? step = null)
     {
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => settings)
+        ResultExtension.Ok(settings)
             .SetStep(step)
             .SetMinAngle(minAngle)
             .SaveSettingsFile()
@@ -107,9 +109,9 @@ internal class WinConsoleUI
         }
 
         var size = new Size(width, height);
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => { settings = settings with { PictureSize = size }; })
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+
+        settings = settings with { PictureSize = size };
+        JsonSettingsHelper.SaveSettingsFile(settings)
             .OnFail(ExceptionHandle)
             .OnSuccess(SuccessHandle, $"Установлен размер {size}");
     }
@@ -126,11 +128,12 @@ internal class WinConsoleUI
                             " Используйте преставление HEX, например \"FF01AB\"");
         }
 
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => { settings = settings with { BackgroundColor = color }; })
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
-            .OnFail(ExceptionHandle)
-            .OnSuccess(SuccessHandle, $"Установлен цвет фона: \"{color}\"\n");
+        {
+            settings = settings with { BackgroundColor = color };
+            JsonSettingsHelper.SaveSettingsFile(settings)
+                .OnFail(ExceptionHandle)
+                .OnSuccess(SuccessHandle, $"Установлен цвет фона: \"{color}\"\n");
+        }
     }
 
 
@@ -146,9 +149,8 @@ internal class WinConsoleUI
             return;
         }
 
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => { settings = settings with { PathToExcludedWords = path }; })
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+        settings = settings with { PathToExcludedWords = path };
+        JsonSettingsHelper.SaveSettingsFile(settings)
             .OnFail(ExceptionHandle)
             .OnSuccess(SuccessHandle);
     }
@@ -162,9 +164,8 @@ internal class WinConsoleUI
             return;
         }
 
-        JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => { settings = settings with { PicturesFormat = format }; })
-            .Then(_ => JsonSettingsHelper.SaveSettingsFile(settings))
+        settings = settings with { PicturesFormat = format };
+        JsonSettingsHelper.SaveSettingsFile(settings)
             .OnFail(ExceptionHandle)
             .OnSuccess(SuccessHandle);
     }
@@ -176,12 +177,7 @@ internal class WinConsoleUI
         [Named("out", Description = "Путь к файлу, куда сохранить изображение")]
         string pathOut)
     {
-        var cloud = JsonSettingsHelper.TryGetLayoutSettings(out var settings)
-            .Then(_ => DICloudLayouterContainerFactory.GetContainer(settings))
-            .TryResolve(out ITagCloudMaker cloudMaker)
-            .TryResolve(out IPainter painter)
-            .TryResolve(out IBitmapHandler bitmapHandler)
-            .Then(_ => FileReaderHelper.ReadLinesFromFile(pathIn))
+        var cloud = FileReaderHelper.ReadLinesFromFile(pathIn)
             .Then(words => cloudMaker.GetTagsToRender(words))
             .OnFail(ExceptionHandle);
 
@@ -199,10 +195,12 @@ internal class WinConsoleUI
         cloud.Then(tags => painter.Paint(tags))
             .Then(pic => bitmapHandler.Handle(pic, pathOut, settings.PicturesFormat))
             .OnSuccess(SuccessHandle, $"\nСохранено в:\n{pathOut}")
-            .OnFail(ExceptionHandle);
+            .OnFail(ExceptionHandle)
+            .GetValueOrThrow()
+            .Dispose();
     }
 
-    private static void ExceptionHandle(string information)
+    internal static void ExceptionHandle(string information)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("\n[FAIL]\n");
@@ -211,7 +209,7 @@ internal class WinConsoleUI
         Console.ResetColor();
     }
 
-    private static void WarningHandle(string information)
+    internal static void WarningHandle(string information)
     {
         Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.WriteLine("\n[WARNING]\n");
@@ -220,7 +218,7 @@ internal class WinConsoleUI
         Console.ResetColor();
     }
 
-    private static void SuccessHandle(string information = "")
+    internal static void SuccessHandle(string information = "")
     {
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("\n[SUCCESS]\n");

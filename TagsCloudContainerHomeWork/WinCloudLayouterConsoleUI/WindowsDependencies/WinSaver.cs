@@ -20,24 +20,24 @@ public class WinSaver : IBitmapHandler
 
     private static readonly Regex NameRegex = new(@"(?<=[\\\/])[^\\\/]+?\.(.+)$", RegexOptions.Compiled);
 
-    public Result<None> Handle(Bitmap picture, string outPath, string format)
+    public Result<Bitmap> Handle(Bitmap picture, string outPath, string format)
     {
         var name = DateTime.Now.ToString("dd-MMMM-yyyy-hh-mm") + ".png";
         outPath = NameRegex.IsMatch(outPath) ? outPath : (outPath + "\\" + name).Replace("\"", "");
 
         if (!SupportedFormats.ContainsKey(format))
         {
-            return ResultExtension.Fail<None>("Неподдерживаемый формат изображения");
+            return ResultExtension.Fail<Bitmap>("Неподдерживаемый формат изображения");
         }
 
         try
         {
             picture.Save(outPath, SupportedFormats[format]);
-            return ResultExtension.Ok();
+            return ResultExtension.Ok(picture);
         }
         catch (Exception e)
         {
-            return ResultExtension.Fail<None>($"{e.GetType().Name} {e.Message}");
+            return ResultExtension.Fail<Bitmap>($"{e.GetType().Name} {e.Message}");
         }
     }
 }

@@ -62,21 +62,20 @@ public static class JsonSettingsHelper
         }
     }
 
-    public static Result<LayoutSettings> TryGetLayoutSettings(out LayoutSettings settings)
+    public static Result<LayoutSettings> TryGetLayoutSettings()
     {
         try
         {
             using var fileReader = new StreamReader("./TagsCloudSettings.json");
             var jsonSettings = fileReader.ReadToEnd();
 
-            settings = Deserialize<LayoutSettings>(jsonSettings)
-                       ?? throw new Exception("Ошибка при получении настроек");
+            var settings = Deserialize<LayoutSettings>(jsonSettings)
+                           ?? throw new Exception("Ошибка при получении настроек");
 
             return settings;
         }
         catch (Exception e)
         {
-            settings = default!;
             return ResultExtension.Fail<LayoutSettings>($"{e.GetType().Name} {e.Message}");
         }
     }

@@ -6,8 +6,6 @@ namespace TagsCloudContainerCore.CircularLayouter;
 public class CircularCloudLayoutParameters
 {
     private const float Pi2 = MathF.PI * 2;
-    private const int MaxRadius = 10000;
-
 
     private readonly float minAngle;
     private readonly int step;
@@ -67,12 +65,6 @@ public class CircularCloudLayoutParameters
         if (CountRadiusBoosts % countBoostsForChangeAngle == 0 && NextAngle > minAngle)
         {
             StepAngle /= 2;
-        }
-
-        if (Radius > MaxRadius)
-        {
-            throw new Exception("The radius exceeds the maximum allowed value\n" +
-                                $"MaxRadius = {MaxRadius} CurrentRadius = {Radius}");
         }
     }
 

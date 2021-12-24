@@ -23,29 +23,11 @@ public class TagStatisticMaker : IStatisticMaker
 
     public IEnumerable<KeyValuePair<string, int>> CountedTags => tagsWithCount;
 
-    public KeyValuePair<string, int> GetLeastFrequentTag()
-    {
-        // ReSharper disable once InvertIf
-        if (isChangeTags)
-        {
-            orderedPairs = tagsWithCount.OrderBy(x => x.Value).ToList();
-            isChangeTags = false;
-        }
+    public Result<KeyValuePair<string, int>> GetMostFrequentTag()
+        => GetFrequentTag(true);
 
-        return orderedPairs[1];
-    }
-
-    public KeyValuePair<string, int> GetMostFrequentTag()
-    {
-        // ReSharper disable once InvertIf
-        if (isChangeTags)
-        {
-            orderedPairs = tagsWithCount.OrderBy(x => x.Value).ToList();
-            isChangeTags = false;
-        }
-
-        return orderedPairs[^1];
-    }
+    public Result<KeyValuePair<string, int>> GetLeastFrequentTag()
+        => GetFrequentTag(false);
 
     public Result<None> AddTagValues(IEnumerable<string> words)
     {
@@ -77,5 +59,23 @@ public class TagStatisticMaker : IStatisticMaker
         }
 
         tagsWithCount[tag]++;
+    }
+
+    private Result<KeyValuePair<string, int>> GetFrequentTag(bool needMost)
+    {
+        // ReSharper disable once InvertIf
+        if (isChangeTags)
+        {
+            orderedPairs = tagsWithCount.OrderBy(x => x.Value).ToList();
+            isChangeTags = false;
+        }
+
+        if (orderedPairs.Count == 0)
+        {
+            return ResultExtension.Fail<KeyValuePair<string, int>>("Нет тегов для статистики");
+        }
+
+        var index = needMost ? orderedPairs.Count - 1 : 0;
+        return orderedPairs[index];
     }
 }

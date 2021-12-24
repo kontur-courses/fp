@@ -7,5 +7,5 @@ namespace TagsCloudContainerCore.InterfacesCore;
 public interface IBitmapHandler
 {
     // ReSharper disable once UnusedMember.Global
-    public Result<None> Handle(Bitmap bitmap, string outPath, string format);
+    public Result<Bitmap> Handle(Bitmap bitmap, string outPath, string format);
 }

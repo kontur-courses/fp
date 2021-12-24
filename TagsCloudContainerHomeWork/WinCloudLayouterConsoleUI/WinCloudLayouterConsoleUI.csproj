@@ -11,4 +11,8 @@
         <ProjectReference Include="..\TagsCloudContainerCore\TagsCloudContainerCore.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="CommandDotNet.IoC.Autofac" Version="4.0.1"/>
+    </ItemGroup>
+
 </Project>

@@ -12,13 +12,13 @@ public class TagToRender
 
     public int ColorHex { get; }
 
-
     public float FontSize { get; }
 
     public string FontName { get; }
 
     public Rectangle LimitingRectangle { get; }
 
+    // ReSharper disable once UnusedMember.Global
     public Point Location => LimitingRectangle.Location;
 
     public TagToRender(Rectangle limitingRectangle, string value, int colorHex, float fontSize, string fontName)

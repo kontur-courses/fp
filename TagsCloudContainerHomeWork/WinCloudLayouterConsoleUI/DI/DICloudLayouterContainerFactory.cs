@@ -50,6 +50,7 @@ internal static class DICloudLayouterContainerFactory
                     new PositionalParameter(0, Point.Empty),
                 });
 
+            builder.RegisterType<WinConsoleUI>();
             builder.RegisterType<WinFontChecker>().As<IFontChecker>();
             builder.RegisterType<WinSaver>().As<IBitmapHandler>();
             builder.RegisterType<TagStatisticMaker>().As<IStatisticMaker>();

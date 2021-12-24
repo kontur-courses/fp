@@ -11,6 +11,7 @@ using TagsCloudContainerCore.StatisticMaker;
 namespace WinCloudLayouterConsoleUI.WindowsDependencies;
 
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Проверка совместимости платформы")]
+[SuppressMessage("ReSharper", "ConstantNullCoalescingCondition")]
 public class WinTagMaker : ITagMaker
 {
     private readonly ILayouter layouter;
@@ -28,7 +29,13 @@ public class WinTagMaker : ITagMaker
         {
             var fontSize = GetFontSize(raw, statisticMaker);
             var tagSize = GetTagSize(raw.Key, settings.FontName, fontSize, settings.PictureSize);
-            var putRectangle = layouter.PutNextRectangle(tagSize);
+
+            if (!tagSize.IsSuccess)
+            {
+                return ResultExtension.Fail<TagToRender>($"Ошибка при получении локации тега\n{tagSize.Error}");
+            }
+
+            var putRectangle = layouter.PutNextRectangle(tagSize.GetValueOrThrow());
 
             if (!putRectangle.IsSuccess)
             {
@@ -38,7 +45,7 @@ public class WinTagMaker : ITagMaker
             var color = int.Parse("FF" + settings.FontColor, NumberStyles.HexNumber);
             var limRectangle = putRectangle.GetValueOrThrow();
 
-            return new TagToRender(limRectangle, raw.Key, color, fontSize, settings.FontName);
+            return new TagToRender(limRectangle, raw.Key, color, fontSize.GetValueOrThrow(), settings.FontName);
         }
         catch (Exception e)
         {
@@ -46,21 +53,36 @@ public class WinTagMaker : ITagMaker
         }
     }
 
-    private float GetFontSize(KeyValuePair<string, int> tag, IStatisticMaker statMaker)
+    private Result<float> GetFontSize(KeyValuePair<string, int> tag, IStatisticMaker statMaker)
     {
-        var size = settings.FontMinSize + settings.FontMaxSize * (tag.Value - statMaker.GetLeastFrequentTag().Value) /
-            (statMaker.GetMostFrequentTag().Value -
-             statMaker.GetLeastFrequentTag().Value);
+        var leastTag = statMaker.GetLeastFrequentTag();
+        var mostTag = statMaker.GetMostFrequentTag();
+
+        if (!leastTag.IsSuccess || !mostTag.IsSuccess)
+        {
+            var error = string.Join("\n", leastTag.Error ?? "", mostTag.Error ?? "");
+            return ResultExtension.Fail<float>(error);
+        }
+
+        var size = settings.FontMinSize + settings.FontMaxSize * (tag.Value - leastTag.GetValueOrThrow().Value) /
+            (mostTag.GetValueOrThrow().Value -
+             leastTag.GetValueOrThrow().Value);
+
         return size >= settings.FontMinSize
             ? size
             : settings.FontMinSize;
     }
 
-    private static Size GetTagSize(string tag, string fontName, float fontSize, Size imageSize)
+    private static Result<Size> GetTagSize(string tag, string fontName, Result<float> fontSize, Size imageSize)
     {
+        if (!fontSize.IsSuccess)
+        {
+            return ResultExtension.Fail<Size>(fontSize.Error);
+        }
+
         using var mockImage = new Bitmap(imageSize.Width, imageSize.Height);
         using var mockGraphics = Graphics.FromImage(mockImage);
-        using var mockFont = new Font(fontName, fontSize);
+        using var mockFont = new Font(fontName, fontSize.GetValueOrThrow());
 
         return mockGraphics.MeasureString(tag, mockFont).ToSize();
     }

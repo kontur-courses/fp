@@ -8,7 +8,7 @@ namespace TagsCloudContainerCore.StatisticMaker;
 public interface IStatisticMaker
 {
     Result<None> AddTagValues(IEnumerable<string> words);
-    public KeyValuePair<string, int> GetMostFrequentTag();
-    public KeyValuePair<string, int> GetLeastFrequentTag();
+    public Result<KeyValuePair<string, int>> GetMostFrequentTag();
+    public Result<KeyValuePair<string, int>> GetLeastFrequentTag();
     IEnumerable<KeyValuePair<string, int>> CountedTags { get; }
 }
