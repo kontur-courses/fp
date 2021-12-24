@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer.TagsCloudVisualization;
 
-namespace TagsCloudContainer.TagsCloudVisualization
+namespace TagsCloudContainer.Tests
 {
     public class SpiralPointsGeneratorTests
     {

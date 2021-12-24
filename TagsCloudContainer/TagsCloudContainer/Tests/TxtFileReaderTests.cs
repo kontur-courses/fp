@@ -2,8 +2,9 @@
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer.TextPreparation;
 
-namespace TagsCloudContainer.TextPreparation
+namespace TagsCloudContainer.Tests
 {
     public class TxtFileReaderTests
     {

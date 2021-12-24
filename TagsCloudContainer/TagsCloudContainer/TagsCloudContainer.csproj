@@ -99,31 +99,33 @@
         <Reference Include="WindowsBase" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ConsoleApplication.cs" />
-        <Compile Include="FileSaver.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Result.cs" />
         <Compile Include="TagsCloudVisualization\CircularCloudLayouter.cs" />
-        <Compile Include="TagsCloudVisualization\CircularCloudLayouterTests.cs" />
         <Compile Include="TagsCloudVisualization\CloudVisualizer.cs" />
         <Compile Include="TagsCloudVisualization\RectangleExtensions.cs" />
-        <Compile Include="TagsCloudVisualization\RectangleExtensionsTests.cs" />
         <Compile Include="TagsCloudVisualization\SpiralPointsGenerator.cs" />
-        <Compile Include="TagsCloudVisualization\SpiralPointsGeneratorTests.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\ConsoleApplication.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\FileSaver.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\SizeRange.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\VisualizationParameters.cs" />
+        <Compile Include="TagsCloudWithWordsVisualization\Visualizer.cs" />
+        <Compile Include="Tests\CircularCloudLayouterTests.cs" />
+        <Compile Include="Tests\DefaultWordHelperTests.cs" />
+        <Compile Include="Tests\DocFileReaderTests.cs" />
+        <Compile Include="Tests\RectangleExtensionsTests.cs" />
+        <Compile Include="Tests\SpiralPointsGeneratorTests.cs" />
+        <Compile Include="Tests\TxtFileReaderTests.cs" />
+        <Compile Include="Tests\VisualizerTests.cs" />
+        <Compile Include="Tests\WordsReaderTests.cs" />
         <Compile Include="TextPreparation\DefaultWordHelper.cs" />
-        <Compile Include="TextPreparation\DefaultWordHelperTests.cs" />
         <Compile Include="TextPreparation\DocFileReader.cs" />
-        <Compile Include="TextPreparation\DocFileReaderTests.cs" />
         <Compile Include="TextPreparation\IFileReader.cs" />
         <Compile Include="TextPreparation\IWordsHelper.cs" />
         <Compile Include="TextPreparation\IWordsReader.cs" />
         <Compile Include="TextPreparation\TxtFileReader.cs" />
-        <Compile Include="TextPreparation\TxtFileReaderTests.cs" />
-        <Compile Include="TextPreparation\WordsReaderTests.cs" />
         <Compile Include="TextPreparation\WordsReader.cs" />
-        <Compile Include="Visualizer.cs" />
-        <Compile Include="VisualizerTests.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="input.txt" />

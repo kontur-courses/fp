@@ -1,4 +1,6 @@
-﻿namespace TagsCloudContainer
+﻿using TagsCloudContainer.TagsCloudWithWordsVisualization;
+
+namespace TagsCloudContainer
 {
     internal static class Program
     {

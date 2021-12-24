@@ -5,42 +5,33 @@ using System.Linq;
 using System.Windows.Forms;
 using TagsCloudContainer.TagsCloudVisualization;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.TagsCloudWithWordsVisualization
 {
     public static class Visualizer
     {
-        public static Result<Bitmap> GetCloudVisualization(List<string> words, List<Color> tagsColors,
-            Color backgroundColor, Size minTagSize, Size maxTagSize, CircularCloudLayouter layouter,
-            double reductionCoefficient, float minFontSize, FontFamily fontFamily, Brush textBrush)
-        {
-            return GetCloudVisualization(words, tagsColors, backgroundColor, minTagSize, maxTagSize, layouter,
-                reductionCoefficient, minFontSize, fontFamily, new List<Brush>() {textBrush});
-        }
-
-        public static Result<Bitmap> GetCloudVisualization(List<string> words, List<Color> tagsColors,
-            Color backgroundColor, Size minTagSize, Size maxTagSize, CircularCloudLayouter layouter,
-            double reductionCoefficient, float minFontSize, FontFamily fontFamily, List<Brush> brushes)
+        public static Result<Bitmap> GetCloudVisualization(List<string> words, CircularCloudLayouter layouter,
+            double reductionCoefficient, VisualizationParameters parameters)
         {
             if (words == null)
             {
                 return Result.Fail<Bitmap>("Words can't be null");
             }
 
-            if (tagsColors == null)
+            if (parameters.TagColors == null)
             {
                 return Result.Fail<Bitmap>("Tags colors can't be null");
             }
 
-            return GenerateRectangles(words, minTagSize, maxTagSize, layouter, reductionCoefficient)
-                .Then(_ => CloudVisualizer.Draw(layouter, tagsColors, backgroundColor))
-                .ThenDo(bitmap =>
-                    AddWordsToImage(bitmap, layouter.Rectangles, words, minFontSize, fontFamily, brushes));
+            return GenerateRectangles(words, parameters.TagSizeRange, layouter, reductionCoefficient)
+                .Then(_ => CloudVisualizer.Draw(layouter, parameters.TagColors, parameters.BackgroundColor))
+                .ThenDo(bitmap => AddWordsToImage(bitmap, layouter.Rectangles, words, parameters.MinFontSize,
+                    parameters.FontFamily, parameters.TextBrushes));
         }
 
-        private static Result<None> GenerateRectangles(List<string> words, Size minSize, Size maxSize,
+        private static Result<None> GenerateRectangles(List<string> words, SizeRange range,
             CircularCloudLayouter layouter, double reductionCoefficient)
         {
-            if (maxSize.Height < minSize.Height || maxSize.Width < minSize.Width)
+            if (range.MaxSize.Height < range.MinSize.Height || range.MaxSize.Width < range.MinSize.Width)
             {
                 return Result.Fail<None>("Min tag size must be less or equal than max tag size");
             }
@@ -55,19 +46,20 @@ namespace TagsCloudContainer
                 return Result.Fail<None>("Layouter can't be null");
             }
 
-            var currentSize = maxSize;
+            var currentSize = range.MaxSize;
             var result = Result.Ok(Rectangle.Empty);
             foreach (var _ in words)
             {
-                currentSize.Width = currentSize.Width < minSize.Width ? minSize.Width : currentSize.Width;
-                currentSize.Height = currentSize.Height < minSize.Height ? minSize.Height : currentSize.Height;
+                currentSize.Width = currentSize.Width < range.MinSize.Width ? range.MinSize.Width : currentSize.Width;
+                currentSize.Height = currentSize.Height < range.MinSize.Height
+                    ? range.MinSize.Height
+                    : currentSize.Height;
                 result = result.Then(_ => layouter.PutNextRectangle(currentSize));
                 currentSize.Height = (int) (currentSize.Height * reductionCoefficient);
                 currentSize.Width = (int) (currentSize.Width * reductionCoefficient);
             }
 
-            return result
-                .Then(_ => new None());
+            return result.Then(_ => new None());
         }
 
         private static Result<None> AddWordsToImage(Bitmap bitmap, List<Rectangle> rectangles, List<string> words,
@@ -95,13 +87,13 @@ namespace TagsCloudContainer
 
             var rnd = new Random();
             var graphics = Graphics.FromImage(bitmap);
-            var result = Result.Ok(float.MaxValue);
+            var result = new Result<float>();
             for (var i = 0; i < words.Count && i < rectangles.Count; i++)
             {
                 var brushIndex = brushes.Count == Math.Min(words.Count, rectangles.Count)
                     ? i
                     : rnd.Next(0, brushes.Count);
-
+                
                 result = result.Then(_ => GetFontSize(rectangles[i], words[i], minFontSize)
                     .ThenDo(fontSize => graphics.DrawString(words[i], new Font(fontFamily, fontSize),
                         brushes[brushIndex], rectangles[i])));

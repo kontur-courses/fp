@@ -7,8 +7,9 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using TagsCloudContainer.TagsCloudVisualization;
 
-namespace TagsCloudContainer.TagsCloudVisualization
+namespace TagsCloudContainer.Tests
 {
     public class CircularCloudLayouterTests
     {

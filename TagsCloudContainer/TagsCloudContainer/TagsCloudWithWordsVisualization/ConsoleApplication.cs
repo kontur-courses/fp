@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Autofac;
 using TagsCloudContainer.TagsCloudVisualization;
 using TagsCloudContainer.TextPreparation;
 
-namespace TagsCloudContainer
+namespace TagsCloudContainer.TagsCloudWithWordsVisualization
 {
     public static class ConsoleApplication
     {
@@ -19,16 +20,13 @@ namespace TagsCloudContainer
                 var rnd = new Random();
                 var parametersToVisualize = GetParametersToVisualize(scope);
                 var fileName = rnd.Next().ToString();
-                Visualizer.GetCloudVisualization(parametersToVisualize.wordsToVisualize, parametersToVisualize.colors,
-                        parametersToVisualize.backgroundColor, parametersToVisualize.minTagSize,
-                        parametersToVisualize.maxTagSize, parametersToVisualize.layouter,
-                        parametersToVisualize.reductionCoefficient, parametersToVisualize.minFontSize,
-                        parametersToVisualize.fontFamily, parametersToVisualize.brushes)
-                    .ThenDo(bitmap => FileSaver.Save(bitmap, fileName, "../../Samples/", parametersToVisualize.format))
-                    .GetValueOrThrow();
+                var filePath = "Samples/" + fileName + "." + parametersToVisualize.format;
+                Visualizer.GetCloudVisualization(parametersToVisualize.wordsToVisualize, parametersToVisualize.layouter,
+                        parametersToVisualize.reductionCoefficient, parametersToVisualize.parameters)
+                    .ThenDo(bitmap => FileSaver.Save(bitmap, "../../" + filePath)
+                    .GetValueOrThrow());
 
-                Console.WriteLine(scope.ResolveNamed<string>("finalMessage") + fileName + "." +
-                                  parametersToVisualize.format);
+                Console.WriteLine(scope.ResolveNamed<string>("finalMessage") + filePath);
             }
         }
 
@@ -57,21 +55,18 @@ namespace TagsCloudContainer
             builder.Register(_ => FontFamily.GenericSansSerif).Named<FontFamily>("fontFamily");
             builder.Register(_ => "Print text colors separated by whitespace").Named<string>("brushesMessage");
             builder.Register(_ => "Print format to save").Named<string>("formatMessage");
-            builder.Register(_ => "Result saved to Samples/").Named<string>("finalMessage");
+            builder.Register(_ => "Result saved to ").Named<string>("finalMessage");
             return builder.Build();
         }
 
-        private static (List<string> wordsToVisualize, List<Color> colors, Color backgroundColor, Size minTagSize, Size
-            maxTagSize, CircularCloudLayouter layouter, double reductionCoefficient, float minFontSize, FontFamily
-            fontFamily, List<Brush> brushes, string format) GetParametersToVisualize(ILifetimeScope scope)
+        private static (List<string> wordsToVisualize, CircularCloudLayouter layouter, double reductionCoefficient,
+            VisualizationParameters parameters, string format) GetParametersToVisualize(ILifetimeScope scope)
         {
             var path = AskUserForPath(scope);
-            var wordsToVisualize = scope.Resolve<IWordsHelper>()
-                .GetAllWordsToVisualize(GetFileReaderByFilePath(scope, path)
-                    .GetValueOrThrow()
-                    .GetAllWords(path)
-                    .GetValueOrThrow())
-                .GetValueOrThrow();
+            var wordsHelper = scope.Resolve<IWordsHelper>();
+            var fileReader = GetFileReaderByFilePath(scope, path).GetValueOrThrow();
+            var fileWords = fileReader.GetAllWords(path).GetValueOrThrow();
+            var wordsToVisualize = wordsHelper.GetAllWordsToVisualize(fileWords).GetValueOrThrow();
             var colors = AskUserForTagColors(scope);
             var backgroundColor = AskUserForBackgroundColor(scope);
             var brushes = AskUserForBrushColors(scope);
@@ -85,9 +80,9 @@ namespace TagsCloudContainer
             var minFontSize = scope.ResolveNamed<float>("minFontSize");
             var fontFamily = scope.ResolveNamed<FontFamily>("fontFamily");
             var format = AskUserForSavingFormat(scope);
-            return (wordsToVisualize, colors, backgroundColor, minTagSize, maxTagSize,
-                new CircularCloudLayouter(pointsGenerator), reductionCoefficient, minFontSize, fontFamily, brushes,
-                format);
+            return (wordsToVisualize, new CircularCloudLayouter(pointsGenerator), reductionCoefficient,
+                new VisualizationParameters(colors, backgroundColor, new SizeRange(minTagSize, maxTagSize), fontFamily,
+                    minFontSize, brushes), format);
         }
 
         private static string AskUserForPath(ILifetimeScope scope)
@@ -159,17 +154,13 @@ namespace TagsCloudContainer
 
         private static Result<IFileReader> GetFileReaderByFilePath(ILifetimeScope scope, string path)
         {
-            if (path is not {Length: >= 3})
-            {
-                return Result.Fail<IFileReader>("File path is Invalid");
-            }
-
-            if (path.Substring(path.Length - 3).Equals("txt"))
+            var format = Path.GetExtension(path);
+            if (format.Equals(".txt"))
             {
                 return Result.Ok((IFileReader) scope.ResolveNamed<TxtFileReader>("txtReader"));
             }
 
-            if (path.Length >= 4 && path.Substring(path.Length - 4).Equals("docx"))
+            if (format.Equals(".docx"))
             {
                 return Result.Ok((IFileReader) scope.ResolveNamed<DocFileReader>("docReader"));
             }

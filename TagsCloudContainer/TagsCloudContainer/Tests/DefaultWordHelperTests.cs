@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer.TextPreparation;
 
-namespace TagsCloudContainer.TextPreparation
+namespace TagsCloudContainer.Tests
 {
     public class DefaultWordHelperTests
     {

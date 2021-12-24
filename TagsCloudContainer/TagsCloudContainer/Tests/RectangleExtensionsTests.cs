@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudContainer.TagsCloudVisualization;
 
-namespace TagsCloudContainer.TagsCloudVisualization
+namespace TagsCloudContainer.Tests
 {
     public class RectangleExtensionsTests
     {
