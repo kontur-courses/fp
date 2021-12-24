@@ -2,6 +2,6 @@
 {
     public class ToLowerCaseConverter : IConverter<string>
     {
-        public string Convert(string source) => source.ToLower();
+        public Result<string> Convert(string source) => source.ToLower();
     }
 }

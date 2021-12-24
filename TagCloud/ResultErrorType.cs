@@ -10,6 +10,7 @@
         InitializeCloudError,
         CalculateStatisticError,
         RectangleSizeError,
-        RectanglePutError
+        RectanglePutError,
+        IncorrectWordError
     }
 }

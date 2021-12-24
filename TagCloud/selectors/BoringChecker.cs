@@ -2,6 +2,7 @@
 {
     public class BoringChecker : IChecker<string>
     {
-        public bool IsValid(string source) => source.Length > 3;
+        public Result<string> IsValid(string source) 
+            => source.Length > 3 ? Result.Ok(source) : Result.Fail<string>(ResultErrorType.IncorrectWordError);
     }
 }

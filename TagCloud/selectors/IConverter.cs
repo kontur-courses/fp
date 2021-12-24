@@ -2,6 +2,6 @@
 {
     public interface IConverter<T>
     {
-        T Convert(T source);
+        Result<T> Convert(T source);
     }
 }

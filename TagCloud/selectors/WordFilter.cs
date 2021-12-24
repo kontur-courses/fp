@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TagCloud.selectors
 {
@@ -7,14 +8,15 @@ namespace TagCloud.selectors
     {
         private readonly List<IChecker<string>> checkers;
 
-        public WordFilter(List<IChecker<string>> checkers)
+        public WordFilter([NotNull]List<IChecker<string>> checkers)
         {
             this.checkers = checkers;
         }
 
-        public IEnumerable<string> Filter(IEnumerable<string> source) =>
-            checkers.Count == 0
-                ? source
-                : source.Where(word => checkers.Any(checker => checker.IsValid(word)));
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> source) =>
+            Result.Of(() => checkers.Count == 0
+                    ? source
+                    : source.Where(word => checkers.Any(checker => checker.IsValid(word).IsSuccess)),
+                ResultErrorType.FilterError);
     }
 }

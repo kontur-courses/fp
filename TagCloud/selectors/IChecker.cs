@@ -1,7 +1,7 @@
 ﻿namespace TagCloud.selectors
 {
-    public interface IChecker<in T>
+    public interface IChecker<T>
     {
-        bool IsValid(T source);
+        Result<T> IsValid(T source);
     }
 }

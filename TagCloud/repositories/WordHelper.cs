@@ -34,9 +34,9 @@ namespace TagCloud.repositories
         }
 
         public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
-            => Result.Of(() => filter.Filter(words), ResultErrorType.FilterError);
+            => Result.Of(() => filter.Filter(words).GetValueOrThrow(), ResultErrorType.FilterError);
 
         public Result<IEnumerable<string>> ConvertWords(IEnumerable<string> words)
-            => Result.Of(() => converter.Convert(words), ResultErrorType.ConverterError);
+            => Result.Of(() => converter.Convert(words).GetValueOrThrow(), ResultErrorType.ConverterError);
     }
 }
