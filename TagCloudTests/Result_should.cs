@@ -179,7 +179,7 @@ public class Result_Should
     {
         const string? value = "123";
 
-        var result = value.AsResult().Validate(v => v.Length > 5);
+        var result = value.AsResult().Validate(v => v.Length > 9, "");
 
         result.IsSuccess.Should().BeFalse();
     }

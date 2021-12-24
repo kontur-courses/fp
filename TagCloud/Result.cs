@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TagCloud;
 
@@ -95,11 +96,11 @@ public static class Result
             : Fail<TOutput>(input.Error);
     }
 
-    public static Result<T> Validate<T>(this Result<T> input, Predicate<T> condition)
+    public static Result<T> Validate<T>(this Result<T> input, Predicate<T> condition, string errorMessage)
     {
         return !input.IsSuccess || condition(input.Value)
             ? input
-            : Fail<T>("");
+            : Fail<T>(errorMessage);
     }
 
     public static Result<TInput> OnFail<TInput>(
