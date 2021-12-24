@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
-using TagCloud;
 using TagCloud.TextHandlers.Converters;
 
 namespace TagCloudTests;
@@ -12,11 +12,11 @@ public class WordConverterTests
     public void Convert_ShouldConvertWord()
     {
         const string? text = "TeSt";
-        var expected = text.ToLower().AsResult();
+        var expected = text.ToLower();
         var sut = new ConvertersPool(new IConverter[] { new ToLowerConverter() });
-        
-        var converted = sut.Convert(text);
 
-        converted.Should().BeEquivalentTo(expected);
+        var converted = sut.Convert(new[] { text }).Value.ToArray();
+
+        converted.Should().BeEquivalentTo(new[] { expected });
     }
 }

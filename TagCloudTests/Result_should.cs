@@ -13,6 +13,7 @@ public class Result_Should
     public void Create_Ok()
     {
         var r = Result.Ok(42);
+        
         r.IsSuccess.Should().BeTrue();
         r.GetValueOrThrow().Should().Be(42);
     }
@@ -55,6 +56,7 @@ public class Result_Should
     {
         var res = Result.Ok(42)
             .Then(n => n + 10);
+        
         res.Should().BeEquivalentTo(Result.Ok(52));
     }
 
@@ -63,6 +65,7 @@ public class Result_Should
     {
         var res = Result.Ok(42)
             .Then(n => Result.Ok(n + 10));
+        
         res.Should().BeEquivalentTo(Result.Ok(52));
     }
 
@@ -71,11 +74,13 @@ public class Result_Should
     {
         var fail = Result.Fail<int>("������");
         var called = false;
+        
         fail.Then(n =>
         {
             called = true;
             return n;
         });
+        
         called.Should().BeFalse();
     }
 
@@ -83,8 +88,10 @@ public class Result_Should
     public void Then_ReturnsFail_OnException()
     {
         Func<int, int> continuation = _ => { throw new Exception("123"); };
+        
         var res = Result.Ok(42)
             .Then(continuation);
+        
         res.Should().BeEquivalentTo(Result.Fail<int>("123"));
     }
 
@@ -92,8 +99,10 @@ public class Result_Should
     public void Then_ReturnsFail_OnFailedContinuation()
     {
         Func<int, Result<int>> continuation = _ => Result.Fail<int>("123");
+        
         var res = Result.Ok(42)
             .Then(continuation);
+        
         res.Should().BeEquivalentTo(Result.Fail<int>("123"));
     }
 
@@ -127,6 +136,7 @@ public class Result_Should
                 .Then(int.Parse)
                 .Then(i => Convert.ToString(i, 16))
                 .Then(hex => Guid.Parse(hex + hex + hex + hex));
+        
         res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
     }
 
@@ -134,9 +144,11 @@ public class Result_Should
     public void RunThen_WhenOk_ComplexScenario()
     {
         var parsed = Result.Ok("1358571172").Then(int.Parse);
+        
         var res = parsed
             .Then(i => Convert.ToString(i, 16))
             .Then(hex => parsed.GetValueOrThrow() + " -> " + Guid.Parse(hex + hex + hex + hex));
+        
         res.Should().BeEquivalentTo(Result.Ok("1358571172 -> 50fa26a4-50fa-26a4-50fa-26a450fa26a4"));
     }
 
@@ -169,6 +181,7 @@ public class Result_Should
     public void RefineError_AddErrorMessageBeforePreviousErrorText()
     {
         var calculation = Result.Fail<None>("No connection");
+        
         calculation
             .RefineError("Posting results to db")
             .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.CloudLayouter;
 using TagCloud.Templates.Colors;

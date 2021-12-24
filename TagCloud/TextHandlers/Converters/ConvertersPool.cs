@@ -26,7 +26,7 @@ internal class ConvertersPool : IConvertersPool
             .Then(results => results.Select(w => w.Value));
     }
 
-    public Result<string> Convert(string word)
+    private Result<string> Convert(string word)
     {
         return converters.Aggregate(word.AsResult(), (wordResult, convert) => wordResult.Then(convert));
     }
