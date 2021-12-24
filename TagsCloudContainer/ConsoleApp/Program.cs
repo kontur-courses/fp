@@ -1,5 +1,4 @@
-﻿using System;
-using TagsCloudVisualization.ResultOf;
+﻿using TagsCloudVisualization.ResultOf;
 
 namespace ConsoleApp
 {
