@@ -3,30 +3,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudCLI
 {
     internal class SettingProvider
-    {
-        public GeneralSettings GetSettings(Options options)
-        {
-            var fontSettings = new FontSettings(options.MaxFontSize, options.FontFamilyName);
-            var saverSettings = new SaverSetting(options.Directory, options.ImageName);
-            var wordsPreprocessorSettings =
-                new WordsPreprocessorSettings(GetBoringWordsFromFile(options.PathToBoringWords).GetValueOrThrow());
-            var reader = new ReaderSettings(options.FileWithWords);
-            var drawerSettings = new DrawerSettings(Color.FromName(options.TagColor));
+    { 
+        public Result<GeneralSettings> GetSettings(Options options) =>
+            from font in ParseFont(options.FontFamilyName, options.MaxFontSize)
+            from preprocessor in ParseWordsPreprocessorSettings(options.PathToBoringWords)
+            from drawer in ParseDrawerSettings(options.TagColor)
+            select new GeneralSettings(font, new SaverSetting(options.Directory, options.ImageName), preprocessor,
+                new ReaderSettings(options.FileWithWords), drawer, Point.Empty);
 
-            return new GeneralSettings(fontSettings, saverSettings, wordsPreprocessorSettings, reader, drawerSettings,
-                new Point(0, 0));
-        }
-        
-        private static Result<IEnumerable<string>> GetBoringWordsFromFile(string filename)
+        private static Result<FontSettings> ParseFont(string fontFamilyName, int maxFontSize)
         {
-            return filename.AsResult()
+            using var testFont = new Font(fontFamilyName, 8);
+            return testFont.AsResult()
+                .Validate(font => fontFamilyName.Equals(font.Name, StringComparison.InvariantCultureIgnoreCase),
+                    $"Font name {fontFamilyName} doesn't exists")
+                .Validate(maxFontSize > 0, $"Font size must be positive, not {maxFontSize}")
+                .Then(font => new FontSettings(maxFontSize, font.Name));
+        }
+
+        private static Result<WordsPreprocessorSettings> ParseWordsPreprocessorSettings(string pathToBoringWords) =>
+            GetBoringWordsFromFile(pathToBoringWords)
+                .Then(path => new WordsPreprocessorSettings(path));
+        
+        private static Result<IEnumerable<string>> GetBoringWordsFromFile(string filename) =>
+            filename.AsResult()
                 .Validate(File.Exists, $"No such file {filename}")
                 .Then(File.ReadLines);
-        }
+
+        private static Result<DrawerSettings> ParseDrawerSettings(string colorName) => 
+            colorName.AsResult()
+                .Then(Color.FromName)
+                .Validate(color => color.IsKnownColor, $"Unknown color {colorName}")
+                .Then(color => new DrawerSettings(color));
     }
 }
