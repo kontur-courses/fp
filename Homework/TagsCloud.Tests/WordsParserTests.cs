@@ -10,6 +10,14 @@ namespace TagsCloud.Tests
 {
     public class WordsParserTests
     {
+        private WordsParser sut;
+
+        [SetUp]
+        public void InitParser()
+        {
+            sut = new WordsParser(new IWordsFilter[] {new BoringWordsFilter()});
+        }
+        
         private static TestCaseData[] testCases =
         {
             new TestCaseData("", new List<Word>()).SetName("Empty text"),
@@ -36,14 +44,6 @@ namespace TagsCloud.Tests
                     })
                 .SetName("Boring words")
         };
-
-        private WordsParser sut;
-
-        [SetUp]
-        public void InitParser()
-        {
-            sut = new WordsParser(new IWordsFilter[] {new BoringWordsFilter()});
-        }
 
         [TestCaseSource(nameof(testCases))]
         public void CountWordsFrequency_ShouldParseCorrectly_When(string text, List<Word> expectedResult)

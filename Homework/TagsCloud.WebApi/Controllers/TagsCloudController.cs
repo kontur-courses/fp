@@ -9,7 +9,7 @@ using TagsCloud.Visualization.TextProviders;
 namespace TagsCloud.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("tagscloud")]
     public class TagsCloudController : Controller
     {
         private readonly ITagsCloudVisualizer tagsCloudVisualizer;
