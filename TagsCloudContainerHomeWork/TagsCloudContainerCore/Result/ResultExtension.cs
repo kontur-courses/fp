@@ -80,7 +80,7 @@ public static class ResultExtension
         }
         catch (Exception e)
         {
-            return Fail<T>(error ?? e.Message);
+            return Fail<T>(error ?? $"{e.GetType().Name}: {e.Message}");
         }
     }
 
@@ -93,7 +93,7 @@ public static class ResultExtension
         }
         catch (Exception e)
         {
-            return Fail<None>(error ?? e.Message);
+            return Fail<None>(error ?? $"{e.GetType().Name} : {e.Message}");
         }
     }
 }

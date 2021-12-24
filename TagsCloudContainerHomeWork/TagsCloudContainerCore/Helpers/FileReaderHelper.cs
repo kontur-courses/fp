@@ -32,7 +32,8 @@ public static class FileReaderHelper
         }
         catch (Exception e)
         {
-            return ResultExtension.Fail<IEnumerable<string>>($"{e.GetType().Name} {e.Message}");
+            return ResultExtension.Fail<IEnumerable<string>>($"Ошибка при чтении файла{path}\n:" +
+                                                             $"{e.GetType().Name}: {e.Message}");
         }
     }
 }
