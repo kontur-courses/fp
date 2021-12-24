@@ -1,60 +1,46 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace TagCloud
 {
-    public class None
+    [PublicAPI]
+    public class Result<T> : Result
     {
-        private None()
-        {
-        }
-    }
-
-    public struct Result<T>
-    {
-        public Result(ResultErrorType? error, T value = default(T))
+        public Result(ResultErrorType? error, T value = default(T)) : base(error)
         {
             Error = error;
             Value = value;
         }
 
-        public static implicit operator Result<T>(T v)
-        {
-            return Result.Ok(v);
-        }
+        public static implicit operator Result<T>(T v) => Ok(v);
 
-        public ResultErrorType? Error { get; }
+        public new ResultErrorType? Error { get; }
         internal T Value { get; }
 
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
+            if (IsSuccess)
+                return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
+        }
+    }
+
+    [PublicAPI]
+    public class Result
+    {
+        public ResultErrorType? Error { get; }
+
+        public Result(ResultErrorType? error)
+        {
+            Error = error;
         }
 
         public bool IsSuccess => Error == null;
-    }
 
-    public static class Result
-    {
-        public static Result<T> AsResult<T>(this T value)
-        {
-            return Ok(value);
-        }
+        public static Result<T> Ok<T>(T value) => new(null, value);
 
-        public static Result<T> Ok<T>(T value)
-        {
-            return new Result<T>(null, value);
-        }
 
-        public static Result<None> Ok()
-        {
-            return Ok<None>(null);
-        }
-
-        public static Result<T> Fail<T>(ResultErrorType? e)
-        {
-            return new Result<T>(e);
-        }
+        public static Result<T> Fail<T>(ResultErrorType? e) => new(e);
 
         public static Result<T> Of<T>(Func<T> f, ResultErrorType? error = null)
         {
@@ -68,41 +54,37 @@ namespace TagCloud
             }
         }
 
-        public static Result<None> OfAction(Action f, ResultErrorType? error = null)
+        public static Result OfAction(Action f, ResultErrorType? error = null)
         {
             try
             {
                 f();
-                return Ok();
+                return new Result(null);
             }
             catch (Exception)
             {
-                return Fail<None>(error ?? ResultErrorType.DefaultError);
+                return new Result(error ?? ResultErrorType.DefaultError);
             }
         }
+    }
+
+    [PublicAPI]
+    public static class ResultExtensions
+    {
+        public static Result<TOutput> Then<TInput, TOutput>(
+            this Result<TInput> input,
+            Func<TInput, TOutput> continuation
+        ) => input.Then(inp => Result.Of(() => continuation(inp)));
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
-        {
-            return input.Then(inp => Of(() => continuation(inp)));
-        }
-        
-        public static Result<None> Then<TInput>(
-            this Result<TInput> input,
-            Action<TInput> continuation)
-        {
-            return input.Then(inp => OfAction(() => continuation(inp)));
-        }
+            Func<TInput, Result<TOutput>> continuation
+        ) => input.IsSuccess ? continuation(input.Value) : Result.Fail<TOutput>(input.Error);
 
-        public static Result<TOutput> Then<TInput, TOutput>(
+        public static Result Then<TInput>(
             this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
-        {
-            return input.IsSuccess
-                ? continuation(input.Value)
-                : Fail<TOutput>(input.Error);
-        }
+            Action<TInput> continuation
+        ) => input.Then(inp => Result.OfAction(() => continuation(inp)));
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,

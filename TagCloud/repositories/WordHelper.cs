@@ -15,7 +15,7 @@ namespace TagCloud.repositories
             this.converter = converter;
         }
 
-        public IEnumerable<WordStatistic> GetWordStatistics(IEnumerable<string> words)
+        public Result<IEnumerable<WordStatistic>> GetWordStatistics(IEnumerable<string> words)
         {
             var statistics = new Dictionary<string, int>();
             foreach (var word in words)
@@ -25,14 +25,18 @@ namespace TagCloud.repositories
                 statistics[word]++;
             }
 
-            return statistics.Select(s => new WordStatistic(s.Key, s.Value))
-                .OrderBy(s => s.Count);
+            return Result.Of<IEnumerable<WordStatistic>>(
+                () => statistics
+                    .Select(s => new WordStatistic(s.Key, s.Value))
+                    .OrderBy(s => s.Count),
+                ResultErrorType.CalculateStatisticError
+            );
         }
 
-        public Result<List<string>> FilterWords(IEnumerable<string> words) 
-            => Result.Of(() => filter.Filter(words).ToList(), ResultErrorType.FilterError);
+        public Result<IEnumerable<string>> FilterWords(IEnumerable<string> words)
+            => Result.Of(() => filter.Filter(words), ResultErrorType.FilterError);
 
-        public Result<List<string>> ConvertWords(IEnumerable<string> words) 
-            => Result.Of(() => converter.Convert(words).ToList(), ResultErrorType.ConverterError);
+        public Result<IEnumerable<string>> ConvertWords(IEnumerable<string> words)
+            => Result.Of(() => converter.Convert(words), ResultErrorType.ConverterError);
     }
 }

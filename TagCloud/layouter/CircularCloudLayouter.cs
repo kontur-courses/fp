@@ -27,41 +27,45 @@ namespace TagCloud.layouter
             points.Add(center);
         }
 
-        public RectangleF PutNextRectangle(Size rectangleSize)
+        public Result<RectangleF> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("Size params should be positive");
+                return Result.Fail<RectangleF>(ResultErrorType.RectangleSizeError);
 
             var rectangle = Rectangle.Empty;
             foreach (var point in points.ToEnumerable())
-                if (TryPutRectangleToCorners(point, rectangleSize, out rectangle))
-                    break;
+            {
+                var putResult = PutRectangleToCorners(point, rectangleSize);
+                if (!putResult.IsSuccess) 
+                    continue;
+                rectangle = putResult.Value;
+                break;
+            }
 
             rectangles.Add(rectangle);
-            SaveRectangleBorderPoints(rectangle);
-            return rectangle;
+            return SaveRectangleBorderPoints(rectangle);
         }
 
-        private void SaveRectangleBorderPoints(Rectangle rectangle)
+        private Result<RectangleF> SaveRectangleBorderPoints(Rectangle rectangle)
         {
             points.Add(new Point(rectangle.Right, rectangle.Bottom));
             points.Add(new Point(rectangle.Left, rectangle.Bottom));
             points.Add(new Point(rectangle.Right, rectangle.Top));
             points.Add(new Point(rectangle.Left, rectangle.Top));
+            return Result.Ok((RectangleF) rectangle);
         }
 
-        private bool TryPutRectangleToCorners(Point point, Size rectangleSize, out Rectangle rectangle)
+        private Result<Rectangle> PutRectangleToCorners(Point point, Size rectangleSize)
         {
             foreach (var shift in shifts)
             {
                 var location = shift(point, rectangleSize);
-                rectangle = new Rectangle(location, rectangleSize);
+                var rectangle = new Rectangle(location, rectangleSize);
                 if (!rectangles.IntersectsWith(rectangle))
-                    return true;
+                    return Result.Ok(rectangle);
             }
 
-            rectangle = Rectangle.Empty;
-            return false;
+            return Result.Fail<Rectangle>(ResultErrorType.RectanglePutError);
         }
     }
 }

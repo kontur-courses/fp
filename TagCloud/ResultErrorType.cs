@@ -7,6 +7,9 @@
         SaveFileError,
         FilterError,
         ConverterError,
-        InitializeCloudError
+        InitializeCloudError,
+        CalculateStatisticError,
+        RectangleSizeError,
+        RectanglePutError
     }
 }

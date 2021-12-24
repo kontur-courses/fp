@@ -7,32 +7,27 @@ using TagCloud.settings;
 
 namespace TagCloud.visual
 {
-    public class TagVisualizer : IVisualizer
+    public class TagCloudVisualizer : ICloudVisualizer
     {
         private readonly List<Tag> tags = new();
         private readonly ITagSettings tagSettings;
         private readonly ICloudLayouter layouter;
         private readonly IWordHelper helper;
 
-        public TagVisualizer(ITagSettings tagSettings, ICloudLayouter layouter, IWordHelper helper)
+        public TagCloudVisualizer(ITagSettings tagSettings, ICloudLayouter layouter, IWordHelper helper)
         {
             this.tagSettings = tagSettings;
             this.layouter = layouter;
             this.helper = helper;
         }
 
-        public Result<IVisualizer> InitializeCloud(List<string> words)
-        {
-            var processWordsResult = ProcessWords(words, helper);
-            if (!processWordsResult.IsSuccess)
-                return Result.Fail<IVisualizer>(processWordsResult.Error);
-            var statistics = helper.GetWordStatistics(processWordsResult.Value);
-            var fillResult = Result.OfAction(() => FillTags(statistics));
-            return fillResult.IsSuccess 
-                ? Result.Ok<IVisualizer>(this) 
-                : Result.Fail<IVisualizer>(ResultErrorType.InitializeCloudError);
-        }
-            
+        public Result<ICloudVisualizer> InitializeCloud(IEnumerable<string> words)
+            => ProcessWords(words, helper)
+                .Then(w => helper.GetWordStatistics(w))
+                .Then(w =>
+                    Result.OfAction(() => FillTags(w), ResultErrorType.InitializeCloudError)
+                ).Then(r => new Result<ICloudVisualizer>(r.Error, this));
+
         public Result<Image> GetImage(IDrawSettings drawSettings)
         {
             var (width, height) = (drawSettings.GetSize().Width, drawSettings.GetSize().Height);
@@ -56,8 +51,8 @@ namespace TagCloud.visual
         private static Color GetRandomColor(IReadOnlyList<Color> colors, Random random)
             => colors[random.Next(colors.Count)];
 
-        private static Result<List<string>> ProcessWords(List<string> words, IWordHelper helper)
-            => Result.Ok(words).Then(helper.ConvertWords).Then(helper.FilterWords);
+        private static Result<IEnumerable<string>> ProcessWords(IEnumerable<string> words, IWordHelper helper)
+            => helper.ConvertWords(words).Then(helper.FilterWords);
 
         private void FillTags(IEnumerable<WordStatistic> wordStatistics)
         {
@@ -69,7 +64,7 @@ namespace TagCloud.visual
                 );
                 var layoutRectangle = layouter.PutNextRectangle(
                     new Size((int)font.Size * wordStatistic.Word.Length, font.Height)
-                );
+                ).Value;
                 tags.Add(new Tag(wordStatistic.Word, layoutRectangle, font));
             }
         }

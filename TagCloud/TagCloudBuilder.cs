@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using TagCloud.file_readers;
 using TagCloud.layouter;
@@ -28,9 +26,8 @@ namespace TagCloud
                 Color.Black,
                 new Size(1500, 1500)
             );
-            output = "serious_out.png";
             container = new ServiceCollection();
-            container.AddSingleton<IVisualizer, TagVisualizer>()
+            container.AddSingleton<ICloudVisualizer, TagCloudVisualizer>()
                 .AddSingleton<IWordHelper, WordHelper>()
                 .AddSingleton<IFilter<string>>(new WordFilter(new List<IChecker<string>>()))
                 .AddSingleton<IConverter<IEnumerable<string>>>(
@@ -77,13 +74,13 @@ namespace TagCloud
             return this;
         }
 
-        public Result<None> Run()
+        public Result Run()
         {
             var scope = container.BuildServiceProvider().CreateScope();
             return scope.ServiceProvider.GetRequiredService<IFileReader>().GetWords(input)
-                .Then(scope.ServiceProvider.GetRequiredService<IVisualizer>().InitializeCloud)
+                .Then(scope.ServiceProvider.GetRequiredService<ICloudVisualizer>().InitializeCloud)
                 .Then(v => v.GetImage(drawSettings))
-                .Then(i => scope.ServiceProvider.GetRequiredService<ISaver<Image>>().Save(i, output));
+                .Then(i => scope.ServiceProvider.GetRequiredService<ISaver<Image>>().Save(i, output!));
         }
     }
 }

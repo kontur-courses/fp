@@ -4,9 +4,9 @@ using TagCloud.settings;
 
 namespace TagCloud.visual
 {
-    public interface IVisualizer
+    public interface ICloudVisualizer
     {
-        Result<IVisualizer> InitializeCloud(List<string> words);
+        Result<ICloudVisualizer> InitializeCloud(IEnumerable<string> words);
         Result<Image> GetImage(IDrawSettings drawSettings);
     }
 }
