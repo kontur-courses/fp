@@ -1,0 +1,6 @@
+﻿../../input.txt
+Red Crimson DarkRed FireBrick DeepPink Tomato Brown LightCoral
+Black
+White
+500 500
+png
