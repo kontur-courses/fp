@@ -2,6 +2,7 @@
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud;
 using TagCloud.repositories;
 using TagCloud.selectors;
 
@@ -34,8 +35,8 @@ namespace TagCloudTests
         [Test]
         public void FilterWords_ShouldNotIgnoreOnlyValidWords()
         {
-            A.CallTo(() => checker.IsValid("word")).Returns(true);
-            A.CallTo(() => checker.IsValid("WORD")).Returns(false);
+            A.CallTo(() => checker.IsValid("word")).Returns(Result.Ok("word"));
+            A.CallTo(() => checker.IsValid("WORD")).Returns(Result.Fail<string>(ResultErrorType.FilterError));
             var helper = new WordHelper(filter, null);
             helper.FilterWords(words)
                 .GetValueOrThrow()
@@ -50,6 +51,7 @@ namespace TagCloudTests
             var helper = new WordHelper(null, null);
             var result = new List<WordStatistic> { new("word", 1), new("WORD", 1) };
             helper.GetWordStatistics(words)
+                .GetValueOrThrow()
                 .Should()
                 .BeEquivalentTo(result);
         }
