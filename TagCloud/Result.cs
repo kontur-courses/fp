@@ -97,7 +97,7 @@ public static class Result
 
     public static Result<T> Validate<T>(this Result<T> input, Predicate<T> condition)
     {
-        return condition(input.Value)
+        return !input.IsSuccess || condition(input.Value)
             ? input
             : Fail<T>("Validation error");
     }
@@ -114,8 +114,8 @@ public static class Result
         this Result<TInput> input,
         Func<string, string> replaceError)
     {
-        return input.IsSuccess 
-            ? input 
+        return input.IsSuccess
+            ? input
             : Fail<TInput>(replaceError(input.Error));
     }
 

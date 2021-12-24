@@ -7,11 +7,10 @@ public class Visualizer : IVisualizer
 {
     public Bitmap Draw(ITemplate template)
     {
-        var bitmap = new Bitmap(template.Size.Width, template.Size.Height);
+        var bitmap = new Bitmap(template.ImageSize.Width, template.ImageSize.Height);
+        var offset = new PointF(bitmap.Width / 2f, bitmap.Height / 2f);
         using var graphics = Graphics.FromImage(bitmap);
         graphics.FillRectangle(new SolidBrush(template.BackgroundColor), 0, 0, bitmap.Width, bitmap.Height);
-        var bitmapCenter = new PointF(bitmap.Width / 2f, bitmap.Height / 2f);
-        var offset = new PointF(bitmapCenter.X - template.Center.X, bitmapCenter.Y - template.Center.Y);
         foreach (var wordParameter in template.GetWordParameters())
         {
             var rectangleF = wordParameter.WordRectangleF;

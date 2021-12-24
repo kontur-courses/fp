@@ -28,8 +28,6 @@ public class ConvertersPool : IConvertersPool
 
     public Result<string> Convert(string word)
     {
-        var source = word.AsResult();
-
-        return converters.Aggregate(source, (current, converter) => current.Then(converter));
+        return converters.Aggregate(word.AsResult(), (wordResult, convert) => wordResult.Then(convert));
     }
 }

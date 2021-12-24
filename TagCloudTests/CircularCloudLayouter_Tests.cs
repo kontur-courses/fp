@@ -10,7 +10,7 @@ using TagCloud.PointGenerator;
 namespace TagCloudTests
 {
     [TestFixture]
-    class CircularCloudLayouterTests
+    internal class CircularCloudLayouterTests
     {
         private TagCloud.CloudLayouter.CloudLayouter sut;
 

@@ -1,13 +1,12 @@
 ﻿using TagCloud.Templates;
 
-namespace TagCloudApp.Configurations
+namespace TagCloudApp.Configurations;
+
+public static class ConfigurationExtensions
 {
-    public static class ConfigurationExtensions
+    public static TemplateConfiguration ToTemplateConfiguration(this Configuration configuration)
     {
-        public static TemplateConfiguration ToTemplateConfiguration(this Configuration configuration)
-        {
-            return new TemplateConfiguration(configuration.FontFamily, configuration.BackgroundColor,
-                configuration.ImageSize);
-        }
+        return new TemplateConfiguration(configuration.FontFamily, configuration.BackgroundColor,
+            configuration.ImageSize);
     }
 }

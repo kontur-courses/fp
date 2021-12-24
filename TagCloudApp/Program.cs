@@ -5,26 +5,30 @@ using TagCloudApp.Configurations;
 using Configuration = TagCloudApp.Configurations.Configuration;
 
 
-namespace TagCloudApp
-{
-    public static class Program
-    {
-        public static void Main(string[] args)
-        {
-            var configuration = CommandLineConfigurationProvider.GetConfiguration(args);
-            configuration
-                .Validate(c => c != null)
-                .Then(BuildContainer)
-                .Then(c => c.Resolve<IApp>())
-                .Then(a => a.Run(configuration.Value))
-                .OnFail(Console.WriteLine);
-        }
+namespace TagCloudApp;
 
-        private static IContainer BuildContainer(Configuration configuration)
-        {
-            var builder = ContainerBuilder.GetDefault(configuration);
-            builder.RegisterType<ConsoleApp>().As<IApp>();
-            return builder.Build();
-        }
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        var config = CommandLineConfigurationProvider.GetConfiguration(args);
+        config
+            .Validate(c => c != null)
+            .Then(BuildContainer)
+            .Then(c => c.Resolve<IApp>())
+            .Then(a => a.Run())
+            .OnFail(HandleError);
+    }
+
+    private static void HandleError(string message)
+    {
+        Console.WriteLine($"[ERROR] {message}");
+    }
+
+    private static IContainer BuildContainer(Configuration configuration)
+    {
+        var builder = new ContainerBuilder().GetDefaultBuild(configuration);
+        builder.RegisterType<ConsoleApp>().As<IApp>();
+        return builder.Build();
     }
 }

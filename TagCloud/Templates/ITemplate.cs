@@ -6,7 +6,6 @@ namespace TagCloud.Templates;
 public interface ITemplate
 {
     IEnumerable<WordParameter> GetWordParameters();
-    Size Size { get; }
-    PointF Center { get; }
+    Size ImageSize { get; }
     Color BackgroundColor { get; }
 }

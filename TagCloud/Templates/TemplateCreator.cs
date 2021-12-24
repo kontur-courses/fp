@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagCloud.CloudLayouter;
 using TagCloud.Templates.Colors;
@@ -33,10 +34,7 @@ public class TemplateCreator : ITemplateCreator
 
     public ITemplate GetTemplate(IEnumerable<string> words)
     {
-        var template = new Template
-        {
-            Size = size
-        };
+        var template = new Template { ImageSize = size };
         var wordToSize = fontSizeCalculator.GetFontSizes(words);
         var bitmap = new Bitmap(1, 1);
         var g = Graphics.FromImage(bitmap);
@@ -46,7 +44,8 @@ public class TemplateCreator : ITemplateCreator
             var wordParameter = new WordParameter(word, font, colorGenerator.GetColor(word));
             var wordSize = g.MeasureString(word, font);
             wordParameter.WordRectangleF = cloudLayouter.PutNextRectangle(wordSize);
-            template.Add(wordParameter);
+            if (!template.TryAdd(wordParameter))
+                throw new Exception("Tag cloud did not fit on the image of the given size");
         }
 
         template.BackgroundColor = backgroundColor;
