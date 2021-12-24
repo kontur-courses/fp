@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using CommandLine;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudImageSaver;
 using TagsCloudVisualization;
 using TagsCloudVisualization.Settings;
@@ -21,12 +22,15 @@ namespace TagsCloudCLI
 
         private static void Run(Options options)
         {
-            var settings = new SettingProvider().GetSettings(options);
-
-            settings.AsResult()
-                .Then(CreateContainer)
-                .Then(container => container.Resolve<Visualizer>().Visualize())
-                .Then(image => new ImageSaver(settings.Saver.Directory, settings.Saver.ImageName).Save(image))
+            var generalSettings = new SettingProvider().GetSettings(options);
+            
+            generalSettings
+                .SelectMany(CreateContainer, (settings, container) => new { settings, container })
+                .Then(tuple =>
+                {
+                    var image = tuple.container.Resolve<Visualizer>().Visualize();
+                    new ImageSaver(tuple.settings.Saver.Directory, tuple.settings.Saver.ImageName).Save(image);
+                })
                 .OnFail(Console.WriteLine);
         }
 
