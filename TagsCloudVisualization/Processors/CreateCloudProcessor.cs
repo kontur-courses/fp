@@ -15,16 +15,28 @@ namespace TagsCloudVisualization.Processors
 {
     public class CreateCloudProcessor : CommandProcessorBase<CreateCloudCommand>
     {
+        private readonly ICanvasSettings canvasSettings;
+        private readonly ITagStyleSettings tagStyleSettings;
+
+        public CreateCloudProcessor(IFileReader fileReader, ITextAnalyzer textAnalyzer, ITagBuilder tagBuilder,
+            ITagCloudPainter tagCloudPainter, IImageWriter imageWriter, ICanvasSettings canvasSettings,
+            ITagStyleSettings tagStyleSettings)
+            : base(fileReader, textAnalyzer, tagBuilder, tagCloudPainter, imageWriter)
+        {
+            this.canvasSettings = canvasSettings;
+            this.tagStyleSettings = tagStyleSettings;
+        }
+
         public override int Run(CreateCloudCommand options)
         {
-            var result = Result.Of(() => container.Resolve<ICanvasSettings>())
+            var result = Result.Of(() => canvasSettings)
                 .And(canvas =>
                 {
                     canvas.Width = options.Width;
                     canvas.Height = options.Height;
                     canvas.BackgroundColor = GetColorFromString(options.BackgroundColor).GetValueOrThrow();
                 }, "Переданы неверные настройки холста изображения:")
-                .Then(_ => container.Resolve<ITagStyleSettings>())
+                .Then(_ => tagStyleSettings)
                 .And(tagStyle =>
                 {
                     tagStyle.ForegroundColors =
@@ -33,11 +45,11 @@ namespace TagsCloudVisualization.Processors
                     tagStyle.Size = options.TagSize;
                     tagStyle.SizeScatter = options.TagSizeScatter;
                 }, "Переданы неверные настройки стилей:")
-                .Then(_ => container.Resolve<IFileReader>().ReadFile(options.InputFile))
-                .Then(text => container.Resolve<ITextAnalyzer>().GetWordStatistics(text))
-                .Then(stat => container.Resolve<ITagBuilder>().GetTags(stat))
-                .Then(tags => container.Resolve<ITagCloudPainter>().Paint(tags))
-                .Then(bitmap => container.Resolve<IImageWriter>().Save(bitmap, options.OutputFile))
+                .Then(_ => fileReader.ReadFile(options.InputFile))
+                .Then(text => textAnalyzer.GetWordStatistics(text))
+                .Then(stat => tagBuilder.GetTags(stat))
+                .Then(tags => tagCloudPainter.Paint(tags))
+                .Then(bitmap => imageWriter.Save(bitmap, options.OutputFile))
                 .OnSuccess(_ => Console.WriteLine($"Облако тегов сгенерировано и сохранено '{options.OutputFile}'."))
                 .OnFail(Console.WriteLine);
 

@@ -8,5 +8,7 @@ namespace TagsCloudVisualization.Common.Layouters
         public IEnumerable<Rectangle> Rects { get; }
 
         public Rectangle PutNextRectangle(Size rectangleSize);
+
+        public void Clear();
     }
 }

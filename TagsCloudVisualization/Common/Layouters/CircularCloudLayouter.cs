@@ -66,5 +66,10 @@ namespace TagsCloudVisualization.Common.Layouters
                 }
             }
         }
+
+        public void Clear()
+        {
+            rects.Clear();
+        }
     }
 }

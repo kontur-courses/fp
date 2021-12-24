@@ -4,6 +4,7 @@ using System.Reflection;
 using Autofac;
 using Autofac.Core;
 using NHunspell;
+using TagsCloudVisualization.Commands;
 using TagsCloudVisualization.Common.ErrorHandling;
 using TagsCloudVisualization.Common.FileReaders;
 using TagsCloudVisualization.Common.ImageWriters;
@@ -14,6 +15,7 @@ using TagsCloudVisualization.Common.TagCloudPainters;
 using TagsCloudVisualization.Common.Tags;
 using TagsCloudVisualization.Common.TextAnalyzers;
 using TagsCloudVisualization.Common.WordFilters;
+using TagsCloudVisualization.Processors;
 
 namespace TagsCloudVisualization
 {
@@ -60,6 +62,10 @@ namespace TagsCloudVisualization
                     "не удалось зарегистрировать настройки тегов TagStyleSettings.")
                 .And(builder => builder.RegisterType<ImageWriter>().As<IImageWriter>(),
                     "не удалось зарегистрировать обработчик изображений ImageWriter.")
+                .And(builder => builder.RegisterType<CreateCloudProcessor>().SingleInstance(),
+                    "не удалось зарегистрировать обработчик CreateCloudProcessor.")
+                .And(builder => builder.RegisterType<ShowDemoProcessor>().SingleInstance(),
+                    "не удалось зарегистрировать обработчик ShowDemoProcessor.")
                 .Then(builder => builder.Build());
 
             return containerBuilder;

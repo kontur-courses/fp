@@ -22,6 +22,8 @@ namespace TagsCloudVisualization.Common.TagCloudPainters
 
         public Result<Bitmap> Paint(IEnumerable<Tag> tags)
         {
+            layouter.Clear();
+            
             var bitmap = new Bitmap(settings.Width, settings.Height);
             using var graphics = Graphics.FromImage(bitmap);
             graphics.Clear(settings.BackgroundColor);
