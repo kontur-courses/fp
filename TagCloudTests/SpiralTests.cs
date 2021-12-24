@@ -13,26 +13,24 @@ public class SpiralTests
     [Test]
     public void GetCoordinates_FirstPointInCenter()
     {
-        var center = new PointF(2, 6);
-        var spiral = new Circle(0.2f, 0.5, center, new Cache());
+        var spiral = Spiral.GetDefaultSpiral();
 
         var firstPoint = spiral.GetPoints(new Size(1, 1)).First();
 
-        firstPoint.Should().Be(center);
+        firstPoint.Should().Be(new PointF(0, 0));
     }
 
     [Test]
     public void GetCoordinates_ReturnCoordinatesThatRadiusShouldIncrease()
     {
-        var center = new PointF(9, 2);
-        var spiral = new Circle(0.2f, 0.5, center, new Cache());
+        var spiral = Spiral.GetDefaultSpiral();
 
         var points = spiral.GetPoints(new Size(5, 5)).Take(100).ToArray();
 
         for (var i = 1; i < points.Length; i++)
         {
-            var previousRadius = GetDistance(center, points[i - 1]);
-            var currentRadius = GetDistance(center, points[i]);
+            var previousRadius = GetDistance(new PointF(0, 0), points[i - 1]);
+            var currentRadius = GetDistance(new PointF(0, 0), points[i]);
             (previousRadius < currentRadius).Should().BeTrue();
         }
     }

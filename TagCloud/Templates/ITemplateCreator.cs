@@ -4,5 +4,5 @@ namespace TagCloud.Templates;
 
 public interface ITemplateCreator
 {
-    public ITemplate GetTemplate(IEnumerable<string> words);
+    public Result<ITemplate> GetTemplate(IEnumerable<string> words);
 }

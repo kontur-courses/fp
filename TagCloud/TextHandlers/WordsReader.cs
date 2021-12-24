@@ -5,7 +5,7 @@ using TagCloud.TextHandlers.Parser;
 
 namespace TagCloud.TextHandlers;
 
-public class WordsReader : IReader
+internal class WordsReader : IReader
 {
     private readonly ITextParser parser;
     private readonly IConvertersPool converter;

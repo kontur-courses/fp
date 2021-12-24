@@ -1,8 +1,7 @@
 ﻿using Autofac;
 using TagCloud;
 using TagCloudApp.Apps;
-using TagCloudApp.Configurations;
-using Configuration = TagCloudApp.Configurations.Configuration;
+using Configuration = TagCloud.Configuration.Configuration;
 
 
 namespace TagCloudApp;
@@ -12,16 +11,11 @@ public static class Program
     public static void Main(string[] args)
     {
         CommandLineConfigurationProvider.GetConfiguration(args)
-            .Validate(c => c != null)
+            .Validate(c => c != null, "")
             .Then(BuildContainer)
             .Then(c => c.Resolve<IApp>())
             .Then(a => a.Run())
-            .OnFail(HandleError);
-    }
-
-    private static void HandleError(string message)
-    {
-        Console.WriteLine($"{message}");
+            .OnFail(Console.WriteLine);
     }
 
     private static IContainer BuildContainer(Configuration configuration)

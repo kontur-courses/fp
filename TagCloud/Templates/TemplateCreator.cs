@@ -6,7 +6,7 @@ using TagCloud.Templates.Colors;
 
 namespace TagCloud.Templates;
 
-public class TemplateCreator : ITemplateCreator
+internal class TemplateCreator : ITemplateCreator
 {
     private readonly FontFamily fontFamily;
     private readonly Color backgroundColor;
@@ -26,13 +26,14 @@ public class TemplateCreator : ITemplateCreator
         this.cloudLayouter = cloudLayouter;
     }
 
-    public TemplateCreator(TemplateConfiguration templateConfiguration, IFontSizeCalculator fontSizeCalculator, IColorGenerator colorGenerator, ICloudLayouter cloudLayouter)
+    public TemplateCreator(TemplateConfiguration templateConfiguration, IFontSizeCalculator fontSizeCalculator,
+        IColorGenerator colorGenerator, ICloudLayouter cloudLayouter)
         : this(templateConfiguration.FontFamily, templateConfiguration.BackgroundColor, templateConfiguration.Size,
             fontSizeCalculator, colorGenerator, cloudLayouter)
     {
     }
 
-    public ITemplate GetTemplate(IEnumerable<string> words)
+    public Result<ITemplate> GetTemplate(IEnumerable<string> words)
     {
         var template = new Template { ImageSize = size };
         var wordToSize = fontSizeCalculator.GetFontSizes(words);
@@ -41,11 +42,13 @@ public class TemplateCreator : ITemplateCreator
         foreach (var (word, fontSize) in wordToSize)
         {
             var font = new Font(fontFamily, fontSize);
-            var wordParameter = new WordParameter(word, font, colorGenerator.GetColor(word));
-            var wordSize = g.MeasureString(word, font);
-            wordParameter.WordRectangleF = cloudLayouter.PutNextRectangle(wordSize);
-            if (!template.TryAdd(wordParameter))
-                throw new Exception("Tag cloud did not fit on the image of the given size");
+            var wordParameter = g.MeasureString(word, font).AsResult()
+                .Then(cloudLayouter.PutNextRectangle)
+                .Then(r => new WordParameter(word, font, colorGenerator.GetColor(word), r));
+            if (!wordParameter.IsSuccess)
+                return Result.Fail<ITemplate>($"Error on handling {word}");
+            if (!template.TryAdd(wordParameter.Value))
+                return Result.Fail<ITemplate>("Tag cloud did not fit on the image of the given size");
         }
 
         template.BackgroundColor = backgroundColor;

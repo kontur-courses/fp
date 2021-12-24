@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace TagCloud.TextHandlers.Converters;
 
-public class ConvertersPool : IConvertersPool
+internal class ConvertersPool : IConvertersPool
 {
     private readonly List<Func<string, Result<string>>> converters;
 

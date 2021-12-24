@@ -2,7 +2,7 @@
 
 namespace TagCloud.Templates;
 
-public class TemplateConfiguration
+internal class TemplateConfiguration
 {
     public FontFamily FontFamily { get; }
 

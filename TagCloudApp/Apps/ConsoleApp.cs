@@ -1,7 +1,7 @@
 ﻿using TagCloud;
+using TagCloud.Configuration;
 using TagCloud.Templates;
 using TagCloud.TextHandlers;
-using TagCloudApp.Configurations;
 
 namespace TagCloudApp.Apps;
 
@@ -25,7 +25,7 @@ public class ConsoleApp : IApp
         reader
             .Read(configuration.WordsFilename)
             .Then(templateCreator.GetTemplate)
-            .Then(t => visualizer.Draw(t))
+            .Then(visualizer.Draw)
             .Then(b => b.Save(configuration.OutputFilename))
             .OnFail(Console.WriteLine);
     }

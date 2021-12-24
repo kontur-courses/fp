@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.Extensions;
 using TagCloud.PointGenerator;
 
 namespace TagCloud.CloudLayouter;
-
 public class CloudLayouter : ICloudLayouter
 {
     private readonly List<RectangleF> tagCloud;
@@ -19,18 +17,19 @@ public class CloudLayouter : ICloudLayouter
         this.pointGenerator = pointGenerator;
     }
 
-    public RectangleF PutNextRectangle(SizeF rectangleSize)
+    public Result<RectangleF> PutNextRectangle(SizeF rectangleSize)
     {
-        if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-            throw new ArgumentException("Size parameters should be positive");
-        var tag = GetNextRectangle(rectangleSize);
-        tagCloud.Add(tag);
-        UpdateCloudBorders(tag);
-        return tag;
+        return rectangleSize.AsResult()
+            .Validate(s => s.Height > 0 && s.Width > 0, "Height and weight should be positive")
+            .Then(GetNextRectangle)
+            .Then(r =>
+            {
+                tagCloud.Add(r);
+                UpdateCloudBorders(r);
+                return r;
+            });
     }
-
-    public RectangleF[] GetCloud() => tagCloud.ToArray();
-
+    
     private void UpdateCloudBorders(RectangleF newTag)
     {
         CloudRectangle = RectangleF.Union(CloudRectangle, newTag);

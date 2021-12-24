@@ -19,9 +19,9 @@ public class Spiral : IPointGenerator
 
     public IEnumerable<PointF> GetPoints(SizeF size)
     {
-        foreach (var polar in ArchimedeanSpiral.GetArchimedeanSpiral(cache.SafeGetParameter(size), anglePitch, spiralPitch))
+        foreach (var polar in ArchimedeanSpiral.GetArchimedeanSpiral(cache.SafeGet(size), anglePitch, spiralPitch))
         {
-            cache.SafeUpdate(size, polar.Angle);
+            cache.UpdateOrAdd(size, polar.Angle);
             var cartesian = polar.ToCartesian();
             yield return new PointF(cartesian.X + Center.X, cartesian.Y + Center.Y);
         }

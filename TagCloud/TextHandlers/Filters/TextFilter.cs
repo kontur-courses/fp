@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace TagCloud.TextHandlers.Filters;
 
-public class TextFilter : ITextFilter
+internal class TextFilter : ITextFilter
 {
     private readonly List<Predicate<string>> filters = new();
 
@@ -22,7 +22,6 @@ public class TextFilter : ITextFilter
     {
         return words
             .AsResult()
-            .Then(w => w.Where(word => filters.All(f => f(word))))
-            .ReplaceError(_ => "Filter error");
+            .Then(w => w.Where(word => filters.All(f => f(word))));
     }
 }

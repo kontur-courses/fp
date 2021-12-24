@@ -1,11 +1,17 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using NHunspell;
 
 namespace TagCloud.TextHandlers.Converters;
 
 public class ToInfinitiveConverter : IConverter
 {
-    private readonly Hunspell hunspell = new("ru_ru.aff", "ru_ru.dic");
+    private readonly Hunspell hunspell;
+
+    public ToInfinitiveConverter()
+    {
+        hunspell = new("ru_ru.aff", "ru_ru.dic");
+    }
 
     public Result<string> Convert(string original)
     {

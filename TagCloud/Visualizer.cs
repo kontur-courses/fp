@@ -3,9 +3,9 @@ using TagCloud.Templates;
 
 namespace TagCloud;
 
-public class Visualizer : IVisualizer
+internal class Visualizer : IVisualizer
 {
-    public Bitmap Draw(ITemplate template)
+    public Result<Bitmap> Draw(ITemplate template)
     {
         var bitmap = new Bitmap(template.ImageSize.Width, template.ImageSize.Height);
         var offset = new PointF(bitmap.Width / 2f, bitmap.Height / 2f);
@@ -19,6 +19,6 @@ public class Visualizer : IVisualizer
                 rectangleF);
         }
 
-        return bitmap;
+        return bitmap.AsResult();
     }
 }

@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("TagCloudTests")]
 namespace TagCloud.PointGenerator;
-
-public class Cache : ICache
+internal class Cache : ICache
 {
     private readonly Dictionary<SizeF, float> sizeToCircleParameter = new();
 
-    public float SafeGetParameter(SizeF size)
+    public float SafeGet(SizeF size)
     {
         if (!sizeToCircleParameter.ContainsKey(size))
             sizeToCircleParameter[size] = 0;
         return sizeToCircleParameter[size];
     }
 
-    public void SafeUpdate(SizeF size, float radius)
+    public void UpdateOrAdd(SizeF size, float radius)
     {
         sizeToCircleParameter[size] = radius;
     }

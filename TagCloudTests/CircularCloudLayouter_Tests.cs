@@ -1,72 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud.CloudLayouter;
 using TagCloud.PointGenerator;
+
 
 namespace TagCloudTests
 {
     [TestFixture]
-    internal class CircularCloudLayouterTests
+    public class CircularCloudLayouterTests
     {
-        private TagCloud.CloudLayouter.CloudLayouter sut;
+        private CloudLayouter sut;
 
         [SetUp]
         public void SetUp()
         {
-            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.01f, 1, new PointF(), new Cache()));
+            sut = new CloudLayouter(new Circle(0.01f, 1, new Cache()));
         }
 
         [TestCase(0, 1, TestName = "Width is zero")]
         [TestCase(-1, 1, TestName = "Width is negative")]
         [TestCase(1, 0, TestName = "Height is zero")]
         [TestCase(1, -1, TestName = "Height is negative")]
-        public void PutNextRectangle_ShouldThrow_IfIncorrectSize(int width, int height)
+        public void PutNextRectangle_ShouldReturnFailResult_IfIncorrectSize(int width, int height)
         {
-            Action act = () => sut.PutNextRectangle(new Size(width, height));
+            var result = sut.PutNextRectangle(new Size(width, height));
 
-            act.Should().Throw<ArgumentException>()
-                .WithMessage("Size parameters should be positive");
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("Height and weight should be positive");
         }
 
         [Test]
         public void PutNextRectangle_ShouldPutWithoutIntersecting()
         {
+            var cloud = new List<RectangleF>();
             for (var i = 0; i < 20; i++)
             {
-                sut.PutNextRectangle(new Size(50, 15));
+                cloud.Add(sut.PutNextRectangle(new Size(50, 15)).Value);
             }
 
-            var cloud = sut.GetCloud();
             cloud
                 .Where(r => CloudIntersectWith(r, cloud))
                 .Should()
                 .BeEmpty();
         }
 
-        [TestCase(0, 0, 2, 2, TestName = "Even width and height in zero center")]
-        [TestCase(0, 0, 9, 9, TestName = "Odd width and height in zero center")]
-        [TestCase(0, 1, 2, 5, TestName = "Different width and height")]
-        [TestCase(3, 3, 1, 1, TestName = "Width and height greater than center coordinates")]
-        [TestCase(3, 6, 9, 1, TestName = "Different parameters and different center coordinates")]
-        [TestCase(-4, -3, 2, 6, TestName = "Negative center coordinates")]
-        public void PutNextRectangle_ReturnFirstTagInCenter_IfAddOneTag(int xCloudPosition, int yCloudPosition,
+        [TestCase(2, 2, TestName = "Even width and height in zero center")]
+        [TestCase(0, 0, TestName = "Odd width and height in zero center")]
+        [TestCase(0, 1, TestName = "Different width and height")]
+        [TestCase(3, 3, TestName = "Width and height greater than center coordinates")]
+        [TestCase(3, 6, TestName = "Different parameters and different center coordinates")]
+        [TestCase(-4, -3, TestName = "Negative center coordinates")]
+        public void PutNextRectangle_ReturnFirstTagInCenter_IfAddOneTag(
             int width,
             int height)
         {
-            sut = new TagCloud.CloudLayouter.CloudLayouter(new Circle(0.2f, 1,
-                new Point(xCloudPosition, yCloudPosition),
+            sut = new CloudLayouter(new Circle(0.2f, 1,
                 new Cache()));
 
-            var tag = sut.PutNextRectangle(new Size(width, height));
+            var tag = sut.PutNextRectangle(new Size(width, height)).Value;
 
             var xCenter = (tag.Left + tag.Right) / 2;
             var yCenter = (tag.Top + tag.Bottom) / 2;
-            xCenter.Should().Be(xCloudPosition);
-            yCenter.Should().Be(yCloudPosition);
+            xCenter.Should().Be(0);
+            yCenter.Should().Be(0);
         }
 
         [TestCase(1, 1, 100, 0.9, TestName = "Very tightly if small 100 1x1 squares")]
@@ -74,18 +74,18 @@ namespace TagCloudTests
         [TestCase(9, 9, 60, 0.8, TestName = "Big squares")]
         public void PutNextRectangle_ShouldPutEnoughTight(int width, int height, int count, double densityCoefficient)
         {
+            var cloud = new List<RectangleF>();
             for (var i = 0; i < count; i++)
-                sut.PutNextRectangle(new Size(width, height));
+                cloud.Add(sut.PutNextRectangle(new Size(width, height)).Value);
 
-            var density = GetDensity(sut);
+            var density = GetDensity(sut.CloudRectangle, cloud);
             density.Should().BeGreaterThan((Math.PI / 4) * densityCoefficient).And.BeLessThan(Math.PI / 4);
         }
 
-        private double GetDensity(TagCloud.CloudLayouter.CloudLayouter cloudLayouter)
+        private double GetDensity(RectangleF union, IEnumerable<RectangleF> cloud)
         {
-            var union = cloudLayouter.CloudRectangle;
             var unionRectsArea = union.Height * union.Width;
-            var sumOfAreas = cloudLayouter.GetCloud().Sum(rectangle => rectangle.Height * rectangle.Width);
+            var sumOfAreas = cloud.Sum(rectangle => rectangle.Height * rectangle.Width);
             return sumOfAreas / unionRectsArea;
         }
 

@@ -14,6 +14,7 @@ public class WordConverterTests
         const string? text = "TeSt";
         var expected = text.ToLower().AsResult();
         var sut = new ConvertersPool(new IConverter[] { new ToLowerConverter() });
+        
         var converted = sut.Convert(text);
 
         converted.Should().BeEquivalentTo(expected);

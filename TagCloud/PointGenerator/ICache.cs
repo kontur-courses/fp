@@ -4,6 +4,6 @@ namespace TagCloud.PointGenerator;
 
 public interface ICache
 {
-    float SafeGetParameter(SizeF size);
-    void SafeUpdate(SizeF size, float radius);
+    float SafeGet(SizeF size);
+    void UpdateOrAdd(SizeF size, float radius);
 }

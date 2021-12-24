@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using CommandLine;
 
-namespace TagCloudApp.Configurations;
+namespace TagCloudApp.Apps;
 
 public class ConsoleUiOptions
 {

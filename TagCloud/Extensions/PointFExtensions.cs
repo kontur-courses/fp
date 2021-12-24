@@ -4,7 +4,7 @@ namespace TagCloud.Extensions;
 
 internal static class PointFExtensions
 {
-    internal static RectangleF GetRectangle(this PointF center, SizeF size)
+    public static RectangleF GetRectangle(this PointF center, SizeF size)
     {
         return new RectangleF(
             new PointF(center.X - size.Width / 2f, center.Y - size.Height / 2f),

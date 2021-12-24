@@ -5,5 +5,5 @@ namespace TagCloud;
 
 public interface IVisualizer
 {
-    Bitmap Draw(ITemplate template);
+    Result<Bitmap> Draw(ITemplate template);
 }

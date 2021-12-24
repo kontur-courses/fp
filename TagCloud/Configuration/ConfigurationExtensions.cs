@@ -1,8 +1,8 @@
 ﻿using TagCloud.Templates;
 
-namespace TagCloudApp.Configurations;
+namespace TagCloud.Configuration;
 
-public static class ConfigurationExtensions
+internal static class ConfigurationExtensions
 {
     public static TemplateConfiguration ToTemplateConfiguration(this Configuration configuration)
     {

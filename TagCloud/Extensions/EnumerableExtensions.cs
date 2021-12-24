@@ -2,7 +2,7 @@
 
 namespace TagCloud.Extensions;
 
-public static class EnumerableExtensions
+internal static class EnumerableExtensions
 {
     public static Dictionary<T, int> GetCountByItems<T>(this IEnumerable<T> items)
     {
