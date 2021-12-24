@@ -99,7 +99,7 @@ public static class Result
     {
         return !input.IsSuccess || condition(input.Value)
             ? input
-            : Fail<T>("Validation error");
+            : Fail<T>("");
     }
 
     public static Result<TInput> OnFail<TInput>(

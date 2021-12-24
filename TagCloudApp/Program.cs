@@ -11,8 +11,7 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var config = CommandLineConfigurationProvider.GetConfiguration(args);
-        config
+        CommandLineConfigurationProvider.GetConfiguration(args)
             .Validate(c => c != null)
             .Then(BuildContainer)
             .Then(c => c.Resolve<IApp>())
@@ -22,7 +21,7 @@ public static class Program
 
     private static void HandleError(string message)
     {
-        Console.WriteLine($"[ERROR] {message}");
+        Console.WriteLine($"{message}");
     }
 
     private static IContainer BuildContainer(Configuration configuration)
