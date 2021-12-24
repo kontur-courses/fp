@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointGenerators;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudVisualization.ColorService;
 using TagsCloudVisualization.Drawable;
 using TagsCloudVisualization.FontService;

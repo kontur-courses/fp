@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudVisualization.WordsProvider.FileReader;
 
 namespace TagsCloudVisualization.WordsProvider

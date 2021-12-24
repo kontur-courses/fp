@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using ResultMonad;
+using ResultMonad.Extensions;
 using TagsCloudVisualization.DrawableContainers.Builders;
 using TagsCloudVisualization.ImageCreators;
 using TagsCloudVisualization.WordsPreprocessors;
