@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudVisualization
@@ -26,13 +27,12 @@ namespace TagsCloudVisualization
 
         public Result<Bitmap> CreateTagsCloudBitmapFromTextFile(string inputPath)
         {
-            var result = fileReader.GetWordsFromFile(inputPath, new[] { ' ' })
+            return fileReader.GetWordsFromFile(inputPath, new[] { ' ' })
                 .Then(wordPreparator.GetPreparedWords)
                 .Then(frequencyCounter.GetFrequencyDictionary)
                 .Then(tagParser.ParseTags)
-                .Then(imageGenerator.DrawTagCloudBitmap);
-
-            return result;
+                .Then(imageGenerator.DrawTagCloudBitmap)
+                .OnFail(Console.WriteLine);
         }
     }
 }
