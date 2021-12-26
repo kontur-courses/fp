@@ -20,18 +20,18 @@ namespace TagsCloudVisualization
 
         public Result<IEnumerable<Tag>> ParseTags(IDictionary<string, int> freqDictionary)
         {
-            return freqDictionary == null
-                ? Result.Fail<IEnumerable<Tag>>("freqDictionary was null")
-                : Result.Ok(CreateTags(freqDictionary));
-        }
-
-        private IEnumerable<Tag> CreateTags(IDictionary<string, int> freqDictionary)
-        {
+            var tagsList = new List<Tag>();
             foreach (var word in freqDictionary.Keys.OrderByDescending(x => freqDictionary[x]))
             {
-                var rectangle = cloudLayouter.PutNextWord(word, font, graphics);
-                yield return new Tag(rectangle.Value, word, freqDictionary[word]);
+                var size = graphics.MeasureString(word, font).ToSize();
+                var rectangle = cloudLayouter.PutNextRectangle(size);
+                if (rectangle.IsSuccess)
+                    tagsList.Add(new Tag(rectangle.Value, word, freqDictionary[word]));
+                else
+                    return Result.Fail<IEnumerable<Tag>>(rectangle.Error);
             }
+
+            return Result.Ok<IEnumerable<Tag>>(tagsList);
         }
     }
 }
