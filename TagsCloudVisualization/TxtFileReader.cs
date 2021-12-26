@@ -10,9 +10,6 @@ namespace TagsCloudVisualization
     {
         public Result<IEnumerable<string>> GetWordsFromFile(string path, char[] separators)
         {
-            if (!File.Exists(path))
-                return Result.Fail<IEnumerable<string>>($"file {path} does not exist");
-
             try
             {
                 using var reader = new StreamReader(path);
