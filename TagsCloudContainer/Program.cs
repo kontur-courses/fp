@@ -14,7 +14,7 @@ namespace TagsCloudContainer
         {
             var builder = new ContainerBuilder();
             var preContainer = RegisterDependensiesInPreContainer(builder).Build();
-            new Registrator(builder).RegisterDependencies();
+            builder.RegisterModule<AutofacModule>();
             SetUpUi(preContainer);
         }
         
@@ -23,7 +23,7 @@ namespace TagsCloudContainer
             var preBuilder = new ContainerBuilder();
             preBuilder.RegisterInstance(Console.Out).As<TextWriter>();
             preBuilder.RegisterInstance(Console.In).As<TextReader>();
-            preBuilder.RegisterType<ConsoleResultHandler>().As<IResultHandler>();
+            preBuilder.RegisterType<ConsoleResultHandler>().AsImplementedInterfaces();
             preBuilder.RegisterInstance(builder).As<ContainerBuilder>();
             RegisterActions(preBuilder);
             return preBuilder;
@@ -49,8 +49,8 @@ namespace TagsCloudContainer
                 .GetTypes()
                 .Where(t => action.IsAssignableFrom(t))
                 .ToArray();
-            builder.RegisterTypes(actions).As<IUiAction>();
-            builder.RegisterType<MenuCreator>().As<IMenuCreator>();
+            builder.RegisterTypes(actions).AsImplementedInterfaces();
+            builder.RegisterType<MenuCreator>().AsImplementedInterfaces();
         }
     }
 }

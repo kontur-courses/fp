@@ -1,5 +1,5 @@
-﻿using TagsCloudContainer.Common;
-using TagsCloudContainer.Common.Result;
+﻿using TagsCloudContainer.Common.Result;
+using TagsCloudContainer.Preprocessors;
 
 namespace TagsCloudContainer.UI
 {
@@ -16,7 +16,7 @@ namespace TagsCloudContainer.UI
 
         protected override void PerformAction()
         {
-            var preprocessors = PreprocessorsRegistrator.GetActivePreprocessors();
+            var preprocessors = TagsPreprocessor.AllPreprocessors;
             foreach (var preprocessor in preprocessors) 
                 handler.AddHandledText(preprocessor.Name);
         }

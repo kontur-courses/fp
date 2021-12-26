@@ -23,7 +23,7 @@ namespace TagsCloudContainer.UI
                 case "y":
                     var container = builder.Build();
                     var processor = container.Resolve<Processor>();
-                    processor.Process();
+                    processor.Process(handler);
                     Environment.Exit(0);
                     return;
                 case "n":

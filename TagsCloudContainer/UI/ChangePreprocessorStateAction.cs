@@ -2,6 +2,7 @@
 using System.Linq;
 using TagsCloudContainer.Common;
 using TagsCloudContainer.Common.Result;
+using TagsCloudContainer.Preprocessors;
 
 namespace TagsCloudContainer.UI
 {
@@ -19,7 +20,7 @@ namespace TagsCloudContainer.UI
         protected override void PerformAction()
         {
                 var processorName = handler.GetText();
-                var userPreprocessor = PreprocessorsRegistrator.GetActivePreprocessors()
+                var userPreprocessor = TagsPreprocessor.AllPreprocessors
                     .FirstOrDefault(t => t.Name == processorName);
                 if (userPreprocessor == null)
                     throw new Exception("Preprocessor with that name not found, " +

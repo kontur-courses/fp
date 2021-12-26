@@ -9,8 +9,7 @@ namespace TagsCloudContainer
 {
     internal class Processor
     {
-        private readonly IResultHandler handler;
-        private readonly TagReader tagReader;
+        private readonly IReader tagReader;
         private readonly WordsCountParser parser;
         private readonly TagsPreprocessor preprocessor;
         private readonly TagLayouter layouter;
@@ -18,26 +17,24 @@ namespace TagsCloudContainer
         private readonly IVisualizator visualizator;
         private readonly IVisualizatorSettings settings;
 
-        public Processor(IResultHandler handler,
-            TagReader tagReader,
+        public Processor(IReader tagReader,
             WordsCountParser parser,
             TagsPreprocessor preprocessor,
             TagLayouter layouter,
             TagPainter painter,
             IVisualizator visualizator,
-            IVisualizatorSettings settings)
+            IVisualizatorSettingsProvider provider)
         {
-            this.handler = handler;
             this.tagReader = tagReader;
             this.parser = parser;
             this.preprocessor = preprocessor;
             this.layouter = layouter;
             this.painter = painter;
             this.visualizator = visualizator;
-            this.settings = settings;
+            settings = provider.GetVisualizatorSettings();
         }
 
-        public void Process()
+        public void Process(IResultHandler handler)
         {
             Result.Of(() => tagReader.Read(AppSettings.TextFilename),
                     "File not exist, or unavailable")

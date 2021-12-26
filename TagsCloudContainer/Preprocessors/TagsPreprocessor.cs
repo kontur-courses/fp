@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using TagsCloudContainer.Common;
+using TagsCloudContainer.Extensions;
 
 namespace TagsCloudContainer.Preprocessors
 {
     public class TagsPreprocessor
     {
         private readonly IPreprocessor[] preprocessors;
+        public static readonly Type[] AllPreprocessors = AppDomain.CurrentDomain.GetAssemblies()
+            .First(a => a.FullName.Contains("TagsCloudContainer"))
+            .GetTypes()
+            .Where(t => t.IsInstanceOf<IPreprocessor>())
+            .ToArray();
 
         public TagsPreprocessor(IPreprocessor[] preprocessors)
         {
@@ -28,5 +34,12 @@ namespace TagsCloudContainer.Preprocessors
                 throw new Exception("With this preprocessors, you can`t get any tags, and then can`t visualize it");
             return processedTags;
         }
+
+        public static Type[] GetActivPreprocessors()
+            => AppDomain.CurrentDomain.GetAssemblies()
+                .First(a => a.FullName.Contains("TagsCloudContainer"))
+                .GetTypes()
+                .Where(t => t.IsInstanceOf<IPreprocessor>())
+                .ToArray();
     }
 }
