@@ -34,10 +34,10 @@ namespace ConsoleClient
             var resultImage = cloudCreator.CreateTagsCloudBitmapFromTextFile("Sample.txt")
                 .OnFail(Console.WriteLine);
 
-            if (!resultImage.IsSuccess) 
+            if (!resultImage.IsSuccess)
                 return;
             try
-            
+
             {
                 resultImage.GetValueOrThrow().Save("Sample.png");
             }
