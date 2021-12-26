@@ -26,33 +26,9 @@ namespace TagsCloudVisualization
             return Result.Ok(rectangles.ToArray());
         }
 
-        public Result<Point> GetCenter()
+        public Point GetCenter()
         {
-            return Result.Ok(center);
-        }
-
-        public Result<Rectangle> PutNextWord(string word, Font font, Graphics graphics)
-        {
-            var rectangleResult = PutNextRectangle(graphics.MeasureString(word, font).ToSize());
-            return rectangleResult.IsSuccess
-                ? Result.Ok(rectangleResult.GetValueOrThrow())
-                : Result.Fail<Rectangle>(rectangleResult.Error);
-        }
-
-        public Result<List<Rectangle>> PutWords(IEnumerable<string> words, Font font, Graphics graphics)
-        {
-            var rectanglesResult = new List<Rectangle>();
-
-            foreach (var word in words)
-            {
-                var rectangleResult = PutNextWord(word, font, graphics);
-                if (!rectangleResult.IsSuccess)
-                    return Result.Fail<List<Rectangle>>(rectangleResult.Error);
-
-                rectanglesResult.Add(rectangleResult.Value);
-            }
-
-            return Result.Ok(rectanglesResult);
+            return center;
         }
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
