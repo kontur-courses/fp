@@ -81,7 +81,7 @@ namespace TagsCloudVisualizationTests
         public void CloudLayouter_ShouldMustLeaveLessThan20PercentsEmptySpace_WhenSizesRandom()
         {
             var random = new Random(10);
-            var center = cloudLayouter.GetCenter().GetValueOrThrow();
+            var center = cloudLayouter.GetCenter();
 
             for (var i = 0; i < 100; i++)
                 cloudLayouter.PutNextRectangle(new Size(random.Next(5, 70), random.Next(5, 70)));
