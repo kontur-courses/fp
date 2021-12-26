@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 
 namespace ResultOfTask
 {
@@ -59,26 +58,21 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            return input.Then(x => Of(() => continuation(x)));
+            throw new NotImplementedException();
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new DataException();
+            throw new NotImplementedException();
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            if (!input.IsSuccess)
-            {
-                handleError.Invoke(input.Error);
-            }
-
-            return input;
+            throw new NotImplementedException();
         }
     }
 }

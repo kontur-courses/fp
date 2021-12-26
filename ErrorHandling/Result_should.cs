@@ -2,12 +2,11 @@ using System;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using ResultOfTask;
 
-namespace ErrorHandling
+namespace ResultOfTask
 {
     [TestFixture]
-    public class ResultShould
+    public class Result_Should
     {
         [Test]
         public void Create_Ok()

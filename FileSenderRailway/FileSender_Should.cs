@@ -51,7 +51,7 @@ namespace FileSenderRailway
         public void Fail_WhenNotRecognized()
         {
             A.CallTo(() => recognizer.Recognize(file))
-                .Returns(Result.Fail<Document>("Can't recognize"));
+                .Throws(new FormatException("Can't recognize"));
 
             VerifyErrorOnPrepareFile(file, certificate);
         }
