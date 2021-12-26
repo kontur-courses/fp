@@ -1,13 +1,9 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Enums;
 using TagsCloudVisualization.Interfaces;
-
-#endregion
 
 namespace TagsCloudVisualization
 {
@@ -27,36 +23,48 @@ namespace TagsCloudVisualization
 
         public Result<Rectangle[]> GetPutRectangles()
         {
-            return new Result<Rectangle[]>(null, rectangles.ToArray());
+            return Result.Ok(rectangles.ToArray());
         }
 
         public Result<Point> GetCenter()
         {
-            return new Result<Point>(null, center);
+            return Result.Ok(center);
         }
 
         public Result<Rectangle> PutNextWord(string word, Font font, Graphics graphics)
         {
-            return new Result<Rectangle>(null,
-                PutNextRectangle(graphics.MeasureString(word, font).ToSize()).GetValueOrThrow());
+            var rectangleResult = PutNextRectangle(graphics.MeasureString(word, font).ToSize());
+            return rectangleResult.IsSuccess
+                ? Result.Ok(rectangleResult.GetValueOrThrow())
+                : Result.Fail<Rectangle>(rectangleResult.Error);
         }
 
-        public Result<IEnumerable<Rectangle>> PutWords(IEnumerable<string> words, Font font, Graphics graphics)
+        public Result<List<Rectangle>> PutWords(IEnumerable<string> words, Font font, Graphics graphics)
         {
-            return new Result<IEnumerable<Rectangle>>(null,
-                words.Select(word => PutNextRectangle(graphics.MeasureString(word, font).ToSize()).GetValueOrThrow()));
+            var rectanglesResult = new List<Rectangle>();
+
+            foreach (var word in words)
+            {
+                var rectangleResult = PutNextWord(word, font, graphics);
+                if (!rectangleResult.IsSuccess)
+                    return Result.Fail<List<Rectangle>>(rectangleResult.Error);
+
+                rectanglesResult.Add(rectangleResult.Value);
+            }
+
+            return Result.Ok(rectanglesResult);
         }
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                return new Result<Rectangle>(
-                    $"Size is empty! Width: {rectangleSize.Width}, height: {rectangleSize.Height}");
+                return Result.Fail<Rectangle>(
+                    $"Width and height should be greater than zero. Width: {rectangleSize.Width}, height: {rectangleSize.Height}");
 
             var nextRectangle = MoveToCenter(GetNextPossibleRectangle(rectangleSize));
 
             rectangles.Add(nextRectangle);
-            return new Result<Rectangle>(null, nextRectangle);
+            return Result.Ok(nextRectangle);
         }
 
         private Point GetNextPointAndUpdateAngle()

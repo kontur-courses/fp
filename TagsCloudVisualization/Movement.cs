@@ -1,8 +1,4 @@
-﻿#region
-
-using TagsCloudVisualization.Enums;
-
-#endregion
+﻿using TagsCloudVisualization.Enums;
 
 namespace TagsCloudVisualization
 {

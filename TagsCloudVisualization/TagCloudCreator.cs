@@ -1,10 +1,5 @@
-﻿#region
-
-using System.Drawing;
-using System.Reflection;
+﻿using System.Drawing;
 using TagsCloudVisualization.Interfaces;
-
-#endregion
 
 namespace TagsCloudVisualization
 {
@@ -29,7 +24,7 @@ namespace TagsCloudVisualization
             this.tagParser = tagParser;
         }
 
-        public Result<Bitmap> CreateAndSaveCloudFromTextFile(string inputPath)
+        public Result<Bitmap> CreateTagsCloudBitmapFromTextFile(string inputPath)
         {
             var result = fileReader.GetWordsFromFile(inputPath, new[] { ' ' })
                 .Then(wordPreparator.GetPreparedWords)
@@ -38,11 +33,6 @@ namespace TagsCloudVisualization
                 .Then(imageGenerator.DrawTagCloudBitmap);
 
             return result;
-        }
-
-        public static Assembly GetAssemblyInfo()
-        {
-            return Assembly.GetExecutingAssembly();
         }
     }
 }

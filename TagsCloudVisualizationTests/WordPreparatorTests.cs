@@ -1,13 +1,9 @@
-﻿#region
-
-using System;
+﻿using System;
 using DeepMorphy;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization;
 using TagsCloudVisualization.Enums;
-
-#endregion
 
 namespace TagsCloudVisualizationTests
 {

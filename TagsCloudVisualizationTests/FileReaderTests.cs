@@ -1,18 +1,14 @@
-﻿#region
-
-using System.IO;
+﻿using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization;
-
-#endregion
 
 namespace TagsCloudVisualizationTests
 {
     [TestFixture]
     public class FileReaderTests
     {
-        private readonly FileReader fileReader = new();
+        private readonly TxtFileReader txtFileReader = new();
 
         [Test]
         public void FileReader_ShouldReadCorrectly_WhenOneWordOnLine()
@@ -26,7 +22,7 @@ namespace TagsCloudVisualizationTests
             writer.WriteLine("Line");
             writer.Close();
 
-            var actual = fileReader.GetWordsFromFile(filePath, new[] { ' ' });
+            var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
             actual.GetValueOrThrow().Should().BeEquivalentTo("One", "Word", "On", "Line");
         }
@@ -43,7 +39,7 @@ namespace TagsCloudVisualizationTests
             writer.WriteLine("Line Clear");
             writer.Close();
 
-            var actual = fileReader.GetWordsFromFile(filePath, new[] { ' ' });
+            var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
             actual.GetValueOrThrow().Should()
                 .BeEquivalentTo("One", "Two", "Three", "Words", "Where", "On", "Where", "Line", "Clear");
@@ -57,7 +53,7 @@ namespace TagsCloudVisualizationTests
             var writer = new StreamWriter(filePath);
             writer.Close();
 
-            var actual = fileReader.GetWordsFromFile(filePath, new[] { ' ' });
+            var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
             actual.GetValueOrThrow().Should().BeEmpty();
         }
@@ -65,7 +61,7 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void FileReader_ShouldReturnUnsuccessfulResult_WhenFileDoesNotExist()
         {
-            var actual = fileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' });
+            var actual = txtFileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' });
 
             actual.IsSuccess.Should().BeFalse();
         }

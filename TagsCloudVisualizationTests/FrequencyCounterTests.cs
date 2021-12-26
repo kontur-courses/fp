@@ -1,12 +1,8 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization;
-
-#endregion
 
 namespace TagsCloudVisualizationTests
 {

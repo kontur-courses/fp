@@ -1,22 +1,27 @@
-﻿#region
-
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TagsCloudVisualization.Interfaces;
 
-#endregion
-
 namespace TagsCloudVisualization
 {
-    public class FileReader : IFileReader
+    public class TxtFileReader : IFileReader
     {
         public Result<IEnumerable<string>> GetWordsFromFile(string path, char[] separators)
         {
-            if (!File.Exists(path)) return new Result<IEnumerable<string>>($"file {path} does not exist");
+            if (!File.Exists(path))
+                return Result.Fail<IEnumerable<string>>($"file {path} does not exist");
 
-            var reader = new StreamReader(path);
-            return new Result<IEnumerable<string>>(null, ReadAllWordsFromReader(reader, separators));
+            try
+            {
+                using var reader = new StreamReader(path);
+                return Result.Ok(ReadAllWordsFromReader(reader, separators));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<IEnumerable<string>>(e.Message);
+            }
         }
 
         private static IEnumerable<string> ReadAllWordsFromReader(TextReader reader, char[] separators)
@@ -25,13 +30,11 @@ namespace TagsCloudVisualization
 
             while (!string.IsNullOrEmpty(line))
             {
-                foreach (var word in line.Split(separators).Where(word => word.Length > 0))
+                foreach (var word in line.Split(separators, StringSplitOptions.RemoveEmptyEntries))
                     yield return word;
 
                 line = reader.ReadLine();
             }
-
-            reader.Close();
         }
     }
 }

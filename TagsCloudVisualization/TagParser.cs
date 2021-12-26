@@ -1,11 +1,7 @@
-﻿#region
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagsCloudVisualization.Interfaces;
-
-#endregion
 
 namespace TagsCloudVisualization
 {
@@ -25,8 +21,8 @@ namespace TagsCloudVisualization
         public Result<IEnumerable<Tag>> ParseTags(IDictionary<string, int> freqDictionary)
         {
             return freqDictionary == null
-                ? new Result<IEnumerable<Tag>>("freqDictionary was null")
-                : new Result<IEnumerable<Tag>>(null, CreateTags(freqDictionary));
+                ? Result.Fail<IEnumerable<Tag>>("freqDictionary was null")
+                : Result.Ok(CreateTags(freqDictionary));
         }
 
         private IEnumerable<Tag> CreateTags(IDictionary<string, int> freqDictionary)

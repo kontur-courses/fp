@@ -1,5 +1,9 @@
-﻿using Ninject;
+﻿#region
+
 using System;
+using Ninject;
+
+#endregion
 
 namespace ConwaysGameOfLife
 {
@@ -12,7 +16,7 @@ namespace ConwaysGameOfLife
         }
 
         private Game game;
-        private IGameUi ui;
+        private readonly IGameUi ui;
 
         private static void Main()
         {
@@ -31,7 +35,7 @@ namespace ConwaysGameOfLife
             ui.UpdateAll(game);
             while (true)
             {
-                var key = Console.ReadKey(intercept: true);
+                var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Escape) break;
                 game = DoGameStep(game, ui);
             }

@@ -1,13 +1,9 @@
-﻿#region
-
-using System.Drawing;
-
-#endregion
+﻿using System.Drawing;
 
 namespace TagsCloudVisualization.Interfaces
 {
     public interface ITagCloudCreator
     {
-        Result<Bitmap> CreateAndSaveCloudFromTextFile(string inputPath);
+        Result<Bitmap> CreateTagsCloudBitmapFromTextFile(string inputPath);
     }
 }

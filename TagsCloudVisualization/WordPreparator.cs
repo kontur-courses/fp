@@ -1,13 +1,9 @@
-﻿#region
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DeepMorphy;
 using DeepMorphy.Model;
 using TagsCloudVisualization.Enums;
 using TagsCloudVisualization.Interfaces;
-
-#endregion
 
 namespace TagsCloudVisualization
 {
@@ -32,12 +28,12 @@ namespace TagsCloudVisualization
 
         public Result<IEnumerable<string>> GetPreparedWords(IEnumerable<string> unpreparedWords)
         {
-            if (unpreparedWords == null) return new Result<IEnumerable<string>>("inpreparedWords was null");
-
+            if (unpreparedWords == null)
+                return Result.Fail<IEnumerable<string>>("unpreparedWords was null");
 
             var words = morphAnalyzer.Parse(unpreparedWords).ToArray();
 
-            return new Result<IEnumerable<string>>(null, words
+            return Result.Ok(words
                 .Where(info => !IsMorphInfoExcluded(info))
                 .Select(t => t.BestTag.Lemma));
         }

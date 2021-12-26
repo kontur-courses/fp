@@ -1,8 +1,4 @@
-﻿#region
-
-using System.Drawing;
-
-#endregion
+﻿using System.Drawing;
 
 namespace TagsCloudVisualization.Interfaces
 {
