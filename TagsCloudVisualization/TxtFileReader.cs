@@ -7,30 +7,31 @@ namespace TagsCloudVisualization
 {
     public class TxtFileReader : IFileReader
     {
-        public Result<IEnumerable<string>> GetWordsFromFile(string path, char[] separators)
+        public Result<List<string>> GetWordsFromFile(string path, char[] separators)
         {
             try
             {
-                return Result.Ok(ReadAllWordsFromReader(path, separators));
+                return Result.Ok(ReadAllWordsFromFile(path, separators));
             }
             catch (Exception e)
             {
-                return Result.Fail<IEnumerable<string>>(e.Message);
+                return Result.Fail<List<string>>(e.Message);
             }
         }
 
-        private static IEnumerable<string> ReadAllWordsFromReader(string path, char[] separators)
+        private static List<string> ReadAllWordsFromFile(string path, char[] separators)
         {
-            using var reader = new StreamReader(path);
-            var line = reader.ReadLine();
+            using var streamReader = new StreamReader(path);
+            var line = streamReader.ReadLine();
+            var wordsList = new List<string>();
 
             while (!string.IsNullOrEmpty(line))
             {
-                foreach (var word in line.Split(separators, StringSplitOptions.RemoveEmptyEntries))
-                    yield return word;
-
-                line = reader.ReadLine();
+                wordsList.AddRange(line.Split(separators, StringSplitOptions.RemoveEmptyEntries));
+                line = streamReader.ReadLine();
             }
+
+            return wordsList;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace TagsCloudVisualization
                 return Result.Fail<Bitmap>("Tags was null");
 
             var tagsList = tags.ToList();
-            var graphics = Graphics.FromImage(image);
+            using var graphics = Graphics.FromImage(image);
 
             foreach (var tag in tagsList)
             {

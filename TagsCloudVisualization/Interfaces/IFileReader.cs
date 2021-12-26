@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Interfaces
 {
     public interface IFileReader
     {
-        Result<IEnumerable<string>> GetWordsFromFile(string path, char[] separators);
+        Result<List<string>> GetWordsFromFile(string path, char[] separators);
     }
 }

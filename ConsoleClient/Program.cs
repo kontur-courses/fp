@@ -31,12 +31,20 @@ namespace ConsoleClient
             var container = builder.Build();
 
             var cloudCreator = container.Resolve<ITagCloudCreator>();
-            var resultImage = cloudCreator.CreateTagsCloudBitmapFromTextFile("Sample.txt");
+            var resultImage = cloudCreator.CreateTagsCloudBitmapFromTextFile("Sample.txt")
+                .OnFail(Console.WriteLine);
 
-            if (resultImage.IsSuccess)
+            if (!resultImage.IsSuccess) 
+                return;
+            try
+            
+            {
                 resultImage.GetValueOrThrow().Save("Sample.png");
-            else
-                Console.WriteLine(resultImage.Error);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

@@ -66,13 +66,9 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void FileReader_ShouldReturnUnsuccessfulResult_WhenFileDoesNotExist()
         {
-            Action act = () =>
-            {
-                txtFileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' }).GetValueOrThrow()
-                    .ToList();
-            };
+            var actual = txtFileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' });
 
-            act.Should().Throw<FileNotFoundException>();
+            actual.IsSuccess.Should().BeFalse();
         }
     }
 }
