@@ -14,7 +14,7 @@ namespace TagsCloudVisualization
             var freqDictionary = new Dictionary<string, int>();
 
             foreach (var word in words)
-                freqDictionary.AddOrUpdate(word, 1, value => value + 1);
+                freqDictionary.AddOrUpdate<string, int>(word, 1, value => value + 1);
 
             return Result.Ok(freqDictionary);
         }

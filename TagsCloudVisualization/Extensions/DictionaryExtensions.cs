@@ -6,11 +6,11 @@ namespace TagsCloudVisualization.Extensions
 {
     public static class DictionaryExtensions
     {
-        public static void AddOrUpdate(this IDictionary dictionary, object key, int value,
-            Expression<Func<int, int>> func)
+        public static void AddOrUpdate<TKey, TValue>(this IDictionary dictionary, object key, int value,
+            Expression<Func<TValue, TValue>> func)
         {
             if (dictionary.Contains(key))
-                dictionary[key] = func.Compile().Invoke((int)dictionary[key]);
+                dictionary[key] = func.Compile().Invoke((TValue)dictionary[key]);
             else
                 dictionary[key] = value;
         }
