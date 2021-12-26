@@ -31,9 +31,8 @@ namespace TagsCloudVisualization
             if (unpreparedWords == null)
                 return Result.Fail<IEnumerable<string>>("unpreparedWords was null");
 
-            var words = morphAnalyzer.Parse(unpreparedWords).ToArray();
-
-            return Result.Ok(words
+            return Result.Of(() => morphAnalyzer.Parse(unpreparedWords)
+                .ToArray()
                 .Where(info => !IsMorphInfoExcluded(info))
                 .Select(t => t.BestTag.Lemma));
         }

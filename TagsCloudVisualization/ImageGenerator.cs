@@ -33,7 +33,7 @@ namespace TagsCloudVisualization
                 graphics.DrawString(tag.Word, font, new SolidBrush(pen.Color), tag.Rectangle.Location);
             }
 
-            return Result.Ok(image);
+            return image;
         }
     }
 }

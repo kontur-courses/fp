@@ -31,7 +31,7 @@ namespace TagsCloudVisualization
                     return Result.Fail<IEnumerable<Tag>>(rectangle.Error);
             }
 
-            return Result.Ok<IEnumerable<Tag>>(tagsList);
+            return tagsList;
         }
     }
 }

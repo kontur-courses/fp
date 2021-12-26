@@ -16,6 +16,7 @@ namespace TagsCloudVisualizationTests
         public void SetUp()
         {
             cloudLayouter = new CircularCloudLayouter(new Point(500, 500));
+            rectangles = new List<Rectangle>();
         }
 
         [TearDown]
@@ -25,9 +26,8 @@ namespace TagsCloudVisualizationTests
             {
                 var image = new Bitmap(800, 800);
                 var brush = Graphics.FromImage(image);
-                var rectangles = cloudLayouter.GetPutRectangles();
 
-                DrawRectangles(rectangles.GetValueOrThrow(), brush);
+                DrawRectangles(rectangles, brush);
 
                 brush.DrawEllipse(new Pen(Color.Red, 3), 500, 500, 3, 3);
                 image.Save(
@@ -38,6 +38,7 @@ namespace TagsCloudVisualizationTests
         }
 
         private CircularCloudLayouter cloudLayouter;
+        private List<Rectangle> rectangles;
 
         private static void DrawRectangles(IReadOnlyList<Rectangle> rectangles, Graphics brush)
         {
@@ -54,15 +55,14 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void PullNextRectangle_ShouldReturn_NotIntersectedRects()
         {
-            var random = new Random();
+            var random = new Random(10);
 
             for (var i = 0; i < 100; i++)
-                cloudLayouter.PutNextRectangle(new Size(random.Next(5, 70), random.Next(5, 70)));
+                rectangles.Add(cloudLayouter.PutNextRectangle(new Size(random.Next(5, 70), random.Next(5, 70)))
+                    .GetValueOrThrow());
 
-            var rectangles = cloudLayouter.GetPutRectangles().GetValueOrThrow();
-
-            for (var i = 0; i < rectangles.Length - 1; i++)
-            for (var j = i + 1; j < rectangles.Length; j++)
+            for (var i = 0; i < rectangles.Count - 1; i++)
+            for (var j = i + 1; j < rectangles.Count; j++)
                 rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
         }
 
@@ -81,12 +81,12 @@ namespace TagsCloudVisualizationTests
         public void CloudLayouter_ShouldMustLeaveLessThan20PercentsEmptySpace_WhenSizesRandom()
         {
             var random = new Random(10);
-            var center = cloudLayouter.GetCenter();
+            var center = cloudLayouter.GetCenter().GetValueOrThrow();
 
             for (var i = 0; i < 100; i++)
-                cloudLayouter.PutNextRectangle(new Size(random.Next(5, 70), random.Next(5, 70)));
+                rectangles.Add(cloudLayouter.PutNextRectangle(new Size(random.Next(5, 70), random.Next(5, 70)))
+                    .GetValueOrThrow());
 
-            var rectangles = cloudLayouter.GetPutRectangles().GetValueOrThrow();
             var averageDistanceFromCenterToBorder = GetAverageDistanceFromCenterToBorder(center, rectangles);
             var areaOfCircle = Math.PI * Math.Pow(averageDistanceFromCenterToBorder, 2);
             var filedArea = rectangles.Select(x => x.Width * x.Height).Sum();

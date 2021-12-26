@@ -21,12 +21,7 @@ namespace TagsCloudVisualization
             angle = 0;
         }
 
-        public Result<Rectangle[]> GetPutRectangles()
-        {
-            return Result.Ok(rectangles.ToArray());
-        }
-
-        public Point GetCenter()
+        public Result<Point> GetCenter()
         {
             return center;
         }
@@ -40,7 +35,7 @@ namespace TagsCloudVisualization
             var nextRectangle = MoveToCenter(GetNextPossibleRectangle(rectangleSize));
 
             rectangles.Add(nextRectangle);
-            return Result.Ok(nextRectangle);
+            return nextRectangle;
         }
 
         private Point GetNextPointAndUpdateAngle()

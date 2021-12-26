@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudVisualization;
@@ -15,12 +17,13 @@ namespace TagsCloudVisualizationTests
         {
             const string filePath = "FileWithOneWordOnLine.txt";
 
-            var writer = new StreamWriter(filePath);
-            writer.WriteLine("One");
-            writer.WriteLine("Word");
-            writer.WriteLine("On");
-            writer.WriteLine("Line");
-            writer.Close();
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine("One");
+                writer.WriteLine("Word");
+                writer.WriteLine("On");
+                writer.WriteLine("Line");
+            }
 
             var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
@@ -32,12 +35,13 @@ namespace TagsCloudVisualizationTests
         {
             const string filePath = "FileWithSeveralWordsOnLine.txt";
 
-            var writer = new StreamWriter(filePath);
-            writer.WriteLine("One Two Three");
-            writer.WriteLine("Words Where");
-            writer.WriteLine("On Where");
-            writer.WriteLine("Line Clear");
-            writer.Close();
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine("One Two Three");
+                writer.WriteLine("Words Where");
+                writer.WriteLine("On Where");
+                writer.WriteLine("Line Clear");
+            }
 
             var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
@@ -50,8 +54,9 @@ namespace TagsCloudVisualizationTests
         {
             const string filePath = "EmptyFile.txt";
 
-            var writer = new StreamWriter(filePath);
-            writer.Close();
+            using (var _ = new StreamWriter(filePath))
+            {
+            }
 
             var actual = txtFileReader.GetWordsFromFile(filePath, new[] { ' ' });
 
@@ -61,9 +66,13 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void FileReader_ShouldReturnUnsuccessfulResult_WhenFileDoesNotExist()
         {
-            var actual = txtFileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' });
+            Action act = () =>
+            {
+                txtFileReader.GetWordsFromFile("dasdadaasdsadasdsadasads.txt", new[] { ' ' }).GetValueOrThrow()
+                    .ToList();
+            };
 
-            actual.IsSuccess.Should().BeFalse();
+            act.Should().Throw<FileNotFoundException>();
         }
     }
 }
