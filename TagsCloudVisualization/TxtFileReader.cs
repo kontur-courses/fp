@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TagsCloudVisualization.Interfaces;
 
 namespace TagsCloudVisualization
@@ -12,8 +11,7 @@ namespace TagsCloudVisualization
         {
             try
             {
-                using var reader = new StreamReader(path);
-                return Result.Ok(ReadAllWordsFromReader(reader, separators));
+                return Result.Ok(ReadAllWordsFromReader(path, separators));
             }
             catch (Exception e)
             {
@@ -21,8 +19,9 @@ namespace TagsCloudVisualization
             }
         }
 
-        private static IEnumerable<string> ReadAllWordsFromReader(TextReader reader, char[] separators)
+        private static IEnumerable<string> ReadAllWordsFromReader(string path, char[] separators)
         {
+            using var reader = new StreamReader(path);
             var line = reader.ReadLine();
 
             while (!string.IsNullOrEmpty(line))
