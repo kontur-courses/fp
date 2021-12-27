@@ -9,48 +9,54 @@ namespace CTV.Common
     public class Visualizer
     {
         private readonly IWordSizer wordSizer;
-        private readonly VisualizerSettings settings;
         private readonly ILayouter layouter;
 
         public Visualizer(
             IWordSizer wordSizer,
-            VisualizerSettings settings,
             ILayouter layouter)
         {
             this.wordSizer = wordSizer;
-            this.settings = settings;
             this.layouter = layouter;
         }
 
-        public Result<Bitmap> Visualize(string[] words)
+        public Result<Bitmap> Visualize(string[] words, VisualizerSettings settings)
         {
-            return Result.Ok()
-                .InitVariable(() => settings.ImageSize, out var imageSize)
-                .InitVariable(() => new Bitmap(imageSize.Width, imageSize.Height), out var bmp)
-                .InitVariable(() => Graphics.FromImage(bmp), out var g)
-                .Then(_ => DrawBackground(g))
-                .Then(_ => wordSizer.Convert(
-                    words,
-                    settings.TextFont,
-                    (word, font) => g.MeasureString(word, font).ToCeilSize()))
-                .Then(sizedWords => DrawWords(sizedWords, imageSize, g))
-                .Then(_ => new Bitmap(bmp, bmp.Size));
+            return
+                from bmp in Result.Ok(new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height))
+                from g in Result.Ok(Graphics.FromImage(bmp))
+                from gWithBackground in DrawBackground(g, settings)
+                from sizedWords in CalculateSizedWords(words, settings.TextFont, gWithBackground)
+                from gWithDrawerWords in DrawWords(sizedWords, settings, gWithBackground)
+                select new Bitmap(bmp, bmp.Size);
         }
 
-        private Result<Graphics> DrawWords(List<SizedWord> sizedWords, Size imageSize, Graphics g)
+        private Result<List<SizedWord>> CalculateSizedWords(string[] words, Font font, Graphics g)
+        {
+            return Result.Of(() =>
+                wordSizer.Convert(words,
+                    font,
+                    (word, scaledFont) => Size.Ceiling(g.MeasureString(word, scaledFont))));
+        }
+
+        private Result<Graphics> DrawWords(List<SizedWord> sizedWords, VisualizerSettings settings, Graphics g)
         {
             layouter.Center = (Point) (settings.ImageSize / 2);
 
             return sizedWords.OrderBy(x => x.ScaledFont.SizeInPoints)
                 .Aggregate(Result.Ok(g),
-                    (current, word) => current
-                        .InitVariable(() => layouter.PutNextRectangle(word.WordSize), out var wordLocation)
-                        .Then(_ => ValidateWordIsInsideImageBorders(imageSize, wordLocation))
-                        .Then(_ => DrawStroke(wordLocation, g))
-                        .Then(graphics => DrawWord(word, wordLocation, graphics)));
+                    (currentResult, word) =>
+                        from current in currentResult
+                        from wordLocation in Result.Of(() => layouter.PutNextRectangle(word.WordSize))
+                        from _ in ValidateWordIsInsideImageBorders(settings.ImageSize, wordLocation)
+                        from gWithStroke in DrawStroke(wordLocation, settings, g)
+                        from gWithWord in DrawWord(word, settings, wordLocation, gWithStroke)
+                        select gWithWord);
         }
 
-        private Result<Graphics> DrawWord(SizedWord sizedWord, Rectangle wordLocation, Graphics g)
+        private Result<Graphics> DrawWord(SizedWord sizedWord,
+            VisualizerSettings settings,
+            Rectangle wordLocation,
+            Graphics g)
         {
             var textBrush = new SolidBrush(settings.TextColor);
             var (word, font, _) = sizedWord;
@@ -59,14 +65,14 @@ namespace CTV.Common
                 .Then(_ => g);
         }
 
-        private Result<Graphics> DrawStroke(Rectangle wordLocation, Graphics g)
+        private Result<Graphics> DrawStroke(Rectangle wordLocation, VisualizerSettings settings, Graphics g)
         {
             return Result.Ok(new Pen(settings.StrokeColor))
                 .Then(pen => g.DrawRectangle(pen, wordLocation))
                 .Then(_ => g);
         }
 
-        private Result<Graphics> DrawBackground(Graphics g)
+        private Result<Graphics> DrawBackground(Graphics g, VisualizerSettings settings)
         {
             return Result.OfAction(() => g.FillRectangle(new SolidBrush(settings.BackgroundColor),
                     new Rectangle(Point.Empty, settings.ImageSize)))
@@ -79,7 +85,6 @@ namespace CTV.Common
             return imageSizeAsRectangle.Contains(wordLocation)
                 ? Result.Ok()
                 : Result.Fail<None>("Part of word was drawn outside the image");
-
         }
     }
 }

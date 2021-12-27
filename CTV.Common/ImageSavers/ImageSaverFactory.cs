@@ -1,9 +1,8 @@
 ﻿using System;
-using CTV.Common.ImageSavers;
 
-namespace CTV.Common.VisualizerContainer
+namespace CTV.Common.ImageSavers
 {
-    public static class SavingFormatExtensions
+    public static class ImageSaverFactory
     {
         public static IImageSaver ToImageSaver(this SavingFormat format)
             => format switch

@@ -73,10 +73,7 @@ namespace FunctionalProgrammingInfrastructure
         [Test]
         public void Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
+            Func<int, int> continuation = n => { throw new Exception("123"); };
             var res = Result.Ok(42)
                 .Then(continuation);
             res.Should().BeEquivalentTo(Result.Fail<int>("123"));
@@ -158,42 +155,5 @@ namespace FunctionalProgrammingInfrastructure
                 .RefineError("Posting results to db")
                 .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
         }
-
-        [Test]
-        public void InitVariable_ReturnInitializedValueWhenCurrentResultWasSuccess()
-        {
-            var str = "hello";
-            Func<string> func = () => str;
-            var initialResult = Result.Ok();
-
-            initialResult.InitVariable(func, out var initializedString);
-
-            initializedString.Should().Be(str);
-        }
-        
-        [Test]
-        public void InitVariable_ReturnInitializedValueWhenCurrentResultFailed()
-        {
-            var str = "hello";
-            Func<string> func = () => str;
-            var initialResult = Result.Fail<string>("error");
-
-            initialResult.InitVariable(func, out var initializedString);
-
-            initializedString.Should().BeNull();
-        }
-        
-        
-        [Test]
-        public void InitVariable_FailWhenInitializingFuncThrowed()
-        {
-            Func<string> func = () => throw new Exception();
-            var result =  Result.Ok()
-                .InitVariable(func, out _);
-
-            result.IsSuccess.Should().BeFalse();
-        }
-        
-        
     }
 }

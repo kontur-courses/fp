@@ -1,20 +1,16 @@
-﻿using CTV.Common;
-using CTV.Common.Layouters;
+﻿using CTV.Common.Layouters;
 using CTV.Common.Layouters.Spirals;
 using CTV.Common.Preprocessors;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CTV.Common.VisualizerContainer
+namespace CTV.Common
 {
     public static class VisualizerContainerFactory
     {
-        public static ServiceProvider CreateInstance(VisualizerFactorySettings factorySettings)
+        public static ServiceProvider CreateInstance()
         {
             var container = new ServiceCollection();
             InitCommonObjects(container);
-            InitImageSaver(container, factorySettings);
-            InitFileReader(container, factorySettings);
-            InitVisualizerSettings(container, factorySettings);
             return container.BuildServiceProvider();
         }
 
@@ -37,29 +33,6 @@ namespace CTV.Common.VisualizerContainer
             container.AddScoped<ILayouter, CircularCloudLayouter>();
             container.AddScoped<ISpiral, ExpandingSquareSpiral>();
             container.AddScoped<IWordSizer, FrequencyBasedWordSizer>();
-        }
-
-        private static void InitImageSaver(IServiceCollection container, VisualizerFactorySettings factorySettings)
-        {
-            container.AddSingleton(factorySettings.SavingFormat.ToImageSaver());
-        }
-
-        private static void InitFileReader(IServiceCollection container, VisualizerFactorySettings factorySettings)
-        {
-            container.AddSingleton(factorySettings.InputFileFormat.ToFileReader());
-        }
-
-        private static void InitVisualizerSettings(IServiceCollection container, VisualizerFactorySettings settings)
-        {
-            var visualizerSettings = new VisualizerSettings(
-                settings.ImageSize,
-                settings.TextFont,
-                settings.TextColor,
-                settings.BackgroundColor,
-                settings.StrokeColor
-            );
-
-            container.AddSingleton(visualizerSettings);
         }
     }
 }

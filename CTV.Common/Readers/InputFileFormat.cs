@@ -1,4 +1,4 @@
-﻿namespace CTV.Common.VisualizerContainer
+﻿namespace CTV.Common.Readers
 {
     public enum InputFileFormat
     {

@@ -1,4 +1,4 @@
-﻿namespace CTV.Common.VisualizerContainer
+﻿namespace CTV.Common.ImageSavers
 {
     public enum SavingFormat
     {

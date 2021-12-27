@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using CTV.Common.VisualizerContainer;
+using CTV.Common.ImageSavers;
+using CTV.Common.Readers;
 using FunctionalProgrammingInfrastructure;
 
 namespace CTV.ConsoleInterface

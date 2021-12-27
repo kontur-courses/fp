@@ -27,7 +27,7 @@ namespace CTV.ConsoleInterface
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (StartLoopCommand command) => Result.OfAction(() => StartLoop(command)),
-                    errors => OnError(errors)
+                    _ => Result.Fail<None>("Error")
                 );
         }
 
@@ -40,14 +40,13 @@ namespace CTV.ConsoleInterface
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (ExitLoopCommand command) => Result.OfAction(ExitLoopCommand.ExitLoop),
-                    errors => OnError(errors)
+                    _ => Result.Fail<None>("Error")
                 );
         }
 
         private static Result<None> VisualizeOnce(VisualizerOptions options)
         {
-            return Result.Ok(new ConsoleProcessor())
-                .Then(processor => processor.Run(options))
+            return ConsoleProcessor.Render(options)
                 .RefineError("Visualization failed");
         }
 
@@ -75,17 +74,8 @@ namespace CTV.ConsoleInterface
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 ParseLoopOptions(args)
-                    .OnFail(Console.WriteLine)
                     .OnSuccess(() => Console.WriteLine("Successfully visualized image"));
             }
-        }
-
-        private static Result<None> OnError(IEnumerable<Error> errors)
-        {
-            return errors.Any(x => x is not HelpRequestedError and not VersionRequestedError)
-                ? Result.Fail<None>("Error in parsing line commands")
-                : Result.Ok();
-
         }
     }
 }

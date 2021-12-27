@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FunctionalProgrammingInfrastructure
 {
@@ -23,6 +25,7 @@ namespace FunctionalProgrammingInfrastructure
 
         public string Error { get; }
         internal T Value { get; }
+        
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
@@ -136,44 +139,6 @@ namespace FunctionalProgrammingInfrastructure
             string errorMessage)
         {
             return input.ReplaceError(err => errorMessage + ". " + err);
-        }
-
-        public static Result<TInput> InitVariable<TInput, TVariable>(this Result<TInput> input,
-            Func<TVariable> func,
-            out TVariable variable)
-        {
-            variable = default;
-            
-            if (!input.IsSuccess)
-                return input;
-            
-            try
-            {
-                variable = func();
-                return input;
-            }
-            catch (Exception e)
-            {
-                return Fail<TInput>(e.Message);
-            }
-        }
-        
-        public static Result<TInput> InitVariable<TInput, TVariable>(this Result<TInput> input,
-            Func<Result<TVariable>> func,
-            out TVariable variable)
-        {
-            variable = default;
-
-            if (!input.IsSuccess)
-                return input;
-            
-            var funcResult = func();
-            if (!funcResult.IsSuccess)
-                return Fail<TInput>(funcResult.Error);
-            
-            variable = funcResult.GetValueOrThrow();
-            return input;
-
         }
     }
 }
