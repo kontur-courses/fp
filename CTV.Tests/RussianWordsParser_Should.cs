@@ -1,4 +1,4 @@
-﻿using CTV.Common;
+﻿using CTV.Common.WordsParsers;
 using FluentAssertions;
 using FunctionalProgrammingInfrastructure;
 using NUnit.Framework;

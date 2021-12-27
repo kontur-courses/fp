@@ -1,6 +1,6 @@
 ﻿using FunctionalProgrammingInfrastructure;
 
-namespace CTV.Common
+namespace CTV.Common.WordsParsers
 {
     public interface IWordsParser
     {

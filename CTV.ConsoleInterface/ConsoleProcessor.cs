@@ -1,13 +1,12 @@
 ﻿using System.Drawing;
 using System.IO;
-using System.Linq;
 using CTV.Common;
 using CTV.Common.ImageSavers;
 using CTV.Common.Preprocessors;
 using CTV.Common.Readers;
 using FunctionalProgrammingInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using CTV.Common.ImageSavers;
+using CTV.Common.WordsParsers;
 
 namespace CTV.ConsoleInterface
 {

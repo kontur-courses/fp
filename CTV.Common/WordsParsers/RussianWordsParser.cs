@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using FunctionalProgrammingInfrastructure;
 
-namespace CTV.Common
+namespace CTV.Common.WordsParsers
 {
     public class RussianWordsParser : IWordsParser
     {

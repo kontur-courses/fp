@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net;
 using System.Text.Json;
 using CommandLine;
 using CTV.ConsoleInterface.Options;

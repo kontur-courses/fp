@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using CommandLine;
 using CTV.ConsoleInterface.ConsoleCommands;
 using CTV.ConsoleInterface.Options;
