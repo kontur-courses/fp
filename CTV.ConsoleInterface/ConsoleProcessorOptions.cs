@@ -6,7 +6,7 @@ using FunctionalProgrammingInfrastructure;
 
 namespace CTV.ConsoleInterface
 {
-    public class VisualizerOptions
+    public class ConsoleProcessorOptions
     {
         public string InputFile { get; set; }
         public string OutputFile { get; set; }
@@ -18,7 +18,7 @@ namespace CTV.ConsoleInterface
         public SavingFormat SavingFormat { get; set; }
         public InputFileFormat InputFileFormat { get; set; }
 
-        public VisualizerOptions(
+        public ConsoleProcessorOptions(
             string inputFile,
             string outputFile,
             int imageWidth,

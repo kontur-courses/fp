@@ -22,7 +22,7 @@ namespace FunctionalProgrammingInfrastructure
         {
             var res =
                 "1358571172".ParseIntResult()
-                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new { i, hex })
+                    .SelectMany(i => Convert.ToString(i, 16).AsResult(), (i, hex) => new {i, hex})
                     .SelectMany(t => (t.hex + t.hex + t.hex + t.hex).ParseGuidResult());
             res.Should().BeEquivalentTo(Result.Ok(Guid.Parse("50FA26A450FA26A450FA26A450FA26A4")));
         }

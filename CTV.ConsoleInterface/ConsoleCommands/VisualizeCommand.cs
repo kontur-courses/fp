@@ -38,9 +38,9 @@ namespace CTV.ConsoleInterface.Options
         [Option("fontSize", Default = 240)] public int FontSize { get; set; }
 
 
-        public VisualizerOptions ToVisualizerOptions()
+        public ConsoleProcessorOptions ToVisualizerOptions()
         {
-            return new VisualizerOptions(
+            return new ConsoleProcessorOptions(
                 inputFile: InputFile,
                 outputFile: OutputFile,
                 imageWidth: Width,

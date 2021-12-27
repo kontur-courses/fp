@@ -15,7 +15,7 @@ namespace CTV.ConsoleInterface
             Result
                 .OfAction(() => ParseDefaultOptions(args))
                 .RefineError("Failed")
-                .OnFail(Console.Error.WriteLine);
+                .OnFail(error => Console.Error.WriteLine(error));
         }
 
         private static Result<None> ParseDefaultOptions(string[] args)
@@ -27,7 +27,7 @@ namespace CTV.ConsoleInterface
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (StartLoopCommand command) => Result.OfAction(() => StartLoop(command)),
-                    _ => Result.Fail<None>("Error")
+                    _ => Result.Fail<None>("Contained error in arguments")
                 );
         }
 
@@ -40,11 +40,11 @@ namespace CTV.ConsoleInterface
                     (VisualizeCommand command) => OnVisualizeCommand(command),
                     (VisualizeFromConfigCommand command) => OnVisualizeFromConfigCommand(command),
                     (ExitLoopCommand command) => Result.OfAction(ExitLoopCommand.ExitLoop),
-                    _ => Result.Fail<None>("Error")
+                    _ => Result.Fail<None>("Contained error in arguments")
                 );
         }
 
-        private static Result<None> VisualizeOnce(VisualizerOptions options)
+        private static Result<None> VisualizeOnce(ConsoleProcessorOptions options)
         {
             return ConsoleProcessor.Render(options)
                 .RefineError("Visualization failed");
@@ -74,6 +74,7 @@ namespace CTV.ConsoleInterface
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 ParseLoopOptions(args)
+                    .OnFail(e => Console.Error.WriteLine(e))
                     .OnSuccess(() => Console.WriteLine("Successfully visualized image"));
             }
         }

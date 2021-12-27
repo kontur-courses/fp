@@ -10,11 +10,11 @@ namespace CTV.Common
         public static ServiceProvider CreateInstance()
         {
             var container = new ServiceCollection();
-            InitCommonObjects(container);
+            AddDependencies(container);
             return container.BuildServiceProvider();
         }
 
-        private static void InitCommonObjects(IServiceCollection container)
+        private static void AddDependencies(IServiceCollection container)
         {
             container.AddScoped<Visualizer>();
             container.AddScoped<IFileStreamFactory, FileStreamFactory>();

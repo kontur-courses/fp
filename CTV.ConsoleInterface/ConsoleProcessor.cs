@@ -13,7 +13,7 @@ namespace CTV.ConsoleInterface
 {
     public class ConsoleProcessor
     {
-        public static Result<None> Render(VisualizerOptions options)
+        public static Result<None> Render(ConsoleProcessorOptions options)
         {
             return
                 from container in VisualizerContainerFactory.CreateInstance().AsResult()
@@ -42,7 +42,8 @@ namespace CTV.ConsoleInterface
                 Result.Ok(inStream)
                     .Then(fileReader.ReadToEnd)
                     .Then(wordsParser.Parse)
-                    .Then(preprocessor.Preprocess);
+                    .Then(preprocessor.Preprocess)
+                    .InAnyCase(inStream.Close);
         }
 
         private static Result<None> SaveImage(Bitmap image, Stream oStream, IImageSaver imageSaver)
@@ -52,8 +53,8 @@ namespace CTV.ConsoleInterface
                 .Then(stream => imageSaver.Save(image, stream))
                 .InAnyCase(oStream.Close);
         }
-     
-        private static VisualizerSettings GetVisualizerSetting(VisualizerOptions options)
+
+        private static VisualizerSettings GetVisualizerSetting(ConsoleProcessorOptions options)
         {
             return new VisualizerSettings(
                 options.ImageSize,

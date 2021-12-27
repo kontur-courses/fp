@@ -13,7 +13,7 @@ namespace CTV.ConsoleInterface.ConsoleCommands
         [Option("config", Default = "config.json")]
         public string PathToJsonConfig { get; set; }
 
-        public Result<VisualizerOptions> ReadConfig()
+        public Result<ConsoleProcessorOptions> ReadConfig()
         {
             return ReadJson()
                 .Then(Deserialize)

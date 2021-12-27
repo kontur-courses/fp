@@ -11,6 +11,7 @@ namespace FunctionalProgrammingInfrastructure
                 ? v.AsResult()
                 : Result.Fail<int>(error ?? "Не число " + s);
         }
+
         public static Result<Guid> ParseGuidResult(this string s, string error = null)
         {
             Guid v;
