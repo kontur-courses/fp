@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Parser;
+﻿using TagCloud.Infrastructure;
+
+namespace TagCloud.Parser;
 
 public interface ITagParser
 {
-    public TagMap Parse(string filepath);
+    public Result<TagMap> Parse(string filepath);
 }

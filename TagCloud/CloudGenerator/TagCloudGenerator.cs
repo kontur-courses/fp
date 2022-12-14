@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagCloud.ImageGenerator;
+using TagCloud.Infrastructure;
 using TagCloud.Parser;
 using TagCloud.WordSizingAlgorithm;
 
@@ -19,9 +20,13 @@ public class TagCloudGenerator : ICloudGenerator
         this.imageGenerator = imageGenerator;
     }
 
-    public Image GenerateCloud(string filepath)
+    public Result<Image> GenerateCloud(string filepath)
     {
         var tagMap = parser.Parse(filepath);
+
+        if (!tagMap.IsSuccess)
+            return new Result<Image>(tagMap.Error);
+
         var measuredTags = wordSizingAlgorithm.GetTagSizes(tagMap);
         return imageGenerator.GenerateImage(measuredTags);
     }

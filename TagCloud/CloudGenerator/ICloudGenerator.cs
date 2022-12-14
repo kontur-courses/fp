@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using TagCloud.Infrastructure;
 
 namespace TagCloud.CloudGenerator;
 
 public interface ICloudGenerator
 {
-    public Image GenerateCloud(string filepath);
+    public Result<Image> GenerateCloud(string filepath);
 }

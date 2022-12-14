@@ -14,7 +14,7 @@ public class RelativeWordSizingAlgorithm : IWordSizingAlgorithm
     
     public int GetWordSize(string word, TagMap tagMap)
     {
-        return (int)Math.Round(tagMap[word] / (double)tagMap.TotalWordCount * baseWordSize);
+        return (int)Math.Ceiling(tagMap[word] / (double)tagMap.TotalWordCount * baseWordSize);
     }
 
     public Tag[] GetTagSizes(TagMap tagMap)

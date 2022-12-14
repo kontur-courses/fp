@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
 using TagCloud.ColoringAlgorithm;
+using TagCloud.Infrastructure;
 using TagCloud.LayoutAlgorithm;
 
 namespace TagCloud.ImageGenerator;
@@ -9,22 +10,26 @@ public class BitmapImageGenerator : IImageGenerator
 {
     private readonly Size size;
     private readonly IColoringAlgorithm coloringAlgorithm;
-    private readonly Font font;
+    private readonly FontProvider fontProvider;
     private readonly ILayoutAlgorithm layoutAlgorithm;
 
-    public BitmapImageGenerator(Size size, IColoringAlgorithm coloringAlgorithm, Font font,
+    public BitmapImageGenerator(Size size, IColoringAlgorithm coloringAlgorithm, FontProvider fontProvider,
         ILayoutAlgorithm layoutAlgorithm)
     {
         this.size = size;
         this.coloringAlgorithm = coloringAlgorithm;
-        this.font = font;
+        this.fontProvider = fontProvider;
         this.layoutAlgorithm = layoutAlgorithm;
     }
     
-    public Image GenerateImage(Tag[] tags)
+    public Result<Image> GenerateImage(Tag[] tags)
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            throw new NotSupportedException();
+            return new Result<Image>("OS not supported");
+
+        var font = fontProvider.GetFont();
+        if (!font.IsSuccess)
+            return new Result<Image>(font.Error);
         
         var image = new Bitmap(size.Width, size.Height);
 
@@ -36,10 +41,15 @@ public class BitmapImageGenerator : IImageGenerator
         var i = 0;
         foreach (var tag in tags)
         {
-            var tagFont = new Font(font.FontFamily, tag.Size);
+            var tagFont = new Font(font.Value!.FontFamily, tag.Size);
             var measuredTag = graphics.MeasureString(tag.Word, tagFont);
             var tagSize = new Size((int)Math.Ceiling(measuredTag.Width), (int)Math.Ceiling(measuredTag.Height));
             var position = layoutAlgorithm.PutNextRectangle(tagSize).Location;
+
+            if (position.X < 0 || position.X + tagSize.Width > size.Width 
+                               || position.Y < 0 || position.Y + tagSize.Height > size.Height)
+                return new Result<Image>($"Image size (width: {size.Width}, height: {size.Height}) is too small.");
+            
             using var tagBrush = new SolidBrush(colors[i++]);
             graphics.DrawString(tag.Word, tagFont, tagBrush, position);
         }

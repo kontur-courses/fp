@@ -3,10 +3,12 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Autofac;
 using CommandLine;
+using TagCloud;
 using TagCloud.CloudGenerator;
 using TagCloud.ColoringAlgorithm;
 using TagCloud.ColoringAlgorithm.Provider;
 using TagCloud.ImageGenerator;
+using TagCloud.Infrastructure;
 using TagCloud.LayoutAlgorithm;
 using TagCloud.LayoutAlgorithm.CircularLayoutAlgorithm;
 using TagCloud.Parser;
@@ -16,6 +18,7 @@ using TagCloud.WordSizingAlgorithm;
 
 namespace TagCloudConsoleApp;
 
+#pragma warning disable CA1416
 public static class Program
 {
     public static int Main(string[] args)
@@ -35,16 +38,23 @@ public static class Program
         var container = ConfigureContainer(options);
 
         var generator = container.Resolve<ICloudGenerator>();
-        var image = generator.GenerateCloud(options.InputFile);
-        image.Save(options.OutputFile, ImageFormat.Png);
-        Console.WriteLine($"Image saved as {options.OutputFile}");
+        generator.GenerateCloud(options.InputFile)
+            .OnSuccess(image => SaveImage(image, options.OutputFile))
+            .OnFail(Console.WriteLine);
         return 0;
+    }
+
+    private static void SaveImage(Image image, string filepath)
+    {
+        image.Save(filepath, ImageFormat.Png);
+        Console.WriteLine($"Image saved as {filepath}");
     }
 
     private static IContainer ConfigureContainer(Options options)
     {
         var containerBuilder = new ContainerBuilder();
         RegisterLayoutAlgorithm(options, containerBuilder);
+        RegisterFontProvider(options, containerBuilder);
         RegisterWordSizingAlgorithm(options, containerBuilder);
         RegisterParsingConfig(containerBuilder);
         RegisterParser(options, containerBuilder);
@@ -52,6 +62,12 @@ public static class Program
         RegisterImageGenerator(options, containerBuilder);
         RegisterCloudGenerator(containerBuilder);
         return containerBuilder.Build();
+    }
+
+    private static void RegisterFontProvider(Options options, ContainerBuilder containerBuilder)
+    {
+        containerBuilder.RegisterType<FontProvider>().AsSelf()
+            .WithParameter(new TypedParameter(typeof(string), options.FontName));
     }
 
     private static void RegisterCloudGenerator(ContainerBuilder containerBuilder)
@@ -69,11 +85,8 @@ public static class Program
 
     private static void RegisterImageGenerator(Options options, ContainerBuilder containerBuilder)
     {
-        var imageGeneratorBuilder = containerBuilder.RegisterType<BitmapImageGenerator>().As<IImageGenerator>()
+        containerBuilder.RegisterType<BitmapImageGenerator>().As<IImageGenerator>()
             .WithParameter(new TypedParameter(typeof(Size), new Size(options.Width, options.Height ?? options.Width)));
-        imageGeneratorBuilder.WithParameter(options.FontName != null
-            ? new TypedParameter(typeof(Font), new Font(options.FontName, 1))
-            : new TypedParameter(typeof(Font), new Font("Arial", 1)));
     }
 
     private static void RegisterWordSizingAlgorithm(Options options, ContainerBuilder containerBuilder)
@@ -131,3 +144,4 @@ public static class Program
         return result;
     }
 }
+#pragma warning restore CA1416
