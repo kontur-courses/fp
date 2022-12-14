@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWindowsForms>true</UseWindowsForms>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TagCloudLayouter\TagCloudLayouter.csproj" />
+      <ProjectReference Include="..\TagCloudCoreExtensions\TagCloudCoreExtensions.csproj" />
+      <ProjectReference Include="..\TagCloudCore\TagCloudCore.csproj" />
+    </ItemGroup>
+
+</Project>
