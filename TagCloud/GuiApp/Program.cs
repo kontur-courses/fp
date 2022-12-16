@@ -24,7 +24,7 @@ internal static class Program
         var oldImage = Viewport.Instance.Image;
         var result = container.Resolve<TagCloudConstructor>().Construct();
         if (!result.IsSuccess)
-            return;
+            MessageBox.Show(result.Error, "Error", MessageBoxButtons.OK);
         Viewport.Instance.Image = result.Value;
         oldImage?.Dispose();
     }

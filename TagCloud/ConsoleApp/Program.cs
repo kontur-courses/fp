@@ -13,8 +13,11 @@ internal static class Program
         if (args.Contains("--help"))
             return;
 
-        if (options is null)
-            throw new ArgumentException("Incorrect parsing result");
+        if (!options.IsSuccess || options.Value is null)
+        {
+            Console.Error.WriteLine($"Arguments parsing: {options.Error}");
+            return;
+        }
 
         var container = DiContainerBuilder.Build();
         
@@ -22,11 +25,15 @@ internal static class Program
             .Setup(
                 container.Resolve<ApplicationProperties>(),
                 container.Resolve<IWordsParser>());
-            
+
         var result = container.Resolve<TagCloudConstructor>().Construct();
         if (!result.IsSuccess)
+        {
+            Console.Error.WriteLine($"Cloud constructor:\n{result.Error}");
             return;
-        result.Value?.Save(options.OutputPath);
-        Console.WriteLine($"Tag cloud saved to file {options.OutputPath}");
+        }
+
+        result.Value?.Save(options.Value.OutputPath);
+        Console.WriteLine($"Tag cloud saved to file {options.Value.OutputPath}");
     }
 }
