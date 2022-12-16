@@ -1,6 +1,8 @@
-﻿namespace TagCloud;
+﻿using Result;
+
+namespace TagCloud;
 
 public interface IFileLoader
 {
-    public string Load(string path);
+    public Result<string> Load(string path);
 }

@@ -37,6 +37,8 @@ public class TagCloudConstructor
     public Result<Bitmap> Construct()
     {
         var text = textLoader.Load(applicationProperties.Path);
+        if (!text.IsSuccess)
+            return new Result<Bitmap>(null, $"TextLoader: {text.Error}");
         var words = parser.Parse(text);
         var processedWords = wordPreprocessor.Process(words, applicationProperties.CloudProperties.ExcludedWords);
         var wordsFrequency = frequencyDictionary.GetWordsFrequency(processedWords);

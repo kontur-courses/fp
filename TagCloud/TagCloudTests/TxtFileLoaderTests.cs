@@ -15,10 +15,7 @@ public class TxtFileLoaderTests
     public void Load_ExceptionOnIncorrectArgument(string value)
     {
         var loader = new TxtFileLoader();
-
-        var action = () => loader.Load(value);
-
-        action.Should().Throw<Exception>();
+        loader.Load(value).IsSuccess.Should().BeFalse();
     }
 
     [Test]
@@ -30,6 +27,6 @@ public class TxtFileLoaderTests
         var actual = loader.Load(path);
 
         var expected = File.ReadAllText(path);
-        actual.Should().Be(expected);
+        actual.Value.Should().Be(expected);
     }
 }
