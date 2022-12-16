@@ -22,8 +22,11 @@ internal static class Program
             .Setup(
                 container.Resolve<ApplicationProperties>(),
                 container.Resolve<IWordsParser>());
-
-        container.Resolve<TagCloudConstructor>().Construct().Save(options.OutputPath);
+            
+        var result = container.Resolve<TagCloudConstructor>().Construct();
+        if (!result.IsSuccess)
+            return;
+        result.Value?.Save(options.OutputPath);
         Console.WriteLine($"Tag cloud saved to file {options.OutputPath}");
     }
 }

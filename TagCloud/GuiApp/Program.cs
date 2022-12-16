@@ -22,7 +22,10 @@ internal static class Program
     private static void OnRender(object? sender, EventArgs e)
     {
         var oldImage = Viewport.Instance.Image;
-        Viewport.Instance.Image = container.Resolve<TagCloudConstructor>().Construct();
+        var result = container.Resolve<TagCloudConstructor>().Construct();
+        if (!result.IsSuccess)
+            return;
+        Viewport.Instance.Image = result.Value;
         oldImage?.Dispose();
     }
 }

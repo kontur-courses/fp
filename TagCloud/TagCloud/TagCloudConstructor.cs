@@ -1,4 +1,5 @@
 ﻿using TagsCloudLayouter;
+using Result;
 
 namespace TagCloud;
 
@@ -33,7 +34,7 @@ public class TagCloudConstructor
         this.frequencyDictionary = frequencyDictionary;
     }
 
-    public Bitmap Construct()
+    public Result<Bitmap> Construct()
     {
         var text = textLoader.Load(applicationProperties.Path);
         var words = parser.Parse(text);
@@ -41,6 +42,6 @@ public class TagCloudConstructor
         var wordsFrequency = frequencyDictionary.GetWordsFrequency(processedWords);
         var texts = sizeByFrequency.ResizeAll(wordsFrequency).ToList();
         layouter.PlaceTexts(texts);
-        return drawer.Draw(texts);
+        return new Result<Bitmap>(drawer.Draw(texts));
     }
 }
