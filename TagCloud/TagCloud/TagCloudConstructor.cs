@@ -48,6 +48,18 @@ public class TagCloudConstructor
         var wordsFrequency = frequencyDictionary.GetWordsFrequency(processedWords);
         var texts = sizeByFrequency.ResizeAll(wordsFrequency).ToList();
         layouter.PlaceTexts(texts);
-        return new Result<Bitmap>(drawer.Draw(texts));
+        
+        return AreAllWordsWithinImageBounds(applicationProperties.SizeProperties, applicationProperties.CloudProperties) 
+            ? new Result<Bitmap>(drawer.Draw(texts)) 
+            : new Result<Bitmap>(null, "Words are not in bound of image");
+    }
+
+    private bool AreAllWordsWithinImageBounds(SizeProperties sizeProperties, CloudProperties cloudProperties)
+    {
+        var imagePosition = Point.Subtract(
+            cloudProperties.Center,
+            sizeProperties.ImageSize / 2);
+        var imageZone = new Rectangle(imagePosition, sizeProperties.ImageSize);
+        return layouter.Rectangles.All(r => imageZone.Contains(r));
     }
 }
