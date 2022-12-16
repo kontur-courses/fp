@@ -20,7 +20,13 @@ public class ApplicationPropertiesSetuper
         var cloudProperties = properties.CloudProperties;
         cloudProperties.Density = consoleOptions.Density;
         if (consoleOptions.ExcludedWords is not null)
-            cloudProperties.ExcludedWords = wordsParser.Parse(consoleOptions.ExcludedWords);
+        {
+            var excludedWords = wordsParser.Parse(consoleOptions.ExcludedWords);
+            if (!excludedWords.IsSuccess || excludedWords.Value is null)
+                return;
+            cloudProperties.ExcludedWords = excludedWords.Value;
+        }
+
         var palette = properties.Palette;
         palette.Background = ColorTranslator.FromHtml(consoleOptions.BackgroundColor);
         palette.Foreground = ColorTranslator.FromHtml(consoleOptions.ForegroundColor);

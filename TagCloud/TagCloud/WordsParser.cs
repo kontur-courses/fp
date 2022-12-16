@@ -1,9 +1,17 @@
-﻿namespace TagCloud;
+﻿using Result;
+
+namespace TagCloud;
 
 public class WordsParser : IWordsParser
 {
-    public List<string> Parse(string text)
+    public Result<List<string>> Parse(string? text)
     {
-        return text.Split(new[] { "\n", " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (text is null)
+            return new Result<List<string>>(new List<string>(), "Can't parse null string");
+
+        var parsedWords = text
+            .Split(new[] { "\n", " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+        return new Result<List<string>>(parsedWords);
     }
 }

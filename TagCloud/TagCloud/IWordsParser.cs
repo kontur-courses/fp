@@ -1,6 +1,8 @@
-﻿namespace TagCloud;
+﻿using Result;
+
+namespace TagCloud;
 
 public interface IWordsParser
 {
-    public List<string> Parse(string text);
+    public Result<List<string>> Parse(string? text);
 }

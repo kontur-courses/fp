@@ -149,7 +149,7 @@ public sealed class PropertyPanel : TableLayoutPanel
     {
         if (sender is not ExcludedWords words)
             return;
-        properties.CloudProperties.ExcludedWords = words.Words;
+        properties.CloudProperties.ExcludedWords = words.Words();
     }
 
     private void OnDensityChanged(object? sender, EventArgs args)

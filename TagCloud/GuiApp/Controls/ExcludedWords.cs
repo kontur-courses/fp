@@ -6,7 +6,11 @@ public sealed class ExcludedWords : TextBox
 {
     private IWordsParser wordsParser;
 
-    public List<string> Words => wordsParser.Parse(Text);
+    public List<string> Words()
+    {
+        var words = wordsParser.Parse(Text);
+        return words.IsSuccess && words.Value is not null ? words.Value : new List<string>();
+    }
     
     public ExcludedWords(IWordsParser wordsParser)
     {
