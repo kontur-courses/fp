@@ -33,6 +33,6 @@ public class ArgumentsParserTests
     {
         var arguments = argumentsLine.Split().ToArray();
         
-        ArgumentsParser.ParseArgs(arguments).Should().BeNull();
+        ArgumentsParser.ParseArgs(arguments).Value.Should().BeNull();
     }
 }

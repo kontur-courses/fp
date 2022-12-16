@@ -19,13 +19,11 @@ internal static class Program
             return;
         }
 
-        var container = DiContainerBuilder.Build();
+        var properties = new ApplicationPropertiesSetuper(options)
+            .Setup(new WordsParser());
         
-        new ApplicationPropertiesSetuper(options)
-            .Setup(
-                container.Resolve<ApplicationProperties>(),
-                container.Resolve<IWordsParser>());
-
+        var container = DiContainerBuilder.Build(properties);
+        
         var result = container.Resolve<TagCloudConstructor>().Construct();
         if (!result.IsSuccess)
         {
@@ -33,6 +31,9 @@ internal static class Program
             return;
         }
 
+        if (Path.GetExtension(options.Value.OutputPath) is not (".jpg" or ".jpeg" or ".png"))
+            Console.Error.WriteLine("Unsupported image format in path");
+        
         result.Value?.Save(options.Value.OutputPath);
         Console.WriteLine($"Tag cloud saved to file {options.Value.OutputPath}");
     }

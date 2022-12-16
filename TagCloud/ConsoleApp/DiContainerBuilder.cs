@@ -6,10 +6,10 @@ namespace ConsoleApp;
 
 public static class DiContainerBuilder
 {
-    public static IContainer Build()
+    public static IContainer Build(ApplicationProperties applicationProperties)
     {
         var builder = new ContainerBuilder();
-        builder.RegisterType<ApplicationProperties>().AsSelf().SingleInstance();
+        builder.RegisterInstance(applicationProperties).AsSelf().SingleInstance();
         builder.RegisterType<TxtFileLoader>().As<IFileLoader>().SingleInstance();
         builder.RegisterType<WordsParser>().As<IWordsParser>();
         builder.RegisterType<FrequencyDictionary>().AsSelf();
