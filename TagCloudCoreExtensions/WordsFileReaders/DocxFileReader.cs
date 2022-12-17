@@ -1,5 +1,4 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
-using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCoreExtensions.WordsFileReaders;
