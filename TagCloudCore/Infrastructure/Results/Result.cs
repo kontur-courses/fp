@@ -24,7 +24,7 @@ public struct Result<T>
     [MemberNotNullWhen(false, nameof(Error))]
     public bool IsSuccess => Error is null;
 
-    public T? GetValueOrThrow()
+    public T GetValueOrThrow()
     {
         if (IsSuccess)
             return Value;
