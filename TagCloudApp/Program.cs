@@ -36,6 +36,10 @@ internal static class Program
         builder.RegisterType<MainForm>()
             .SingleInstance();
 
+        builder.RegisterType<ErrorHandler>()
+            .As<IErrorHandler>()
+            .SingleInstance();
+
         builder.RegisterType<SettingsManager>();
         builder.RegisterType<FileBlobStorage>()
             .As<IBlobStorage>();
