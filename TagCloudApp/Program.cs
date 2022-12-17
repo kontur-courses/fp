@@ -5,7 +5,6 @@ using TagCloudApp.Domain;
 using TagCloudCore.Domain;
 using TagCloudCore.Domain.Providers;
 using TagCloudCore.Domain.Settings;
-using TagCloudCore.Infrastructure;
 using TagCloudCore.Infrastructure.Settings;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
