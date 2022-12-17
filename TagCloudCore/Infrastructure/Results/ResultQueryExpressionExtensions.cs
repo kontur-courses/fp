@@ -1,4 +1,4 @@
-﻿namespace TagCloudCore.Infrastructure.Result;
+﻿namespace TagCloudCore.Infrastructure.Results;
 
 public static class ResultQueryExpressionExtensions
 {

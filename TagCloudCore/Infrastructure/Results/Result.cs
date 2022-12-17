@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace TagCloudCore.Infrastructure.Result;
+namespace TagCloudCore.Infrastructure.Results;
 
 public abstract class None
 {
