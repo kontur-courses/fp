@@ -62,6 +62,35 @@ public class FileReaders_Should
         Check(new DocxFileReader(_pathSettingsProvider));
     }
 
+    [Test]
+    public void Fail_ForNonExistingFile()
+    {
+        _filePathToRemove = "abc/efg.txt";
+        _pathSettingsProvider.GetWordsPathSettings().WordsPath = _filePathToRemove;
+
+        var result = new DocxFileReader(_pathSettingsProvider).ReadFile();
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain(_filePathToRemove);
+    }
+
+    [Test]
+    public void Fail_ForBadExtension()
+    {
+        _filePathToRemove = "text.txt";
+        using (var writer = new StreamWriter(File.Create(_filePathToRemove)))
+        {
+            writer.Write(TestText);
+        }
+
+        _pathSettingsProvider.GetWordsPathSettings().WordsPath = _filePathToRemove;
+
+        var result = new DocxFileReader(_pathSettingsProvider).ReadFile();
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain(".txt");
+    }
+
     private void Check(IFileReader reader)
     {
         _pathSettingsProvider.GetWordsPathSettings().WordsPath = _filePathToRemove!;
