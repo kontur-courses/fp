@@ -4,21 +4,17 @@ using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCoreExtensions.WordsFileReaders;
 
-public class DocxFileReader : IFileReader
+public class DocxFileReader : StandardFileReader
 {
-    private readonly IWordsPathSettingsProvider _pathSettingsProvider;
-
-    public DocxFileReader(IWordsPathSettingsProvider pathSettingsProvider)
+    public DocxFileReader(IWordsPathSettingsProvider pathSettingsProvider) : base(pathSettingsProvider)
     {
-        _pathSettingsProvider = pathSettingsProvider;
     }
 
-    public string SupportedExtension => ".docx";
+    public override string SupportedExtension => ".docx";
 
-    public string ReadFile()
+    protected override string InternalReadFile(string path)
     {
-        var dir = _pathSettingsProvider.GetWordsPathSettings().WordsPath;
-        using var wordDoc = WordprocessingDocument.Open(dir, false);
+        using var wordDoc = WordprocessingDocument.Open(path, false);
         var body = wordDoc.MainDocumentPart!.Document.Body!;
         var lines = body.ChildElements.Select(line => line.InnerText);
         return string.Join("\r\n", lines);

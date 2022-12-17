@@ -66,6 +66,7 @@ public class FileReaders_Should
     {
         _pathSettingsProvider.GetWordsPathSettings().WordsPath = _filePathToRemove!;
 
-        reader.ReadFile().Should().Be(TestText);
+        reader.ReadFile().GetValueOrThrow()
+            .Should().Be(TestText);
     }
 }

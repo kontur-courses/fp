@@ -1,22 +1,15 @@
-﻿using TagCloudCore.Interfaces;
-using TagCloudCore.Interfaces.Providers;
+﻿using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCoreExtensions.WordsFileReaders;
 
-public class TxtFileReader : IFileReader
+public class TxtFileReader : StandardFileReader
 {
-    private readonly IWordsPathSettingsProvider _pathSettingsProvider;
-
-    public TxtFileReader(IWordsPathSettingsProvider pathSettingsProvider)
+    public TxtFileReader(IWordsPathSettingsProvider pathSettingsProvider) : base(pathSettingsProvider)
     {
-        _pathSettingsProvider = pathSettingsProvider;
     }
 
-    public string SupportedExtension => ".txt";
+    public override string SupportedExtension => ".txt";
 
-    public string ReadFile()
-    {
-        var dir = _pathSettingsProvider.GetWordsPathSettings().WordsPath;
-        return File.ReadAllText(dir);
-    }
+    protected override string InternalReadFile(string path) =>
+        File.ReadAllText(path);
 }
