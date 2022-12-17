@@ -10,7 +10,7 @@ using Text = DocumentFormat.OpenXml.Drawing.Text;
 namespace TagCloudTests;
 
 [TestFixture]
-public class WordsReaders_Should
+public class FileReaders_Should
 {
     private const string TestText = "a bc\r\nde f";
     private IWordsPathSettingsProvider _pathSettingsProvider = null!;
