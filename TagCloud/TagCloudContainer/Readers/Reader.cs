@@ -1,22 +1,30 @@
 ﻿using Spire.Doc;
 using Spire.Doc.Documents;
 using System.Text;
+using Spire.Doc.Interface;
 
 namespace TagCloudContainer.Readers
 {
     public class Reader : IFileReader
     {
-        public string TxtRead(string path)
+        public Result<string> TxtRead(string path)
         {
-            return File.ReadAllText(path);
+            return Result.Of(()=>File.ReadAllText(path))
+                .RefineError("Error file path");
         }
-        public string DocRead(string path)
+        
+        public Result<string> DocRead(string path)
+        {
+            return Result.Of(() => new Document(path))
+                .Then(GetTextFromDoc)
+                .RefineError("Error file path");
+        }
+        private static string GetTextFromDoc(IDocument document)
         {
             var stringBuilder = new StringBuilder();
-            var document = new Document(path);
             foreach (Section section in document.Sections)
-                foreach (Paragraph paragraph in section.Paragraphs)
-                    stringBuilder.AppendLine(paragraph.Text);
+            foreach (Paragraph paragraph in section.Paragraphs)
+                stringBuilder.AppendLine(paragraph.Text);
             return stringBuilder.ToString();
         }
     }

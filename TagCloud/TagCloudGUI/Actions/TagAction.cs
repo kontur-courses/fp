@@ -66,15 +66,15 @@ namespace TagCloudGraphicalUserInterface.Actions
             var text = presetsSettings.txtReader
                 ? presetsSettings.Reader.TxtRead(filePath)
                 : presetsSettings.Reader.DocRead(filePath);
-            var parsedText = presetsSettings.Parser.Parse(text);
+            var parsedText = presetsSettings.Parser.Parse(text.GetValueOrThrow()).GetValueOrThrow();
             var filteredTags = presetsSettings.Filtered
-                ? presetsSettings.Filter.Filter(parsedText, w => w.Length > 3)
+                ? presetsSettings.Filter.Filter(parsedText, w => w.Length > 3).GetValueOrThrow()
                 : parsedText;
             var formattedTags = presetsSettings.ToLowerCase
-                ? presetsSettings.Formatter.Normalize(filteredTags, x => x.ToLower())
+                ? presetsSettings.Formatter.Normalize(filteredTags, x => x.ToLower()).GetValueOrThrow()
                 : filteredTags;
             var freqTags = presetsSettings.FrequencyCounter.GetWordsFrequency(formattedTags);
-            return presetsSettings.FontSizer.GetTagsWithSize(freqTags, algorithmSettings.FontSettings);
+            return presetsSettings.FontSizer.GetTagsWithSize(freqTags.GetValueOrThrow(), algorithmSettings.FontSettings).GetValueOrThrow();
         }
     }
 }

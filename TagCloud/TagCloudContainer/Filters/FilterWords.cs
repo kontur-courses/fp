@@ -3,9 +3,9 @@
 
     public class FilterWords : IFilter
     {
-        public IEnumerable<string> Filter(IEnumerable<string> textWords, Func<string, bool> filterFunc)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> textWords, Func<string, bool> filterFunc)
         {
-            return textWords.Select(x => x).Where(filterFunc);
+            return Result.Of(()=> textWords.Select(x => x).Where(filterFunc));
         }
     }
 }

@@ -26,8 +26,8 @@ namespace TagCloudShould
             var reader = new Reader();
             var text = reader.TxtRead((Environment.CurrentDirectory +
                                        "\\..\\..\\..\\word_data\\data.txt"));
-            var words = new FileLinesParser().Parse(text);
-            defaultTags = InitializeTags(words);
+            var words = new FileLinesParser().Parse(text.GetValueOrThrow());
+            defaultTags = InitializeTags(words.GetValueOrThrow());
         }
 
 
@@ -36,13 +36,13 @@ namespace TagCloudShould
             var filterWords = new FilterWords();
             var filtredTags = filterWords.Filter(rowWords, x => x.Length > 0);
             var formatter = new WordFormatter();
-            var formattedTags = formatter.Normalize(filtredTags, x => x.ToLower());
+            var formattedTags = formatter.Normalize(filtredTags.GetValueOrThrow(), x => x.ToLower());
             var freqtag = new FrequencyTags();
-            var freqTags = freqtag.GetWordsFrequency(formattedTags);
+            var freqTags = freqtag.GetWordsFrequency(formattedTags.GetValueOrThrow());
             var fontSizer = new FontSizer();
-            var fontTags = fontSizer.GetTagsWithSize(freqTags,
+            var fontTags = fontSizer.GetTagsWithSize(freqTags.GetValueOrThrow(),
                 new FontSettings() { Font = new FontFamily("Times"), MaxFont = 150, MinFont = 50 });
-            return fontTags;
+            return fontTags.GetValueOrThrow();
         }
 
 

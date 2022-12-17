@@ -2,7 +2,7 @@
 {
     public interface IFileReader
     {
-        string TxtRead(string path);
-        string DocRead(string path);
+        Result<string> TxtRead(string path);
+        Result<string> DocRead(string path);
     }
 }

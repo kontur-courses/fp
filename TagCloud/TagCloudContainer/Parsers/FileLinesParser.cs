@@ -2,9 +2,9 @@
 {
     public class FileLinesParser : IFileParser
     {
-        public IEnumerable<string> Parse(string text)
+        public Result<IEnumerable<string>> Parse(string text)
         {
-            return text.Split(Environment.NewLine);
+            return Result.Of(()=> text.Split(Environment.NewLine)).Then(x=> x as IEnumerable<string>).RefineError("Error parse file");
         }
     }
 }

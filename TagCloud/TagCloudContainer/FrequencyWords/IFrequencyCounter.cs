@@ -2,6 +2,6 @@
 {
     public interface IFrequencyCounter
     {
-        IEnumerable<WordFrequency> GetWordsFrequency(IEnumerable<string> words);
+        Result<IEnumerable<WordFrequency>> GetWordsFrequency(IEnumerable<string> words);
     }
 }
