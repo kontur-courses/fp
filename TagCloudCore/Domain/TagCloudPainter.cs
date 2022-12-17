@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using CircularCloudLayouter.Domain;
 using TagCloudCore.Domain.Settings;
+using TagCloudCore.Infrastructure;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
-using TagCloudCore.Infrastructure;
 
 namespace TagCloudCore.Domain;
 
@@ -27,31 +28,34 @@ public class TagCloudPainter
         _paintDataProviderFactory = paintDataProviderFactory;
     }
 
-    public void Paint()
+    public Result<None> Paint()
     {
         var imageSize = _imageHolder.GetImageSize();
 
-        using (var graphics = _imageHolder.StartDrawing())
-        {
-            var calculator = _wordCalculatorProvider(graphics);
-            var paintDataProvider = _paintDataProviderFactory(calculator);
-            
-            using (var backgroundBrush = new SolidBrush(_paintSettings.BackgroundColor))
-            {
-                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.Width, imageSize.Height);
-            }
+        using var graphics = _imageHolder.StartDrawing();
+        var calculator = _wordCalculatorProvider(graphics);
+        return _paintDataProviderFactory(calculator).GetWordsPaintData()
+            .Then(words => Paint(words, graphics))
+            .RefineError("Unable to paint tag cloud");
+    }
 
-            using (var wordsBrush = new SolidBrush(_paintSettings.WordsColor))
-            {
-                var i = 0;
-                foreach (var wordPaintData in paintDataProvider.GetWordsPaintData())
-                {
-                    using var font = _paintSettings.BasicFont.WithSize(wordPaintData.FontSize);
-                    graphics.DrawString(wordPaintData.Word, font, wordsBrush, ConvertRectangle(wordPaintData.Rect));
-                    if (++i % 10 == 0)
-                        _imageHolder.UpdateUi();
-                }
-            }
+    private void Paint(IEnumerable<WordPaintData> wordsPainData, Graphics graphics)
+    {
+        var imageSize = _imageHolder.GetImageSize();
+
+        using (var backgroundBrush = new SolidBrush(_paintSettings.BackgroundColor))
+        {
+            graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.Width, imageSize.Height);
+        }
+
+        using var wordsBrush = new SolidBrush(_paintSettings.WordsColor);
+
+        foreach (var (wordPaintData, i) in wordsPainData.Select((wordPainData, i) => (wordPainData, i)))
+        {
+            using var font = _paintSettings.BasicFont.WithSize(wordPaintData.FontSize);
+            graphics.DrawString(wordPaintData.Word, font, wordsBrush, ConvertRectangle(wordPaintData.Rect));
+            if (i % 10 == 0)
+                _imageHolder.UpdateUi();
         }
 
         _imageHolder.UpdateUi();

@@ -1,5 +1,6 @@
 ﻿using TagCloudCore.Domain.Settings;
 using TagCloudCore.Infrastructure;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
@@ -25,10 +26,14 @@ public class WordsPaintDataProvider : IWordsPaintDataProvider
         _paintSettings = paintSettings;
     }
 
-    public IEnumerable<WordPaintData> GetWordsPaintData()
+    public Result<IEnumerable<WordPaintData>> GetWordsPaintData() =>
+        _wordsInfoParser.GetWordsInfo()
+            .Then(ParseWordsPaintData);
+
+    private IEnumerable<WordPaintData> ParseWordsPaintData(IEnumerable<WordInfo> words)
     {
         var layouter = _layouterProvider.CreateLayouter();
-        var countSortedWordsInfos = _wordsInfoParser.GetWordsInfo()
+        var countSortedWordsInfos = words
             .OrderByDescending(word => word.Count)
             .ToArray();
         if (countSortedWordsInfos.Length == 0)

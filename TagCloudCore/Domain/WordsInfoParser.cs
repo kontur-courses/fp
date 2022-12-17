@@ -1,4 +1,5 @@
 ﻿using TagCloudCore.Infrastructure;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
@@ -21,16 +22,19 @@ public class WordsInfoParser : IWordsInfoParser
         _wordsFilters = wordsFilters;
     }
 
-    public IEnumerable<WordInfo> GetWordsInfo()
-    {
-        var text = _fileReaderProvider.GetReader().ReadFile().ToLower();
-        var originalFormWords = _wordsNormalizer.GetWordsOriginalForm(text);
-        var filtered = _wordsFilters.Aggregate(
-            originalFormWords,
-            (toFilter, filter) => filter.FilterWords(toFilter)
+    public Result<IEnumerable<WordInfo>> GetWordsInfo() =>
+        _fileReaderProvider.GetReader()
+            .Then(reader => reader.ReadFile())
+            .Then(text => _wordsNormalizer.GetWordsOriginalForm(text))
+            .Then(FilterWords)
+            .Then(filtered => filtered
+                .GroupBy(w => w)
+                .Select(group => new WordInfo(group.Key, group.Count()))
+            );
+
+    private Result<IEnumerable<string>> FilterWords(IEnumerable<string> sourceWords) =>
+        _wordsFilters.Aggregate(
+            sourceWords.AsResult(),
+            (toFilter, filter) => toFilter.Then(filter.FilterWords)
         );
-        return filtered
-            .GroupBy(w => w)
-            .Select(group => new WordInfo(group.Key, group.Count()));
-    }
 }
