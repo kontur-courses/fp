@@ -40,7 +40,9 @@ public class MyStem
     private Process StartProcess()
     {
         if (!_myStemSettings.CheckCorrectAppPath())
-            throw new FileNotFoundException($"File not found, invalid path: {_myStemSettings.MyStemAppPath}");
+            throw new FileNotFoundException(
+                $"MyStem executable not found, invalid path: {_myStemSettings.MyStemAppPath}"
+            );
 
         return Process.Start(
             new ProcessStartInfo
