@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using MyStemWrapper;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 
 namespace TagCloudCoreExtensions;
@@ -13,11 +14,14 @@ public class MyStemWordsNormalizer : IWordsNormalizer
         _grammarInfoParser = grammarInfoParser;
     }
 
-    public IEnumerable<string> GetWordsOriginalForm(string sourceText)
+    public Result<IEnumerable<string>> GetWordsOriginalForm(string sourceText)
     {
         var sourceWords = Regex.Split(sourceText.ToLower(), @"\W+")
             .Where(word => !string.IsNullOrWhiteSpace(word));
-        return _grammarInfoParser.Parse(sourceWords)
-            .Select(grammarInfo => grammarInfo.OriginalForm);
+
+        return Result.Of(() =>
+            _grammarInfoParser.Parse(sourceWords)
+                .Select(grammarInfo => grammarInfo.OriginalForm)
+        );
     }
 }

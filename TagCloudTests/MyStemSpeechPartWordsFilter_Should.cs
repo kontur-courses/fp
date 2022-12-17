@@ -29,7 +29,7 @@ public class MyStemSpeechPartWordsFilter_Should
     [Test]
     public void DontSkip_IfCorrect()
     {
-        _speechPartFilter.FilterWords(new[] {"слово"})
+        _speechPartFilter.FilterWords(new[] {"слово"}).GetValueOrThrow()
             .Should().ContainSingle()
             .Which.Should().Be("слово");
     }
@@ -38,14 +38,16 @@ public class MyStemSpeechPartWordsFilter_Should
     public void SkipWord_IfSpeechPartExcluded()
     {
         _settings.ExcludedSpeechParts.Add(SpeechPart.Noun);
-        _speechPartFilter.FilterWords(new[] {"слово"}).Should().BeEmpty();
+        _speechPartFilter.FilterWords(new[] {"слово"}).GetValueOrThrow()
+            .Should().BeEmpty();
     }
 
     [Test]
     public void SkipWordWithUndefinedPartSpeech_IfOptionEnabled()
     {
         _settings.ExcludeUndefined = true;
-        _speechPartFilter.FilterWords(new[] {"абв"}).Should().BeEmpty();
+        _speechPartFilter.FilterWords(new[] {"абв"}).GetValueOrThrow()
+            .Should().BeEmpty();
     }
 
     [Test]
@@ -53,7 +55,7 @@ public class MyStemSpeechPartWordsFilter_Should
     {
         _settings.ExcludedSpeechParts.Add(SpeechPart.Noun);
         _settings.ExcludeUndefined = true;
-        _speechPartFilter.FilterWords(new[] {"слово", "абв", "длинный"})
+        _speechPartFilter.FilterWords(new[] {"слово", "абв", "длинный"}).GetValueOrThrow()
             .Should().ContainSingle()
             .Which.Should().Be("длинный");
     }

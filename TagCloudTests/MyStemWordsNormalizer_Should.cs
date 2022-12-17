@@ -18,7 +18,7 @@ public class MyStemWordsNormalizer_Should
     [Test]
     public void ReturnWordsInOriginalForm_Successfully()
     {
-        _normalizer.GetWordsOriginalForm("коровы едят траву")
+        _normalizer.GetWordsOriginalForm("коровы едят траву").GetValueOrThrow()
             .Should().BeEquivalentTo("корова", "есть", "трава");
     }
 
@@ -27,7 +27,7 @@ public class MyStemWordsNormalizer_Should
     [TestCase("@ $ %", TestName = "Symbols")]
     public void ReturnNothing_ForStringWithoutWords(string str)
     {
-        _normalizer.GetWordsOriginalForm(str)
+        _normalizer.GetWordsOriginalForm(str).GetValueOrThrow()
             .Should().BeEmpty();
     }
 }

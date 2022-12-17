@@ -1,5 +1,6 @@
 ﻿using MyStemWrapper;
 using MyStemWrapper.Domain;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 using TagCloudCoreExtensions.WordsFilters.Settings;
 
@@ -19,9 +20,11 @@ public class MyStemSpeechPartWordsFilter : IWordsFilter
         _grammarInfoParser = grammarInfoParser;
     }
 
-    public IEnumerable<string> FilterWords(IEnumerable<string> sourceWords) =>
-        _grammarInfoParser.Parse(sourceWords)
-            .Where(info => !_settings.ExcludedSpeechParts.Contains(info.SpeechPart))
-            .Where(info => !_settings.ExcludeUndefined || info.SpeechPart is not SpeechPart.Undefined)
-            .Select(word => word.OriginalForm);
+    public Result<IEnumerable<string>> FilterWords(IEnumerable<string> sourceWords) =>
+        Result.Of(() =>
+            _grammarInfoParser.Parse(sourceWords)
+                .Where(info => !_settings.ExcludedSpeechParts.Contains(info.SpeechPart))
+                .Where(info => !_settings.ExcludeUndefined || info.SpeechPart is not SpeechPart.Undefined)
+                .Select(word => word.OriginalForm)
+        );
 }

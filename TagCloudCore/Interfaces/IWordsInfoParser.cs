@@ -1,8 +1,9 @@
 ﻿using TagCloudCore.Infrastructure;
+using TagCloudCore.Infrastructure.Results;
 
 namespace TagCloudCore.Interfaces;
 
 public interface IWordsInfoParser
 {
-    IEnumerable<WordInfo> GetWordsInfo();
+    Result<IEnumerable<WordInfo>> GetWordsInfo();
 }

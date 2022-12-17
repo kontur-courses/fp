@@ -23,7 +23,7 @@ public class WordsLengthFilter_Should
     [Test]
     public void DontSkipWord_IfCorrect()
     {
-        _lengthFilter.FilterWords(new[] {"слово"})
+        _lengthFilter.FilterWords(new[] {"слово"}).GetValueOrThrow()
             .Should().ContainSingle()
             .Which.Should().Be("слово");
     }
@@ -32,14 +32,16 @@ public class WordsLengthFilter_Should
     public void SkipWord_IfShorterThanMin()
     {
         _settings.MinWordLength = 3;
-        _lengthFilter.FilterWords(new[] {"я"}).Should().BeEmpty();
+        _lengthFilter.FilterWords(new[] {"я"}).GetValueOrThrow()
+            .Should().BeEmpty();
     }
 
     [Test]
     public void SkipWord_IfLongerThanMax()
     {
         _settings.MaxWordLength = 3;
-        _lengthFilter.FilterWords(new[] {"слово"}).Should().BeEmpty();
+        _lengthFilter.FilterWords(new[] {"слово"}).GetValueOrThrow()
+            .Should().BeEmpty();
     }
 
     [Test]
@@ -47,7 +49,7 @@ public class WordsLengthFilter_Should
     {
         _settings.MinWordLength = 3;
         _settings.MaxWordLength = 5;
-        _lengthFilter.FilterWords(new[] {"слово", "я", "длинный"})
+        _lengthFilter.FilterWords(new[] {"слово", "я", "длинный"}).GetValueOrThrow()
             .Should().ContainSingle()
             .Which.Should().Be("слово");
     }

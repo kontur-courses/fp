@@ -1,4 +1,5 @@
-﻿using TagCloudCore.Interfaces;
+﻿using TagCloudCore.Infrastructure.Results;
+using TagCloudCore.Interfaces;
 using TagCloudCoreExtensions.WordsFilters.Settings;
 
 namespace TagCloudCoreExtensions.WordsFilters;
@@ -12,7 +13,8 @@ public class WordsLengthFilter : IWordsFilter
         _settings = settings;
     }
 
-    public IEnumerable<string> FilterWords(IEnumerable<string> sourceWords) =>
+    public Result<IEnumerable<string>> FilterWords(IEnumerable<string> sourceWords) =>
         sourceWords
-            .Where(word => word.Length >= _settings.MinWordLength && word.Length <= _settings.MaxWordLength);
+            .Where(word => word.Length >= _settings.MinWordLength && word.Length <= _settings.MaxWordLength)
+            .AsResult();
 }

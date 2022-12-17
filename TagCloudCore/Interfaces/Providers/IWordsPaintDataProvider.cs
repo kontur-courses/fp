@@ -1,8 +1,9 @@
 ﻿using TagCloudCore.Infrastructure;
+using TagCloudCore.Infrastructure.Results;
 
 namespace TagCloudCore.Interfaces.Providers;
 
 public interface IWordsPaintDataProvider
 {
-    IEnumerable<WordPaintData> GetWordsPaintData();
+    Result<IEnumerable<WordPaintData>> GetWordsPaintData();
 }

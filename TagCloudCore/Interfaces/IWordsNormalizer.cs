@@ -1,6 +1,8 @@
-﻿namespace TagCloudCore.Interfaces;
+﻿using TagCloudCore.Infrastructure.Results;
+
+namespace TagCloudCore.Interfaces;
 
 public interface IWordsNormalizer
 {
-    public IEnumerable<string> GetWordsOriginalForm(string sourceText);
+    public Result<IEnumerable<string>> GetWordsOriginalForm(string sourceText);
 }

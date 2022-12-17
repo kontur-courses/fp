@@ -1,6 +1,8 @@
-﻿namespace TagCloudCore.Interfaces;
+﻿using TagCloudCore.Infrastructure.Results;
+
+namespace TagCloudCore.Interfaces;
 
 public interface IWordsFilter
 {
-    public IEnumerable<string> FilterWords(IEnumerable<string> sourceWords);
+    public Result<IEnumerable<string>> FilterWords(IEnumerable<string> sourceWords);
 }
