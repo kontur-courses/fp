@@ -19,7 +19,8 @@ public struct Result<T>
     public string? Error { get; }
 
     internal T? Value { get; }
-    
+
+    [MemberNotNullWhen(true, nameof(Value))]
     [MemberNotNullWhen(false, nameof(Error))]
     public bool IsSuccess => Error is null;
 
@@ -69,19 +70,19 @@ public static class Result
 
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
-        Func<TInput?, TOutput> continuation
+        Func<TInput, TOutput> continuation
     ) =>
         input.Then(inp => Of(() => continuation(inp)));
 
     public static Result<None> Then<TInput>(
         this Result<TInput> input,
-        Action<TInput?> continuation
+        Action<TInput> continuation
     ) =>
         input.Then(inp => OfAction(() => continuation(inp)));
 
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
-        Func<TInput?, Result<TOutput>> continuation
+        Func<TInput, Result<TOutput>> continuation
     ) =>
         input.IsSuccess
             ? continuation(input.Value)
