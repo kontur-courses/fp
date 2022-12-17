@@ -1,7 +1,9 @@
+using TagCloudCore.Infrastructure.Results;
+
 namespace TagCloudCore.Infrastructure.Settings;
 
 public interface IBlobStorage
 {
-    byte[]? Get(string name);
-    void Set(string name, byte[] content);
+    Result<byte[]> Get(string name);
+    Result<None> Set(string name, byte[] content);
 }

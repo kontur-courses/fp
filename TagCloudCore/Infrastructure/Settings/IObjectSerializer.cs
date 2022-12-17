@@ -1,7 +1,9 @@
+using TagCloudCore.Infrastructure.Results;
+
 namespace TagCloudCore.Infrastructure.Settings;
 
 public interface IObjectSerializer
 {
-    T? Deserialize<T>(byte[] bytes);
-    byte[] Serialize<T>(T obj);
+    Result<T> Deserialize<T>(byte[] bytes);
+    Result<byte[]> Serialize<T>(T obj);
 }

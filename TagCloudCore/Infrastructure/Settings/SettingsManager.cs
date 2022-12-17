@@ -1,4 +1,5 @@
 ﻿using TagCloudCore.Domain.Settings;
+using TagCloudCore.Infrastructure.Results;
 
 namespace TagCloudCore.Infrastructure.Settings;
 
@@ -12,30 +13,14 @@ public class SettingsManager
     {
         _serializer = serializer;
         _storage = storage;
-        AppSettings = new Lazy<AppSettings>(LoadFromFile);
     }
 
-    public Lazy<AppSettings> AppSettings { get; }
+    public Result<AppSettings> LoadSettingsFromFile() =>
+        _storage.Get(SettingsFilename)
+            .Then(bytes => _serializer.Deserialize<AppSettings>(bytes))
+            .RefineError("Can't get settings from file");
 
-    public AppSettings LoadFromFile()
-    {
-        try
-        {
-            var data = _storage.Get(SettingsFilename);
-            if (data is not null)
-                return _serializer.Deserialize<AppSettings>(data)!;
-
-            var defaultSettings = CreateDefaultSettings();
-            Save();
-            return defaultSettings;
-        }
-        catch (Exception)
-        {
-            return CreateDefaultSettings();
-        }
-    }
-
-    private static AppSettings CreateDefaultSettings() =>
+    public AppSettings CreateDefaultSettings() =>
         new()
         {
             ImagePath = ".",
@@ -47,8 +32,8 @@ public class SettingsManager
             }
         };
 
-    public void Save()
-    {
-        _storage.Set(SettingsFilename, _serializer.Serialize(AppSettings.Value));
-    }
+    public Result<None> Save(AppSettings settings) =>
+        _serializer.Serialize(settings)
+            .Then(bytes => _storage.Set(SettingsFilename, bytes))
+            .RefineError("Can't save settings to file");
 }

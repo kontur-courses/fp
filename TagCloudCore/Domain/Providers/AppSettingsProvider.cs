@@ -1,5 +1,6 @@
 ﻿using TagCloudCore.Domain.Settings;
 using TagCloudCore.Infrastructure.Settings;
+using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 using TagCloudCore.Interfaces.Settings;
 
@@ -8,18 +9,33 @@ namespace TagCloudCore.Domain.Providers;
 public class AppSettingsProvider : IWordsPathSettingsProvider, IImagePathSettingsProvider, IImageSettingsProvider
 {
     private readonly SettingsManager _settingsManager;
+    private readonly IErrorHandler _errorHandler;
+    private AppSettings? _appSettings;
 
-    public AppSettingsProvider(SettingsManager settingsManager)
+    public AppSettingsProvider(SettingsManager settingsManager, IErrorHandler errorHandler)
     {
         _settingsManager = settingsManager;
+        _errorHandler = errorHandler;
     }
 
     public IWordsPathSettings GetWordsPathSettings() =>
-        _settingsManager.AppSettings.Value;
+        GetAppSettings();
 
     public IImagePathSettings GetImagePathSettings() =>
-        _settingsManager.AppSettings.Value;
+        GetAppSettings();
 
     public ImageSettings GetImageSettings() =>
-        _settingsManager.AppSettings.Value.ImageSettings;
+        GetAppSettings().ImageSettings;
+
+    public AppSettings GetAppSettings()
+    {
+        if (_appSettings is not null)
+            return _appSettings;
+
+        var settingsResult = _settingsManager.LoadSettingsFromFile();
+        if (settingsResult.IsSuccess)
+            return _appSettings ??= settingsResult.Value;
+        _errorHandler.HandleError(settingsResult.Error);
+        return _appSettings ??= _settingsManager.CreateDefaultSettings();
+    }
 }
