@@ -1,7 +1,9 @@
-﻿namespace TagCloudCore.Interfaces.Providers;
+﻿using TagCloudCore.Infrastructure.Results;
+
+namespace TagCloudCore.Interfaces.Providers;
 
 public interface IFileReaderProvider
 {
     IEnumerable<string> SupportedExtensions { get; }
-    IFileReader GetReader();
+    Result<IFileReader> GetReader();
 }

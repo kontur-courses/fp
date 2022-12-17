@@ -40,14 +40,15 @@ public class ImageSaverProvider_Should
         Type expectedSaverType)
     {
         _pathSettings.ImagePath = $"image{extension}";
-        _imageSaverProvider.GetSaver().GetType().Should().Be(expectedSaverType);
+        _imageSaverProvider.GetSaver().GetValueOrThrow().GetType()
+            .Should().Be(expectedSaverType);
     }
 
     [Test]
     public void ThrowOperationException_ForBadExtension()
     {
         _pathSettings.ImagePath = "image.abc";
-        _imageSaverProvider.Invoking(provider => provider.GetSaver())
+        _imageSaverProvider.Invoking(provider => provider.GetSaver().GetValueOrThrow())
             .Should().Throw<InvalidOperationException>()
             .Which.Message.Should().Contain(".abc");
     }

@@ -1,11 +1,12 @@
-﻿using TagCloudCore.Interfaces;
+﻿using TagCloudCore.Infrastructure.Results;
+using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCore.Domain.Providers;
 
 public class ImageSaverProvider : IImageSaverProvider
 {
-    private readonly Dictionary<string, IImageSaver> _wordsFileReaders;
+    private readonly Dictionary<string, IImageSaver> _imageSavers;
     private readonly IImagePathSettingsProvider _pathSettingsProvider;
 
     public ImageSaverProvider(
@@ -13,17 +14,17 @@ public class ImageSaverProvider : IImageSaverProvider
         IImagePathSettingsProvider pathSettingsProvider
     )
     {
-        _wordsFileReaders = wordsFileReaders.ToDictionary(saver => saver.SupportedExtension);
+        _imageSavers = wordsFileReaders.ToDictionary(saver => saver.SupportedExtension);
         _pathSettingsProvider = pathSettingsProvider;
     }
 
-    public IEnumerable<string> SupportedExtensions => _wordsFileReaders.Keys;
+    public IEnumerable<string> SupportedExtensions => _imageSavers.Keys;
 
-    public IImageSaver GetSaver()
+    public Result<IImageSaver> GetSaver()
     {
         var imageExtension = Path.GetExtension(_pathSettingsProvider.GetImagePathSettings().ImagePath);
-        if (_wordsFileReaders.TryGetValue(imageExtension, out var result))
-            return result;
-        throw new InvalidOperationException($"No saver for extension: {imageExtension}");
+        return _imageSavers.TryGetValue(imageExtension, out var result)
+            ? result.AsResult()
+            : Result.Fail<IImageSaver>($"No saver for extension: {imageExtension}");
     }
 }

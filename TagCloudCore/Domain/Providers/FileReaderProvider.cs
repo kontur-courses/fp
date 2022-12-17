@@ -1,4 +1,5 @@
-﻿using TagCloudCore.Interfaces;
+﻿using TagCloudCore.Infrastructure.Results;
+using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCore.Domain.Providers;
@@ -18,11 +19,11 @@ public class FileReaderProvider : IFileReaderProvider
 
     public IEnumerable<string> SupportedExtensions => _wordsFileReaders.Keys;
 
-    public IFileReader GetReader()
+    public Result<IFileReader> GetReader()
     {
         var wordsFileExtension = Path.GetExtension(_pathSettingsProvider.GetWordsPathSettings().WordsPath);
-        if (_wordsFileReaders.TryGetValue(wordsFileExtension, out var result))
-            return result;
-        throw new InvalidOperationException($"No reader for extension: {wordsFileExtension}");
+        return _wordsFileReaders.TryGetValue(wordsFileExtension, out var result)
+            ? result.AsResult()
+            : Result.Fail<IFileReader>($"No reader for extension: {wordsFileExtension}");
     }
 }

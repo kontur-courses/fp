@@ -2,7 +2,6 @@ using TagCloudCore.Domain.Providers;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 using TagCloudCore.Interfaces.Settings;
-using TagCloudCoreExtensions.ImageSavers;
 using TagCloudCoreExtensions.WordsFileReaders;
 
 namespace TagCloudTests;
@@ -36,14 +35,15 @@ public class WordsFileReaderProvider_Should
     public void ReturnCorrectReader_ForCorrectExtension(string extension, Type expectedReaderType)
     {
         _pathSettings.WordsPath = $"text{extension}";
-        _readerProvider.GetReader().GetType().Should().Be(expectedReaderType);
+        _readerProvider.GetReader().GetValueOrThrow().GetType()
+            .Should().Be(expectedReaderType);
     }
 
     [Test]
     public void ThrowOperationException_ForBadExtension()
     {
         _pathSettings.WordsPath = "text.abc";
-        _readerProvider.Invoking(provider => provider.GetReader())
+        _readerProvider.Invoking(provider => provider.GetReader().GetValueOrThrow())
             .Should().Throw<InvalidOperationException>()
             .Which.Message.Should().Contain(".abc");
     }
