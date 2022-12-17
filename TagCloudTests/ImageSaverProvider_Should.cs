@@ -45,11 +45,11 @@ public class ImageSaverProvider_Should
     }
 
     [Test]
-    public void ThrowOperationException_ForBadExtension()
+    public void Fail_ForBadExtension()
     {
         _pathSettings.ImagePath = "image.abc";
-        _imageSaverProvider.Invoking(provider => provider.GetSaver().GetValueOrThrow())
-            .Should().Throw<InvalidOperationException>()
-            .Which.Message.Should().Contain(".abc");
+        var saverResult = _imageSaverProvider.GetSaver();
+        saverResult.IsSuccess.Should().BeFalse();
+        saverResult.Error.Should().Contain(".abc");
     }
 }

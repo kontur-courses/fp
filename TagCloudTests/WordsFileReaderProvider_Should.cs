@@ -40,11 +40,11 @@ public class WordsFileReaderProvider_Should
     }
 
     [Test]
-    public void ThrowOperationException_ForBadExtension()
+    public void Fail_ForBadExtension()
     {
         _pathSettings.WordsPath = "text.abc";
-        _readerProvider.Invoking(provider => provider.GetReader().GetValueOrThrow())
-            .Should().Throw<InvalidOperationException>()
-            .Which.Message.Should().Contain(".abc");
+        var saverResult = _readerProvider.GetReader();
+        saverResult.IsSuccess.Should().BeFalse();
+        saverResult.Error.Should().Contain(".abc");
     }
 }
