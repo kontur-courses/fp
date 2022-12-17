@@ -1,14 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32929.386
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C1CC8-A8B6-46C6-B35C-8A43B80111A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{F8BC9749-D11A-41B6-829D-69D252B94A52}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainerTests", "TagsCloudContainer_Should\TagsCloudContainerTests.csproj", "{F3E4FAC0-BD29-4D1D-9370-D12BFC55E52E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +39,22 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8BC9749-D11A-41B6-829D-69D252B94A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8BC9749-D11A-41B6-829D-69D252B94A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8BC9749-D11A-41B6-829D-69D252B94A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8BC9749-D11A-41B6-829D-69D252B94A52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3E4FAC0-BD29-4D1D-9370-D12BFC55E52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3E4FAC0-BD29-4D1D-9370-D12BFC55E52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3E4FAC0-BD29-4D1D-9370-D12BFC55E52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3E4FAC0-BD29-4D1D-9370-D12BFC55E52E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0285F774-DA92-42C5-B651-17DE7211C6D2}
 	EndGlobalSection
 EndGlobal
