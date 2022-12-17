@@ -6,12 +6,13 @@ namespace TagCloudContainer.TagsWithFont
     {
         public Result<IEnumerable<FontTag>> GetTagsWithSize(IEnumerable<WordFrequency> tags, IFontSettings settings)
         {
-            Result.OfAction(() => CheckSettings(settings)).GetValueOrThrow();
-            return Result.Of(() => (from tag in tags
-                let size = (int)Math.Round(tag.Count == tags.Last().Count
-                    ? (int)Math.Round((double)settings.MinFont)
-                    : tag.Count / (double)tags.First().Count * (settings.MaxFont - settings.MinFont) + settings.MinFont)
-                select new FontTag(tag.Word, size, settings.Font)).ToList()).Then(x=>x as IEnumerable<FontTag>);
+            if(Result.OfAction(() => CheckSettings(settings)).IsSuccess) 
+                return Result.Of(() => (from tag in tags
+                    let size = (int)Math.Round(tag.Count == tags.Last().Count
+                        ? (int)Math.Round((double)settings.MinFont)
+                        : tag.Count / (double)tags.First().Count * (settings.MaxFont - settings.MinFont) + settings.MinFont)
+                    select new FontTag(tag.Word, size, settings.Font)).ToList()).Then(x=>x as IEnumerable<FontTag>);
+            return new Result<IEnumerable<FontTag>>("Could not create cloud, error font settings");
         }
 
         private static void CheckSettings(IFontSettings settings)

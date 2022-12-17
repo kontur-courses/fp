@@ -2,9 +2,12 @@
 {
     public class FileLinesParser : IFileParser
     {
-        public Result<IEnumerable<string>> Parse(string text)
+        public Result<IEnumerable<string>> Parse(string text, string separator)
         {
-            return Result.Of(()=> text.Split(Environment.NewLine)).Then(x=> x as IEnumerable<string>).RefineError("Error parse file");
+            var parsedText = text.Split(separator);
+            return parsedText.Length <= 1 
+                ? new Result<IEnumerable<string>>("Could not parse file for parameters") 
+                : parsedText;
         }
     }
 }

@@ -14,4 +14,8 @@
     <PackageReference Include="WeCantSpell.Hunspell" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Result\Result.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,6 +2,6 @@
 {
     public interface IFileParser
     {
-        Result<IEnumerable<string>> Parse(string text);
+        Result<IEnumerable<string>> Parse(string text, string separator);
     }
 }

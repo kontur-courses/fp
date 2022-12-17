@@ -1,4 +1,5 @@
-﻿namespace TagCloudContainer
+﻿
+namespace TagCloudContainer
 {
     public class None
     {
@@ -24,7 +25,7 @@
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. {Error}");
+            throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
     }

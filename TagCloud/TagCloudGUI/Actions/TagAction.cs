@@ -66,7 +66,7 @@ namespace TagCloudGraphicalUserInterface.Actions
             var text = presetsSettings.txtReader
                 ? presetsSettings.Reader.TxtRead(filePath)
                 : presetsSettings.Reader.DocRead(filePath);
-            var parsedText = presetsSettings.Parser.Parse(text.GetValueOrThrow()).GetValueOrThrow();
+            var parsedText = presetsSettings.Parser.Parse(text.GetValueOrThrow(),Environment.NewLine).GetValueOrThrow();
             var filteredTags = presetsSettings.Filtered
                 ? presetsSettings.Filter.Filter(parsedText, w => w.Length > 3).GetValueOrThrow()
                 : parsedText;

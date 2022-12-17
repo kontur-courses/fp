@@ -9,15 +9,19 @@ namespace TagCloudContainer.Readers
     {
         public Result<string> TxtRead(string path)
         {
+            if (!File.Exists(path))
+                return new Result<string>($"Could not find any file for create cloud:{path}.");
             return Result.Of(()=>File.ReadAllText(path))
-                .RefineError("Error file path");
+                .RefineError("Could not read file");
         }
         
         public Result<string> DocRead(string path)
         {
+            if (!File.Exists(path))
+                return new Result<string>($"Could not find any file for create cloud:{path}.");
             return Result.Of(() => new Document(path))
                 .Then(GetTextFromDoc)
-                .RefineError("Error file path");
+                .RefineError("Could not read file");
         }
         private static string GetTextFromDoc(IDocument document)
         {
