@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagCloudCore.Infrastructure.Results;
 
 namespace TagCloudCore.Interfaces;
 
 public interface IImageSaver
 {
     public string SupportedExtension { get; }
-    void SaveImage(Image image);
+    Result<None> SaveImage(Image image);
 }

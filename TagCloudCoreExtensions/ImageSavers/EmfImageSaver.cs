@@ -1,23 +1,20 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCoreExtensions.ImageSavers;
 
-public class EmfImageSaver : IImageSaver
+public class EmfImageSaver : StandardImageSaver
 {
-    private readonly IImagePathSettingsProvider _pathSettingsProvider;
-
-    public EmfImageSaver(IImagePathSettingsProvider pathSettingsProvider)
+    public EmfImageSaver(IImagePathSettingsProvider pathSettingsProvider) : base(pathSettingsProvider)
     {
-        _pathSettingsProvider = pathSettingsProvider;
+        
     }
 
-    public string SupportedExtension => ".emf";
+    public override string SupportedExtension => ".emf";
 
-    public void SaveImage(Image image)
+    protected override void InternalSaveImage(Image image, string path)
     {
-        image.Save(_pathSettingsProvider.GetImagePathSettings().ImagePath, ImageFormat.Emf);
+        image.Save(path, ImageFormat.Emf);
     }
 }

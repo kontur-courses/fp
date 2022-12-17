@@ -1,23 +1,20 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
 namespace TagCloudCoreExtensions.ImageSavers;
 
-public class JpegImageSaver : IImageSaver
+public class JpegImageSaver : StandardImageSaver
 {
-    private readonly IImagePathSettingsProvider _pathSettingsProvider;
-
-    public JpegImageSaver(IImagePathSettingsProvider pathSettingsProvider)
+    public JpegImageSaver(IImagePathSettingsProvider pathSettingsProvider) : base(pathSettingsProvider)
     {
-        _pathSettingsProvider = pathSettingsProvider;
+        
     }
 
-    public string SupportedExtension => ".jpeg";
+    public override string SupportedExtension => ".jpeg";
 
-    public void SaveImage(Image image)
+    protected override void InternalSaveImage(Image image, string path)
     {
-        image.Save(_pathSettingsProvider.GetImagePathSettings().ImagePath, ImageFormat.Jpeg);
+        image.Save(path, ImageFormat.Jpeg);
     }
 }
