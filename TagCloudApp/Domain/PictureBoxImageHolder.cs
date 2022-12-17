@@ -1,4 +1,5 @@
 using System.Drawing.Imaging;
+using TagCloudCore.Infrastructure.Results;
 using TagCloudCore.Interfaces;
 using TagCloudCore.Interfaces.Providers;
 
@@ -8,11 +9,17 @@ public class PictureBoxImageHolder : PictureBox, IImageHolder
 {
     private readonly IImageSaverProvider _imageSaverProvider;
     private readonly IImageSettingsProvider _imageSettingsProvider;
+    private readonly IErrorHandler _errorHandler;
 
-    public PictureBoxImageHolder(IImageSaverProvider imageSaverProvider, IImageSettingsProvider imageSettingsProvider)
+    public PictureBoxImageHolder(
+        IImageSaverProvider imageSaverProvider,
+        IImageSettingsProvider imageSettingsProvider,
+        IErrorHandler errorHandler
+    )
     {
         _imageSaverProvider = imageSaverProvider;
         _imageSettingsProvider = imageSettingsProvider;
+        _errorHandler = errorHandler;
     }
 
     public Size GetImageSize()
@@ -49,6 +56,8 @@ public class PictureBoxImageHolder : PictureBox, IImageHolder
     public void SaveImage()
     {
         FailIfNotInitialized();
-        _imageSaverProvider.GetSaver().SaveImage(Image);
+        _imageSaverProvider.GetSaver()
+            .Then(saver => saver.SaveImage(Image))
+            .OnFail(_errorHandler.HandleError);
     }
 }
