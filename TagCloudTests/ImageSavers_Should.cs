@@ -11,6 +11,7 @@ public class ImageSavers_Should
 {
     private IImagePathSettingsProvider _pathSettingsProvider = null!;
     private Image _image = null!;
+    private string? _imagePath;
 
     [SetUp]
     public void Setup()
@@ -26,19 +27,19 @@ public class ImageSavers_Should
     public void TearDown()
     {
         _image.Dispose();
+        RemoveFileIfExists();
     }
 
     [TestCaseSource(nameof(ImagesFormatsTestCaseData))]
     public void SaveImage_Successfully(Func<IImagePathSettingsProvider, IImageSaver> saverProvider)
     {
         var saver = saverProvider(_pathSettingsProvider);
-        var imageName = $"image{saver.SupportedExtension}";
-        RemoveIfExists(imageName);
-        _pathSettingsProvider.GetImagePathSettings().ImagePath = imageName;
+        _imagePath = $"image{saver.SupportedExtension}";
+        RemoveFileIfExists();
+        _pathSettingsProvider.GetImagePathSettings().ImagePath = _imagePath;
         saver.SaveImage(_image);
 
-        File.Exists(imageName).Should().BeTrue();
-        RemoveIfExists(imageName);
+        File.Exists(_imagePath).Should().BeTrue();
     }
 
     private static TestCaseData[] ImagesFormatsTestCaseData =
@@ -57,9 +58,22 @@ public class ImageSavers_Should
         ).SetName("Emf")
     };
 
-    private static void RemoveIfExists(string file)
+    [Test]
+    public void Fail_ForBadExtension()
     {
-        if (File.Exists(file))
-            File.Delete(file);
+        _imagePath = "image.png";
+
+        _pathSettingsProvider.GetImagePathSettings().ImagePath = _imagePath;
+
+        var result = new JpegImageSaver(_pathSettingsProvider).SaveImage(_image);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain(".png");
+    }
+
+    private void RemoveFileIfExists()
+    {
+        if (_imagePath is not null && File.Exists(_imagePath))
+            File.Delete(_imagePath);
     }
 }
