@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{08FEFA6E-BA09-4AED-BB32-3B9A05C3C242}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainerTests", "TagsCloudContainerTests\TagsCloudContainerTests.csproj", "{485BA968-578A-4C0E-8FF2-1AB796573A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FEFA6E-BA09-4AED-BB32-3B9A05C3C242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FEFA6E-BA09-4AED-BB32-3B9A05C3C242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FEFA6E-BA09-4AED-BB32-3B9A05C3C242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FEFA6E-BA09-4AED-BB32-3B9A05C3C242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{485BA968-578A-4C0E-8FF2-1AB796573A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{485BA968-578A-4C0E-8FF2-1AB796573A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{485BA968-578A-4C0E-8FF2-1AB796573A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{485BA968-578A-4C0E-8FF2-1AB796573A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
