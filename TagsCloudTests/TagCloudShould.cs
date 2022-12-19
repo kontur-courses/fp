@@ -1,9 +1,10 @@
-﻿using NUnit.Framework;
-using System;
-using TagsCloud;
+﻿using System;
 using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
+using TagsCloud;
+using TagsCloud.Validators;
 
 namespace TagsCloudTests
 {
@@ -12,9 +13,9 @@ namespace TagsCloudTests
     {
         private TagCloud tagCloud;
 
-        private string textPath = @"..\..\..\..\text.txt";
-        private string picPath = @"..\..\..\..\testPicture";
-        private string extension = @".png";
+        private readonly string textPath = @"..\..\..\..\text.txt";
+        private readonly string picPath = @"..\..\..\..\testPicture";
+        private readonly string extension = @".png";
 
         private ServiceProvider serviceProvider;
 
@@ -29,7 +30,7 @@ namespace TagsCloudTests
         public void TagCloud_CommonInput_ShouldCreateFile()
         {
             var fullPath = picPath + extension;
-            
+
             if (File.Exists(fullPath)) File.Delete(fullPath);
 
             tagCloud.PrintTagCloud(textPath, picPath, extension);
@@ -40,17 +41,58 @@ namespace TagsCloudTests
         [Test]
         public void TagCloud_NullTextFile_ShouldThrowException()
         {
-            Assert.Throws<FileNotFoundException>(() => tagCloud.PrintTagCloud(String.Empty, picPath, picPath));
+            Assert.Throws<InvalidOperationException>(
+                () => tagCloud.PrintTagCloud(
+                    String.Empty, 
+                    picPath, 
+                    picPath));
         }
 
         [Test]
-        public void TagCloud_NotCreatedTextFile_ShouldThroeExeption()
+        public void TagCloud_NotCreatedTextFile_ShouldThrowExeption()
         {
             var path = @"..\..\..\..\testText.txt";
 
             if (File.Exists(path)) File.Delete(path);
 
-            Assert.Throws<FileNotFoundException>(() => tagCloud.PrintTagCloud(path, picPath, extension));
+            Assert.Throws<InvalidOperationException>(
+                () => tagCloud.PrintTagCloud(
+                    path, 
+                    picPath, 
+                    extension));
+        }
+
+        [Test]
+        public void TagCloud_WordsDontFitOnCanvas_ShouldThrowExeption()
+        {
+            var path = @"..\..\..\..\text.txt";
+
+            serviceProvider = ContainerBuilder.GetNewTagCloudServices(100, 100);
+            tagCloud = serviceProvider.GetService<TagCloud>();
+
+            Assert.Throws<InvalidOperationException>(
+                () => tagCloud.PrintTagCloud(
+                    path, 
+                    picPath, 
+                    extension));
+        }
+
+        [Test]
+        public void PringSettings_NotInstalledFont_ShouldThrowExeption()
+        {
+            var validator = new SettingsValidator();
+            var settings = new PrintSettings(validator);
+
+            Assert.Throws<InvalidOperationException>(() => settings.SetFont("Super mega font", 64));
+        }
+
+        [Test]
+        public void PringSettings_NegativeSizeOfPicture_ShouldThrowExeption()
+        {
+            var validator = new SettingsValidator();
+            var settings = new PrintSettings(validator);
+
+            Assert.Throws<InvalidOperationException>(() => settings.SetPictureSize(-10, -10));
         }
     }
 }

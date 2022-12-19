@@ -11,13 +11,15 @@ namespace TagsCloud
         
         private readonly ICloudLayouter cloudLayouter;
         private readonly IPrintSettings printSettings;
+        private readonly IBitmapValidator bitmapValidator;
 
-        public Bitmapper(IPrintSettings printSettings, ICloudLayouter cloudLayouter)
+        public Bitmapper(IPrintSettings printSettings, ICloudLayouter cloudLayouter, IBitmapValidator bitmapValidator)
         {
             bitmap = new Bitmap(printSettings.Width, printSettings.Height);
 
             this.cloudLayouter = cloudLayouter;
             this.printSettings = printSettings;
+            this.bitmapValidator = bitmapValidator;
         }
 
         private void FillBackground()
@@ -39,10 +41,11 @@ namespace TagsCloud
                 var wordSize = new Size((int)wordSizeF.Width + 2, (int)wordSizeF.Height + 2);
 
                 var newWordLocation = cloudLayouter.PutNextRectangle(wordSize);
+                var validResult = bitmapValidator.ValidateNewRectangle(newWordLocation, bitmap);
 
                 using (var solidBrush = new SolidBrush(pen.Color))
                 {
-                    graphics.DrawString(word, font, solidBrush, newWordLocation);
+                    graphics.DrawString(word, font, solidBrush, validResult.GetValueOrThrow());
                 }
             }
         }

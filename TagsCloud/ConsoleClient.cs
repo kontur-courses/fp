@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using TagsCloud.Interfaces;
 
@@ -8,8 +7,8 @@ namespace TagsCloud
 {
     public class ConsoleClient : IClient
     {
-        public string TextFilePath => basePath + textFileName; 
-        public string PicFilePath => basePath + picFileName; 
+        public string TextFilePath => basePath + textFileName;
+        public string PicFilePath => basePath + picFileName;
         public string PicFileExtension { get; private set; }
 
         private readonly string basePath;
@@ -17,57 +16,92 @@ namespace TagsCloud
         private string picFileName;
 
         private readonly StringBuilder textFileBuilder;
-        private char[] validChars;
 
-        public ConsoleClient(string basePath)
+        private readonly IRecognizer<string> recognizer;
+        private readonly IClientValidator validator;
+
+
+        public ConsoleClient(IRecognizer<string> recognizer, IClientValidator validator, string basePath)
         {
             this.basePath = basePath;
+            this.recognizer = recognizer;
+            this.validator = validator;
+
             textFileBuilder = new StringBuilder();
-            AddRussianCharsInMassive();
         }
 
         public void StartClient()
         {
-            Console.WriteLine("Enter text file name to save input text:");
-            var newLine = Console.ReadLine();
-            textFileName = newLine;
+            EnterTextName();
 
-            Console.WriteLine("Enter picture file name to save:");
-            newLine = Console.ReadLine();
-            picFileName = newLine;
+            EnterPictureName();
 
-            Console.WriteLine("Enter picture file extension to save:");
-            newLine = Console.ReadLine();
-            PicFileExtension = newLine;
+            EnterPictureExtension();
 
             Console.WriteLine("Enter one word at a time in the stack. If you want to finish, type \"stop\"");
 
             FillTextFile();
         }
 
-        private bool InputIsValid(string line)
+        private void EnterTextName()
         {
-            foreach (var ch in line)
+            while (true)
             {
-                if (!validChars.Contains(ch) && ch != '\n')
-                {
-                    return false;
-                }
-            }
+                Console.WriteLine("Enter text file name to save input text:");
+                var newLine = Console.ReadLine();
 
-            return true;
+                var validResult = recognizer.Recognize(newLine)
+                    .Then(validator.ValidateWrongSymbolsInPath)
+                    .Then(validator.ValidateRightTextExtension)
+                    .RefineError("Wrong text file name");
+
+                if (validResult.IsSuccess)
+                {
+                    textFileName = newLine;
+                    break;
+                }
+
+                Console.WriteLine(validResult.Error);
+            }
         }
 
-        private void AddRussianCharsInMassive()
+        private void EnterPictureName()
         {
-            char ch;
-            int n = 0;
-            validChars = new char[64];
-            for (int i = 1040; i <= 1103; i++)
+            while (true)
             {
-                ch = System.Convert.ToChar(i);
-                validChars[n] = ch;
-                n++;
+                Console.WriteLine("Enter picture file name to save:");
+                var newLine = Console.ReadLine();
+
+                var validResult = recognizer.Recognize(newLine)
+                    .Then(validator.ValidateWrongSymbolsInPath);
+
+                if (validResult.IsSuccess)
+                {
+                    picFileName = newLine;
+                    break;
+                }
+
+                Console.WriteLine(validResult.Error);
+            }
+        }
+
+        private void EnterPictureExtension()
+        {
+            while (true)
+            {
+                Console.WriteLine("Enter picture file extension to save:");
+                var newLine = Console.ReadLine();
+
+                var validResult = recognizer.Recognize(newLine)
+                    .Then(validator.ValidateRightPictureExtension);
+
+                if (validResult.IsSuccess)
+                {
+                    PicFileExtension = newLine;
+                    break;
+                }
+
+                Console.WriteLine(validResult.Error);
             }
         }
 
@@ -82,7 +116,10 @@ namespace TagsCloud
                     break;
                 }
 
-                if (InputIsValid(newLine)) textFileBuilder.Append(newLine + '\n');
+                var validResult = recognizer.Recognize(newLine)
+                    .Then(validator.ValidateRussianInput);
+
+                if (validResult.IsSuccess) textFileBuilder.Append(newLine + '\n');
                 else Console.WriteLine("Invalid word. Please, retype.");
             }
 
@@ -91,7 +128,7 @@ namespace TagsCloud
 
         private void SaveTextFile()
         {
-            using (StreamWriter writer = new StreamWriter(basePath + textFileName, true, System.Text.Encoding.Default))
+            using (var writer = new StreamWriter(basePath + textFileName, true, Encoding.Default))
             {
                 var text = textFileBuilder.ToString();
                 writer.WriteLine(text);

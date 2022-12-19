@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TagsCloud.Interfaces;
 
 namespace TagsCloud
@@ -16,7 +13,8 @@ namespace TagsCloud
             comparer = dictionaryComparer;
         }
 
-        public SortedDictionary<double, List<string>> ConvertFreqToProportions(SortedDictionary<int, List<string>> wordsFreq)
+        public SortedDictionary<double, List<string>> ConvertFreqToProportions(
+            SortedDictionary<int, List<string>> wordsFreq)
         {
             var scaledWords = new SortedDictionary<double, List<string>>(comparer);
             var baseHeight = (double)wordsFreq.First().Key;

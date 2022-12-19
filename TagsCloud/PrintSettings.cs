@@ -13,9 +13,18 @@ namespace TagsCloud
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        private readonly ISettingsValidator settingsValidator;
+
+        public PrintSettings(ISettingsValidator settingsValidator)
+        {
+            this.settingsValidator = settingsValidator;
+        }
+
         public void SetFont(string fontName, int fontSize)
         {
-            FontName = fontName;
+            var verifyResult = settingsValidator.VerifyFont(fontName);
+
+            FontName = verifyResult.GetValueOrThrow();
             FontSize = fontSize;
         }
 
@@ -36,8 +45,10 @@ namespace TagsCloud
 
         public void SetPictureSize(int width, int height)
         {
-            Width = width;
-            Height = height;
+            var validSize = settingsValidator.VerifyPictureSize(new Size(width, height));
+
+            Width = validSize.GetValueOrThrow().Width;
+            Height = validSize.GetValueOrThrow().Height;
         }
     }
 }

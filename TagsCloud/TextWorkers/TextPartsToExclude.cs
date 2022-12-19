@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TagsCloud.Interfaces;
+﻿using TagsCloud.Interfaces;
 
 namespace TagsCloud.TextWorkers
 {
@@ -9,8 +6,6 @@ namespace TagsCloud.TextWorkers
     {
         public string[] SpeechPartsToExclude { get; } = { "мест", "межд", "част", "предл", "союз" };
 
-        private readonly string[] wordsToExclude;
-
-        public string[] WordsToExclude => wordsToExclude;
+        public string[] WordsToExclude { get; }
     }
 }

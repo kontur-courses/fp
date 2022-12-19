@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TagsCloud.Interfaces;
 using TagsCloud.TextWorkers;
+using TagsCloud.Validators;
 
 namespace TagsCloud
 {
@@ -23,9 +24,10 @@ namespace TagsCloud
             services.AddSingleton<ICloudLayouter, CircularCloudLayouter>();
             services.AddSingleton<CircularCloudLayouter, CircularCloudLayouter>();
 
+            services.AddSingleton<ISettingsValidator, SettingsValidator>();
             services.AddSingleton<IPrintSettings>(x =>
             {
-                var settings = new PrintSettings();
+                var settings = new PrintSettings(x.GetService<ISettingsValidator>());
                 settings.SetFont("Consolas", 64);
                 settings.SetCentralPen(Color.White, 8);
                 settings.SetSurroundPen(Color.FromArgb(249, 100, 0), 4);
@@ -34,9 +36,7 @@ namespace TagsCloud
                 return settings;
             });
 
-            services.AddSingleton<IBitmapper>(x => new Bitmapper(
-                x.GetService<IPrintSettings>(),
-                x.GetService<ICloudLayouter>()));
+            services.AddSingleton<IBitmapper, Bitmapper>();
 
             services.AddSingleton<ITextPartsToExclude, TextPartsToExclude>();
 
@@ -50,11 +50,18 @@ namespace TagsCloud
             services.AddSingleton<IMorphsParser, MorphsParser>();
             services.AddSingleton<INormalFormParser, NormalFormParser>();
             services.AddSingleton<ITextSplitter, TextSplitter>();
+            services.AddSingleton<IFileValidator, FileValidator>();
+            services.AddSingleton<IBitmapValidator, BitmapValidator>();
 
             services.AddSingleton<ITagCloud, TagCloud>();
             services.AddSingleton<TagCloud, TagCloud>();
 
-            services.AddSingleton<IClient>(x => new ConsoleClient(@"..\..\..\..\"));
+            services.AddSingleton<IRecognizer<string>, Recognizer>();
+            services.AddSingleton<IClientValidator, ClientValidator>();
+            services.AddSingleton<IClient>(x => new ConsoleClient(
+                x.GetService<IRecognizer<string>>(),
+                x.GetService<IClientValidator>(),
+                @"..\..\..\..\"));
 
             var serviceProvider = services.BuildServiceProvider();
 

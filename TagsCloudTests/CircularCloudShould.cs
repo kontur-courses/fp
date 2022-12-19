@@ -18,7 +18,7 @@ namespace TagsCloudTests
         {
             get
             {
-                return new TestCaseData[]
+                return new []
                 {
                     new TestCaseData(new Size[]
                     {

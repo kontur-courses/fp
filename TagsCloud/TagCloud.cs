@@ -1,5 +1,4 @@
-﻿using System.IO;
-using TagsCloud.Interfaces;
+﻿using TagsCloud.Interfaces;
 
 namespace TagsCloud
 {
@@ -11,13 +10,15 @@ namespace TagsCloud
         private readonly IWordsRectanglesScaler wordsRectanglesScaler;
         private readonly IMorphsParser morphsParser;
         private readonly INormalFormParser normalFormParser;
+        private readonly IFileValidator fileValidator;
 
-        public TagCloud(IBitmapper bitmapper, 
-            IMorphsFilter morphsFilter, 
-            IWordsFrequencyAnalyzer freqAnalyzer, 
+        public TagCloud(IBitmapper bitmapper,
+            IMorphsFilter morphsFilter,
+            IWordsFrequencyAnalyzer freqAnalyzer,
             IWordsRectanglesScaler wordsRectanglesScaler,
             IMorphsParser morphsParser,
-            INormalFormParser normalFormParser)
+            INormalFormParser normalFormParser,
+            IFileValidator fileValidator)
         {
             this.bitmapper = bitmapper;
             this.morphsFilter = morphsFilter;
@@ -25,16 +26,16 @@ namespace TagsCloud
             this.wordsRectanglesScaler = wordsRectanglesScaler;
             this.morphsParser = morphsParser;
             this.normalFormParser = normalFormParser;
+            this.fileValidator = fileValidator;
         }
 
         public void PrintTagCloud(string textFilePath, string exportFilePath, string extension)
         {
-            if (!File.Exists(textFilePath) || textFilePath == null)
-                throw new FileNotFoundException("Файл с текстом отсутствует");
+            var validResult = fileValidator.VerifyFileExistence(textFilePath);
 
             var fullPath = exportFilePath + extension;
 
-            var morphInfo = morphsParser.GetMorphs(textFilePath);
+            var morphInfo = morphsParser.GetMorphs(validResult.GetValueOrThrow());
 
             var clearMorphs = morphsFilter.FilterRedundantWords(morphInfo);
 
