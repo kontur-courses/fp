@@ -9,7 +9,15 @@ namespace TagsCloud.TextWorkers
     {
         public IEnumerable<string> Normalize(IEnumerable<MorphInfo> clearMorphs)
         {
-            var normalForms = clearMorphs.Select(x => x.BestTag.Lemma);
+            var normalForms = clearMorphs.Select(x => 
+            {
+                if (x.BestTag.HasLemma == false)
+                {
+                    return x.Text;
+                }
+
+                return x.BestTag.Lemma;
+            });
 
             return normalForms;
         }

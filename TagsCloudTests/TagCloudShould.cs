@@ -24,6 +24,8 @@ namespace TagsCloudTests
         {
             serviceProvider = ContainerBuilder.GetNewTagCloudServices(1024, 720);
             tagCloud = serviceProvider.GetService<TagCloud>();
+
+            File.Delete(picPath + extension);
         }
 
         [Test]
@@ -36,6 +38,16 @@ namespace TagsCloudTests
             tagCloud.PrintTagCloud(textPath, picPath, extension);
 
             File.Exists(fullPath).Should().BeTrue();
+        }
+
+        [Test]
+        public void TagCloud_Text2Input()
+        {
+            var fullPath = @"..\..\..\..\text2.txt";
+
+            tagCloud.PrintTagCloud(textPath, picPath, extension);
+
+            File.Exists(picPath + extension).Should().BeTrue();
         }
 
         [Test]
