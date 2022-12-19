@@ -71,7 +71,7 @@ public class FileReaders_Should
         var result = new DocxFileReader(_pathSettingsProvider).ReadFile();
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Contain(_filePathToRemove);
+        result.Error.Should().Be($"File not found. Wrong path: {_filePathToRemove}");
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class FileReaders_Should
         var result = new DocxFileReader(_pathSettingsProvider).ReadFile();
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Contain(".txt");
+        result.Error.Should().Be("Wrong file extension: .txt");
     }
 
     private void Check(IFileReader reader)

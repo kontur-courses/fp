@@ -45,6 +45,6 @@ public class WordsFileReaderProvider_Should
         _pathSettings.WordsPath = "text.abc";
         var saverResult = _readerProvider.GetReader();
         saverResult.IsSuccess.Should().BeFalse();
-        saverResult.Error.Should().Contain(".abc");
+        saverResult.Error.Should().Be("No reader for extension: .abc");
     }
 }

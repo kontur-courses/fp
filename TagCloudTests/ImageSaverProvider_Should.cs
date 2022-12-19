@@ -50,6 +50,6 @@ public class ImageSaverProvider_Should
         _pathSettings.ImagePath = "image.abc";
         var saverResult = _imageSaverProvider.GetSaver();
         saverResult.IsSuccess.Should().BeFalse();
-        saverResult.Error.Should().Contain(".abc");
+        saverResult.Error.Should().Be("No saver for extension: .abc");
     }
 }

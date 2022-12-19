@@ -68,7 +68,7 @@ public class ImageSavers_Should
         var result = new JpegImageSaver(_pathSettingsProvider).SaveImage(_image);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Contain(".png");
+        result.Error.Should().Be("Wrong file extension: .png");
     }
 
     private void RemoveFileIfExists()
