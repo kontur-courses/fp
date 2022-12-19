@@ -16,9 +16,9 @@ namespace TagsCloud.Validators
                 rect.Y > 0 && rect.Y < bitHeight &&
                 diagonalPoint.X > 0 && diagonalPoint.X < bitWidth &&
                 diagonalPoint.Y > 0 && diagonalPoint.Y < bitHeight)
-                return Result.Ok(rect);
+                return Result<Rectangle>.Ok(rect);
 
-            return Result.Fail<Rectangle>("Rectangle out of bitmap bounds");
+            return Result<Rectangle>.Fail<Rectangle>("Rectangle out of bitmap bounds");
         }
     }
 }

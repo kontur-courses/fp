@@ -76,8 +76,8 @@ namespace TagsCloud.Validators
         private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
         {
             return predicate(obj)
-                ? Result.Ok(obj)
-                : Result.Fail<T>(errorMessage);
+                ? Result<T>.Ok(obj)
+                : Result<T>.Fail<T>(errorMessage);
         }
 
         private void AddRussianCharsInMassive()

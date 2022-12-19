@@ -10,15 +10,13 @@ namespace TagsCloud
         private readonly IWordsRectanglesScaler wordsRectanglesScaler;
         private readonly IMorphsParser morphsParser;
         private readonly INormalFormParser normalFormParser;
-        private readonly IFileValidator fileValidator;
 
         public TagCloud(IBitmapper bitmapper,
             IMorphsFilter morphsFilter,
             IWordsFrequencyAnalyzer freqAnalyzer,
             IWordsRectanglesScaler wordsRectanglesScaler,
             IMorphsParser morphsParser,
-            INormalFormParser normalFormParser,
-            IFileValidator fileValidator)
+            INormalFormParser normalFormParser)
         {
             this.bitmapper = bitmapper;
             this.morphsFilter = morphsFilter;
@@ -26,16 +24,13 @@ namespace TagsCloud
             this.wordsRectanglesScaler = wordsRectanglesScaler;
             this.morphsParser = morphsParser;
             this.normalFormParser = normalFormParser;
-            this.fileValidator = fileValidator;
         }
 
         public void PrintTagCloud(string textFilePath, string exportFilePath, string extension)
         {
-            var validResult = fileValidator.VerifyFileExistence(textFilePath);
-
             var fullPath = exportFilePath + extension;
 
-            var morphInfo = morphsParser.GetMorphs(validResult.GetValueOrThrow());
+            var morphInfo = morphsParser.GetMorphs(textFilePath);
 
             var clearMorphs = morphsFilter.FilterRedundantWords(morphInfo);
 

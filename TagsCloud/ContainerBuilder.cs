@@ -52,6 +52,7 @@ namespace TagsCloud
             services.AddSingleton<ITextSplitter, TextSplitter>();
             services.AddSingleton<IFileValidator, FileValidator>();
             services.AddSingleton<IBitmapValidator, BitmapValidator>();
+            services.AddSingleton<IMorphsValidator, MorphsValidator>();
 
             services.AddSingleton<ITagCloud, TagCloud>();
             services.AddSingleton<TagCloud, TagCloud>();

@@ -6,7 +6,7 @@ namespace TagsCloud
     {
         public Result<string> Recognize(string value)
         {
-            var result = new Result<string>(null, value);
+            var result = Result<string>.Ok(value);
             return result;
         }
     }

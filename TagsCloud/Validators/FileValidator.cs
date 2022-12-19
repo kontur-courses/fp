@@ -9,15 +9,15 @@ namespace TagsCloud.Validators
         {
             if (path == null)
             {
-                return Result.Fail<string>("Null path");
+                return Result<string>.Fail<string>("Null path");
             }
 
             if (!File.Exists(path))
             {
-                return Result.Fail<string>("File was not found");
+                return Result<string>.Fail<string>("File was not found");
             }
 
-            return Result.Ok(path);
+            return Result<string>.Ok(path);
         }
     }
 }

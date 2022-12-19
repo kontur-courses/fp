@@ -7,24 +7,28 @@ namespace TagsCloud.TextWorkers
 {
     public class MorphsParser : IMorphsParser
     {
-        private ITextSplitter TextSplitter { get; }
+        private ITextSplitter textSplitter;
+        private IFileValidator fileValidator;
+        private IMorphsValidator morphsValidator;
 
-        public MorphsParser(ITextSplitter textSplitter)
+        public MorphsParser(ITextSplitter textSplitter, IFileValidator fileValidator, IMorphsValidator morphsValidator)
         {
-            TextSplitter = textSplitter;
+            this.textSplitter = textSplitter;
+            this.fileValidator = fileValidator;
+            this.morphsValidator = morphsValidator;
         }
 
         public IEnumerable<MorphInfo> GetMorphs(string filePath)
         {
             var morph = new MorphAnalyzer(true);
 
-            var text = TextReader.ReadFile(filePath);
+            var validation = fileValidator.VerifyFileExistence(filePath)
+                .ThenDoWorkWithValue((x) => TextReader.ReadFile(x))
+                .ThenDoWorkWithValue((x) => textSplitter.SplitTextOnWords(x));
 
-            var words = TextSplitter.SplitTextOnWords(text);
+            var morphInfoValidate = morphsValidator.ParseOnMorphs(validation.GetValueOrThrow());
 
-            var morphInfo = morph.Parse(words);
-
-            return morphInfo;
+            return morphInfoValidate.GetValueOrThrow();
         }
     }
 }
