@@ -1,6 +1,6 @@
-﻿using DeepMorphy.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DeepMorphy.Model;
 using TagsCloud.Interfaces;
 
 namespace TagsCloud.TextWorkers
@@ -9,7 +9,7 @@ namespace TagsCloud.TextWorkers
     {
         public IEnumerable<string> Normalize(IEnumerable<MorphInfo> clearMorphs)
         {
-            var normalForms = clearMorphs.Select(x => 
+            var normalForms = clearMorphs.Select(x =>
             {
                 if (x.BestTag.HasLemma == false)
                 {

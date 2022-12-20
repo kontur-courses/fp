@@ -42,14 +42,14 @@ namespace TagsCloud
                     return newRectange;
                 }
             }
-            
+
             return Rectangle.Empty;
         }
 
         public Rectangle MoveToCenter(Rectangle rect)
         {
             var rectCenter = new Point(
-                rect.X + rect.Width / 2, 
+                rect.X + rect.Width / 2,
                 rect.Y + rect.Height / 2);
 
             var delX = rectCenter.X - Spiral.Center.X;
@@ -121,8 +121,8 @@ namespace TagsCloud
             var rectCenterX = rect.X + rect.Width / 2 - center.X;
             var rectCenterY = rect.Y + rect.Height / 2 - center.Y;
 
-            return (Math.Abs(rectCenterX) < CenterAreaRadius &&
-                Math.Abs(rectCenterY) < CenterAreaRadius);
+            return Math.Abs(rectCenterX) < CenterAreaRadius &&
+                   Math.Abs(rectCenterY) < CenterAreaRadius;
         }
     }
 }

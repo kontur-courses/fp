@@ -5,19 +5,21 @@ namespace TagsCloud.Validators
 {
     public class FileValidator : IFileValidator
     {
-        public Result<string> VerifyFileExistence(string path)
+        public ResultHandler<string> VerifyFileExistence(string path)
         {
+            var handler = new ResultHandler<string>(path);
+
             if (path == null)
             {
-                return Result<string>.Fail<string>("Null path");
+                return handler.Fail("Null path");
             }
 
             if (!File.Exists(path))
             {
-                return Result<string>.Fail<string>("File was not found");
+                return handler.Fail("File was not found");
             }
 
-            return Result<string>.Ok(path);
+            return handler;
         }
     }
 }

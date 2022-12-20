@@ -43,8 +43,6 @@ namespace TagsCloudTests
         [Test]
         public void TagCloud_Text2Input()
         {
-            var fullPath = @"..\..\..\..\text2.txt";
-
             tagCloud.PrintTagCloud(textPath, picPath, extension);
 
             File.Exists(picPath + extension).Should().BeTrue();
@@ -55,8 +53,8 @@ namespace TagsCloudTests
         {
             Assert.Throws<InvalidOperationException>(
                 () => tagCloud.PrintTagCloud(
-                    String.Empty, 
-                    picPath, 
+                    String.Empty,
+                    picPath,
                     picPath));
         }
 
@@ -69,8 +67,8 @@ namespace TagsCloudTests
 
             Assert.Throws<InvalidOperationException>(
                 () => tagCloud.PrintTagCloud(
-                    path, 
-                    picPath, 
+                    path,
+                    picPath,
                     extension));
         }
 
@@ -84,8 +82,8 @@ namespace TagsCloudTests
 
             Assert.Throws<InvalidOperationException>(
                 () => tagCloud.PrintTagCloud(
-                    path, 
-                    picPath, 
+                    path,
+                    picPath,
                     extension));
         }
 

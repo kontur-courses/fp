@@ -7,27 +7,30 @@ namespace TagsCloud.Validators
 {
     public class SettingsValidator : ISettingsValidator
     {
-        public Result<string> VerifyFont(string fontName)
+        public ResultHandler<string> VerifyFont(string fontName)
         {
             var installedFonts = new InstalledFontCollection();
             var fontFamily = installedFonts.Families;
+            var handler = new ResultHandler<string>(fontName);
 
             if (fontFamily.Any(x => x.Name == fontName))
             {
-                return Result<string>.Ok(fontName);
+                return handler;
             }
 
-            return Result<string>.Fail<string>("Font was not found");
+            return handler.Fail("Font was not found");
         }
 
-        public Result<Size> VerifyPictureSize(Size size)
+        public ResultHandler<Size> VerifyPictureSize(Size size)
         {
+            var handler = new ResultHandler<Size>(size);
+
             if (size.Width > 0 && size.Height > 0)
             {
-                return Result<string>.Ok(size);   
+                return handler;
             }
 
-            return Result<string>.Fail<Size>("The size of the picture is wrong");
+            return handler.Fail("The size of the picture is wrong");
         }
     }
 }

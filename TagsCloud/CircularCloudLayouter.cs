@@ -25,7 +25,7 @@ namespace TagsCloud
 
         public bool CheckSizeAvailable(Size checkAvailable)
         {
-            return (checkAvailable.Width > 0 && checkAvailable.Height > 0);
+            return checkAvailable.Width > 0 && checkAvailable.Height > 0;
         }
     }
 }

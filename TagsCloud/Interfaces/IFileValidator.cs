@@ -2,6 +2,6 @@
 {
     public interface IFileValidator
     {
-        public Result<string> VerifyFileExistence(string path);
+        public ResultHandler<string> VerifyFileExistence(string path);
     }
 }

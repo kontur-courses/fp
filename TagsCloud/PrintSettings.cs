@@ -24,7 +24,7 @@ namespace TagsCloud
         {
             var verifyResult = settingsValidator.VerifyFont(fontName);
 
-            FontName = verifyResult.GetValueOrThrow();
+            FontName = verifyResult.Value;
             FontSize = fontSize;
         }
 
@@ -47,8 +47,8 @@ namespace TagsCloud
         {
             var validSize = settingsValidator.VerifyPictureSize(new Size(width, height));
 
-            Width = validSize.GetValueOrThrow().Width;
-            Height = validSize.GetValueOrThrow().Height;
+            Width = validSize.Value.Width;
+            Height = validSize.Value.Height;
         }
     }
 }

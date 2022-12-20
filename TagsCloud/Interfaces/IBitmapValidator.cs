@@ -4,6 +4,6 @@ namespace TagsCloud.Interfaces
 {
     public interface IBitmapValidator
     {
-        public Result<Rectangle> ValidateNewRectangle(Rectangle rect, Bitmap bitmap);
+        public ResultHandler<Rectangle> ValidateNewRectangle(Rectangle rect, Bitmap bitmap);
     }
 }

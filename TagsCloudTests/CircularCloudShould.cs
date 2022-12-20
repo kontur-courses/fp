@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using TagsCloud;
 using TagsCloud.Interfaces;
 
@@ -18,23 +15,23 @@ namespace TagsCloudTests
         {
             get
             {
-                return new []
+                return new[]
                 {
-                    new TestCaseData(new Size[]
+                    new TestCaseData(new[]
                     {
                         new Size(100, 100),
                         new Size(50, 100),
                         new Size(50, 50),
                         new Size(20, 30)
                     }),
-                    new TestCaseData(new Size[]
+                    new TestCaseData(new[]
                     {
                         new Size(100, 100),
                         new Size(200, 200),
                         new Size(100, 50),
                         new Size(5, 5)
                     }),
-                    new TestCaseData(new Size[]
+                    new TestCaseData(new[]
                     {
                         new Size(100, 100),
                         new Size(100, 100),
@@ -125,9 +122,9 @@ namespace TagsCloudTests
 
         public bool IsRectanglesIntersect(List<Rectangle> rects)
         {
-            for (int i = 0; i < rects.Count; i++)
+            for (var i = 0; i < rects.Count; i++)
             {
-                for (int j = i + 1; j < rects.Count; j++)
+                for (var j = i + 1; j < rects.Count; j++)
                 {
                     var a = rects[i];
                     var b = rects[j];

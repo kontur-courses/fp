@@ -51,8 +51,8 @@ namespace TagsCloud
                 var newLine = Console.ReadLine();
 
                 var validResult = recognizer.Recognize(newLine)
-                    .Then(validator.ValidateWrongSymbolsInPath)
-                    .Then(validator.ValidateRightTextExtension)
+                    .Then(x => validator.ValidateWrongSymbolsInFileName(x.Value))
+                    .Then(x => validator.ValidateRightTextExtension(x.Value))
                     .RefineError("Wrong text file name");
 
                 if (validResult.IsSuccess)
@@ -73,7 +73,7 @@ namespace TagsCloud
                 var newLine = Console.ReadLine();
 
                 var validResult = recognizer.Recognize(newLine)
-                    .Then(validator.ValidateWrongSymbolsInPath);
+                    .Then(x => validator.ValidateWrongSymbolsInFileName(x.Value));
 
                 if (validResult.IsSuccess)
                 {
@@ -93,7 +93,7 @@ namespace TagsCloud
                 var newLine = Console.ReadLine();
 
                 var validResult = recognizer.Recognize(newLine)
-                    .Then(validator.ValidateRightPictureExtension);
+                    .Then(x => validator.ValidateRightPictureExtension(x.Value));
 
                 if (validResult.IsSuccess)
                 {
@@ -117,7 +117,7 @@ namespace TagsCloud
                 }
 
                 var validResult = recognizer.Recognize(newLine)
-                    .Then(validator.ValidateRussianInput);
+                    .Then(x => validator.ValidateRussianInput(x.Value));
 
                 if (validResult.IsSuccess) textFileBuilder.Append(newLine + '\n');
                 else Console.WriteLine("Invalid word. Please, retype.");

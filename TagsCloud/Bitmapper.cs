@@ -8,7 +8,7 @@ namespace TagsCloud
     {
         private readonly Bitmap bitmap;
         private Graphics graphics => Graphics.FromImage(bitmap);
-        
+
         private readonly ICloudLayouter cloudLayouter;
         private readonly IPrintSettings printSettings;
         private readonly IBitmapValidator bitmapValidator;
@@ -45,7 +45,7 @@ namespace TagsCloud
 
                 using (var solidBrush = new SolidBrush(pen.Color))
                 {
-                    graphics.DrawString(word, font, solidBrush, validResult.GetValueOrThrow());
+                    graphics.DrawString(word, font, solidBrush, validResult.Value);
                 }
             }
         }

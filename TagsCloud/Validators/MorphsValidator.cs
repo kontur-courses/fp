@@ -1,29 +1,26 @@
-﻿using DeepMorphy;
-using DeepMorphy.Model;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using DeepMorphy;
+using DeepMorphy.Model;
 using TagsCloud.Interfaces;
-using TagsCloud.TextWorkers;
 
 namespace TagsCloud.Validators
 {
     public class MorphsValidator : IMorphsValidator
     {
-        public Result<IEnumerable<MorphInfo>> ParseOnMorphs(IEnumerable<string> words)
+        public ResultHandler<IEnumerable<MorphInfo>> ParseOnMorphs(IEnumerable<string> words)
         {
             var morphParser = new MorphAnalyzer();
             var morphInfo = morphParser.Parse(words);
 
-            if (morphInfo.Count() == 0)
+            var handler = new ResultHandler<IEnumerable<MorphInfo>>(morphInfo);
+
+            if (morphInfo.Count() != 0)
             {
-                return Result<IEnumerable<MorphInfo>>.Fail<IEnumerable<MorphInfo>>("Empty words enum");
+                return handler;
             }
-            else
-            {
-                return Result<IEnumerable<MorphInfo>>.Ok(morphInfo);
-            }
+
+            return handler.Fail("Empty words enum");
         }
     }
 }

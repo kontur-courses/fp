@@ -36,7 +36,7 @@ namespace TagsCloud.TextWorkers
         private SortedDictionary<int, List<string>> GetOrderedDictByFrequency(Dictionary<string, int> wordsFrequency)
         {
             var orderedWordsFrequency = new SortedDictionary<int, List<string>>(comparer);
-               
+
             foreach (var pair in wordsFrequency)
             {
                 var word = pair.Key;
@@ -48,7 +48,7 @@ namespace TagsCloud.TextWorkers
                 }
                 else
                 {
-                    orderedWordsFrequency.Add(freq, new List<string>() { word });
+                    orderedWordsFrequency.Add(freq, new List<string> { word });
                 }
             }
 

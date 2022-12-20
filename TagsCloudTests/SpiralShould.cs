@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Drawing;
+using FluentAssertions;
 using NUnit.Framework;
-using System.Drawing;
 using TagsCloud;
 
 namespace TagsCloudTests
@@ -62,7 +62,7 @@ namespace TagsCloudTests
             var spiralPoints = spiral.GetSpiralPoints();
             var enumerator = spiralPoints.GetEnumerator();
 
-            for (int i = 0; i < quantity + 2; i++)
+            for (var i = 0; i < quantity + 2; i++)
             {
                 enumerator.MoveNext();
             }

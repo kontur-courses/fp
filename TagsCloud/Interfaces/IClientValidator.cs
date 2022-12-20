@@ -4,12 +4,12 @@
     {
         public char[] ValidChars { get; }
 
-        public Result<string> ValidateRussianInput(string line);
+        public ResultHandler<string> ValidateRussianInput(string line);
 
-        public Result<string> ValidateWrongSymbolsInPath(string line);
+        public ResultHandler<string> ValidateWrongSymbolsInFileName(string line);
 
-        public Result<string> ValidateRightTextExtension(string line);
+        public ResultHandler<string> ValidateRightTextExtension(string line);
 
-        public Result<string> ValidateRightPictureExtension(string line);
+        public ResultHandler<string> ValidateRightPictureExtension(string line);
     }
 }

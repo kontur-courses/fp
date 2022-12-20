@@ -1,6 +1,6 @@
-﻿using DeepMorphy.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DeepMorphy.Model;
 using TagsCloud.Interfaces;
 
 namespace TagsCloud.TextWorkers

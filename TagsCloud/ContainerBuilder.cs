@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using Microsoft.Extensions.DependencyInjection;
 using TagsCloud.Interfaces;
 using TagsCloud.TextWorkers;
 using TagsCloud.Validators;
@@ -11,7 +11,7 @@ namespace TagsCloud
     {
         public static ServiceProvider GetNewTagCloudServices(int width, int height)
         {
-            var centerPoint = new Point((int)(width / 2), (int)(height / 2));
+            var centerPoint = new Point(width / 2, height / 2);
 
             var services = new ServiceCollection();
 

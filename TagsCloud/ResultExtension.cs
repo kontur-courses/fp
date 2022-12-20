@@ -4,36 +4,37 @@ namespace TagsCloud
 {
     public static class ResultExtension
     {
-        public static Result<TOutput> Then<T, TOutput>(
-            this Result<T> input,
-            Func<T, Result<TOutput>> continuation)
+        public static ResultHandler<T> Then<T>(
+            this ResultHandler<T> input,
+            Func<ResultHandler<T>, ResultHandler<T>> continuation)
         {
             return input.IsSuccess
-                ? continuation(input.Value)
-                : Result<T>.Fail<TOutput>(input.Error);
+                ? continuation(input)
+                : input.Fail(input.Error);
         }
 
-        public static Result<TOutput> ThenDoWorkWithValue<T, TOutput>(
-           this Result<T> input,
-           Func<T, TOutput> continuation)
+        public static ResultHandler<TOut> ThenDoWorkWithValue<T, TOut>(
+            this ResultHandler<T> input,
+            Func<T, TOut> continuation)
         {
             var newValue = continuation(input.Value);
+            var handler = new ResultHandler<TOut>(newValue);
 
             return input.IsSuccess
-                ? Result<TOutput>.Ok(newValue)
-                : Result<T>.Fail<TOutput>(input.Error);
+                ? handler
+                : handler.Fail(input.Error);
         }
 
-        public static Result<T> ReplaceError<T>(
-           this Result<T> input,
-           Func<string, string> replaceError)
+        public static ResultHandler<T> ReplaceError<T>(
+            this ResultHandler<T> input,
+            Func<string, string> replaceError)
         {
             if (input.IsSuccess) return input;
-            return Result<T>.Fail<T>(replaceError(input.Error));
+            return input.Fail(replaceError(input.Error));
         }
 
-        public static Result<T> RefineError<T>(
-            this Result<T> input,
+        public static ResultHandler<T> RefineError<T>(
+            this ResultHandler<T> input,
             string errorMessage)
         {
             return ReplaceError(input, err => errorMessage + ". " + err);

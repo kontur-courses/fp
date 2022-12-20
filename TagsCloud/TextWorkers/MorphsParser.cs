@@ -1,15 +1,15 @@
-﻿using DeepMorphy;
+﻿using System.Collections.Generic;
+using DeepMorphy;
 using DeepMorphy.Model;
-using System.Collections.Generic;
 using TagsCloud.Interfaces;
 
 namespace TagsCloud.TextWorkers
 {
     public class MorphsParser : IMorphsParser
     {
-        private ITextSplitter textSplitter;
-        private IFileValidator fileValidator;
-        private IMorphsValidator morphsValidator;
+        private readonly ITextSplitter textSplitter;
+        private readonly IFileValidator fileValidator;
+        private readonly IMorphsValidator morphsValidator;
 
         public MorphsParser(ITextSplitter textSplitter, IFileValidator fileValidator, IMorphsValidator morphsValidator)
         {
@@ -23,12 +23,12 @@ namespace TagsCloud.TextWorkers
             var morph = new MorphAnalyzer(true);
 
             var validation = fileValidator.VerifyFileExistence(filePath)
-                .ThenDoWorkWithValue((x) => TextReader.ReadFile(x))
-                .ThenDoWorkWithValue((x) => textSplitter.SplitTextOnWords(x));
+                .ThenDoWorkWithValue(x => TextReader.ReadFile(x))
+                .ThenDoWorkWithValue(x => textSplitter.SplitTextOnWords(x));
 
-            var morphInfoValidate = morphsValidator.ParseOnMorphs(validation.GetValueOrThrow());
+            var morphInfoValidate = morphsValidator.ParseOnMorphs(validation.Value);
 
-            return morphInfoValidate.GetValueOrThrow();
+            return morphInfoValidate.Value;
         }
     }
 }

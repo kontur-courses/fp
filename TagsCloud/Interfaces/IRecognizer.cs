@@ -2,6 +2,6 @@
 {
     public interface IRecognizer<T>
     {
-        public Result<T> Recognize(T value);
+        public ResultHandler<T> Recognize(T value);
     }
 }

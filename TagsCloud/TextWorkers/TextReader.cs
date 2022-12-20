@@ -6,7 +6,7 @@ namespace TagsCloud.TextWorkers
     {
         public static string ReadFile(string path)
         {
-            using (StreamReader reader = new StreamReader(path))
+            using (var reader = new StreamReader(path))
             {
                 return reader.ReadToEnd();
             }

@@ -53,11 +53,11 @@ namespace TagsCloud
 
             while (true)
             {
-                double r = Math.Sqrt(lastX * lastX + lastY * lastY);
-                double tx = helixPitch * lastX + r * lastY;
-                double ty = helixPitch * lastY - r * lastX;
-                double tLen = Math.Sqrt(tx * tx + ty * ty);
-                double k = segmentLength / tLen;
+                var r = Math.Sqrt(lastX * lastX + lastY * lastY);
+                var tx = helixPitch * lastX + r * lastY;
+                var ty = helixPitch * lastY - r * lastX;
+                var tLen = Math.Sqrt(tx * tx + ty * ty);
+                var k = segmentLength / tLen;
                 lastX -= tx * k;
                 lastY -= ty * k;
                 var newPoint = new Point((int)(Center.X + lastX), (int)(Center.Y + lastY));

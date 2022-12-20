@@ -4,9 +4,9 @@ namespace TagsCloud
 {
     public class Recognizer : IRecognizer<string>
     {
-        public Result<string> Recognize(string value)
+        public ResultHandler<string> Recognize(string value)
         {
-            var result = Result<string>.Ok(value);
+            var result = new ResultHandler<string>(value);
             return result;
         }
     }

@@ -13,7 +13,7 @@ namespace TagsCloud.Validators
 
         public char[] ValidChars { get; private set; }
 
-        public Result<string> ValidateRussianInput(string line)
+        public ResultHandler<string> ValidateRussianInput(string line)
         {
             var result = Validate(line, l =>
                 {
@@ -28,7 +28,7 @@ namespace TagsCloud.Validators
             return result;
         }
 
-        public Result<string> ValidateWrongSymbolsInPath(string line)
+        public ResultHandler<string> ValidateWrongSymbolsInFileName(string line)
         {
             var wrongSymbols = new[] { '<', '>', ':', '"', '\\', '/', '|', '?', '*' };
 
@@ -43,41 +43,53 @@ namespace TagsCloud.Validators
                 "Wrong symbols in path name");
         }
 
-        public Result<string> ValidateRightTextExtension(string line)
+        public ResultHandler<string> ValidateRightTextExtension(string line)
         {
             var expectedTextExtensions = new[] { ".txt" };
 
             return ValidateExtensions(expectedTextExtensions, line);
         }
 
-        public Result<string> ValidateRightPictureExtension(string line)
+        public ResultHandler<string> ValidateRightPictureExtension(string line)
         {
             var expectedPictureExtensions = new[] { ".png", ".jpg" };
 
             return ValidateExtensions(expectedPictureExtensions, line);
         }
 
-        private Result<string> ValidateExtensions(string[] availableExtensions, string line)
+        private ResultHandler<string> ValidateExtensions(string[] availableExtensions, string line)
         {
-            return Validate(line, l =>
+            var isDotInLine = false;
+
+            var res = Validate(line, l =>
                 {
                     var extInd = line.LastIndexOf('.');
                     var ext = "";
 
                     if (extInd != -1) ext = line.Substring(extInd);
-                    else return false;
+                    else
+                    {
+                        isDotInLine = true;
+                        return false;
+                    }
 
                     if (availableExtensions.Contains(ext)) return true;
                     return false;
                 },
                 $"Wrong extension. Expected only {string.Join(" ", availableExtensions)} files");
+
+            if (isDotInLine) res.RefineError("A dot in the extension name is not found");
+            return res;
         }
 
-        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
+
+        private ResultHandler<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage)
         {
+            var handler = new ResultHandler<T>(obj);
+
             return predicate(obj)
-                ? Result<T>.Ok(obj)
-                : Result<T>.Fail<T>(errorMessage);
+                ? handler
+                : handler.Fail(errorMessage);
         }
 
         private void AddRussianCharsInMassive()
