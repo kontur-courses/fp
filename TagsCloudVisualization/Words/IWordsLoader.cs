@@ -2,5 +2,5 @@ namespace TagsCloudVisualization.Words;
 
 public interface IWordsLoader
 {
-    IEnumerable<Word> LoadWords(VisualizationOptions options);
+    Result<IEnumerable<Word>> LoadWords(VisualizationOptions options);
 }

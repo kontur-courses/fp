@@ -19,15 +19,25 @@ public class CustomWordsLoader : IWordsLoader
         _wordsFilter = wordsFilter;
     }
 
-    public IEnumerable<Word> LoadWords(VisualizationOptions options)
+    public Result<IEnumerable<Word>> LoadWords(VisualizationOptions options)
     {
-        var text = _textReader.ReadText();
-        var rawWords = _textParser.ParseWords(text);
+        var rawWordsResult = _textReader.ReadText()
+            .Then(text => _textParser.ParseWords(text))
+            .RefineError("Cant parse text");
+
+        if (!rawWordsResult.IsSuccess)
+            return Result.Fail<IEnumerable<Word>>(rawWordsResult.Error);
+
+        var rawWords = rawWordsResult.GetValueOrThrow();
 
         var wordsAndCount = rawWords.GroupBy(r => r.ToLowerInvariant())
             .ToDictionary(r => r.Key, r => r.Count());
 
-        var filteredWords = _wordsFilter.FilterWords(wordsAndCount, options);
+        var filteredWordsResult = _wordsFilter.FilterWords(wordsAndCount, options);
+        if (!filteredWordsResult.IsSuccess)
+            return Result.Fail<IEnumerable<Word>>(filteredWordsResult.Error);
+
+        var filteredWords = filteredWordsResult.GetValueOrThrow();
         var takeWords = filteredWords;
 
         if (options.TakeMostPopularWords > 0)
@@ -35,7 +45,11 @@ public class CustomWordsLoader : IWordsLoader
                 .Take(options.TakeMostPopularWords)
                 .ToDictionary(r => r.Key, r => r.Value);
 
-        var sizesForWords = _wordsSizeCalculator.CalcSizeForWords(takeWords, options.MinFontSize, options.MaxFontSize);
+        var sizesForWordsResult = _wordsSizeCalculator.CalcSizeForWords(takeWords, options.MinFontSize, options.MaxFontSize);
+        if (!sizesForWordsResult.IsSuccess)
+            return Result.Fail<IEnumerable<Word>>(sizesForWordsResult.Error);
+
+        var sizesForWords = sizesForWordsResult.GetValueOrThrow();
 
         var words = new List<Word>();
         foreach (var group in takeWords)

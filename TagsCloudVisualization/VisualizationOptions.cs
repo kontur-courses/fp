@@ -4,11 +4,11 @@ namespace TagsCloudVisualization;
 
 public class VisualizationOptions
 {
-    public Size CanvasSize { get; set; }
+    public Size? CanvasSize { get; set; }
     public float SpiralStep { get; set; }
-    public Color BackgroundColor { get; set; }
-    public Palette Palette { get; set; }
-    public FontFamily FontFamily { get; set; }
+    public Color? BackgroundColor { get; set; }
+    public Palette? Palette { get; set; }
+    public FontFamily? FontFamily { get; set; }
     public int TakeMostPopularWords { get; set; }
 
     public List<string> BoringWords { get; set; }
@@ -21,6 +21,7 @@ public class VisualizationOptions
 
     public VisualizationOptions()
     {
+        DirectoryToMyStemProgram = "";
         Palette = new Palette(Brushes.Black);
         BoringWords = new List<string>();
         ExcludedPartsOfSpeech = new List<string>();

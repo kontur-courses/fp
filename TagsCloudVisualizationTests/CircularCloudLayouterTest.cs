@@ -43,17 +43,17 @@ public class CircularCloudLayouterTest
     [TestCase(0, 5, TestName = "Zero width")]
     [TestCase(-1, 5, TestName = "Negative width")]
     [TestCase(5, -1, TestName = "Negative height")]
-    public void PutNextRectangle_NotPositiveOrSingleSideSize_EmptyRectangle(int width, int height)
+    public void PutNextRectangle_NotPositiveOrSingleSideSize_NotIsSuccess(int width, int height)
     {
         var rectangle = _layouter.PutNextRectangle(new Size(0, 0), _options);
-        rectangle.IsEmpty.Should().BeTrue();
+        rectangle.IsSuccess.Should().BeFalse();
     }
 
     [Test]
-    public void PutNextRectangle_ZeroSize_EmptyRectangle()
+    public void PutNextRectangle_ZeroSize_NotIsSuccess()
     {
         var rectangle = _layouter.PutNextRectangle(new Size(0, 0), _options);
-        rectangle.IsEmpty.Should().BeTrue();
+        rectangle.IsSuccess.Should().BeFalse();
     }
 
     [Test]
@@ -63,10 +63,12 @@ public class CircularCloudLayouterTest
         var width = random.Next(1, 100);
         var height = random.Next(1, 100);
 
-        var rectangle = _layouter.PutNextRectangle(new Size(width, height), _options);
+        var rectangleResult = _layouter.PutNextRectangle(new Size(width, height), _options);
 
         using (new AssertionScope())
         {
+            rectangleResult.IsSuccess.Should().BeTrue();
+            var rectangle = rectangleResult.GetValueOrThrow();
             rectangle.Width.Should().Be(width);
             rectangle.Height.Should().Be(height);
         }
@@ -76,19 +78,23 @@ public class CircularCloudLayouterTest
     [Test]
     public void PutNextRectangle_FirstRectangle_ShiftToCenterOfRectangle()
     {
-        var x = 4;
-        var y = 6;
-        var width = 9;
-        var height = 12;
+        const int x = 4;
+        const int y = 6;
+        const int width = 9;
+        const int height = 12;
 
         _options = new LayoutOptions(new PointF(x, y), 0.1f);
-        var rectangle = _layouter.PutNextRectangle(new Size(width, height), _options);
+        var rectangleResult = _layouter.PutNextRectangle(new Size(width, height), _options);
 
-        var expectedX = x - (float)width / 2;
-        var expectedY = y - (float)height / 2;
+        const float expectedX = x - (float)width / 2;
+        const float expectedY = y - (float)height / 2;
 
         using (new AssertionScope())
         {
+            rectangleResult.IsSuccess.Should().BeTrue();
+            var rectangle = rectangleResult.GetValueOrThrow();
+            rectangle.Width.Should().Be(width);
+            rectangle.Height.Should().Be(height);
             rectangle.X.Should().Be(expectedX);
             rectangle.Y.Should().Be(expectedY);
         }
@@ -100,13 +106,23 @@ public class CircularCloudLayouterTest
     [TestCase(5, 7)]
     public void PutNextRectangle_TwoRectangles_NotIntersect(int width, int height)
     {
-        var firstRectangle = _layouter.PutNextRectangle(new Size(width, height), _options);
-        var secondRectangle = _layouter.PutNextRectangle(new Size(width, height), _options);
+        var firstRectangleResult = _layouter.PutNextRectangle(new Size(width, height), _options);
+        var secondRectangleResult = _layouter.PutNextRectangle(new Size(width, height), _options);
 
-        firstRectangle
-            .IntersectsWith(secondRectangle)
-            .Should()
-            .BeFalse();
+
+        using (new AssertionScope())
+        {
+            firstRectangleResult.IsSuccess.Should().BeTrue();
+            secondRectangleResult.IsSuccess.Should().BeTrue();
+
+            var firstRectangle = firstRectangleResult.GetValueOrThrow();
+            var secondRectangle = secondRectangleResult.GetValueOrThrow();
+
+            firstRectangle
+                .IntersectsWith(secondRectangle)
+                .Should()
+                .BeFalse();
+        }
     }
 
     [Test]
@@ -120,7 +136,10 @@ public class CircularCloudLayouterTest
         {
             var newX = random.Next(40, 100);
             var newY = random.Next(40, 100);
-            rectangles.Add(_layouter.PutNextRectangle(new Size(newX, newY), _options));
+            var putResult = _layouter.PutNextRectangle(new Size(newX, newY), _options);
+
+            if (putResult.IsSuccess)
+                rectangles.Add(putResult.GetValueOrThrow());
         }
 
         foreach (var rectangle in rectangles)
@@ -141,7 +160,11 @@ public class CircularCloudLayouterTest
         {
             var newX = random.Next(40, 100);
             var newY = random.Next(40, 100);
-            rectangles.Add(_layouter.PutNextRectangle(new Size(newX, newY), _options));
+
+            var putResult = _layouter.PutNextRectangle(new Size(newX, newY), _options);
+
+            if (putResult.IsSuccess)
+                rectangles.Add(putResult.GetValueOrThrow());
         }
 
         _layouter.Rectangles.Should().BeEquivalentTo(rectangles);
@@ -151,6 +174,5 @@ public class CircularCloudLayouterTest
     [TearDown]
     public void TearDown()
     {
-
     }
 }

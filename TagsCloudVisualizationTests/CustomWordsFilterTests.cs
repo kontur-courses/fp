@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using TagsCloudVisualization;
@@ -20,7 +21,7 @@ public class CustomWordsFilterTests
     {
         var mock = new Mock<IMorphAnalyzer>();
         mock.Setup(a => a.GetWordsMorphInfo(It.IsAny<IEnumerable<string>>()))
-            .Returns(new Func<IEnumerable<string>, Dictionary<string, WordMorphInfo>>((callInfo) => new Dictionary<string, WordMorphInfo>()));
+            .Returns(new Func<IEnumerable<string>, Result<Dictionary<string, WordMorphInfo>>>((callInfo) => new Dictionary<string, WordMorphInfo>()));
 
         _wordsFilter = new CustomWordsFilter(mock.Object);
     }
@@ -28,11 +29,7 @@ public class CustomWordsFilterTests
     [Test]
     public void FilterWords_EmptyOptions_ReturnAllWords()
     {
-        var options = new VisualizationOptions()
-        {
-        };
-        // options.BoringWords.options.ExcludedPartsOfSpeech
-
+        var options = new VisualizationOptions();
 
         var wordsAndCount = new Dictionary<string, int>()
         {
@@ -47,7 +44,11 @@ public class CustomWordsFilterTests
             },
         };
         var actualWords = _wordsFilter.FilterWords(wordsAndCount, options);
-        actualWords.Should().BeEquivalentTo(wordsAndCount);
+        using (new AssertionScope())
+        {
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(wordsAndCount);
+        }
     }
 
     [Test]
@@ -55,7 +56,7 @@ public class CustomWordsFilterTests
     {
         var mock = new Mock<IMorphAnalyzer>();
         mock.Setup(a => a.GetWordsMorphInfo(It.IsAny<IEnumerable<string>>()))
-            .Returns(new Func<IEnumerable<string>, Dictionary<string, WordMorphInfo>>((callInfo) =>
+            .Returns(new Func<IEnumerable<string>, Result<Dictionary<string, WordMorphInfo>>>((callInfo) =>
                 new Dictionary<string, WordMorphInfo>()
                 {
                     {
@@ -133,7 +134,14 @@ public class CustomWordsFilterTests
                 "test4", 3
             }
         };
+
         var actualWords = _wordsFilter.FilterWords(wordsAndCount, options);
+
+        using (new AssertionScope())
+        {
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
+        }
     }
 
     [Test]
@@ -147,8 +155,6 @@ public class CustomWordsFilterTests
                 "test4"
             }
         };
-        // options.BoringWords.options.ExcludedPartsOfSpeech
-
 
         var wordsAndCount = new Dictionary<string, int>()
         {
@@ -176,6 +182,10 @@ public class CustomWordsFilterTests
             }
         };
         var actualWords = _wordsFilter.FilterWords(wordsAndCount, options);
-        actualWords.Should().BeEquivalentTo(expectedWords);
+        using (new AssertionScope())
+        {
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
+        }
     }
 }

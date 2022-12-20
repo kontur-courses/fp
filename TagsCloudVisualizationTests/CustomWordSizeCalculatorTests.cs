@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 using TagsCloudVisualization.Words;
 
@@ -20,15 +21,19 @@ public class CustomWordSizeCalculatorTests
 
     [TestCase(20, 10, Description = "MaxFontSize больше чем MinFontSize")]
     [TestCase(25, 25, Description = "MaxFontSize равен MinFontSize")]
-    public void CalcSizeForWords_MaxFontSizeAndMinFontSize_ThrowException(float minFontSize, float maxFontSize)
+    public void CalcSizeForWords_MaxFontSizeAndMinFontSize_IsNotSuccess(float minFontSize, float maxFontSize)
     {
-        new Action(() => { _wordsSizeCalculator.CalcSizeForWords(new Dictionary<string, int>(), minFontSize, maxFontSize); }).Should().Throw<ArgumentException>();
+        _wordsSizeCalculator.CalcSizeForWords(new Dictionary<string, int>(), minFontSize, maxFontSize).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void CalcSizeForWords_MinFontSizeLessThanOne_ThrowException()
+    public void CalcSizeForWords_MinFontSizeLessThanOne_IsNotSuccess()
     {
-        new Action(() => { _wordsSizeCalculator.CalcSizeForWords(new Dictionary<string, int>(), 0, 20); }).Should().Throw<ArgumentException>();
+        _wordsSizeCalculator.CalcSizeForWords(new Dictionary<string, int>(), 0, 20).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
@@ -76,14 +81,20 @@ public class CustomWordSizeCalculatorTests
         };
 
         var wordsAndSizesActual = _wordsSizeCalculator.CalcSizeForWords(wordsAndCount, minFontSize, maxFontSize);
-        wordsAndSizesActual.Should().BeEquivalentTo(wordsAndSizesExpected);
+
+        
+        using (new AssertionScope())
+        {
+            wordsAndSizesActual.IsSuccess.Should().BeTrue();
+            wordsAndSizesActual.GetValueOrThrow().Should().BeEquivalentTo(wordsAndSizesExpected);
+        }
     }
 
     [Test]
     public void CalcSizeForWords_OneWord_MinSizeForWord()
     {
-        var minFontSize = 10f;
-        var maxFontSize = 30f;
+        const float minFontSize = 10f;
+        const float maxFontSize = 30f;
         var wordsAndCount = new Dictionary<string, int>()
         {
             {
@@ -111,7 +122,12 @@ public class CustomWordSizeCalculatorTests
         };
 
         var wordsAndSizesActual = _wordsSizeCalculator.CalcSizeForWords(wordsAndCount, minFontSize, maxFontSize);
-        wordsAndSizesActual.Should().BeEquivalentTo(wordsAndSizesExpected);
+
+        using (new AssertionScope())
+        {
+            wordsAndSizesActual.IsSuccess.Should().BeTrue();
+            wordsAndSizesActual.GetValueOrThrow().Should().BeEquivalentTo(wordsAndSizesExpected);
+        }
     }
 
 
@@ -166,21 +182,25 @@ public class CustomWordSizeCalculatorTests
         };
 
         var wordsAndSizesActual = _wordsSizeCalculator.CalcSizeForWords(wordsAndCount, minFontSize, maxFontSize);
-        wordsAndSizesActual.Should().BeEquivalentTo(wordsAndSizesExpected);
+
+        using (new AssertionScope())
+        {
+            wordsAndSizesActual.IsSuccess.Should().BeTrue();
+            wordsAndSizesActual.GetValueOrThrow().Should().BeEquivalentTo(wordsAndSizesExpected);
+        }
     }
 
     [Test]
     public void CalcSizeForWords_ManyWordsWithDifferentCountAndTreeWithEqualsCount_RightSizeForAllWord()
     {
-        var minFontSize = 10f;
-        var maxFontSize = 30f;
+        const float minFontSize = 10f;
+        const float maxFontSize = 30f;
         var wordsAndCount = new Dictionary<string, int>()
         {
             {
                 "1234", 5
             }
         };
-        var step = (maxFontSize - minFontSize) / wordsAndCount.Count;
 
         var wordsAndSizesExpected = new Dictionary<string, float>()
         {
@@ -191,38 +211,10 @@ public class CustomWordSizeCalculatorTests
 
         var wordsAndSizesActual = _wordsSizeCalculator.CalcSizeForWords(wordsAndCount, minFontSize, maxFontSize);
 
-        wordsAndSizesActual.Should().BeEquivalentTo(wordsAndSizesExpected);
-    }
-
-    private static Dictionary<string, float> CalcSizesForWords(int maxFontSize, int minFontSize, Dictionary<string, int> wordsAndCount)
-    {
-        var wordsFrequency = wordsAndCount.Values.ToList();
-
-        var groupByUniqueCount = wordsFrequency.GroupBy(r => r)
-            .Select(r => r.Key)
-            .OrderByDescending(r => r)
-            .ToList();
-
-        var sizesDiff = maxFontSize - minFontSize;
-        var step = sizesDiff / groupByUniqueCount.Count;
-        var currentSize = minFontSize;
-
-        var sizeForFrequency = new Dictionary<int, float>();
-        foreach (var oneWordCount in groupByUniqueCount)
+        using (new AssertionScope())
         {
-            sizeForFrequency[oneWordCount] = currentSize;
-            currentSize += step;
+            wordsAndSizesActual.IsSuccess.Should().BeTrue();
+            wordsAndSizesActual.GetValueOrThrow().Should().BeEquivalentTo(wordsAndSizesExpected);
         }
-
-        var wordsAndSizesExpected = new Dictionary<string, float>();
-        foreach (var group in wordsAndCount)
-        {
-            if (!sizeForFrequency.TryGetValue(group.Value, out var wordSize))
-                wordSize = minFontSize;
-
-            wordsAndSizesExpected.Add(group.Key, wordSize);
-        }
-
-        return wordsAndSizesExpected;
     }
 }

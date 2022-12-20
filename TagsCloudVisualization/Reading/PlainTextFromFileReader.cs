@@ -9,11 +9,19 @@ public class PlainTextFromFileReader : ITextReader
         _pathToFile = pathToFile;
     }
 
-    public string ReadText()
+    public Result<string> ReadText()
     {
         if (!File.Exists(_pathToFile))
-            throw new FileNotFoundException($"File not exists {_pathToFile}");
+            return Result.Fail<string>($"File not exists {_pathToFile}");
 
-        return File.ReadAllText(_pathToFile);
+        try
+        {
+            var text = File.ReadAllText(_pathToFile);
+            return text;
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<string>(e.ToString());
+        }
     }
 }

@@ -1,26 +1,29 @@
 using System.Drawing.Imaging;
+using TagsCloudVisualization;
 
 namespace TagsCloudVisualizationConsole;
 
 public static class AppOptionsValidator
 {
-    public static void ValidatePathsInOptions(ArgsOptions? argsOptions)
+    public static Result<None?> ValidatePathsInOptions(ArgsOptions? argsOptions)
     {
         if (argsOptions == null)
-            throw new ArgumentNullException(nameof(argsOptions));
+            return Result.Fail<None?>($"{nameof(argsOptions)} is null");
 
         if (!File.Exists(argsOptions.PathToTextFile))
-            throw new ArgumentException($"{argsOptions.PathToTextFile} does not exist");
+            return Result.Fail<None?>($"{argsOptions.PathToTextFile} does not exist");
 
         if (!Directory.Exists(argsOptions.DirectoryToSaveFile))
-            throw new ArgumentException($"{argsOptions.DirectoryToSaveFile} does not exist");
+            return Result.Fail<None?>($"{argsOptions.DirectoryToSaveFile} does not exist");
 
         if (string.IsNullOrEmpty(argsOptions.SaveFileName))
-            throw new ArgumentException($"Save file name empty");
+            return Result.Fail<None?>($"Save file name empty");
+
+        return Result.Ok();
     }
 
 
-    public static ImageFormat GetImageFormat(string format)
+    public static Result<ImageFormat> GetImageFormat(string format)
     {
         return format.ToLower() switch
         {
@@ -31,7 +34,7 @@ public static class AppOptionsValidator
             "icon" => ImageFormat.Icon,
             "jpeg" => ImageFormat.Jpeg,
             "tiff" => ImageFormat.Tiff,
-            _ => throw new ArgumentException("ImageFormat unexpected")
+            _ => Result.Fail<ImageFormat>("ImageFormat unexpected")
         };
     }
 }

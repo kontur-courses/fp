@@ -2,5 +2,5 @@ namespace TagsCloudVisualization.Reading;
 
 public interface ITextReader
 {
-    public string ReadText();
+    public Result<string> ReadText();
 }

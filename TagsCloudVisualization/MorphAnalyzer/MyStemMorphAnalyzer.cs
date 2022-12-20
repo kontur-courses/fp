@@ -7,33 +7,35 @@ namespace TagsCloudVisualization.MorphAnalyzer;
 public class MyStemMorphAnalyzer : IMorphAnalyzer
 {
     private readonly string _workingDirectory;
-
-    private readonly string[] _knownGrammems =
-    {
-        "A", "ADV", "ADVPRO", "ANUM", "APRO", "COM", "CONJ", "INTJ", "NUM", "PART", "PR", "S", "SPRO", "V"
-    };
+    private const string TempFileName = "mystemTemp.txt";
 
     public MyStemMorphAnalyzer(string workingDirectory)
     {
         _workingDirectory = workingDirectory;
-
-        if (!File.Exists(Path.Combine(_workingDirectory, "mystem.exe")))
-            throw new FileNotFoundException($"File mystem.exe not found");
     }
 
-    public Dictionary<string, WordMorphInfo> GetWordsMorphInfo(IEnumerable<string> words)
+    public Result<Dictionary<string, WordMorphInfo>> GetWordsMorphInfo(IEnumerable<string> words)
     {
-        const string tempFileName = "mystemTemp.txt";
-        var pathToTempFileName = Path.Combine(_workingDirectory, tempFileName);
+        if (!File.Exists(Path.Combine(_workingDirectory, "mystem.exe")))
+            return Result.Fail<Dictionary<string, WordMorphInfo>>($"File mystem.exe not found");
+        
+        var pathToTempFileName = Path.Combine(_workingDirectory, TempFileName);
 
-        File.WriteAllLines(pathToTempFileName, words);
+        try
+        {
+            File.WriteAllLines(pathToTempFileName, words);
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<Dictionary<string, WordMorphInfo>>(e.ToString()).RefineError("Error write temp file for morph words");
+        }
 
         var proc = new ProcessStartInfo
         {
             UseShellExecute = false,
             WorkingDirectory = Path.Combine(_workingDirectory),
             FileName = @"C:\Windows\System32\cmd.exe",
-            Arguments = $"/C mystem.exe -nig --format json {tempFileName}",
+            Arguments = $"/C mystem.exe -nig --format json {TempFileName}",
             RedirectStandardOutput = true,
             WindowStyle = ProcessWindowStyle.Hidden,
             StandardOutputEncoding = Encoding.UTF8,
@@ -46,7 +48,17 @@ public class MyStemMorphAnalyzer : IMorphAnalyzer
             .Split(Environment.NewLine)
             .ToList()!;
 
-        File.Delete(pathToTempFileName);
+        if (File.Exists(pathToTempFileName))
+        {
+            try
+            {
+                File.Delete(pathToTempFileName);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<Dictionary<string, WordMorphInfo>>(e.ToString()).RefineError("Error delete temp file for morph words");
+            }
+        }
 
         return ParseWordMorphInfoFromOutput(wordsFromMorphAnalyzer);
     }

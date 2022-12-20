@@ -29,7 +29,7 @@ public class TagCloudVisualizationsTests
 
         var morphAnalyzerMock = new Mock<IMorphAnalyzer>();
         morphAnalyzerMock.Setup(a => a.GetWordsMorphInfo(It.IsAny<IEnumerable<string>>()))
-            .Returns(new Func<IEnumerable<string>, Dictionary<string, WordMorphInfo>>((callInfo) => new Dictionary<string, WordMorphInfo>()));
+            .Returns(new Func<IEnumerable<string>, Result<Dictionary<string, WordMorphInfo>>>((callInfo) => new Dictionary<string, WordMorphInfo>()));
 
         var wordsLoader = new CustomWordsLoader(textReaderMock.Object, new SingleColumnTextParser(), new CustomWordSizeCalculator(), new CustomWordsFilter(morphAnalyzerMock.Object));
         var cloudLayouter = new CircularCloudLayouter(new ArithmeticSpiral());
@@ -48,73 +48,80 @@ public class TagCloudVisualizationsTests
     }
 
     [Test]
-    public void DrawCloud_ZeroCanvasSize_ThrowException()
+    public void DrawCloud_ZeroCanvasSize_IsNotSuccess()
     {
         _defaultOptions.CanvasSize = new Size(0, 0);
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<ArgumentException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void DrawCloud_EmptyOptions_ThrowException()
+    public void DrawCloud_EmptyOptions_IsNotSuccess()
     {
         _defaultOptions = new VisualizationOptions();
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<ArgumentException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void DrawCloud_NullFontFamily_ThrowException()
+    public void DrawCloud_NullFontFamily_IsNotSuccess()
     {
         _defaultOptions.FontFamily = null!;
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<NullReferenceException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void DrawCloud_NullPalette_ThrowException()
+    public void DrawCloud_NullPalette_IsNotSuccess()
     {
         _defaultOptions.Palette = null!;
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<NullReferenceException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
 
     [Test]
-    public void DrawCloud_NullPaletteDefaultBrush_ThrowException()
+    public void DrawCloud_NullPaletteDefaultBrush_IsNotSuccess()
     {
         _defaultOptions.Palette = new Palette(Brushes.Black);
         _defaultOptions.Palette.DefaultBrush = null!;
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<NullReferenceException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void DrawCloud_NullPaletteAvailableBrushes_ThrowException()
+    public void DrawCloud_NullPaletteAvailableBrushes_IsNotSuccess()
     {
         _defaultOptions.Palette = new Palette(Brushes.Black);
         _defaultOptions.Palette.AvailableBrushes = null!;
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<NullReferenceException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [Test]
-    public void DrawCloud_ZeroSpiralStep_ThrowException()
+    public void DrawCloud_ZeroSpiralStep_IsNotSuccess()
     {
         _defaultOptions.SpiralStep = 0;
-        new Action(() => { _tagCloudVisualizations.DrawCloud(_defaultOptions); }).Should().Throw<ArgumentException>();
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
     }
-    
 
-    // if (options.CanvasSize.Width < 1 || options.CanvasSize.Height < 1)
-    // throw new ArgumentException("Canvas size must be greater than 1");
-    //
-    //     if (options.FontFamily == null)
-    // throw new NullReferenceException("FontFamily null");
-    //
-    //     if (options.Palette == null)
-    // throw new NullReferenceException("FontFamily null");
-    //
-    //     if (options.Palette.DefaultBrush == null)
-    // throw new NullReferenceException("FontFamily null");
-    //
-    //     if (options.Palette.AvailableBrushes == null)
-    // throw new NullReferenceException("FontFamily null");
-    //
-    //     if (options.SpiralStep <= 0)
-    // throw new ArgumentException("SpiralStep must be greater than 0");
+
+    [Test]
+    public void DrawCloud_WordsSizeGreaterThanCanvas_IsNotSuccess()
+    {
+        _defaultOptions.MinFontSize = 100;
+        _defaultOptions.MaxFontSize = 200;
+
+        _tagCloudVisualizations.DrawCloud(_defaultOptions).IsSuccess
+            .Should()
+            .BeFalse();
+    }
 }

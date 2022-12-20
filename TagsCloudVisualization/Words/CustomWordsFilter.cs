@@ -13,16 +13,17 @@ public class CustomWordsFilter : IWordsFilter
         _morphAnalyzer = morphAnalyzer;
     }
 
-    public Dictionary<string, int> FilterWords(Dictionary<string, int> wordsAndCount, VisualizationOptions options)
+    public Result<Dictionary<string, int>> FilterWords(Dictionary<string, int> wordsAndCount, VisualizationOptions options)
     {
-        var speechInfo = _morphAnalyzer.GetWordsMorphInfo(wordsAndCount.Keys);
+        var speechInfoResult = _morphAnalyzer.GetWordsMorphInfo(wordsAndCount.Keys);
         var filteredWords = new Dictionary<string, int>();
+
         foreach (var wordCountPair in wordsAndCount)
         {
             if (options.BoringWords.Contains(wordCountPair.Key))
                 continue;
 
-            if (!options.ExcludedPartsOfSpeech.Any() || !speechInfo.TryGetValue(wordCountPair.Key, out var wordMorphInfo))
+            if (!options.ExcludedPartsOfSpeech.Any() || !speechInfoResult.IsSuccess || !speechInfoResult.GetValueOrThrow().TryGetValue(wordCountPair.Key, out var wordMorphInfo))
             {
                 filteredWords.Add(wordCountPair.Key, wordCountPair.Value);
                 continue;

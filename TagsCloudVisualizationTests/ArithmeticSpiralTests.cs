@@ -33,16 +33,15 @@ public class ArithmeticSpiralTests
     [Test]
     public void GetPoint_CalcPointByFormula_Equals()
     {
-        var center = new Point(0, 0);
-        const int constant = 2;
-        const int length = 5;
+        var center = new PointF(0, 0);
+        const float constant = 2;
+        const float length = 5;
 
         var arithmeticSpiral = new ArithmeticSpiral(constant);
 
         var point = arithmeticSpiral.GetPoint(center, length);
-
-        var expectedX = (int)(center.X + Math.Cos(length) * length * constant);
-        var expectedY = (int)(center.Y + Math.Sin(length) * length * constant);
+        var expectedX = (center.X + (float)Math.Cos(length) * length * constant);
+        var expectedY = (center.Y + (float)Math.Sin(length) * length * constant);
 
 
         using (new AssertionScope())
