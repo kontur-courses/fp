@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DeepMorphy;
 using DeepMorphy.Model;
@@ -11,7 +12,16 @@ namespace TagsCloud.Validators
         public ResultHandler<IEnumerable<MorphInfo>> ParseOnMorphs(IEnumerable<string> words)
         {
             var morphParser = new MorphAnalyzer();
-            var morphInfo = morphParser.Parse(words);
+            IEnumerable<MorphInfo> morphInfo;
+
+            try
+            {
+                morphInfo = morphParser.Parse(words);
+            }
+            catch
+            {
+                throw new Exception("DeepMorphy Exception");
+            }
 
             var handler = new ResultHandler<IEnumerable<MorphInfo>>(morphInfo);
 
