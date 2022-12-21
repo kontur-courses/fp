@@ -93,6 +93,15 @@ public static class Result
         return input.Then(inp => OfAction(() => continuation(inp)))!;
     }
 
+    public static Result<TInput> Then<TInput>(
+        this Result<TInput> input,
+        Func<TInput, Result<TInput>> continuation)
+    {
+        return input.IsSuccess
+            ? continuation(input.Value)
+            : Fail<TInput>(input.Error);
+    }
+
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
         Func<TInput, Result<TOutput>> continuation)

@@ -12,7 +12,7 @@ public class PlainTextFromFileReader : ITextReader
     public Result<string> ReadText()
     {
         if (!File.Exists(_pathToFile))
-            return Result.Fail<string>($"File not exists {_pathToFile}");
+            return Result.Fail<string>($"File not exists {_pathToFile}.\nCheck directory of file location");
 
         try
         {
@@ -21,7 +21,7 @@ public class PlainTextFromFileReader : ITextReader
         }
         catch (Exception e)
         {
-            return Result.Fail<string>(e.ToString());
+            return Result.Fail<string>(e.ToString()).RefineError($"Error to read file {_pathToFile}.\nMaybe file is locked by another application.");
         }
     }
 }

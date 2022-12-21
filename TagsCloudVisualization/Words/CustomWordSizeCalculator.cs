@@ -5,10 +5,10 @@ public class CustomWordSizeCalculator : IWordsSizeCalculator
     public Result<Dictionary<string, float>> CalcSizeForWords(Dictionary<string, int> wordsAndCount, float minFontSize, float maxFontSize)
     {
         if (minFontSize < 1)
-            return Result.Fail<Dictionary<string, float>>("MinFontSize should be greater or equal than 1");
+            return Result.Fail<Dictionary<string, float>>("MinFontSize should be greater or equal than 1. Change MinFontSize.");
 
         if (maxFontSize <= minFontSize)
-            return Result.Fail<Dictionary<string, float>>("MaxFontSize should be greater than MinFontSize");
+            return Result.Fail<Dictionary<string, float>>("MaxFontSize should be greater than MinFontSize. Increase MaxFontSize or decrease MinFontSize.");
 
         var wordsFrequency = wordsAndCount.Values.ToList();
 

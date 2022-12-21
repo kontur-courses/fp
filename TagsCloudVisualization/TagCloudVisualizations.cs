@@ -47,7 +47,7 @@ public class TagCloudVisualizations
                 continue;
 
             if (rectangle.Value.Left < 0 || rectangle.Value.Top < 0 || rectangle.Value.Right > options.CanvasSize.Value.Width || rectangle.Value.Bottom > options.CanvasSize.Value.Height)
-                return Result.Fail<Bitmap>($"Word {word.Text} out of canvas bounds");
+                return Result.Fail<Bitmap>($"Word {word.Text} out of canvas bounds. Change decrease min or max font size or take less words to draw changing parameter TakeMostPopularWords");
 
             var fontColor = GetNextFontColor(options, wordIndex);
             graphics.DrawString(word.Text, fontForWord, fontColor, rectangle.Value);
@@ -74,25 +74,25 @@ public class TagCloudVisualizations
     private static Result<None?> CheckOptions(VisualizationOptions options)
     {
         if (options.CanvasSize == null)
-            return Result.Fail<None?>("Canvas null");
+            return Result.Fail<None?>("Check visualizationOptions. CanvasSize null. Check size in options");
 
         if (options.CanvasSize.Value.Width < 1 || options.CanvasSize.Value.Height < 1)
-            return Result.Fail<None?>("Canvas size must be greater than 1");
+            return Result.Fail<None?>("Check visualizationOptions. Canvas size must be greater or equals than 1");
 
         if (options.FontFamily == null)
-            return Result.Fail<None?>("FontFamily null");
+            return Result.Fail<None?>("Check visualizationOptions. FontFamily null");
 
         if (options.Palette == null)
-            return Result.Fail<None?>("Palette null");
+            return Result.Fail<None?>("Check visualizationOptions. Palette null");
 
         if (options.Palette.DefaultBrush == null)
-            return Result.Fail<None?>("DefaultBrush null");
+            return Result.Fail<None?>("Check visualizationOptions. DefaultBrush null");
 
         if (options.Palette.AvailableBrushes == null)
-            return Result.Fail<None?>("AvailableBrushes null");
+            return Result.Fail<None?>("Check visualizationOptions. AvailableBrushes null");
 
         if (options.SpiralStep - 0 < 0.0001f)
-            return Result.Fail<None?>("SpiralStep must be greater than 0");
+            return Result.Fail<None?>("Check visualizationOptions. SpiralStep must be greater than 0");
 
         return Result.Ok();
     }

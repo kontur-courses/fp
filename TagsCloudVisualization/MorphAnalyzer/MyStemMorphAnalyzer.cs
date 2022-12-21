@@ -17,17 +17,17 @@ public class MyStemMorphAnalyzer : IMorphAnalyzer
     public Result<Dictionary<string, WordMorphInfo>> GetWordsMorphInfo(IEnumerable<string> words)
     {
         if (!File.Exists(Path.Combine(_workingDirectory, "mystem.exe")))
-            return Result.Fail<Dictionary<string, WordMorphInfo>>($"File mystem.exe not found");
-        
+            return Result.Fail<Dictionary<string, WordMorphInfo>>($"File mystem.exe not found in directory {_workingDirectory}.\nCheck locations of file or change directory.");
+
         var pathToTempFileName = Path.Combine(_workingDirectory, TempFileName);
 
         try
         {
             File.WriteAllLines(pathToTempFileName, words);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            return Result.Fail<Dictionary<string, WordMorphInfo>>(e.ToString()).RefineError("Error write temp file for morph words");
+            return Result.Fail<Dictionary<string, WordMorphInfo>>(ex.ToString()).RefineError("Error write temp file for morph words");
         }
 
         var proc = new ProcessStartInfo

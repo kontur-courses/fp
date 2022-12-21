@@ -5,21 +5,18 @@ namespace TagsCloudVisualizationConsole;
 
 public static class AppOptionsValidator
 {
-    public static Result<None?> ValidatePathsInOptions(ArgsOptions? argsOptions)
+    public static Result<ArgsOptions> ValidatePathsInOptions(ArgsOptions argsOptions)
     {
-        if (argsOptions == null)
-            return Result.Fail<None?>($"{nameof(argsOptions)} is null");
-
         if (!File.Exists(argsOptions.PathToTextFile))
-            return Result.Fail<None?>($"{argsOptions.PathToTextFile} does not exist");
+            return Result.Fail<ArgsOptions>($"{argsOptions.PathToTextFile} does not exist. Check or create file.");
 
         if (!Directory.Exists(argsOptions.DirectoryToSaveFile))
-            return Result.Fail<None?>($"{argsOptions.DirectoryToSaveFile} does not exist");
+            return Result.Fail<ArgsOptions>($"{argsOptions.DirectoryToSaveFile} does not exist. Check path or create directory.");
 
         if (string.IsNullOrEmpty(argsOptions.SaveFileName))
-            return Result.Fail<None?>($"Save file name empty");
+            return Result.Fail<ArgsOptions>($"Save file name empty. Pass file name to save result image by SaveFileName parameter");
 
-        return Result.Ok();
+        return argsOptions;
     }
 
 

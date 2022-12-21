@@ -19,13 +19,13 @@ public class CircularCloudLayouter : ICloudLayouter
     public Result<RectangleF> PutNextRectangle(SizeF rectangleSize, LayoutOptions options)
     {
         if (options.SpiralStep <= 0)
-            return Result.Fail<RectangleF>("SpiralStep must be greater than 0");
+            return Result.Fail<RectangleF>("SpiralStep must be greater than 0. Change LayoutOptions.");
 
         if (rectangleSize.IsEmpty)
-            return Result.Fail<RectangleF>("Rectangle size empty");
+            return Result.Fail<RectangleF>("Rectangle size empty. Check size of rectangles.");
 
-        if (rectangleSize.Width < 0.001 || rectangleSize.Height < 0.001)
-            return Result.Fail<RectangleF>("Rectangle size with or height must be greater than 0.001");
+        if (rectangleSize.Width <= 0.001 || rectangleSize.Height <= 0.001)
+            return Result.Fail<RectangleF>("Rectangle size with or height must be greater than 0.001. Change LayoutOptions.");
 
 
         var currentLength = 0f;

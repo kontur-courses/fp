@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Drawing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using TagsCloudVisualization;
 using TagsCloudVisualization.CloudLayouter;
@@ -9,74 +10,59 @@ using TagsCloudVisualization.Words;
 using TagsCloudVisualizationConsole;
 
 
-try
+Result<ArgsOptions> LoadAppOptions(string[] strings)
 {
-    var appOptions = new ArgsOptions();
-
     if (!File.Exists("appsettings.json"))
-        Console.WriteLine("File with configuration settings not exits");
-    else
+        return Result.Fail<ArgsOptions>("File appsettings.json not exits. Check or create file.");
+
+    try
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false)
-            .AddCommandLine(args)
+            .AddCommandLine(strings)
             .Build();
-        appOptions = configuration.Get<ArgsOptions>();
+        var argsOptions = configuration.Get<ArgsOptions>();
+        return argsOptions ?? Result.Fail<ArgsOptions>("Error to get app options. Check app arguments/");
     }
-
-    var validateResult = AppOptionsValidator.ValidatePathsInOptions(appOptions);
-    if (!validateResult.IsSuccess)
+    catch (IOException ex)
     {
-        Console.WriteLine(validateResult.Error);
-        Console.Read();
-        return;
+        return Result.Fail<ArgsOptions>($"Error to open file. Maybe file blocked by another app\n{ex}");
     }
-
-    var optionsResult = VisualizationOptionsConverter.ConvertOptions(appOptions!);
-
-    if (!optionsResult.IsSuccess)
+    catch (Exception ex)
     {
-        Console.WriteLine(optionsResult.Error);
-        Console.Read();
-        return;
-    }
-
-    var options = optionsResult.GetValueOrThrow();
-
-    var container = new ServiceCollection()
-        .AddTransient<ITextReader>(r => new PlainTextFromFileReader(appOptions!.PathToTextFile))
-        .AddSingleton<ITextParser, SingleColumnTextParser>()
-        .AddSingleton<IWordsLoader, CustomWordsLoader>()
-        .AddTransient<IWordsFilter, CustomWordsFilter>()
-        .AddTransient<IMorphAnalyzer>(r => new MyStemMorphAnalyzer(appOptions!.DirectoryToMyStemProgram))
-        .AddSingleton<IWordsSizeCalculator, CustomWordSizeCalculator>()
-        .AddSingleton<ICloudLayouter, CircularCloudLayouter>()
-        .AddSingleton<ISpiralFormula, ArithmeticSpiral>()
-        .AddTransient<TagCloudVisualizations>()
-        .BuildServiceProvider();
-
-    var visualizations = container.GetRequiredService<TagCloudVisualizations>();
-
-    var bitmap = visualizations.DrawCloud(options);
-
-    var imageFormatResult = AppOptionsValidator.GetImageFormat(appOptions!.FileExtension);
-    if (!imageFormatResult.IsSuccess)
-    {
-        Console.WriteLine(imageFormatResult.Error);
-        return;
-    }
-
-    if (bitmap.IsSuccess)
-        bitmap.GetValueOrThrow().Save(Path.Combine(appOptions.DirectoryToSaveFile, string.Concat(appOptions.SaveFileName, ".", appOptions.FileExtension.ToLower())), imageFormatResult.GetValueOrThrow());
-    else
-    {
-        Console.WriteLine(bitmap.Error);
+        return Result.Fail<ArgsOptions>(ex.ToString());
     }
 }
-catch (Exception ex)
-{
-    Console.WriteLine(ex);
-}
+
+LoadAppOptions(args)
+    .Then<ArgsOptions>(AppOptionsValidator.ValidatePathsInOptions)
+    .Then(appOptions =>
+    {
+        var container = new ServiceCollection()
+            .AddTransient<ITextReader>(r => new PlainTextFromFileReader(appOptions!.PathToTextFile))
+            .AddSingleton<ITextParser, SingleColumnTextParser>()
+            .AddSingleton<IWordsLoader, CustomWordsLoader>()
+            .AddTransient<IWordsFilter, CustomWordsFilter>()
+            .AddTransient<IMorphAnalyzer>(r => new MyStemMorphAnalyzer(appOptions!.DirectoryToMyStemProgram))
+            .AddSingleton<IWordsSizeCalculator, CustomWordSizeCalculator>()
+            .AddSingleton<ICloudLayouter, CircularCloudLayouter>()
+            .AddSingleton<ISpiralFormula, ArithmeticSpiral>()
+            .AddTransient<TagCloudVisualizations>()
+            .BuildServiceProvider();
+
+        var visualizations = container.GetRequiredService<TagCloudVisualizations>();
+
+        return VisualizationOptionsConverter.ConvertOptions(appOptions)
+            .Then(visualizations.DrawCloud)
+            .Then(bitmap =>
+                {
+                    AppOptionsValidator.GetImageFormat(appOptions.FileExtension)
+                        .Then(imageFormat =>
+                            bitmap.Save(Path.Combine(appOptions.DirectoryToSaveFile, string.Concat(appOptions.SaveFileName, ".", appOptions.FileExtension.ToLower())), imageFormat));
+                }
+            );
+    }).OnFail(Console.WriteLine);
+
 
 Console.Read();
