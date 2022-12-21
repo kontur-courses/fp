@@ -13,17 +13,18 @@ namespace TagsCloud.Validators
         {
             var morphParser = new MorphAnalyzer();
             IEnumerable<MorphInfo> morphInfo;
+            ResultHandler<IEnumerable<MorphInfo>> handler;
 
             try
             {
                 morphInfo = morphParser.Parse(words);
+                handler = new ResultHandler<IEnumerable<MorphInfo>>(morphInfo);
             }
             catch
             {
-                throw new Exception("DeepMorphy Exception");
+                handler = new ResultHandler<IEnumerable<MorphInfo>>(null).Fail("DeepMorphy Exception");
+                return handler;
             }
-
-            var handler = new ResultHandler<IEnumerable<MorphInfo>>(morphInfo);
 
             if (morphInfo.Count() != 0)
             {
