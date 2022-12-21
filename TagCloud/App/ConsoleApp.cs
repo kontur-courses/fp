@@ -36,7 +36,7 @@ namespace TagCloud.App
         {
             var text = fileReader.ReadAllText(appConfig.InputTextFilePath);
 
-            var words = textParser.GetWords(text);
+            var words = textParser.GetWords(text.Value);
 
             var convertedWords = convertersExecutor.Convert(words);
 

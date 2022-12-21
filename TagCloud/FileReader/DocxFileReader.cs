@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using ResultOf;
 using System.IO;
 using System.Text;
 
@@ -7,10 +8,13 @@ namespace TagCloud.FileReader
 {
     public class DocxFileReader : IFileReader
     {
-        public string ReadAllText(string filePath)
+        public Result<string> ReadAllText(string filePath)
         {
             if (!File.Exists(filePath))
-                throw new FileNotFoundException($"File {filePath} doesn't exist");
+                return new Result<string>($"File {filePath} doesn't exist");
+
+            if (Path.GetExtension(filePath) != ".doc" && Path.GetExtension(filePath) != ".docx")
+                return new Result<string>($"File {filePath} has invalid format");
 
             var sb = new StringBuilder();
 

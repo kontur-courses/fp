@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.IO;
 using TagCloud.FileReader;
 
 namespace TagCloudUnitTests
@@ -24,15 +22,25 @@ namespace TagCloudUnitTests
 
             var actualText = fileReader.ReadAllText(@"TestTextFiles\TestText.txt");
 
-            actualText.Should().BeEquivalentTo(expectedText);
+            actualText.IsSuccess.Should().BeTrue();
+
+            actualText.GetValueOrThrow().Should().BeEquivalentTo(expectedText);
         }
 
         [Test]
-        public void ReadAllText_ThrowFileNotFoundException_WhenFileDoesNotExist()
+        public void ReadAllText_IsNotSuccess_WhenFileDoesNotExist()
         {
-            Action action = () => fileReader.ReadAllText("blablabla");
+            var actualText = fileReader.ReadAllText("blablabla");
 
-            action.Should().Throw<FileNotFoundException>();
+            actualText.IsSuccess.Should().BeFalse();
+        }
+
+        [Test]
+        public void ReadAllText_IsNotSuccess_WhenFileHasInvalidFormat()
+        {
+            var actualText = fileReader.ReadAllText(@"TestTextFiles\TestText.ttxtt");
+
+            actualText.IsSuccess.Should().BeFalse();
         }
     }
 }

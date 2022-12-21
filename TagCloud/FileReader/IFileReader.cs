@@ -1,7 +1,9 @@
-﻿namespace TagCloud.FileReader
+﻿using ResultOf;
+
+namespace TagCloud.FileReader
 {
     public interface IFileReader
     {
-        string ReadAllText(string filePath);
+        Result<string> ReadAllText(string filePath);
     }
 }

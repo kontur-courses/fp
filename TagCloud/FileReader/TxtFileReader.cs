@@ -1,19 +1,22 @@
 ﻿using System.IO;
-using System;
+using ResultOf;
 
 namespace TagCloud.FileReader
 {
     public class TxtFileReader : IFileReader
     {
-        public string ReadAllText(string filePath)
+        public Result<string> ReadAllText(string filePath)
         {
             if (!File.Exists(filePath))
-                throw new FileNotFoundException($"File {filePath} doesn't exist");
+                return new Result<string>($"File {filePath} doesn't exist");
 
-            var text = File.ReadAllText(filePath);
+            if (Path.GetExtension(filePath) != ".txt")
+                return new Result<string>($"File {filePath} has invalid format");
 
-            if (text.Length == 0)
-                throw new Exception($"File {filePath} is empty");
+            var text = Result.Of(() => File.ReadAllText(filePath));
+
+            if (text.IsSuccess && text.Value.Length == 0)
+                return new Result<string>($"File {filePath} is empty");
 
             return text;
         }
