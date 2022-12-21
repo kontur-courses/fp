@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using ResultOf;
 using TagCloud.Common;
 
 namespace TagCloud.CLI
@@ -20,15 +21,14 @@ namespace TagCloud.CLI
 
         private static void StartApp(Options cmdOptions)
         {
-            var visualizationOptions = cmdOptions.MapToVisualizationOptions();
-            try
+            var visualizationOptions = cmdOptions.MapToVisualizationOptions().OnFail(Console.WriteLine);
+            if (!visualizationOptions.IsSuccess)
+                return;
+            var options = visualizationOptions.GetValueOrThrow();
+            var appResult = CloudGeneratorApplication.Run(options).OnFail(Console.WriteLine);
+            if (appResult.IsSuccess)
             {
-                CloudGeneratorApplication.Run(visualizationOptions);
-                Console.WriteLine("Cloud created!");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Cloud created! Saved to {options.SavingOptions.GetFullSavingPath()}");
             }
         }
     }

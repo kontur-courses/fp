@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagCloud.Common.Layouter;
 
@@ -16,11 +17,11 @@ public class CircularCloudLayouter : ICloudLayouter
         currentPoint = center;
     }
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
         {
-            throw new IncorrectSizeException();
+            return Result.Fail<Rectangle>("Can't layout rectangle with negative size");
         }
 
         var rectangle = new Rectangle(currentPoint, rectangleSize);
@@ -31,7 +32,7 @@ public class CircularCloudLayouter : ICloudLayouter
         }
 
         rectangles.Add(rectangle);
-        return rectangle;
+        return rectangle.AsResult();
     }
 
     public IEnumerable<Rectangle> GetRectanglesLayout()

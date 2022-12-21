@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Imaging;
+using ResultOf;
 
 namespace TagCloud.Common.Options;
 
@@ -15,7 +16,7 @@ public class SavingOptions
         SavingImageFormat = savingImageFormat;
     }
 
-    public static ImageFormat ConvertToImageFormat(string format)
+    public static Result<ImageFormat> ConvertToImageFormat(string format)
     {
         return format switch
         {
@@ -23,7 +24,12 @@ public class SavingOptions
             ".jpeg" => ImageFormat.Jpeg,
             ".jpg" => ImageFormat.Jpeg,
             ".png" => ImageFormat.Png,
-            _ => throw new BadImageFormatException("Недопустимый формат изображения")
+            _ => Result.Fail<ImageFormat>("Недопустимый формат изображения")
         };
+    }
+
+    public string GetFullSavingPath()
+    {
+        return SavePath + FileName + "." + SavingImageFormat.ToString().ToLower();
     }
 }

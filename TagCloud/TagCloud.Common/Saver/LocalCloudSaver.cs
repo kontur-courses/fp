@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 using TagCloud.Common.Options;
 
 namespace TagCloud.Common.Saver;
@@ -6,20 +7,21 @@ namespace TagCloud.Common.Saver;
 public class LocalCloudSaver : ICloudSaver
 {
     public SavingOptions CloudSavingOptions { get; }
+
     public LocalCloudSaver(SavingOptions savingOptions)
     {
         CloudSavingOptions = savingOptions;
     }
 
-    public void SaveCloud(Bitmap bmp)
+    public Result<None> SaveCloud(Bitmap bmp)
     {
         if (!Directory.Exists(CloudSavingOptions.SavePath))
         {
-            Directory.CreateDirectory(CloudSavingOptions.SavePath);
+            return Result.Fail<None>("Saving directory doesn't exist");
         }
 
-        var path = Path.Combine(CloudSavingOptions.SavePath, CloudSavingOptions.FileName + "." + CloudSavingOptions.SavingImageFormat.ToString().ToLower());
-        bmp.Save(path);
+        bmp.Save(CloudSavingOptions.GetFullSavingPath());
         bmp.Dispose();
+        return Result.Ok();
     }
 }

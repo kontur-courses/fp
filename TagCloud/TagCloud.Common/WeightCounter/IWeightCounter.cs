@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Common.WeightCounter;
+﻿using ResultOf;
+
+namespace TagCloud.Common.WeightCounter;
 
 public interface IWeightCounter
 {
-    Dictionary<string, int> CountWeights(IEnumerable<string> lines);
+    Result<Dictionary<string, int>> CountWeights(IEnumerable<string> words);
 }

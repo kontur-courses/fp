@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using CommandLine;
+using ResultOf;
 using TagCloud.Common.Options;
 
 namespace TagCloud.CLI;
@@ -33,22 +34,28 @@ public class Options
     [Option('c', "TextColor", Required = false, HelpText = "Image text color", Default = "Red")]
     public string TextColor { get; set; }
 
-    public VisualizationOptions MapToVisualizationOptions()
+    public Result<VisualizationOptions> MapToVisualizationOptions()
     {
         var wordsOptions = new WordsOptions(BoringWordsThreshold, MinFontSize, PathToTextFile);
         var savingOptions = MapToSavingOptions();
         var drawingOptions = MapToDrawingOptions();
-
-        return new VisualizationOptions(wordsOptions, drawingOptions, savingOptions);
+        return !savingOptions.IsSuccess
+            ? Result.Fail<VisualizationOptions>(savingOptions.Error)
+            : new VisualizationOptions(wordsOptions, drawingOptions, savingOptions.GetValueOrThrow());
     }
 
-    private SavingOptions MapToSavingOptions()
+    private Result<SavingOptions> MapToSavingOptions()
     {
         var random = new Random();
         var format = SavingOptions.ConvertToImageFormat(SavingImageFormat);
+        if (!format.IsSuccess)
+        {
+            return Result.Fail<SavingOptions>(format.Error);
+        }
+
         var savePath = SavePath == "Text file directory" ? Path.GetDirectoryName(PathToTextFile)! : SavePath;
         var fileName = FileName == "Randomize" ? random.Next(1000).ToString() : FileName;
-        return new SavingOptions(savePath, fileName, format);
+        return new SavingOptions(savePath, fileName, format.GetValueOrThrow());
     }
 
     private DrawingOptions MapToDrawingOptions()

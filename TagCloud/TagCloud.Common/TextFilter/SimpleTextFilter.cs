@@ -1,22 +1,19 @@
 ﻿using System.Text.RegularExpressions;
+using ResultOf;
 
 namespace TagCloud.Common.TextFilter;
 
 public class SimpleTextFilter : ITextFilter
 {
-    public IEnumerable<string> FilterAllWords(IEnumerable<string> lines, int boringWordsLength)
+    public Result<List<string>> FilterAllWords(IEnumerable<string> lines, int boringWordsLength)
     {
-        if (lines == null)
-        {
-            throw new ArgumentNullException(nameof(lines));
-        }
         var words = new List<string>();
         foreach (var line in lines)
         {
             words.AddRange(GetWords(line).Where(word => word.Length > boringWordsLength));
         }
 
-        return words;
+        return words.Count == 0 ? Result.Fail<List<string>>("Filtered 0 words inside text") : words.AsResult();
     }
 
     private IEnumerable<string> GetWords(string input)

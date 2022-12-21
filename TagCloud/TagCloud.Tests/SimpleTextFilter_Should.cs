@@ -18,21 +18,16 @@ public class SimpleTextFilter_Should
     public void FilterAllWords_ShouldWorkCorrect_WithEmptyCollection()
     {
         var words = filter.FilterAllWords(new List<string>(), 0);
-        words.Should().BeEmpty();
+        words.IsSuccess.Should().BeFalse();
+        words.Error.Should().Be("Filtered 0 words inside text");
     }
 
     [Test]
     public void FilterAllWords_ShouldWorkCorrect_WithEmptyStringInsideCollection()
     {
         var words = filter.FilterAllWords(new List<string> { "" }, 0);
-        words.Should().BeEmpty();
-    }
-
-    [Test]
-    public void FilterAllWords_ShouldWorkCorrect_WithNull()
-    {
-        Action action = () => filter.FilterAllWords(null, 0);
-        action.Should().Throw<ArgumentNullException>();
+        words.IsSuccess.Should().BeFalse();
+        words.Error.Should().Be("Filtered 0 words inside text");
     }
 
     [TestCase("строка без символов", 3)]
@@ -40,21 +35,21 @@ public class SimpleTextFilter_Should
     public void FilterAllWords_ShouldWorkCorrect_SimpleLines(string line, int wordsCount)
     {
         var words = filter.FilterAllWords(new List<string> { line }, 0);
-        words.Count().Should().Be(wordsCount);
+        words.GetValueOrThrow().Count().Should().Be(wordsCount);
     }
 
     [Test]
     public void FilterAllWords_ShouldWorkCorrect_WithManyLines()
     {
         var words = filter.FilterAllWords(new List<string> { "однослово", "два слова", "три слова да" }, 0);
-        words.Count().Should().Be(6);
+        words.GetValueOrThrow().Count().Should().Be(6);
     }
 
     [TestCase("Простое предложение с точкой в конце.", 6, "конце")]
     [TestCase("Одно предложение, разделенное запятой", 4, "предложение")]
     public void FilterAllWords_ShouldWorkCorrect_DefaultSentences(string line, int wordsCount, string lastWord)
     {
-        var words = filter.FilterAllWords(new List<string> { line }, 0).ToList();
+        var words = filter.FilterAllWords(new List<string> { line }, 0).GetValueOrThrow().ToList();
         words.Count.Should().Be(wordsCount);
         words.Should().Contain(lastWord);
     }
@@ -63,16 +58,16 @@ public class SimpleTextFilter_Should
     [TestCase("ОдноСлово")]
     public void FilterAllWords_Should_TranslateToLowerCase(string line)
     {
-        var words = filter.FilterAllWords(new List<string> { line }, 0).ToList();
+        var words = filter.FilterAllWords(new List<string> { line }, 0).GetValueOrThrow().ToList();
         words.Any(word => word != word.ToLower()).Should().BeFalse();
     }
 
-    [TestCase("б у к в ы ", 1, 0)]
+    [TestCase("б у к в ы слово", 1, 1)]
     [TestCase("что где когда", 3, 1)]
     [TestCase("три,два,один", 3, 1)]
     public void FilterAllWords_Should_ExcludeBoringWords(string line, int boringWordsBorder, int wordsCount)
     {
-        var words = filter.FilterAllWords(new List<string> { line }, boringWordsBorder).ToList();
+        var words = filter.FilterAllWords(new List<string> { line }, boringWordsBorder).GetValueOrThrow().ToList();
         words.Count.Should().Be(wordsCount);
     }
 
@@ -81,7 +76,7 @@ public class SimpleTextFilter_Should
         3, 46)]
     public void FilterAllWords_Should_WorkWithHardCases(string line, int boringWordsBorder, int wordsCount)
     {
-        var words = filter.FilterAllWords(new List<string> { line }, boringWordsBorder).ToList();
+        var words = filter.FilterAllWords(new List<string> { line }, boringWordsBorder).GetValueOrThrow().ToList();
         words.Count.Should().Be(wordsCount);
     }
 }

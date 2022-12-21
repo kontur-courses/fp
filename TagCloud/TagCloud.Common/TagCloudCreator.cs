@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 using TagCloud.Common.Drawing;
 using TagCloud.Common.Options;
 using TagCloud.Common.TagsConverter;
@@ -19,13 +20,17 @@ public class TagCloudCreator
         this.filter = filter;
     }
 
-    public Bitmap CreateCloud(WordsOptions wordsOptions)
+    public Result<Bitmap> CreateCloud(WordsOptions wordsOptions)
     {
+        if (!File.Exists(wordsOptions.PathToTextFile))
+        {
+            return Result.Fail<Bitmap>("Path to text file was incorrect");
+        }
+
         var lines = File.ReadAllLines(wordsOptions.PathToTextFile);
-        var words = filter.FilterAllWords(lines,
-            wordsOptions.BoringWordsThreshold);
-        var tags = converter.ConvertToTags(words, wordsOptions.MinFontSize);
-        var bmp = drawer.DrawCloud(tags);
-        return bmp;
+        var cloudImage = filter.FilterAllWords(lines, wordsOptions.BoringWordsThreshold)
+            .Then(w => converter.ConvertToTags(w, wordsOptions.MinFontSize))
+            .Then(tags => drawer.DrawCloud(tags));
+        return cloudImage;
     }
 }

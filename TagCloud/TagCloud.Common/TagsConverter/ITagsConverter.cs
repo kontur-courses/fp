@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Common.TagsConverter;
+﻿using ResultOf;
+
+namespace TagCloud.Common.TagsConverter;
 
 public interface ITagsConverter
 {
-    IEnumerable<Tag> ConvertToTags(IEnumerable<string> words, int minFontSize);
+    Result<IEnumerable<Tag>> ConvertToTags(IEnumerable<string> words, int minFontSize);
 }

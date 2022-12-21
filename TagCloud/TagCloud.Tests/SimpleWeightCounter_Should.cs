@@ -18,7 +18,8 @@ public class SimpleWeightCounter_Should
     public void CountWeights_ShouldWorkCorrect_WithEmptyCollection()
     {
         var wordsWithWeights = counter.CountWeights(new List<string>());
-        wordsWithWeights.Should().BeEmpty();
+        wordsWithWeights.IsSuccess.Should().BeFalse();
+        wordsWithWeights.Error.Should().Be("There was no words inside WeightCounter");
     }
 
     [TestCase("слово слово слово слово", 4, "слово")]
@@ -26,7 +27,7 @@ public class SimpleWeightCounter_Should
     public void CountWeights_ShouldWorkCorrect_OneRepeatingWord(string line, int weight, string key)
     {
         var words = line.Split(' ');
-        var wordsWithWeights = counter.CountWeights(words);
+        var wordsWithWeights = counter.CountWeights(words).GetValueOrThrow();
         wordsWithWeights.Count.Should().Be(1);
         wordsWithWeights[key].Should().Be(weight);
     }
@@ -36,7 +37,7 @@ public class SimpleWeightCounter_Should
     public void CountWeights_ShouldWorkCorrect_ManyNobRepeatingWords(string line)
     {
         var words = line.Split(' ');
-        var wordsWithWeights = counter.CountWeights(words);
+        var wordsWithWeights = counter.CountWeights(words).GetValueOrThrow();
         wordsWithWeights.Count.Should().Be(words.Length);
         wordsWithWeights.All(pair => pair.Value == 1).Should().BeTrue();
     }
@@ -47,7 +48,7 @@ public class SimpleWeightCounter_Should
     public void CountWeights_ShouldWorkCorrect_RepeatingWords(string line, int count)
     {
         var words = line.Split(' ');
-        var wordsWithWeights = counter.CountWeights(words);
+        var wordsWithWeights = counter.CountWeights(words).GetValueOrThrow();
         wordsWithWeights.Count.Should().Be(count);
         wordsWithWeights.All(pair => pair.Value == 3).Should().BeTrue();
     }
@@ -56,7 +57,7 @@ public class SimpleWeightCounter_Should
     public void CountWeights_ShouldNotCount_WordsInsideWord(string line)
     {
         var words = line.Split(' ');
-        var wordsWithWeights = counter.CountWeights(words);
+        var wordsWithWeights = counter.CountWeights(words).GetValueOrThrow();
         wordsWithWeights.All(pair => pair.Value == 1).Should().BeTrue();
         wordsWithWeights.Count.Should().NotBe(1);
     }

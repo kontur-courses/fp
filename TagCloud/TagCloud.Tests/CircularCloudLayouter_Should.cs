@@ -20,14 +20,14 @@ public class CircularCloudLayouter_Should
     [Test]
     public void PutNextRectangle_ShouldAdd_NewRectangular()
     {
-        var rectangle = layouter.PutNextRectangle(new Size(1, 2));
+        var rectangle = layouter.PutNextRectangle(new Size(1, 2)).GetValueOrThrow();
         rectangle.Should().BeEquivalentTo(new Rectangle(0, 0, 1, 2));
     }
 
     [Test]
     public void PutNextRectangle_ShouldAddFirstRectangle_ToCenterOfCloud()
     {
-        var rectangle = layouter.PutNextRectangle(new Size(1, 2));
+        var rectangle = layouter.PutNextRectangle(new Size(1, 2)).GetValueOrThrow();
         rectangle.Location.Should().BeEquivalentTo(layouter.Center);
     }
 
@@ -37,8 +37,9 @@ public class CircularCloudLayouter_Should
     [TestCase(1, -1, TestName = "negative height")]
     public void PutNextRectangle_ThrowsException_WithIncorrectSize(int width, int height)
     {
-        Action put = () => layouter.PutNextRectangle(new Size(width, height));
-        put.Should().Throw<IncorrectSizeException>();
+        var layouterResult =  layouter.PutNextRectangle(new Size(width, height));
+        layouterResult.IsSuccess.Should().BeFalse();
+        layouterResult.Error.Should().Be("Can't layout rectangle with negative size");
     }
 
     [Test]
@@ -69,7 +70,7 @@ public class CircularCloudLayouter_Should
     public void PutNextRectangle_SavesRectangleSize()
     {
         var size = new Size(1, 2);
-        layouter.PutNextRectangle(size).Size.Should().Be(size);
+        layouter.PutNextRectangle(size).GetValueOrThrow().Size.Should().Be(size);
     }
 
     [Test]
@@ -86,7 +87,11 @@ public class CircularCloudLayouter_Should
         var rnd = new Random(30);
         var rectangles = new List<Rectangle>();
         for (var i = 0; i < 400; i++)
-            rectangles.Add(layouter.PutNextRectangle(new Size(rnd.Next(20, 50), rnd.Next(20, 50))));
+        {
+            var rectangle = layouter.PutNextRectangle(new Size(rnd.Next(20, 50), rnd.Next(20, 50))).GetValueOrThrow();
+            rectangles.Add(rectangle);
+        }
+            
         var intersectRectangles = rectangles.Where(rect => rectangles.Any(t => t != rect && t.IntersectsWith(rect)));
         intersectRectangles.Should().BeEmpty();
     }

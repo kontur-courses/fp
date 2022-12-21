@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
-using TagCloud.Common.Options;
+using ResultOf;
 
 namespace TagCloud.Common.Drawing;
 
 public interface ICloudDrawer
 {
-    Bitmap DrawCloud(IEnumerable<Tag> tags);
+    Result<Bitmap> DrawCloud(IEnumerable<Tag> tags);
 }
