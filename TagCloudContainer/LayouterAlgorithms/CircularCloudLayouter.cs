@@ -21,7 +21,7 @@ namespace TagCloudContainer.LayouterAlgorithms
             Spiral = spiral;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
                 throw new ArgumentException("Wrong size of rectangle");
@@ -30,24 +30,29 @@ namespace TagCloudContainer.LayouterAlgorithms
                 {
                     var coordinatesOfRectangle =
                         RectangleCoordinatesCalculator.CalculateRectangleCoordinates(point, rectangleSize);
-                    return new Rectangle(coordinatesOfRectangle, rectangleSize);
+                    return !coordinatesOfRectangle.IsSuccess ? 
+                        new Result<Rectangle>(coordinatesOfRectangle.Error) :
+                        new Result<Rectangle>(null, new Rectangle(coordinatesOfRectangle.Value, rectangleSize));
                 })
                 .First(rectangle => !IntersectsWithOtherRectangles(rectangle));
-            Rectangles.Add(rect);
+            if(rect.IsSuccess)
+                Rectangles.Add(rect.Value);
             return rect;
         }
 
-        public Point PlaceNextWord(string word, int wordCount, int coefficient)
+        public Result<Point> PlaceNextWord(string word, int wordCount, int coefficient)
         {
             var rectangleHeight = wordCount * coefficient * word.Length + coefficient;
             var rectangleWidth = wordCount * 2 * coefficient;
             var rectangle = PutNextRectangle(new Size(rectangleHeight, rectangleWidth));
-            return new Point(rectangle.X, rectangle.Y);
+            return !rectangle.IsSuccess ?
+                new Result<Point>(rectangle.Error) : 
+                new Result<Point>(null, new Point(rectangle.Value.X, rectangle.Value.Y));
         }
 
-        private bool IntersectsWithOtherRectangles(Rectangle rectangle)
+        private bool IntersectsWithOtherRectangles(Result<Rectangle> rectangle)
         {
-            return Rectangles.Any(r => r.IntersectsWith(rectangle));
+            return rectangle.IsSuccess && Rectangles.Any(r => r.IntersectsWith(rectangle.Value));
         }
     }
 }
