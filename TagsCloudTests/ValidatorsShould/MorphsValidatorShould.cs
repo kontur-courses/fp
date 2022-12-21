@@ -8,13 +8,7 @@ namespace TagsCloudTests.ValidatorsShould
     [TestFixture]
     public class MorphsValidatorShould
     {
-        private MorphsValidator validator;
-
-        [SetUp]
-        public void SetUp()
-        {
-            validator = new MorphsValidator();
-        }
+        private MorphsValidator validator = new MorphsValidator();
 
         [Test]
         public void ParseOnMorphs_NullEnum_ShouldThrowException()

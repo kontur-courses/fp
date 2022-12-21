@@ -1,8 +1,10 @@
-﻿namespace TagsCloud.Interfaces
+﻿using System.Collections.Generic;
+
+namespace TagsCloud.Interfaces
 {
     public interface IClientValidator
     {
-        public char[] ValidChars { get; }
+        public HashSet<char> ValidChars { get; }
 
         public ResultHandler<string> ValidateRussianInput(string line);
 

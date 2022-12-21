@@ -9,13 +9,7 @@ namespace TagsCloudTests.ValidatorsShould
     [TestFixture]
     public class BitmapValidatorShould
     {
-        private BitmapValidator validator;
-
-        [SetUp]
-        public void SetUp()
-        {
-            validator = new BitmapValidator();
-        }
+        private BitmapValidator validator = new BitmapValidator();
 
         [Test]
         public void NewRectangleBiggerThanCanvas_ShouldFail()

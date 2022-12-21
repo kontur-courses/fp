@@ -8,13 +8,7 @@ namespace TagsCloudTests.ValidatorsShould
     [TestFixture]
     public class SettingsValidatorShould
     {
-        private SettingsValidator validator;
-
-        [SetUp]
-        public void SetUp()
-        {
-            validator = new SettingsValidator();
-        }
+        private SettingsValidator validator = new SettingsValidator();
 
         [Test]
         public void VerifyFont_NotInstalledFont()

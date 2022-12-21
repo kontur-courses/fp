@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using NUnit.Framework;
@@ -10,13 +11,7 @@ namespace TagsCloudTests.ValidatorsShould
     [TestFixture]
     public class ClientValidatorShould
     {
-        private ClientValidator validator;
-
-        [SetUp]
-        public void SetUp()
-        {
-            validator = new ClientValidator();
-        }
+        private ClientValidator validator = new ClientValidator();
 
         [Test]
         public void ValidatorCreate_ShouldHasOnlyRussianSymbolsInCharSet()
@@ -24,7 +19,7 @@ namespace TagsCloudTests.ValidatorsShould
             var pattern = @"[А-я]+";
             var charSet = validator.ValidChars;
 
-            var line = new string(charSet);
+            var line = new string(charSet.ToArray());
             var res = Regex.Match(line, pattern);
 
             res.Groups.Count.Should().Be(1);

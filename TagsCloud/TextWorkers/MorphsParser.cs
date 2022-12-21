@@ -20,8 +20,6 @@ namespace TagsCloud.TextWorkers
 
         public IEnumerable<MorphInfo> GetMorphs(string filePath)
         {
-            var morph = new MorphAnalyzer(true);
-
             var validation = fileValidator.VerifyFileExistence(filePath)
                 .ThenDoWorkWithValue(x => TextReader.ReadFile(x))
                 .ThenDoWorkWithValue(x => textSplitter.SplitTextOnWords(x));

@@ -9,14 +9,8 @@ namespace TagsCloudTests.ValidatorsShould
     [TestFixture]
     public class FileValidatorShould
     {
-        private FileValidator validator;
+        private FileValidator validator = new FileValidator();
         private readonly string basePath = @"..\..\..\..\";
-
-        [SetUp]
-        public void SetUp()
-        {
-            validator = new FileValidator();
-        }
 
         [Test]
         public void VerifyFileExistence_NullPath()

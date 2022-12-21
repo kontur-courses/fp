@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TagsCloud.Interfaces;
 
@@ -11,7 +12,7 @@ namespace TagsCloud.Validators
             AddRussianCharsInMassive();
         }
 
-        public char[] ValidChars { get; private set; }
+        public HashSet<char> ValidChars { get; private set; }
 
         public ResultHandler<string> ValidateRussianInput(string line)
         {
@@ -96,11 +97,11 @@ namespace TagsCloud.Validators
         {
             char ch;
             var n = 0;
-            ValidChars = new char[64];
+            ValidChars = new HashSet<char>(64);
             for (var i = 1040; i <= 1103; i++)
             {
                 ch = Convert.ToChar(i);
-                ValidChars[n] = ch;
+                ValidChars.Add(ch);
                 n++;
             }
         }
