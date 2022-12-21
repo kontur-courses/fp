@@ -4,6 +4,6 @@ namespace TagCloud.WordPreprocessors
 {
     public interface IWordPreprocessor
     {
-        public IEnumerable<string> GetPreprocessedWords();
+        public Result<IEnumerable<string>> GetPreprocessedWords();
     }
 }

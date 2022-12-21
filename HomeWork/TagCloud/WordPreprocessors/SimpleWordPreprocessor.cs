@@ -9,7 +9,7 @@ namespace TagCloud.WordPreprocessors
     {
         private readonly IReader wordsReader;
         private readonly IBoringWordsStorage boringWordsStorage;
-        private HashSet<string> boringWords;
+        private Result<HashSet<string>> boringWords;
 
         public SimpleWordPreprocessor(IReader wordsReader, IBoringWordsStorage boringWordsStorage)
         {
@@ -17,13 +17,13 @@ namespace TagCloud.WordPreprocessors
             this.boringWordsStorage = boringWordsStorage;
         }
 
-        public IEnumerable<string> GetPreprocessedWords()
+        public Result<IEnumerable<string>> GetPreprocessedWords()
         {
             boringWords = boringWordsStorage.GetBoringWords();
-            return wordsReader
-                .ReadWords()
-                .Select(word => word.ToLower())
-                .Where(word => !boringWords.Contains(word));
+            return wordsReader.ReadWords()
+                .Then(words => words
+                        .Select(word => word.ToLower())
+                        .Where(word => !boringWords.Value.Contains(word)));
         }
     }
 }
