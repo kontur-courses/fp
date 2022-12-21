@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.WordFilter
 {
@@ -10,17 +11,13 @@ namespace TagCloud.WordFilter
         public FiltersExecutor(IWordFilter[] filters)
         {
             foreach (var filter in filters)
-                RegisterFilter(filter);
+                Filters.Add(filter);
         }
 
-        public void RegisterFilter(IWordFilter filter)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> words)
         {
-            Filters.Add(filter);
-        }
-
-        public IReadOnlyList<string> Filter(IEnumerable<string> words)
-        {
-            return words.Where(word => Filters.All(filter => filter.IsPermitted(word))).ToList();
+            return words.AsResult()
+                    .Then(ws => ws.Where(word => Filters.All(filter => filter.IsPermitted(word).Value)));
         }
     }
 }

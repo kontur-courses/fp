@@ -1,7 +1,9 @@
-﻿namespace TagCloud.WordFilter
+﻿using TagCloud.ResultMonade;
+
+namespace TagCloud.WordFilter
 {
     public interface IWordFilter
     {
-        bool IsPermitted(string word);
+        Result<bool> IsPermitted(string word);
     }
 }

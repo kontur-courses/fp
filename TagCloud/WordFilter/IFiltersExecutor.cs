@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.WordFilter
 {
     public interface IFiltersExecutor
     {
-        IReadOnlyList<string> Filter(IEnumerable<string> words);
+        Result<IEnumerable<string>> Filter(IEnumerable<string> words);
     }
 }

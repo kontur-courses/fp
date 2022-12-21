@@ -8,18 +8,10 @@ namespace TagCloudUnitTests
     [TestFixture]
     internal class FiltersExecutorTests
     {
-        private FiltersExecutor filtersExecutor;
-
-        [SetUp]
-        public void Setup()
-        {
-            filtersExecutor = new FiltersExecutor(new IWordFilter[] { });
-        }
-
         [Test]
         public void Conver_ReturnsLowerCaseWords_WhenToLowerConverterRegistred()
         {
-            filtersExecutor.RegisterFilter(new BoringWordFilter());
+            var filtersExecutor = new FiltersExecutor(new IWordFilter[] { new BoringWordFilter() });
 
             var inputWords = new List<string>() { "one", "two", "three", "four", "five", "six" };
 
@@ -27,7 +19,8 @@ namespace TagCloudUnitTests
 
             var actualWords = filtersExecutor.Filter(inputWords);
 
-            actualWords.Should().BeEquivalentTo(expectedWords);
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
         }
     }
 }

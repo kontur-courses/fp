@@ -42,7 +42,7 @@ namespace TagCloud.App
 
             var filteredWords = filtersExecutor.Filter(convertedWords.Value);
 
-            var frequencies = wordsFrequencyAnalyzer.GetFrequencies(filteredWords);
+            var frequencies = wordsFrequencyAnalyzer.GetFrequencies(filteredWords.Value);
 
             var bitmap = cloudImageGenerator.GenerateBitmap(frequencies);
 
