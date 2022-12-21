@@ -50,7 +50,7 @@ public static class Result
         return new Result<T>(e);
     }
 
-    public static Result<T> Of<T>(Func<T> f, string error = null)
+    public static Result<T> Of<T>(Func<T> f, string? error = null)
     {
         try
         {
@@ -62,7 +62,7 @@ public static class Result
         }
     }
 
-    public static Result<None> OfAction(Action f, string error = null)
+    public static Result<None> OfAction(Action f, string? error = null)
     {
         try
         {
@@ -81,14 +81,7 @@ public static class Result
     {
         return input.Then(inp => Of(() => continuation(inp)));
     }
-
-    public static Result<None> Then<TInput, TOutput>(
-        this Result<TInput> input,
-        Action<TInput> continuation)
-    {
-        return input.Then(inp => OfAction(() => continuation(inp)));
-    }
-
+    
     public static Result<None> Then<TInput>(
         this Result<TInput> input,
         Action<TInput> continuation)
@@ -111,6 +104,15 @@ public static class Result
     {
         if (!input.IsSuccess) handleError(input.Error);
         return input;
+    }
+    
+    public static Result<TInput> ReturnOnFail<TInput>(
+        this Result<TInput> input,
+        Func<string, Result<TInput>> handleError)
+    {
+        return input.IsSuccess
+            ? input
+            : handleError(input.Error);
     }
 
     public static Result<TInput> ReplaceError<TInput>(

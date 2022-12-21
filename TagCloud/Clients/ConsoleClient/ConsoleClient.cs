@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagCloud.App;
 using TagCloud.App.CloudCreatorDriver.CloudCreator;
 using TagCloud.App.CloudCreatorDriver.CloudDrawers.DrawingSettings;
 using TagCloud.App.CloudCreatorDriver.ImageSaver;
@@ -11,7 +12,7 @@ namespace TagCloud.Clients.ConsoleClient;
 
 public class ConsoleClient : IClient
 {
-    private string? path;
+    private string? pathToText;
     private string? savePath;
     private Size imageSize;
     private Color bgColor;
@@ -41,233 +42,192 @@ public class ConsoleClient : IClient
         this.wordsVisualisationSelector = wordsVisualisationSelector;
     }
 
-    public void Run()
+    public Result<None> Run()
     {
-        Start();
-
-        try
-        {
-            if (!TryGetFilePath(out path)
-                || !TryGetImageSize(out imageSize)
-                || !TryGetBgColor(out bgColor)
-                || !TryGetOutImagePath(out savePath))
-                return;
-
-            if (!TryGetFileEncoder(fileEncoders, path, out var suitableFileEncoder))
+        return Start()
+            .Then(_ => GetFilePath().Then(p => pathToText = p))
+            .Then(_ => GetImageSize().Then(s => imageSize = s))
+            .Then(_ => GetBgColor().Then(c => bgColor = c))
+            .Then(_ => GetOutImagePath().Then(p => savePath = p))
+            .Then(_ => Result.OfAction(() =>
             {
-                Console.WriteLine(Phrases.FailGettingFileEncoder);
-                return;
-            }
-
-            var streamContext = new FromFileStreamContext(path, suitableFileEncoder!);
-            drawingSettings.BgColor = bgColor;
-            drawingSettings.PictureSize = imageSize;
-            ((SpiralCloudLayouterSettings)cloudLayouterSettings).Center =
-                new Point(imageSize.Width / 2, imageSize.Height / 2);
-
-            Console.Write(Phrases.AskingAddingUsersBoringWords);
-            if (Console.ReadLine() == Phrases.Yes)
-                creator.AddBoringWordManager(GetBoringWords());
-
-            if (!TryCollectWordsColors(wordsVisualisationSelector)
-                || !TryCollectFontSizes(wordsVisualisationSelector))
-                return;
-
-            var image = creator.CreatePicture(streamContext);
-
-            Console.WriteLine(imageSaver.TrySaveImage(image, savePath!)
-                ? Phrases.SuccessSaveImage + savePath
-                : Phrases.FailImageSaving);
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(Phrases.UnexpectedError(e));
-        }
-
-        Stop();
+                drawingSettings.BgColor = bgColor;
+                drawingSettings.PictureSize = imageSize;
+                ((SpiralCloudLayouterSettings)cloudLayouterSettings).Center =
+                    new Point(imageSize.Width / 2, imageSize.Height / 2);
+            }))
+            .Then(_ => WriteToConsole(Phrases.AskingAddingUsersBoringWords))
+            .Then(_ => ReadLineFromConsole())
+            .Then(answer => answer == Phrases.Yes
+                ? GetBoringWords().Then(bw => creator.AddBoringWordManager(bw))
+                : Result.Ok())
+            .Then(_ => CollectWordsColors(wordsVisualisationSelector))
+            .Then(_ => CollectFontSizes(wordsVisualisationSelector))
+            .Then(_ => GetFileEncoder(fileEncoders, pathToText!))
+            .Then(encoder => Result.Of(() => new FromFileStreamContext(pathToText!, encoder)))
+            .Then(context => creator.CreatePicture(context))
+            .Then(image => imageSaver.SaveImage(image, savePath!))
+            .Then(_ => WriteLineToConsole(Phrases.SuccessSaveImage + savePath))
+            .RefineError("Program finished with error")
+            .OnFail(e => WriteLineToConsole(e));
     }
 
-    private static bool TryCollectFontSizes(IWordsVisualisationSelector selector)
+    private static Result<None> CollectFontSizes(IWordsVisualisationSelector selector)
     {
-        Console.Write(Phrases.AskingFontSize);
-        try
-        {
-            var sizes = Console.ReadLine()!
-                .Split(' ')
-                .Select(int.Parse)
-                .Take(2).ToArray();
-            selector.SetWordsSizes(sizes[0], sizes[1]);
-            return true;
-        }
-        catch
-        {
-            Console.Write(Phrases.FailGettingFontSize + Phrases.TryAgain);
-            return Console.ReadLine() == Phrases.Yes && TryCollectFontSizes(selector);
-        }
+        return WriteToConsole(Phrases.AskingFontSize)
+            .Then(_ => ReadLineFromConsole())
+            .Then(font => Result.Of(() =>
+                    font.Split(' ')
+                        .Select(int.Parse)
+                        .Take(2).ToArray())
+                .RefineError("Can not recognize font sizes"))
+            .Then(sizes => selector.SetWordsSizes(sizes[0], sizes[1]))
+            .RefineError("Can not get font sizes from console")
+            .ReturnOnFail(e => TryAgain(e, () => CollectFontSizes(selector)));
     }
 
-    private static bool TryCollectWordsColors(IWordsVisualisationSelector visualisationSelector)
+    private static Result<None> CollectWordsColors(IWordsVisualisationSelector visualisationSelector)
     {
-        Console.Write(Phrases.AskingWordsColors);
-        var colors = Console.ReadLine()!
-            .Split('-')
-            .Select(Color.FromName)
-            .Where(cColor => cColor.IsKnownColor)
-            .ToArray();
-        if (colors.Length > 0)
-        {
-            visualisationSelector.AddWordPossibleColors(colors);
-            return true;
-        }
-        Console.Write(Phrases.FailGettingWordsColors + Phrases.TryAgain);
-        return Console.ReadLine() == Phrases.Yes && TryCollectWordsColors(visualisationSelector);
+        return WriteToConsole(Phrases.AskingWordsColors)
+            .Then(_ => ReadLineFromConsole())
+            .Then(colors => Result.Of(() => 
+                    colors.Split('-')
+                        .Select(Color.FromName)
+                        .Where(cColor => cColor.IsKnownColor)
+                        .ToArray())
+                .RefineError("Can not recognize colors from input"))
+            .Then(colors => FailIf(colors, colors.Length == 0, "Colors count can not be 0"))
+            .Then(visualisationSelector.AddWordPossibleColors)
+            .RefineError("Can not get colors from console")
+            .ReturnOnFail(e => TryAgain(e, () => CollectWordsColors(visualisationSelector)));
     }
 
-    private BoringWordsFromUser GetBoringWords()
+    private Result<BoringWordsFromUser> GetBoringWords()
     {
-        Console.WriteLine(Phrases.AskingFullPathToBoringWords);
+        return WriteLineToConsole(Phrases.AskingFullPathToBoringWords)
+            .Then(_ => GetFilePathFromConsole())
+            .Then(GetWordsFromFile)
+            .Then(CreateBoringWords)
+            .RefineError("Can not get users boring words")
+            .ReturnOnFail(e => TryAgain(e, GetBoringWords));
+    }
+
+    private Result<BoringWordsFromUser> CreateBoringWords(IEnumerable<string> words)
+    {
+        var boringWord = new BoringWordsFromUser();
+        return Result.OfAction(() => {
+                foreach (var word in words)
+                {
+                    boringWord.AddBoringWord(word);
+                }
+            })
+            .Then(_ => boringWord)
+            .RefineError("Can not create boring words class from words");
+    }
+
+    private Result<List<string>> GetWordsFromFile(string fileName)
+    {
+        return GetFileEncoder(fileEncoders, fileName)
+            .Then(fileEncoder => new FromFileStreamContext(fileName, fileEncoder))
+            .Then(context => inputWordsStream.GetAllWordsFromStream(context))
+            .RefineError("Can not read data from boring words file");
+    }
+
+    private static Result<IFileEncoder> GetFileEncoder(IEnumerable<IFileEncoder> fileEncoders, string fileName)
+    {
+        return Result.Of(() =>
+            fileEncoders.First(encoder =>
+                fileName.EndsWith(encoder.GetExpectedFileType())))
+            .RefineError("Can not find file encoder");
         
-        var boringWords = new BoringWordsFromUser();
-        if (!TryGetFilePathFromConsole(out var boringWordsPath) || boringWordsPath == null)
-        {
-            Console.Write(Phrases.FailGettingFullPath + Phrases.TryAgain);
-            return Console.ReadLine() == Phrases.Yes
-                ? GetBoringWords()
-                : boringWords;
-        }
-        
-        if (!TryGetFileEncoder(fileEncoders, boringWordsPath, out var suitableFileEncoder))
-        {
-            Console.WriteLine(Phrases.FailGettingFileEncoder);
-            return boringWords;
-        }
-        
-        var streamContext = new FromFileStreamContext(boringWordsPath, suitableFileEncoder!);
-        foreach (var word in inputWordsStream.GetAllWordsFromStream(streamContext))
-        {
-            boringWords.AddBoringWord(word);
-        }
-        Console.WriteLine(Phrases.SuccessUploadBoringWords);
-
-        return boringWords;
     }
 
-    private static bool TryGetFileEncoder(
-        IEnumerable<IFileEncoder> fileEncoders,
-        string fileName,
-        out IFileEncoder? fileEncoder)
+    private static Result<None> Start()
     {
-        fileEncoder = fileEncoders.FirstOrDefault(encoder =>
-            fileName.EndsWith(encoder.GetExpectedFileType()));
-        return fileEncoder != null;
+        return WriteLineToConsole(Phrases.Hello);
     }
 
-    private static void Start()
+    private static Result<Color> GetBgColor()
     {
-        Console.WriteLine(Phrases.Hello);
+        return WriteToConsole(Phrases.AskingBgColor)
+            .Then(_ => GetColorFromConsole())
+            .ReturnOnFail(e => TryAgain(e, GetBgColor));
     }
 
-    private static bool TryGetBgColor(out Color color)
+    private static Result<Color> GetColorFromConsole()
     {
-        Console.Write(Phrases.AskingBgColor);
-
-        if (TryGetColorFromConsole(out color))
-            return true;
-            
-        Console.Write(Phrases.FailGettingColor + Phrases.TryAgain);
-        return Console.ReadLine() == Phrases.Yes && TryGetBgColor(out color);
+        return ReadLineFromConsole()
+            .Then(color => Result.Of(() =>
+                Color.FromName(color), "Can not recognize color"));
     }
 
-    private static bool TryGetColorFromConsole(out Color color)
+    private static Result<Size> GetImageSize()
     {
-        var stringColor = Console.ReadLine();
-        if (stringColor == null)
-        {
-            color = Color.Empty;
-            return false;
-        }
-
-        color = Color.FromName(stringColor);
-        return color.IsKnownColor;
+        return WriteToConsole(Phrases.AskingImageSize)
+            .Then(_ => GetImageSizeFromConsole())
+            .ReturnOnFail(e => TryAgain(e, GetImageSize));
     }
 
-    private static bool TryGetImageSize(out Size size)
+    private static Result<Size> GetImageSizeFromConsole()
     {
-        Console.Write(Phrases.AskingImageSize);
-
-        if (TryGetImageSizeFromConsole(out size))
-            return true;
-            
-        Console.Write(Phrases.FailGettingImageSize + Phrases.TryAgain);
-        return Console.ReadLine() == Phrases.Yes && TryGetImageSize(out size);
+        return ReadLineFromConsole()
+            .Then(size => Result.Of(() => size.Split('*').Select(int.Parse).ToArray(), "Parse error"))
+            .Then(size => FailIf(size, size.Length != 2, "Incorrect Size input"))
+            .Then(size => new Size(size[0], size[1]));
     }
 
-    private static bool TryGetImageSizeFromConsole(out Size size)
+    private static Result<string> GetOutImagePath()
     {
-        var stringSize = Console.ReadLine();
-        
-        if (stringSize == null)
-        {
-            size = new Size(0, 0);
-            return false;
-        }
-
-        int[] intSize;
-        try
-        {
-            intSize = stringSize.Split('*').Select(int.Parse).ToArray();
-        }
-        catch
-        {
-            size = new Size(0, 0);
-            return false;
-        }
-
-        if (intSize.Length != 2)
-        {
-            size = new Size(0, 0);
-            return false;
-        }
-
-        size = new Size(intSize[0], intSize[1]);
-        return true;
-    }
-
-    private static bool TryGetOutImagePath(out string? outPath)
-    {
-        Console.WriteLine(Phrases.AskingFullPathToOutImage);
-        Console.Write(Phrases.GetArrow(0));
-        outPath = Console.ReadLine();
-        return outPath != null;
+        return WriteLineToConsole(Phrases.AskingFullPathToOutImage)
+            .Then(_ => WriteToConsole(Phrases.GetArrow(0)))
+            .Then(_ => ReadLineFromConsole())
+            .ReturnOnFail(e => TryAgain(e, GetOutImagePath));
     }
         
-    private static bool TryGetFilePath(out string filePath)
+    private static Result<string> GetFilePath()
     {
-        Console.WriteLine(Phrases.AskingFullPathToText);
-        
-        if (TryGetFilePathFromConsole(out var path) && path != null)
-        {
-            filePath = path;
-            return true;
-        }
-            
-        Console.Write(Phrases.FailGettingFullPath + Phrases.TryAgain);
-        if (Console.ReadLine() == Phrases.Yes) return TryGetFilePath(out filePath);
-        filePath = "";
-        return false;
+        return
+            WriteLineToConsole(Phrases.AskingFullPathToText)
+                .Then(_ => GetFilePathFromConsole())
+                .ReturnOnFail(e => TryAgain(e, GetFilePath));
     }
 
-    private static bool TryGetFilePathFromConsole(out string? filePath)
+    private static Result<string> GetFilePathFromConsole()
     {
-        Console.Write(Phrases.GetArrow(0));
-        var path = Console.ReadLine();
-        filePath = path;
-        return File.Exists(path);
+        return WriteLineToConsole(Phrases.GetArrow(0))
+                .Then(_ => ReadLineFromConsole())
+                .Then(path => FailIf(path, !File.Exists(path), "File not exists"));
     }
 
-    private static void Stop()
+    private static Result<None> WriteToConsole(string text)
     {
-        Console.WriteLine(Phrases.GoodBy);
+        return Result.OfAction(() => Console.Write(text), "Can not write text to console");
+    }
+    
+    private static Result<None> WriteLineToConsole(string text)
+    {
+        return WriteToConsole(text + '\n');
+    }
+
+    private static Result<string> ReadLineFromConsole()
+    {
+        return Result.Of(Console.ReadLine, "Con not read data from console")
+            .Then(str => FailIf(str, str == null, "Console input can not be null"));
+    }
+
+    private static Result<T> TryAgain<T>(string error, Func<Result<T>> function)
+    {
+        return WriteToConsole(error + ". " + Phrases.TryAgain)
+            .Then(_ => ReadLineFromConsole())
+            .Then(i => i == Phrases.Yes
+                ? function()
+                : Result.Fail<T>(error));
+    }
+
+    private static Result<T> FailIf<T>(T? value, bool checker, string error)
+    {
+        return value == null || checker
+            ? Result.Fail<T>(error)
+            : value.AsResult();
     }
 }
