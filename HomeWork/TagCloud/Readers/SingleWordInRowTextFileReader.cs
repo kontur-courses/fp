@@ -6,24 +6,34 @@ namespace TagCloud.Readers
 {
     public class SingleWordInRowTextFileReader : IBoringWordsReader
     {
-        private string path;
-        private readonly string[] defaultWords = "У меня нет слов".Split();
+        private Result<string> path;
+        private readonly IEnumerable<string> defaultWords = "У меня нет слов".Split();
         public string FileExtFilter => "txt files (*.txt)|*.txt";
 
         public void SetFile(string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) 
-                throw new ArgumentNullException(nameof(path));
-
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"file {path} not found");
-
-            this.path = path;
+            this.path = Result.Ok(path)
+                .Then(CheckNullArgument)
+                .Then(CheckExistenceOfFile);
         }
 
-        public IEnumerable<string> ReadWords() =>
-            path == null 
-                ? defaultWords
-                : File.ReadAllLines(path);
+
+        private Result<string> CheckNullArgument(string path) =>
+            Validate(path, p => string.IsNullOrWhiteSpace(p), $"path is not defined");
+
+        private Result<string> CheckExistenceOfFile(string path) =>
+            Validate(path, p => !File.Exists(p), $"file {path} not found");
+
+        private Result<T> Validate<T>(T obj, Func<T, bool> predicate, string errorMessage) =>
+            predicate(obj)
+                ? Result.Ok(obj)
+                : Result.Fail<T>(errorMessage);
+
+        public Result<IEnumerable<string>> ReadWords() =>
+            !path.IsSuccess 
+                ? Result.Fail<IEnumerable<string>>(path.Error) 
+                : Result.Ok(path.Value == null 
+                    ? defaultWords 
+                    : File.ReadAllLines(path.Value));
     }
 }

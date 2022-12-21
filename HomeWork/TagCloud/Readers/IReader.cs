@@ -6,6 +6,6 @@ namespace TagCloud.Readers
     {
         public string FileExtFilter { get; }
         public void SetFile(string path);
-        public IEnumerable<string> ReadWords();
+        public Result<IEnumerable<string>> ReadWords();
     }
 }
