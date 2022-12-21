@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloud", "TagCloud\TagCloud.csproj", "{F2D36FE3-A042-44FD-8DAA-1607E8002C9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudTest", "TagCloudTest\TagCloudTest.csproj", "{89579844-D664-469D-8769-6A50607FE36F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2D36FE3-A042-44FD-8DAA-1607E8002C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2D36FE3-A042-44FD-8DAA-1607E8002C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2D36FE3-A042-44FD-8DAA-1607E8002C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2D36FE3-A042-44FD-8DAA-1607E8002C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89579844-D664-469D-8769-6A50607FE36F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89579844-D664-469D-8769-6A50607FE36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89579844-D664-469D-8769-6A50607FE36F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89579844-D664-469D-8769-6A50607FE36F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
