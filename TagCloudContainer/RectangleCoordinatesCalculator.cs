@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using TagCloudContainer.Result;
 
 namespace TagCloudContainer
 {
@@ -8,11 +9,13 @@ namespace TagCloudContainer
     /// </summary>
     public static class RectangleCoordinatesCalculator
     {
-        public static Point CalculateRectangleCoordinates(Point rectangleCenter, Size rectangleSize)
+        public static Result<Point> CalculateRectangleCoordinates(Result<Point> rectangleCenter, Size rectangleSize)
         {
+            if (!rectangleCenter.IsSuccess)
+                return new Result<Point>(rectangleCenter.Error);
             if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
-                throw new ArgumentException("Incorrect size of rectangle");
-            return new Point(rectangleCenter.X - rectangleSize.Width / 2, rectangleCenter.Y - rectangleSize.Height / 2);
+                return new Result<Point>("Incorrect size of rectangle");
+            return new Result<Point>( null, new Point(rectangleCenter.Value.X - rectangleSize.Width / 2, rectangleCenter.Value.Y - rectangleSize.Height / 2));
         }
     }
 }
