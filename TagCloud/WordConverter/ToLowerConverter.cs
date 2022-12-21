@@ -1,10 +1,13 @@
-﻿namespace TagCloud.WordConverter
+﻿using TagCloud.ResultMonade;
+
+namespace TagCloud.WordConverter
 {
     public class ToLowerConverter : IWordConverter
     {
-        public string Convert(string word)
+        public Result<string> Convert(string word)
         {
-            return word.ToLower();
+            return Result.Of(() => word.ToLower())
+                .RefineError($"Word <{word}> can't be converted to lower case");
         }
     }
 }

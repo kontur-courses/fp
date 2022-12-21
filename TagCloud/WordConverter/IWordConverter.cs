@@ -1,7 +1,9 @@
-﻿namespace TagCloud.WordConverter
+﻿using TagCloud.ResultMonade;
+
+namespace TagCloud.WordConverter
 {
     public interface IWordConverter
     {
-        string Convert(string word);
+        Result<string> Convert(string word);
     }
 }

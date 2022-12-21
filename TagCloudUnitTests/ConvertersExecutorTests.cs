@@ -19,7 +19,8 @@ namespace TagCloudUnitTests
 
             var actualWords = convertersExecutor.Convert(inputWords);
 
-            actualWords.Should().BeEquivalentTo(expectedWords);
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(expectedWords);
         }
     }
 }

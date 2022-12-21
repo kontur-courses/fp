@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.WordConverter
 {
@@ -12,9 +13,9 @@ namespace TagCloud.WordConverter
             Converters = converters;
         }
 
-        public IReadOnlyList<string> Convert(IEnumerable<string> words)
+        public Result<List<string>> Convert(IEnumerable<string> words)
         {
-            return words.Select(word => Converters.Aggregate(word, (current, converter) => converter.Convert(current)))
+            return words.Select(word => Converters.Aggregate(word, (current, converter) => converter.Convert(current).Value))
                         .ToList();
         }
     }

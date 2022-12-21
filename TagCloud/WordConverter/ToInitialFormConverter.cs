@@ -1,10 +1,13 @@
-﻿namespace TagCloud.WordConverter
+﻿using TagCloud.ResultMonade;
+
+namespace TagCloud.WordConverter
 {
     public class ToInitialFormConverter : IWordConverter
     {
-        public string Convert(string word)
+        public Result<string> Convert(string word)
         {
-            return word;
+            return Result.Of(() => word)
+                    .RefineError($"Word <{word}> can't be converted to intial form");
         }
     }
 }

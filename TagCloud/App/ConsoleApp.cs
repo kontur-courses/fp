@@ -40,7 +40,7 @@ namespace TagCloud.App
 
             var convertedWords = convertersExecutor.Convert(words.Value);
 
-            var filteredWords = filtersExecutor.Filter(convertedWords);
+            var filteredWords = filtersExecutor.Filter(convertedWords.Value);
 
             var frequencies = wordsFrequencyAnalyzer.GetFrequencies(filteredWords);
 

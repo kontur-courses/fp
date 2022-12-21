@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.WordConverter
 {
     public interface IConvertersExecutor
     {
-        IReadOnlyList<string> Convert(IEnumerable<string> words);
+        Result<List<string>> Convert(IEnumerable<string> words);
     }
 }
