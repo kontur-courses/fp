@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using ResultOf;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.FileReader
 {
@@ -8,15 +8,15 @@ namespace TagCloud.FileReader
         public Result<string> ReadAllText(string filePath)
         {
             if (!File.Exists(filePath))
-                return new Result<string>($"File {filePath} doesn't exist");
+                return Result.Fail<string>($"File {filePath} doesn't exist");
 
             if (Path.GetExtension(filePath) != ".txt")
-                return new Result<string>($"File {filePath} has invalid format");
+                return Result.Fail<string>($"File {filePath} has invalid format");
 
             var text = Result.Of(() => File.ReadAllText(filePath));
 
             if (text.IsSuccess && text.Value.Length == 0)
-                return new Result<string>($"File {filePath} is empty");
+                return Result.Fail<string>($"File {filePath} is empty");
 
             return text;
         }

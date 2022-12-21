@@ -1,8 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using ResultOf;
 using System.IO;
 using System.Text;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.FileReader
 {
@@ -11,10 +11,10 @@ namespace TagCloud.FileReader
         public Result<string> ReadAllText(string filePath)
         {
             if (!File.Exists(filePath))
-                return new Result<string>($"File {filePath} doesn't exist");
+                return Result.Fail<string>($"File {filePath} doesn't exist");
 
             if (Path.GetExtension(filePath) != ".doc" && Path.GetExtension(filePath) != ".docx")
-                return new Result<string>($"File {filePath} has invalid format");
+                return Result.Fail<string>($"File {filePath} has invalid format");
 
             var sb = new StringBuilder();
 

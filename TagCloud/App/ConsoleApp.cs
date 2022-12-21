@@ -38,7 +38,7 @@ namespace TagCloud.App
 
             var words = textParser.GetWords(text.Value);
 
-            var convertedWords = convertersExecutor.Convert(words);
+            var convertedWords = convertersExecutor.Convert(words.Value);
 
             var filteredWords = filtersExecutor.Filter(convertedWords);
 

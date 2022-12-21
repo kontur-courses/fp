@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.TextParsing
 {
     public interface ITextParser
     {
-        IReadOnlyList<string> GetWords(string text);
+        Result<List<string>> GetWords(string text);
     }
 }

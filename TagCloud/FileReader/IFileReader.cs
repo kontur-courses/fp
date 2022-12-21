@@ -1,4 +1,4 @@
-﻿using ResultOf;
+﻿using TagCloud.ResultMonade;
 
 namespace TagCloud.FileReader
 {

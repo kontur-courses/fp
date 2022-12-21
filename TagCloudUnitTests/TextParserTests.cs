@@ -18,33 +18,25 @@ namespace TagCloudUnitTests
             parser = new TextParser();
         }
 
-        [Test]
-        public void GetWords_ReturnsWords_WhenTextWithoutPunctuationMarks()
+        [TestCase("One\ntwo\nthree\nfour\nfive\nsix\n", TestName = "Text with new line characters")]
+        [TestCase("One\r\ntwo\r\nthree\r\nfour\r\nfive\r\nsix\r\n", TestName = "Text with new line and carriage return characters")]
+        [TestCase("One two three four five six", TestName = "Text without punctuation marks")]
+        [TestCase("One, two: three. four; five! - six?", TestName = "Text with punctuation marks")]
+        public void GetWords_ReturnsCorrectWords(string text)
         {
-            var text = "One two three four five six";
-
             var actualWords = parser.GetWords(text);
 
-            actualWords.Should().BeEquivalentTo(exprectedWords);
+            actualWords.IsSuccess.Should().BeTrue();
+            actualWords.GetValueOrThrow().Should().BeEquivalentTo(exprectedWords);
         }
 
-        [Test]
-        public void GetWords_ReturnsWords_WhenTextWithPunctuationMarks()
-        {
-            var text = "One, two: three. four; five! - six?";
-
-            var actualWords = parser.GetWords(text);
-
-            actualWords.Should().BeEquivalentTo(exprectedWords);
-        }
-
-        [TestCase("One\ntwo\nthree\nfour\nfive\nsix\n", TestName = "Only new line characters")]
-        [TestCase("One\r\ntwo\r\nthree\r\nfour\r\nfive\r\nsix\r\n", TestName = "New line and carriage return characters")]
-        public void GetWords_ReturnsWords_WhenTextWithNewLineCharacters(string text)
+        [TestCase(null, TestName = "Text is null")]
+        [TestCase("", TestName = "Text is empty")]
+        public void GetWords_IsNotSuccess_WhenTextIsInvalid(string text)
         {
             var actualWords = parser.GetWords(text);
 
-            actualWords.Should().BeEquivalentTo(exprectedWords);
+            actualWords.IsSuccess.Should().BeFalse();
         }
     }
 }
