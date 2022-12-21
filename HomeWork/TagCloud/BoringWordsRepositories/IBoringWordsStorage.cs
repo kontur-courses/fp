@@ -6,6 +6,6 @@ namespace TagCloud.BoringWordsRepositories
     {
         public string FileExtFilter { get; }
         public void LoadBoringWords(string path);
-        public HashSet<string> GetBoringWords();
+        public Result<HashSet<string>> GetBoringWords();
     }
 }

@@ -7,7 +7,7 @@ namespace TagCloud.BoringWordsRepositories
     public class TextFileBoringWordsStorage : IBoringWordsStorage
     {
         private readonly IBoringWordsReader reader;
-        private HashSet<string> boringWords;
+        private Result<HashSet<string>> boringWords;
 
         public TextFileBoringWordsStorage(IBoringWordsReader reader)
         {
@@ -19,13 +19,12 @@ namespace TagCloud.BoringWordsRepositories
 
         public void LoadBoringWords(string path)
         {
-            boringWords.Clear();
+            boringWords.Value.Clear();
             reader.SetFile(path);
-            boringWords = reader.ReadWords().
-                Select(word => word.ToLower())
-                .ToHashSet();
+            boringWords = reader.ReadWords()
+                .Then(words => words.Select(word => word.ToLower()).ToHashSet());
         }
 
-        public HashSet<string> GetBoringWords() => boringWords;
+        public Result<HashSet<string>> GetBoringWords() => boringWords;
     }
 }
