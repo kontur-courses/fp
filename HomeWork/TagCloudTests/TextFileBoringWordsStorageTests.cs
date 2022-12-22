@@ -19,21 +19,21 @@ namespace TagCloudTests
         [Test]
         public void TextFileBoringWordsStorage_GetBoringWords_ShouldReturnedEmptyCollectionAfterCtor()
         {
-            boringWordsStorage.GetBoringWords().Should().BeEmpty();
+            boringWordsStorage.GetBoringWords().GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase("empty.txt", TestName = "file without words")]
         public void TextFileBoringWordsStorage_GetBoringWords_ShouldReturnedEmptyCollectionWhen(string path)
         {
             boringWordsStorage.LoadBoringWords(path);
-            boringWordsStorage.GetBoringWords().Should().BeEmpty();
+            boringWordsStorage.GetBoringWords().GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase("BoringWordsDictionary.txt", TestName = "file with words")]
         public void TextFileBoringWordsStorage_GetBoringWords_ShouldReturnedCollectionWhen(string path)
         {
             boringWordsStorage.LoadBoringWords(path);
-            boringWordsStorage.GetBoringWords().Should().HaveCountGreaterThan(1);
+            boringWordsStorage.GetBoringWords().GetValueOrThrow().Should().HaveCountGreaterThan(1);
         }
 
         [Test]

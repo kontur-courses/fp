@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagCloud;
 using TagCloud.BoringWordsRepositories;
 using TagCloud.Readers;
 using TagCloud.WordPreprocessors;
@@ -23,14 +24,31 @@ namespace TagCloudTests
             wordsReader.SetFile("aboutKonturWords.txt");
         }
 
+        [TestCase(null,null, 
+            "Error when reading boring words: path is not defined. Error when reading words: path is not defined", TestName = "null words paths")]
+        [TestCase("notExistedFile.txt", "notExistedBoringWordsFile.txt",
+            "Error when reading boring words: file notExistedBoringWordsFile.txt not found. Error when reading words: file notExistedFile.txt not found", TestName = "not existed words paths")]
+        [TestCase(null, "notExistedBoringWordsFile.txt", 
+            "Error when reading boring words: file notExistedBoringWordsFile.txt not found. Error when reading words: path is not defined", TestName = "not existed and null words paths")]
+        //[TestCase("aboutKonturWords.txt", null, "Error when reading boring words: path is not defined", TestName = "null boring words path")]
+        public void SimpleWordPreprocessor_GetPreprocessedWords_ShouldReturnErrorWhen(string wordPath, string boringWordsPath, string errorText)
+        {
+            wordsReader.SetFile(wordPath);
+            boringWordsStorage.LoadBoringWords(boringWordsPath);
+            var preprocessedWords = GetPreprocessedWords();
+
+            preprocessedWords.IsSuccess.Should().BeFalse();
+            preprocessedWords.Error.Should().Be(errorText);
+        }
+
         [Test]
         public void SimpleWordPreprocessor_GetPreprocessedWords_ShouldReturnСonvertWordsToLowerCase()
         {
             var words = wordsReader.ReadWords();
             var preprocessedWords = GetPreprocessedWords();
 
-            words.Should().Contain(word => word.Any(c => char.IsUpper(c)));
-            preprocessedWords.Should().NotContain(word => word.Any(c => char.IsUpper(c)));
+            words.GetValueOrThrow().Should().Contain(word => word.Any(c => char.IsUpper(c)));
+            preprocessedWords.GetValueOrThrow().Should().NotContain(word => word.Any(c => char.IsUpper(c)));
         }
 
         [Test]
@@ -39,14 +57,14 @@ namespace TagCloudTests
             var words = wordsReader.ReadWords();
             boringWordsStorage.LoadBoringWords(boringWordsPath);
 
-            var boringWords = boringWordsStorage.GetBoringWords();
+            var boringWords = boringWordsStorage.GetBoringWords().GetValueOrThrow();
             var preprocessedWords = GetPreprocessedWords();
 
-            words.Should().Contain(word => boringWords.Contains(word));
-            preprocessedWords.Should().NotContain(word => boringWords.Contains(word));
+            words.GetValueOrThrow().Should().Contain(word => boringWords.Contains(word));
+            preprocessedWords.GetValueOrThrow().Should().NotContain(word => boringWords.Contains(word));
         }
 
-        private IEnumerable<string> GetPreprocessedWords()
+        private Result<IEnumerable<string>> GetPreprocessedWords()
         {
             wordPreprocessor = new SimpleWordPreprocessor(wordsReader, boringWordsStorage);
             var preprocessedWords = wordPreprocessor.GetPreprocessedWords();

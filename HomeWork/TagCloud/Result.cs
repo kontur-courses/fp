@@ -125,9 +125,20 @@ namespace TagCloud
 
         public static Result<TInput> RefineError<TInput>(
             this Result<TInput> input,
-            string errorMessage)
+            string errorMessage, bool isAdditionalInformation = false)
         {
-            return input.ReplaceError(err => errorMessage + ". " + err);
+            if (string.IsNullOrEmpty(errorMessage)) 
+                return input;
+
+            if (input.IsSuccess) 
+                return isAdditionalInformation
+                    ? input
+                    : Fail<TInput>(errorMessage);
+
+            return input.ReplaceError(err =>
+                isAdditionalInformation
+                    ? errorMessage + err
+                    : errorMessage + ". " + err);
         }
     }
 }

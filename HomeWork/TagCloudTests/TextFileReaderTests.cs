@@ -37,34 +37,30 @@ namespace TagCloudTests
             var fileReader = new SingleWordInRowTextFileReader();
             fileReader.SetFile("empty.txt");
 
-            fileReader.ReadWords().Should().BeEmpty();
+            fileReader.ReadWords().GetValueOrThrow().Should().BeEmpty();
         }
 
         [TestCase("notExistingFile.txt", TestName = "file extension not exist")]
         public void SingleWordInRowTextFileReader_Ctor_ThrowFileNotFoundExceptionWhen(string path)
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Action act = () => 
-            {
-                var reader = new SingleWordInRowTextFileReader();
-                reader.SetFile(path);
-            };
-
-            act.Should().Throw<FileNotFoundException>();
+            var reader = new SingleWordInRowTextFileReader();
+            reader.SetFile(path);
+            var result = reader.ReadWords();
+            
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be($"file {path} not found");
         }
 
         [TestCase(null, TestName = "is null")]
         [TestCase("", TestName = "is whitespace")]
         public void SingleWordInRowTextFileReader_Ctor_ThrowArgumentNullExceptionWhenPath(string path)
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Action act = () =>
-            {
-                var reader = new SingleWordInRowTextFileReader();
-                reader.SetFile(path);
-            };
+            var reader = new SingleWordInRowTextFileReader();
+            reader.SetFile(path);
+            var result = reader.ReadWords();
 
-            act.Should().Throw<ArgumentNullException>();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("path is not defined");
         }
 
         private string RandomString(int length)
@@ -86,8 +82,9 @@ namespace TagCloudTests
 
         private void CheckThatDataIsReadBy(IReader reader)
         {
-            var words = reader.ReadWords(); 
-            words.Should().BeEquivalentTo(data);
+            var words = reader.ReadWords();
+            words.IsSuccess.Should().BeTrue();
+            words.GetValueOrThrow().Should().BeEquivalentTo(data);
         }
 
         private void DeleteFile(string path)

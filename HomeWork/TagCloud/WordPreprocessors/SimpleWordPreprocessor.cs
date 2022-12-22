@@ -20,8 +20,11 @@ namespace TagCloud.WordPreprocessors
         public Result<IEnumerable<string>> GetPreprocessedWords()
         {
             boringWords = boringWordsStorage.GetBoringWords();
-            return wordsReader.ReadWords()
-                .Then(words => words
+            var readWords = wordsReader.ReadWords();
+            return !boringWords.IsSuccess || !readWords.IsSuccess
+                ? readWords.RefineError("Error when reading words: ", true).RefineError(
+                        boringWords.RefineError("Error when reading boring words: ", true).Error)
+                : readWords.Then(words => words
                         .Select(word => word.ToLower())
                         .Where(word => !boringWords.Value.Contains(word)));
         }
