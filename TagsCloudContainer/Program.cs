@@ -33,9 +33,9 @@ public class Program
             .AddTransient<CloudDrawer>()
             .BuildServiceProvider();
 
-        var drawer = ActivatorUtilities.CreateInstance<CloudDrawer>(container);
+        var drawer = container.GetService<CloudDrawer>();
 
-        var result = drawer.DrawCloud(validatorResult);
-        Console.WriteLine(result ? result.Value : result.Exception!.Message);
+        var result = drawer.DrawCloud(options);
+        Console.WriteLine(result);
     }
 }

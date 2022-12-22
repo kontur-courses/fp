@@ -7,7 +7,7 @@ using Result;
 
 namespace TagsCloudContainer;
 
-public class CloudDrawer
+public class CloudDrawer : IDrawer
 {
     private readonly ISpiralDrawer spiralDrawer;
     private readonly IConverter converter;
@@ -21,44 +21,44 @@ public class CloudDrawer
         this.calculator = calculator;
     }
 
-    public Result<string> DrawCloud(string path, Result<ICustomOptions> options)
+    public string DrawCloud(string path, ICustomOptions options)
     {
-        var layout = new CircularCloudLayout(spiralDrawer, new InputOptions(options.Value.PictureSize));
-        var size = options.Value.PictureSize;
-        var picture = new Bitmap(size, size);
-        var graphics = Graphics.FromImage(picture);
-        var backColor = Color.FromName(options.Value.BackgroundColor);
-        var fontColor = new SolidBrush(Color.FromName(options.Value.FontColor));
+        var layout = new CircularCloudLayout(spiralDrawer, new InputOptions(options.PictureSize));
+        var size = options.PictureSize;
+        using var picture = new Bitmap(size, size);
+        using var graphics = Graphics.FromImage(picture);
+        var backColor = Color.FromName(options.BackgroundColor);
+        using var fontColor = new SolidBrush(Color.FromName(options.FontColor));
         graphics.Clear(backColor);
         var resultDictionary = converter.GetWordsInFile(options);
         if (!resultDictionary)
-            return new Result<string>(resultDictionary.Exception!);
-        var wordsToDraw = calculator.CalculateSize(resultDictionary, options);
-        if (!wordsToDraw)
-            return new Result<string>(wordsToDraw.Exception!);
-        foreach (var pair in wordsToDraw.Value)
+            return resultDictionary.Exception!.Message;
+        var wordsToDrawResult = calculator.CalculateSize(resultDictionary.Value, options);
+        if (!wordsToDrawResult)
+            return resultDictionary.Exception!.Message;
+        foreach (var pair in wordsToDrawResult.Value)
         {
             var stringSize = graphics.MeasureString(pair.Key, pair.Value);
             var putResult = layout.PutNextRectangle(stringSize);
             if (!putResult)
-                return new Result<string>(putResult.Exception!);
+                return resultDictionary.Exception!.Message;
             if (!putResult.Value.isPutted)
-                return new Result<string>(new Exception($"Word {pair.Key} can't be placed in layout"));
+                return $"Word {pair.Key} can't be placed in layout";
             graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.Value.rectangle);
         }
 
-        var format = GetImageFormat(options.Value.ImageFormat);
+        var format = GetImageFormat(options.ImageFormat);
         if (!format)
-            return new Result<string>(format.Exception!);
+            return resultDictionary.Exception!.Message;
         picture.Save(path, format.Value);
-        return new Result<string>($"Picture saved at {path}");
+        return $"Picture saved at {path}";
     }
 
-    public Result<string> DrawCloud(Result<ICustomOptions> options)
+    public string DrawCloud(ICustomOptions options)
     {
         return DrawCloud(
-            Path.Combine(options.Value.WorkingDir,
-                string.Concat(options.Value.ImageName, ".", options.Value.ImageFormat.ToLower())), options);
+            Path.Combine(options.WorkingDir,
+                string.Concat(options.ImageName, ".", options.ImageFormat.ToLower())), options);
     }
 
     private static Result<ImageFormat> GetImageFormat(string format)

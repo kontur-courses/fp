@@ -16,12 +16,12 @@ public class FileToDictionaryConverter : IConverter
         this.parser = parser;
     }
 
-    public Result<Dictionary<string, int>> GetWordsInFile(Result<ICustomOptions> options)
+    public Result<Dictionary<string, int>> GetWordsInFile(ICustomOptions options)
     {
-        var inputWordPath = Path.Combine(options.Value!.WorkingDir, options.Value.WordsFileName);
+        var inputWordPath = Path.Combine(options.WorkingDir, options.WordsFileName);
         Result<List<string>> bufferedWordsResult;
 
-        if (options.Value.WordsFileName[options.Value.WordsFileName.LastIndexOf('.')..] != ".txt")
+        if (options.WordsFileName[options.WordsFileName.LastIndexOf('.')..] != ".txt")
             bufferedWordsResult = parser.ParseDoc(inputWordPath);
         else
         {
@@ -37,7 +37,7 @@ public class FileToDictionaryConverter : IConverter
         var bufferedWords = bufferedWordsResult.Value
             .Select(x => x.ToLower())
             .ToList();
-        var tmpFilePath = Path.Combine(options.Value.WorkingDir, "tmp.txt");
+        var tmpFilePath = Path.Combine(options.WorkingDir, "tmp.txt");
         File.WriteAllLines(tmpFilePath, bufferedWords);
 
         var cmd = $"mystem.exe -nig {tmpFilePath}";
@@ -45,7 +45,7 @@ public class FileToDictionaryConverter : IConverter
         var processStartInfo = new ProcessStartInfo
         {
             UseShellExecute = false,
-            WorkingDirectory = Path.Combine(options.Value.WorkingDir),
+            WorkingDirectory = Path.Combine(options.WorkingDir),
             FileName = @"C:\Windows\System32\cmd.exe",
             Arguments = "/C" + cmd,
             RedirectStandardOutput = true,
@@ -58,10 +58,11 @@ public class FileToDictionaryConverter : IConverter
             .ReadToEnd()
             .Split("\r\n")
             .ToList();
+        process.Close();
 
         File.Delete(tmpFilePath);
 
-        var boringWords = File.ReadAllLines(Path.Combine(options.Value.WorkingDir, options.Value.BoringWordsName))
+        var boringWords = File.ReadAllLines(Path.Combine(options.WorkingDir, options.BoringWordsName))
             .Select(x => x.ToLower())
             .ToList();
 

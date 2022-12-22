@@ -6,7 +6,6 @@ using Result;
 
 namespace TagsCloudContainerTests;
 
-[TestFixture]
 public class WordsFilterTests
 {
     private WordsFilter sut;

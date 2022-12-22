@@ -4,5 +4,5 @@ namespace TagsCloudContainer.Interfaces;
 
 public interface IConverter
 {
-    Result<Dictionary<string, int>> GetWordsInFile(Result<ICustomOptions> options);
+    Result<Dictionary<string, int>> GetWordsInFile(ICustomOptions options);
 }

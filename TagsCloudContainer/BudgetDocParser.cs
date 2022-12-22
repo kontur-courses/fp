@@ -9,7 +9,7 @@ public class BudgetDocParser : IDocParser
 {
     public Result<List<string>> ParseDoc(string filePath)
     {
-        var parser = new Parser(filePath);
+        using var parser = new Parser(filePath);
 
         using var reader = parser.GetFormattedText(new FormattedTextOptions(FormattedTextMode.PlainText));
         return reader == null

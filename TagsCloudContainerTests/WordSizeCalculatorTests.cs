@@ -6,7 +6,6 @@ using Result;
 
 namespace TagsCloudContainerTests;
 
-[TestFixture]
 public class WordSizeCalculatorTests
 {
     private Result<ICustomOptions> options;

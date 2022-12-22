@@ -6,7 +6,7 @@ namespace CloudLayout
 {
     public class CircularCloudLayout
     {
-        public readonly int radius;
+        private readonly int radius;
         private readonly List<PointF> spiralPoints;
         private readonly List<RectangleF> placedRectangles;
 

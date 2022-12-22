@@ -6,12 +6,12 @@ namespace TagsCloudContainer;
 
 public class WordsFilter : IWordsFilter
 {
-    public Result<List<string>> FilterWords(List<string> taggedWords, Result<ICustomOptions> options,
+    public Result<List<string>> FilterWords(List<string> taggedWords, ICustomOptions options,
         HashSet<string>? boringWords = null)
     {
         //PoS - Part of Speech; grammemes - grammatical number etc, including PoS
         var excludedPoS =
-            options.Value.ExcludedParticals.Split(", ", StringSplitOptions.RemoveEmptyEntries);
+            options.ExcludedParticals.Split(", ", StringSplitOptions.RemoveEmptyEntries);
 
         var jointPos = string.Join('|', excludedPoS
             .Select(x => "=(,|=)"

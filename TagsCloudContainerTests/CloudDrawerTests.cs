@@ -7,7 +7,6 @@ using Result;
 
 namespace TagsCloudContainerTests;
 
-[TestFixture]
 public class CloudDrawer_Should
 {
     private string firstPath;
@@ -24,22 +23,7 @@ public class CloudDrawer_Should
         var spiralDrawer = new SpiralDrawer();
         sut = new CloudDrawer(spiralDrawer, converter, calculator);
 
-        defaultOptions = new Result<ICustomOptions>(new CustomOptions
-        {
-            WorkingDir = Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\WorkingDir"),
-            WordsFileName = "FiveSingleWords.txt",
-            BoringWordsName = "EmptyList.txt",
-            Font = "Arial",
-            PictureSize = 600,
-            MinTagSize = 15,
-            MaxTagSize = 35,
-            BackgroundColor = "White",
-            FontColor = "Blue",
-            ExcludedParticals = "SPRO, PR, PART, CONJ",
-            ImageFormat = "Png",
-            ImageName = "Cloud"
-        });
-
+        defaultOptions = GetDeafultResultOptions();
         firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
             (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
         secondPath = Path.Combine(defaultOptions.Value.WorkingDir,
@@ -52,7 +36,16 @@ public class CloudDrawer_Should
         File.Delete(firstPath);
         File.Delete(secondPath);
 
-        defaultOptions = new Result<ICustomOptions>(new CustomOptions
+        defaultOptions = GetDeafultResultOptions();
+        firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
+            (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
+        secondPath = Path.Combine(defaultOptions.Value.WorkingDir,
+            (defaultOptions.Value.ImageName + "2." + defaultOptions.Value.ImageFormat));
+    }
+
+    private Result<ICustomOptions> GetDeafultResultOptions()
+    {
+        return new Result<ICustomOptions>(new CustomOptions
         {
             WorkingDir = Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\WorkingDir"),
             WordsFileName = "FiveSingleWords.txt",
@@ -67,12 +60,7 @@ public class CloudDrawer_Should
             ImageFormat = "Png",
             ImageName = "Cloud1"
         });
-        firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
-        secondPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "2." + defaultOptions.Value.ImageFormat));
     }
-
     [Test]
     public void DrawAPicture()
     {
