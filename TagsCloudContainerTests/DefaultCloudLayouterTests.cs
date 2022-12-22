@@ -33,7 +33,7 @@ namespace TagsCloudContainerTests
         public void PutNextRectangle_ShouldReturnRectangleWithCorrectSize()
         {
             var size = new Size(1000, 10000);
-            var rectangle = layouter.PutNextRectangle(size);
+            var rectangle = layouter.PutNextRectangle(size).Value;
             rectangle.Size.Should().Be(size);
         }
 
@@ -42,7 +42,7 @@ namespace TagsCloudContainerTests
         {
             var size = new Size(8, 8);
             var rectangleInCenter = new Rectangle(new Point(center.X - 3, center.Y - 3), size);
-            var rectangle = layouter.PutNextRectangle(size);
+            var rectangle = layouter.PutNextRectangle(size).Value;
             rectangle.Should().BeEquivalentTo(rectangleInCenter);
         }
 
@@ -64,7 +64,7 @@ namespace TagsCloudContainerTests
         {
             var size = new Size(x, y);
             var coordinatesCorrectRectangle = new Point(center.X - x / 2 + 1, center.Y - y / 2 + 1);
-            var rectangle = layouter.PutNextRectangle(size);
+            var rectangle = layouter.PutNextRectangle(size).Value;
             rectangle.Should().BeEquivalentTo(new Rectangle(coordinatesCorrectRectangle, size));
         }
 
@@ -75,7 +75,7 @@ namespace TagsCloudContainerTests
             for (var i = 0; i < 100; i++)
             {
                 var rectangle = layouter.PutNextRectangle(new Size(rnd.Next(10, 100), rnd.Next(10, 50)));
-                rectangles.Add(rectangle);
+                rectangles.Add(rectangle.Value);
             }
 
             foreach (var rectangle in rectangles)
@@ -89,7 +89,7 @@ namespace TagsCloudContainerTests
             for (var i = 0; i < 5; i++)
             {
                 var rectangle = layouter.PutNextRectangle(rectangleSize);
-                rectangles.Add(rectangle);
+                rectangles.Add(rectangle.Value);
             }
 
             for (var i = 0; i < 5; i++)

@@ -25,7 +25,7 @@ namespace TagsCloudContainerTests
             settings.AngleOffset = 1;
             settings.RadiusOffset = 1;
             var spiral = new Spiral(settings);
-            var points = spiral.GetPoints().Take(5).ToList();
+            var points = spiral.GetPoints().Select(res=>res.Value).Take(5).ToList();
             points.First().Should().BeEquivalentTo(new Point(501, 501));
         }
 
@@ -36,7 +36,7 @@ namespace TagsCloudContainerTests
             settings.AngleOffset = radiusOffset;
             settings.RadiusOffset = angleOffset;
             var spiral = new Spiral(settings);
-            var points = spiral.GetPoints().Take(10).ToList();
+            var points = spiral.GetPoints().Select(res=>res.Value).Take(10).ToList();
             for (var i = 0; i < 10; i++)
                 points[i].Should().BeEquivalentTo(expectedPoints[i]);
         }

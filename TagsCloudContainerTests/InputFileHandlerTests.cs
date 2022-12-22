@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CommandLine;
 using FluentAssertions;
@@ -21,7 +22,7 @@ namespace TagsCloudContainerTests
         public void SetUp()
         {
             path = "../testfile.txt";
-            words = new TxtReader().FileToWordsArray(path);
+            words = new TxtReader().FileToWordsArray(path).Value;
             fs = new FileStream(path, FileMode.Create);
             settings = Parser.Default.ParseArguments<ConsoleUiSettings>(new string[] { }).Value;
             fs.Dispose();

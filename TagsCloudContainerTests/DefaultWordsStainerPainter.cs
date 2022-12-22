@@ -21,7 +21,7 @@ namespace TagsCloudContainerTests
         {
             var result =
                 painter.GetColorsSequence(new Dictionary<string, int> {{"asdx", 2}, {"ssds", 1}, {"ssdsas", 1}},
-                    Color.Black);
+                    Color.Black).Value;
             result.Should().BeEquivalentTo(new Color[] {Color.Black, Color.Black, Color.Black});
         }
     }

@@ -34,22 +34,21 @@ namespace TagCloudContainer
             var brushColor = GetColorFromString(settings.BrushColor);
             var coefficient = ScaleCoefficientCalculator.CalculateScaleCoefficient(settings.CanvasWidth,
                 settings.CanvasHeight, settings.CanvasBorder);
-            if (!CheckResultSuccess(color) || !CheckResultSuccess(coefficient) || !CheckResultSuccess(brushColor))
+            var words = fileReader.Value.FileToWordsArray(settings.PathToOpen);
+            if (!CheckResultSuccess(color) ||
+                !CheckResultSuccess(coefficient) ||
+                !CheckResultSuccess(brushColor) ||
+                !CheckResultSuccess(words))
                 return;
             graphics.Clear(color.Value);
-
-            var frequencyDictionary =
-                InputFileHandler.FormFrequencyDictionary(fileReader.Value.FileToWordsArray(settings.PathToOpen),
-                    settings);
+            var frequencyDictionary = InputFileHandler.FormFrequencyDictionary(words.Value, settings);
             var brushColors = painter.Value.GetColorsSequence(frequencyDictionary, brushColor.Value);
             if (!CheckResultSuccess(brushColors))
                 return;
-            var counter = 0;
+            var counter = -1;
             foreach (var pair in frequencyDictionary)
-            {
-                DrawWord(pair, coefficient.Value, layouter.Value, settings, graphics, brushColors.Value[counter]);
-                counter++;
-            }
+                DrawWord(pair, coefficient.Value, layouter.Value, settings, graphics, brushColors.Value[counter+=1]);
+            
 
             fileSaver.Value.SaveCanvas(settings.PathToSave, canvas);
             graphics.Dispose();

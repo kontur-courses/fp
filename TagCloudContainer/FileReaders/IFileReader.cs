@@ -1,3 +1,5 @@
+using TagCloudContainer.Result;
+
 namespace TagCloudContainer.FileReaders
 {
     /// <summary>
@@ -5,6 +7,6 @@ namespace TagCloudContainer.FileReaders
     /// </summary>
     public interface IFileReader
     {
-        public string[] FileToWordsArray(string filePath);
+        public Result<string[]> FileToWordsArray(string filePath);
     }
 }

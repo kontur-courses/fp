@@ -19,24 +19,15 @@ namespace TagCloudContainer
             var parsedArguments = app.GetType() == new ConsoleUiSettings().GetType()
                 ? Parser.Default.ParseArguments<ConsoleUiSettings>(args).Value
                 : app;
-            if (parsedArguments is null)
-                return;
-            try
-            {
-                RegisterDependencies(builder, parsedArguments);
-                var container = builder.Build();
-                CircularCloudDrawer.DrawWords(container.Resolve<WordsColoringFactory>(),
-                    container.Resolve<FileSaverFactory>(),
-                    container.Resolve<FileReaderFactory>(),
-                    parsedArguments,
-                    container.Resolve<LayouterFactory>());
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            RegisterDependencies(builder, parsedArguments);
+            var container = builder.Build();
+            CircularCloudDrawer.DrawWords(container.Resolve<WordsColoringFactory>(),
+                container.Resolve<FileSaverFactory>(),
+                container.Resolve<FileReaderFactory>(),
+                parsedArguments,
+                container.Resolve<LayouterFactory>());
         }
-        
+
         private static void RegisterDependencies(ContainerBuilder builder, IUi parsedArguments)
         {
             builder.RegisterInstance(new FileSaverFactory(() => parsedArguments)).As<FileSaverFactory>();

@@ -13,7 +13,7 @@ namespace TagsCloudContainerTests
         {
             var size = new Size(100, 100);
             var center = new Point(-100, -100);
-            var coordinates = RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size);
+            var coordinates = RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size).Value;
             coordinates.Should().BeEquivalentTo(new Point(-150, -150));
         }
 
@@ -22,7 +22,7 @@ namespace TagsCloudContainerTests
         {
             var size = new Size(0, 0);
             var center = new Point(0, 0);
-            var coordinates = RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size);
+            var coordinates = RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size).Value;
             coordinates.Should().BeEquivalentTo(new Point(0, 0));
         }
 
@@ -31,8 +31,8 @@ namespace TagsCloudContainerTests
         {
             var size = new Size(-1, -1);
             var center = new Point(0, 0);
-            Action act = () => RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size);
-            act.Should().Throw<ArgumentException>().WithMessage("Incorrect size of rectangle");
+            var coordinates = RectangleCoordinatesCalculator.CalculateRectangleCoordinates(center, size);
+            coordinates.Error.Should().Be("Incorrect size of rectangle");
         }
     }
 }

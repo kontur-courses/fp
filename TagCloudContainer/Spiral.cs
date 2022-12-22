@@ -28,9 +28,9 @@ namespace TagCloudContainer
 
         public IEnumerable<Result<Point>> GetPoints()
         {
-            if (angleOffset > 1 || angleOffset < 0)
+            if (angleOffset > 1 || angleOffset < -1)
                 yield return new Result<Point>("Invalid angle offset");
-            if (radiusOffset > 1 || radiusOffset < 0)
+            if (radiusOffset > 1 || radiusOffset < -1)
                 yield return new Result<Point>("Invalid radius offset");
             foreach (var point in usedPoints)
                 yield return point;
