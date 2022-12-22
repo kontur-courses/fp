@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using TagCloudContainer.FileReaders;
 using TagCloudContainer.FileSavers;
 using TagCloudContainer.LayouterAlgorithms;
+using TagCloudContainer.Result;
 using TagCloudContainer.UI;
 using TagCloudContainer.WordsColoringAlgorithms;
 
@@ -24,52 +26,65 @@ namespace TagCloudContainer
             var canvas = new Bitmap(settings.CanvasWidth, settings.CanvasHeight);
             var graphics = Graphics.FromImage(canvas);
             var color = GetColorFromString(settings.BackGroundColor);
-            graphics.Clear(color);
+            if(!CheckResultSuccess(color))
+                return;
+            graphics.Clear(color.Value);
             var counter = 0;
             var coefficient = ScaleCoefficientCalculator.CalculateScaleCoefficient(settings.CanvasWidth,
                 settings.CanvasHeight, settings.CanvasBorder);
             var frequencyDictionary =
                 InputFileHandler.FormFrequencyDictionary(fileReader.FileToWordsArray(settings.PathToOpen), settings);
-            var brushColors = painter.GetColorsSequence(frequencyDictionary, GetColorFromString(settings.BrushColor));
+            var brushColor = GetColorFromString(settings.BrushColor);
+            if(!CheckResultSuccess(brushColor))
+                return;
+            var brushColors = painter.GetColorsSequence(frequencyDictionary, brushColor.Value);
             foreach (var pair in frequencyDictionary)
             {
-                var word = pair.Key;
-                var wordCount = pair.Value;
-                var rectangleHeight = wordCount * coefficient * word.Length + coefficient;
-                var rectangleWidth = wordCount * 2 * coefficient;
-                var location = layouter.PlaceNextWord(word, wordCount, coefficient);
-                var rectangle = new Rectangle(location, new Size(rectangleHeight, rectangleWidth));
-                try
-                {
-                    var font = GetFontFromString(coefficient, settings.FontName, wordCount);
-                    graphics.DrawString(word, font, new SolidBrush(brushColors[counter]), rectangle);
-                    counter++;
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine(e.Message);
-                    return;
-                }
+                DrawWord(pair, coefficient, layouter, settings, graphics, brushColors[counter]);
+                counter++;
             }
-
             fileSaver.SaveCanvas(settings.PathToSave, canvas);
             graphics.Dispose();
         }
 
-        private static Color GetColorFromString(string color)
+        private static void DrawWord(KeyValuePair<string, int> pair, int coefficient, ICloudLayouterAlgorithm layouter, IUi settings, Graphics graphics, Color brushColor)
+        {
+            var word = pair.Key;
+            var wordCount = pair.Value;
+            var rectangleHeight = wordCount * coefficient * word.Length + coefficient;
+            var rectangleWidth = wordCount * 2 * coefficient;
+            var location = layouter.PlaceNextWord(word, wordCount, coefficient);
+            if(!CheckResultSuccess(location))
+                return;
+            var rectangle = new Rectangle(location.Value, new Size(rectangleHeight, rectangleWidth));
+            var font = GetFontFromString(coefficient, settings.FontName, wordCount);
+            if(!CheckResultSuccess(font))
+                return;
+            graphics.DrawString(word, font.Value, new SolidBrush(brushColor), rectangle);
+            
+        }
+        private static Result<Color> GetColorFromString(string color)
         {
             var result = Color.FromName(color);
-            if (!result.IsKnownColor)
-                throw new ArgumentException("Unknown color");
-            return result;
+            return !result.IsKnownColor ? 
+                new Result<Color>("Unknown color") : 
+                new Result<Color>(null, result);
         }
 
-        private static Font GetFontFromString(int coefficient, string fontName, int wordCount)
+        private static Result<Font> GetFontFromString(int coefficient, string fontName, int wordCount)
         {
             var font = new Font(fontName, (coefficient + 2) * wordCount - 2);
-            if (font.Name != font.OriginalFontName)
-                throw new ArgumentException("Unknown font name");
-            return font;
+            return font.Name != font.OriginalFontName ?
+                new Result<Font>("Unknown font name") :
+                new Result<Font>(null, font);
+        }
+
+        private static bool CheckResultSuccess<T>(Result<T> result)
+        {
+            if (result.IsSuccess) return true;
+            Console.WriteLine(result.Error);
+            return false;
+
         }
     }
 }

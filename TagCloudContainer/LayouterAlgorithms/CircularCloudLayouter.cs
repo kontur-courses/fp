@@ -21,7 +21,7 @@ namespace TagCloudContainer.LayouterAlgorithms
             Spiral = spiral;
         }
 
-        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
+        private Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 0 || rectangleSize.Width < 0)
                 throw new ArgumentException("Wrong size of rectangle");
