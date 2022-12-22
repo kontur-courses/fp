@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TagsCloud\TagsCloud.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.5.0" />
+      <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ApplicationDefinition Remove="App.xaml" />
+      <Page Include="App.xaml" />
+    </ItemGroup>
+
+</Project>
