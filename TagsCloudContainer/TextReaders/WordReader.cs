@@ -5,7 +5,7 @@ namespace TagsCloudContainer.TextReaders
 {
     public class WordReader : ITextReader
     {
-        public string GetTextFromFile(string path)
+        public Result<string> GetTextFromFile(string path)
         {
             using var document = DocX.Load(path);
 
@@ -17,7 +17,7 @@ namespace TagsCloudContainer.TextReaders
                 builder.Append(word + Environment.NewLine);
             }
 
-            return builder.ToString();
+            return builder.ToString().Ok();
         }
     }
 }

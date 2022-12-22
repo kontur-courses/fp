@@ -4,10 +4,10 @@ namespace TagsCloudContainer.TextReaders
 {
     public class TxtReader : ITextReader
     {
-        public string GetTextFromFile(string path)
+        public Result<string> GetTextFromFile(string path)
         {
             var builder = new StringBuilder();
-            using (StreamReader sr = new StreamReader(path))
+            using (var sr = new StreamReader(path))
             {
                 var line = sr.ReadLine();
                 while (line != null)
@@ -17,7 +17,7 @@ namespace TagsCloudContainer.TextReaders
                 }
             }
 
-            return builder.ToString();
+            return builder.ToString().Ok();
         }
     }
 }

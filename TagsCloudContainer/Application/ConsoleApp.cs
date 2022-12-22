@@ -32,12 +32,15 @@ namespace TagsCloudContainer.Application
             bitmap.Save(projectDirectory + "\\Results", "Rectangles", ImageFormat.Png);
         }
 
-        private string GetText(string fileName)
+        private Result<string> GetText(string fileName)
         {
             if (!File.Exists(fileName))
-                throw new ArgumentException($"File is not exists: {fileName}");
-            var reader = _readerGenerator.GetReader(fileName);
-            return reader.GetTextFromFile(fileName);
+                return Result.Fail<string>($"File is not exists: {fileName}");
+            var result = _readerGenerator
+                .GetReader(fileName)
+                .Then(x => x.GetTextFromFile(fileName))
+                .RefineError("Can't get text from file");
+            return result;
         }
     }
 }
