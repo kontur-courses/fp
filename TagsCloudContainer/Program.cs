@@ -11,7 +11,7 @@ namespace TagsCloudContainer
             var options = Parser.Default.ParseArguments<Options>(args).Value;
             var container = Container.Container.SetDiBuilder(options);
             var app = container.Resolve<IApp>();
-            app.Run();
+            app.Run().OnFail(Console.WriteLine);
         }
     }
 }

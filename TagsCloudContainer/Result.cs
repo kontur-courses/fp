@@ -58,6 +58,13 @@ public static class Result
             : Fail<TOutput>(input.Error);
     }
     
+    public static Result<T> OnFail<T>(this Result<T> input, Action<string> continuation)
+    {
+        if (!input.IsSuccess)
+            continuation(input.Error);
+        return input;
+    }
+    
     public static Result<T> ReplaceError<T>(this Result<T> input, Func<string, string> error)
     {
         return input.IsSuccess

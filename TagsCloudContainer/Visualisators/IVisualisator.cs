@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Visualisators
 {
     public interface IVisualisator
     {
-        public Bitmap Paint(List<Word> words);
+        public Result<Bitmap> Paint(List<Word> words);
     }
 }

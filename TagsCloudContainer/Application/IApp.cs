@@ -2,6 +2,6 @@
 {
     public interface IApp
     {
-        public void Run();
+        public Result<string> Run();
     }
 }

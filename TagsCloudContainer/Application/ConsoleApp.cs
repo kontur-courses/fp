@@ -21,15 +21,25 @@ namespace TagsCloudContainer.Application
             _visualisator = visualisator;
         }
 
-        public void Run()
+        public Result<string> Run()
         {
             var text = GetText(_settings.FileName);
+            if (!text.IsSuccess)
+                return Result.Fail<string>(text.Error);
+            
             var boringText = GetText(_settings.BoringWordsFileName);
-            var words = _handler.ProcessWords(text, boringText);
+            if (!boringText.IsSuccess)
+                return Result.Fail<string>(boringText.Error);
+            
+            var words = _handler.ProcessWords(text.Value, boringText.Value);
             var bitmap = _visualisator.Paint(words);
+            if (!bitmap.IsSuccess)
+                return Result.Fail<string>(bitmap.Error);
 
             var projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
-            bitmap.Save(projectDirectory + "\\Results", "Rectangles", ImageFormat.Png);
+            bitmap.Value.Save(projectDirectory + "\\Results", "Rectangles", ImageFormat.Png);
+            
+            return $"{projectDirectory}\\Results\\Rectangles".Ok<string>();
         }
 
         private Result<string> GetText(string fileName)

@@ -7,25 +7,30 @@ namespace TagsCloudContainer.WorkWithWords
     {
         private Settings _settings;
         private CircularCloudLayouter _layouter;
+        private FontProvider _fontProvider;
         
-        public WordGenerator(CircularCloudLayouter layouter, Settings settings)
+        public WordGenerator(CircularCloudLayouter layouter, 
+            Settings settings, FontProvider fontProvider)
         {
             _layouter = layouter;
             _settings = settings;
+            _fontProvider = fontProvider;
         }
         
-        public List<Rectangle> GenerateRectanglesByWords(List<Word> words)
+        public Result<List<Rectangle>> GenerateRectanglesByWords(List<Word> words)
         {
             var rectangles = new List<Rectangle>();
+            var settingsFont = _fontProvider.TryGetFont(_settings.WordFontName, _settings.WordFontSize);
+            if (!settingsFont.IsSuccess)
+                return Result.Fail<List<Rectangle>>(settingsFont.Error);
             foreach (var word in words)
             {
-                //Проверка на существуемость
-                using var font = new Font(_settings.WordFontName, word.Size);
+                using var font = new Font(settingsFont.Value.FontFamily, word.Size);
                 var size = MeasureWord(word.Value, font);
                 rectangles.Add(_layouter.PutNextRectangle(size));
             }
 
-            return rectangles;
+            return rectangles.Ok();
         }
 
         private static Size MeasureWord(string word, Font font)

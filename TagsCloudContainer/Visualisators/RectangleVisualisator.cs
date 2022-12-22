@@ -25,10 +25,12 @@ namespace TagsCloudContainer.Visualisators
             return new Bitmap(width * 2, height * 2);
         }
 
-        public Bitmap Paint(List<Word> words)
+        public Result<Bitmap> Paint(List<Word> words)
         {
             var rectangles = _wordGenerator.GenerateRectanglesByWords(words);
-            var bitmap = GenerateBitmap(rectangles);
+            if (!rectangles.IsSuccess)
+                return Result.Fail<Bitmap>(rectangles.Error);
+            var bitmap = GenerateBitmap(rectangles.Value);
             var shiftToBitmapCenter = new Size(bitmap.Width / 2, bitmap.Height / 2);
 
             using var graphics = Graphics.FromImage(bitmap);
@@ -37,13 +39,13 @@ namespace TagsCloudContainer.Visualisators
             using var pen = new Pen(_settings.WordColor);
             foreach (var word in words)
             {
-                var rectangleOnMap = CreateRectangleOnMap(rectangles[count], shiftToBitmapCenter);
+                var rectangleOnMap = CreateRectangleOnMap(rectangles.Value[count], shiftToBitmapCenter);
                 using var font = new Font(_settings.WordFontName, word.Size);
                 graphics.DrawString(word.Value, font, pen.Brush, rectangleOnMap.Location);
                 count++;
             }
 
-            return bitmap;
+            return bitmap.Ok();
         }
 
         private Rectangle CreateRectangleOnMap(Rectangle rectangle, Size shiftToBitmapCenter)

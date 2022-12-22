@@ -30,6 +30,7 @@ namespace TagsCloudContainer.Container
             builder.RegisterType<RectangleVisualisator>().As<IVisualisator>();
             builder.RegisterType<ConsoleApp>().As<IApp>();
             builder.RegisterType<WordGenerator>().AsSelf();
+            builder.RegisterType<FontProvider>().AsSelf();
 
             return builder.Build();
         }
