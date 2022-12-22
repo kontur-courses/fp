@@ -6,6 +6,6 @@ namespace TagCloud.CloudLayouters
     {
         public delegate ICloudLayouter Factory();
         public Point Center { get; }
-        public Rectangle PutNextRectangle(Size rectangleSize);
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

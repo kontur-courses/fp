@@ -54,9 +54,10 @@ namespace TagCloudTests
         [TestCase(10, 0, TestName = "height is zero")]
         public void CircularCloudLayouter_PutNextRectangle_ThrowArgumentException_When(int width, int height)
         {
-            Action act = () => cloudLayouter.PutNextRectangle(new Size(width, height));
+            var result = cloudLayouter.PutNextRectangle(new Size(width, height));
 
-            act.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("width and height of the rectangle must be greater than zero");
         }
 
         [TestCase(0, 0, 350, 750)]
@@ -69,7 +70,7 @@ namespace TagCloudTests
             do
             {
                 var rectSize = new Size(firstRectWidth, firstRectHeight);
-                var newRect = cloudLayouter.PutNextRectangle(rectSize);
+                var newRect = cloudLayouter.PutNextRectangle(rectSize).GetValueOrThrow();
 
                 rectangles.All(rect => rect.IntersectsWith(newRect) == false).Should().BeTrue();
                 rectangles.Add(newRect);

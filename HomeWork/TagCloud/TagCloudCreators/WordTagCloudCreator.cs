@@ -38,7 +38,7 @@ namespace TagCloud.TagCloudCreators
         private void PrepareWords()
         {
             cloudLayouter = cloudLayouterFactory.Invoke();
-            var words = wordPreprocessor.GetPreprocessedWords().Value;
+            var words = wordPreprocessor.GetPreprocessedWords().GetValueOrThrow();
             wordsWithRate = words.GroupBy(word => word).
                 Select(group => new KeyValuePair<string, int>(group.Key, group.Count())).
                 OrderByDescending(group => group.Value);

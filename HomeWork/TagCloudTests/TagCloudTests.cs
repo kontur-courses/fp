@@ -45,7 +45,7 @@ namespace TagCloudTests
             cloudLayouter = new CircularCloudLayouter(() => new SpiralPointGenerator(center));
             var localTagCloud = new TagCloud.TagCloud(center);
 
-            var rectangle = cloudLayouter.PutNextRectangle(new Size(reactWidth, reactHeight));
+            var rectangle = cloudLayouter.PutNextRectangle(new Size(reactWidth, reactHeight)).GetValueOrThrow();
             localTagCloud.Layouts.Add(new Layout(rectangle));
             var planningReactLocation = new Point(centerX - reactWidth / 2, centerY - reactHeight / 2);
 

@@ -23,10 +23,10 @@ namespace TagCloud.CloudLayouters
             Center = pointGenerator.GetCenterPoint();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height < 1 || rectangleSize.Width < 1)
-                throw new ArgumentException("width and height of the rectangle must be greater than zero");
+                return Result.Fail<Rectangle>("width and height of the rectangle must be greater than zero");
 
             Rectangle rectangle;
             do

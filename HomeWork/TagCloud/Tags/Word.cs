@@ -15,7 +15,7 @@ namespace TagCloud.Tags
         {
             Text = word;
             Font = font;
-            frame = circularCloudLayouter.PutNextRectangle(Size);
+            frame = circularCloudLayouter.PutNextRectangle(Size).GetValueOrThrow();
         }
 
         private static Size GetTextLayout(string word, Font font)
