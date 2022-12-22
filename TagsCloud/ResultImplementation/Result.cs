@@ -1,11 +1,5 @@
 ﻿
-namespace TagCloud;
-public class None
-{
-    private None()
-    {
-    }
-}
+namespace TagCloud.ResultImplementation;
 
 public readonly struct Result<T>
 {

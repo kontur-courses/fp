@@ -1,10 +1,11 @@
 using System.Drawing;
-using TagsCloud.Creators;
-using TagsCloud.Creators.Implementation;
+using TagCloud.Creators;
+using TagCloud.Creators.Implementation;
+using TagCloud.ResultImplementation;
 using TagsCloud.FigurePatterns;
 using TagsCloud.FigurePatterns.Implementation;
 
-namespace TagsCloud.CloudLayouter.Implementation;
+namespace TagCloud.CloudLayouter.Implementation;
 
 public sealed class CircularCloudLayouter : CloudLayouter<Rectangle>
 {
@@ -23,14 +24,14 @@ public sealed class CircularCloudLayouter : CloudLayouter<Rectangle>
         creator = new RectangleCreator();
     }
 
-    public override Rectangle PutNextRectangle(Size rectangleSize)
+    public override Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-            throw new ArgumentException("Incorrect width or height", nameof(rectangleSize));
-            
+            return Result.Fail<Rectangle>($"Incorrect width or height: {nameof(rectangleSize)}");
+
         var figure = GetNextFigure(rectangleSize);
         Figures.Add(figure);
-        return figure;
+        return Result.Ok(figure);
     }
 
     private Rectangle GetNextFigure(Size size)

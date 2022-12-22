@@ -1,5 +1,5 @@
 using System.Drawing;
-using TagsCloud.Creators.Implementation;
+using TagCloud.Creators.Implementation;
 
 namespace TagsCloud.Tests
 {

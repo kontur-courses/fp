@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TagsCloud.Creators
+namespace TagCloud.Creators
 {
     public interface ICreator<out T>
     {

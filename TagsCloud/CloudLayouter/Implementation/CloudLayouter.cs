@@ -1,16 +1,16 @@
 using System.Drawing;
+using TagCloud.ResultImplementation;
 
-namespace TagsCloud.CloudLayouter.Implementation
+namespace TagCloud.CloudLayouter.Implementation;
+
+public abstract class CloudLayouter<T> : ICloudLayouter<T>
 {
-    public abstract class CloudLayouter<T> : ICloudLayouter<T>
+    public List<T> Figures { get; }
+
+    protected CloudLayouter()
     {
-        public List<T> Figures { get; }
-
-        protected CloudLayouter()
-        {
-            Figures = new List<T>();
-        }
-
-        public abstract T PutNextRectangle(Size rectangleSize);
+        Figures = new List<T>();
     }
+
+    public abstract Result<Rectangle> PutNextRectangle(Size rectangleSize);
 }

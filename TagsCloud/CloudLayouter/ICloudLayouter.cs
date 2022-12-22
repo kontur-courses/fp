@@ -1,9 +1,10 @@
 using System.Drawing;
+using TagCloud.ResultImplementation;
 
-namespace TagsCloud.CloudLayouter
+namespace TagCloud.CloudLayouter
 {
     public interface ICloudLayouter<out T>
     {
-        T PutNextRectangle(Size size);
+        Result<Rectangle> PutNextRectangle(Size size);
     }
 }

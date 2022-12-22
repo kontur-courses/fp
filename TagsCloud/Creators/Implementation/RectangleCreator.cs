@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TagsCloud.Creators.Implementation
+namespace TagCloud.Creators.Implementation
 {
     public class RectangleCreator : ICreator<Rectangle>
     {

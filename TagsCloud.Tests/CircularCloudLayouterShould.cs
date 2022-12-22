@@ -1,11 +1,12 @@
 using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework.Interfaces;
-using TagsCloud.CloudLayouter.Implementation;
+using TagCloud.CloudLayouter.Implementation;
 using TagsCloud.Painter;
+using TagsCloud.Tests;
 using TagsCloud.Tests.ImageFromTestSaver.Implementation;
 
-namespace TagsCloud.Tests
+namespace TagCloud.Should
 {
     [TestFixture]
     public class CircularCloudLayouterShould
@@ -51,7 +52,8 @@ namespace TagsCloud.Tests
         public void PutNextRectangle_IncorrectSize_ArgumentException(int width, int height)
         {
             var putNextRectangle = (Action) (() => circularCloud.PutNextRectangle(new Size(width, height)));
-            putNextRectangle.Should().Throw<ArgumentException>();
+            putNextRectangle.Should().NotThrow<ArgumentException>();
+            circularCloud.PutNextRectangle(new Size(width, height)).IsSuccess.Should().Be(false);
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.CorrectSizes))]
@@ -69,7 +71,10 @@ namespace TagsCloud.Tests
         public void PutNextRectangle_IncorrectValues_ErrorPaint()
         {
             for (var index = 0; index < 10; index++)
-                rectangles.Add(circularCloud.PutNextRectangle(new Size(random.Next(25, 50), random.Next(25, 50))));
+                rectangles
+                    .Add(circularCloud
+                        .PutNextRectangle(new Size(random.Next(25, 50), random.Next(25, 50)))
+                        .GetValueOrThrow());
             
             circularCloud.Figures.Count.Should().Be(0);
         }
