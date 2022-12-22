@@ -32,13 +32,16 @@ namespace TagCloudContainer
             if (!CheckResultSuccess(color) || !CheckResultSuccess(coefficient) || !CheckResultSuccess(brushColor))
                 return;
             graphics.Clear(color.Value);
-            var counter = 0;
+
             var frequencyDictionary =
                 InputFileHandler.FormFrequencyDictionary(fileReader.FileToWordsArray(settings.PathToOpen), settings);
             var brushColors = painter.GetColorsSequence(frequencyDictionary, brushColor.Value);
+            if (!CheckResultSuccess(brushColors))
+                return;
+            var counter = 0;
             foreach (var pair in frequencyDictionary)
             {
-                DrawWord(pair, coefficient.Value, layouter, settings, graphics, brushColors[counter]);
+                DrawWord(pair, coefficient.Value, layouter, settings, graphics, brushColors.Value[counter]);
                 counter++;
             }
 

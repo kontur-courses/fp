@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagCloudContainer.Result;
 
 namespace TagCloudContainer.WordsColoringAlgorithms
 {
     public class GradientDependsOnSizePainter : IWordsPainter
     {
-        public Color[] GetColorsSequence(Dictionary<string, int> frequencyDictionary, Color startColor)
+        public Result<Color[]> GetColorsSequence(Dictionary<string, int> frequencyDictionary, Color startColor)
         {
             if (frequencyDictionary.Count == 0)
-                return Array.Empty<Color>();
+                return new Result<Color[]>("Brush color mistake");
             var maxWordCount = frequencyDictionary.Values.Max();
             var resultA = startColor.A / maxWordCount;
             var colors = new Color[frequencyDictionary.Count];
@@ -21,7 +22,7 @@ namespace TagCloudContainer.WordsColoringAlgorithms
                 counter++;
             }
 
-            return colors;
+            return new Result<Color[]>(null, colors);
         }
     }
 }
