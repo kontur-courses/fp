@@ -31,6 +31,35 @@ namespace FileSenderRailway
             recognizer = A.Fake<IRecognizer>();
             fileSender = new FileSender(cryptographer, sender, recognizer, () => now);
         }
+        
+        [Test]
+        public void PrepareFileToSend_WhenGoodParameters(
+            [Values("4.0", "3.1")] string format,
+            [Values(0, 30)] int daysBeforeNow)
+        {
+            var doc = recognizer.Recognize(file);
+            doc = doc.Value.WithContent(cryptographer.Sign(doc.Value.Content, certificate));
+            var signed = SomeByteArray();
+            PrepareDocument(file, signed, now.AddDays(-daysBeforeNow), format);
+
+            fileSender.PrepareFileToSend(file, certificate)
+                .Should()
+                .BeEquivalentTo(doc);
+        }
+        
+        [Test]
+        public void PrepareFileToSend_WhenBadParameters(
+            [Values("6.0", "3.1")] string format,
+            [Values(0, 31)] int daysBeforeNow)
+        {
+            var doc = recognizer.Recognize(file);
+            doc = doc.Value.WithContent(cryptographer.Sign(doc.Value.Content, certificate));
+            var signed = SomeByteArray();
+            PrepareDocument(file, signed, now.AddDays(-daysBeforeNow), format);
+
+            A.CallTo(() => fileSender.PrepareFileToSend(file, certificate))
+                .Throws<FormatException>();
+        }
 
         [Test]
         public void BeOk_WhenGoodFormat(

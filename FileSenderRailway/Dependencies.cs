@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -11,7 +14,13 @@ namespace FileSenderRailway
     public interface IRecognizer
     {
         /// <exception cref="FormatException">Not recognized</exception>
-        Document Recognize(FileContent file);
+        Result<Document> Recognize(FileContent file);
+    }
+
+    public interface IFileSender
+    {
+        Document PrepareFileToSend(FileContent file, X509Certificate certificate);
+        IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate);
     }
 
     public interface ISender
@@ -20,7 +29,7 @@ namespace FileSenderRailway
         void Send(Document document);
     }
 
-    public class Document
+    public struct Document
     {
         public Document(string name, byte[] content, DateTime created, string format)
         {
@@ -30,10 +39,15 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public Document WithContent(byte[] content)
+        {
+            return new Document(Name, content, Created, Format);
+        }
+
+        public string Name { get; }
+        public DateTime Created { get; }
+        public string Format { get; }
+        public byte[] Content { get; }
     }
 
     public class FileContent
