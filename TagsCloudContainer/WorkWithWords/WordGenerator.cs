@@ -27,7 +27,10 @@ namespace TagsCloudContainer.WorkWithWords
             {
                 using var font = new Font(settingsFont.Value.FontFamily, word.Size);
                 var size = MeasureWord(word.Value, font);
-                rectangles.Add(_layouter.PutNextRectangle(size));
+                var rectangle = _layouter.PutNextRectangle(size);
+                if (!rectangle.IsSuccess)
+                    return Result.Fail<List<Rectangle>>(rectangle.Error);
+                rectangles.Add(rectangle.Value);
             }
 
             return rectangles.Ok();

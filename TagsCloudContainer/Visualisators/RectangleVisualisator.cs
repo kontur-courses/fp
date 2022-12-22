@@ -40,6 +40,12 @@ namespace TagsCloudContainer.Visualisators
             foreach (var word in words)
             {
                 var rectangleOnMap = CreateRectangleOnMap(rectangles.Value[count], shiftToBitmapCenter);
+                if(rectangleOnMap.Left < 0 
+                   || rectangleOnMap.Right > bitmap.Width 
+                   || rectangleOnMap.Bottom > bitmap.Height
+                   || rectangleOnMap.Top < 0)
+                    return Result.Fail<Bitmap>(
+                        $"Tags got out of the image: X:{_settings.CenterX}, Y:{_settings.CenterY}");
                 using var font = new Font(_settings.WordFontName, word.Size);
                 graphics.DrawString(word.Value, font, pen.Brush, rectangleOnMap.Location);
                 count++;

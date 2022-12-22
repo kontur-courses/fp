@@ -15,22 +15,21 @@ namespace TagsCloudContainer.Layouter
             _rectangles = new List<Rectangle>();
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("The size must not be equal to or less than 0");
+                Result.Fail<Rectangle>("The size must not be equal to or less than 0");
 
             Rectangle rectangle;
             do
             {
                 rectangle = new Rectangle(_spiral.NextPoint(), rectangleSize);
             } while (rectangle.IsIntersects(_rectangles));
-
             if (_rectangles.Count != 0)
                 rectangle = ShiftRectangleToCenter(rectangle);
 
             _rectangles.Add(rectangle);
-            return rectangle;
+            return rectangle.Ok();
         }
 
         private Rectangle ShiftRectangleToCenter(Rectangle rectangle)

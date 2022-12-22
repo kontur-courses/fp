@@ -19,7 +19,9 @@ namespace TagsCloudContainer.Container
                     WordFontName = options.FontName,
                     WordFontSize = options.FontSize,
                     FileName = options.PathToInputFile,
-                    BoringWordsFileName = options.PathToBoringWordsFile
+                    BoringWordsFileName = options.PathToBoringWordsFile,
+                    CenterX = options.CenterX,
+                    CenterY = options.CenterY
                 })
                 .As<Settings>();
             builder.RegisterType<TextReaderGenerator>().AsSelf();
