@@ -10,6 +10,8 @@ namespace TagCloudGraphicalUserInterface.Settings
         public AlgorithmSettings(IFontSettings fontSettings, IPointConfig config)
         {
             FontSettings = fontSettings;
+            fontSettings.MaxFont = 150;
+            fontSettings.MinFont = 50;
             PointConfig = config;
         }
 
