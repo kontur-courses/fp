@@ -20,7 +20,7 @@ namespace FileSenderRailway
         void Send(Document document);
     }
 
-    public class Document
+    public struct Document
     {
         public Document(string name, byte[] content, DateTime created, string format)
         {
@@ -30,10 +30,15 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public string Name { get; }
+        public DateTime Created { get;  }
+        public string Format { get;  }
+        public byte[] Content { get; }
+
+        public Document SignDoc(byte[] content)
+        {
+            return new Document(Name, content, Created, Format);
+        }
     }
 
     public class FileContent

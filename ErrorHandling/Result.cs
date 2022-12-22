@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
+using System;
 
 namespace ResultOfTask
 {
@@ -8,6 +9,7 @@ namespace ResultOfTask
         {
         }
     }
+
     public struct Result<T>
     {
         public Result(string error, T value = default(T))
@@ -15,13 +17,16 @@ namespace ResultOfTask
             Error = error;
             Value = value;
         }
+
         public string Error { get; }
         internal T Value { get; }
+
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
+
         public bool IsSuccess => Error == null;
     }
 
@@ -58,21 +63,34 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(v => Of(() => continuation(v)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            return input.IsSuccess ? continuation(input.Value) : Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if(!input.IsSuccess)
+                handleError(input.Error);
+            return input;
+        }
+
+        public static Result<TOutput> ReplaceError<TOutput>(this Result<TOutput> input,
+            Func<string, string> replace)
+        {
+            return !input.IsSuccess ? Fail<TOutput>(replace(input.Error)) : input;
+        }
+        public static Result<TOutput> RefineError<TOutput>(this Result<TOutput> input,
+             string refine)
+        {
+            return input.ReplaceError(x => refine+". " + input.Error);
         }
     }
 }
