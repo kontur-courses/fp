@@ -29,6 +29,7 @@ namespace TagsCloudContainer.Container
                 .As<CircularCloudLayouter>();
             builder.RegisterType<RectangleVisualisator>().As<IVisualisator>();
             builder.RegisterType<ConsoleApp>().As<IApp>();
+            builder.RegisterType<WordGenerator>().AsSelf();
 
             return builder.Build();
         }

@@ -1,17 +1,16 @@
 ﻿using System.Drawing;
-using TagsCloudContainer.Layouter;
 using TagsCloudContainer.WorkWithWords;
 
 namespace TagsCloudContainer.Visualisators
 {
     public class RectangleVisualisator : IVisualisator
     {
+        private readonly WordGenerator _wordGenerator;
         private readonly Settings _settings;
-        private readonly CircularCloudLayouter _layouter;
 
-        public RectangleVisualisator(CircularCloudLayouter layouter, Settings settings)
+        public RectangleVisualisator(WordGenerator wordGenerator, Settings settings)
         {
-            _layouter = layouter;
+            _wordGenerator = wordGenerator;
             _settings = settings;
         }
 
@@ -28,7 +27,7 @@ namespace TagsCloudContainer.Visualisators
 
         public Bitmap Paint(List<Word> words)
         {
-            var rectangles = WordGenerator.GenerateRectanglesByWords(words, _layouter, _settings);
+            var rectangles = _wordGenerator.GenerateRectanglesByWords(words);
             var bitmap = GenerateBitmap(rectangles);
             var shiftToBitmapCenter = new Size(bitmap.Width / 2, bitmap.Height / 2);
 

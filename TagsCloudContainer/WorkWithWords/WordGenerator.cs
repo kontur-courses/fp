@@ -3,17 +3,26 @@ using TagsCloudContainer.Layouter;
 
 namespace TagsCloudContainer.WorkWithWords
 {
-    public static class WordGenerator
+    public class WordGenerator
     {
-        public static List<Rectangle> GenerateRectanglesByWords(List<Word> words, CircularCloudLayouter layouter,
-            Settings settings)
+        private Settings _settings;
+        private CircularCloudLayouter _layouter;
+        
+        public WordGenerator(CircularCloudLayouter layouter, Settings settings)
+        {
+            _layouter = layouter;
+            _settings = settings;
+        }
+        
+        public List<Rectangle> GenerateRectanglesByWords(List<Word> words)
         {
             var rectangles = new List<Rectangle>();
             foreach (var word in words)
             {
-                using var font = new Font(settings.WordFontName, word.Size);
+                //Проверка на существуемость
+                using var font = new Font(_settings.WordFontName, word.Size);
                 var size = MeasureWord(word.Value, font);
-                rectangles.Add(layouter.PutNextRectangle(size));
+                rectangles.Add(_layouter.PutNextRectangle(size));
             }
 
             return rectangles;
