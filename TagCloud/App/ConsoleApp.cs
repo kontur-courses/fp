@@ -1,7 +1,9 @@
-﻿using TagCloud.AppConfig;
+﻿using System;
+using TagCloud.AppConfig;
 using TagCloud.FileReader;
 using TagCloud.FrequencyAnalyzer;
 using TagCloud.ImageProcessing;
+using TagCloud.ResultMonade;
 using TagCloud.TextParsing;
 using TagCloud.WordConverter;
 using TagCloud.WordFilter;
@@ -17,11 +19,11 @@ namespace TagCloud.App
         private readonly IWordsFrequencyAnalyzer wordsFrequencyAnalyzer;
         private readonly ICloudImageGenerator cloudImageGenerator;
 
-        public ConsoleApp(IFileReader fileReader, 
-                          ITextParser textParser, 
-                          IConvertersExecutor convertersExecutor, 
-                          IFiltersExecutor filtersExecutor, 
-                          IWordsFrequencyAnalyzer wordsFrequencyAnalyzer, 
+        public ConsoleApp(IFileReader fileReader,
+                          ITextParser textParser,
+                          IConvertersExecutor convertersExecutor,
+                          IFiltersExecutor filtersExecutor,
+                          IWordsFrequencyAnalyzer wordsFrequencyAnalyzer,
                           ICloudImageGenerator cloudImageGenerator)
         {
             this.fileReader = fileReader;
@@ -34,19 +36,14 @@ namespace TagCloud.App
 
         public void Run(IAppConfig appConfig)
         {
-            var text = fileReader.ReadAllText(appConfig.InputTextFilePath);
-
-            var words = textParser.GetWords(text.Value);
-
-            var convertedWords = convertersExecutor.Convert(words.Value);
-
-            var filteredWords = filtersExecutor.Filter(convertedWords.Value);
-
-            var frequencies = wordsFrequencyAnalyzer.GetFrequencies(filteredWords.Value);
-
-            var bitmap = cloudImageGenerator.GenerateBitmap(frequencies);
-
-            ImageSaver.SaveBitmap(bitmap, appConfig.OutputImageFilePath);
+            var g = fileReader.ReadAllText(appConfig.InputTextFilePath)
+                              .Then(textParser.GetWords)
+                              .Then(convertersExecutor.Convert)
+                              .Then(filtersExecutor.Filter)
+                              .Then(wordsFrequencyAnalyzer.GetFrequencies)
+                              .Then(cloudImageGenerator.GenerateBitmap)
+                              .Then( b => ImageSaver.SaveBitmap(b, appConfig.OutputImageFilePath))
+                              .OnFail(Console.WriteLine);
         }
     }
 }
