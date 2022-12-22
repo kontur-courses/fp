@@ -1,6 +1,6 @@
-﻿using TagsCloud.FileConverter;
+﻿using TagCloud.FileConverter;
 
-namespace TagsCloud.FileReader.Implementation;
+namespace TagCloud.FileReader.Implementation;
 
 public class DocxReader : IFileReader
 {

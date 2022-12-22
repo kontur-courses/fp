@@ -1,4 +1,4 @@
-﻿namespace TagsCloud.FileConverter;
+﻿namespace TagCloud.FileConverter;
 
 public interface IFileConverter
 {

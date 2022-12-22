@@ -9,9 +9,9 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using TagCloud.CloudLayouter;
 using TagCloud.CloudLayouter.Implementation;
-using TagsCloud.FileReader;
-using TagsCloud.WordHandler;
-using TagsCloud.WordHandler.Implementation;
+using TagCloud.FileReader;
+using TagCloud.WordHandler;
+using TagCloud.WordHandler.Implementation;
 using TagsCloud.WPF.PictureSaver;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
@@ -81,14 +81,17 @@ public partial class MainWindow
         UIElement figure;
         if (PrintRectangles.IsChecked is not null && (bool) PrintRectangles.IsChecked)
         {
-            rectangleFromCloud = circularCloud.PutNextRectangle(SizeCreator.GetRandomRectangleSize(25, 50));
+            rectangleFromCloud = circularCloud
+                .PutNextRectangle(SizeCreator.GetRandomRectangleSize(25, 50))
+                .GetValueOrThrow();
             figure = CreateRectangle(rectangleFromCloud);
         }
         else
         {
             figure = CreateLabel(words[wordPointer++]);
-            rectangleFromCloud =
-                circularCloud.PutNextRectangle(SizeCreator.GetLabelSize((Label) figure));
+            rectangleFromCloud = circularCloud
+                .PutNextRectangle(SizeCreator.GetLabelSize((Label) figure))
+                .GetValueOrThrow();
         }
 
         AddFigure(figure, rectangleFromCloud);

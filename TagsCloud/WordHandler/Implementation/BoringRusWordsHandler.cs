@@ -1,4 +1,4 @@
-﻿namespace TagsCloud.WordHandler.Implementation;
+﻿namespace TagCloud.WordHandler.Implementation;
 
 public class BoringRusWordsHandler : IWordHandler
 {

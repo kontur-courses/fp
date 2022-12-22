@@ -2,7 +2,7 @@ using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework.Interfaces;
 using TagCloud.CloudLayouter.Implementation;
-using TagsCloud.Painter;
+using TagCloud.Painter;
 using TagsCloud.Tests;
 using TagsCloud.Tests.ImageFromTestSaver.Implementation;
 

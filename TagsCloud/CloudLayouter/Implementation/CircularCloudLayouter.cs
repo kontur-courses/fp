@@ -1,9 +1,9 @@
 using System.Drawing;
 using TagCloud.Creators;
 using TagCloud.Creators.Implementation;
+using TagCloud.FigurePatterns;
+using TagCloud.FigurePatterns.Implementation;
 using TagCloud.ResultImplementation;
-using TagsCloud.FigurePatterns;
-using TagsCloud.FigurePatterns.Implementation;
 
 namespace TagCloud.CloudLayouter.Implementation;
 

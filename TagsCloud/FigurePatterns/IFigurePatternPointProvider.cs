@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TagsCloud.FigurePatterns
+namespace TagCloud.FigurePatterns
 {
     public interface IFigurePatternPointProvider
     {

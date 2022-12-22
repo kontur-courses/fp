@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows;
 using Autofac;
+using TagCloud.FileConverter;
 using TagCloud.FileConverter.Implementation;
-using TagsCloud.FileConverter;
-using TagsCloud.FileReader;
-using TagsCloud.FileReader.Implementation;
-using TagsCloud.WordHandler;
-using TagsCloud.WordHandler.Implementation;
+using TagCloud.FileReader;
+using TagCloud.FileReader.Implementation;
+using TagCloud.WordHandler;
+using TagCloud.WordHandler.Implementation;
 using TagsCloud.WPF.PictureSaver;
 using TagsCloud.WPF.PictureSaver.Implementation;
 

@@ -1,6 +1,6 @@
 using System.Drawing;
 using FluentAssertions;
-using TagsCloud.FigurePatterns.Implementation;
+using TagCloud.FigurePatterns.Implementation;
 
 namespace TagsCloud.Tests
 {

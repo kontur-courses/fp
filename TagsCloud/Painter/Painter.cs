@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloud.Painter
+namespace TagCloud.Painter
 {
     public abstract class Painter<T>
     {
@@ -15,9 +15,9 @@ namespace TagsCloud.Painter
         {
             var brushesType = typeof(Brushes);
             var properties = brushesType.GetProperties();
-            var randomValue = this.random.Next(properties.Length);
+            var randomValue = random.Next(properties.Length);
             
-            var brush = (Brush)properties[randomValue].GetValue(null, null)!;
+            var brush = (Brush) properties[randomValue].GetValue(null, null)!;
             RectangleColor = brush;
         }
     }

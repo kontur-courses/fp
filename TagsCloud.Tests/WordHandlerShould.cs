@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using TagsCloud.WordHandler.Implementation;
+using TagCloud.WordHandler.Implementation;
 
 namespace TagsCloud.Tests;
 

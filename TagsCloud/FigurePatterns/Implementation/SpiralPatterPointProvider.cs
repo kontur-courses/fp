@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TagsCloud.FigurePatterns.Implementation
+namespace TagCloud.FigurePatterns.Implementation
 {
     public class SpiralPatterPointProvider : IFigurePatternPointProvider
     {

@@ -1,6 +1,4 @@
-﻿using TagsCloud.FileConverter;
-
-namespace TagsCloud.FileReader.Implementation;
+﻿namespace TagCloud.FileReader.Implementation;
 
 public class TxtReader : IFileReader
 {

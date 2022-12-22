@@ -1,4 +1,4 @@
-﻿namespace TagsCloud.WordHandler;
+﻿namespace TagCloud.WordHandler;
 
 public interface IWordHandler
 {

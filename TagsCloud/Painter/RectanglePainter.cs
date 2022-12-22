@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloud.Painter
+namespace TagCloud.Painter
 {
     public class RectanglePainter : Painter<Rectangle>
     {
