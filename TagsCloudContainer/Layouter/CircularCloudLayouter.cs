@@ -11,19 +11,22 @@ namespace TagsCloudContainer.Layouter
         public CircularCloudLayouter(Point center)
         {
             _center = center;
-            _spiral = new Spiral(center, 2);
+            _spiral = new Spiral(center);
             _rectangles = new List<Rectangle>();
         }
 
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                Result.Fail<Rectangle>("The size must not be equal to or less than 0");
+                return Result.Fail<Rectangle>("The size must not be equal to or less than 0");
 
             Rectangle rectangle;
             do
             {
-                rectangle = new Rectangle(_spiral.NextPoint(), rectangleSize);
+                var point = _spiral.NextPoint(2);
+                if (!point.IsSuccess)
+                    return Result.Fail<Rectangle>(point.Error);
+                rectangle = new Rectangle(point.Value, rectangleSize);
             } while (rectangle.IsIntersects(_rectangles));
             if (_rectangles.Count != 0)
                 rectangle = ShiftRectangleToCenter(rectangle);

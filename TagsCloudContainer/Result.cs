@@ -1,5 +1,12 @@
 ﻿namespace TagsCloudContainer;
 
+public class None
+{
+    private None()
+    {
+    }
+}
+
 public class Result <T>
 {
     public Result(string error, T value = default(T))
