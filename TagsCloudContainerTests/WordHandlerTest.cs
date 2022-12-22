@@ -99,7 +99,7 @@ namespace TagsCloudContainerTests
         private string GetText(string pathToFile)
         {
             var reader = _generator.GetReader(pathToFile);
-            return reader.GetTextFromFile(pathToFile);
+            return reader.Value.GetTextFromFile(pathToFile).Value;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace TagsCloudContainerTests
         public void GetReader_ShouldReturnTxtReader(string fileName)
         {
             var reader = _generator.GetReader($"{_projectDirectory}\\TextFiles\\{fileName}");
-            reader.Should().BeOfType<TxtReader>();
+            reader.Value.Should().BeOfType<TxtReader>();
         }
 
         [TestCase("OneCharacters.docx")]
@@ -33,7 +33,7 @@ namespace TagsCloudContainerTests
         public void GetReader_ShouldReturnWordReader(string fileName)
         {
             var reader = _generator.GetReader($"{_projectDirectory}\\TextFiles\\{fileName}");
-            reader.Should().BeOfType<WordReader>();
+            reader.Value.Should().BeOfType<WordReader>();
         }
 
         [TestCase("Example.ini")]
@@ -43,8 +43,8 @@ namespace TagsCloudContainerTests
         public void GetReader_ShouldThrowArgumentException(string fileName)
         {
             var extension = Path.GetExtension(fileName);
-            Action action = () => _generator.GetReader(fileName);
-            action.Should().Throw<ArgumentException>().WithMessage($"This file format is not supported: {extension}");
+            var result = _generator.GetReader(fileName);
+            result.Error.Should().Be($"This file format is not supported: {extension}");
         }
     }
 }

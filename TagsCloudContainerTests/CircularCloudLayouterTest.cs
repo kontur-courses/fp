@@ -27,8 +27,8 @@ namespace TagsCloudContainerTests
         [TestCase(-1, -1, Description = "Less than 0 size")]
         public void PutNextRectangle_ThrowArgumentException(int sizeX, int sizeY)
         {
-            Action action = () => _layouter.PutNextRectangle(new Size(sizeX, sizeY));
-            action.Should().Throw<ArgumentException>().WithMessage("The size must not be equal to or less than 0");
+            var result = _layouter.PutNextRectangle(new Size(sizeX, sizeY));
+            result.Error.Should().Be("The size must not be equal to or less than 0");
         }
 
 
@@ -40,13 +40,13 @@ namespace TagsCloudContainerTests
             {
                 var size = new Size(_random.Next() % 255 + 1, _random.Next() % 255 + 1);
                 var rectangle = _layouter.PutNextRectangle(size);
-                if (rectangle.IsIntersects(_rectangles))
+                if (rectangle.Value.IsIntersects(_rectangles))
                 {
                     isIntersects = true;
                     isIntersects.Should().BeFalse();
                 }
 
-                _rectangles.Add(rectangle);
+                _rectangles.Add(rectangle.Value);
             }
 
             isIntersects.Should().BeFalse();
@@ -78,7 +78,7 @@ namespace TagsCloudContainerTests
             for (int i = 0; i < amount; i++)
             {
                 var size = new Size(_random.Next() % 255 + 1, _random.Next() % 255 + 1);
-                _rectangles.Add(_layouter.PutNextRectangle(size));
+                _rectangles.Add(_layouter.PutNextRectangle(size).Value);
             }
         }
     }
