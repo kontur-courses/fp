@@ -1,4 +1,5 @@
 using System;
+using TagCloudContainer.Result;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer.LayouterAlgorithms
@@ -12,13 +13,13 @@ namespace TagCloudContainer.LayouterAlgorithms
             this.settingsProvider = settingsProvider;
         }
 
-        public ICloudLayouterAlgorithm Create(Spiral spiral)
+        public Result<ICloudLayouterAlgorithm> Create(Spiral spiral)
         {
             var actualSettings = settingsProvider.Invoke();
             return actualSettings.Layouter switch
             {
-                "d" => new CircularCloudLayouter(spiral),
-                _ => throw new ArgumentException("Wrong algorithm name")
+                "d" => new Result<ICloudLayouterAlgorithm>(null, new CircularCloudLayouter(spiral)),
+                _ => new Result<ICloudLayouterAlgorithm>("Wrong algorithm name")
             };
         }
     }

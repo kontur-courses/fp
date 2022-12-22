@@ -23,6 +23,11 @@ namespace TagCloudContainer
             var fileSaver = fileSaverFactory.Create();
             var fileReader = fileReaderFactory.Create();
             var layouter = layouterFactory.Create(new Spiral(settings));
+            if (!CheckResultSuccess(painter) ||
+                !CheckResultSuccess(fileSaver) ||
+                !CheckResultSuccess(fileReader) ||
+                !CheckResultSuccess(layouter))
+                return;
             var canvas = new Bitmap(settings.CanvasWidth, settings.CanvasHeight);
             var graphics = Graphics.FromImage(canvas);
             var color = GetColorFromString(settings.BackGroundColor);
@@ -34,18 +39,19 @@ namespace TagCloudContainer
             graphics.Clear(color.Value);
 
             var frequencyDictionary =
-                InputFileHandler.FormFrequencyDictionary(fileReader.FileToWordsArray(settings.PathToOpen), settings);
-            var brushColors = painter.GetColorsSequence(frequencyDictionary, brushColor.Value);
+                InputFileHandler.FormFrequencyDictionary(fileReader.Value.FileToWordsArray(settings.PathToOpen),
+                    settings);
+            var brushColors = painter.Value.GetColorsSequence(frequencyDictionary, brushColor.Value);
             if (!CheckResultSuccess(brushColors))
                 return;
             var counter = 0;
             foreach (var pair in frequencyDictionary)
             {
-                DrawWord(pair, coefficient.Value, layouter, settings, graphics, brushColors.Value[counter]);
+                DrawWord(pair, coefficient.Value, layouter.Value, settings, graphics, brushColors.Value[counter]);
                 counter++;
             }
 
-            fileSaver.SaveCanvas(settings.PathToSave, canvas);
+            fileSaver.Value.SaveCanvas(settings.PathToSave, canvas);
             graphics.Dispose();
         }
 

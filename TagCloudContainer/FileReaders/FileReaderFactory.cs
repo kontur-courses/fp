@@ -1,4 +1,5 @@
 using System;
+using TagCloudContainer.Result;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer.FileReaders
@@ -12,15 +13,15 @@ namespace TagCloudContainer.FileReaders
             this.settingsProvider = settingsProvider;
         }
 
-        public IFileReader Create()
+        public Result<IFileReader> Create()
         {
             var actualSettings = settingsProvider.Invoke();
             var index = actualSettings.PathToOpen.LastIndexOf('.');
             var format = actualSettings.PathToOpen.Substring(index + 1);
             return format switch
             {
-                "txt" => new TxtReader(),
-                _ => throw new ArgumentException("Wrong path to open")
+                "txt" => new Result<IFileReader>(null, new TxtReader()),
+                _ => new Result<IFileReader>("Wrong path to open")
             };
         }
     }

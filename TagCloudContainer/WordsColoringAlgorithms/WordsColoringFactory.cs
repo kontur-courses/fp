@@ -1,4 +1,5 @@
 using System;
+using TagCloudContainer.Result;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer.WordsColoringAlgorithms
@@ -6,21 +7,22 @@ namespace TagCloudContainer.WordsColoringAlgorithms
     public class WordsColoringFactory
     {
         private readonly Func<IUi> settingsProvider;
+
         public WordsColoringFactory(Func<IUi> settingsProvider)
         {
             this.settingsProvider = settingsProvider;
         }
-        public IWordsPainter Create()
+
+        public Result<IWordsPainter> Create()
         {
             var actualSettings = settingsProvider.Invoke();
             return actualSettings.WordsColoringAlgorithm switch
             {
-                "d" => new DefaultWordsPainter(),
-                "gd" => new GradientDependsOnSizePainter(),
-                "g" => new GradientWordsPainter(),
-                _ => throw new ArgumentException("Wrong coloring algorithm")
+                "d" => new Result<IWordsPainter>(null, new DefaultWordsPainter()),
+                "gd" => new Result<IWordsPainter>(null, new GradientDependsOnSizePainter()),
+                "g" => new Result<IWordsPainter>(null, new GradientWordsPainter()),
+                _ => new Result<IWordsPainter>("Wrong coloring algorithm")
             };
-            
         }
     }
 }
