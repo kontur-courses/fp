@@ -8,7 +8,7 @@ namespace TagCloud.TagCloudVisualizations
 
         public Color BackgroundColor { get; set; }
         public Color? TextColor { get; set; }
-        public int TextScale { get; set; }
+        public uint TextScale { get; set; }
         public string FontFamilyName { get; set; }
     }
 }

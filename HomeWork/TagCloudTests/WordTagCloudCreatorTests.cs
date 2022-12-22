@@ -50,7 +50,37 @@ namespace TagCloudTests
             var spiralPointGeneratorFactory = (IPointGenerator.Factory)(() => new SpiralPointGenerator());
             var cloudLayouterFactory = (ICloudLayouter.Factory)(() => new CircularCloudLayouter(spiralPointGeneratorFactory));
             var tagCloudCreator = new WordTagCloudCreator(cloudLayouterFactory, wordPreprocessor, settings);
-            return tagCloudCreator.GenerateTagCloud();
+            return tagCloudCreator.GenerateTagCloud().GetValueOrThrow();
+        }
+
+        [Test]
+        public void PrepareTagCloud_ShouldReturnErrorWhenFontNotInstalled()
+        {
+            settings.FontFamilyName = "notInstalledFont";
+            var tagCloud = CreateTagCloud();
+            tagCloud.IsSuccess.Should().BeFalse();
+            tagCloud.Error.Should().Be($"font {settings.FontFamilyName} not found");
+        }
+
+        [Test]
+        public void PrepareTagCloud_ShouldReturnErrorWhenTextScaleLessThanOne()
+        {
+            settings.TextScale = 0;
+            var tagCloud = CreateTagCloud();
+            tagCloud.IsSuccess.Should().BeFalse();
+            tagCloud.Error.Should().Be($"TextScale must be higher than 0");
+        }
+
+        private Result<ITagCloud> CreateTagCloud()
+        {
+            var wordsReader = new SingleWordInRowTextFileReader();
+            var boringWordsStorage = new TextFileBoringWordsStorage(new SingleWordInRowTextFileReader());
+            var wordPreprocessor = new SimpleWordPreprocessor(wordsReader, boringWordsStorage);
+            var spiralPointGeneratorFactory = (IPointGenerator.Factory)(() => new SpiralPointGenerator());
+            var cloudLayouterFactory = (ICloudLayouter.Factory)(() => new CircularCloudLayouter(spiralPointGeneratorFactory));
+            wordPreprocessor.GetPreprocessedWords().IsSuccess.Should().BeTrue();
+            var tagCloud = new WordTagCloudCreator(cloudLayouterFactory, wordPreprocessor, settings).GenerateTagCloud();
+            return tagCloud;
         }
     }
 }

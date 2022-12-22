@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using TagCloud.CloudLayouters;
 using TagCloud.TagCloudVisualizations;
@@ -16,8 +17,6 @@ namespace TagCloud.TagCloudCreators
         private readonly ITagCloudVisualizationSettings settings;
 
         private ICloudLayouter cloudLayouter;
-        private IOrderedEnumerable<KeyValuePair<string, int>> wordsWithRate;
-        private ITagCloud tagCloud;
 
         public WordTagCloudCreator(
             ICloudLayouter.Factory cloudLayouterFactory, 
@@ -29,24 +28,31 @@ namespace TagCloud.TagCloudCreators
             this.settings = settings;
         }
 
-        public ITagCloud GenerateTagCloud()
-        {
-            PrepareWords();
-            return PrepareTagCloud();
-        }
+        public Result<ITagCloud> GenerateTagCloud() =>
+            PrepareWords().Then(PrepareTagCloud);
 
-        private void PrepareWords()
+        private Result<IOrderedEnumerable<KeyValuePair<string, int>>> PrepareWords()
         {
             cloudLayouter = cloudLayouterFactory.Invoke();
-            var words = wordPreprocessor.GetPreprocessedWords().GetValueOrThrow();
-            wordsWithRate = words.GroupBy(word => word).
+            var processedWords = wordPreprocessor.GetPreprocessedWords();
+            return !processedWords.IsSuccess
+                ? Result.Fail<IOrderedEnumerable<KeyValuePair<string, int>>>(processedWords.Error)
+                : processedWords.Value.GroupBy(word => word).
                 Select(group => new KeyValuePair<string, int>(group.Key, group.Count())).
-                OrderByDescending(group => group.Value);
+                OrderByDescending(group => group.Value).AsResult();
         }
 
-        private ITagCloud PrepareTagCloud()
+        private Result<ITagCloud> PrepareTagCloud(IOrderedEnumerable<KeyValuePair<string, int>> wordsWithRate)
         {
-            tagCloud = new TagCloud(cloudLayouter.Center);
+            var installedFonts = new InstalledFontCollection();
+
+            if (installedFonts.Families.All(font => font.Name != settings.FontFamilyName))
+                return Result.Fail<ITagCloud>($"font {settings.FontFamilyName} not found");
+
+            if(settings.TextScale < 1)
+                return Result.Fail<ITagCloud>($"TextScale must be higher than 0");
+
+            var tagCloud = new TagCloud(cloudLayouter.Center);
             foreach (var word in wordsWithRate)
             {
                 var font = new Font(settings.FontFamilyName, GetFontSize(word.Value, settings.TextScale));
@@ -55,7 +61,7 @@ namespace TagCloud.TagCloudCreators
             return tagCloud;
         }
 
-        private int GetFontSize(int wordRate, int scale) =>
-            (int)Math.Pow(wordRate, 0.5) * scale;
+        private uint GetFontSize(int wordRate, uint scale) =>
+            (uint)Math.Pow(wordRate, 0.5) * scale;
     }
 }

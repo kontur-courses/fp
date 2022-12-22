@@ -1,4 +1,5 @@
-﻿using TagCloud.TagCloudCreators;
+﻿using System.Windows.Forms;
+using TagCloud.TagCloudCreators;
 using TagCloud.TagCloudVisualizations;
 using TagCloudGui.Infrastructure;
 using TagCloudGui.Infrastructure.Common;
@@ -34,7 +35,12 @@ namespace TagCloudGui.Actions
             using (var graphics = imageHolder.StartDrawing())
             {
                 var tagCloud = tagCloudCreator.GenerateTagCloud();
-                visualization.PrepareImage(graphics, tagCloud, settings);
+                if(tagCloud.IsSuccess)
+                    visualization.PrepareImage(graphics, tagCloud.GetValueOrThrow(), settings);
+                else
+                {
+                    MessageBox.Show(tagCloud.Error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             imageHolder.UpdateUi();
         }

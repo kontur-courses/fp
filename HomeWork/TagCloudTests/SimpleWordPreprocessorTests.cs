@@ -30,7 +30,7 @@ namespace TagCloudTests
             "Error when reading boring words: file notExistedBoringWordsFile.txt not found. Error when reading words: file notExistedFile.txt not found", TestName = "not existed words paths")]
         [TestCase(null, "notExistedBoringWordsFile.txt", 
             "Error when reading boring words: file notExistedBoringWordsFile.txt not found. Error when reading words: path is not defined", TestName = "not existed and null words paths")]
-        //[TestCase("aboutKonturWords.txt", null, "Error when reading boring words: path is not defined", TestName = "null boring words path")]
+        [TestCase("aboutKonturWords.txt", null, "Error when reading boring words: path is not defined", TestName = "null boring words path")]
         public void SimpleWordPreprocessor_GetPreprocessedWords_ShouldReturnErrorWhen(string wordPath, string boringWordsPath, string errorText)
         {
             wordsReader.SetFile(wordPath);

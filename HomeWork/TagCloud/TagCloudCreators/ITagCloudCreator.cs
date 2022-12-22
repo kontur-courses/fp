@@ -2,6 +2,6 @@
 {
     public interface ITagCloudCreator
     {
-        public ITagCloud GenerateTagCloud();
+        public Result<ITagCloud> GenerateTagCloud();
     }
 }
