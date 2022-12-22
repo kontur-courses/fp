@@ -22,13 +22,13 @@ namespace TagsCloudContainer.App.Layouter
             return painterType == PainterType.TwoColor;
         }
 
-        public void Paint(List<TagInfo> tags)
+        public void Paint(IEnumerable<TagInfo> tags)
         {
             var imageSize = imageHolder.GetImageSize();
             using (var graphics = imageHolder.StartDrawing())
             using (var backgroundBrush = new SolidBrush(palette.BackgroundColor))
             {
-                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.Width, imageSize.Height);
+                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.GetValueOrThrow().Width, imageSize.GetValueOrThrow().Height);
                 var i = 0;
                 if (tags != null)
                     foreach (var tag in tags)

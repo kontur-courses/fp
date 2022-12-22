@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Microsoft.VisualBasic;
+using ResultOf;
 using TagsCloudContainer.App.Layouter;
 using TagsCloudContainer.Infrastructure;
 
@@ -23,26 +25,31 @@ namespace TagsCloudContainer.App.Layouter
             this.fontText = fontText;
         }
 
-        public List<TagInfo> PutAllTags(string text)
+        public Result<IEnumerable<TagInfo>> PutAllTags(string text)
         {
-            var wordsWithCountRepeat = tagsExtractor.FindAllTagsInText(text);
-            if (wordsWithCountRepeat is null || wordsWithCountRepeat.Count == 0) return null;
+            cloudLayouter.Clear();
+
+            var wordsWithCountRepeat = tagsExtractor.FindAllTagsInText(text).GetValueOrThrow();
             var minT = wordsWithCountRepeat.Values.Min();
             var maxT = wordsWithCountRepeat.Values.Max();
-            var tags = wordsWithCountRepeat
-                .Select(t => new TagInfo(t.Key, new Font(fontText.Font.FontFamily,
-                    CalculateSizeFont(t.Value, minT, maxT, fontText.Font.Size), fontText.Font.Style)))
-                .ToList();
+            return Result.Of(() => wordsWithCountRepeat.Select(p =>
+                PutNextTag(p.Key, p.Value, minT, maxT).GetValueOrThrow()));
+        }
 
-            foreach (var tag in tags)
-            {
-                var sizeF = CalculateSizeWord(tag.TagText, tag.TagFont);
-                var size = new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
-                var rect = cloudLayouter.PutNextRectangle(size);
-                tag.TagRect = rect;
-            }
-            cloudLayouter.Clear();
-            return tags;
+        private Result<TagInfo> PutNextTag(string word, int countRepeat, int minT, int maxT)
+        {
+            var font = new Font(fontText.Font.FontFamily, CalculateSizeFont(countRepeat, minT, maxT, fontText.Font.Size), fontText.Font.Style);
+            return Result.Of(() => cloudLayouter.PutNextRectangle(CalculateSizeWord(word, font)))
+                .Then(CheckIsRectangleInsideArea)
+                .Then(rect => new TagInfo(word, font, rect));
+        }
+
+        private Result<Rectangle> CheckIsRectangleInsideArea(Rectangle rect)
+        {
+            var size = imageHolder.GetImageSize();
+            return rect.Left >=0 && rect.Right <= size.GetValueOrThrow().Width && rect.Top >= 0 && rect.Bottom <= size.GetValueOrThrow().Height
+                ? Result.Ok(rect)
+                : Result.Fail<Rectangle>("Облако тегов не влезло на изображение заданного размера");
         }
 
         private float CalculateSizeFont(int T, int minT, int maxT, float f)
@@ -51,10 +58,11 @@ namespace TagsCloudContainer.App.Layouter
             return Math.Max(f * (T - minT) / (maxT - minT), 1);
         }
 
-        private SizeF CalculateSizeWord(string word, Font font)
+        private Size CalculateSizeWord(string word, Font font)
         {
             var graphics = imageHolder.StartDrawing();
-            return graphics.MeasureString(word, font);
+            var sizeF = graphics.MeasureString(word, font);
+            return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
         }
     }
 }

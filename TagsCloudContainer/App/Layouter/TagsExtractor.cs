@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using TagsCloudContainer.App.Layouter;
 using DeepMorphy;
+using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
 {
     public class TagsExtractor : ITagsExtractor
     {
         private readonly MorphAnalyzer morphAnalyzer;
-        private string[] partsOfSpeech;
+        private readonly string[] partsOfSpeech;
 
         public TagsExtractor()
         {
@@ -18,23 +19,23 @@ namespace TagsCloudContainer.App.Layouter
             partsOfSpeech = new[] { "сущ", "прил", "кр_прил", "гл", "инф_гл", "прич", "кр_прич", "деепр", "нареч" };
         }
 
-        public Dictionary<string, int> FindAllTagsInText(string text)
+        public Result<Dictionary<string, int>> FindAllTagsInText(string text)
         {
-            var textArray = text
-                .ToLower()
-                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-            return ChooseNotBoringWordsWithSimpleForm(textArray)
+            return Result.Of(() => (ChooseNotBoringWordsWithSimpleForm(text.ToLower().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)))
+                .GetValueOrThrow()
                 .GroupBy(word => word)
-                .ToDictionary(group => group.Key, group => group.Count());
+                .ToDictionary(group => group.Key, group => group.Count()));
         }
 
-        private string[] ChooseNotBoringWordsWithSimpleForm(string[] text)
+        private Result<IEnumerable<string>> ChooseNotBoringWordsWithSimpleForm(string[] text)
         {
-            return morphAnalyzer.Parse(text)
+            var result = Result.Of(() => morphAnalyzer.Parse(text)
                 .Where(tag => partsOfSpeech.Contains(tag.BestTag.Grams.FirstOrDefault()))
                 .Select(tag => tag.BestTag.Lemma)
-                .Where(tag => tag != null)
-                .ToArray();
+                .Where(tag => tag != null));
+            return (result.Value is null || !result.Value.Any())
+                ? Result.Fail<IEnumerable<string>>("В этом тексте нет ни одного тега")
+                : result;
         }    
     }
 }

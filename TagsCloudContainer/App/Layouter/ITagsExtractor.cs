@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
 {
     public interface ITagsExtractor
     {
-        public Dictionary<string, int> FindAllTagsInText(string text);
+        public Result<Dictionary<string, int>> FindAllTagsInText(string text);
     }
 }

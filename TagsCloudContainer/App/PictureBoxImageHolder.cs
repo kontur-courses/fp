@@ -3,15 +3,16 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using TagsCloudContainer.Infrastructure;
+using ResultOf;
 
 namespace TagsCloudContainer
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-        public Size GetImageSize()
+        public Result<Size> GetImageSize()
         {
-            FailIfNotInitialized();
-            return Image.Size;
+            return FailIfNotInitialized()
+                .Then(image => image.Size);
         }
 
         public Graphics StartDrawing()
@@ -20,10 +21,11 @@ namespace TagsCloudContainer
             return Graphics.FromImage(Image);
         }
 
-        private void FailIfNotInitialized()
+        private Result<Image> FailIfNotInitialized()
         {
-            if (Image == null)
-                throw new InvalidOperationException("Call PictureBoxImageHolder.RecreateImage before other method call!");
+            return (Image == null)
+                ? Result.Fail<Image>("Call PictureBoxImageHolder.RecreateImage before other method call!")  
+                : Result.Ok(Image);
         }
 
         public void UpdateUi()
@@ -39,8 +41,7 @@ namespace TagsCloudContainer
 
         public void SaveImage(string fileName)
         {
-            FailIfNotInitialized();
-            Image.Save(fileName);
+            FailIfNotInitialized().Then(image => image.Save(fileName));
         }
     }
 }

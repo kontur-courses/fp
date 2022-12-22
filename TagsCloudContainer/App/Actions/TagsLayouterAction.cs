@@ -45,7 +45,7 @@ namespace TagsCloudContainer.App.Actions
                 var tags = tagsLayouter.PutAllTags(allText);
                 tagsPainter
                     .FirstOrDefault(t => t.CanPaint(imageSettings.PainterType))?
-                    .Paint(tags);
+                    .Paint(tags.GetValueOrThrow());
             }
         }
     }

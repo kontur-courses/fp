@@ -21,13 +21,13 @@ namespace TagsCloudContainer.App.Layouter
             return painterType == PainterType.TwoColorDependOnSize;
         }
 
-        public void Paint(List<TagInfo> tags)
+        public void Paint(IEnumerable<TagInfo> tags)
         {
             var imageSize = imageHolder.GetImageSize();
             using (var graphics = imageHolder.StartDrawing())
             using (var backgroundBrush = new SolidBrush(palette.BackgroundColor))
             {
-                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.Width, imageSize.Height);
+                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.GetValueOrThrow().Width, imageSize.GetValueOrThrow().Height);
                 if (tags != null)
                 {
                     var middleSize = tags.Average(t => t.TagFont.Size);
