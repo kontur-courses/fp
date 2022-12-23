@@ -1,12 +1,13 @@
-﻿using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
+﻿using TagCloud;
+using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
 using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.Words;
 
 namespace TagCloudTest.WordPreprocessor.Infrastructure;
 
 public class NoBoringWords : IBoringWords
 {
-    public bool IsBoring(IWord word)
+    public Result<None> IsBoring(IWord word)
     {
-        return false;
+        return Result.Fail<None>("Word is not boring");
     }
 }

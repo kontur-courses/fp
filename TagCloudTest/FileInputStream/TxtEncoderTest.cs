@@ -15,13 +15,15 @@ public class TxtEncoderTest
         _filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "test.txt";
     }
 
+    // If you run all the tests at once, then it crashes. If you only run it, then everything works
     [Test]
     public void GetText_ShouldReturnTextFromTxtFile_WhenOnlyOneLineInFile()
     {
-        var text = "word1 word2";
+        const string text = "word1 word2";
         GetText_Helper(text, CreateFileWithText(text));
     }
 
+    // If you run all the tests at once, then it crashes. If you only run it, then everything works
     [Test]
     public void GetText_ShouldReturnTextFromTxtFile_WhenManyLinesInFile()
     {
@@ -51,6 +53,8 @@ public class TxtEncoderTest
     private static void GetText_Helper(string expectedText, string filePath)
     {
         var sut = new TxtEncoder();
-        sut.GetText(filePath).Should().Be(expectedText);
+        var result = sut.GetText(filePath);
+        result.IsSuccess.Should().BeTrue();
+        result.GetValueOrThrow()!.Should().Be(expectedText);
     }
 }

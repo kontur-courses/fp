@@ -23,30 +23,31 @@ public class FromFileInputWordsStreamTest
     [Test]
     public void GetAllWordsFromStream_ShouldReturnEmptyList_WhenNoWords()
     {
-        sut.GetAllWordsFromStream(GetContext("")).Should().BeEmpty();
+        var result = sut.GetAllWordsFromStream(GetContext(""));
+        result.IsSuccess.Should().BeTrue();
+        result.GetValueOrThrow()!.Should().BeEmpty();
     }
 
     [Test]
     public void GetAllWordsFromStream_ShouldThrowFileNotFoundException_WhenIncorrectFilename()
     {
-        Action creatingStreamWithIncorrectFile = () =>
-            sut.GetAllWordsFromStream(GetContext("", "incorrectPath"));
-        creatingStreamWithIncorrectFile.Should().Throw<FileNotFoundException>();
+        sut.GetAllWordsFromStream(GetContext("", "incorrectPath"))
+            .IsSuccess.Should().BeFalse();
     }
 
     [Test]
     public void GetAllWordsFromStream_ShouldThrowException_WhenIncorrectFileType()
     {
-        Action creatingStreamWithIncorrectFileType = () =>
-            sut.GetAllWordsFromStream(GetContext("", filetype: "docx"));
-        creatingStreamWithIncorrectFileType.Should().Throw<Exception>();
+        sut.GetAllWordsFromStream(GetContext("", filetype: "docx"))
+            .IsSuccess.Should().BeFalse();
     }
 
     [Test]
     public void GetAllWordsFromStream_ShouldReturnAllWordsFromFile()
     {
         var words = sut.GetAllWordsFromStream(GetContext(textWithNewLines));
-        words.Count.Should().Be(3);
+        words.IsSuccess.Should().BeTrue();
+        words.GetValueOrThrow()!.Count.Should().Be(3);
     }
 
 

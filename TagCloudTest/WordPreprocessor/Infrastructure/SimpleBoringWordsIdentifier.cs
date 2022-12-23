@@ -1,12 +1,15 @@
-﻿using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
+﻿using TagCloud;
+using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
 using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.Words;
 
 namespace TagCloudTest.WordPreprocessor.Infrastructure;
 
 public class SimpleBoringWordsIdentifier : IBoringWords
 {
-    public bool IsBoring(IWord word)
+    public Result<None> IsBoring(IWord word)
     {
-        return word.Value == "boring";
+        return word.Value == "boring"
+            ? Result.Ok()
+            : Result.Fail<None>("Word is not boring");
     }
 }

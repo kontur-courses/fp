@@ -1,4 +1,5 @@
-﻿using TagCloud.App.WordPreprocessorDriver.InputStream;
+﻿using TagCloud;
+using TagCloud.App.WordPreprocessorDriver.InputStream;
 
 namespace TagCloudTest.FileInputStream.Infrastructure;
 
@@ -15,20 +16,22 @@ public class FileEncoderСheater : IFileEncoder
         this.fileType = fileType;
     }
 
+    public Result<string> GetText(string fileName)
+    {
+        return existFile
+            ? Result.Ok(text)
+            : Result.Fail<string>("File not found");
+    }
+
+    public Result<None> IsSuitableFileType(string fileName)
+    {
+        return fileName.EndsWith(fileType)
+            ? Result.Ok()
+            : Result.Fail<None>("Not suitable file type");
+    }
+
     public string GetExpectedFileType()
     {
         return fileType;
-    }
-
-    public string GetText(string fileName)
-    {
-        return existFile
-            ? text
-            : throw new ArgumentException("File not found");
-    }
-
-    public bool IsCompatibleFileType(string fileName)
-    {
-        return fileName.EndsWith(fileType);
     }
 }
