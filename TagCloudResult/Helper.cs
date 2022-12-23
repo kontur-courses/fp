@@ -32,9 +32,9 @@ public static class Helper
 
     public static Result<Font> GetFont(string fontFamily, float fontSize)
     {
-        if (fontSize <= 0)
-            return Result.Fail<Font>("Font size cannot be less or equal to zero.");
-        return Result.Of(() => new Font(fontFamily, fontSize)).RefineError("Couldn't create font");
+        return fontSize <= 0
+            ? Result.Fail<Font>("Font size cannot be less or equal to zero.")
+            : Result.Of(() => new Font(fontFamily, fontSize)).RefineError("Couldn't create font");
     }
 
     public static Result<Size> GetSize(int width, int height)

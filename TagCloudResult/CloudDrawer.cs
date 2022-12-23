@@ -37,8 +37,8 @@ public class CloudDrawer
 
         foreach (var wordRectangle in words)
         {
-            var color = GetRandomColorFromColors(colors, _random);
-            var brush = new SolidBrush(color);
+            var color = GetRandomColorFromColors(colors);
+            using var brush = new SolidBrush(color);
             font = font.ChangeSize(fontSize * wordRectangle.Word.Frequency);
             graphics.DrawString(wordRectangle.Word.Value, font, brush,
                 wordRectangle.Rectangle.Location + image.Size.Multiply(0.5));
@@ -47,10 +47,10 @@ public class CloudDrawer
         return image;
     }
 
-    private Color GetRandomColorFromColors(IEnumerable<Color> colors, Random random)
+    private Color GetRandomColorFromColors(IEnumerable<Color> colors)
     {
         var colorsList = colors.ToList();
-        var randomNumber = random.Next(colorsList.Count);
+        var randomNumber = _random.Next(colorsList.Count);
         return colorsList[randomNumber];
     }
 }
