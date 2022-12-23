@@ -79,6 +79,7 @@ public class ConsoleClient : IClient
                     font.Split(' ')
                         .Select(int.Parse)
                         .Take(2).ToArray())
+                .Then(sizes => Result.FailIf(sizes, sizes.Length != 2, "Incorrect numbers count"))
                 .RefineError("Can not recognize font sizes"))
             .Then(sizes => selector.SetWordsSizes(sizes[0], sizes[1]))
             .RefineError("Can not get font sizes from console")
@@ -111,7 +112,7 @@ public class ConsoleClient : IClient
             .ReturnOnFail(e => TryAgain(e, GetBoringWords));
     }
 
-    private Result<BoringWordsFromUser> CreateBoringWords(IEnumerable<string> words)
+    private static Result<BoringWordsFromUser> CreateBoringWords(IEnumerable<string> words)
     {
         var boringWord = new BoringWordsFromUser();
         return Result.OfAction(() =>
@@ -190,7 +191,7 @@ public class ConsoleClient : IClient
 
     private static Result<string> GetFilePathFromConsole()
     {
-        return WriteLineToConsole(Phrases.GetArrow(0))
+        return WriteToConsole(Phrases.GetArrow(0))
             .Then(_ => ReadLineFromConsole())
             .Then(path => FailIf(path, !File.Exists(path), "File not exists"));
     }
