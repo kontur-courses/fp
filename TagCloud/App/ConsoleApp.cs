@@ -1,5 +1,5 @@
 ﻿using System;
-using TagCloud.AppConfig;
+using TagCloud.AppConfiguration;
 using TagCloud.FileReader;
 using TagCloud.FrequencyAnalyzer;
 using TagCloud.ImageProcessing;
@@ -18,13 +18,15 @@ namespace TagCloud.App
         private readonly IFiltersExecutor filtersExecutor;
         private readonly IWordsFrequencyAnalyzer wordsFrequencyAnalyzer;
         private readonly ICloudImageGenerator cloudImageGenerator;
+        private readonly IAppConfig appConfig;
 
         public ConsoleApp(IFileReader fileReader,
                           ITextParser textParser,
                           IConvertersExecutor convertersExecutor,
                           IFiltersExecutor filtersExecutor,
                           IWordsFrequencyAnalyzer wordsFrequencyAnalyzer,
-                          ICloudImageGenerator cloudImageGenerator)
+                          ICloudImageGenerator cloudImageGenerator,
+                          IAppConfig appConfig)
         {
             this.fileReader = fileReader;
             this.textParser = textParser;
@@ -32,9 +34,10 @@ namespace TagCloud.App
             this.filtersExecutor = filtersExecutor;
             this.wordsFrequencyAnalyzer = wordsFrequencyAnalyzer;
             this.cloudImageGenerator = cloudImageGenerator;
+            this.appConfig = appConfig;
         }
 
-        public void Run(IAppConfig appConfig)
+        public void Run()
         {
             var g = fileReader.ReadAllText(appConfig.InputTextFilePath)
                               .Then(textParser.GetWords)

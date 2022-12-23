@@ -1,6 +1,8 @@
-﻿using Autofac;
-using TagCloud.AppConfig;
+﻿using System;
+using Autofac;
 using TagCloud.App;
+using TagCloud.AppConfiguration;
+using TagCloud.ResultMonade;
 
 namespace TagCloud
 {
@@ -8,10 +10,15 @@ namespace TagCloud
     {
         static void Main(string[] args)
         {
-            var appConfig = new ConsoleAppConfigProvider(args).GetAppConfig();
-            var container = ContainerConfig.Configure(appConfig);
-            var app = container.Resolve<IApp>();
-            app.Run(appConfig);
+
+            args = "-i C:\\VIKTOR\\Kontur\\10_FP\\Text.txt -o C:\\VIKTOR\\Kontur\\10_FP\\TagCloudImages\\Output.png -z ellipse -w 800 -h 400 -b white -f arial -l 5 -p 40 -k random".Split(' ');
+
+            new ConsoleAppConfigProvider().GetAppConfig(args)
+                                          .Then(config => ContainerConfig.Configure(config))
+                                          .Then(container => container.Resolve<IApp>())
+                                          .Then(app => app.Run())
+                                          .RefineError("OMG! Application failed")
+                                          .OnFail(Console.WriteLine);
         }
     }
 }

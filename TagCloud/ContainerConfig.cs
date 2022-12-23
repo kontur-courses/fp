@@ -8,7 +8,7 @@ using TagCloud.ImageProcessing;
 using TagCloud.PointGenerator;
 using TagCloud.TextParsing;
 using Autofac;
-using TagCloud.AppConfig;
+using TagCloud.AppConfiguration;
 using TagCloud.App;
 using System.Reflection;
 using TagCloud.CloudLayouter;
@@ -40,6 +40,8 @@ namespace TagCloud
             ConfigurePointGenerator(appConfig, builder);
 
             ConfigureCloudImageGenerator(builder);
+
+            ConfigureAppConfig(appConfig, builder);
 
             ConfigureApp(builder);
 
@@ -144,6 +146,11 @@ namespace TagCloud
             builder.RegisterType<CloudImageGenerator>().
                     UsingConstructor(typeof(ICloudLayouter), typeof(IImageSettings), typeof(IWordColoring)).
                     As<ICloudImageGenerator>();
+        }
+
+        private static void ConfigureAppConfig(IAppConfig appConfig, ContainerBuilder builder)
+        {
+            builder.Register( c => appConfig).As<IAppConfig>();
         }
 
         private static void ConfigureApp(ContainerBuilder builder)

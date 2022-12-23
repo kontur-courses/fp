@@ -1,9 +1,7 @@
-﻿using TagCloud.AppConfig;
-
-namespace TagCloud.App
+﻿namespace TagCloud.App
 {
     public interface IApp
     {
-        void Run(IAppConfig appConfig);
+        void Run();
     }
 }

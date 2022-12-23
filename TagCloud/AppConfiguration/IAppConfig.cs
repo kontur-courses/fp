@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TagCloud.ImageProcessing;
 
-namespace TagCloud.AppConfig
+namespace TagCloud.AppConfiguration
 {
     public interface IAppConfig
     {
