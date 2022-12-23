@@ -1,25 +1,26 @@
 ﻿using System.Text.RegularExpressions;
 using MoreLinq.Extensions;
+using ResultOfTask;
 
 namespace TagCloudResult.Words;
 
 public class TextFormatter
 {
-    public IList<Word> Format(string text)
+    public Result<IList<Word>> Format(string text)
     {
-        text = RemovePunctuations(text);
-        text = ConvertToLowerCase(text);
-        var words = GetAllWordsFromText(text);
-        words = words.Where(word => string.IsNullOrWhiteSpace(word.Value) == false).ToList();
-        Strip(words);
-        return words;
+        return Result.Ok(text)
+            .Then(RemovePunctuations)
+            .Then(ConvertToLowerCase)
+            .Then(GetAllWordsFromText)
+            .Then(RemoveEmptyWords)
+            .Then(StripAllWords)
+            .RefineError("Cannot format given text");
     }
 
     private string RemovePunctuations(string text)
     {
         return Regex.Replace(text, "\\p{P}", string.Empty);
     }
-
 
     private string ConvertToLowerCase(string text)
     {
@@ -35,12 +36,18 @@ public class TextFormatter
             .Select(wordsWithAmount =>
                 new Word(wordsWithAmount.Key, (float)wordsWithAmount.Value / allWords.Length))
             .ToList();
-
         return words;
     }
 
-    private void Strip(IEnumerable<Word> words)
+    private IList<Word> RemoveEmptyWords(IList<Word> words)
     {
-        foreach (var word in words) word.Value = word.Value.Trim();
+        return words.Where(word => string.IsNullOrWhiteSpace(word.Value) == false).ToList();
+    }
+
+    private IList<Word> StripAllWords(IList<Word> words)
+    {
+        foreach (var word in words)
+            word.Value = word.Value.Trim();
+        return words;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOfTask;
 using TagCloudResult.Curves;
 using TagCloudResult.Extensions;
 
@@ -10,28 +11,25 @@ public class CloudLayouter
     private readonly List<Rectangle> _rectangles = new();
     private double _lastCurveParameter;
 
-    public CloudLayouter(Point center, double curveStep = 0.01)
+    public CloudLayouter(Point center, double curveStep)
     {
         Center = center;
         _curveStep = curveStep;
     }
 
-    public CloudLayouter() : this(Point.Empty)
+    public CloudLayouter(double curveStep = 0.01) : this(Point.Empty, curveStep)
     {
     }
 
     public IEnumerable<Rectangle> Rectangles => _rectangles;
     public Point Center { get; }
 
-    public Rectangle PutRectangle(ICurve curve, Size rectangleSize)
+    public Result<Rectangle> PutRectangle(ICurve curve, Size rectangleSize)
     {
-        if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-            throw new ArgumentException("Rectangles' width and height should be positive.");
-        var rectangle = new Rectangle(Point.Empty, rectangleSize);
-        rectangle = PlaceRectangle(curve, rectangle);
-        rectangle = ShiftRectangleToCenter(rectangle);
-        _rectangles.Add(rectangle);
-        return rectangle;
+        return Result.Of(() => new Rectangle(Point.Empty, rectangleSize))
+            .Then(rectangle => PlaceRectangle(curve, rectangle))
+            .Then(ShiftRectangleToCenter)
+            .Then(AddRectangleToRectangles);
     }
 
     private Rectangle PlaceRectangle(ICurve curve, Rectangle rectangle)
@@ -65,6 +63,12 @@ public class CloudLayouter
         if (rectangle.IntersectsWith(_rectangles))
             rectangle.Location -= offset;
 
+        return rectangle;
+    }
+
+    private Rectangle AddRectangleToRectangles(Rectangle rectangle)
+    {
+        _rectangles.Add(rectangle);
         return rectangle;
     }
 }

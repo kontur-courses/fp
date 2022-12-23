@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using ResultOfTask;
 using TagCloudResult.Extensions;
 using TagCloudResult.Words;
 
@@ -15,12 +16,12 @@ public class CloudDrawer
         _random = random;
     }
 
-    public Bitmap CreateImage(IList<WordRectangle> words, Size size, Font font, IEnumerable<Color> colors)
+    public Result<Bitmap> CreateImage(IList<WordRectangle> words, Size size, Font font, IEnumerable<Color> colors)
     {
-        var image = CreateBitmap(size);
         colors = colors.Any() ? colors : _defaultColors;
-        DrawWords(image, words, font, colors);
-        return image;
+        return Result.Of(() => CreateBitmap(size))
+            .Then(image => DrawWords(image, words, font, colors))
+            .RefineError("Couldn't create image.");
     }
 
     private Bitmap CreateBitmap(Size size)
@@ -28,7 +29,7 @@ public class CloudDrawer
         return new Bitmap(size.Width, size.Height);
     }
 
-    private void DrawWords(Bitmap image, IList<WordRectangle> words, Font font, IEnumerable<Color> colors)
+    private Bitmap DrawWords(Bitmap image, IList<WordRectangle> words, Font font, IEnumerable<Color> colors)
     {
         var graphics = Graphics.FromImage(image);
         graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -42,6 +43,8 @@ public class CloudDrawer
             graphics.DrawString(wordRectangle.Word.Value, font, brush,
                 wordRectangle.Rectangle.Location + image.Size.Multiply(0.5));
         }
+
+        return image;
     }
 
     private Color GetRandomColorFromColors(IEnumerable<Color> colors, Random random)
