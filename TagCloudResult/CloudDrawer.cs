@@ -31,7 +31,7 @@ public class CloudDrawer
 
     private Bitmap DrawWords(Bitmap image, IList<WordRectangle> words, Font font, IEnumerable<Color> colors)
     {
-        var graphics = Graphics.FromImage(image);
+        using var graphics = Graphics.FromImage(image);
         graphics.SmoothingMode = SmoothingMode.HighQuality;
         var fontSize = font.Size;
 
