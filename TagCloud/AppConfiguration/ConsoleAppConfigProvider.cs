@@ -40,11 +40,11 @@ namespace TagCloud.AppConfiguration
 
             if (options.ImageWidth <= 0 || options.ImageHeight <= 0)
                 return Result.Fail<Options>($"Image size {options.ImageWidth} x {options.ImageHeight} is invalid");
-
-            if (!Result.Of(() => System.Drawing.Color.FromName(options.BackgroundColor)).IsSuccess)
+         
+            if (!Color.FromName(options.BackgroundColor).IsKnownColor)
                 return Result.Fail<Options>($"Background color {options.BackgroundColor} is invalid");
 
-            if (!Result.Of(() => new System.Drawing.FontFamily(options.FontFamily)).IsSuccess)
+            if (!Result.Of(() => new FontFamily(options.FontFamily)).IsSuccess)
                 return Result.Fail<Options>($"Font family {options.FontFamily} is invalid");
 
             if (options.MinFontSize <= 0)
