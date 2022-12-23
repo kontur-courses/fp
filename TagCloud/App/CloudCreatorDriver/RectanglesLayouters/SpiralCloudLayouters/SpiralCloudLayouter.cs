@@ -8,52 +8,61 @@ public class SpiralCloudLayouter : ICloudLayouter
     private readonly List<Rectangle> laidRectangles = new();
     private double rotationAngle;
     
-    public List<Rectangle> GetLaidRectangles(IEnumerable<Size> sizes, ICloudLayouterSettings layouterSettings)
+    public Result<List<Rectangle>> GetLaidRectangles(IEnumerable<Size> sizes, ICloudLayouterSettings layouterSettings)
     {
-        SetSettings(layouterSettings);
-        foreach (var size in sizes)
-        {
-            PutNextRectangle(size);
-        }
+        return SetSettings(layouterSettings)
+            .Then(_ =>
+            {
+                foreach (var size in sizes)
+                {
+                    var result = PutNextRectangle(size);
+                    if (!result.IsSuccess)
+                        return Result.Fail<None>("Rectangles didn't lay. " + result.Value);
+                }
 
-        return laidRectangles;
+                return Result.Ok();
+            })
+            .Then(_ => laidRectangles);
     }
         
-    private void SetSettings(ICloudLayouterSettings layouterSettings)
+    private Result<None> SetSettings(ICloudLayouterSettings layouterSettings)
     {
-        if (layouterSettings == null)
-            throw new NullReferenceException("Layouter settings can not be null");
-        
         if (layouterSettings is not SpiralCloudLayouterSettings spiralLayouterSettings)
-            throw new Exception("Incorrect layouter settings type. " +
+            return Result.Fail<None>("Incorrect layouter settings type. " +
                                              $"Expected {typeof(SpiralCloudLayouterSettings)}, " +
                                              $"found {layouterSettings.GetType()}");
         settings = spiralLayouterSettings;
+        return Result.Ok();
     }
 
-    private Rectangle PutNextRectangle(Size rectangleSize)
+    private Result<None> PutNextRectangle(Size rectangleSize)
     {
-        Rectangle rectangle;
+        if (settings == null)
+            return Result.Fail<None>("Settings are not initialised");
+        
+        Result<Rectangle> rectangleCreation;
         if (laidRectangles.Count == 0)
-            rectangle = new Rectangle(
-                settings!.Center.X - rectangleSize.Width / 2,
-                settings!.Center.Y - rectangleSize.Height / 2,
+            rectangleCreation = new Rectangle(
+                settings.Center.X - rectangleSize.Width / 2,
+                settings.Center.Y - rectangleSize.Height / 2,
                 rectangleSize.Width,
-                rectangleSize.Height);
-        else rectangle = FindNextRectangleOnSpiral(rectangleSize);
-        laidRectangles.Add(rectangle);
-        return rectangle;
+                rectangleSize.Height).AsResult();
+        else rectangleCreation = FindNextRectangleOnSpiral(rectangleSize);
+
+        return rectangleCreation
+            .Then(rect => laidRectangles.Add(rect));
     }
 
-    private Rectangle FindNextRectangleOnSpiral(Size rectangleSize)
+    private Result<Rectangle> FindNextRectangleOnSpiral(Size rectangleSize)
     {
+        // This cycle is obviously interrupted, because you can always find the location for the next rectangle
         while (true)
         {
-            var position = GetNextPositionOnSpiral();
-            position.X += settings!.Center.X;
-            position.Y += settings!.Center.Y;
-            var newRectangle = GetPositionedRectangle_DependedOnAngle(position, rectangleSize);
-            if (laidRectangles.All(rectangle => !newRectangle.IntersectsWith(rectangle)))
+            var newRectangle = GetNextPositionOnSpiral()
+                .Then(p => new Point(p.X + settings!.Center.X, p.Y + settings!.Center.Y))
+                .Then(point => GetPositionedRectangle_DependedOnAngle(point, rectangleSize))
+                .RefineError("Can not find rectangle in spiral");
+            if (!newRectangle.IsSuccess || laidRectangles.All(rectangle => !newRectangle.Value.IntersectsWith(rectangle)))
             {
                 return newRectangle;
             }
@@ -103,21 +112,23 @@ public class SpiralCloudLayouter : ICloudLayouter
         return new Rectangle(left, top, rectangleSize.Width, rectangleSize.Height);
     }
 
-    private Point GetNextPositionOnSpiral()
+    private Result<Point> GetNextPositionOnSpiral()
     {
         var radius = GetPolarRadiusByAngleOnSpiral(rotationAngle);
-        var x = radius * Math.Cos(rotationAngle);
-        var y = radius * Math.Sin(rotationAngle);
+        if (!radius.IsSuccess)
+            return Result.Fail<Point>("Can not find position of next rectangle. "+radius.Error);
+        var x = radius.Value * Math.Cos(rotationAngle);
+        var y = radius.Value * Math.Sin(rotationAngle);
         var intX = (int)Math.Round(x);
         var intY = (int)Math.Round(y);
         rotationAngle += settings!.RotationStep;
-        return new Point(intX, intY);
+        return Result.Ok(new Point(intX, intY));
     }
 
-    private double GetPolarRadiusByAngleOnSpiral(double angle)
+    private Result<double> GetPolarRadiusByAngleOnSpiral(double angle)
     {
-        if (angle < 0)
-            throw new ArgumentException("angle should be not negative");
-        return (settings!.SpiralStep / (2 * Math.PI)) * angle;
+        return settings == null
+            ? Result.Fail<double>("Settings are not initialised")
+            : Result.Ok(settings.SpiralStep / (2 * Math.PI) * angle);
     }
 }

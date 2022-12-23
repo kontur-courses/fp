@@ -5,5 +5,5 @@ namespace TagCloud.App.CloudCreatorDriver.RectanglesLayouters;
 
 public interface ICloudLayouter
 {
-    List<Rectangle> GetLaidRectangles(IEnumerable<Size> sizes, ICloudLayouterSettings layouterSettings);
+    Result<List<Rectangle>> GetLaidRectangles(IEnumerable<Size> sizes, ICloudLayouterSettings layouterSettings);
 }

@@ -5,8 +5,8 @@ namespace TagCloud.App.CloudCreatorDriver.RectanglesLayouters.SpiralCloudLayoute
 public class SpiralCloudLayouterSettings : ICloudLayouterSettings
 {
     public Point Center { get; set; }
-    public double SpiralStep { get; set; }
-    public double RotationStep { get; set; }
+    public double SpiralStep { get; }
+    public double RotationStep { get; }
         
     public SpiralCloudLayouterSettings(Point center, double spiralStep, double rotationStep)
     {
