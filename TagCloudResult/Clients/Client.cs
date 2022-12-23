@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOfTask;
 using TagCloudResult.Curves;
 using TagCloudResult.Extensions;
 using TagCloudResult.Savers;
@@ -19,7 +20,7 @@ public class Client
         _saver = saver;
     }
 
-    public Bitmap Draw(IEnumerable<Word> words, ICurve curve, Size size, Font font, IEnumerable<Color> colors)
+    public Result<Bitmap> Draw(IEnumerable<Word> words, ICurve curve, Size size, Font font, IEnumerable<Color> colors)
     {
         var wordRectangles = new List<WordRectangle>();
         var fontSize = font.Size;
@@ -27,7 +28,10 @@ public class Client
         {
             font = font.ChangeSize(fontSize * word.Frequency);
             var rectangleSize = word.MeasureWord(font);
-            var wordRectangle = new WordRectangle(word) { Rectangle = _layouter.PutRectangle(curve, rectangleSize) };
+            var rectangle = _layouter.PutRectangle(curve, rectangleSize);
+            if (rectangle.IsSuccess == false)
+                return Result.Fail<Bitmap>(rectangle.Error).RefineError("Couldn't draw image.");
+            var wordRectangle = new WordRectangle(word) { Rectangle = rectangle.Value };
             wordRectangles.Add(wordRectangle);
         }
 
@@ -36,15 +40,30 @@ public class Client
         return image;
     }
 
-    public void Save(Bitmap image, IEnumerable<string> destinationPaths)
+    public Result<None> Save(Bitmap image, IEnumerable<string> destinationPaths)
     {
         foreach (var destinationPath in destinationPaths)
-            Save(image, destinationPath);
+        {
+            var result = Save(image, destinationPath);
+            if (result.IsSuccess == false)
+                return result;
+        }
+
+        return new Result<None>();
     }
 
-    public void Save(Bitmap image, string destinationPath)
+    public Result<None> Save(Bitmap image, string destinationPath)
     {
         var format = Helper.GetImageFormat(destinationPath);
-        _saver.Save(image, destinationPath, format);
+        if (format.IsSuccess == false)
+            return Result.Fail<None>("Cannot define image extension.");
+        var result = _saver.Save(image, destinationPath, format.Value);
+        return result;
+    }
+
+    public void PrintError(string error)
+    {
+        Console.WriteLine(error);
+        Environment.Exit(1);
     }
 }
