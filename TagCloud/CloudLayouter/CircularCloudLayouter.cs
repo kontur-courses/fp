@@ -43,6 +43,35 @@ namespace TagCloud.CloudLayouter
             return shiftedRectangle;
         }
 
+        public Size GetCloudSize()
+        {
+            var minTop = int.MaxValue;
+            var maxBottom = -int.MaxValue;
+            var minLeft = int.MaxValue;
+            var maxRight = -int.MaxValue;
+
+            foreach (var rectangle in rectangles)
+            {
+                if (rectangle.Top < minTop)
+                    minTop = rectangle.Top;
+
+                if (rectangle.Bottom > maxBottom)
+                    maxBottom = rectangle.Bottom;
+
+                if (rectangle.Left < minLeft)
+                    minLeft = rectangle.Left;
+
+                if (rectangle.Right > maxRight)
+                    maxRight = rectangle.Right;
+            }
+
+            var width = 2 * Math.Max(Math.Abs(minLeft), Math.Abs(maxRight));
+
+            var height = 2 * Math.Max(Math.Abs(maxBottom), Math.Abs(minTop));
+
+            return new Size(width, height);
+        }
+
         private static bool IsValidRectangleSize(Size rectangleSize)
         {
             return rectangleSize.Width > 0 && rectangleSize.Height > 0;

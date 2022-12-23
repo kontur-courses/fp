@@ -7,5 +7,7 @@ namespace TagCloud.CloudLayouter
         Point CloudCenter { get; }
 
         Rectangle PutNextRectangle(Size rectangleSize);
+
+        Size GetCloudSize();
     }
 }

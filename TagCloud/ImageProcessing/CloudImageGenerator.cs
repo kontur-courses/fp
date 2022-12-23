@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.CloudLayouter;
+using TagCloud.ResultMonade;
 using TagCloud.WordColoring;
 
 namespace TagCloud.ImageProcessing
@@ -24,7 +25,7 @@ namespace TagCloud.ImageProcessing
             this.wordColoring = wordColoring;
         }
 
-        public Bitmap GenerateBitmap(IReadOnlyDictionary<string, double> wordsFrequencies)
+        public Result<Bitmap> GenerateBitmap(IReadOnlyDictionary<string, double> wordsFrequencies)
         {
             var width = imageSettings.Size.Width;
 
@@ -41,6 +42,9 @@ namespace TagCloud.ImageProcessing
             DrawWords(wordsFrequencies);
 
             graphics.Dispose();
+
+            if (IsCloudSizeExceedsImageSize())
+                return Result.Fail<Bitmap>("Cloud size exceeds image defined size");
 
             return bitmap;
         }
@@ -85,6 +89,15 @@ namespace TagCloud.ImageProcessing
             var height = (int)Math.Ceiling(wordSize.Height);
 
             return new Size(width, height);
+        }
+
+        private bool IsCloudSizeExceedsImageSize()
+        {
+            var cloudSize = layouter.GetCloudSize();
+
+            var imageSize = imageSettings.Size;
+
+            return cloudSize.Width > imageSize.Width && cloudSize.Height > imageSize.Height;
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.ImageProcessing
 {
     public interface ICloudImageGenerator
     {
-        Bitmap GenerateBitmap(IReadOnlyDictionary<string, double> wordsFrequencies);
+        Result<Bitmap> GenerateBitmap(IReadOnlyDictionary<string, double> wordsFrequencies);
     }
 }
