@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 
 namespace TagsCloudVisualization.Structures
 {
@@ -21,10 +22,7 @@ namespace TagsCloudVisualization.Structures
 
         public int Count
         {
-            get
-            {
-                return nodes.Sum(t => t.Count) + contents.Count;
-            }
+            get { return nodes.Sum(t => t.Count) + contents.Count; }
         }
 
         public bool IntersectsWith(Rectangle queryArea)
@@ -50,23 +48,19 @@ namespace TagsCloudVisualization.Structures
             return false;
         }
 
-        public void Insert(Rectangle item)
+        public Result<None> Insert(Rectangle item)
         {
             if (!Bounds.Contains(item))
-                throw new ArgumentOutOfRangeException(nameof(item),
-                    "Feature is out of the bounds of this quadtree node.");
+                return Result.Fail<None>("Feature is out of the bounds of this quadtree node.");
 
             if (nodes.Length == 0)
                 CreateSubNodes();
 
             foreach (var node in nodes)
                 if (node.Bounds.Contains(item))
-                {
-                    node.Insert(item);
-                    return;
-                }
+                    return node.Insert(item);
 
-            contents.Push(item);
+            return Result.OfAction(() => contents.Push(item));
         }
 
         private void CreateSubNodes()

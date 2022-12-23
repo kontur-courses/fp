@@ -24,14 +24,14 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void Insert_ShouldThrowArgumentOutOfRangeException_WhenRectangleOutOfBounds()
         {
-            Action action = () => { QuadTreeNode.Insert(new Rectangle(new Point(1000, 1000), new Size(10, 10))); };
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            Action action = () => { QuadTreeNode.Insert(new Rectangle(new Point(1000, 1000), new Size(10, 10))).GetValueOrThrow(); };
+            action.Should().Throw<Exception>();
         }
 
         [Test]
         public void IntersectsWith_ShouldTrue_WhenRectanglesIntersects()
         {
-            QuadTreeNode.Insert(new Rectangle(new Point(0, 0), new Size(10, 10)));
+            QuadTreeNode.Insert(new Rectangle(new Point(0, 0), new Size(10, 10))).GetValueOrThrow();
             var result = QuadTreeNode.IntersectsWith(
                 new Rectangle(new Point(5, 5), new Size(20, 20)));
             result.Should().BeTrue();
@@ -41,7 +41,7 @@ namespace TagsCloudVisualizationTests
         [Test]
         public void IntersectsWith_ShouldFalse_WhenRectanglesNotIntersects()
         {
-            QuadTreeNode.Insert(new Rectangle(new Point(0, 0), new Size(10, 10)));
+            QuadTreeNode.Insert(new Rectangle(new Point(0, 0), new Size(10, 10))).GetValueOrThrow();
             var result = QuadTreeNode.IntersectsWith(
                 new Rectangle(new Point(50, 50), new Size(10, 10)));
             result.Should().BeFalse();
@@ -58,7 +58,7 @@ namespace TagsCloudVisualizationTests
                 var point = new Point(Random.Next(0, nodeSize.Width - 20), Random.Next(0, nodeSize.Height - 20));
                 var size = new Size(Random.Next(5, 20), Random.Next(5, 20));
                 var rectangle = new Rectangle(point, size);
-                QuadTreeNode.Insert(rectangle);
+                QuadTreeNode.Insert(rectangle).GetValueOrThrow();
             }
             var result = QuadTreeNode.Count;
             result.Should().Be(iterationsCount);

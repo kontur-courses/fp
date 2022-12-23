@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ResultOf;
 using TagsCloudVisualization.Curves;
 using TagsCloudVisualization.Structures;
 
@@ -25,6 +26,37 @@ namespace TagsCloudVisualization
 
         protected QuadTree QuadTree { get; }
 
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
+        {
+            if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
+                return Result.Fail<Rectangle>("Given rectangle size must be positive");
+
+            while (spiral.MoveNext())
+            {
+                var rectangle = GetRectangleAtPositionOfCenter(spiral.Current, rectangleSize);
+                SpiralPoints.Add(CalcOriginalPos(spiral.Current));
+
+                if (QuadTree.IntersectsWith(rectangle))
+                    continue;
+
+                var rectangleOutsideCheck = CheckIfRectangleIsOutsideOfCanvas(rectangle);
+                if (!rectangleOutsideCheck.IsSuccess)
+                    return Result.Fail<Rectangle>(rectangleOutsideCheck.Error);
+
+                for (var i = 0; i < 4; i++)
+                    rectangle = TryShiftToCenter(rectangle, i % 2 == 0);
+
+                var intersectResult = QuadTree.Insert(rectangle);
+                if (!intersectResult.IsSuccess)
+                    return Result.Fail<Rectangle>(intersectResult.Error);
+
+                rectangle.Location = CalcOriginalPos(rectangle.Location);
+                return rectangle;
+            }
+
+            return Result.Fail<Rectangle>("Given rectangle couldn't be placed");
+        }
+
         private Rectangle GetRectangleAtPositionOfCenter(Point position, Size rectangleSize)
         {
             return new Rectangle(position - rectangleSize / 2, rectangleSize);
@@ -37,39 +69,13 @@ namespace TagsCloudVisualization
             return new Point(x, y);
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
-        {
-            if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("Given rectangle size must be positive");
-
-            while (spiral.MoveNext())
-            {
-                var rectangle = GetRectangleAtPositionOfCenter(spiral.Current, rectangleSize);
-                SpiralPoints.Add(CalcOriginalPos(spiral.Current));
-
-                if (QuadTree.IntersectsWith(rectangle))
-                    continue;
-
-                CheckIfRectangleIsOutsideOfCanvas(rectangle);
-
-                for (var i = 0; i < 4; i++)
-                    rectangle = TryShiftToCenter(rectangle, i % 2 == 0);
-
-                QuadTree.Insert(rectangle);
-
-                rectangle.Location = CalcOriginalPos(rectangle.Location);
-                return rectangle;
-            }
-
-            throw new Exception("Given rectangle couldn't be placed");
-        }
-
-        private void CheckIfRectangleIsOutsideOfCanvas(Rectangle rectangle)
+        private Result<None> CheckIfRectangleIsOutsideOfCanvas(Rectangle rectangle)
         {
             var copy = rectangle;
             copy.Intersect(maxCanvas);
             if (copy != rectangle)
-                throw new Exception("Rectangle was placed out side of canvas");
+                return Result.Fail<None>("Rectangle was placed out side of canvas");
+            return Result.Ok();
         }
 
         private Rectangle TryShiftToCenter(Rectangle rectangle, bool isVertical)

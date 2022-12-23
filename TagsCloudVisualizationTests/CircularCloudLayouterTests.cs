@@ -40,7 +40,7 @@ namespace TagsCloudVisualizationTests
             for (var i = 0; i < 1000; i++)
             {
                
-                var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle());
+                var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle()).GetValueOrThrow();
                 square += rectangle.Size.Width * rectangle.Size.Height;
                 rectangles.Add(rectangle);
             }
@@ -62,12 +62,12 @@ namespace TagsCloudVisualizationTests
         [Test, Category("DrawImageWhenFail")]
         public void PutNextRectangle_RectanglesShouldNotBeDiscrete_ForCenter()
         {
-            rectangles.Add(layouter.PutNextRectangle(generator.GetRandomRectangle()));
+            rectangles.Add(layouter.PutNextRectangle(generator.GetRandomRectangle()).GetValueOrThrow());
             using (new AssertionScope())
             {
                 for (var i = 0; i < 100; i++)
                 {
-                    var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle());
+                    var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle()).GetValueOrThrow();
 
                     var closerRectangle = new Rectangle(rectangle.Location, rectangle.Size);
                     closerRectangle.Y += Math.Sign(CanvasCenter.Y - rectangle.Center().Y);
@@ -87,7 +87,7 @@ namespace TagsCloudVisualizationTests
             {
                 for (var i = 0; i < 100; i++)
                 {
-                    var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle());
+                    var rectangle = layouter.PutNextRectangle(generator.GetRandomRectangle()).GetValueOrThrow();
 
                     var result = rectangle.IntersectsWith(rectangles);
                     result.Should().BeFalse($"Iteration: {i}, rectangles should not intersect. {rectangle.Location} wrong");
@@ -103,7 +103,7 @@ namespace TagsCloudVisualizationTests
             Action action = () =>
             {
                 var layouter = new CircularCloudLayouter(CanvasCenter);
-                layouter.PutNextRectangle(new Size(10000, 1000));
+                layouter.PutNextRectangle(new Size(100000, 10000)).GetValueOrThrow();
             };
             action.Should().Throw<Exception>();
         }
@@ -116,9 +116,9 @@ namespace TagsCloudVisualizationTests
             Action action = () =>
             {
                 var layouter = new CircularCloudLayouter(CanvasCenter);
-                layouter.PutNextRectangle(new Size(width, height));
+                layouter.PutNextRectangle(new Size(width, height)).GetValueOrThrow();
             };
-            action.Should().Throw<ArgumentException>();
+            action.Should().Throw<Exception>();
         }
 
         [TearDown]
@@ -128,7 +128,7 @@ namespace TagsCloudVisualizationTests
                 TestContext.CurrentContext.Result.Outcome.Status != TestStatus.Failed) return;
 
             var path = "../../../errors/" + TestContext.CurrentContext.Test.MethodName + ".png";
-            painter.DrawRectanglesToFile(rectangles, path);
+            painter.DrawRectanglesToFile(rectangles, path).GetValueOrThrow();
             Console.WriteLine($"Tag cloud visualization saved to file {path}");
         }
     }

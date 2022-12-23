@@ -27,7 +27,7 @@ namespace TagsCloudVisualizationTests
             
             var expectedWords = new List<string>() { "eiusmod", "tempor", "incididunt" };
 
-            textFormatter.Format(input).Select(t => t.Value).ToList().Should().BeEquivalentTo(expectedWords);
+            textFormatter.Format(input).GetValueOrThrow().Select(t => t.Value).ToList().Should().BeEquivalentTo(expectedWords);
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace TagsCloudVisualizationTests
             string input = "do\neiusmod\ntempor\nincididunt\nut\ndo\neiusmod\ntempor\ntempor";
 
             var expected = new List<float>() { 3f/6, 2f/6, 1f/6 };
-            var result = textFormatter.Format(input).Select(t => t.Frequency);
+            var result = textFormatter.Format(input).GetValueOrThrow().Select(t => t.Frequency);
             result.Should().BeEquivalentTo(expected);
         }
     }

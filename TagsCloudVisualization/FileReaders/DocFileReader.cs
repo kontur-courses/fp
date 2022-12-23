@@ -1,30 +1,22 @@
-﻿using Syncfusion.DocIO;
+﻿using ResultOf;
 using Syncfusion.DocIO.DLS;
 
 namespace TagsCloudVisualization.FileReaders
 {
     public class DocFileReader : IFileReader
     {
-        public string FilePath { get; }
-
         public DocFileReader(string path)
         {
             FilePath = path;
         }
 
+        public string FilePath { get; }
+
         public bool TryReadAllText(out string text)
         {
-            text = string.Empty;
-            try
-            {
-                using var document = new WordDocument(FilePath);
-                text = document.GetText();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var resultText = Result.Of(() => new WordDocument(FilePath).GetText());
+            text = resultText.IsSuccess ? resultText.Value : string.Empty;
+            return resultText.IsSuccess;
         }
     }
 }

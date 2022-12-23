@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ResultOf;
 
 namespace TagsCloudVisualization.TextFormatters
 {
@@ -16,15 +17,16 @@ namespace TagsCloudVisualization.TextFormatters
             Filter = filter;
         }
 
-        public List<Word> Format(string text)
+        public Result<List<Word>> Format(string text)
         {
-            var words = GetWords(text);
-            words.ForEach(t => t.ToLower());
-            words = words.Where(t => Filter.IsPermitted(t)).ToList();
-            return GetAllWordsFromText(words).ToList();
+            return GetWords(text).Then(words =>
+            {
+                words.ForEach(t => t.ToLower());
+                return GetAllWordsFromText(words.Where(t => Filter.IsPermitted(t).Value));
+            });
         }
 
-        private List<string> GetWords(string text)
+        private Result<List<string>> GetWords(string text)
         {
             var words = new List<string>();
 
@@ -38,11 +40,11 @@ namespace TagsCloudVisualization.TextFormatters
             return words;
         }
 
-        private IEnumerable<Word> GetAllWordsFromText(IEnumerable<string> words)
+        private Result<List<Word>> GetAllWordsFromText(IEnumerable<string> words)
         {
             var wordsCount = words.Count();
 
-            return words.GroupBy(word => word)
+            return Result.Of(() => words.GroupBy(word => word)
                 .OrderByDescending(group => group.Count()).Select(group =>
                 {
                     var word = new Word(group.Key)
@@ -50,7 +52,7 @@ namespace TagsCloudVisualization.TextFormatters
                         Frequency = (float)group.Count() / wordsCount
                     };
                     return word;
-                });
+                }).ToList());
         }
     }
 }

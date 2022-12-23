@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ResultOf;
 using TagsCloudVisualization.TextFormatters;
 
 namespace TagsCloudVisualization
 {
     public interface IPainter
     {
-        public void DrawWordsToFile(List<Word> words, string path);
-
+        public Result<None> DrawWordsToFile(List<Word> words, string path);
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ResultOf;
 
 namespace TagsCloudVisualization.TextFormatters
 {
     public interface IWordFilter
     {
-        bool IsPermitted(string word);
+        Result<bool> IsPermitted(string word);
     }
 }

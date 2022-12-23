@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using TagsCloudVisualization.Curves;
@@ -27,7 +28,9 @@ namespace TagsCloudVisualization
             var font = new FontFamily(parsedArgs.FontName);
             var client = Container.GetRequiredService<Client>();
 
-            client.Draw(parsedArgs.OutputFile, font);
+            var result = client.Draw(parsedArgs.OutputFile, font);
+            if (!result.IsSuccess)
+                Console.WriteLine("Error: " + result.Error);
         }
     }
 }

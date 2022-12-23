@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloudVisualization.Curves;
+using ResultOf;
 using TagsCloudVisualization.FileReaders;
 using TagsCloudVisualization.TextFormatters;
 
@@ -15,9 +11,9 @@ namespace TagsCloudVisualization
 {
     public class Client
     {
-        private readonly IPainter painter;
         private readonly ITextFormatter formatter;
         private readonly ICloudLayouter layouter;
+        private readonly IPainter painter;
 
         public Client(ICloudLayouter layouter, IPainter painter, ITextFormatter formatter)
         {
@@ -26,24 +22,20 @@ namespace TagsCloudVisualization
             this.formatter = formatter;
         }
 
-        public void Draw(string destinationPath, FontFamily font)
+        public Result<None> Draw(string destinationPath, FontFamily font)
         {
             var services = Program.Container.GetServices<IFileReader>();
             foreach (var service in services)
-            {
                 if (service.TryReadAllText(out var text))
-                {
-                    var words = MakeRectangles(formatter.Format(text), font);
-                    painter.DrawWordsToFile(words, destinationPath);
-                    return;
-                }
-            }
+                    return formatter.Format(text)
+                        .Then(t => MakeRectangles(t, font)
+                            .Then(t => painter.DrawWordsToFile(t, destinationPath)));
 
-            throw new Exception("IFileReader not found!");
+            return Result.Fail<None>("IFileReader not found!");
         }
 
 
-        private List<Word> MakeRectangles(List<Word> words, FontFamily fontFamily)
+        private Result<List<Word>> MakeRectangles(List<Word> words, FontFamily fontFamily)
         {
             var processedWords = new List<Word>();
 
@@ -51,37 +43,53 @@ namespace TagsCloudVisualization
 
             double maxFrequency = words.Max(x => x.Frequency);
 
+            if (Math.Abs(maxFrequency - minFrequency) < 1e-6)
+                return Result.Fail<List<Word>>("at least one word must pass the filter");
+
             foreach (var word in words)
             {
-                var font = GetWordFontByFrequency(fontFamily, 12, 36, minFrequency, maxFrequency, word.Frequency);
-
-                var rectangleSize = GetWordLayoutRectangleSize(word.Value, font);
-
-                var rectangle = layouter.PutNextRectangle(rectangleSize);
-
-                word.Font = font;
-                word.Rectangle = rectangle;
-                processedWords.Add(word);
-
+                var resOfFont =
+                    TryGetWordFontByFrequency(fontFamily, 12, 36, minFrequency, maxFrequency, word.Frequency)
+                        .Then(t =>
+                        {
+                            word.Font = t;
+                            return GetWordLayoutRectangleSize(word.Value, t);
+                        })
+                        .Then(t => layouter.PutNextRectangle(t))
+                        .Then(t =>
+                        {
+                            word.Rectangle = t;
+                            processedWords.Add(word);
+                        });
+                if (!resOfFont.IsSuccess)
+                    return Result.Fail<List<Word>>(resOfFont.Error);
             }
+
             return processedWords;
         }
 
-        private Font GetWordFontByFrequency(FontFamily fontFamily, int minFontSize, int maxFontSize, double minFrequency, double maxFrequency, double wordFrequency)
+        private Result<Font> TryGetWordFontByFrequency(FontFamily fontFamily, int minFontSize, int maxFontSize,
+            double minFrequency, double maxFrequency, double wordFrequency)
         {
-            var fontSize = (int)(minFontSize + (maxFontSize - minFontSize) * (wordFrequency - minFrequency) / (maxFrequency - minFrequency));
-
-            return new Font(fontFamily, fontSize);
+            return Result.Of(() =>
+            {
+                var fontSize = (int)(minFontSize + (maxFontSize - minFontSize) * (wordFrequency - minFrequency) /
+                    (maxFrequency - minFrequency));
+                return new Font(fontFamily, fontSize);
+            });
         }
 
-        private Size GetWordLayoutRectangleSize(string word, Font font)
+        private Result<Size> GetWordLayoutRectangleSize(string word, Font font)
         {
-            Image fakeImage = new Bitmap(1, 1);
-            var graphics = Graphics.FromImage(fakeImage);
-            var wordSize = graphics.MeasureString(word, font);
-            var width = (int)Math.Ceiling(wordSize.Width);
-            var height = (int)Math.Ceiling(wordSize.Height);
-            return new Size(width, height);
+            return Result.Of(() => new Bitmap(1, 1))
+                .Then(t => Graphics.FromImage(t))
+                .Then(t => t.MeasureString(word, font))
+                .Then(t =>
+                {
+                    var width = (int)Math.Ceiling(t.Width);
+                    var height = (int)Math.Ceiling(t.Height);
+                    return new Size(width, height);
+                });
         }
     }
 }

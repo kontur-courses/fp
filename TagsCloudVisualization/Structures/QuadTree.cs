@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudVisualization.Structures
 {
@@ -13,9 +14,9 @@ namespace TagsCloudVisualization.Structures
             root = new QuadTreeNode(this.canvas);
         }
 
-        public void Insert(Rectangle item)
+        public Result<None> Insert(Rectangle item)
         {
-            root.Insert(item);
+            return root.Insert(item);
         }
 
         public bool IntersectsWith(Rectangle area)

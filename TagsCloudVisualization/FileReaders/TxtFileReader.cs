@@ -1,34 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Syncfusion.DocIO;
+﻿using System.IO;
+using ResultOf;
 
 namespace TagsCloudVisualization.FileReaders
 {
     public class TxtFileReader : IFileReader
     {
-        public string FilePath { get; }
-
         public TxtFileReader(string filePath)
         {
             FilePath = filePath;
         }
 
+        public string FilePath { get; }
+
         public bool TryReadAllText(out string text)
         {
-            text = string.Empty;
-            try
-            {
-                text = File.ReadAllText(FilePath);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var resultText = Result.Of(() => File.ReadAllText(FilePath));
+            text = resultText.IsSuccess ? resultText.Value : string.Empty;
+            return resultText.IsSuccess;
         }
     }
 }
