@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using CloudLayout;
 using CloudLayout.Interfaces;
 using TagsCloudContainer.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace TagsCloudContainer;
 
@@ -21,7 +21,7 @@ public class CloudDrawer : IDrawer
         this.calculator = calculator;
     }
 
-    public string DrawCloud(string path, ICustomOptions options)
+    public Result<string> DrawCloud(string path, ICustomOptions options)
     {
         var layout = new CircularCloudLayout(spiralDrawer, new InputOptions(options.PictureSize));
         var size = options.PictureSize;
@@ -31,30 +31,30 @@ public class CloudDrawer : IDrawer
         using var fontColor = new SolidBrush(Color.FromName(options.FontColor));
         graphics.Clear(backColor);
         var resultDictionary = converter.GetWordsInFile(options);
-        if (!resultDictionary)
-            return resultDictionary.Exception!.Message;
-        var wordsToDrawResult = calculator.CalculateSize(resultDictionary.Value, options);
-        if (!wordsToDrawResult)
-            return resultDictionary.Exception!.Message;
-        foreach (var pair in wordsToDrawResult.Value)
+        if (!resultDictionary.IsSuccess)
+            return resultDictionary.Error.AsResult();
+        var wordsToDrawResult = calculator.CalculateSize(resultDictionary.GetValueOrThrow(), options);
+        if (!wordsToDrawResult.IsSuccess)
+            return resultDictionary.Error.AsResult();
+        foreach (var pair in wordsToDrawResult.GetValueOrThrow())
         {
             var stringSize = graphics.MeasureString(pair.Key, pair.Value);
             var putResult = layout.PutNextRectangle(stringSize);
-            if (!putResult)
-                return resultDictionary.Exception!.Message;
-            if (!putResult.Value.isPutted)
-                return $"Word {pair.Key} can't be placed in layout";
-            graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.Value.rectangle);
+            if (!putResult.IsSuccess)
+                return Result.Fail<string>(putResult.Error);
+            if (!putResult.GetValueOrThrow().isPutted)
+                return $"Word {pair.Key} can't be placed in layout".AsResult();
+            graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.GetValueOrThrow().rectangle);
         }
 
         var format = GetImageFormat(options.ImageFormat);
-        if (!format)
-            return resultDictionary.Exception!.Message;
-        picture.Save(path, format.Value);
-        return $"Picture saved at {path}";
+        if (!format.IsSuccess)
+            return resultDictionary.Error.AsResult();
+        picture.Save(path, format.GetValueOrThrow());
+        return $"Picture saved at {path}".AsResult();
     }
 
-    public string DrawCloud(ICustomOptions options)
+    public Result<string> DrawCloud(ICustomOptions options)
     {
         return DrawCloud(
             Path.Combine(options.WorkingDir,
@@ -65,17 +65,17 @@ public class CloudDrawer : IDrawer
     {
         return format.ToLower() switch
         {
-            "png" => new Result<ImageFormat>(ImageFormat.Png),
-            "bmp" => new Result<ImageFormat>(ImageFormat.Bmp),
-            "emf" => new Result<ImageFormat>(ImageFormat.Emf),
-            "exif" => new Result<ImageFormat>(ImageFormat.Exif),
-            "gif" => new Result<ImageFormat>(ImageFormat.Gif),
-            "icon" => new Result<ImageFormat>(ImageFormat.Icon),
-            "jpeg" => new Result<ImageFormat>(ImageFormat.Jpeg),
-            "memorybmp" => new Result<ImageFormat>(ImageFormat.MemoryBmp),
-            "tiff" => new Result<ImageFormat>(ImageFormat.Tiff),
-            "wmf" => new Result<ImageFormat>(ImageFormat.Wmf),
-            _ => new Result<ImageFormat>(new ArgumentException("Unexpected image format"))
+            "png" => ImageFormat.Png.AsResult(),
+            "bmp" => ImageFormat.Bmp.AsResult(),
+            "emf" => ImageFormat.Emf.AsResult(),
+            "exif" => ImageFormat.Exif.AsResult(),
+            "gif" => ImageFormat.Gif.AsResult(),
+            "icon" => ImageFormat.Icon.AsResult(),
+            "jpeg" => ImageFormat.Jpeg.AsResult(),
+            "memorybmp" => ImageFormat.MemoryBmp.AsResult(),
+            "tiff" => ImageFormat.Tiff.AsResult(),
+            "wmf" => ImageFormat.Wmf.AsResult(),
+            _ => Result.Fail<ImageFormat>("Unexpected image format")
         };
     }
 }

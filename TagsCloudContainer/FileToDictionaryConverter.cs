@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using TagsCloudContainer.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace TagsCloudContainer;
 
@@ -28,13 +28,13 @@ public class FileToDictionaryConverter : IConverter
             var wordsInFile = File.ReadAllLines(inputWordPath)
                 .ToList();
             bufferedWordsResult = wordsInFile.Count != 0
-                ? new Result<List<string>>(wordsInFile)
-                : new Result<List<string>>(new Exception("Words file are empty"));
+                ? wordsInFile.AsResult()
+                : Result.Fail<List<string>>("Words file are empty");
         }
 
-        if (!bufferedWordsResult)
-            return new Result<Dictionary<string, int>>(bufferedWordsResult.Exception!);
-        var bufferedWords = bufferedWordsResult.Value
+        if (!bufferedWordsResult.IsSuccess)
+            return Result.Fail<Dictionary<string, int>>(bufferedWordsResult.Error);
+        var bufferedWords = bufferedWordsResult.GetValueOrThrow()
             .Select(x => x.ToLower())
             .ToList();
         var tmpFilePath = Path.Combine(options.WorkingDir, "tmp.txt");
@@ -73,7 +73,7 @@ public class FileToDictionaryConverter : IConverter
         var filteredWords = filter.FilterWords(taggedWords, options, boringWordsSet);
 
         var result = new Dictionary<string, int>();
-        filteredWords.Value.ForEach(x =>
+        filteredWords.GetValueOrThrow().ForEach(x =>
         {
             if (result.ContainsKey(x))
                 result[x] += 1;
@@ -81,9 +81,10 @@ public class FileToDictionaryConverter : IConverter
             else result.Add(x, 1);
         });
 
-        return new Result<Dictionary<string, int>>(result
+        return result
             .ToList()
             .OrderByDescending(x => x.Value)
-            .ToDictionary(x => x.Key, x => x.Value));
+            .ToDictionary(x => x.Key, x => x.Value)
+            .AsResult();
     }
 }

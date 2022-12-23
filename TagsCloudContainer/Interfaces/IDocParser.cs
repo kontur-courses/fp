@@ -1,4 +1,4 @@
-﻿using Result;
+﻿using ResultOfTask;
 
 namespace TagsCloudContainer.Interfaces;
 

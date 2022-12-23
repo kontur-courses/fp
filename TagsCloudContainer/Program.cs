@@ -18,9 +18,9 @@ public class Program
 
         var options = configuration.Get<CustomOptions>();
         var validatorResult = CustomOptionsValidator.ValidateOptions(options);
-        if (!validatorResult)
+        if (!validatorResult.IsSuccess)
         {
-            Console.WriteLine(validatorResult.Exception!.Message);
+            Console.WriteLine(validatorResult.Error);
             return;
         }
 
@@ -30,12 +30,12 @@ public class Program
             .AddTransient<IWordsFilter, WordsFilter>()
             .AddSingleton<ISpiralDrawer, SpiralDrawer>()
             .AddSingleton<IWordSizeCalculator, WordSizeCalculator>()
-            .AddTransient<CloudDrawer>()
+            .AddTransient<IDrawer,CloudDrawer>()
             .BuildServiceProvider();
 
-        var drawer = container.GetService<CloudDrawer>();
+        var drawer = container.GetService<IDrawer>();
 
         var result = drawer.DrawCloud(options);
-        Console.WriteLine(result);
+        Console.WriteLine(result.IsSuccess? result.GetValueOrThrow():result.Error);
     }
 }

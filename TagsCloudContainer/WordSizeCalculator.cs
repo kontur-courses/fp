@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using TagsCloudContainer.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace TagsCloudContainer;
 
@@ -24,6 +24,6 @@ public class WordSizeCalculator : IWordSizeCalculator
             result.Add(pair.Key, new Font(options.Font, (int)size));
         }
 
-        return new Result<Dictionary<string, Font>>(result);
+        return result.AsResult();
     }
 }

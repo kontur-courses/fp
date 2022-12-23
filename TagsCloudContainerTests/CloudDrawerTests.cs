@@ -3,7 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
 using TagsCloudContainer.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace TagsCloudContainerTests;
 
@@ -11,7 +11,7 @@ public class CloudDrawer_Should
 {
     private string firstPath;
     private string secondPath;
-    private Result<ICustomOptions> defaultOptions;
+    private ICustomOptions defaultOptions;
     private CloudDrawer sut;
 
 
@@ -24,10 +24,10 @@ public class CloudDrawer_Should
         sut = new CloudDrawer(spiralDrawer, converter, calculator);
 
         defaultOptions = GetDeafultResultOptions();
-        firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
-        secondPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "2." + defaultOptions.Value.ImageFormat));
+        firstPath = Path.Combine(defaultOptions.WorkingDir,
+            (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
+        secondPath = Path.Combine(defaultOptions.WorkingDir,
+            (defaultOptions.ImageName + "2." + defaultOptions.ImageFormat));
     }
 
     [TearDown]
@@ -37,15 +37,15 @@ public class CloudDrawer_Should
         File.Delete(secondPath);
 
         defaultOptions = GetDeafultResultOptions();
-        firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
-        secondPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "2." + defaultOptions.Value.ImageFormat));
+        firstPath = Path.Combine(defaultOptions.WorkingDir,
+            (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
+        secondPath = Path.Combine(defaultOptions.WorkingDir,
+            (defaultOptions.ImageName + "2." + defaultOptions.ImageFormat));
     }
 
-    private Result<ICustomOptions> GetDeafultResultOptions()
+    private ICustomOptions GetDeafultResultOptions()
     {
-        return new Result<ICustomOptions>(new CustomOptions
+        return new CustomOptions
         {
             WorkingDir = Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\WorkingDir"),
             WordsFileName = "FiveSingleWords.txt",
@@ -59,8 +59,9 @@ public class CloudDrawer_Should
             ExcludedParticals = "SPRO, PR, PART, CONJ",
             ImageFormat = "Png",
             ImageName = "Cloud1"
-        });
+        };
     }
+
     [Test]
     public void DrawAPicture()
     {
@@ -73,10 +74,10 @@ public class CloudDrawer_Should
     [TestCase("jpeg")]
     public void DrawAPNGPicture(string format)
     {
-        defaultOptions.Value.ImageFormat = format;
+        defaultOptions.ImageFormat = format;
         sut.DrawCloud(firstPath, defaultOptions);
-        firstPath = Path.Combine(defaultOptions.Value.WorkingDir,
-            (defaultOptions.Value.ImageName + "1." + defaultOptions.Value.ImageFormat));
+        firstPath = Path.Combine(defaultOptions.WorkingDir,
+            (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
 
         var result = new FileInfo(firstPath);
 
@@ -86,9 +87,9 @@ public class CloudDrawer_Should
     [Test]
     public void DrawSamePictureFromDocAndTxtWithSameWordsInThem()
     {
-        var docOptions = new Result<ICustomOptions>((CustomOptions)((CustomOptions)defaultOptions.Value).Clone());
-        docOptions.Value.WordsFileName = "SmallText.doc";
-        defaultOptions.Value.WordsFileName = "SmallText.txt";
+        var docOptions = (CustomOptions)((CustomOptions)defaultOptions).Clone();
+        docOptions.WordsFileName = "SmallText.doc";
+        defaultOptions.WordsFileName = "SmallText.txt";
 
         sut.DrawCloud(firstPath, defaultOptions);
         sut.DrawCloud(secondPath, docOptions);
@@ -102,9 +103,9 @@ public class CloudDrawer_Should
     [Description("Sizes are relative to word count")]
     public void DrawSamePictureFromFiveSingleWordsAndFiveWordsPair()
     {
-        var fivePairsOption = new Result<ICustomOptions>((CustomOptions)((CustomOptions)defaultOptions.Value).Clone());
-        fivePairsOption.Value.WordsFileName = "FiveWordsPair.txt";
-        defaultOptions.Value.WordsFileName = "FiveSingleWords.txt";
+        var fivePairsOption = (CustomOptions)((CustomOptions)defaultOptions).Clone();
+        fivePairsOption.WordsFileName = "FiveWordsPair.txt";
+        defaultOptions.WordsFileName = "FiveSingleWords.txt";
 
         sut.DrawCloud(firstPath, defaultOptions);
         sut.DrawCloud(secondPath, fivePairsOption);
@@ -117,9 +118,8 @@ public class CloudDrawer_Should
     [Test]
     public void DrawBiggerPictureWithoutBoringWordsList()
     {
-        var boringWordsOption =
-            new Result<ICustomOptions>((CustomOptions)((CustomOptions)defaultOptions.Value).Clone());
-        boringWordsOption.Value.BoringWordsName = "SomeBoringWords.txt";
+        var boringWordsOption = (CustomOptions)((CustomOptions)defaultOptions).Clone();
+        boringWordsOption.BoringWordsName = "SomeBoringWords.txt";
 
         sut.DrawCloud(firstPath, defaultOptions);
         sut.DrawCloud(secondPath, boringWordsOption);

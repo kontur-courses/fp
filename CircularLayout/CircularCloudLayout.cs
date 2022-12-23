@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using CloudLayout.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace CloudLayout
 {
@@ -26,9 +26,9 @@ namespace CloudLayout
         {
             var rectangle = new RectangleF();
             if (!ValidateSize(size))
-                return new Result<(bool, RectangleF)>(new ArgumentException("Both dimensions must be above zero"));
+                return Result.Fail<(bool, RectangleF)>("Both dimensions must be above zero");
             if (placedRectangles.Count == 0)
-                return new Result<(bool, RectangleF)>((TryPlaceRectangleInCenter(out rectangle, size), rectangle));
+                return (TryPlaceRectangleInCenter(out rectangle, size), rectangle).AsResult();
 
             foreach (var point in spiralPoints)
             {
@@ -42,9 +42,9 @@ namespace CloudLayout
             }
 
             if (rectangle.IsEmpty)
-                return new Result<(bool, RectangleF)>((false, rectangle));
+                return (false, rectangle).AsResult();
             placedRectangles.Add(rectangle);
-            return new Result<(bool, RectangleF)>((true, rectangle));
+            return (true, rectangle).AsResult();
         }
 
         private void OffsetRectangle(ref RectangleF rectangle)

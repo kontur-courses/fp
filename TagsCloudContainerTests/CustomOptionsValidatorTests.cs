@@ -51,7 +51,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Texts directory does not exist");
+        result.Error.Should().Be("Texts directory does not exist");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -62,7 +62,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Tag file does not exist");
+        result.Error.Should().Be("Tag file does not exist");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -73,7 +73,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Exclude words file does not exist");
+        result.Error.Should().Be("Exclude words file does not exist");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -85,7 +85,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be($"Font \"{font}\" can't be found");
+        result.Error.Should().Be($"Font \"{font}\" can't be found");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -97,7 +97,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Picture size should be above 0");
+        result.Error.Should().Be("Picture size should be above 0");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -109,7 +109,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Font size should be above 0");
+        result.Error.Should().Be("Font size should be above 0");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -121,7 +121,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Invalid font color");
+        result.Error.Should().Be("Invalid font color");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -133,7 +133,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Invalid backgroud color");
+        result.Error.Should().Be("Invalid backgroud color");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -146,7 +146,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Font size should be less than picture size");
+        result.Error.Should().Be("Font size should be less than picture size");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -168,7 +168,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Unsupported image format");
+        result.Error.Should().Be("Unsupported image format");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -179,7 +179,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Exception!.Message.Should().Be("Mystem not found in working directory");
+        result.Error.Should().Be("Mystem not found in working directory");
         result.IsSuccess.Should().BeFalse();
     }
 }

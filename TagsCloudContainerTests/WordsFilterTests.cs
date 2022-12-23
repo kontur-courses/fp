@@ -2,23 +2,23 @@
 using NUnit.Framework;
 using TagsCloudContainer;
 using TagsCloudContainer.Interfaces;
-using Result;
+using ResultOfTask;
 
 namespace TagsCloudContainerTests;
 
 public class WordsFilterTests
 {
     private WordsFilter sut;
-    private Result<ICustomOptions> options;
+    private ICustomOptions options;
 
     [SetUp]
     public void Setup()
     {
         sut = new WordsFilter();
-        options = new Result<ICustomOptions>(new CustomOptions
+        options = new CustomOptions
         {
             ExcludedParticals = "SPRO, PR, PART, CONJ"
-        });
+        };
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class WordsFilterTests
 
         var result = sut.FilterWords(taggedWords, options);
 
-        result.Value.Should().BeEquivalentTo(expectedResult);
+        result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class WordsFilterTests
 
         var result = sut.FilterWords(taggedWords, options);
 
-        result.Value.Should().BeEquivalentTo(expectedResult);
+        result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class WordsFilterTests
 
         var result = sut.FilterWords(taggedWords, options);
 
-        result.Value.Should().BeEquivalentTo(expectedResult);
+        result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
@@ -68,9 +68,9 @@ public class WordsFilterTests
             "печь"
         };
 
-        var result = sut.FilterWords(taggedWords, new Result<ICustomOptions>(new CustomOptions()));
+        var result = sut.FilterWords(taggedWords, new CustomOptions());
 
-        result.Value.Should().BeEquivalentTo(expectedResult);
+        result.GetValueOrThrow().Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
@@ -81,6 +81,6 @@ public class WordsFilterTests
 
         var result = sut.FilterWords(taggedWords, options, boringWords);
 
-        result.Value.Count.Should().Be(0);
+        result.GetValueOrThrow().Count.Should().Be(0);
     }
 }

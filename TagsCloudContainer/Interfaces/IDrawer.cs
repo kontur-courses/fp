@@ -1,7 +1,8 @@
-﻿namespace TagsCloudContainer.Interfaces
+﻿using ResultOfTask;
+namespace TagsCloudContainer.Interfaces
 {
     internal interface IDrawer
     {
-        public string DrawCloud(string path, ICustomOptions options);
+        public Result<string> DrawCloud(ICustomOptions options);
     }
 }

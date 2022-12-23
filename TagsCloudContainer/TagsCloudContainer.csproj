@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CircularLayout\CloudLayout.csproj" />
-    <ProjectReference Include="..\Result\Result.csproj" />
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj" />
   </ItemGroup>
 
   <ItemGroup>
