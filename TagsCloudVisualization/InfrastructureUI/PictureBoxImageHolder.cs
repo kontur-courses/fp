@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using TagsCloudVisualization.Infrastructure;
@@ -9,7 +8,6 @@ namespace TagsCloudVisualization.InfrastructureUI
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-
         public Result<Size> GetImageSize()
         {
             return FailIfNotInitialized()

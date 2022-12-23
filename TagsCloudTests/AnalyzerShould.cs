@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Infrastructure.Analyzer;
 using TagsCloudVisualization.Settings;
 

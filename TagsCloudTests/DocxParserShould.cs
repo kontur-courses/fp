@@ -81,5 +81,17 @@ namespace TagsCloudTests
 
             result.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ReturnFail_WhenPathNotExist()
+        {
+            var path = "1234.docx";
+            var parser = new DocxParser(settings);
+
+            var result = parser.WordParse(path);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain(path);
+        }
     }
 }

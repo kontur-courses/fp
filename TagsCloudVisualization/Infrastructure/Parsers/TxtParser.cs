@@ -20,6 +20,9 @@ namespace TagsCloudVisualization.Infrastructure.Parsers
 
         public Result<IEnumerable<string>> WordParse(string path)
         {
+            if (!File.Exists(path))
+                return Result.Fail<IEnumerable<string>>($"файла по пути {path} не существует");
+
             var encoding = helper.Encodings[settings.Encoding];
             return Result.Ok(settings.TextType == TextType.OneWordOneLine
                 ? OneWordOneLineParse(path, encoding)

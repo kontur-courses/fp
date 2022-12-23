@@ -33,7 +33,7 @@ namespace TagsCloudVisualization.InfrastructureUI.Actions
 
             var path = dialog.FileName;
             var size = imageHolder.GetImageSize().OnFail(Error.HandleError<ErrorHandlerUi>);
-            if(!size.IsSuccess)
+            if (!size.IsSuccess)
                 return;
             var butterfly = new Butterfly(new Point(size.Value.Width / 2, size.Value.Height / 2));
             painter.Paint(path, butterfly).OnFail(Error.HandleError<ErrorHandlerUi>);
