@@ -1,7 +1,9 @@
-﻿namespace TagCloud.App
+﻿using TagCloud.ResultMonade;
+
+namespace TagCloud.App
 {
     public interface IApp
     {
-        void Run();
+        Result<None> Run();
     }
 }

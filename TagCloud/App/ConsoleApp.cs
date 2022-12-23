@@ -37,16 +37,15 @@ namespace TagCloud.App
             this.appConfig = appConfig;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            var g = fileReader.ReadAllText(appConfig.InputTextFilePath)
+             return fileReader.ReadAllText(appConfig.InputTextFilePath)
                               .Then(textParser.GetWords)
                               .Then(convertersExecutor.Convert)
                               .Then(filtersExecutor.Filter)
                               .Then(wordsFrequencyAnalyzer.GetFrequencies)
                               .Then(cloudImageGenerator.GenerateBitmap)
-                              .Then( b => ImageSaver.SaveBitmap(b, appConfig.OutputImageFilePath))
-                              .OnFail(Console.WriteLine);
+                              .Then(b => ImageSaver.SaveBitmap(b, appConfig.OutputImageFilePath));
         }
     }
 }
