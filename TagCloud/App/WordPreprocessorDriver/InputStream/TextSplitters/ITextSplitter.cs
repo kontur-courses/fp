@@ -2,5 +2,5 @@
 
 public interface ITextSplitter
 {
-    List<string> GetSplitWords(string text);
+    Result<List<string>> GetSplitWords(string text);
 }

@@ -2,8 +2,8 @@
 
 public class NewLineTextSplitter : ITextSplitter
 {
-    public List<string> GetSplitWords(string text)
+    public Result<List<string>> GetSplitWords(string text)
     {
-        return text.Split(Environment.NewLine).ToList();
+        return Result.Of(() => text.Split(Environment.NewLine).ToList());
     }
 }
