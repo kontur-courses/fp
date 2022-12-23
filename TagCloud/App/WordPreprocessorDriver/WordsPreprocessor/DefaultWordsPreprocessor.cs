@@ -7,47 +7,54 @@ namespace TagCloud.App.WordPreprocessorDriver.WordsPreprocessor;
 public class DefaultWordsPreprocessor : IWordsPreprocessor
 {
     private readonly CultureInfo cultureInfo;
-    private HashSet<IWord> wordsSet;
 
     public DefaultWordsPreprocessor(CultureInfo cultureInfo)
     {
         this.cultureInfo = cultureInfo;
-        wordsSet = new HashSet<IWord>();
     }
 
-    public ISet<IWord> GetProcessedWords(List<string> words, IReadOnlyCollection<IBoringWords> boringWords)
+    public Result<ISet<IWord>> GetProcessedWords(List<string> words, IReadOnlyCollection<IBoringWords> boringWords)
     {
-        wordsSet = CreateWordsSet(words)
-            .Where(word =>
-                boringWords.All(checker => !checker.IsBoring(word)))
-            .ToHashSet();
-        CalculateTfIndexes(wordsSet, words.Count);
-        return wordsSet;
+        return CreateWordsSet(words)
+            .Then(uniqueWords => Result.Of(() =>
+                uniqueWords.Where(word =>
+                        boringWords.All(checker => !checker.IsBoring(word)))
+                    .ToHashSet()))
+            .Then(uniqueWords => CalculateTfIndexes(uniqueWords, words.Count));
     }
 
-    private static double GetTfIndex(int wordCount, int totalWordsCount)
+    private static Result<double> GetTfIndex(int wordCount, int totalWordsCount)
     {
-        return 1d * wordCount / totalWordsCount;
+        return totalWordsCount <= 0
+            ? Result.Fail<double>("Total words count can not be 0")
+            : Result.Ok(1d * wordCount / totalWordsCount);
     }
         
-    private static void CalculateTfIndexes(IEnumerable<IWord> words, int totalWordsCount)
+    private static Result<ISet<IWord>> CalculateTfIndexes(ISet<IWord> words, int totalWordsCount)
     {
         foreach (var word in words)
         {
-            word.Tf = GetTfIndex(word.Count, totalWordsCount);
+            var result = GetTfIndex(word.Count, totalWordsCount)
+                .Then(value => word.Tf = value);
+            if (!result.IsSuccess)
+                return Result.Fail<ISet<IWord>>("Can not calculate tf indexes. " + result.Error);
         }
+        return Result.Ok(words);
     }
         
-    private HashSet<IWord> CreateWordsSet(IEnumerable<string> words)
+    private Result<HashSet<IWord>> CreateWordsSet(IEnumerable<string> words)
     {
         var set = new HashSet<IWord>();
-        foreach (var word in words.Select(wordValue => new Word(wordValue.ToLower(cultureInfo))))
-        {
-            if (set.TryGetValue(word, out var containedWord))
-                containedWord.Count++;
-            else 
-                set.Add(word);
-        }
-        return set;
+        return Result.OfAction(() =>
+            {
+                foreach (var word in words.Select(wordValue => new Word(wordValue.ToLower(cultureInfo))))
+                {
+                    if (set.TryGetValue(word, out var containedWord))
+                        containedWord.Count++;
+                    else
+                        set.Add(word);
+                }
+            })
+            .Then(_ => set);
     }
 }

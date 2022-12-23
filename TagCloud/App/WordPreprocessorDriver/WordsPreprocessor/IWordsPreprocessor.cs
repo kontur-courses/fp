@@ -5,5 +5,5 @@ namespace TagCloud.App.WordPreprocessorDriver.WordsPreprocessor;
 
 public interface IWordsPreprocessor
 {
-    ISet<IWord> GetProcessedWords(List<string> words, IReadOnlyCollection<IBoringWords> boringWords);
+    Result<ISet<IWord>> GetProcessedWords(List<string> words, IReadOnlyCollection<IBoringWords> boringWords);
 }
