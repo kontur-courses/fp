@@ -6,19 +6,21 @@ namespace TagsCloudContainer;
 
 public class WordsFilter : IWordsFilter
 {
+    private const string template = "= (,|=)";
     public Result<List<string>> FilterWords(List<string> taggedWords, ICustomOptions options,
         HashSet<string>? boringWords = null)
     {
-        //PoS - Part of Speech; grammemes - grammatical number etc, including PoS
         var excludedPoS =
             options.ExcludedParticals.Split(", ", StringSplitOptions.RemoveEmptyEntries);
 
         var jointPos = string.Join('|', excludedPoS
-            .Select(x => $"={x}(,|=)")
+            .Select(x => template.Replace(" ", x))
             .ToArray());
-        jointPos = jointPos.Length == 0 ? "= (,|=)" : jointPos;
+
+        var innerExpression = jointPos.Length == 0 ? template : jointPos;
+
         var regexString =
-            $"^(\\w+){{((?!{jointPos}).)*$"; //.Insert(11, jointPos);
+            $"^(\\w+){{((?!{innerExpression}).)*$";
         // something like that ^(\w+){((?!=SPRO(,|=)|=PR(,|=)|=PART(,|=)|=CONJ(,|=)).)*$
         var regex = new Regex(regexString);
 
