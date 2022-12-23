@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ResultOfTask;
 
 namespace TagCloudResult.Savers;
 
 public interface IBitmapSaver
 {
-    public void Save(Bitmap bitmap, string name, ImageFormat format);
+    public Result<None> Save(Bitmap bitmap, string name, ImageFormat format);
 }
