@@ -11,7 +11,7 @@ public class LinearWordVisualisationSelector : IWordsVisualisationSelector
     // ReSharper disable once RedundantDefaultMemberInitializer
     private double minTf = 0;
     private double maxTf = 1;
-    private string wordsFont;
+    private readonly string wordsFont;
 
 
     public LinearWordVisualisationSelector(string wordsFont, int minSize, int maxSize)
@@ -20,43 +20,45 @@ public class LinearWordVisualisationSelector : IWordsVisualisationSelector
         SetWordsSizes(minSize, maxSize);
     }
 
-    public DrawingWord GetWordVisualisation(IWord word, Rectangle rectangle)
+    public Result<IDrawingWord> GetWordVisualisation(IWord word, Rectangle rectangle)
     {
-        if (possibleColors.Count == 0)
-            throw new Exception("Possible colors are not initialised");
         var fontDelta = maxSize - minSize;
         var tfDelta = maxTf - minTf;
-        var size = minSize + (int)Math.Floor(fontDelta * (word.Tf-minTf) / tfDelta) ;
-        var colorIdx = (int)Math.Floor(1d * (possibleColors.Count-1) * (word.Tf-minTf) / tfDelta);
-        return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle);
+        return Result.FailIf(possibleColors, possibleColors.Count == 0, "Possible colors are not initialised")
+            .Then(_ => Result.FailIf(tfDelta, Math.Abs(tfDelta) < 1e-5, "TfDelta can not be 0"))
+            .Then(_ => Result.Of(() =>
+            {
+                var size = minSize + (int)Math.Floor(fontDelta * (word.Tf - minTf) / tfDelta);
+                var colorIdx = (int)Math.Floor(1d * (possibleColors.Count - 1) * (word.Tf - minTf) / tfDelta);
+                return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle) as IDrawingWord;
+            }));
     }
 
-    public void AddWordPossibleColors(IEnumerable<Color> colors)
+    public Result<None> AddWordPossibleColors(IEnumerable<Color> colors)
     {
-        possibleColors.AddRange(colors);
+        return Result.OfAction(() => possibleColors.AddRange(colors));
     }
 
-    public void SetWordsFontName(string font)
-    {
-        wordsFont = font;
-    }
-
-    public void SetWordsSizes(int min, int max)
+    public Result<None> SetWordsSizes(int min, int max)
     {
         if (min > max)
-            throw new ArgumentException($"Min size {min} should be less or equal max size {max}");
+            return Result.Fail<None>($"Min font size {min} should be less or equal max size {max}");
         if (min <= 0)
-            throw new ArgumentException($"Min value {min} should be positive");
+            return Result.Fail<None>($"Min font value {min} should be positive");
         minSize = min;
         maxSize = max;
+        return Result.Ok();
     }
 
-    public void SetMinAndMaxRealWordTfIndex(double min, double max)
+    public Result<None> SetMinAndMaxRealWordTfIndex(double min, double max)
     {
         if (min > max)
-            throw new ArgumentException($"Min size {min} should be less or equal max size {max}");
+            return Result.Fail<None>($"Min tf size {min} should be less or equal max size {max}");
+        if (min <= 0)
+            return Result.Fail<None>($"Min tf value {min} should be positive");
         minTf = min;
         maxTf = max;
+        return Result.Ok();
     }
 
     public bool Empty()

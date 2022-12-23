@@ -10,13 +10,11 @@ public interface IDrawingSettings
     
     bool HasWordVisualisationSelector();
 
-    IWordsVisualisationSelector GetSelector();
+    Result<IWordsVisualisationSelector> GetSelector();
 
-    IDrawingWord GetDrawingWordFromSelector(IWord word, Rectangle rectangle);
+    Result<IDrawingWord> GetDrawingWordFromSelector(IWord word, Rectangle rectangle);
+    
+    Result<IEnumerable<IWordVisualisation>> GetWordVisualisations();
 
-    void AddWordVisualisation(IWordVisualisation wordVisualisation);
-
-    IEnumerable<IWordVisualisation> GetWordVisualisations();
-
-    IWordVisualisation GetDefaultVisualisation();
+    Result<IWordVisualisation> GetDefaultVisualisation();
 }

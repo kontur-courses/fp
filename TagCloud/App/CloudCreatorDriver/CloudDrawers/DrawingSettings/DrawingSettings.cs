@@ -9,7 +9,7 @@ public class DrawingSettings : IDrawingSettings
     public Size PictureSize { get; set; }
     
     private readonly IWordVisualisation defaultVisualisation;
-    private IWordsVisualisationSelector visualisationSelector;
+    private readonly IWordsVisualisationSelector visualisationSelector;
     private readonly List<IWordVisualisation> wordVisualisations;
 
     public DrawingSettings(IWordVisualisation defaultVisualisation, IWordsVisualisationSelector visualisationSelector)
@@ -20,29 +20,24 @@ public class DrawingSettings : IDrawingSettings
     }
 
     public bool HasWordVisualisationSelector() => !visualisationSelector.Empty();
-    public IWordsVisualisationSelector GetSelector()
+    public Result<IWordsVisualisationSelector> GetSelector()
     {
         return HasWordVisualisationSelector()
-            ? visualisationSelector
-            : throw new Exception("Selector was not initialised");
+            ? Result.Ok(visualisationSelector)
+            : Result.Fail<IWordsVisualisationSelector>("Selector was not initialised");
     }
 
-    public IDrawingWord GetDrawingWordFromSelector(IWord word, Rectangle rectangle)
+    public Result<IDrawingWord> GetDrawingWordFromSelector(IWord word, Rectangle rectangle)
     {
-        if (!HasWordVisualisationSelector())
-            throw new Exception("Selector was not initialised");
-        return visualisationSelector!.GetWordVisualisation(word, rectangle);
+        return HasWordVisualisationSelector()
+            ? visualisationSelector.GetWordVisualisation(word, rectangle)
+            : Result.Fail<IDrawingWord>("Selector was not initialised");
     }
 
-    public void AddWordVisualisation(IWordVisualisation wordVisualisation)
-    {
-        wordVisualisations.Add(wordVisualisation);
-    }
-
-    public IEnumerable<IWordVisualisation> GetWordVisualisations()
+    public Result<IEnumerable<IWordVisualisation>> GetWordVisualisations()
     {
         return wordVisualisations;
     }
 
-    public IWordVisualisation GetDefaultVisualisation() => defaultVisualisation;
+    public Result<IWordVisualisation> GetDefaultVisualisation() => Result.Ok(defaultVisualisation);
 }

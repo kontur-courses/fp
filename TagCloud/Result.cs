@@ -1,4 +1,4 @@
-﻿namespace TagCloud.App;
+﻿namespace TagCloud;
 
 public class None
 {

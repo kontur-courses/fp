@@ -5,15 +5,13 @@ namespace TagCloud.App.CloudCreatorDriver.CloudDrawers.DrawingSettings;
 
 public interface IWordsVisualisationSelector
 {
-    DrawingWord GetWordVisualisation(IWord word, Rectangle rectangle);
+    Result<IDrawingWord> GetWordVisualisation(IWord word, Rectangle rectangle);
 
-    void AddWordPossibleColors(IEnumerable<Color> colors);
+    Result<None> AddWordPossibleColors(IEnumerable<Color> colors);
+    
+    Result<None> SetWordsSizes(int min, int max);
 
-    void SetWordsFontName(string font);
-
-    void SetWordsSizes(int min, int max);
-
-    void SetMinAndMaxRealWordTfIndex(double min, double max);
+    Result<None> SetMinAndMaxRealWordTfIndex(double min, double max);
 
     bool Empty();
 }
