@@ -1,4 +1,6 @@
-﻿namespace TagCloudResult.Files;
+﻿using ResultOfTask;
+
+namespace TagCloudResult.Files;
 
 public class FileReader
 {
@@ -9,13 +11,13 @@ public class FileReader
         _fileReaders = fileReaders;
     }
 
-    public string ReadAll(string filename)
+    public Result<string> ReadAll(string filename)
     {
         var extension = Path.GetExtension(filename);
         var fileReader = _fileReaders.FirstOrDefault(file => file.Extension == extension);
-        if (fileReader is not null)
-            return fileReader.ReadAll(filename);
-
-        throw new ArgumentException($"This extension {extension} is not supported!");
+        return fileReader is null
+            ? Result.Fail<string>($"This extension {extension} is not supported!")
+            : Result.Of(() => fileReader.ReadAll(filename))
+                .RefineError($"Cannot read the file '{filename}'");
     }
 }
