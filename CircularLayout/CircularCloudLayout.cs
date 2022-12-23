@@ -14,9 +14,9 @@ namespace CloudLayout
         {
             var center = options.CenterPoint;
             if (center.X < 1)
-                throw new ArgumentException("X should be positive number");
+                throw new ArgumentException("Center point X is zero or less");
             if (center.Y < 1)
-                throw new ArgumentException("Y should be positive number");
+                throw new ArgumentException("Center point Y is zero or less");
             radius = center.X < center.Y ? center.X : center.Y;
             placedRectangles = new();
             spiralPoints = drawer.GetSpiralPoints(center);
@@ -26,7 +26,7 @@ namespace CloudLayout
         {
             var rectangle = new RectangleF();
             if (!ValidateSize(size))
-                return Result.Fail<(bool, RectangleF)>("Both dimensions must be above zero");
+                throw new ArgumentException("Word size dimension is zero or less");
             if (placedRectangles.Count == 0)
                 return (TryPlaceRectangleInCenter(out rectangle, size), rectangle).AsResult();
 

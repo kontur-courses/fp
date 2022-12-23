@@ -13,7 +13,7 @@ public class CustomOptionsValidatorTests
     {
         options = new CustomOptions
         {
-            WorkingDir = $"{Path.Combine(Directory.GetCurrentDirectory(), "WorkingDir")}",
+            WorkingDirectory = $"{Path.Combine(Directory.GetCurrentDirectory(), "WorkingDir")}",
             WordsFileName = "SmallText.txt",
             BoringWordsName = "SmallText.txt",
             Font = "Arial",
@@ -47,11 +47,11 @@ public class CustomOptionsValidatorTests
     [Test]
     public void ValidateConfig_AddEmptyTextsPath_ShouldReturnInvalidResult()
     {
-        options.WorkingDir = "";
+        options.WorkingDirectory = "";
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Error.Should().Be("Texts directory does not exist");
+        result.Error.Should().Be("WorkingDirectory folder does not exist in root directory");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -62,7 +62,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Error.Should().Be("Tag file does not exist");
+        result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with words to draw");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -73,7 +73,7 @@ public class CustomOptionsValidatorTests
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Error.Should().Be("Exclude words file does not exist");
+        result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with excluded words");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -175,11 +175,11 @@ public class CustomOptionsValidatorTests
     [Test]
     public void ValidateConfig_AddDirectoryWithoutMystem_ShouldReturnInvalidResult()
     {
-        options.WorkingDir = "c:\\Windows\\System32";
+        options.WorkingDirectory = "c:\\Windows\\System32";
 
         var result = CustomOptionsValidator.ValidateOptions(options);
 
-        result.Error.Should().Be("Mystem not found in working directory");
+        result.Error.Should().Be($"Mystem.exe not found in {options.WorkingDirectory} folder");
         result.IsSuccess.Should().BeFalse();
     }
 }

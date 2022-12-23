@@ -5,7 +5,7 @@ public interface ICustomOptions
     int PictureSize { get; set; }
     int MinTagSize { get; set; }
     int MaxTagSize { get; set; }
-    string WorkingDir { get; set; }
+    string WorkingDirectory { get; set; }
     string WordsFileName { get; set; }
     string BoringWordsName { get; set; }
     string Font { get; set; }

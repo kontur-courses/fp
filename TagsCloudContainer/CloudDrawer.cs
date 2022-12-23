@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Data;
+using System.Drawing;
 using System.Drawing.Imaging;
 using CloudLayout;
 using CloudLayout.Interfaces;
@@ -57,7 +58,7 @@ public class CloudDrawer : IDrawer
     public Result<string> DrawCloud(ICustomOptions options)
     {
         return DrawCloud(
-            Path.Combine(options.WorkingDir,
+            Path.Combine(options.WorkingDirectory,
                 string.Concat(options.ImageName, ".", options.ImageFormat.ToLower())), options);
     }
 
@@ -75,7 +76,7 @@ public class CloudDrawer : IDrawer
             "memorybmp" => ImageFormat.MemoryBmp.AsResult(),
             "tiff" => ImageFormat.Tiff.AsResult(),
             "wmf" => ImageFormat.Wmf.AsResult(),
-            _ => Result.Fail<ImageFormat>("Unexpected image format")
+            _ => throw new ArgumentException("Image format unexpected conversion")
         };
     }
 }

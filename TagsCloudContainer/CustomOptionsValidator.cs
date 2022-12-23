@@ -23,16 +23,14 @@ public class CustomOptionsValidator
     public static Result<ICustomOptions> ValidateOptions(CustomOptions options)
     {
 
-        if (!Directory.Exists(options.WorkingDir))
-            return Result.Fail<ICustomOptions>("Texts directory does not exist");
-        if (!File.Exists(Path.Combine(options.WorkingDir, "mystem.exe")))
-            return Result.Fail<ICustomOptions>("Mystem not found in working directory");
-        if (!File.Exists(Path.Combine(options.WorkingDir, options.WordsFileName)))
-            return Result.Fail<ICustomOptions>("Tag file does not exist");
-        if (!File.Exists(Path.Combine(options.WorkingDir, options.BoringWordsName)))
-            return Result.Fail<ICustomOptions>("Exclude words file does not exist");
-        if (!File.Exists(Path.Combine(options.WorkingDir, "mystem.exe")))
-            return Result.Fail<ICustomOptions>("Mystem not found in working directory");
+        if (!Directory.Exists(options.WorkingDirectory))
+            return Result.Fail<ICustomOptions>("WorkingDirectory folder does not exist in root directory");
+        if (!File.Exists(Path.Combine(options.WorkingDirectory, "mystem.exe")))
+            return Result.Fail<ICustomOptions>($"Mystem.exe not found in {options.WorkingDirectory} folder");
+        if (!File.Exists(Path.Combine(options.WorkingDirectory, options.WordsFileName)))
+            return Result.Fail<ICustomOptions>($"{options.WorkingDirectory} does not contain file with words to draw");
+        if (!File.Exists(Path.Combine(options.WorkingDirectory, options.BoringWordsName)))
+            return Result.Fail<ICustomOptions>($"{options.WorkingDirectory} does not contain file with excluded words");
         var color = Color.FromName(options.BackgroundColor);
         if (!color.IsKnownColor)
             return Result.Fail<ICustomOptions>("Invalid backgroud color");

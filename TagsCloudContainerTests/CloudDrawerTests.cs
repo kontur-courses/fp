@@ -24,9 +24,9 @@ public class CloudDrawer_Should
         sut = new CloudDrawer(spiralDrawer, converter, calculator);
 
         defaultOptions = GetDeafultResultOptions();
-        firstPath = Path.Combine(defaultOptions.WorkingDir,
+        firstPath = Path.Combine(defaultOptions.WorkingDirectory,
             (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
-        secondPath = Path.Combine(defaultOptions.WorkingDir,
+        secondPath = Path.Combine(defaultOptions.WorkingDirectory,
             (defaultOptions.ImageName + "2." + defaultOptions.ImageFormat));
     }
 
@@ -37,9 +37,9 @@ public class CloudDrawer_Should
         File.Delete(secondPath);
 
         defaultOptions = GetDeafultResultOptions();
-        firstPath = Path.Combine(defaultOptions.WorkingDir,
+        firstPath = Path.Combine(defaultOptions.WorkingDirectory,
             (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
-        secondPath = Path.Combine(defaultOptions.WorkingDir,
+        secondPath = Path.Combine(defaultOptions.WorkingDirectory,
             (defaultOptions.ImageName + "2." + defaultOptions.ImageFormat));
     }
 
@@ -47,7 +47,7 @@ public class CloudDrawer_Should
     {
         return new CustomOptions
         {
-            WorkingDir = Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\WorkingDir"),
+            WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\WorkingDir"),
             WordsFileName = "FiveSingleWords.txt",
             BoringWordsName = "EmptyList.txt",
             Font = "Arial",
@@ -76,7 +76,7 @@ public class CloudDrawer_Should
     {
         defaultOptions.ImageFormat = format;
         sut.DrawCloud(firstPath, defaultOptions);
-        firstPath = Path.Combine(defaultOptions.WorkingDir,
+        firstPath = Path.Combine(defaultOptions.WorkingDirectory,
             (defaultOptions.ImageName + "1." + defaultOptions.ImageFormat));
 
         var result = new FileInfo(firstPath);

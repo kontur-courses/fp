@@ -7,7 +7,7 @@ public class CustomOptions : ICustomOptions, ICloneable
     public int PictureSize { get; set; }
     public int MinTagSize { get; set; }
     public int MaxTagSize { get; set; }
-    public string WorkingDir { get; set; } = string.Empty;
+    public string WorkingDirectory { get; set; } = string.Empty;
     public string WordsFileName { get; set; } = string.Empty;
     public string BoringWordsName { get; set; } = string.Empty;
     public string Font { get; set; } = string.Empty;
@@ -22,7 +22,7 @@ public class CustomOptions : ICustomOptions, ICloneable
         return new CustomOptions
         {
             PictureSize = PictureSize,
-            WorkingDir = WorkingDir,
+            WorkingDirectory = WorkingDirectory,
             WordsFileName = WordsFileName,
             BoringWordsName = BoringWordsName,
             Font = Font,

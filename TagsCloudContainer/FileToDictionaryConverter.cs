@@ -18,7 +18,7 @@ public class FileToDictionaryConverter : IConverter
 
     public Result<Dictionary<string, int>> GetWordsInFile(ICustomOptions options)
     {
-        var inputWordPath = Path.Combine(options.WorkingDir, options.WordsFileName);
+        var inputWordPath = Path.Combine(options.WorkingDirectory, options.WordsFileName);
         Result<List<string>> bufferedWordsResult;
 
         if (options.WordsFileName[options.WordsFileName.LastIndexOf('.')..] != ".txt")
@@ -37,7 +37,7 @@ public class FileToDictionaryConverter : IConverter
         var bufferedWords = bufferedWordsResult.GetValueOrThrow()
             .Select(x => x.ToLower())
             .ToList();
-        var tmpFilePath = Path.Combine(options.WorkingDir, "tmp.txt");
+        var tmpFilePath = Path.Combine(options.WorkingDirectory, "tmp.txt");
         File.WriteAllLines(tmpFilePath, bufferedWords);
 
         var cmd = $"mystem.exe -nig {tmpFilePath}";
@@ -45,7 +45,7 @@ public class FileToDictionaryConverter : IConverter
         var processStartInfo = new ProcessStartInfo
         {
             UseShellExecute = false,
-            WorkingDirectory = Path.Combine(options.WorkingDir),
+            WorkingDirectory = Path.Combine(options.WorkingDirectory),
             FileName = @"C:\Windows\System32\cmd.exe",
             Arguments = "/C" + cmd,
             RedirectStandardOutput = true,
@@ -62,7 +62,7 @@ public class FileToDictionaryConverter : IConverter
 
         File.Delete(tmpFilePath);
 
-        var boringWords = File.ReadAllLines(Path.Combine(options.WorkingDir, options.BoringWordsName))
+        var boringWords = File.ReadAllLines(Path.Combine(options.WorkingDirectory, options.BoringWordsName))
             .Select(x => x.ToLower())
             .ToList();
 
