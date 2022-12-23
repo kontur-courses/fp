@@ -7,9 +7,9 @@ public class None
     }
 }
 
-public struct Result<T>
+public readonly struct Result<T>
 {
-    public Result(string error, T value = default(T))
+    public Result(string? error, T? value = default(T))
     {
         Error = error;
         Value = value;
@@ -19,9 +19,9 @@ public struct Result<T>
         return Result.Ok(v);
     }
 
-    public string Error { get; }
-    internal T Value { get; }
-    public T GetValueOrThrow()
+    public string? Error { get; }
+    internal T? Value { get; }
+    public T? GetValueOrThrow()
     {
         if (IsSuccess) return Value;
         throw new InvalidOperationException($"No value. Only Error {Error}");
@@ -36,7 +36,7 @@ public static class Result
         return Ok(value);
     }
 
-    public static Result<T> Ok<T>(T value)
+    public static Result<T> Ok<T>(T? value)
     {
         return new Result<T>(null, value);
     }
@@ -48,6 +48,13 @@ public static class Result
     public static Result<T> Fail<T>(string e)
     {
         return new Result<T>(e);
+    }
+    
+    public static Result<T> FailIf<T>(T? value, bool conditionOfFail, string error)
+    {
+        return conditionOfFail
+            ? Fail<T>(error)
+            : Ok(value);
     }
 
     public static Result<T> Of<T>(Func<T> f, string? error = null)

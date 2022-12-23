@@ -2,9 +2,9 @@
 
 public interface IFileEncoder
 {
-    string GetText(string fileName);
+    Result<string> GetText(string fileName);
         
-    bool IsCompatibleFileType(string fileName);
+    Result<None> IsSuitableFileType(string fileName);
         
     string GetExpectedFileType();
 }

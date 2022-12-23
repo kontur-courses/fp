@@ -4,24 +4,19 @@ public class TxtEncoder : IFileEncoder
 {
     private const string FileType = "txt";
 
-    public string GetText(string fileName)
+    public Result<string> GetText(string fileName)
     {
-        if (!IsCompatibleFileType(FileType))
-            throw new Exception($"Expected {FileType} filetype, " +
-                                $"but was found {fileName.Split('.').LastOrDefault() ?? string.Empty}");
-        try
-        {
-            return File.ReadAllText(fileName);
-        }
-        catch (Exception e)
-        {
-            throw new ArgumentException("Can not read words from file", e);
-        }
+        return IsSuitableFileType(fileName)
+            .Then(_ => Result.Of(() => File.ReadAllText(fileName))
+                .RefineError("Can not read words from file"));
     }
 
-    public bool IsCompatibleFileType(string fileName)
+    public Result<None> IsSuitableFileType(string fileName)
     {
-        return fileName.EndsWith(FileType);
+        return fileName.EndsWith(FileType)
+            ? Result.Ok()
+            : Result.Fail<None>($"File is not suitable. Expected {FileType} filetype, " +
+                                $"but was found {fileName.Split('.').LastOrDefault() ?? string.Empty}");
     }
 
     public string GetExpectedFileType()
