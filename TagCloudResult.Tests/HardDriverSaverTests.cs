@@ -28,6 +28,6 @@ public class HardDriverSaverTests
     public void Save_CorrectParameters_ShouldSaveToHardDriver(Bitmap bitmap, string filename, ImageFormat format)
     {
         _saver.Save(bitmap, filename, format);
-        File.Exists($"{filename}.{format}").Should().BeTrue();
+        File.Exists(filename).Should().BeTrue();
     }
 }
