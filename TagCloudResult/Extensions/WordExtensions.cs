@@ -5,13 +5,14 @@ namespace TagCloudResult.Extensions;
 
 public static class WordExtensions
 {
+    private static readonly Bitmap _bitmap = new(1, 1);
+    private static readonly Graphics _graphics = Graphics.FromImage(_bitmap);
+
     public static Size MeasureWord(this Word word, Font font)
     {
-        using var bitmap = new Bitmap(1, 1);
-        using var graphics = Graphics.FromImage(bitmap);
-        var result = graphics.MeasureString(word.Value, font);
-        if (result.Width < 1) result.Width = 1;
-        if (result.Height < 1) result.Height = 1;
-        return result.ToSize();
+        var size = _graphics.MeasureString(word.Value, font);
+        if (size.Width < 1) size.Width = 1;
+        if (size.Height < 1) size.Height = 1;
+        return size.ToSize();
     }
 }
