@@ -4,5 +4,5 @@ namespace TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
 
 public interface IBoringWords
 { 
-    bool IsBoring(IWord word);
+    Result<None> IsBoring(IWord word);
 }

@@ -8,16 +8,20 @@ public class BoringWordsFromUser : IBoringWords
     
     public BoringWordsFromUser()
     {
-        this.usersWords = new List<string>();
+        usersWords = new List<string>();
     }
 
-    public bool IsBoring(IWord word)
+    public Result<None> IsBoring(IWord word)
     {
-        return usersWords.Any(boringWord => boringWord == word.Value);
+        return Result.Of(() =>
+            usersWords.Any(boringWord => boringWord == word.Value))
+            .Then(result => result
+                ? Result.Ok()
+                : Result.Fail<None>("Word is not boring"));
     }
 
-    public void AddBoringWord(string word)
+    public Result<None> AddBoringWord(string word)
     {
-        usersWords.Add(word);
+        return Result.OfAction(() => usersWords.Add(word));
     }
 }

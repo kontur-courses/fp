@@ -18,11 +18,15 @@ public class BoringUnionsAndAppealsRu : IBoringWords
         "он", "она", "оно", "они", "им", "ей", "ему", "её", "его", "их"
     };
         
-    public bool IsBoring(IWord word)
+    public Result<None> IsBoring(IWord word)
     {
-        var wordValue = word.Value;
-        return Unions.Contains(wordValue)
-               || Prepositions.Contains(wordValue)
-               || Appeals.Contains(wordValue);
+        return Result.Of(() => word.Value)
+            .Then(wordValue =>
+                Unions.Contains(wordValue)
+                || Prepositions.Contains(wordValue)
+                || Appeals.Contains(wordValue))
+            .Then(result => result
+                ? Result.Ok()
+                : Result.Fail<None>("Word is not boring"));
     }
 }

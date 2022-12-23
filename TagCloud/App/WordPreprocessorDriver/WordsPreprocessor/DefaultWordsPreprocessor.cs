@@ -18,7 +18,7 @@ public class DefaultWordsPreprocessor : IWordsPreprocessor
         return CreateWordsSet(words)
             .Then(uniqueWords => Result.Of(() =>
                 uniqueWords.Where(word =>
-                        boringWords.All(checker => !checker.IsBoring(word)))
+                        boringWords.All(checker => checker.IsBoring(word).IsSuccess))
                     .ToHashSet()))
             .Then(uniqueWords => CalculateTfIndexes(uniqueWords, words.Count));
     }
