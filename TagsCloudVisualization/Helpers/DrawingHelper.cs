@@ -1,15 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using TagsCloudVisualization.Configurations;
 
 namespace TagsCloudVisualization.Helpers
 {
     public static class DrawingHelper
     {
-        public static Bitmap DrawTagCloud(Dictionary<Tag, Rectangle> tags, CloudConfiguration cloudConfiguration)
+        public static Result<Bitmap> DrawTagCloud(Dictionary<Tag, Rectangle> tags, CloudConfiguration cloudConfiguration)
         {
+            var maxY = tags.Values.Select(rect => rect.Y).Max();
+            var maxX = tags.Values.Select(rect => rect.X).Max();
+
             var imageWidth = cloudConfiguration.ImageSize.Width;
             var imageHeight = cloudConfiguration.ImageSize.Height;
+
+            if (maxX > imageWidth || maxY > imageHeight)
+                return Result.Fail<Bitmap>($"The tag cloud does not fit into the image with the specified size. " +
+                                           $"Recommended size for the current cloud - width:{maxX + 100}, height:{maxY + 100}");
 
             var bitmap = new Bitmap(imageWidth, imageHeight);
             using var gp = Graphics.FromImage(bitmap);
@@ -19,7 +27,7 @@ namespace TagsCloudVisualization.Helpers
             foreach (var tag in tags)
                 DrawStringInside(gp, tag.Value, new Font(cloudConfiguration.FontFamily, 1), new SolidBrush(cloudConfiguration.PrimaryColor), tag.Key.Text);
 
-            return bitmap;
+            return Result.Ok(bitmap);
         }
 
         private static void DrawStringInside(Graphics graphics, Rectangle rect, Font font, Brush brush, string text)

@@ -17,10 +17,10 @@ namespace TagsCloudVisualization
             this.cloudConfiguration = cloudConfiguration;
         }
 
-        public IEnumerable<Bitmap> Create(IEnumerable<string> words, int amountWords = -1, int amountClouds = 1)
+        public Result<List<Bitmap>> Create(IEnumerable<string> words, int amountWords = 100, int amountClouds = 1)
         {
-            var tags = TagCloudHelper.CreateTagsFromWords(words, amount: amountWords);
-            var sizes = TagCloudHelper.GenerateRectangleSizes(tags);
+            var tags = TagCloudHelper.CreateTagsFromWords(words, amountWords).GetValueOrThrow();
+            var sizes = TagCloudHelper.GenerateRectangleSizes(tags).GetValueOrThrow();
             var bitmaps = new List<Bitmap>();
             
             for (var i = 0; i < amountClouds; i++)
@@ -32,10 +32,10 @@ namespace TagsCloudVisualization
                 var tagsByRectangles = tags.Zip(rectangles, (k, v) => new { k, v })
                     .ToDictionary(x => x.k, x => x.v);
 
-                bitmaps.Add(DrawingHelper.DrawTagCloud(tagsByRectangles, cloudConfiguration));
+                bitmaps.Add(DrawingHelper.DrawTagCloud(tagsByRectangles, cloudConfiguration).GetValueOrThrow());
             }
 
-            return bitmaps;
+            return Result.Ok(bitmaps);
         }
     }
 }

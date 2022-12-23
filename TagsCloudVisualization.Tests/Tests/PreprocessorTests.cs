@@ -26,7 +26,7 @@ public class PreprocessorTests
     [Test]
     public void Process_SuccessPath_ShouldReturnListWordsInLowerFormat()
     {
-        var resultWords = Preprocessor.Process(words).ToList();
+        var resultWords = Preprocessor.Process(words).GetValueOrThrow().ToList();
 
         foreach (var word in resultWords)
         {
@@ -37,7 +37,7 @@ public class PreprocessorTests
     [Test]
     public void Process_SuccessPath_ShouldReturnListWordsWithoutUnnecessaryWords()
     {
-        var resultWords = Preprocessor.Process(words).ToList();
+        var resultWords = Preprocessor.Process(words).GetValueOrThrow().ToList();
 
         foreach (var word in resultWords)
         {

@@ -5,6 +5,6 @@ namespace TagsCloudVisualization
 {
     public interface ICloudCreator
     {
-        IEnumerable<Bitmap> Create(IEnumerable<string> words, int amountWords = -1, int amountClouds = 1);
+        Result<List<Bitmap>> Create(IEnumerable<string> words, int amountWords = -1, int amountClouds = 1);
     }
 }

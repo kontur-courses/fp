@@ -10,9 +10,9 @@ namespace TagsCloudVisualization
 {
     public static class Preprocessor
     {
-        private static readonly Regex Pattern = new Regex(@"([^\d\W]+)", RegexOptions.Compiled);
+        private static readonly Regex Pattern = new (@"([^\d\W]+)", RegexOptions.Compiled);
         
-        private static readonly Dictionary<string, PartSpeech> PartSpeechDictionary = new Dictionary<string, PartSpeech>()
+        private static readonly Dictionary<string, PartSpeech> PartSpeechDictionary = new ()
         {
             { "сущ", PartSpeech.Noun },
             { "гл", PartSpeech.Verb },
@@ -27,7 +27,7 @@ namespace TagsCloudVisualization
             { "неизв", PartSpeech.Unknown },
         };
 
-        public static IEnumerable<string> Process(string[] textLines, PartSpeech flag = PartSpeech.None, IEnumerable<string> unnecessaryWords = null)
+        public static Result<List<string>> Process(string[] textLines, PartSpeech flag = PartSpeech.None, IEnumerable<string> unnecessaryWords = null)
         {
             unnecessaryWords ??= Array.Empty<string>();
             
@@ -43,7 +43,9 @@ namespace TagsCloudVisualization
                 words.AddRange(MorphAnalysisLineWords(morphInfos, flag, unnecessaryWords));
             }
 
-            return words;
+            return words.Count != 0 
+                ? Result.Ok(words) 
+                : Result.Fail<List<string>>("There were no words to enter, or all the words failed the check");
         }
 
         private static IEnumerable<string> MorphAnalysisLineWords(IEnumerable<MorphInfo> morphInfos, 

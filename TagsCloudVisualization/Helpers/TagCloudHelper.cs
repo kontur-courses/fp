@@ -7,8 +7,11 @@ namespace TagsCloudVisualization.Helpers
 {
     public class TagCloudHelper
     {
-        public static List<Tag> CreateTagsFromWords(IEnumerable<string> words, int minFontSize = 10, int maxFontSize = 50, int amount = -1)
+        public static Result<List<Tag>> CreateTagsFromWords(IEnumerable<string> words, int amount, int minFontSize = 10, int maxFontSize = 50)
         {
+            if (amount <= 0)
+                return Result.Fail<List<Tag>>("The amount of words must be greater than zero");
+            
             var frequencyDictionary = CreateFrequencyDictionary(words);
             
             if (frequencyDictionary.Count == 0)
@@ -16,13 +19,13 @@ namespace TagsCloudVisualization.Helpers
 
             var orderedFrequencyDict = frequencyDictionary
                 .OrderByDescending(x => x.Value)
-                .Take(amount == -1 ? frequencyDictionary.Count : amount)
+                .Take(amount)
                 .ToDictionary( kvp => kvp.Key, kvp => kvp.Value );
 
             var minFrequency = orderedFrequencyDict.Min(x => x.Value);
             var maxFrequency = orderedFrequencyDict.Max(x => x.Value);
 
-            return CalculateAndCreateTags(orderedFrequencyDict, maxFrequency, minFrequency, maxFontSize, minFontSize);
+            return Result.Ok(CalculateAndCreateTags(orderedFrequencyDict, maxFrequency, minFrequency, maxFontSize, minFontSize));
         }
 
         public static void ShuffleTags(List<Tag> tags, List<Size> sizes)
@@ -37,11 +40,14 @@ namespace TagsCloudVisualization.Helpers
             }
         }
 
-        public static List<Size> GenerateRectangleSizes(List<Tag> tags)
+        public static Result<List<Size>> GenerateRectangleSizes(IEnumerable<Tag> tags)
         {
             using var gp = Graphics.FromImage(new Bitmap(1, 1));
 
-            return tags.Select(tag => gp.MeasureString(tag.Text, new Font("Arial", tag.FontSize)).ToSize()).ToList();
+            return Result.Ok(tags
+                .Select(tag => gp.MeasureString(tag.Text, new Font("Arial", tag.FontSize))
+                    .ToSize())
+                .ToList());
         }
 
         private static Dictionary<string, int> CreateFrequencyDictionary(IEnumerable<string> words)

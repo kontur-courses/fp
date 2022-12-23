@@ -15,8 +15,10 @@ namespace TagsCloudVisualization
         
         [Option('p', "path", Required = false, HelpText = "Путь к файлу со словами")]
         private string WordsFilePathArgument { get; set; }
+        
         [Option('s', "save", Required = false, HelpText = "Путь сохранения результата")]
         private string SaveTagCloudImagePathArgument { get; set; }
+        
         [Option('a', "amount", Required = false, HelpText = "Количество изображений")]
         private int AmountImagesArgument { get; set; }
         
