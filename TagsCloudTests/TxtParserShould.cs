@@ -42,7 +42,7 @@ namespace TagsCloudTests
             settings.TextType = TextType.OneWordOneLine;
             var parser = new TxtParser(settings);
 
-            var result = parser.WordParse(FileName).ToArray();
+            var result = parser.WordParse(FileName).GetValueOrThrow().ToArray();
 
             result.Should().BeEquivalentTo(words.Split(Environment.NewLine));
         }
@@ -63,7 +63,7 @@ namespace TagsCloudTests
             settings.TextType = TextType.LiteraryText;
             var parser = new TxtParser(settings);
 
-            var result = parser.WordParse(FileName).ToArray();
+            var result = parser.WordParse(FileName).GetValueOrThrow().ToArray();
 
             result.Should().BeEquivalentTo(expected);
         }

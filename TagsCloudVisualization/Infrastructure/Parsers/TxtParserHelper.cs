@@ -10,7 +10,7 @@ namespace TagsCloudVisualization.Infrastructure.Parsers
         {
             [EncodingEnum.Unicode] = Encoding.Unicode,
             [EncodingEnum.Utf32] = Encoding.UTF32,
-            [EncodingEnum.Utf8] = Encoding.UTF8
+            [EncodingEnum.Utf8] = Encoding.UTF8,
         };
 
         public Regex SelectAllWordsRegex => new(@"([\w]+)", RegexOptions.Compiled);

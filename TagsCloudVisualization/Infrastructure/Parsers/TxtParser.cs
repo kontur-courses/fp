@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.Infrastructure.Parsers
@@ -17,17 +18,27 @@ namespace TagsCloudVisualization.Infrastructure.Parsers
 
         public string FileType => "txt";
 
-        public IEnumerable<string> WordParse(string path)
+        public Result<IEnumerable<string>> WordParse(string path)
         {
             var encoding = helper.Encodings[settings.Encoding];
-            if (settings.TextType == TextType.OneWordOneLine)
-                foreach (var line in File.ReadLines(path, encoding))
-                    yield return line;
-            else
-                foreach (var word in helper
-                             .SelectAllWordsRegex
-                             .Matches(File.ReadAllText(path, encoding)))
-                    yield return word.ToString();
+            return Result.Ok(settings.TextType == TextType.OneWordOneLine
+                ? OneWordOneLineParse(path, encoding)
+                : LiteraryTextParse(path, encoding));
+        }
+
+        private static IEnumerable<string> OneWordOneLineParse(string path, Encoding encoding)
+        {
+            return File.ReadLines(path, encoding);
+        }
+
+        private IEnumerable<string> LiteraryTextParse(string path, Encoding encoding)
+        {
+            foreach (var word in helper.SelectAllWordsRegex
+                         .Matches(File.ReadAllText(path, encoding)))
+            {
+                var res = word.ToString()?.Trim();
+                yield return res;
+            }
         }
     }
 }

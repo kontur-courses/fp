@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Infrastructure.Analyzer
 {
     public interface IAnalyzer
     {
-        public IEnumerable<IWeightedWord> CreateWordFrequenciesSequence(IEnumerable<string> words);
+        public Result<IEnumerable<IWeightedWord>> CreateWordFrequenciesSequence(IEnumerable<string> words);
     }
 }

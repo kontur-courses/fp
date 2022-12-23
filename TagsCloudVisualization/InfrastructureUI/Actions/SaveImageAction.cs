@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using TagsCloudVisualization.Infrastructure;
 
 namespace TagsCloudVisualization.InfrastructureUI.Actions
 {
@@ -28,7 +29,9 @@ namespace TagsCloudVisualization.InfrastructureUI.Actions
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
-                imageHolder.SaveImage(dialog.FileName);
+                imageHolder
+                    .SaveImage(dialog.FileName)
+                    .OnFail(Error.HandleError<ErrorHandlerUi>);
         }
     }
 }

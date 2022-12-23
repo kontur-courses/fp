@@ -45,7 +45,8 @@ namespace TagsCloudTests
 
             settings.TextType = TextType.OneWordOneLine;
             var parser = new DocxParser(settings);
-            var result = parser.WordParse(FileName).ToArray()[1..];
+            // срез нужен, чтобы убрать рекламу либы
+            var result = parser.WordParse(FileName).GetValueOrThrow().ToArray()[1..];
 
             result.Should().BeEquivalentTo(words);
         }
@@ -75,7 +76,8 @@ namespace TagsCloudTests
 
             settings.TextType = TextType.LiteraryText;
             var parser = new DocxParser(settings);
-            var result = parser.WordParse(FileName).ToArray()[11..];
+            // срез нужен, чтобы убрать рекламу либы
+            var result = parser.WordParse(FileName).GetValueOrThrow().ToArray()[11..];
 
             result.Should().BeEquivalentTo(expected);
         }

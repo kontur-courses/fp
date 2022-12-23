@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Infrastructure
 {
     public interface IWordsProvider
     {
-        IEnumerable<string> GetWords(string path);
+        Result<IEnumerable<string>> GetWords(string path);
     }
 }

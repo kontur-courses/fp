@@ -21,13 +21,13 @@ namespace TagsCloudTests
         }
 
         [Test]
-        public void ReturnEmptyWhenGivenEmpty()
+        public void ReturnFailResult_WhenGivenEmpty()
         {
             var result = definer
-                .DefineFontSize(Enumerable.Empty<IWeightedWord>())
-                .ToArray();
+                .DefineFontSize(Enumerable.Empty<IWeightedWord>());
 
-            result.Should().BeEmpty();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Contain("пустой");
         }
 
 
@@ -36,13 +36,14 @@ namespace TagsCloudTests
         [TestCase(100)]
         public void ReturnsEqualNumberWords(int count)
         {
-            var words = Enumerable.Repeat(new WeightedWord { Weight = 1, Word = "hello" }, count);
+            var words = Enumerable
+                .Repeat(new WeightedWord { Weight = 1, Word = "hello" }, count);
             settings.MaxEmSize = 100;
 
 
             var result = definer.DefineFontSize(words);
 
-            result.Count().Should().Be(count);
+            result.GetValueOrThrow().Count().Should().Be(count);
         }
 
         [Test]
@@ -56,7 +57,7 @@ namespace TagsCloudTests
 
             var result = definer.DefineFontSize(words);
 
-            result.First().Font.Size.Should().BeInRange(settings.MaxEmSize - 1e-4f,
+            result.GetValueOrThrow().First().Font.Size.Should().BeInRange(settings.MaxEmSize - 1e-4f,
                 settings.MaxEmSize + 1e-4f);
         }
 
@@ -73,7 +74,7 @@ namespace TagsCloudTests
             };
             settings.MaxEmSize = 100;
             settings.MinEmSize = 0;
-            var result = definer.DefineFontSize(words).ToArray();
+            var result = definer.DefineFontSize(words).GetValueOrThrow().ToArray();
 
             for (var i = 0; i < result.Length; i++)
                 result[i].Font.Size.Should().BeInRange(settings.MaxEmSize * weights[i] / weights[0] - 1e-4f,

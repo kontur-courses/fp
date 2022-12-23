@@ -2,22 +2,24 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.InfrastructureUI
 {
     public class PictureBoxImageHolder : PictureBox, IImageHolder
     {
-        public Size GetImageSize()
+
+        public Result<Size> GetImageSize()
         {
-            FailIfNotInitialized();
-            return Image.Size;
+            return FailIfNotInitialized()
+                .Then(_ => Image.Size);
         }
 
-        public Graphics StartDrawing()
+        public Result<Graphics> StartDrawing()
         {
-            FailIfNotInitialized();
-            return Graphics.FromImage(Image);
+            return FailIfNotInitialized()
+                .Then(_ => Graphics.FromImage(Image));
         }
 
         public void UpdateUi()
@@ -26,22 +28,28 @@ namespace TagsCloudVisualization.InfrastructureUI
             Application.DoEvents();
         }
 
-        public void RecreateImage(ImageSettings imageSettings)
+        public Result<None> RecreateImage(ImageSettings imageSettings)
         {
+            if (imageSettings.Height <= 0 || imageSettings.Width <= 0)
+                return Result
+                    .Fail<None>("размеры изображения не могут быть отрицательными или равными нулю")
+                    .RefineError("измените размеры изображения");
+
             Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
+            return Result.Ok();
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            FailIfNotInitialized();
-            Image.Save(fileName);
+            return FailIfNotInitialized()
+                .Then(_ => Image.Save(fileName));
         }
 
-        private void FailIfNotInitialized()
+        public Result<None> FailIfNotInitialized()
         {
-            if (Image == null)
-                throw new InvalidOperationException(
-                    "Call PictureBoxImageHolder.RecreateImage before other method call!");
+            return Image == null
+                ? Result.Fail<None>("Call PictureBoxImageHolder.RecreateImage before other method call!")
+                : Result.Ok();
         }
     }
 }

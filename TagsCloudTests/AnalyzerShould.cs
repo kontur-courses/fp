@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Infrastructure.Analyzer;
 using TagsCloudVisualization.Settings;
 
@@ -32,7 +33,7 @@ namespace TagsCloudTests
         {
             var result = analyzer.CreateWordFrequenciesSequence(nouns);
 
-            result.Select(w => w.Word).Should()
+            result.GetValueOrThrow().Select(w => w.Word).Should()
                 .BeEquivalentTo(nouns.Select(s => s.ToLower()));
         }
 
@@ -43,7 +44,9 @@ namespace TagsCloudTests
 
             var result = analyzer.CreateWordFrequenciesSequence(words);
 
-            result.First().Should().BeEquivalentTo(new WeightedWord { Weight = 3, Word = "привет" });
+            result.GetValueOrThrow()
+                .First()
+                .Should().BeEquivalentTo(new WeightedWord { Weight = 3, Word = "привет" });
         }
 
 
@@ -65,7 +68,7 @@ namespace TagsCloudTests
 
             var result = analyzer.CreateWordFrequenciesSequence(words);
 
-            result.Should().BeEmpty();
+            result.GetValueOrThrow().Should().BeEmpty();
         }
 
 
@@ -83,7 +86,7 @@ namespace TagsCloudTests
 
             var result = analyzer.CreateWordFrequenciesSequence(boring);
 
-            result.Should().BeEmpty();
+            result.GetValueOrThrow().Should().BeEmpty();
         }
 
         [Test]
@@ -95,7 +98,7 @@ namespace TagsCloudTests
 
             var result = analyzer.CreateWordFrequenciesSequence(words);
 
-            result.Select(w => w.Word)
+            result.GetValueOrThrow().Select(w => w.Word)
                 .Should()
                 .BeEquivalentTo(nouns.Select(s => s.ToLower()));
         }
@@ -107,7 +110,7 @@ namespace TagsCloudTests
 
             var result = analyzer.CreateWordFrequenciesSequence(verbs);
 
-            result.Select(w => w.Word)
+            result.GetValueOrThrow().Select(w => w.Word)
                 .Should().BeEquivalentTo("удалять", "смотреть", "наблюдать");
         }
     }

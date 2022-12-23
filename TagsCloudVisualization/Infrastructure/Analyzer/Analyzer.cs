@@ -31,42 +31,50 @@ namespace TagsCloudVisualization.Infrastructure.Analyzer
             this.settings = settings;
         }
 
-        public IEnumerable<IWeightedWord> CreateWordFrequenciesSequence(IEnumerable<string> words)
+        public Result<IEnumerable<IWeightedWord>> CreateWordFrequenciesSequence(IEnumerable<string> words)
         {
             var result = new Dictionary<string, int>();
 
             var remainingWords = Analyze(words);
+            if (!remainingWords.IsSuccess)
+                return Result.Fail<IEnumerable<IWeightedWord>>(remainingWords.Error);
 
-            foreach (var word in remainingWords)
+            foreach (var word in remainingWords.Value)
             {
                 if (!result.ContainsKey(word))
                     result[word] = 0;
                 result[word]++;
             }
 
-            foreach (var pair in result) yield return new WeightedWord { Weight = pair.Value, Word = pair.Key };
+            return Result.Ok(result
+                .Select(pair => new WeightedWord { Weight = pair.Value, Word = pair.Key })
+                .Cast<IWeightedWord>());
         }
 
-        private IEnumerable<string> Analyze(IEnumerable<string> words)
+        private Result<IEnumerable<string>> Analyze(IEnumerable<string> words)
         {
             var analyzer = new MorphAnalyzer(settings.Lemmatization, withTrimAndLower: true);
+
             var excludedTags = settings.ExcludedParts
                 .Select(p => converter[p])
                 .ToHashSet();
+
             var selectedTags = settings.SelectedParts
                 .Select(p => converter[p])
                 .ToHashSet();
 
-            var parsedWords = analyzer
-                .Parse(words.Where(s => s.Length > 0))
-                .Where(m => m.Tags.All(t => !excludedTags.Contains(t["чр"]))
-                            && (selectedTags.Count == 0 ||
-                                selectedTags.Contains(m.BestTag["чр"])))
-                .Where(m => !settings.Lemmatization || m.BestTag.HasLemma)
-                .Select(m => settings.Lemmatization ? m.BestTag.Lemma : m.Text);
+            var parsedWords = Result.Of(() => analyzer
+                .Parse(words.Where(s => s.Length > 0)));
 
-            foreach (var word in parsedWords)
-                yield return word;
+            return !parsedWords.IsSuccess
+                ? Result.Fail<IEnumerable<string>>(
+                    "Ошибка внутренней библиотеки, попробуйте убрать пустые строки из файла")
+                : Result.Ok(parsedWords.Value
+                    .Where(m => m.Tags.All(t => !excludedTags.Contains(t["чр"]))
+                                && (selectedTags.Count == 0 ||
+                                    selectedTags.Contains(m.BestTag["чр"])))
+                    .Where(m => !settings.Lemmatization || m.BestTag.HasLemma)
+                    .Select(m => settings.Lemmatization ? m.BestTag.Lemma : m.Text));
         }
     }
 }

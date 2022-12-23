@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Spire.Doc;
 using TagsCloudVisualization.Settings;
 
@@ -17,12 +19,16 @@ namespace TagsCloudVisualization.Infrastructure.Parsers
 
         public string FileType => "doc";
 
-        public IEnumerable<string> WordParse(string path)
+        public Result<IEnumerable<string>> WordParse(string path)
         {
+            if (!File.Exists(path))
+                return Result.Fail<IEnumerable<string>>($"файла по пути {path} не существует");
+
             var document = new Document(path, FileFormat.Doc);
-            return settings.TextType == TextType.OneWordOneLine
-                ? helper.GetTextParagraph(document)
-                : helper.GetAllWordInDocument(document);
+
+            return Result.Ok(settings.TextType == TextType.OneWordOneLine
+                ? helper.GetTextParagraph(document).Select(s => s.Trim())
+                : helper.GetAllWordInDocument(document));
         }
     }
 }

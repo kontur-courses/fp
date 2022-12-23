@@ -9,4 +9,13 @@ namespace TagsCloudVisualization.InfrastructureUI
             MessageBox.Show(error);
         }
     }
+
+    public static class Error
+    {
+        public static void HandleError<T>(string error)
+            where T : IErrorHandler, new()
+        {
+            new T().HandleError(error);
+        }
+    }
 }

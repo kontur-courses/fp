@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using TagsCloudVisualization.Infrastructure;
 using TagsCloudVisualization.Infrastructure.Analyzer;
 using TagsCloudVisualization.Settings;
 
@@ -15,25 +16,25 @@ namespace TagsCloudVisualization.DefinerFontSize
             this.fontSettings = fontSettings;
         }
 
-        public IEnumerable<WordWithFont> DefineFontSize(IEnumerable<IWeightedWord> words)
+        public Result<IEnumerable<WordWithFont>> DefineFontSize(IEnumerable<IWeightedWord> words)
         {
             var weightedWords = words.ToArray();
 
-            if (weightedWords.Length == 0) yield break;
+            if (weightedWords.Length == 0) return Result.Fail<IEnumerable<WordWithFont>>("пустой список слов");
 
             var countWord = weightedWords.Max(p => p.Weight);
             var difference = fontSettings.MaxEmSize - fontSettings.MinEmSize;
 
-            foreach (var word in weightedWords)
+            return Result.Ok(weightedWords.Select(word =>
             {
                 var percent = word.Weight / (float)countWord;
                 var emSize = fontSettings.MinEmSize + difference * percent;
-                yield return new WordWithFont
+                return new WordWithFont
                 {
                     Font = new Font(fontSettings.FontFamily, emSize, fontSettings.Style),
                     Word = word.Word
                 };
-            }
+            }));
         }
     }
 }

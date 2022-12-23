@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TagsCloudVisualization.Infrastructure.Parsers;
@@ -16,12 +15,12 @@ namespace TagsCloudVisualization.Infrastructure
             this.parsers = parsers.ToDictionary(p => p.FileType);
         }
 
-        public IEnumerable<string> GetWords(string path)
+        public Result<IEnumerable<string>> GetWords(string path)
         {
             var textType = TextTypeRegex.Match(path).Value;
 
             if (textType.Length == 0 || !parsers.ContainsKey(textType[1..]))
-                throw new ArgumentException($"not found parser for {textType}");
+                return Result.Fail<IEnumerable<string>>($"not found parser for {textType}");
 
             return parsers[textType[1..]].WordParse(path);
         }

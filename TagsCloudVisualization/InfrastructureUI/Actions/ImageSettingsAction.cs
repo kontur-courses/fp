@@ -1,4 +1,5 @@
-﻿using TagsCloudVisualization.Settings;
+﻿using TagsCloudVisualization.Infrastructure;
+using TagsCloudVisualization.Settings;
 
 namespace TagsCloudVisualization.InfrastructureUI.Actions
 {
@@ -20,7 +21,17 @@ namespace TagsCloudVisualization.InfrastructureUI.Actions
         public void Perform()
         {
             SettingsForm.For(settings).ShowDialog();
-            imageHolder.RecreateImage(settings);
+            var result = imageHolder
+                .RecreateImage(settings)
+                .OnFail(Error.HandleError<ErrorHandlerUi>);
+            if (!result.IsSuccess)
+            {
+                var size = imageHolder.GetImageSize();
+                if (!size.IsSuccess)
+                    return;
+                settings.Height = size.Value.Height;
+                settings.Width = size.Value.Width;
+            }
         }
     }
 }
