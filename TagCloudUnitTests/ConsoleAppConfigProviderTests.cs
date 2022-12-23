@@ -7,15 +7,13 @@ namespace TagCloudUnitTests
     [TestFixture]
     internal class ConsoleAppConfigProviderTests
     {
-        private ConsoleAppConfigProvider provider;
+        private readonly ConsoleAppConfigProvider provider = new ConsoleAppConfigProvider();
 
         private string args;
 
         [SetUp]
         public void SetUp()
         {
-            provider = new ConsoleAppConfigProvider();
-
             args = "-i Text.txt -o Output.png";
         }
 
@@ -36,7 +34,7 @@ namespace TagCloudUnitTests
         {
             args += testingsArgs;
 
-            var config = new ConsoleAppConfigProvider().GetAppConfig(args.Split(' '));
+            var config = provider.GetAppConfig(args.Split(' '));
 
             config.IsSuccess.Should().BeFalse();
         }
