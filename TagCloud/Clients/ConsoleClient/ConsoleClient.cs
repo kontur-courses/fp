@@ -207,7 +207,7 @@ public class ConsoleClient : IClient
 
     private static Result<string> ReadLineFromConsole()
     {
-        return Result.Of(Console.ReadLine, "Con not read data from console")
+        return Result.Of(Console.ReadLine, "Can not read data from console")
             .Then(str => FailIf(str, str == null, "Console input can not be null"));
     }
 
