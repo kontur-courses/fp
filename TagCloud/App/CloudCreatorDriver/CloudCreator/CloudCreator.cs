@@ -34,86 +34,106 @@ public class CloudCreator : ICloudCreator
         this.drawingSettings = drawingSettings;
     }
 
-    public void AddBoringWordManager(IBoringWords boringWordsManager)
+    public Result<None> AddBoringWordManager(IBoringWords boringWordsManager)
     {
-        boringWords.Add(boringWordsManager);
-    }
-    
-    public Bitmap CreatePicture(FromFileStreamContext streamContext)
-    {
-        if (streamContext == null) throw new ArgumentNullException(nameof(streamContext));
-        
-        var allWords = inputWordsStream.GetAllWordsFromStream(streamContext);
-        var words = GetProcessedWordsOrderedByTf(allWords, wordsPreprocessor, boringWords);
-
-        if (drawingSettings.HasWordVisualisationSelector())
-        {
-            var selector = drawingSettings.GetSelector();
-            var minTf = words.Min(word => word.Tf);
-            var maxTf = words.Max(word => word.Tf);
-            selector.SetMinAndMaxRealWordTfIndex(minTf, maxTf);
-        }
-        
-        var sizes = GetWordsSizes(words, drawingSettings);
-        var rectangles = cloudLayouter.GetLaidRectangles(sizes, cloudLayouterSettings);
-        var drawingWords = CreateDrawingWords(words, rectangles, drawingSettings);
-
-        return cloudDrawer.DrawWords(drawingWords, drawingSettings);
+        return Result.OfAction(() => boringWords.Add(boringWordsManager));
     }
 
-    private static IEnumerable<Size> GetWordsSizes(
+    public Result<Bitmap> CreatePicture(FromFileStreamContext streamContext)
+    {
+        List<IWord>? uniqueWords = null;
+        return inputWordsStream.GetAllWordsFromStream(streamContext)
+            .Then(words => GetProcessedWordsOrderedByTf(words, wordsPreprocessor, boringWords))
+            .Then(words =>
+            {
+                uniqueWords = words;
+                return SetTfValuesToSelector(words, drawingSettings);
+            })
+            .Then(words => GetWordsSizes(words, drawingSettings))
+            .Then(sizes => cloudLayouter.GetLaidRectangles(sizes, cloudLayouterSettings))
+            .Then(rectangles => CreateDrawingWords(uniqueWords!, rectangles, drawingSettings))
+            .Then(words => cloudDrawer.DrawWords(words, drawingSettings));
+    }
+
+    private static Result<List<IWord>> SetTfValuesToSelector(List<IWord> words, IDrawingSettings settings)
+    {
+        if (!settings.HasWordVisualisationSelector())
+            return Result.Fail<List<IWord>>("Word visualisation selector not found");
+        
+        return settings.GetSelector()
+            .Then(selector =>
+            {
+                var minTf = words.Min(word => word.Tf);
+                var maxTf = words.Max(word => word.Tf);
+                selector.SetMinAndMaxRealWordTfIndex(minTf, maxTf);
+            })
+            .Then(_ => words);
+    }
+
+    private static Result<IEnumerable<Size>> GetWordsSizes(
         IEnumerable<IWord> words,
         IDrawingSettings drawingSettings)
     {
-        return drawingSettings.HasWordVisualisationSelector()
-            ? words.Select(word => word.MeasureWord(
-                drawingSettings.GetDrawingWordFromSelector(word, Rectangle.Empty).Font))
-            : words.Select(word => word.MeasureWord(GetVisualisation(word, drawingSettings).Font));
+        return Result.Of(() =>  
+            drawingSettings.HasWordVisualisationSelector()
+            ? words.Select(word => drawingSettings.GetDrawingWordFromSelector(word, Rectangle.Empty)
+                    .Then(w => w.Font)
+                    .Then(word.MeasureWord)
+                    .GetValueOrThrow())
+            : words.Select(word => GetVisualisation(word, drawingSettings)
+                .Then(w => w.Font)
+                .Then(word.MeasureWord)
+                .GetValueOrThrow()))
+            .RefineError("Can not get word size");
     }
 
-    private static List<IWord> GetProcessedWordsOrderedByTf(
+    private static Result<List<IWord>> GetProcessedWordsOrderedByTf(
         List<string> allWordsFromStream,
         IWordsPreprocessor wordsPreprocessor,
         IReadOnlyCollection<IBoringWords> boringWords)
     {
         return wordsPreprocessor.GetProcessedWords(allWordsFromStream, boringWords)
-            .OrderByDescending(word => word.Tf)
-            .ToList();
+            .Then(words => Result.Of(() =>
+                words.OrderByDescending(word => word.Tf).ToList()));
     }
 
-    private static List<IDrawingWord> CreateDrawingWords(IEnumerable<IWord> words,
+    private static Result<List<IDrawingWord>> CreateDrawingWords(
+        IEnumerable<IWord> words,
         IEnumerable<Rectangle> rectangles,
         IDrawingSettings drawingSettings)
     {
         var result = new List<IDrawingWord>();
-        using var enumerator = rectangles.GetEnumerator();
+        var enumerator = rectangles.GetEnumerator();
         foreach (var word in words)
         {
-            if (!enumerator.MoveNext()) break;
-            IDrawingWord drawingWord;
-            if (drawingSettings.HasWordVisualisationSelector())
-                drawingWord = drawingSettings.GetDrawingWordFromSelector(word, enumerator.Current);
-            else
-            {
-                var stile = GetVisualisation(word, drawingSettings);
-                drawingWord = new DrawingWord(word, stile.Font, stile.Color, enumerator.Current);
-            }
-            result.Add(drawingWord);
-        }
+            if (!enumerator.MoveNext()) return Result.Fail<List<IDrawingWord>>("No rectangle for word");
+            var drawingWord = drawingSettings.HasWordVisualisationSelector()
+                ? drawingSettings.GetDrawingWordFromSelector(word, enumerator.Current)
+                : GetVisualisation(word, drawingSettings)
+                    .Then(stile => CreateDrawingWord(word, stile, enumerator.Current));
 
-        return result;
+            if (!drawingWord.Then(dw => result.Add(dw)).IsSuccess)
+                return Result.Fail<List<IDrawingWord>>("");
+        }
+        enumerator.Dispose();
+
+        return Result.Ok(result);
     }
 
-    private static IWordVisualisation GetVisualisation(IWord word,IDrawingSettings drawingSettings)
+    private static IDrawingWord CreateDrawingWord(IWord word, IWordVisualisation stile, Rectangle rectangle)
     {
-        if (word == null) throw new ArgumentNullException(nameof(word));
-        if (drawingSettings == null) throw new ArgumentNullException(nameof(drawingSettings));
+        return new DrawingWord(word, stile.Font, stile.Color, rectangle);
+    }
 
-        return
-            drawingSettings
-                .GetWordVisualisations()
-                .OrderByDescending(visualisation => visualisation.StartingValue)
-                .FirstOrDefault(v => v.StartingValue <= word.Tf)
-            ?? drawingSettings.GetDefaultVisualisation();
+    private static Result<IWordVisualisation> GetVisualisation(IWord word, IDrawingSettings drawingSettings)
+    {
+        return drawingSettings.GetWordVisualisations()
+            .Then(v => Result.Of(() =>
+                v.OrderByDescending(visualisation => visualisation.StartingValue)
+                    .FirstOrDefault(visualisation => visualisation.StartingValue <= word.Tf)))
+            .Then(v => v == null
+                ? drawingSettings.GetDefaultVisualisation()
+                : Result.Ok(v))
+            .RefineError("Can not get visualisation");
     }
 }

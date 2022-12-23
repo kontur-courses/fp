@@ -6,7 +6,7 @@ namespace TagCloud.App.CloudCreatorDriver.CloudCreator;
 
 public interface ICloudCreator
 {
-    Bitmap CreatePicture(FromFileStreamContext streamContext);
+    Result<Bitmap> CreatePicture(FromFileStreamContext streamContext);
 
-    void AddBoringWordManager(IBoringWords boringWordsManager);
+    Result<None> AddBoringWordManager(IBoringWords boringWordsManager);
 }
