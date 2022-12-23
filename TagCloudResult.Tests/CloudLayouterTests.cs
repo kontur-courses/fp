@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOfTask;
 using TagCloudResult.Curves;
 
 namespace TagCloudResult.Tests;
@@ -16,10 +17,9 @@ public class CloudLayouterTests
     private CloudLayouter _layouter;
     private ICurve _curve;
 
-    private void PutAllRectangles(IReadOnlyList<Size> rectangles)
+    private IEnumerable<Rectangle> PutAllRectangles(IReadOnlyList<Size> rectangles)
     {
-        foreach (var rectangleSize in rectangles)
-            _layouter.PutRectangle(_curve, rectangleSize);
+        return rectangles.Select(rectangleSize => _layouter.PutRectangle(_curve, rectangleSize).GetValueOrThrow()).ToList();
     }
 
     private static IEnumerable<TestCaseData> SizesOfRectangles
@@ -50,14 +50,16 @@ public class CloudLayouterTests
     [TestCaseSource(nameof(SizesOfRectangles))]
     public void PutNextRectangle_ShouldNotMakeIntersections(IReadOnlyList<Size> sizesOfRectangles)
     {
-        PutAllRectangles(sizesOfRectangles);
+        var rectangles = PutAllRectangles(sizesOfRectangles);
 
-        foreach (var rectangle1 in _layouter.Rectangles)
-        foreach (var rectangle2 in _layouter.Rectangles)
+        foreach (var rectangle1 in rectangles)
         {
-            if (rectangle1 == rectangle2)
-                continue;
-            rectangle1.IntersectsWith(rectangle2).Should().BeFalse();
+            foreach (var rectangle2 in rectangles)
+            {
+                if (rectangle1 == rectangle2)
+                    continue;
+                rectangle1.IntersectsWith(rectangle2).Should().BeFalse();
+            }
         }
     }
 }

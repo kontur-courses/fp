@@ -21,7 +21,6 @@ public class CloudLayouter
     {
     }
 
-    public IEnumerable<Rectangle> Rectangles => _rectangles;
     public Point Center { get; }
 
     public Result<Rectangle> PutRectangle(ICurve curve, Size rectangleSize)
