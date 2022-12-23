@@ -5,5 +5,5 @@ namespace TagCloud.App.CloudCreatorDriver.CloudDrawers;
 
 public interface ICloudDrawer
 {
-    Bitmap DrawWords(List<IDrawingWord> words, IDrawingSettings settings);
+    Result<Bitmap> DrawWords(List<IDrawingWord> words, IDrawingSettings settings);
 }

@@ -5,24 +5,27 @@ namespace TagCloud.App.CloudCreatorDriver.CloudDrawers;
 
 public class CloudDrawer : ICloudDrawer
 {
-    public Bitmap DrawWords(List<IDrawingWord> words, IDrawingSettings settings)
+    public Result<Bitmap> DrawWords(List<IDrawingWord> words, IDrawingSettings settings)
     {
-        var minExpectedSize = FindSizeByRectangles(words);
-        if (minExpectedSize.Height > settings.PictureSize.Height
-            || minExpectedSize.Width > settings.PictureSize.Width)
-            throw new Exception("User sizes less then min required sizes " +
-                                       $"{minExpectedSize} > {settings.PictureSize}");
-        return Draw(words, settings.PictureSize.Width, settings.PictureSize.Height, settings.BgColor);
+        return FindSizeByRectangles(words)
+            .Then(size => Result.FailIf(size, size.Height > settings.PictureSize.Height,
+                $"Height {settings.PictureSize.Height} can not be less than required {size.Height}"))
+            .Then(size => Result.FailIf(size, size.Width > settings.PictureSize.Width,
+                $"Width {settings.PictureSize.Width} can not be less than required {size.Width}"))
+            .Then(_ => Draw(words, settings.PictureSize.Width, settings.PictureSize.Height, settings.BgColor));
     }
-        
-    private static Size FindSizeByRectangles(IReadOnlyCollection<IDrawingWord> words)
+
+    private static Result<Size> FindSizeByRectangles(IReadOnlyCollection<IDrawingWord> words)
     {
-        var width = words.Max(word => word.Rectangle.Right);
-        var height = words.Max(word => word.Rectangle.Bottom);
-        return new Size(width, height);
+        return Result.Of(() =>
+        {
+            var width = words.Max(word => word.Rectangle.Right);
+            var height = words.Max(word => word.Rectangle.Bottom);
+            return new Size(width, height);
+        });
     }
-        
-    private static Bitmap Draw(
+
+    private static Result<Bitmap> Draw(
         IEnumerable<IDrawingWord> drawingWords,
         int width, int height,
         Color bgColor)
@@ -34,14 +37,14 @@ public class CloudDrawer : ICloudDrawer
         foreach (var word in drawingWords)
         {
             if (word == null)
-                throw new NullReferenceException("Word can not be null");
+                return Result.Fail<Bitmap>("Word can not be null");
             graphics.DrawString(
                 word.Value,
                 word.Font,
                 new SolidBrush(word.Color),
                 word.Rectangle.Location);
         }
-        
-        return myBitmap;
+
+        return Result.Ok(myBitmap);
     }
 }

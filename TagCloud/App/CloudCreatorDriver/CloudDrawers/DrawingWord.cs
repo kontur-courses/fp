@@ -29,9 +29,7 @@ public class DrawingWord : IDrawingWord
         Color = color;
         Rectangle = rectangle;
     }
-        
-    public Size MeasureWord(Font font) => word.MeasureWord(font);
-
+    
     public bool Equals(IWord? other)
     {
         return ((IWord)this).Equals(other);
