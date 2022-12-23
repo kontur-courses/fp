@@ -4,10 +4,10 @@ namespace TagCloud.App.CloudCreatorDriver.RectanglesLayouters.SpiralCloudLayoute
 
 public class SpiralCloudLayouter : ICloudLayouter
 {
-    private SpiralCloudLayouterSettings? settings;
     private readonly List<Rectangle> laidRectangles = new();
     private double rotationAngle;
-    
+    private SpiralCloudLayouterSettings? settings;
+
     public Result<List<Rectangle>> GetLaidRectangles(IEnumerable<Size> sizes, ICloudLayouterSettings layouterSettings)
     {
         return SetSettings(layouterSettings)
@@ -24,13 +24,13 @@ public class SpiralCloudLayouter : ICloudLayouter
             })
             .Then(_ => laidRectangles);
     }
-        
+
     private Result<None> SetSettings(ICloudLayouterSettings layouterSettings)
     {
         if (layouterSettings is not SpiralCloudLayouterSettings spiralLayouterSettings)
             return Result.Fail<None>("Incorrect layouter settings type. " +
-                                             $"Expected {typeof(SpiralCloudLayouterSettings)}, " +
-                                             $"found {layouterSettings.GetType()}");
+                                     $"Expected {typeof(SpiralCloudLayouterSettings)}, " +
+                                     $"found {layouterSettings.GetType()}");
         settings = spiralLayouterSettings;
         return Result.Ok();
     }
@@ -39,7 +39,7 @@ public class SpiralCloudLayouter : ICloudLayouter
     {
         if (settings == null)
             return Result.Fail<None>("Settings are not initialised");
-        
+
         Result<Rectangle> rectangleCreation;
         if (laidRectangles.Count == 0)
             rectangleCreation = new Rectangle(
@@ -62,13 +62,11 @@ public class SpiralCloudLayouter : ICloudLayouter
                 .Then(p => new Point(p.X + settings!.Center.X, p.Y + settings!.Center.Y))
                 .Then(point => GetPositionedRectangle_DependedOnAngle(point, rectangleSize))
                 .RefineError("Can not find rectangle in spiral");
-            if (!newRectangle.IsSuccess || laidRectangles.All(rectangle => !newRectangle.Value.IntersectsWith(rectangle)))
-            {
-                return newRectangle;
-            }
+            if (!newRectangle.IsSuccess ||
+                laidRectangles.All(rectangle => !newRectangle.Value.IntersectsWith(rectangle))) return newRectangle;
         }
     }
-    
+
     private Rectangle GetPositionedRectangle_DependedOnAngle(Point position, Size rectangleSize)
     {
         var angle = rotationAngle % (2 * Math.PI);
@@ -81,14 +79,14 @@ public class SpiralCloudLayouter : ICloudLayouter
             top = y - rectangleSize.Height;
             return new Rectangle(left, top, rectangleSize.Width, rectangleSize.Height);
         }
-            
+
         if (Math.Abs(angle - 3 * Math.PI / 2) < 1e-4)
         {
             left = x - rectangleSize.Width / 2;
             top = y;
             return new Rectangle(left, top, rectangleSize.Width, rectangleSize.Height);
         }
-            
+
         var quarterOfPlane = (int)Math.Ceiling(2 * angle / Math.PI);
         switch (quarterOfPlane)
         {
@@ -109,6 +107,7 @@ public class SpiralCloudLayouter : ICloudLayouter
                 top = y;
                 break;
         }
+
         return new Rectangle(left, top, rectangleSize.Width, rectangleSize.Height);
     }
 
@@ -116,7 +115,7 @@ public class SpiralCloudLayouter : ICloudLayouter
     {
         var radius = GetPolarRadiusByAngleOnSpiral(rotationAngle);
         if (!radius.IsSuccess)
-            return Result.Fail<Point>("Can not find position of next rectangle. "+radius.Error);
+            return Result.Fail<Point>("Can not find position of next rectangle. " + radius.Error);
         var x = radius.Value * Math.Cos(rotationAngle);
         var y = radius.Value * Math.Sin(rotationAngle);
         var intX = (int)Math.Round(x);

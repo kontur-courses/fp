@@ -1,18 +1,13 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using NUnit.Framework;
 
 namespace FP
 {
     [TestFixture]
     public class SummatorTests
     {
-        private Summator summator;
-        private const string LargeInputFilename = "process-large-file.txt";
-        private const string OutputFilename = "process-result.txt";
-        private const string ExpectedOutputFilename = "expected-process-result.txt";
-
         [SetUp]
         public void SetUp()
         {
@@ -23,6 +18,11 @@ namespace FP
                 new HexSumFormatter(),
                 OutputFilename);
         }
+
+        private Summator summator;
+        private const string LargeInputFilename = "process-large-file.txt";
+        private const string OutputFilename = "process-result.txt";
+        private const string ExpectedOutputFilename = "expected-process-result.txt";
 
 
         [Test]
@@ -72,7 +72,7 @@ namespace FP
                     string.Join(
                         " ",
                         Enumerable.Range(0, 4).Select(j => Convert.ToString(r.Next(1000), 16))
-                        )));
+                    )));
         }
     }
 }

@@ -2,16 +2,16 @@
 
 public class Word : IWord
 {
-    public string Value { get; }
-    public int Count { get; set; }
-    public double Tf { get; set; }
-    
     public Word(string value, int count = 1, double tf = 1)
     {
         Value = value;
         Count = count;
         Tf = tf;
     }
+
+    public string Value { get; }
+    public int Count { get; set; }
+    public double Tf { get; set; }
 
     public bool Equals(IWord? other)
     {

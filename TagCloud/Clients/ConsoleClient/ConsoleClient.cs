@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using TagCloud.App;
 using TagCloud.App.CloudCreatorDriver.CloudCreator;
 using TagCloud.App.CloudCreatorDriver.CloudDrawers.DrawingSettings;
 using TagCloud.App.CloudCreatorDriver.ImageSaver;
@@ -12,18 +11,18 @@ namespace TagCloud.Clients.ConsoleClient;
 
 public class ConsoleClient : IClient
 {
-    private string? pathToText;
-    private string? savePath;
-    private Size imageSize;
-    private Color bgColor;
+    private readonly ICloudLayouterSettings cloudLayouterSettings;
 
     private readonly ICloudCreator creator;
-    private readonly IReadOnlyCollection<IFileEncoder> fileEncoders;
-    private readonly ICloudLayouterSettings cloudLayouterSettings;
     private readonly IDrawingSettings drawingSettings;
+    private readonly IReadOnlyCollection<IFileEncoder> fileEncoders;
     private readonly IImageSaver imageSaver;
     private readonly FromFileInputWordsStream inputWordsStream;
     private readonly IWordsVisualisationSelector wordsVisualisationSelector;
+    private Color bgColor;
+    private Size imageSize;
+    private string? pathToText;
+    private string? savePath;
 
     public ConsoleClient(
         IReadOnlyCollection<IFileEncoder> fileEncoders,
@@ -90,7 +89,7 @@ public class ConsoleClient : IClient
     {
         return WriteToConsole(Phrases.AskingWordsColors)
             .Then(_ => ReadLineFromConsole())
-            .Then(colors => Result.Of(() => 
+            .Then(colors => Result.Of(() =>
                     colors.Split('-')
                         .Select(Color.FromName)
                         .Where(cColor => cColor.IsKnownColor)
@@ -115,11 +114,9 @@ public class ConsoleClient : IClient
     private Result<BoringWordsFromUser> CreateBoringWords(IEnumerable<string> words)
     {
         var boringWord = new BoringWordsFromUser();
-        return Result.OfAction(() => {
-                foreach (var word in words)
-                {
-                    boringWord.AddBoringWord(word);
-                }
+        return Result.OfAction(() =>
+            {
+                foreach (var word in words) boringWord.AddBoringWord(word);
             })
             .Then(_ => boringWord)
             .RefineError("Can not create boring words class from words");
@@ -136,10 +133,9 @@ public class ConsoleClient : IClient
     private static Result<IFileEncoder> GetFileEncoder(IEnumerable<IFileEncoder> fileEncoders, string fileName)
     {
         return Result.Of(() =>
-            fileEncoders.First(encoder =>
-                fileName.EndsWith(encoder.GetExpectedFileType())))
+                fileEncoders.First(encoder =>
+                    fileName.EndsWith(encoder.GetExpectedFileType())))
             .RefineError("Can not find file encoder");
-        
     }
 
     private static Result<None> Start()
@@ -183,7 +179,7 @@ public class ConsoleClient : IClient
             .Then(_ => ReadLineFromConsole())
             .ReturnOnFail(e => TryAgain(e, GetOutImagePath));
     }
-        
+
     private static Result<string> GetFilePath()
     {
         return
@@ -195,15 +191,15 @@ public class ConsoleClient : IClient
     private static Result<string> GetFilePathFromConsole()
     {
         return WriteLineToConsole(Phrases.GetArrow(0))
-                .Then(_ => ReadLineFromConsole())
-                .Then(path => FailIf(path, !File.Exists(path), "File not exists"));
+            .Then(_ => ReadLineFromConsole())
+            .Then(path => FailIf(path, !File.Exists(path), "File not exists"));
     }
 
     private static Result<None> WriteToConsole(string text)
     {
         return Result.OfAction(() => Console.Write(text), "Can not write text to console");
     }
-    
+
     private static Result<None> WriteLineToConsole(string text)
     {
         return WriteToConsole(text + '\n');

@@ -14,14 +14,14 @@ public class TxtEncoderTest
     {
         _filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "test.txt";
     }
-        
+
     [Test]
     public void GetText_ShouldReturnTextFromTxtFile_WhenOnlyOneLineInFile()
     {
         var text = "word1 word2";
         GetText_Helper(text, CreateFileWithText(text));
     }
-        
+
     [Test]
     public void GetText_ShouldReturnTextFromTxtFile_WhenManyLinesInFile()
     {

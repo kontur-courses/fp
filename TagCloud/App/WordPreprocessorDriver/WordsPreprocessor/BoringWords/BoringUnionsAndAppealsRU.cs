@@ -8,6 +8,7 @@ public class BoringUnionsAndAppealsRu : IBoringWords
     {
         "и", "или", "а", "с", "при", "но", "однако"
     };
+
     private static readonly List<string> Prepositions = new()
     {
         "в", "из", "к", "у", "по", "из-за", "по-над", "под", "около", "вокруг", "перед", "возле"
@@ -17,7 +18,7 @@ public class BoringUnionsAndAppealsRu : IBoringWords
     {
         "он", "она", "оно", "они", "им", "ей", "ему", "её", "его", "их"
     };
-        
+
     public Result<None> IsBoring(IWord word)
     {
         return Result.Of(() => word.Value)

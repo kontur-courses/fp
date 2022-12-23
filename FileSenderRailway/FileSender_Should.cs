@@ -14,15 +14,6 @@ namespace FileSenderRailway
     [UseReporter(typeof(DiffReporter))]
     public class FileSender_Should
     {
-        private FileSender fileSender;
-        private ICryptographer cryptographer;
-        private ISender sender;
-        private IRecognizer recognizer;
-
-        private readonly FileContent file = new FileContent(Guid.NewGuid().ToString("N"), Guid.NewGuid().ToByteArray());
-        private readonly DateTime now = new DateTime(2000, 01, 01);
-        private readonly X509Certificate certificate = new X509Certificate();
-
         [SetUp]
         public void SetUp()
         {
@@ -31,6 +22,15 @@ namespace FileSenderRailway
             recognizer = A.Fake<IRecognizer>();
             fileSender = new FileSender(cryptographer, sender, recognizer, () => now);
         }
+
+        private FileSender fileSender;
+        private ICryptographer cryptographer;
+        private ISender sender;
+        private IRecognizer recognizer;
+
+        private readonly FileContent file = new(Guid.NewGuid().ToString("N"), Guid.NewGuid().ToByteArray());
+        private readonly DateTime now = new(2000, 01, 01);
+        private readonly X509Certificate certificate = new();
 
         [Test]
         public void BeOk_WhenGoodFormat(
@@ -41,7 +41,7 @@ namespace FileSenderRailway
             PrepareDocument(file, signed, now.AddDays(-daysBeforeNow), format);
 
             fileSender.SendFiles(new[] { file }, certificate)
-                .Should().BeEquivalentTo(new[] { new FileSendResult(file) });
+                .Should().BeEquivalentTo(new FileSendResult(file));
             A.CallTo(() => sender.Send(A<Document>.That.Matches(d => d.Content == signed)))
                 .MustHaveHappened();
         }
@@ -65,7 +65,9 @@ namespace FileSenderRailway
         {
             PrepareDocument(file, null, now.AddDays(-daysBeforeNow), format);
             using (ApprovalResults.ForScenario(format, daysBeforeNow))
+            {
                 VerifyErrorOnPrepareFile(file, certificate);
+            }
         }
 
         private void PrepareDocument(FileContent content, byte[] signedContent, DateTime created, string format)

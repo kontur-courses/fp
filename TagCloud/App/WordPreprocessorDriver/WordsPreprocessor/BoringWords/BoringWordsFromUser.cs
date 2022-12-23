@@ -5,7 +5,7 @@ namespace TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
 public class BoringWordsFromUser : IBoringWords
 {
     private readonly List<string> usersWords;
-    
+
     public BoringWordsFromUser()
     {
         usersWords = new List<string>();
@@ -14,7 +14,7 @@ public class BoringWordsFromUser : IBoringWords
     public Result<None> IsBoring(IWord word)
     {
         return Result.Of(() =>
-            usersWords.Any(boringWord => boringWord == word.Value))
+                usersWords.Any(boringWord => boringWord == word.Value))
             .Then(result => result
                 ? Result.Ok()
                 : Result.Fail<None>("Word is not boring"));

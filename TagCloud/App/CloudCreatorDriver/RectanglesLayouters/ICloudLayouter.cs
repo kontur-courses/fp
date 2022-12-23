@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.Words;
 
 namespace TagCloud.App.CloudCreatorDriver.RectanglesLayouters;
 

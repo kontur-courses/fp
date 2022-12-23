@@ -2,9 +2,9 @@
 
 public class FromFileStreamContext
 {
-    public readonly string Filename;
     public readonly IFileEncoder FileEncoder;
-    
+    public readonly string Filename;
+
     public FromFileStreamContext(string filename, IFileEncoder fileEncoder)
     {
         Filename = filename;

@@ -11,13 +11,13 @@ namespace TagCloud.App.CloudCreatorDriver.CloudCreator;
 
 public class CloudCreator : ICloudCreator
 {
-    private readonly FromFileInputWordsStream inputWordsStream;
-    private readonly IWordsPreprocessor wordsPreprocessor;
     private readonly List<IBoringWords> boringWords;
+    private readonly ICloudDrawer cloudDrawer;
     private readonly ICloudLayouter cloudLayouter;
     private readonly ICloudLayouterSettings cloudLayouterSettings;
-    private readonly ICloudDrawer cloudDrawer;
     private readonly IDrawingSettings drawingSettings;
+    private readonly FromFileInputWordsStream inputWordsStream;
+    private readonly IWordsPreprocessor wordsPreprocessor;
 
     public CloudCreator(
         FromFileInputWordsStream inputWordsStream,
@@ -59,7 +59,7 @@ public class CloudCreator : ICloudCreator
     {
         if (!settings.HasWordVisualisationSelector())
             return Result.Fail<List<IWord>>("Word visualisation selector not found");
-        
+
         return settings.GetSelector()
             .Then(selector =>
             {
@@ -74,16 +74,16 @@ public class CloudCreator : ICloudCreator
         IEnumerable<IWord> words,
         IDrawingSettings drawingSettings)
     {
-        return Result.Of(() =>  
-            drawingSettings.HasWordVisualisationSelector()
-            ? words.Select(word => drawingSettings.GetDrawingWordFromSelector(word, Rectangle.Empty)
-                    .Then(w => w.Font)
-                    .Then(word.MeasureWord)
-                    .GetValueOrThrow())
-            : words.Select(word => GetVisualisation(word, drawingSettings)
-                .Then(w => w.Font)
-                .Then(word.MeasureWord)
-                .GetValueOrThrow()))
+        return Result.Of(() =>
+                drawingSettings.HasWordVisualisationSelector()
+                    ? words.Select(word => drawingSettings.GetDrawingWordFromSelector(word, Rectangle.Empty)
+                        .Then(w => w.Font)
+                        .Then(word.MeasureWord)
+                        .GetValueOrThrow())
+                    : words.Select(word => GetVisualisation(word, drawingSettings)
+                        .Then(w => w.Font)
+                        .Then(word.MeasureWord)
+                        .GetValueOrThrow()))
             .RefineError("Can not get word size");
     }
 
@@ -115,6 +115,7 @@ public class CloudCreator : ICloudCreator
             if (!drawingWord.Then(dw => result.Add(dw)).IsSuccess)
                 return Result.Fail<List<IDrawingWord>>("");
         }
+
         enumerator.Dispose();
 
         return Result.Ok(result);

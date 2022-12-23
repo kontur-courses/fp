@@ -5,9 +5,6 @@ namespace ConwaysGameOfLife
 {
     public class Game : IReadonlyField
     {
-        public int Width { get; }
-        public int Height { get; }
-
         private bool[,] isAlive;
 
         public Game(Size size)
@@ -24,6 +21,14 @@ namespace ConwaysGameOfLife
             isAlive = alive;
         }
 
+        public int Width { get; }
+        public int Height { get; }
+
+        public bool IsAlive(int x, int y)
+        {
+            return isAlive[(x + Width) % Width, (y + Height) % Height];
+        }
+
         public void Revive(params Point[] cells)
         {
             foreach (var pos in cells)
@@ -34,16 +39,17 @@ namespace ConwaysGameOfLife
         {
             var willBeAlive = new bool[Width, Height];
             var changes = new List<ChangedCell>();
-            for (int y = 0; y < Height; y++)
-                for (int x = 0; x < Width; x++)
+            for (var y = 0; y < Height; y++)
+            for (var x = 0; x < Width; x++)
+            {
+                willBeAlive[x, y] = WillBeAlive(x, y);
+                if (willBeAlive[x, y] != isAlive[x, y])
                 {
-                    willBeAlive[x, y] = WillBeAlive(x, y);
-                    if (willBeAlive[x, y] != isAlive[x, y])
-                    {
-                        var change = new ChangedCell(x, y, willBeAlive[x, y]);
-                        changes.Add(change);
-                    }
+                    var change = new ChangedCell(x, y, willBeAlive[x, y]);
+                    changes.Add(change);
                 }
+            }
+
             isAlive = willBeAlive;
             return new StepResult(new Game(willBeAlive), changes);
         }
@@ -56,7 +62,7 @@ namespace ConwaysGameOfLife
 
         private bool WillBeAlive(bool alive, int aliveNeighbours)
         {
-            return aliveNeighbours == 3 || aliveNeighbours == 2 && alive;
+            return aliveNeighbours == 3 || (aliveNeighbours == 2 && alive);
         }
 
         private IEnumerable<Point> GetNeighbours(int x, int y)
@@ -73,26 +79,19 @@ namespace ConwaysGameOfLife
             return IsAlive(pos.X, pos.Y);
         }
 
-        public bool IsAlive(int x, int y)
-        {
-            return isAlive[(x + Width) % Width, (y + Height) % Height];
-        }
-
         public override string ToString()
         {
-
             var rows = Enumerable.Range(0, Height)
                 .Select(y =>
                     string.Join("",
                         Enumerable.Range(0, Width).Select(x => isAlive[x, y] ? "#" : " ")
-                ));
+                    ));
             return string.Join("\n", rows);
         }
     }
 
     public class StepResult
     {
-        public List<ChangedCell> ChangedCells { get; set; }
         public readonly Game NextState;
 
         public StepResult(Game nextState, List<ChangedCell> changes)
@@ -101,6 +100,7 @@ namespace ConwaysGameOfLife
             NextState = nextState;
         }
 
+        public List<ChangedCell> ChangedCells { get; set; }
     }
 
     public class ChangedCell
@@ -112,8 +112,8 @@ namespace ConwaysGameOfLife
             IsAlive = isAlive;
         }
 
-        public int X { get; private set; }
-        public int Y { get; private set; }
-        public bool IsAlive { get; private set; }
+        public int X { get; }
+        public int Y { get; }
+        public bool IsAlive { get; }
     }
 }

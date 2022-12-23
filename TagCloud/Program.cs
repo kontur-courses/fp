@@ -13,11 +13,12 @@ using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor;
 using TagCloud.App.WordPreprocessorDriver.WordsPreprocessor.BoringWords;
 using TagCloud.Clients;
 using TagCloud.Clients.ConsoleClient;
+
 namespace TagCloud;
 
-static class Program
+internal static class Program
 {
-    static void Main()
+    private static void Main()
     {
         var container = GetContainer();
         using var scope = container.BeginLifetimeScope();
@@ -30,22 +31,22 @@ static class Program
         var builder = new ContainerBuilder();
         builder.RegisterType<ConsoleClient>().As<IClient>();
         builder.RegisterType<Phrases>();
-        
+
         builder.RegisterType<TxtEncoder>().As<IFileEncoder>();
         builder.RegisterType<FromFileInputWordsStream>();
         builder.RegisterType<NewLineTextSplitter>().As<ITextSplitter>();
         builder.RegisterType<BoringUnionsAndAppealsRu>().As<IBoringWords>();
         builder.RegisterType<DefaultWordsPreprocessor>().As<IWordsPreprocessor>();
-        
+
         builder.RegisterType<SpiralCloudLayouter>().As<ICloudLayouter>();
-        builder.RegisterInstance(new SpiralCloudLayouterSettings(new Point(0,0), 1, 0.1))
+        builder.RegisterInstance(new SpiralCloudLayouterSettings(new Point(0, 0), 1, 0.1))
             .As<ICloudLayouterSettings>().SingleInstance();
-        
+
         builder.RegisterType<CloudDrawer>().As<ICloudDrawer>();
         builder.RegisterType<DrawingSettings>().As<IDrawingSettings>().SingleInstance();
         builder.RegisterInstance(new LinearWordVisualisationSelector("arial", 13, 30))
             .As<IWordsVisualisationSelector>().SingleInstance();
-        
+
         builder.RegisterType<CloudCreator>().As<ICloudCreator>();
         builder.RegisterType<PngImageSaver>().As<IImageSaver>();
         builder.RegisterInstance(CultureInfo.CurrentCulture).As<CultureInfo>();

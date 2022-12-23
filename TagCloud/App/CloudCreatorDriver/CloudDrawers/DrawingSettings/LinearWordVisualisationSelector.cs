@@ -6,12 +6,13 @@ namespace TagCloud.App.CloudCreatorDriver.CloudDrawers.DrawingSettings;
 public class LinearWordVisualisationSelector : IWordsVisualisationSelector
 {
     private readonly List<Color> possibleColors = new();
-    private int minSize;
+    private readonly string wordsFont;
     private int maxSize;
+    private double maxTf = 1;
+    private int minSize;
+
     // ReSharper disable once RedundantDefaultMemberInitializer
     private double minTf = 0;
-    private double maxTf = 1;
-    private readonly string wordsFont;
 
 
     public LinearWordVisualisationSelector(string wordsFont, int minSize, int maxSize)
@@ -30,7 +31,8 @@ public class LinearWordVisualisationSelector : IWordsVisualisationSelector
             {
                 var size = minSize + (int)Math.Floor(fontDelta * (word.Tf - minTf) / tfDelta);
                 var colorIdx = (int)Math.Floor(1d * (possibleColors.Count - 1) * (word.Tf - minTf) / tfDelta);
-                return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle) as IDrawingWord;
+                return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle) as
+                    IDrawingWord;
             }));
     }
 

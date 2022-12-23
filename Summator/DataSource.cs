@@ -7,9 +7,15 @@ namespace FP
     public class DataSource : IDisposable
     {
         private readonly StreamReader reader;
+
         public DataSource(string filename)
         {
             reader = new StreamReader(filename);
+        }
+
+        public void Dispose()
+        {
+            reader.Close();
         }
 
         ///<returns>null if no more data</returns>
@@ -17,11 +23,6 @@ namespace FP
         {
             var line = reader.ReadLine();
             return line == null ? null : line.Split(' ');
-        }
-
-        public void Dispose()
-        {
-            reader.Close();
         }
     }
 }

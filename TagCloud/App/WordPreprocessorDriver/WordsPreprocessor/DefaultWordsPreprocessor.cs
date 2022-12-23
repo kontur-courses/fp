@@ -29,7 +29,7 @@ public class DefaultWordsPreprocessor : IWordsPreprocessor
             ? Result.Fail<double>("Total words count can not be 0")
             : Result.Ok(1d * wordCount / totalWordsCount);
     }
-        
+
     private static Result<ISet<IWord>> CalculateTfIndexes(ISet<IWord> words, int totalWordsCount)
     {
         foreach (var word in words)
@@ -39,21 +39,20 @@ public class DefaultWordsPreprocessor : IWordsPreprocessor
             if (!result.IsSuccess)
                 return Result.Fail<ISet<IWord>>("Can not calculate tf indexes. " + result.Error);
         }
+
         return Result.Ok(words);
     }
-        
+
     private Result<HashSet<IWord>> CreateWordsSet(IEnumerable<string> words)
     {
         var set = new HashSet<IWord>();
         return Result.OfAction(() =>
             {
                 foreach (var word in words.Select(wordValue => new Word(wordValue.ToLower(cultureInfo))))
-                {
                     if (set.TryGetValue(word, out var containedWord))
                         containedWord.Count++;
                     else
                         set.Add(word);
-                }
             })
             .Then(_ => set);
     }

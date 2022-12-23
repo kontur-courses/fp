@@ -8,10 +8,10 @@ namespace TagCloudTest.CloudLayouter.SpiralCloudLayouters;
 
 public class CircularCloudLayouterTest
 {
-    private List<Rectangle>? rectangles;
     private Point center;
-    private SpiralCloudLayouter? sut;
+    private List<Rectangle>? rectangles;
     private SpiralCloudLayouterSettings? settings;
+    private SpiralCloudLayouter? sut;
 
     [OneTimeSetUp]
     public void StartTests()
@@ -24,10 +24,10 @@ public class CircularCloudLayouterTest
     [Test]
     public void PutNextRectangle_FirstGotRectangle_ShouldContainsCenter()
     {
-        rectangles = sut!.GetLaidRectangles(new[]{new Size(10, 5)}, settings!);
+        rectangles = sut!.GetLaidRectangles(new[] { new Size(10, 5) }, settings!);
         rectangles.First().Contains(center).Should().Be(true);
     }
-        
+
     [TestCase(2)]
     [TestCase(10)]
     [TestCase(40)]
@@ -41,10 +41,8 @@ public class CircularCloudLayouterTest
         {
             var rect = rectangles[i];
             for (var j = 0; j < count; j++)
-            {
                 if (i != j)
                     rect.IntersectsWith(rectangles[j]).Should().Be(false);
-            }
         }
     }
 
@@ -54,7 +52,8 @@ public class CircularCloudLayouterTest
         var testContext = TestContext.CurrentContext;
         if (testContext.Result.FailCount == 0)
             return;
-        var filename = $"Failed test {TestContext.CurrentContext.Test.Name} image at {DateTime.Now:dd-MM-yyyy HH_mm_ss}.jpg";
+        var filename =
+            $"Failed test {TestContext.CurrentContext.Test.Name} image at {DateTime.Now:dd-MM-yyyy HH_mm_ss}.jpg";
         var bitmap = TagCloudDrawer.DrawWithAutoSize(rectangles!.ToArray(),
             Color.Black, Color.DarkOrange,
             true, true);

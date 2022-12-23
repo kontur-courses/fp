@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TagCloud\TagCloud.csproj" />
+        <ProjectReference Include="..\TagCloud\TagCloud.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="6.8.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-      <PackageReference Include="NUnit" Version="3.13.3" />
+        <PackageReference Include="FluentAssertions" Version="6.8.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0"/>
+        <PackageReference Include="NUnit" Version="3.13.3"/>
     </ItemGroup>
 
 </Project>

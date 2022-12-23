@@ -9,11 +9,12 @@ public class None
 
 public readonly struct Result<T>
 {
-    public Result(string? error, T? value = default(T))
+    public Result(string? error, T? value = default)
     {
         Error = error;
         Value = value;
     }
+
     public static implicit operator Result<T>(T v)
     {
         return Result.Ok(v);
@@ -21,11 +22,13 @@ public readonly struct Result<T>
 
     public string? Error { get; }
     internal T? Value { get; }
+
     public T? GetValueOrThrow()
     {
         if (IsSuccess) return Value;
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }
+
     public bool IsSuccess => Error == null;
 }
 
@@ -40,6 +43,7 @@ public static class Result
     {
         return new Result<T>(null, value);
     }
+
     public static Result<None> Ok()
     {
         return Ok<None>(null);
@@ -49,7 +53,7 @@ public static class Result
     {
         return new Result<T>(e);
     }
-    
+
     public static Result<T> FailIf<T>(T? value, bool conditionOfFail, string error)
     {
         return conditionOfFail
@@ -88,7 +92,7 @@ public static class Result
     {
         return input.Then(inp => Of(() => continuation(inp)));
     }
-    
+
     public static Result<None> Then<TInput>(
         this Result<TInput> input,
         Action<TInput> continuation)
@@ -112,7 +116,7 @@ public static class Result
         if (!input.IsSuccess) handleError(input.Error);
         return input;
     }
-    
+
     public static Result<TInput> ReturnOnFail<TInput>(
         this Result<TInput> input,
         Func<string, Result<TInput>> handleError)

@@ -4,12 +4,12 @@ namespace TagCloudTest.CloudLayouter.SpiralCloudLayouters.Infrastructure;
 
 public class CloudDrawingSettings
 {
-    public readonly Size Size;
-    public readonly Point Center;
     public readonly Color BgColor;
-    public readonly Color RectangleColor;
+    public readonly Point Center;
     public readonly bool DrawCenter;
     public readonly bool DrawCircle;
+    public readonly Color RectangleColor;
+    public readonly Size Size;
 
     public CloudDrawingSettings(
         Size size, Point center,

@@ -56,7 +56,7 @@ namespace ResultOfTask
                 .Then(n => n + 10);
             res.Should().BeEquivalentTo(Result.Ok(52));
         }
-        
+
         [Test]
         public void RunThen_WhenContinuationIsOk()
         {
@@ -81,15 +81,12 @@ namespace ResultOfTask
         [Test]
         public void Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
+            Func<int, int> continuation = n => { throw new Exception("123"); };
             var res = Result.Ok(42)
                 .Then(continuation);
             res.Should().BeEquivalentTo(Result.Fail<int>("123"));
         }
-        
+
         [Test]
         public void Then_ReturnsFail_OnFailedContinuation()
         {

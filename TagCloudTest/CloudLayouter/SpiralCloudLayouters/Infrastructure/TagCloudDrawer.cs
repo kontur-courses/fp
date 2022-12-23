@@ -15,7 +15,7 @@ public static class TagCloudDrawer
             new CloudDrawingSettings(size, center, bgColor, rectangleColor, drawCenter, drawCircle);
         return Draw(rectangles, cloudDrawingSettings);
     }
-        
+
     private static Bitmap Draw(
         Rectangle[] rectangles,
         CloudDrawingSettings settings)
@@ -24,10 +24,7 @@ public static class TagCloudDrawer
         var graphics = Graphics.FromImage(myBitmap);
         graphics.Clear(settings.BgColor);
 
-        foreach (var rectangle in rectangles)
-        {
-            graphics.DrawRectangle(new Pen(settings.RectangleColor, 2), rectangle);
-        }
+        foreach (var rectangle in rectangles) graphics.DrawRectangle(new Pen(settings.RectangleColor, 2), rectangle);
 
         if (settings.DrawCenter) DrawCenter(graphics, settings.Center);
         if (settings.DrawCircle) DrawMaxCircle(graphics, settings.Center, rectangles);
@@ -44,7 +41,7 @@ public static class TagCloudDrawer
         var centerY = firstRectangle.Top + firstRectangle.Height / 2;
         return new Point(centerX, centerY);
     }
-        
+
     private static void DrawCenter(Graphics g, Point center)
     {
         g.DrawEllipse(new Pen(Color.Blue, 2), center.X - 4, center.Y - 4, 8, 8);

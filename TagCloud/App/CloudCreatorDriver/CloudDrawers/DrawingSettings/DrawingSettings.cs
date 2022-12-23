@@ -5,9 +5,6 @@ namespace TagCloud.App.CloudCreatorDriver.CloudDrawers.DrawingSettings;
 
 public class DrawingSettings : IDrawingSettings
 {
-    public Color BgColor { get; set; }
-    public Size PictureSize { get; set; }
-    
     private readonly IWordVisualisation defaultVisualisation;
     private readonly IWordsVisualisationSelector visualisationSelector;
     private readonly List<IWordVisualisation> wordVisualisations;
@@ -16,10 +13,17 @@ public class DrawingSettings : IDrawingSettings
     {
         this.defaultVisualisation = defaultVisualisation;
         this.visualisationSelector = visualisationSelector;
-        wordVisualisations = new List<IWordVisualisation>(){defaultVisualisation};
+        wordVisualisations = new List<IWordVisualisation> { defaultVisualisation };
     }
 
-    public bool HasWordVisualisationSelector() => !visualisationSelector.Empty();
+    public Color BgColor { get; set; }
+    public Size PictureSize { get; set; }
+
+    public bool HasWordVisualisationSelector()
+    {
+        return !visualisationSelector.Empty();
+    }
+
     public Result<IWordsVisualisationSelector> GetSelector()
     {
         return HasWordVisualisationSelector()
@@ -39,5 +43,8 @@ public class DrawingSettings : IDrawingSettings
         return wordVisualisations;
     }
 
-    public Result<IWordVisualisation> GetDefaultVisualisation() => Result.Ok(defaultVisualisation);
+    public Result<IWordVisualisation> GetDefaultVisualisation()
+    {
+        return Result.Ok(defaultVisualisation);
+    }
 }

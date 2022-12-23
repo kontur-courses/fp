@@ -11,7 +11,7 @@ public class FromFileInputWordsStreamTest
 {
     private readonly string textWithNewLines = "word1" + Environment.NewLine + "word2" + Environment.NewLine + "word3";
     private string path = "test.txt";
-    private FromFileInputWordsStream sut = new(new NewLineTextSplitter());
+    private readonly FromFileInputWordsStream sut = new(new NewLineTextSplitter());
 
     [OneTimeSetUp]
     public void StartTests()
@@ -19,7 +19,7 @@ public class FromFileInputWordsStreamTest
         path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "test.txt";
         File.Create(path);
     }
-        
+
     [Test]
     public void GetAllWordsFromStream_ShouldReturnEmptyList_WhenNoWords()
     {
@@ -33,7 +33,7 @@ public class FromFileInputWordsStreamTest
             sut.GetAllWordsFromStream(GetContext("", "incorrectPath"));
         creatingStreamWithIncorrectFile.Should().Throw<FileNotFoundException>();
     }
-        
+
     [Test]
     public void GetAllWordsFromStream_ShouldThrowException_WhenIncorrectFileType()
     {
@@ -48,8 +48,8 @@ public class FromFileInputWordsStreamTest
         var words = sut.GetAllWordsFromStream(GetContext(textWithNewLines));
         words.Count.Should().Be(3);
     }
-    
-        
+
+
     [OneTimeTearDown]
     public void StopTests()
     {

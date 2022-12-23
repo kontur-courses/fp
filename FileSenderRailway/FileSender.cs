@@ -8,8 +8,8 @@ namespace FileSenderRailway
     public class FileSender
     {
         private readonly ICryptographer cryptographer;
-        private readonly IRecognizer recognizer;
         private readonly Func<DateTime> now;
+        private readonly IRecognizer recognizer;
         private readonly ISender sender;
 
         public FileSender(
@@ -29,10 +29,10 @@ namespace FileSenderRailway
             foreach (var file in files)
             {
                 var doc = PrepareFileToSend(file, certificate)
-                        .RefineError("Can't prepare file to send")
-                        .Then(document => sender.Send(document)
-                            .RefineError("Can't send"));
-                
+                    .RefineError("Can't prepare file to send")
+                    .Then(document => sender.Send(document)
+                        .RefineError("Can't send"));
+
                 yield return new FileSendResult(file, doc.Error);
             }
         }
