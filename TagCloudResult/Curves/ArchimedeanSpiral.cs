@@ -8,10 +8,8 @@ public class ArchimedeanSpiral : ICurve
 
     public ArchimedeanSpiral(double startRadius = 0, double extendRatio = 0.25)
     {
-        if (startRadius < 0 || extendRatio <= 0)
-            throw new ArgumentException("Parameters cannot be negative.");
-        StartRadius = startRadius;
-        ExtendRatio = extendRatio;
+        StartRadius = (startRadius < 0) ? 0 : startRadius;
+        ExtendRatio = (extendRatio <= 0) ? 0.25 : extendRatio;
     }
 
     public double StartRadius { get; }

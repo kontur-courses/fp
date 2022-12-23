@@ -25,10 +25,10 @@ public class ArchimedeanSpiralTests
     }
 
     [TestCaseSource(nameof(Instance_IncorrectParameters))]
-    public void Instance_IncorrectParameters_ShouldFail(int startRadius, int extendRatio)
+    public void Instance_IncorrectParameters_ShoulNotFail(int startRadius, int extendRatio)
     {
         Action instantiating = () => new ArchimedeanSpiral(startRadius, extendRatio);
-        instantiating.Should().Throw<ArgumentException>();
+        instantiating.Should().NotThrow();
     }
 
     public static IEnumerable<TestCaseData> Instance_CorrectParameters
