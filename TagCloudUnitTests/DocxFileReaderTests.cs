@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.IO;
 using TagCloud.FileReader;
 
 namespace TagCloudUnitTests

@@ -4,9 +4,7 @@ using System.Drawing;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using TagCloud.CloudLayouter;
-using TagCloud.ImageProcessing;
 using TagCloud.PointGenerator;
 
 namespace TagCloudUnitTests

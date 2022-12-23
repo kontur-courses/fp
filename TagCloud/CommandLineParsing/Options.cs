@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using System.Drawing;
 
 namespace TagCloud.CommandLineParsing
 {

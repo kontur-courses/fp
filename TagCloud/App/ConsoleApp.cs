@@ -1,5 +1,4 @@
-﻿using System;
-using TagCloud.AppConfiguration;
+﻿using TagCloud.AppConfiguration;
 using TagCloud.FileReader;
 using TagCloud.FrequencyAnalyzer;
 using TagCloud.ImageProcessing;

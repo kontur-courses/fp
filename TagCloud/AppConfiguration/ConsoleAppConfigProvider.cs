@@ -1,17 +1,13 @@
 ﻿using CommandLine;
-using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using TagCloud.CommandLineParsing;
 using TagCloud.FileReader;
 using TagCloud.ImageProcessing;
-using TagCloud.PointGenerator;
 using TagCloud.ResultMonade;
-using TagCloud.WordColoring;
 
 namespace TagCloud.AppConfiguration
 {
