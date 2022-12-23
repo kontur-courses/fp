@@ -29,7 +29,8 @@ public class CloudLayouter
         return Result.Of(() => new Rectangle(Point.Empty, rectangleSize))
             .Then(rectangle => PlaceRectangle(curve, rectangle))
             .Then(ShiftRectangleToCenter)
-            .Then(AddRectangleToRectangles);
+            .Then(AddRectangleToRectangles)
+            .RefineError("Cannot place rectangle");
     }
 
     private Rectangle PlaceRectangle(ICurve curve, Rectangle rectangle)

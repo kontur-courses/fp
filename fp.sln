@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudResult", "TagCloudResult\TagCloudResult.csproj", "{E47D6141-0791-403C-9527-AA3654CFE830}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagCloudResult.Tests", "TagCloudResult.Tests\TagCloudResult.Tests.csproj", "{FA6DC453-B258-45ED-BCE7-6900AB887C90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{E47D6141-0791-403C-9527-AA3654CFE830}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E47D6141-0791-403C-9527-AA3654CFE830}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E47D6141-0791-403C-9527-AA3654CFE830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA6DC453-B258-45ED-BCE7-6900AB887C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA6DC453-B258-45ED-BCE7-6900AB887C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA6DC453-B258-45ED-BCE7-6900AB887C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA6DC453-B258-45ED-BCE7-6900AB887C90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}

@@ -1,6 +1,6 @@
-﻿using System.Drawing;
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
+using ResultOfTask;
 using TagCloudResult.Clients;
 using TagCloudResult.Files;
 using TagCloudResult.Words;
@@ -13,14 +13,18 @@ internal static class Program
     {
         var parsedArguments = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
         var serviceProvider = DiContainerConfiguration.Build();
-        var fileReader = serviceProvider.GetRequiredService<FileReader>();
-        var curve = Helper.GetCurveByName(parsedArguments.Curve);
-        var font = new Font(parsedArguments.FontName, parsedArguments.FontSize);
-        var size = new Size(parsedArguments.Width, parsedArguments.Height);
         var textFormatter = serviceProvider.GetRequiredService<TextFormatter>();
-        var words = textFormatter.Format(fileReader.ReadAll(parsedArguments.InputFile));
+        var fileReader = serviceProvider.GetRequiredService<FileReader>();
         var client = serviceProvider.GetRequiredService<Client>();
-        var image = client.Draw(words, curve, size, font, parsedArguments.Colors);
-        client.Save(image, parsedArguments.OutputFiles);
+
+        var curve = Helper.GetCurveByName(parsedArguments.Curve).OnFail(client.PrintError); // safe
+        var font = Helper.GetFont(parsedArguments.FontFamily, parsedArguments.FontSize)
+            .OnFail(client.PrintError); // safe
+        var imageSize = Helper.GetSize(parsedArguments.Width, parsedArguments.Height).OnFail(client.PrintError); // safe
+        var text = fileReader.ReadAll(parsedArguments.InputFile).OnFail(client.PrintError); // kinda safe
+        var words = textFormatter.Format(text.Value).OnFail(client.PrintError); // safe
+        var image = client.Draw(words.Value, curve.Value, imageSize.Value, font.Value, parsedArguments.Colors)
+            .OnFail(client.PrintError);
+        client.Save(image.Value, parsedArguments.OutputFiles).OnFail(client.PrintError);
     }
 }

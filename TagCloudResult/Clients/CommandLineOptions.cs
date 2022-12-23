@@ -20,8 +20,8 @@ public class CommandLineOptions
     [Option('w', "width", Required = false, Default = 1920, HelpText = "Width of image")]
     public int Width { get; set; }
 
-    [Option("fontName", Required = false, Default = "Times New Roman", HelpText = "Font name")]
-    public string FontName { get; set; }
+    [Option("fontFamily", Required = false, Default = "Times New Roman", HelpText = "Font name")]
+    public string FontFamily { get; set; }
 
     [Option("fontSize", Required = false, Default = 50, HelpText = "Font size")]
     public float FontSize { get; set; }

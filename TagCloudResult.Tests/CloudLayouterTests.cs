@@ -6,8 +6,7 @@ namespace TagCloudResult.Tests;
 [TestFixture]
 public class CloudLayouterTests
 {
-    
-    [SetUp] 
+    [SetUp]
     public void SetUp()
     {
         _curve = new ArchimedeanSpiral();
