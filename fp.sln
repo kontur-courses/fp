@@ -1,14 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSenderRailway", "FileSenderRailway\FileSenderRailway.csproj", "{D979A1EA-516A-46BC-BE6C-8845CA10853D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorHandling", "ErrorHandling\ErrorHandling.csproj", "{66FAF276-533D-4733-AB2E-A9905D678CF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife", "ConwaysGameOfLife\ConwaysGameOfLife.csproj", "{2AC2EFE1-647B-4116-9D6E-EF99657C2AB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C1CC8-A8B6-46C6-B35C-8A43B80111A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudVisualization", "TagsCloudVisualization\TagsCloudVisualization.csproj", "{6C62B8F2-AED6-4902-A33F-2F0106B746E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudVisualizationTests", "TagsCloudVisualizationTests\TagsCloudVisualizationTests.csproj", "{BA7BEE8C-3D8A-435B-9AB1-A2C4570819FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +39,22 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C62B8F2-AED6-4902-A33F-2F0106B746E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C62B8F2-AED6-4902-A33F-2F0106B746E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C62B8F2-AED6-4902-A33F-2F0106B746E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C62B8F2-AED6-4902-A33F-2F0106B746E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7BEE8C-3D8A-435B-9AB1-A2C4570819FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7BEE8C-3D8A-435B-9AB1-A2C4570819FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7BEE8C-3D8A-435B-9AB1-A2C4570819FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7BEE8C-3D8A-435B-9AB1-A2C4570819FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8CE693E-8513-41D5-BB03-3FE8FF63D2ED}
 	EndGlobalSection
 EndGlobal
