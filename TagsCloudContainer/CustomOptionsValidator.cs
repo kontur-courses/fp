@@ -4,23 +4,16 @@ using ResultOfTask;
 
 namespace TagsCloudContainer;
 
-public class CustomOptionsValidator
+public class CustomOptionsValidator : IOptionsValidator
 {
-    private static readonly HashSet<string> acceptableFormats = new()
-    {
-        "bmp",
-        "emf",
-        "exif",
-        "gif",
-        "icon",
-        "jpeg",
-        "memorybmp",
-        "tiff",
-        "wmf",
-        "png"
-    };
+    private readonly IImageFormatProvider formatProvider;
 
-    public static Result<ICustomOptions> ValidateOptions(CustomOptions options)
+    public CustomOptionsValidator(IImageFormatProvider formatProvider)
+    {
+        this.formatProvider = formatProvider;
+    }
+
+    public Result<ICustomOptions> ValidateOptions(CustomOptions options)
     {
 
         if (!Directory.Exists(options.WorkingDirectory))
@@ -46,7 +39,7 @@ public class CustomOptionsValidator
         var font = new Font(options.Font, 1);
         if (font.Name != options.Font)
             return Result.Fail<ICustomOptions>($"Font \"{options.Font}\" can't be found");
-        if (!acceptableFormats.Contains(options.ImageFormat.ToLower()))
+        if (!formatProvider.ValidateFormatName(options.ImageFormat))
             return Result.Fail<ICustomOptions>("Unsupported image format");
         return options.AsResult<ICustomOptions>();
     }

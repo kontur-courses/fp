@@ -17,25 +17,29 @@ public class Program
             .Build();
 
         var options = configuration.Get<CustomOptions>();
-        var validatorResult = CustomOptionsValidator.ValidateOptions(options);
-        if (!validatorResult.IsSuccess)
-        {
-            Console.WriteLine(validatorResult.Error);
-            return;
-        }
 
         var container = new ServiceCollection()
             .AddTransient<IConverter, FileToDictionaryConverter>()
             .AddSingleton<IDocParser, BudgetDocParser>()
             .AddTransient<IWordsFilter, WordsFilter>()
             .AddSingleton<ISpiralDrawer, SpiralDrawer>()
+            .AddSingleton<IImageFormatProvider, ImageFormatProvider>()
+            .AddSingleton<IOptionsValidator, CustomOptionsValidator>()
             .AddSingleton<IWordSizeCalculator, WordSizeCalculator>()
-            .AddTransient<IDrawer,CloudDrawer>()
+            .AddTransient<IDrawer, CloudDrawer>()
             .BuildServiceProvider();
+
+        var validator = container.GetService<IOptionsValidator>();
+        var validatorResult = validator.ValidateOptions(options);
+        if (!validatorResult.IsSuccess)
+        {
+            Console.WriteLine(validatorResult.Error);
+            return;
+        }
 
         var drawer = container.GetService<IDrawer>();
 
         var result = drawer.DrawCloud(options);
-        Console.WriteLine(result.IsSuccess? result.GetValueOrThrow():result.Error);
+        Console.WriteLine(result.IsSuccess ? result.GetValueOrThrow() : result.Error);
     }
 }

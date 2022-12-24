@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing;
 using CloudLayout;
 using CloudLayout.Interfaces;
 using TagsCloudContainer.Interfaces;
@@ -13,13 +11,15 @@ public class CloudDrawer : IDrawer
     private readonly ISpiralDrawer spiralDrawer;
     private readonly IConverter converter;
     private readonly IWordSizeCalculator calculator;
+    private readonly IImageFormatProvider formatProvider;
 
     public CloudDrawer(ISpiralDrawer spiralDrawer, IConverter converter,
-        IWordSizeCalculator calculator)
+        IWordSizeCalculator calculator, IImageFormatProvider formatProvider)
     {
         this.spiralDrawer = spiralDrawer;
         this.converter = converter;
         this.calculator = calculator;
+        this.formatProvider = formatProvider;
     }
 
     public Result<string> DrawCloud(string path, ICustomOptions options)
@@ -48,7 +48,7 @@ public class CloudDrawer : IDrawer
             graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.GetValueOrThrow().rectangle);
         }
 
-        var format = GetImageFormat(options.ImageFormat);
+        var format = formatProvider.GetFormat(options.ImageFormat);
         if (!format.IsSuccess)
             return resultDictionary.Error.AsResult();
         picture.Save(path, format.GetValueOrThrow());
@@ -60,23 +60,5 @@ public class CloudDrawer : IDrawer
         return DrawCloud(
             Path.Combine(options.WorkingDirectory,
                 string.Concat(options.ImageName, ".", options.ImageFormat.ToLower())), options);
-    }
-
-    private static Result<ImageFormat> GetImageFormat(string format)
-    {
-        return format.ToLower() switch
-        {
-            "png" => ImageFormat.Png.AsResult(),
-            "bmp" => ImageFormat.Bmp.AsResult(),
-            "emf" => ImageFormat.Emf.AsResult(),
-            "exif" => ImageFormat.Exif.AsResult(),
-            "gif" => ImageFormat.Gif.AsResult(),
-            "icon" => ImageFormat.Icon.AsResult(),
-            "jpeg" => ImageFormat.Jpeg.AsResult(),
-            "memorybmp" => ImageFormat.MemoryBmp.AsResult(),
-            "tiff" => ImageFormat.Tiff.AsResult(),
-            "wmf" => ImageFormat.Wmf.AsResult(),
-            _ => throw new ArgumentException("Image format unexpected conversion")
-        };
     }
 }

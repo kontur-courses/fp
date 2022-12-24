@@ -3,7 +3,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
 using TagsCloudContainer.Interfaces;
-using ResultOfTask;
 
 namespace TagsCloudContainerTests;
 
@@ -21,7 +20,8 @@ public class CloudDrawer_Should
         var converter = new FileToDictionaryConverter(new WordsFilter(), new BudgetDocParser());
         var calculator = new WordSizeCalculator();
         var spiralDrawer = new SpiralDrawer();
-        sut = new CloudDrawer(spiralDrawer, converter, calculator);
+        var formatProvider = new ImageFormatProvider();
+        sut = new CloudDrawer(spiralDrawer, converter, calculator, formatProvider);
 
         defaultOptions = GetDeafultResultOptions();
         firstPath = Path.Combine(defaultOptions.WorkingDirectory,
@@ -43,7 +43,7 @@ public class CloudDrawer_Should
             (defaultOptions.ImageName + "2." + defaultOptions.ImageFormat));
     }
 
-    private ICustomOptions GetDeafultResultOptions()
+    private static ICustomOptions GetDeafultResultOptions()
     {
         return new CustomOptions
         {
@@ -72,7 +72,7 @@ public class CloudDrawer_Should
 
     [TestCase("png")]
     [TestCase("jpeg")]
-    public void DrawAPNGPicture(string format)
+    public void DrawPngPicture(string format)
     {
         defaultOptions.ImageFormat = format;
         sut.DrawCloud(firstPath, defaultOptions);

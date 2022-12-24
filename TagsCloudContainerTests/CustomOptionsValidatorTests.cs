@@ -7,6 +7,7 @@ namespace TagsCloudContainerTests;
 public class CustomOptionsValidatorTests
 {
     private CustomOptions options;
+    private CustomOptionsValidator sut;
 
     [SetUp]
     public void Setup()
@@ -24,12 +25,13 @@ public class CustomOptionsValidatorTests
             FontColor = "Blue",
             ImageFormat = "png"
         };
+        sut = new CustomOptionsValidator(new ImageFormatProvider());
     }
 
     [Test]
     public void ValidateConfig_AddPreSetOptions_ShouldReturnValidResult()
     {
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -39,7 +41,7 @@ public class CustomOptionsValidatorTests
     {
         options.FontColor = "white";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -49,7 +51,7 @@ public class CustomOptionsValidatorTests
     {
         options.WorkingDirectory = "";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("WorkingDirectory folder does not exist in root directory");
         result.IsSuccess.Should().BeFalse();
@@ -60,7 +62,7 @@ public class CustomOptionsValidatorTests
     {
         options.WordsFileName = "";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with words to draw");
         result.IsSuccess.Should().BeFalse();
@@ -71,7 +73,7 @@ public class CustomOptionsValidatorTests
     {
         options.BoringWordsName = "";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with excluded words");
         result.IsSuccess.Should().BeFalse();
@@ -83,7 +85,7 @@ public class CustomOptionsValidatorTests
     {
         options.Font = font;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be($"Font \"{font}\" can't be found");
         result.IsSuccess.Should().BeFalse();
@@ -95,7 +97,7 @@ public class CustomOptionsValidatorTests
     {
         options.PictureSize = size;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Picture size should be above 0");
         result.IsSuccess.Should().BeFalse();
@@ -107,7 +109,7 @@ public class CustomOptionsValidatorTests
     {
         options.MinTagSize = size;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Font size should be above 0");
         result.IsSuccess.Should().BeFalse();
@@ -119,7 +121,7 @@ public class CustomOptionsValidatorTests
     {
         options.FontColor = font;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Invalid font color");
         result.IsSuccess.Should().BeFalse();
@@ -131,7 +133,7 @@ public class CustomOptionsValidatorTests
     {
         options.BackgroundColor = font;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Invalid backgroud color");
         result.IsSuccess.Should().BeFalse();
@@ -144,7 +146,7 @@ public class CustomOptionsValidatorTests
     {
         options.MaxTagSize = size;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Font size should be less than picture size");
         result.IsSuccess.Should().BeFalse();
@@ -156,7 +158,7 @@ public class CustomOptionsValidatorTests
     {
         options.ImageFormat = format;
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -166,7 +168,7 @@ public class CustomOptionsValidatorTests
     {
         options.ImageFormat = "ping";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be("Unsupported image format");
         result.IsSuccess.Should().BeFalse();
@@ -177,7 +179,7 @@ public class CustomOptionsValidatorTests
     {
         options.WorkingDirectory = "c:\\Windows\\System32";
 
-        var result = CustomOptionsValidator.ValidateOptions(options);
+        var result = sut.ValidateOptions(options);
 
         result.Error.Should().Be($"Mystem.exe not found in {options.WorkingDirectory} folder");
         result.IsSuccess.Should().BeFalse();
