@@ -20,10 +20,10 @@ namespace TagsCloudVisualization.Infrastructure.Algorithm
 
         public Rectangle[] Rectangles => rectangles.ToArray();
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException("size cannot be less than or equal to zero");
+                return Result.Fail<Rectangle>("size cannot be less than or equal to zero");
 
             var nextRectangle = new Rectangle(GetCenterPointRectangle(center, rectangleSize),
                 rectangleSize);
@@ -38,7 +38,7 @@ namespace TagsCloudVisualization.Infrastructure.Algorithm
             }
 
             rectangles.Add(nextRectangle);
-            return nextRectangle;
+            return Result.Ok(nextRectangle);
         }
 
         private static Point GetCenterPointRectangle(Point location, Size size)

@@ -35,7 +35,7 @@ namespace TagsCloudTests
         public void ReturnFirstRectangle_ShouldBeInCenter()
         {
             var sizeRectangle = new Size(110, 110);
-            var r = cloud.PutNextRectangle(sizeRectangle);
+            var r = cloud.PutNextRectangle(sizeRectangle).GetValueOrThrow();
 
             var expected = new Point(center.X - sizeRectangle.Width / 2,
                 center.Y - sizeRectangle.Height / 2);
@@ -56,8 +56,8 @@ namespace TagsCloudTests
         {
             var size = new Size(width, height);
 
-            Action action = () => cloud.PutNextRectangle(size);
-            action.Should().Throw<ArgumentException>();
+            var result = cloud.PutNextRectangle(size);
+            result.IsSuccess.Should().BeFalse();
         }
 
 
@@ -81,8 +81,8 @@ namespace TagsCloudTests
             int firstWidth, int firstHeight,
             int secondWidth, int secondHeight)
         {
-            var r1 = cloud.PutNextRectangle(new Size(firstWidth, firstHeight));
-            var r2 = cloud.PutNextRectangle(new Size(secondWidth, secondHeight));
+            var r1 = cloud.PutNextRectangle(new Size(firstWidth, firstHeight)).GetValueOrThrow();
+            var r2 = cloud.PutNextRectangle(new Size(secondWidth, secondHeight)).GetValueOrThrow();
 
             r1.AreIntersected(r2).Should().BeFalse();
         }
@@ -99,8 +99,8 @@ namespace TagsCloudTests
         public void ReturnTwoRectangles_AreShouldBeClose(int width, int height, double expectedDistance)
         {
             var sizeRectangle = new Size(width, height);
-            var r1 = cloud.PutNextRectangle(sizeRectangle);
-            var r2 = cloud.PutNextRectangle(sizeRectangle);
+            var r1 = cloud.PutNextRectangle(sizeRectangle).GetValueOrThrow();
+            var r2 = cloud.PutNextRectangle(sizeRectangle).GetValueOrThrow();
 
             var distance = Math.Sqrt(Math.Pow(r1.Location.X - r2.Location.X, 2)
                                      + Math.Pow(r1.Location.Y - r2.Location.Y, 2));
@@ -146,7 +146,7 @@ namespace TagsCloudTests
             var countIn = 0;
             var size = new Size(weightRectangle, heightRectangle);
             for (var i = 0; i < countRectangles; i++)
-                countIn += cloud.PutNextRectangle(size).NestedIn(area) ? 1 : 0;
+                countIn += cloud.PutNextRectangle(size).GetValueOrThrow().NestedIn(area) ? 1 : 0;
 
             ((double)countIn / countRectangles).Should().BeGreaterThan(density);
         }

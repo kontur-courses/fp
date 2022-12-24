@@ -76,7 +76,9 @@ namespace TagsCloudVisualization.InfrastructureUI.Painters
                 var sizeRectangle = TextRenderer.MeasureText(word.Word, word.Font);
                 sizeRectangle.Width++;
                 sizeRectangle.Height++;
-                var r = Result.Of(() => cloud.PutNextRectangle(sizeRectangle));
+                var r = cloud.PutNextRectangle(sizeRectangle);
+                if (!r.IsSuccess)
+                    return Result.Fail<None>(r.Error);
 
                 if (!r.IsSuccess || IsOutsideImage(r.Value, imageSize))
                     return Result.Fail<None>(r.IsSuccess
@@ -96,8 +98,10 @@ namespace TagsCloudVisualization.InfrastructureUI.Painters
 
         private static bool IsOutsideImage(Rectangle rectangle, Size imageSize)
         {
-            return rectangle.X < 0 || rectangle.Y < 0
-                                   || rectangle.Right > imageSize.Width || rectangle.Bottom > imageSize.Height;
+            return rectangle.X < 0
+                   || rectangle.Y < 0
+                   || rectangle.Right > imageSize.Width
+                   || rectangle.Bottom > imageSize.Height;
         }
     }
 }
