@@ -2,7 +2,7 @@
 
 namespace TagCloudResult.Extensions;
 
-public static class PointExtensions
+public static class RectangleExtensions
 {
     public static Point GetCenter(this Rectangle rectangle)
     {
