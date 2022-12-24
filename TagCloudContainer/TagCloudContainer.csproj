@@ -92,7 +92,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="BoringWordsDeleter.cs" />
-        <Compile Include="CircularCloudDrawer.cs" />
+        <Compile Include="CloudDrawer.cs" />
         <Compile Include="FileReaders\FileReaderFactory.cs" />
         <Compile Include="FileReaders\IFileReader.cs" />
         <Compile Include="FileReaders\TxtReader.cs" />
@@ -112,6 +112,7 @@
         <Compile Include="Result\Result.cs" />
         <Compile Include="ScaleCoefficientCalculator.cs" />
         <Compile Include="Spiral.cs" />
+        <Compile Include="UI\Configuration.cs" />
         <Compile Include="UI\ConsoleUiSettings.cs" />
         <Compile Include="UI\IUi.cs" />
         <Compile Include="WordsColoringAlgorithms\DefaultWordsPainter.cs" />

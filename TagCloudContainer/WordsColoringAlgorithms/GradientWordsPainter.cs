@@ -7,21 +7,18 @@ namespace TagCloudContainer.WordsColoringAlgorithms
 {
     public class GradientWordsPainter : IWordsPainter
     {
-        public Result<Color[]> GetColorsSequence(Dictionary<string, int> frequencyDictionary, Color startColor)
+        public Dictionary<string, Color> GetWordColorDictionary(Dictionary<string, int> frequencyDictionary, Color startColor)
         {
+            var result = new Dictionary<string, Color>();
             if (frequencyDictionary.Count == 0)
-                return new Result<Color[]>("Brush color mistake");
-            var counter = 0;
-            var colors = new Color[frequencyDictionary.Count];
-            while (counter < frequencyDictionary.Count)
+                return result;
+            foreach (var pair in frequencyDictionary)
             {
                 var resultA = startColor.A - 10 > 0 ? startColor.A - 10 : 0;
                 startColor = Color.FromArgb(resultA, startColor.R, startColor.G, startColor.B);
-                colors[counter] = startColor;
-                counter++;
+                result[pair.Key] = startColor;
             }
-
-            return new Result<Color[]>(null, colors);
+            return result;
         }
     }
 }

@@ -52,8 +52,8 @@ namespace TagsCloudContainerTests
         public void PutNextRectangle_ShouldThrowArgumentException_OnIncorrectInput(int x, int y)
         {
             var size = new Size(x, y);
-            Action act = () => layouter.PutNextRectangle(size);
-            act.Should().Throw<ArgumentException>().WithMessage("Wrong size of rectangle");
+            var rectangle = layouter.PutNextRectangle(size);
+            rectangle.Error.Should().Be("Incorrect size of rectangle");
         }
 
         [TestCase(0, 3, TestName = "X = 0, Y > 0")]

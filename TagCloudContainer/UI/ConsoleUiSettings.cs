@@ -43,10 +43,10 @@ namespace TagCloudContainer.UI
         [Option('b', "border", Required = false, Default = 150, HelpText = "Borders of canvas")]
         public int CanvasBorder { get; set; }
 
-        [Option('r', "radius", Required = false, Default = 0.1, HelpText = "Radius offset")]
+        [Option('r', "radius", Required = false, Default = 1, HelpText = "Radius offset")]
         public double RadiusOffset { get; set; }
 
-        [Option('a', "angle", Required = false, Default = 0.1, HelpText = "Angle offset")]
+        [Option('a', "angle", Required = false, Default = 1, HelpText = "Angle offset")]
         public double AngleOffset { get; set; }
 
         [Option('e', "coloring", Required = false, Default = "gd",

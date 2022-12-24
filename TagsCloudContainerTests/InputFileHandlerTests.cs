@@ -38,8 +38,8 @@ namespace TagsCloudContainerTests
             fs.Write(bytes, 0, bytes.Length);
             fs.Dispose();
 
-            var result = InputFileHandler.FormFrequencyDictionary(words, settings);
-            result.Should().BeEquivalentTo(new Dictionary<string, int> {{"mary", 2}, {"bloody", 1}, {"june", 1}});
+            var result = InputFileHandler.FormFrequencyDictionary(words);
+            result.Value.Should().BeEquivalentTo(new Dictionary<string, int> {{"mary", 2}, {"bloody", 1}, {"june", 1}});
         }
     }
 }

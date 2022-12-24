@@ -7,15 +7,15 @@ namespace TagCloudContainer.WordsColoringAlgorithms
 {
     public class DefaultWordsPainter : IWordsPainter
     {
-        public Result<Color[]> GetColorsSequence(Dictionary<string, int> frequencyDictionary, Color startColor)
+        public Dictionary<string, Color> GetWordColorDictionary(Dictionary<string, int> frequencyDictionary,
+            Color startColor)
         {
-            var wordsCount = frequencyDictionary.Count;
-            if (wordsCount == 0 || startColor.IsEmpty)
-                return new Result<Color[]>("Brush color mistake");
-            var colors = new Color[wordsCount];
-            for (var i = 0; i < wordsCount; i++)
-                colors[i] = startColor;
-            return new Result<Color[]>(null, colors);
+            var result = new Dictionary<string, Color>();
+            if (frequencyDictionary.Count == 0)
+                return result;
+            foreach (var pair in frequencyDictionary)
+                result[pair.Key] = startColor;
+            return result;
         }
     }
 }

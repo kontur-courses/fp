@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using CommandLine;
 using TagCloudContainer.FileReaders;
 using TagCloudContainer.FileSavers;
@@ -21,11 +20,10 @@ namespace TagCloudContainer
                 : app;
             RegisterDependencies(builder, parsedArguments);
             var container = builder.Build();
-            CircularCloudDrawer.DrawWords(container.Resolve<WordsColoringFactory>(),
+            var configuration = new Configuration(parsedArguments, container.Resolve<WordsColoringFactory>(),
                 container.Resolve<FileSaverFactory>(),
-                container.Resolve<FileReaderFactory>(),
-                parsedArguments,
-                container.Resolve<LayouterFactory>());
+                container.Resolve<FileReaderFactory>(), container.Resolve<LayouterFactory>());
+            CloudDrawer.DrawWords(configuration, parsedArguments);
         }
 
         private static void RegisterDependencies(ContainerBuilder builder, IUi parsedArguments)
