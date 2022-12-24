@@ -1,11 +1,10 @@
 ﻿using System.Drawing;
 
-namespace CloudLayout.Interfaces
-{
-    public interface IInputOptions
-    {
-        Point CenterPoint { get; set; }
+namespace CloudLayout.Interfaces;
 
-        int Size { get; set; }
-    }
+public interface IInputOptions
+{
+    Point CenterPoint { get; set; }
+
+    int Size { get; set; }
 }

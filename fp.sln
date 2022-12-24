@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainer", "TagsC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagsCloudContainerTests", "TagsCloudContainerTests\TagsCloudContainerTests.csproj", "{88EB89A0-825B-4A64-8D46-F8F3ABED25F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Result", "Result\Result.csproj", "{D7AE729B-F548-41AE-886E-D9E0CC480CE8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{88EB89A0-825B-4A64-8D46-F8F3ABED25F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88EB89A0-825B-4A64-8D46-F8F3ABED25F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88EB89A0-825B-4A64-8D46-F8F3ABED25F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7AE729B-F548-41AE-886E-D9E0CC480CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7AE729B-F548-41AE-886E-D9E0CC480CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7AE729B-F548-41AE-886E-D9E0CC480CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7AE729B-F548-41AE-886E-D9E0CC480CE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

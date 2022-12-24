@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 
-namespace CloudLayout.Interfaces
+namespace CloudLayout.Interfaces;
+
+public interface ISpiralDrawer
 {
-    public interface ISpiralDrawer
-    {
-        List<PointF> GetSpiralPoints(Point center);
-    }
+    IEnumerable<PointF> GetSpiralPoints(Point center);
 }
