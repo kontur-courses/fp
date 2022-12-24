@@ -6,10 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Autofac;
-using DeepMorphy;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Newtonsoft.Json.Bson;
 using NUnit.Framework;
 using TagsCloudContainer.Algorithm;
 using TagsCloudContainer.Extensions;
@@ -51,16 +48,45 @@ namespace TagCloudContainerTests
             wordsCounter = container.Resolve<IWordsCounter>();
         }
 
-        [TestCase(new object[] { "Сл ово" }, new object[] { "чело век" })]
-        public void ParserThrowExc_ThanWhiteSpacesInWords(object[] sourceFileText, object[] boringWordsFileText)
+        [Test]
+        public void ParserReturnsResultFail_WhenFileDontExist()
         {
-            FillSourceFile("source.txt", sourceFileText.Cast<string>());
-            FillSourceFile("boring.txt", boringWordsFileText.Cast<string>());
-            var act1 = () => parser.CountWordsInFile(fileSettings.SourceFilePath);
-            var act2 = () => parser.FindWordsInFile(fileSettings.CustomBoringWordsFilePath);
+            var path = PathToProj + "rnd.asd";
+            if (File.Exists(path))
+                File.Delete(path);
+            var wordsCountResult = parser.CountWordsInFile(path);
+            var wordsResult = parser.FindWordsInFile(path);
 
-            act1.Should().Throw<ArgumentException>();
-            act2.Should().Throw<ArgumentException>();
+            wordsCountResult.IsSuccess.Should().BeFalse();
+            wordsCountResult.Error.Should().Be("Файла не существует");
+            wordsResult.IsSuccess.Should().BeFalse();
+            wordsResult.Error.Should().Be("Файла не существует");
+        }
+
+        [Test]
+        public void ParserReturnsResultFail_WhenWhiteSpacesInWords()
+        {
+            FillSourceFile("source.txt", new[] { "Сл ово" });
+            FillSourceFile("boring.txt", new[] { "чело век" });
+            var wordsCountResult = parser.CountWordsInFile(fileSettings.SourceFilePath);
+            var wordsResult = parser.FindWordsInFile(fileSettings.CustomBoringWordsFilePath);
+
+            wordsCountResult.IsSuccess.Should().BeFalse();
+            wordsCountResult.Error.Should().Be("Файл некорректен (содержит пробелы в словах)");
+            wordsResult.IsSuccess.Should().BeFalse();
+            wordsResult.Error.Should().Be("Файл некорректен (содержит пробелы в словах)");
+        }
+
+        [Test]
+        public void WordsCounterResultErrorsContainsRefines_WhenFails()
+        {
+            FillSourceFile("source.txt", new[] { "Сл ово" });
+            FillSourceFile("boring.txt", new[] { "чело век" });
+            var wordsResult = wordsCounter.CountWords(fileSettings.SourceFilePath,
+                fileSettings.CustomBoringWordsFilePath);
+
+            wordsResult.IsSuccess.Should().BeFalse();
+            wordsResult.Error.Should().ContainAll(new[] {"Источник слов", "Источник скучных слов" });
         }
 
         [TestCase(new object[] {"a","a"}, 1)]
@@ -71,7 +97,7 @@ namespace TagCloudContainerTests
             FillSourceFile("source.txt", sourceFileText.Cast<string>());
             var res = parser.CountWordsInFile(fileSettings.SourceFilePath);
 
-            res.Count.Should().Be(expectedCount);
+            res.Value.Count.Should().Be(expectedCount);
         }
 
         [TestCase(new object[] { "слово", "a" }, 1)]
@@ -87,7 +113,7 @@ namespace TagCloudContainerTests
             var res = wordsCounter.CountWords(fileSettings.SourceFilePath, 
                 fileSettings.CustomBoringWordsFilePath);
 
-            res.Count.Should().Be(expectedCount);
+            res.Value.Count.Should().Be(expectedCount);
         }
 
         [Test]
@@ -98,7 +124,7 @@ namespace TagCloudContainerTests
             var res = wordsCounter.CountWords(fileSettings.SourceFilePath,
                 fileSettings.CustomBoringWordsFilePath);
 
-            res.Count.Should().Be(1);
+            res.Value.Count.Should().Be(1);
         }
 
         [Test]
@@ -109,9 +135,9 @@ namespace TagCloudContainerTests
             var res1 = parser.CountWordsInFile(fileSettings.SourceFilePath);
             var res2 = parser.FindWordsInFile(fileSettings.CustomBoringWordsFilePath);
 
-            res1.ContainsKey("слово").Should().BeTrue();
-            res1.ContainsKey("чeловек").Should().BeTrue();
-            res2.Contains("скучный").Should().BeTrue();
+            res1.Value.ContainsKey("слово").Should().BeTrue();
+            res1.Value.ContainsKey("чeловек").Should().BeTrue();
+            res2.Value.Contains("скучный").Should().BeTrue();
         }
 
         [TestCase(new object[0], new object[0], 0)]
@@ -170,7 +196,9 @@ namespace TagCloudContainerTests
         {
             var words = wordsCounter.CountWords(fileSettings.SourceFilePath,
                 fileSettings.CustomBoringWordsFilePath);
-            return cloudLayouter.FindRectanglesPositions(imageSettings.Width, imageSettings.Height, words);
+            return cloudLayouter
+                .FindRectanglesPositions(imageSettings.Width, imageSettings.Height, words.Value)
+                    .Value;
         }
 
         private void FillSourceFile(string filename, IEnumerable<string> text)
