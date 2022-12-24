@@ -6,7 +6,7 @@ namespace TagCloudResult.Words;
 
 public class TextFormatter
 {
-    public Result<IList<Word>> Format(string text)
+    public Result<IEnumerable<Word>> Format(string text)
     {
         return Result.Ok(text)
             .Then(RemovePunctuations)
@@ -27,24 +27,23 @@ public class TextFormatter
         return text.ToLower();
     }
 
-    private IList<Word> GetAllWordsFromText(string text)
+    private IEnumerable<Word> GetAllWordsFromText(string text)
     {
         var allWords = text.Split(Environment.NewLine);
 
         var words = allWords
             .CountBy(word => word)
             .Select(wordsWithAmount =>
-                new Word(wordsWithAmount.Key, (float)wordsWithAmount.Value / allWords.Length))
-            .ToList();
+                new Word(wordsWithAmount.Key, (float)wordsWithAmount.Value / allWords.Length));
         return words;
     }
 
-    private IList<Word> RemoveEmptyWords(IList<Word> words)
+    private IEnumerable<Word> RemoveEmptyWords(IEnumerable<Word> words)
     {
         return words.Where(word => string.IsNullOrWhiteSpace(word.Value) == false).ToList();
     }
 
-    private IList<Word> StripAllWords(IList<Word> words)
+    private IEnumerable<Word> StripAllWords(IEnumerable<Word> words)
     {
         foreach (var word in words)
             word.Value = word.Value.Trim();

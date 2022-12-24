@@ -24,10 +24,11 @@ public class Client
     {
         var wordRectangles = new List<WordRectangle>();
         var fontSize = font.Size;
+        using var wordMeasurer = new WordMeasurer();
         foreach (var word in words.OrderByDescending(word => word.Frequency))
         {
             var wordRectangle = Result.Of(() => font.ChangeSize(fontSize * word.Frequency))
-                .Then(word.MeasureWord)
+                .Then(font => wordMeasurer.MeasureWord(word, font))
                 .Then(rectangleSize => _layouter.PutRectangle(curve, rectangleSize))
                 .Then(rectangle => new WordRectangle(word) { Rectangle = rectangle })
                 .OnFail(PrintError);
