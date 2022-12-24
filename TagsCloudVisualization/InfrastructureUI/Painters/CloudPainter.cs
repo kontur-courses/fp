@@ -77,9 +77,6 @@ namespace TagsCloudVisualization.InfrastructureUI.Painters
                 sizeRectangle.Width++;
                 sizeRectangle.Height++;
                 var r = cloud.PutNextRectangle(sizeRectangle);
-                if (!r.IsSuccess)
-                    return Result.Fail<None>(r.Error);
-
                 if (!r.IsSuccess || IsOutsideImage(r.Value, imageSize))
                     return Result.Fail<None>(r.IsSuccess
                         ? string.Join(Environment.NewLine, "облако вышло за границы изображения,",
