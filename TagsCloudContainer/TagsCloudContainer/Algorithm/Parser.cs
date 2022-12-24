@@ -6,31 +6,38 @@ namespace TagsCloudContainer.Algorithm
 {
     public class Parser : IParser
     {
-        public Dictionary<string, int> CountWordsInFile(string pathToFile)
+        public Result<Dictionary<string, int>> CountWordsInFile(string pathToFile)
         {
+            if (!File.Exists(pathToFile))
+                return Result.Fail<Dictionary<string, int>>("Файла не существует");
+
             var wordsCount = new Dictionary<string, int>();
             using var reader = new StreamReader(pathToFile);
             while (reader.ReadLine()?.Trim().ToLower() is { } line)
             {
                 if (line.Any(char.IsWhiteSpace))
-                    throw new ArgumentException("Файл некорректен (содержит пробелы в словах)");
+                    return Result.Fail<Dictionary<string, int>>("Файл некорректен (содержит пробелы в словах)");
                 wordsCount[line] = wordsCount.ContainsKey(line) ? wordsCount[line] + 1 : 1;
             }
 
-            return wordsCount;
+            return Result.Ok(wordsCount);
         }
 
-        public HashSet<string> FindWordsInFile(string pathToFile)
+        public Result<HashSet<string>> FindWordsInFile(string pathToFile)
         {
+            if (!File.Exists(pathToFile))
+                return Result.Fail<HashSet<string>>("Файла не существует");
+
             var words = new HashSet<string>();
             using var reader = new StreamReader(pathToFile);
             while (reader.ReadLine()?.Trim().ToLower() is { } line)
             {
                 if (line.Any(char.IsWhiteSpace))
-                    throw new ArgumentException("Файл некорректен (содержит пробелы в словах)");
+                    return Result.Fail<HashSet<string>>("Файл некорректен (содержит пробелы в словах)");
                 words.Add(line);
             }
-            return words;
+
+            return Result.Ok(words);
         }
     }
 }

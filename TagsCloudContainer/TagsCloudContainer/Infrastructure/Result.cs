@@ -57,7 +57,6 @@ namespace TagsCloudContainer.Infrastructure
             Func<TInput, TOutput> continuation)
         {
             return Of(() => continuation(input.GetValueOrThrow()));
-            //return input.Then()
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DeepMorphy;
 using TagsCloudContainer.Extensions;
+using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.Algorithm
 {
@@ -20,19 +21,25 @@ namespace TagsCloudContainer.Algorithm
             this.parser = parser;
         }
 
-        public Dictionary<string, int> CountWords(string pathToSource, string pathToCustomBoringWords)
+        public Result<Dictionary<string, int>> CountWords(string pathToSource, string pathToCustomBoringWords)
         {
-            var words = parser.CountWordsInFile(pathToSource);
-            var customBoringWords = parser.FindWordsInFile(pathToCustomBoringWords);
+            var wordsCount = parser
+                .CountWordsInFile(pathToSource)
+                .RefineError("Источник слов");
+            var customBoringWords = parser
+                .FindWordsInFile(pathToCustomBoringWords)
+                .RefineError("Источник скучных слов");
             var notBoringTypes = new[] { "сущ", "прил", "гл" };
 
-            return words
-                .Where(pair =>
-                    !customBoringWords.Contains(pair.Key) && 
-                    notBoringTypes.Any(type =>
-                        morph.GetGrams(pair.Key)["чр"].Contains(type)))
-                .OrderByDescending(pair => pair.Value)
-                .ToDictionary(e => e.Key, e => e.Value);
+            return !wordsCount.IsSuccess || !customBoringWords.IsSuccess ? 
+                Result.Fail<Dictionary<string, int>>(wordsCount.Error + customBoringWords.Error) 
+                : Result.Ok(wordsCount.Value
+                    .Where(pair =>
+                        !customBoringWords.Value.Contains(pair.Key) && 
+                        notBoringTypes.Any(type =>
+                            morph.GetGrams(pair.Key)["чр"].Contains(type)))
+                    .OrderByDescending(pair => pair.Value)
+                    .ToDictionary(e => e.Key, e => e.Value));
 
         }
     }

@@ -51,11 +51,27 @@ namespace TagsCloudContainer.Services
             return "";
         }
 
-        public void DrawImage(string sourceFilePath, string customboringFilePath, int imgWidth, int imgHeight)
+        public void DrawImage(string sourceFilePath, string customBoringFilePath, int imgWidth, int imgHeight)
         {
-            var wordsCount = wordscounter.CountWords(sourceFilePath, 
-                customboringFilePath);
-            painter.Paint(cloudLayouter.FindRectanglesPositions(imgWidth, imgHeight, wordsCount));
+            var wordsCountResult = wordscounter.CountWords(sourceFilePath, 
+                customBoringFilePath);
+
+            if (!wordsCountResult.IsSuccess)
+            {
+                MessageBox.Show(wordsCountResult.Error);
+                return;
+            }
+
+            var rectanglesResult = cloudLayouter
+                .FindRectanglesPositions(imgWidth, imgHeight, wordsCountResult.Value);
+
+            if (!rectanglesResult.IsSuccess)
+            {
+                MessageBox.Show(rectanglesResult.Error);
+                return;
+            }
+
+            painter.Paint(rectanglesResult.Value);
         }
 
         public void SaveImage(string filePath)

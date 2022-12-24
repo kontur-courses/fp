@@ -27,7 +27,7 @@ namespace TagsCloudContainer.Algorithm
             rectangles = new List<(Rectangle rectangle, string text)>();
         }
 
-        public List<(Rectangle rectangle, string text)> FindRectanglesPositions(int imgWidth, int imgHeight,
+        public Result<List<(Rectangle rectangle, string text)>> FindRectanglesPositions(int imgWidth, int imgHeight,
             Dictionary<string, int> wordsCount)
         {
             rectangles.Clear();
@@ -37,10 +37,12 @@ namespace TagsCloudContainer.Algorithm
             foreach (var pair in wordsCount)
             {
                 var size = CalculateRectangleSize(pair.Value, sumWords);
-                rectangles.Add((GetNextRectangle(size), pair.Key));
+                rectangles.Add((GetNextRectangle(size).Value, pair.Key));
             }
 
-            return rectangles;
+            return rectangles.All(pair => pair.rectangle.FitsIn(imgWidth, imgHeight)) ?
+                Result.Ok(rectangles)
+                : Result.Fail<List<(Rectangle rectangle, string text)>>("Картинка слишком мала");
         }
 
         private Size CalculateRectangleSize(int wordCount, int totalWordsCount)
@@ -50,13 +52,14 @@ namespace TagsCloudContainer.Algorithm
                 (int)(Center.X * 2 * 0.7 * proc * 0.5));
         }
 
-        private Rectangle GetNextRectangle(Size rectangleSize)
+        private Result<Rectangle> GetNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException("only positive size");
+                return Result.Fail<Rectangle>("Размеры не могут быть отрицательными");
+
             var rect = FindFreePlaceForNewRectangle(rectangleSize);
             TryMoveRectangleCloserToCenter(ref rect);
-            return rect;
+            return Result.Ok(rect);
         }
 
         private void TryMoveRectangleCloserToCenter(ref Rectangle rect)
