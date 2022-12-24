@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer
@@ -29,11 +29,11 @@ namespace TagCloudContainer
         public IEnumerable<Result<Point>> GetPoints()
         {
             if (angleOffset > 1 || angleOffset < -1)
-                yield return new Result<Point>("Invalid angle offset");
+                yield return Result.OnFail<Point>("Invalid angle offset");
             if (radiusOffset > 1 || radiusOffset < -1)
-                yield return new Result<Point>("Invalid radius offset");
+                yield return Result.OnFail<Point>("Invalid radius offset");
             foreach (var point in usedPoints)
-                yield return point;
+                yield return Result.OnSuccess(point);
             while (true)
             {
                 radius += radiusOffset;
@@ -41,7 +41,7 @@ namespace TagCloudContainer
                 var x = center.X + (int) Math.Round(radius * Math.Cos(angle));
                 var y = center.Y + (int) Math.Round(radius * Math.Sin(angle));
                 usedPoints.Add(new Point(x, y));
-                yield return new Result<Point>(null, new Point(x, y));
+                yield return Result.OnSuccess(new Point(x, y));
             }
         }
     }

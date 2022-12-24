@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer
@@ -9,9 +9,9 @@ namespace TagCloudContainer
     {
         public static Result<IEnumerable<string>> DeleteBoringWords(IEnumerable<string> words)
         {
-            if (!words.Any())
-                return new Result<IEnumerable<string>>("Empty file");
-            return new Result<IEnumerable<string>>(null, words.Where(word => word.Length > 3));
+            return !words.Any(str => str.Length > 0)
+                ? Result.OnFail<IEnumerable<string>>("Empty file")
+                : Result.OnSuccess<IEnumerable<string>>(words.Where(word => word.Length > 3));
         }
     }
 }

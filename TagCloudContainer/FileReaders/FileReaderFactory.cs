@@ -1,5 +1,6 @@
 using System;
-using TagCloudContainer.Result;
+using TagCloudContainer.FileSavers;
+using TagCloudContainer.TaskResult;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer.FileReaders
@@ -20,8 +21,8 @@ namespace TagCloudContainer.FileReaders
             var format = actualSettings.PathToOpen.Substring(index + 1);
             return format switch
             {
-                "txt" => new Result<IFileReader>(null, new TxtReader()),
-                _ => new Result<IFileReader>("Wrong path to open")
+                "txt" => Result.OnSuccess(new TxtReader() as IFileReader),
+                _ => Result.OnFail<IFileReader>("Wrong path to open")
             };
         }
     }

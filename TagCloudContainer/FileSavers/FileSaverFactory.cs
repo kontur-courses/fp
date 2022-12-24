@@ -1,6 +1,6 @@
 using System;
 using TagCloudContainer.FileReaders;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 using TagCloudContainer.UI;
 
 namespace TagCloudContainer.FileSavers
@@ -19,11 +19,11 @@ namespace TagCloudContainer.FileSavers
             var actualSettings = settingsProvider.Invoke();
             return actualSettings.FormatToSave switch
             {
-                "png" => new Result<IFileSaver>(null, new PngSaver()),
-                "jpeg" => new Result<IFileSaver>(null, new JpegSaver()),
-                "gif" => new Result<IFileSaver>(null, new GifSaver()),
-                "bmp" => new Result<IFileSaver>(null, new BmpSaver()),
-                _ => new Result<IFileSaver>("Wrong file format")
+                "png" => Result.OnSuccess(new PngSaver() as IFileSaver),
+                "jpeg" => Result.OnSuccess(new JpegSaver() as IFileSaver),
+                "gif" => Result.OnSuccess(new GifSaver() as IFileSaver),
+                "bmp" => Result.OnSuccess(new BmpSaver() as IFileSaver),
+                _ => Result.OnFail<IFileSaver>("Wrong file format")
             };
         }
     }

@@ -1,15 +1,16 @@
+using System;
 using System.Drawing;
 using TagCloudContainer.FileReaders;
 using TagCloudContainer.FileSavers;
 using TagCloudContainer.LayouterAlgorithms;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 using TagCloudContainer.WordsColoringAlgorithms;
 
 namespace TagCloudContainer.UI
 {
     public class Configuration
     {
-        public Result<int> Coefficient { get; }
+        public int Coefficient { get; }
         public Result<Color> BackgroundColor { get; }
         public Result<Color> BrushColor { get; }
         public Result<IFileSaver> FileSaver { get; }
@@ -31,37 +32,36 @@ namespace TagCloudContainer.UI
             LayouterFactory layouterFactory)
         {
             AngleOffset = settings.AngleOffset > 1 || settings.AngleOffset < 0
-                ? new Result<double>("Invalid angle offset")
-                : new Result<double>(null, settings.AngleOffset);
+                ? Result.OnFail<double>("Invalid angle offset")
+                : Result.OnSuccess<double>(settings.AngleOffset);
             RadiusOffset = settings.RadiusOffset > 1 || settings.RadiusOffset < 0
-                ? new Result<double>("Invalid radius offset")
-                : new Result<double>(null, settings.RadiusOffset);
+                ? Result.OnFail<double>("Invalid radius offset")
+                : Result.OnSuccess<double>(settings.AngleOffset);
             CanvasWidth = settings.CanvasWidth < settings.CanvasBorder * 2
-                ? new Result<int>("Too small canvas width")
-                : new Result<int>(null, settings.CanvasWidth);
+                ? Result.OnFail<int>("Invalid canvas width")
+                : Result.OnSuccess<int>(settings.CanvasWidth);
             CanvasHeight = settings.CanvasHeight < settings.CanvasBorder * 2
-                ? new Result<int>("Too small canvas height")
-                : new Result<int>(null, settings.CanvasHeight);
-            CanvasBorder = settings.CanvasBorder > 0
-                ? new Result<int>(null, settings.CanvasBorder)
-                : new Result<int>("Borders can't be less than zero");
+                ? Result.OnFail<int>("Invalid canvas height")
+                : Result.OnSuccess<int>(settings.CanvasWidth);
+            CanvasBorder = settings.CanvasBorder >= 0
+                ? Result.OnSuccess(settings.CanvasBorder)
+                : Result.OnFail<int>("Borders can't be less than zero");
             PathToSave = settings.PathToSave.Length > 0
-                ? new Result<string>(null, settings.PathToSave)
-                : new Result<string>("Empty path to save");
-            Coefficient = ScaleCoefficientCalculator.CalculateScaleCoefficient(settings.CanvasWidth,
-                settings.CanvasHeight, settings.CanvasBorder);
-            BackgroundColor = GetColorFromString(settings.BackGroundColor);
-            BrushColor = GetColorFromString(settings.BrushColor);
+                ? Result.OnSuccess(settings.PathToSave)
+                : Result.OnFail<string>("Empty path to save");
+            Coefficient = ScaleCoefficientCalculator.CalculateScaleCoefficient(settings.CanvasWidth, settings.CanvasHeight, settings.CanvasBorder);
+            BackgroundColor = GetColorFromString(settings.BackGroundColor, "background");
+            BrushColor = GetColorFromString(settings.BrushColor, "brush");
             FileSaver = fileSaverFactory.Create();
             Painter = wordsColoringFactory.Create();
             FileReader = fileReaderFactory.Create();
             Algorithm = layouterFactory.Create();
         }
 
-        private static Result<Color> GetColorFromString(string color)
+        private static Result<Color> GetColorFromString(string color, string name)
         {
             var result = Color.FromName(color);
-            return !result.IsKnownColor ? new Result<Color>("Unknown color") : new Result<Color>(null, result);
+            return !result.IsKnownColor ? Result.OnFail<Color>($"Unknown {name} color") : Result.OnSuccess(result);
         }
     }
 }

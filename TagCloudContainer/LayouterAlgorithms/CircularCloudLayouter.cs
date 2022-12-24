@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 
 namespace TagCloudContainer.LayouterAlgorithms
 {
@@ -28,20 +27,17 @@ namespace TagCloudContainer.LayouterAlgorithms
                 {
                     var coordinatesOfRectangle =
                         RectangleCoordinatesCalculator.CalculateRectangleCoordinates(point, rectangleSize);
-                    return !coordinatesOfRectangle.IsSuccess ?
-                        new Result<Rectangle>(coordinatesOfRectangle.Error) :
-                        new Result<Rectangle>(null,new Rectangle(coordinatesOfRectangle.Value, rectangleSize));
+                    return coordinatesOfRectangle.Then(p => Result.OnSuccess(new Rectangle(p, rectangleSize)));
                 })
-                .First(rectangle => !IntersectsWithOtherRectangles(rectangle));
+                .First(rectangle => rectangle.Error != null || !IntersectsWithOtherRectangles(rectangle.Value));
             Rectangles.Add(rectangle.Value);
             return rectangle;
         }
 
-        
 
-        private bool IntersectsWithOtherRectangles(Result<Rectangle> rectangle)
+        private bool IntersectsWithOtherRectangles(Rectangle rectangle)
         {
-            return rectangle.IsSuccess && Rectangles.Any(r => r.IntersectsWith(rectangle.Value));
+            return Rectangles.Any(r => r.IntersectsWith(rectangle));
         }
     }
 }

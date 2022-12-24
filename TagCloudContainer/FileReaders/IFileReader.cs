@@ -1,4 +1,4 @@
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 
 namespace TagCloudContainer.FileReaders
 {

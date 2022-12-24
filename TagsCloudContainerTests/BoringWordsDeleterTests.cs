@@ -18,7 +18,6 @@ namespace TagsCloudContainerTests
         [Test]
         public void BoringWordsDeleter_ShouldNotDeleteNotBoringWords()
         {
-            parsedArguments.ExceptPartOfSpeech = "";
             var notBoringWords = new[] {"котик", "котенок", "кошка", "кисуля", "котяра"};
             var result = BoringWordsDeleter.DeleteBoringWords(notBoringWords).Value;
             result.Should().BeEquivalentTo(notBoringWords);
@@ -27,7 +26,6 @@ namespace TagsCloudContainerTests
         [Test]
         public void BoringWordsDeleter_ShouldDeleteBoringWords()
         {
-            parsedArguments.ExceptPartOfSpeech = "";
             var notBoringWords = new[] {"кто", "на", "где", "а", "и"};
             var result = BoringWordsDeleter.DeleteBoringWords(notBoringWords);
             result.Value.Should().BeEmpty();

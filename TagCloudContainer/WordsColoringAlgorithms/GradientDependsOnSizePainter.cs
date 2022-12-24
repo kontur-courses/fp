@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 
 namespace TagCloudContainer.WordsColoringAlgorithms
 {
@@ -12,8 +12,6 @@ namespace TagCloudContainer.WordsColoringAlgorithms
             Color startColor)
         {
             var result = new Dictionary<string, Color>();
-            if (frequencyDictionary.Count == 0)
-                return result;
             var maxWordCount = frequencyDictionary.Values.Max();
             var resultA = startColor.A / maxWordCount;
             foreach (var pair in frequencyDictionary)

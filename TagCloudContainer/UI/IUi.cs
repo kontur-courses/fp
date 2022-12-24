@@ -16,8 +16,6 @@ namespace TagCloudContainer.UI
         public double RadiusOffset { get; set; }
         public double AngleOffset { get; set; }
         public string WordsColoringAlgorithm { get; set; }
-        public string ExceptWords { get; set; }
-        public string ExceptPartOfSpeech { get; set; }
         public string Layouter { get; set; }
     }
 }

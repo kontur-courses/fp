@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using TagCloudContainer.Result;
 
 namespace TagCloudContainer.WordsColoringAlgorithms
 {
@@ -11,8 +10,6 @@ namespace TagCloudContainer.WordsColoringAlgorithms
             Color startColor)
         {
             var result = new Dictionary<string, Color>();
-            if (frequencyDictionary.Count == 0)
-                return result;
             foreach (var pair in frequencyDictionary)
                 result[pair.Key] = startColor;
             return result;

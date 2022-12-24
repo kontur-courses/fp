@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 
 namespace TagCloudContainer.WordsColoringAlgorithms
 {

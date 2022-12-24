@@ -43,7 +43,7 @@ namespace TagCloudContainer.UI
         [Option('b', "border", Required = false, Default = 150, HelpText = "Borders of canvas")]
         public int CanvasBorder { get; set; }
 
-        [Option('r', "radius", Required = false, Default = 1, HelpText = "Radius offset")]
+        [Option('r', "radius", Required = false, Default = 0.1, HelpText = "Radius offset")]
         public double RadiusOffset { get; set; }
 
         [Option('a', "angle", Required = false, Default = 1, HelpText = "Angle offset")]
@@ -53,15 +53,6 @@ namespace TagCloudContainer.UI
             HelpText =
                 "Algorithm for coloring words. Variants: d (every word has the same color), gd (brightness of word depends on it's size), g (brightness of word depends on it's position)")]
         public string WordsColoringAlgorithm { get; set; }
-
-        [Option('x', "except", Required = false, Default = "-котихах +как",
-            HelpText = "'-': Words that are not in the tag cloud\n '+': Words that are in the tag cloud")]
-        public string ExceptWords { get; set; }
-
-        [Option('p', "exceptpofs", Required = false, Default = "-сущ",
-            HelpText =
-                "'-': Parts of speech that are not in the tag cloud\n '+': Parts of speech that are in the tag cloud. Variants: 'сущ', 'прил', 'мест', 'предл', 'союз', 'част', 'числ', 'цифра', 'прич'")]
-        public string ExceptPartOfSpeech { get; set; }
 
         [Option('u', "layouter", Required = false, Default = "d", HelpText = "Layoter algorithm")]
         public string Layouter { get; set; }

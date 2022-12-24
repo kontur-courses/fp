@@ -1,5 +1,5 @@
 using System;
-using TagCloudContainer.Result;
+using TagCloudContainer.TaskResult;
 
 namespace TagCloudContainer
 {
@@ -9,15 +9,9 @@ namespace TagCloudContainer
     /// </summary>
     public static class ScaleCoefficientCalculator
     {
-        public static Result<int> CalculateScaleCoefficient(int canvasWidth, int canvasHeight, int canvasBorder)
+        public static int CalculateScaleCoefficient(int canvasWidth, int canvasHeight, int canvasBorder)
         {
-            if (canvasBorder < 0)
-                return new Result<int>("Borders can't be less than zero");
-            if (canvasHeight < canvasBorder * 2)
-                return new Result<int>("Too small canvas height");
-            if (canvasWidth < canvasBorder * 2)
-                return new Result<int>("Too small canvas width");
-            return new Result<int>(null, Math.Min(canvasWidth - canvasBorder, canvasHeight - canvasBorder) / 100 * 2);
+            return Math.Min(canvasWidth - canvasBorder, canvasHeight - canvasBorder) / 100 * 2;
         }
     }
 }
