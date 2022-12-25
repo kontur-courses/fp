@@ -33,24 +33,22 @@ public class CloudDrawer : IDrawer
         graphics.Clear(backColor);
         var dictionaryResult = converter.GetWordsInFile(options);
         if (!dictionaryResult.IsSuccess)
-            return dictionaryResult.Error.AsResult();
+            return Result.Fail<string>(dictionaryResult.Error);
         var wordsToDrawResult = calculator.CalculateSize(dictionaryResult.GetValueOrThrow(), options);
         if (!wordsToDrawResult.IsSuccess)
-            return dictionaryResult.Error.AsResult();
+            return Result.Fail<string>(wordsToDrawResult.Error);
         foreach (var pair in wordsToDrawResult.GetValueOrThrow())
         {
             var stringSize = graphics.MeasureString(pair.Key, pair.Value);
             var putResult = layout.PutNextRectangle(stringSize);
             if (!putResult.IsSuccess)
-                return Result.Fail<string>(putResult.Error);
-            if (!putResult.GetValueOrThrow().isPutted)
-                return $"Word {pair.Key} can't be placed in layout".AsResult();
-            graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.GetValueOrThrow().rectangle);
+                return Result.Fail<string>($"Word {pair.Key} can't be placed in layout");
+            graphics.DrawString(pair.Key, pair.Value, fontColor, putResult.GetValueOrThrow());
         }
 
         var format = formatProvider.GetFormat(options.ImageFormat);
         if (!format.IsSuccess)
-            return dictionaryResult.Error.AsResult();
+            return Result.Fail<string>(dictionaryResult.Error);
         picture.Save(path, format.GetValueOrThrow());
         return $"Picture saved at {path}".AsResult();
     }

@@ -23,13 +23,15 @@ public class CircularCloudLayout
         spiralPoints = drawer.GetSpiralPoints(center);
     }
 
-    public Result<(bool isPutted, RectangleF rectangle)> PutNextRectangle(SizeF size)
+    public Result<RectangleF> PutNextRectangle(SizeF size)
     {
         var rectangle = new RectangleF();
         if (!ValidateSize(size))
             throw new ArgumentException("Word size dimension is zero or less");
         if (placedRectangles.Count == 0)
-            return (TryPlaceRectangleInCenter(out rectangle, size), rectangle).AsResult();
+            return TryPlaceRectangleInCenter(out rectangle, size) 
+                ? rectangle.AsResult() 
+                : Result.Fail<RectangleF>("Can't be placed in layout");
 
         foreach (var point in spiralPoints)
         {
@@ -43,9 +45,9 @@ public class CircularCloudLayout
         }
 
         if (rectangle.IsEmpty)
-            return (false, rectangle).AsResult();
+            return Result.Fail<RectangleF>("Can't be placed in layout");
         placedRectangles.Add(rectangle);
-        return (true, rectangle).AsResult();
+        return rectangle.AsResult();
     }
 
     private void OffsetRectangle(ref RectangleF rectangle)

@@ -26,7 +26,7 @@ public class CustomOptionsValidator : IOptionsValidator
             return Result.Fail<ICustomOptions>($"{options.WorkingDirectory} does not contain file with excluded words");
         var color = Color.FromName(options.BackgroundColor);
         if (!color.IsKnownColor)
-            return Result.Fail<ICustomOptions>("Unknown backgroud color");
+            return Result.Fail<ICustomOptions>("Unknown background color");
         color = Color.FromName(options.FontColor);
         if (!color.IsKnownColor)
             return Result.Fail<ICustomOptions>("Unknown font color");

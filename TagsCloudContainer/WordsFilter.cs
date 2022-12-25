@@ -31,7 +31,9 @@ public class WordsFilter : IWordsFilter
                 var match = regex.Match(x);
                 return match.Groups[1].Value;
             }).ToList();
-        inputWords = boringWords is null ? inputWords : inputWords.Where(x => !boringWords.Contains(x)).ToList();
+        inputWords = boringWords is null 
+            ? inputWords 
+            : inputWords.Where(x => !boringWords.Contains(x)).ToList();
         return inputWords.AsResult();
     }
 }
