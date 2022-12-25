@@ -24,7 +24,7 @@ public class ToTagConverterTests
 
         var tags = converter.Convert(words);
 
-        tags.Should().BeEmpty();
+        tags.GetValueOrThrow().Should().BeEmpty();
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class ToTagConverterTests
             "C#"
         };
 
-        var tags = converter.Convert(words).ToArray();
+        var tags = converter.Convert(words).GetValueOrThrow().ToArray();
 
         tags.Should().HaveCount(3);
         tags.Select(x => x.Weight)

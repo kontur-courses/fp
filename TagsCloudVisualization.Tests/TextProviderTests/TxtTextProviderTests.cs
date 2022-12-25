@@ -45,6 +45,6 @@ public class TxtTextProviderTests
 
         var words = textProvider.GetText();
 
-        words.Should().Equal(input);
+        words.GetValueOrThrow().Should().Equal(input);
     }
 }
