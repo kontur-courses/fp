@@ -16,7 +16,7 @@ public class DefaultCloudGenerator : ICloudGenerator
         this.font = font;
     }
 
-    public Result<List<TextLabel>> GenerateCloud(string text)
+    public List<TextLabel> GenerateCloud(string text)
     {
         var rects = new List<TextLabel>();
         var wordFreq = Preprocessor.Preprocessing(text);
@@ -36,6 +36,6 @@ public class DefaultCloudGenerator : ICloudGenerator
             });
         }
 
-        return rects.AsResult();
+        return rects;
     }
 }

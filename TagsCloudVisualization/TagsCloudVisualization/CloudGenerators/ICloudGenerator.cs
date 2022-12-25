@@ -7,5 +7,5 @@ public interface ICloudGenerator
 {
     CircularCloudLayouter Layouter { get; set; }
     IPreprocessor Preprocessor { get; set; }
-    Result<List<TextLabel>> GenerateCloud(string text);
+    List<TextLabel> GenerateCloud(string text);
 }

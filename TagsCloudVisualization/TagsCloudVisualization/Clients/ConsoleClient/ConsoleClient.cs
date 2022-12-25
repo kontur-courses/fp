@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using CommandLine;
+using java.lang;
 using ResultOf;
 using TagsCloudVisualization.CloudDrawer;
 using TagsCloudVisualization.TextInput;
@@ -10,13 +11,15 @@ public class ConsoleClient
 {
     public void Run(params string[] args)
     {
-        Result
-            .Of(() => Parser.Default.ParseArguments<Options>(args).Value)
+        var configuration = Result
+            .Of(() => Parse(args))
             .RefineError("Options error")
-            .OnFail(WriteError)
             .Then(AppContainer.Configure)
             .RefineError("Configuration error")
-            .OnFail(WriteError);
+            .OnFail(PrintError);
+
+        if (!configuration.IsSuccess)
+            return;
 
         using (var scope = AppContainer.GetScope())
         {
@@ -25,14 +28,22 @@ public class ConsoleClient
             var drawer = scope.Resolve<ICloudDrawer>();
 
             textInput.GetInputString()
+                .RefineError("Input error")
                 .Then(generator.GenerateCloud)
                 .RefineError("Generation error")
-                .OnFail(WriteError)
                 .Then(drawer.Draw)
                 .RefineError("Drawing error")
-                .OnFail(WriteError);
+                .OnFail(PrintError);
         }
     }
 
-    private void WriteError(string error) => Console.Write(error);
+    private void PrintError(string error) => Console.Write(error);
+
+    private Options Parse(string[] args)
+    {
+        var val = Parser.Default.ParseArguments<Options>(args).Value;
+        if (val is null)
+            throw new System.Exception("Invalid option");
+        return val;
+    }
 }
