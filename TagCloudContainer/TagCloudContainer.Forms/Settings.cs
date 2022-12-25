@@ -1,5 +1,7 @@
-﻿using TagCloudContainer.Additions;
-using TagCloudContainer.Additions.Interfaces;
+﻿using TagCloudContainer.Core;
+using TagCloudContainer.Core.Interfaces;
+using TagCloudContainer.Core.Models;
+using TagCloudContainer.Forms.Interfaces;
 
 namespace TagCloudContainer.Forms;
 
@@ -8,24 +10,26 @@ public partial class Settings : Form
     private readonly TagCloud _tagCloud;
     private readonly ITagCloudContainerConfig _tagCloudContainerConfig;
     private readonly ITagCloudFormConfig _tagCloudFormConfig;
-    private readonly ITagCloudFormResult _tagCloudFormResult;
-    private readonly IWordReaderConfig _wordReaderConfig;
-
-    public static void Main() { } // Иначе, без Main, не компилилось. Не знал как сделать
+    private readonly IConfigValidator<ITagCloudFormConfig> _tagCloudFormConfigValidator;
+    private readonly IConfigValidator<ITagCloudContainerConfig> _tagCloudContainerConfigValidator;
 
     public Settings(
         TagCloud tagCloud, 
         ITagCloudContainerConfig tagCloudContainerConfig,
         ITagCloudFormConfig tagCloudFormConfig,
-        IWordReaderConfig wordReaderConfig,
-        ITagCloudFormResult tagCloudFormResult)
+        IConfigValidator<ITagCloudFormConfig> tagCloudFormConfigValidator,
+        IConfigValidator<ITagCloudContainerConfig> tagCloudContainerConfigValidator)
     {
-        _tagCloud = tagCloud;
-        _tagCloudContainerConfig = tagCloudContainerConfig;
-        _tagCloudFormConfig = tagCloudFormConfig;
-        _wordReaderConfig = wordReaderConfig;
-        _tagCloudFormResult = tagCloudFormResult;
-        
+        _tagCloud = tagCloud ?? throw new ArgumentNullException("Tag cloud can't be null");
+        _tagCloudContainerConfig = 
+            tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
+        _tagCloudFormConfig = 
+            tagCloudFormConfig ?? throw new ArgumentNullException("Tag cloud form config can't be null");
+        _tagCloudFormConfigValidator = 
+            tagCloudFormConfigValidator ?? throw new ArgumentNullException("Tag cloud config validator can't be null");
+        _tagCloudContainerConfigValidator = 
+            tagCloudContainerConfigValidator ?? throw new ArgumentNullException("Tag cloud form config validator can't be null");
+
         InitializeComponent();
     }
 
@@ -39,22 +43,29 @@ public partial class Settings : Form
         RunTagCloudForm(false);
     }
 
-    private void AddConfigValues(bool random)
+    private void AddUserSelectedValues(bool random)
     {
         var parsedUserSelectedSizeValue = Sizes
             .Text
             .Split("x")
             .Select(i => int.Parse(i))
             .ToArray();
-        var userSelectedSize = new Size(parsedUserSelectedSizeValue[0], parsedUserSelectedSizeValue[1]);
-            
-        _tagCloudFormConfig.Color = Additions.Models.Colors.Get(Colors.Text);
-        _tagCloudFormConfig.BackgroundColor = Additions.Models.Colors.Get(BackgroundColors.Text);
-        _tagCloudFormConfig.FontFamily = Fonts.Text;
-        _tagCloudFormConfig.FormSize = userSelectedSize;
+        var userSelectedSize = Screens.Sizes.First(size =>
+            size.Width == parsedUserSelectedSizeValue[0] && size.Height == parsedUserSelectedSizeValue[1]);
+
+        var colorResult = GetColorsByChoosedName(Colors.Text);
+        var backgroundColorResult = GetColorsByChoosedName(BackgroundColors.Text);
         
-        _wordReaderConfig.SetFilePath("words.txt");
-        _wordReaderConfig.SetExcludeWordsFilePath("boring_words.txt");
+        if (!colorResult.IsSuccess || !backgroundColorResult.IsSuccess)
+            return;
+
+        _tagCloudFormConfig.Color = colorResult.GetValueOrThrow();
+        _tagCloudFormConfig.BackgroundColor = backgroundColorResult.GetValueOrThrow();
+        _tagCloudFormConfig.FontFamily = Fonts.Text;
+        _tagCloudFormConfig.ImageSize = userSelectedSize;
+        
+        _tagCloudContainerConfig.SetFilePath("words.txt");
+        _tagCloudContainerConfig.SetExcludeWordsFilePath("boring_words.txt");
         
         _tagCloudContainerConfig.NearestToTheCenterPoints = new SortedList<float, Point>();
         _tagCloudContainerConfig.PutRectangles = new List<Rectangle>();
@@ -63,29 +74,28 @@ public partial class Settings : Form
 
     private void RunTagCloudForm(bool random)
     {
-        AddConfigValues(random);
+        AddUserSelectedValues(random);
         ValidateUserParameters();
         
-        _tagCloud.ChangeSize(_tagCloudFormConfig.FormSize);
+        _tagCloud.ChangeSize(_tagCloudFormConfig.ImageSize);
         _tagCloud.ShowDialog(this);
+    }
 
-        if (!_tagCloudFormResult.FormResult.IsSuccess)
-            MessageBox.Show("Облако тегов не влезло на изображение заданного размера", "Ошибка");
+    private Result<Color> GetColorsByChoosedName(string colorName)
+    {
+        var colorResult = Core.Models.Colors.Get(colorName);
+        colorResult.OnFail(error => MessageBox.Show(error, "Ошибка"));
+        
+        return colorResult;
     }
 
     private void ValidateUserParameters()
     {
-        var validator = new Validator();
-        
-        var tagCloudContainerConfigResult = validator.Validate(_tagCloudContainerConfig);
-        var tagCloudFormConfigResult= validator.Validate(_tagCloudFormConfig);
-        var wordReaderConfigResult= validator.Validate(_wordReaderConfig);
-        
-        if (!tagCloudContainerConfigResult.IsSuccess)
-            MessageBox.Show("Invalid container options: " + tagCloudContainerConfigResult.Error);
-        if (!tagCloudFormConfigResult.IsSuccess)
-            MessageBox.Show("Invalid form options: " + tagCloudFormConfigResult.Error);
-        if (!wordReaderConfigResult.IsSuccess)
-            MessageBox.Show("Invalid words reader options: " + wordReaderConfigResult.Error);
+        _tagCloudContainerConfigValidator
+            .Validate(_tagCloudContainerConfig)
+            .OnFail(error => MessageBox.Show("Invalid container options: " + error, "Ошибка"));
+        _tagCloudFormConfigValidator
+            .Validate(_tagCloudFormConfig)
+            .OnFail(error => MessageBox.Show("Invalid form options: " + error, "Ошибка"));
     }
 }
