@@ -17,7 +17,7 @@ namespace TagsCloudContainer.Infrastructure
         {
             var okButton = new Button
             {
-                Text = "OK",
+                Text = @"OK",
                 DialogResult = DialogResult.OK,
                 Dock = DockStyle.Bottom,
             };
@@ -33,7 +33,7 @@ namespace TagsCloudContainer.Infrastructure
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Text = "Настройки";
+            Text = @"Настройки";
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ResultOf;
 
 namespace TagsCloudContainer.Infrastructure
 {
@@ -9,9 +10,9 @@ namespace TagsCloudContainer.Infrastructure
     {
         public string Filter => "Изображения (*.txt)|*.txt";
 
-        public string ReadText(string path)
+        public Result<string> ReadText(string path)
         {
-            return File.ReadAllText(path);
+            return Result.Of(() => File.ReadAllText(path));
         }
     }
 }

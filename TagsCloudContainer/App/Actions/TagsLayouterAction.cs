@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.App.Layouter;
 
@@ -10,20 +9,17 @@ namespace TagsCloudContainer.App.Actions
     public class TagsLayouterAction : IUiAction
     {
         private TagsLayouter tagsLayouter;
-        private ITagsPainter[] tagsPainter;
-        private readonly IImageDirectoryProvider imageDirectoryProvider;
+        private ITagsPainter tagsPainter;
         private readonly ITextReader textReader;
-        private readonly ImageSettings imageSettings;
+        private readonly IImageHolder imageHolder;
 
-        public TagsLayouterAction(TagsLayouter tagsLayouter, ITagsPainter[] tagsPainter,
-            IImageDirectoryProvider imageDirectoryProvider, ITextReader textReader, 
-            ImageSettings imageSettings)
+        public TagsLayouterAction(TagsLayouter tagsLayouter, ITagsPainter tagsPainter,
+            ITextReader textReader, IImageHolder imageHolder)
         {
             this.tagsLayouter = tagsLayouter;
             this.tagsPainter = tagsPainter;
-            this.imageDirectoryProvider = imageDirectoryProvider;
             this.textReader = textReader;
-            this.imageSettings = imageSettings;
+            this.imageHolder = imageHolder;
         }
 
         public string Category => "Облако тегов";
@@ -35,17 +31,24 @@ namespace TagsCloudContainer.App.Actions
             var dialog = new OpenFileDialog()
             {
                 CheckFileExists = false,
-                InitialDirectory = Path.GetFullPath(imageDirectoryProvider.ImagesDirectory),
+                InitialDirectory = Path.GetFullPath("."),
                 Filter = textReader.Filter
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
             {
-                var allText = textReader.ReadText(dialog.FileName);
-                var tags = tagsLayouter.PutAllTags(allText);
-                tagsPainter
-                    .FirstOrDefault(t => t.CanPaint(imageSettings.PainterType))?
-                    .Paint(tags.GetValueOrThrow());
+                var imageSize = imageHolder.GetImageSize();
+                if (!imageSize.IsSuccess)
+                {
+                    MessageBox.Show(imageSize.Error);
+                    return;
+                }
+
+                var result = textReader.ReadText(dialog.FileName)
+                    .Then(text => tagsLayouter.PutAllTags(text, imageSize.Value))
+                    .Then(tags => tagsPainter.Paint(tags));
+                if (!result.IsSuccess)
+                    MessageBox.Show(result.Error);
             }
         }
     }

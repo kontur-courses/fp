@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using ResultOf;
 
 namespace TagsCloudContainer.Infrastructure
 {
@@ -9,6 +10,6 @@ namespace TagsCloudContainer.Infrastructure
     {
         public string Filter { get; }
 
-        public string ReadText(string path);
+        public Result<string> ReadText(string path);
     }
 }

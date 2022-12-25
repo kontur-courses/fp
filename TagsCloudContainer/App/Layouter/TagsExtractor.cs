@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using TagsCloudContainer.App.Layouter;
 using DeepMorphy;
 using ResultOf;
 
@@ -21,10 +19,8 @@ namespace TagsCloudContainer.App.Layouter
 
         public Result<Dictionary<string, int>> FindAllTagsInText(string text)
         {
-            return Result.Of(() => (ChooseNotBoringWordsWithSimpleForm(text.ToLower().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)))
-                .GetValueOrThrow()
-                .GroupBy(word => word)
-                .ToDictionary(group => group.Key, group => group.Count()));
+            return ChooseNotBoringWordsWithSimpleForm(text.ToLower().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+                .Then(t => t.GroupBy(word => word).ToDictionary(group => group.Key, group => group.Count()));
         }
 
         private Result<IEnumerable<string>> ChooseNotBoringWordsWithSimpleForm(string[] text)

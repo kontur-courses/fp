@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
 {
     public interface ITagsPainter
     {
-        public void Paint(IEnumerable<TagInfo> tags);
-
-        public bool CanPaint(PainterType painterType);
+        public Result<None> Paint(IEnumerable<TagInfo> tags);
     }
 }
+
+

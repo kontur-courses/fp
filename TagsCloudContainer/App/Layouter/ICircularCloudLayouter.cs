@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
 {

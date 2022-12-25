@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
 {
@@ -38,5 +39,6 @@ namespace TagsCloudContainer.App.Layouter
             }
             return false;
         }
+
     }
 }

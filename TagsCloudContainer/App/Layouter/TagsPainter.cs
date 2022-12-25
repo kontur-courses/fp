@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.App.Layouter
@@ -17,24 +16,27 @@ namespace TagsCloudContainer.App.Layouter
             this.palette = palette;
         }
 
-        public bool CanPaint(PainterType painterType)
-        {
-            return painterType == PainterType.OneColor;
-        }
-
-        public void Paint(IEnumerable<TagInfo> tags)
+        public Result<None> Paint(IEnumerable<TagInfo> tags)
         {
             var imageSize = imageHolder.GetImageSize();
-            using (var graphics = imageHolder.StartDrawing())
-            using (var backgroundBrush = new SolidBrush(palette.BackgroundColor))
-            using (var penBrush = new SolidBrush(palette.PrimaryColor))
+            if (!imageSize.IsSuccess)
+                return Result.Fail<None>(imageSize.Error);
+            var graphics = imageHolder.StartDrawing();
+            if (!graphics.IsSuccess)
+                return Result.Fail<None>(graphics.Error);
+            graphics.Value.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Value.Width, imageSize.Value.Height);
+            var i = 0;
+            foreach (var tag in tags)
             {
-                graphics.FillRectangle(backgroundBrush, 0, 0, imageSize.GetValueOrThrow().Width, imageSize.GetValueOrThrow().Height);
-                if (tags != null)
-                    foreach (var tag in tags)
-                        graphics.DrawString(tag.TagText, tag.TagFont, penBrush, tag.TagRect);
+                var result = tag.CheckIsRectangleInsideArea(imageSize.Value)
+                    .Then(tagInfo => graphics.Value.DrawString(tag.TagText, tag.TagFont, 
+                        new SolidBrush(i % 2 == 0 ? palette.PrimaryColor : palette.SecondaryColor), tag.TagRect));
+                if (!result.IsSuccess)
+                    return Result.Fail<None>(result.Error);
+                i++;
             }
             imageHolder.UpdateUi();
+            return Result.Ok();
         }
     }
 }

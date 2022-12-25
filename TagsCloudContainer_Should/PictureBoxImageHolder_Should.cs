@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer;
-using TagsCloudContainer.App.Layouter;
 
 namespace TagsCloudContainerTests
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ResultOf;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -12,9 +13,7 @@ namespace TagsCloudContainer.App.Layouter
 
         public CircularCloudLayouter(CloudLayouterSettings cloudLayouterSettings)
         {
-            if (cloudLayouterSettings.Center.X < 0 || cloudLayouterSettings.Center.Y < 0)
-                throw new ArgumentException();
-            this.settings = cloudLayouterSettings;
+            settings = cloudLayouterSettings;
             Rectangles = new List<Rectangle>();
             lastNumberPoint = 0;
         }

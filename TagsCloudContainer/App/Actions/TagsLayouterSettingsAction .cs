@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using System.Windows.Forms;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.App.Layouter;
 
@@ -21,6 +20,12 @@ namespace TagsCloudContainer.App.Actions
         public void Perform()
         {
             SettingsForm.For(settings).ShowDialog();
+            var settingResult = settings.CheckIsSettingValid();
+            if (!settingResult.IsSuccess)
+            {
+                MessageBox.Show(settingResult.Error);
+                settings.SetDefaultSetting();
+            }
         }
     }
 }

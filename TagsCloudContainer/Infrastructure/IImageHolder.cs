@@ -6,7 +6,7 @@ namespace TagsCloudContainer.Infrastructure
     public interface IImageHolder
     {
         Result<Size> GetImageSize();
-        Graphics StartDrawing();
+        Result<Graphics> StartDrawing();
         void UpdateUi();
         void RecreateImage(ImageSettings settings);
         void SaveImage(string fileName);

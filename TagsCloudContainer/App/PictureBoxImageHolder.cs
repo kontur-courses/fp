@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -15,10 +14,10 @@ namespace TagsCloudContainer
                 .Then(image => image.Size);
         }
 
-        public Graphics StartDrawing()
+        public Result<Graphics> StartDrawing()
         {
-            FailIfNotInitialized();
-            return Graphics.FromImage(Image);
+            return FailIfNotInitialized()
+                .Then(image => Graphics.FromImage(image));
         }
 
         private Result<Image> FailIfNotInitialized()

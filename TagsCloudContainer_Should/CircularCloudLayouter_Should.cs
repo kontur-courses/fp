@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using TagsCloudContainer.App.Layouter;
@@ -9,15 +8,12 @@ namespace TagsCloudContainerTests
     public class CircularCloudLayouter_Should
     {
         [Test]
-        public void CircularCloudLayouter_ShouldThrowArgumentException_WhenNegativeX_Y()
+        public void CircularCloudLayouter_ShouldContainError_WhenNegativeX_Y()
         {
             var cloudLayouterSettings = new CloudLayouterSettings();
             cloudLayouterSettings.Center = new Point(-1, -1);
-            Action act = () =>
-            {
-                var circularCloudLayouter = new CircularCloudLayouter(cloudLayouterSettings);
-            };
-            act.Should().Throw<ArgumentException>();
+            var actual = cloudLayouterSettings.CheckIsSettingValid();
+            actual.Error.Should().Be("Настройки неверные. Координаты точки должны быть положительными числами");
         }
 
         [Test]

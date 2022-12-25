@@ -6,12 +6,10 @@ namespace TagsCloudContainer.App.Actions
 {
     public class SaveImageAction : IUiAction
     {
-        private readonly IImageDirectoryProvider imageDirectoryProvider;
         private readonly IImageHolder imageHolder;
 
-        public SaveImageAction(IImageDirectoryProvider imageDirectoryProvider, IImageHolder imageHolder)
+        public SaveImageAction(IImageHolder imageHolder)
         {
-            this.imageDirectoryProvider = imageDirectoryProvider;
             this.imageHolder = imageHolder;
         }
 
@@ -24,10 +22,10 @@ namespace TagsCloudContainer.App.Actions
             var dialog = new SaveFileDialog
             {
                 CheckFileExists = false,
-                InitialDirectory = Path.GetFullPath(imageDirectoryProvider.ImagesDirectory),
+                InitialDirectory = Path.GetFullPath("."),
                 DefaultExt = "png",
                 FileName = "image.png",
-                Filter = "Изображения (*.png)|*.png"
+                Filter = @"Изображения (*.png)|*.png"
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
