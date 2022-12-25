@@ -5,19 +5,16 @@ namespace TagCloudResult.Extensions;
 
 public class WordMeasurer : IDisposable
 {
-    private readonly Bitmap _bitmap;
     private readonly Graphics _graphics;
 
     public WordMeasurer()
     {
-        _bitmap = new Bitmap(1, 1);
-        _graphics = Graphics.FromImage(_bitmap);
+        _graphics = Graphics.FromHwnd(IntPtr.Zero);
     }
 
     public void Dispose()
     {
         _graphics.Dispose();
-        _bitmap.Dispose();
     }
 
     public Size MeasureWord(Word word, Font font)
