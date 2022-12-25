@@ -7,4 +7,5 @@ public interface IImageFormatProvider
 {
     public bool ValidateFormatName(string name);
     public Result<ImageFormat> GetFormat(string name);
+    public string GetSupportedFormats();
 }

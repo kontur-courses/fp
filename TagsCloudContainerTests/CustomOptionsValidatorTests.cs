@@ -8,6 +8,8 @@ public class CustomOptionsValidatorTests
 {
     private CustomOptions options;
     private CustomOptionsValidator sut;
+    private ImageFormatProvider formatProvider;
+
 
     [SetUp]
     public void Setup()
@@ -25,7 +27,8 @@ public class CustomOptionsValidatorTests
             FontColor = "Blue",
             ImageFormat = "png"
         };
-        sut = new CustomOptionsValidator(new ImageFormatProvider());
+        formatProvider = new ImageFormatProvider();
+        sut = new CustomOptionsValidator(formatProvider);
     }
 
     [Test]
@@ -53,7 +56,7 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("WorkingDirectory folder does not exist in root directory");
+        result.Error.Should().Be($"{options.WorkingDirectory} folder should exist.");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -64,7 +67,7 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with words to draw");
+        result.Error.Should().Be($"{options.WorkingDirectory} should contain your file with words to draw.");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -75,7 +78,8 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be($"{options.WorkingDirectory} does not contain file with excluded words");
+        result.Error.Should()
+            .Be($"{options.WorkingDirectory} should contain your text (*.txt) file with excluded words.");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -87,7 +91,8 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be($"Font \"{font}\" can't be found");
+        result.Error.Should()
+            .Be($"Font \"{options.Font}\" can't be found");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -123,7 +128,8 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("Unknown font color");
+        result.Error.Should().Be("Unknown font color.\r\nSupported colors listed here" +
+                                 " https://learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-7.0#properties");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -135,7 +141,8 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("Unknown backgroud color");
+        result.Error.Should().Be($"Unknown background color.\r\nSupported colors listed here" +
+                                 $" https://learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-7.0#properties");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -170,7 +177,8 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("Unsupported image format");
+        result.Error.Should().Be($"Unsupported image format. Supported formats are:" +
+                                 $" {formatProvider.GetSupportedFormats()}");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -181,7 +189,9 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be($"Mystem.exe not found in {options.WorkingDirectory} folder");
+        result.Error.Should()
+            .Be(
+                $"Mystem.exe should be in {options.WorkingDirectory} folder. You can download it from https://yandex.ru/dev/mystem/.");
         result.IsSuccess.Should().BeFalse();
     }
 }

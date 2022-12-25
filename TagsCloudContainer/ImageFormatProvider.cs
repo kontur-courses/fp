@@ -20,6 +20,7 @@ public class ImageFormatProvider : IImageFormatProvider
         { "wmf", ImageFormat.Wmf }
     };
 
+    public string GetSupportedFormats() => string.Join(null,formats.Select(x => $"\r\n - {x.Key}"));
     public bool ValidateFormatName(string name) => formats.ContainsKey(name.ToLower());
 
     public Result<ImageFormat> GetFormat(string name)
