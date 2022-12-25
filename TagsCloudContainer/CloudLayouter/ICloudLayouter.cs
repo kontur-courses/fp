@@ -7,6 +7,6 @@ namespace TagsCloudContainer.CloudLayouter
     public interface ICloudLayouter
     {
         public IList<ICloudItem> Items { get; }
-        public ICloudItem PutNextCloudItem(string word, Size size, Font font);
+        public Result<ICloudItem> PutNextCloudItem(string word, Size size, Font font);
     }
 }

@@ -22,8 +22,14 @@ namespace TagsCloudContainer.Visualizer
 
         public void Visualize()
         {
-            var foregroundBrush = new SolidBrush(Color.FromName(options.ForegroundColor));
-            var backgroundBrush = new SolidBrush(Color.FromName(options.BackgroundColor));
+            var foregroundBrush = Result.Of(
+                () => new SolidBrush(Color.FromName(options.ForegroundColor)),
+                "Incorrect foreground color")
+                .GetValueOrThrow();
+            var backgroundBrush = Result.Of(
+                () => new SolidBrush(Color.FromName(options.BackgroundColor)),
+                "Incorrect background color")
+                .GetValueOrThrow();
 
             graphics.FillRectangle(backgroundBrush, 0, 0, options.Width, options.Height);
             foreach (var item in cloud.Items)
@@ -46,7 +52,10 @@ namespace TagsCloudContainer.Visualizer
         {
             var fontSize = Math.Max(options.MinFontSize,
                 options.MaxFontSize * (weight - minWeight) / (maxWeight - minWeight));
-            return new Font(options.FontFamily, fontSize);
+            var fontFamily = Result.Of(
+                () => new FontFamily(options.FontFamily), "Incorrect Font Family")
+                .GetValueOrThrow();
+            return new Font(fontFamily, fontSize);
         }
     }
 }

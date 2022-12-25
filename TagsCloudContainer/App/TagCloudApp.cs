@@ -44,13 +44,15 @@ namespace TagsCloudContainer.App
             var minAmount = counter.GetAmount(words.Last());
             var maxAmount = counter.GetAmount(words.First());
             foreach (var word in words)
+            {
                 if (visualizer is TagCloudVisualizer tagCloudVisualizer)
                 {
                     var font = tagCloudVisualizer
                         .GetFontByWeightWord(counter.GetAmount(word), minAmount, maxAmount);
                     var size = tagCloudVisualizer.MeasureString(word.Text, font).Ceiling();
-                    cloud.PutNextCloudItem(word.Text, size, font);
+                    cloud.PutNextCloudItem(word.Text, size, font).GetValueOrThrow();
                 }
+            }
         }
     }
 }

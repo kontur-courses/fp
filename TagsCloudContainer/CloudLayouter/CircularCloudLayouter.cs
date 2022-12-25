@@ -18,10 +18,10 @@ namespace TagsCloudContainer.CloudLayouter
         private IDistribution Distribution { get; }
         public IList<ICloudItem> Items { get; }
 
-        public ICloudItem PutNextCloudItem(string word, Size size, Font font)
+        public Result<ICloudItem> PutNextCloudItem(string word, Size size, Font font)
         {
             if (size.Width < 0 || size.Height < 0)
-                throw new ArgumentException("Height and width must be positive");
+                return Result.Fail<ICloudItem>("Height and width must be positive");
 
             foreach (var point in Distribution.GetPoints())
             {
@@ -32,11 +32,11 @@ namespace TagsCloudContainer.CloudLayouter
                 {
                     var item = new TagCloudItem(word, rectangle, font);
                     Items.Add(item);
-                    return item;
+                    return Result.Ok<ICloudItem>(item);
                 }
             }
 
-            throw new Exception("The end of the distribution has been reached");
+            return Result.Fail<ICloudItem>("The end of the distribution has been reached");
         }
     }
 }

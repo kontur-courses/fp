@@ -35,7 +35,9 @@ namespace TagsCloudContainer.MorphologicalAnalysis
 
                 var word = match.Groups[1].Value;
                 var aliasPartSpeech = match.Groups[2].Value;
-                var partSpeech = IdentifyPartSpeech(aliasPartSpeech);
+                var partSpeech = Result.Of(() => IdentifyPartSpeech(aliasPartSpeech), 
+                    "Incorrect part of speech has been introduced")
+                    .GetValueOrThrow();
 
                 yield return new Word(word, partSpeech);
             }
