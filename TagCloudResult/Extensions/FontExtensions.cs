@@ -9,9 +9,8 @@ public static class FontExtensions
         if (font.Size == fontSize)
             return font;
         var fontWithNewSize = new Font(font.Name, fontSize,
-                font.Style, font.Unit,
-                font.GdiCharSet, font.GdiVerticalFont);
-        font.Dispose();
+            font.Style, font.Unit,
+            font.GdiCharSet, font.GdiVerticalFont);
         return fontWithNewSize;
     }
 }

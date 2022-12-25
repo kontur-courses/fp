@@ -34,7 +34,6 @@ public class CloudDrawer
         using var graphics = Graphics.FromImage(image);
         graphics.SmoothingMode = SmoothingMode.HighQuality;
         var fontSize = font.Size;
-
         foreach (var wordRectangle in wordsRectangles)
         {
             var color = GetRandomColorFromColors(colors);
