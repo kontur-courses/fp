@@ -31,12 +31,12 @@ public class CloudDrawer : IDrawer
         var backColor = Color.FromName(options.BackgroundColor);
         using var fontColor = new SolidBrush(Color.FromName(options.FontColor));
         graphics.Clear(backColor);
-        var resultDictionary = converter.GetWordsInFile(options);
-        if (!resultDictionary.IsSuccess)
-            return resultDictionary.Error.AsResult();
-        var wordsToDrawResult = calculator.CalculateSize(resultDictionary.GetValueOrThrow(), options);
+        var dictionaryResult = converter.GetWordsInFile(options);
+        if (!dictionaryResult.IsSuccess)
+            return dictionaryResult.Error.AsResult();
+        var wordsToDrawResult = calculator.CalculateSize(dictionaryResult.GetValueOrThrow(), options);
         if (!wordsToDrawResult.IsSuccess)
-            return resultDictionary.Error.AsResult();
+            return dictionaryResult.Error.AsResult();
         foreach (var pair in wordsToDrawResult.GetValueOrThrow())
         {
             var stringSize = graphics.MeasureString(pair.Key, pair.Value);
@@ -50,7 +50,7 @@ public class CloudDrawer : IDrawer
 
         var format = formatProvider.GetFormat(options.ImageFormat);
         if (!format.IsSuccess)
-            return resultDictionary.Error.AsResult();
+            return dictionaryResult.Error.AsResult();
         picture.Save(path, format.GetValueOrThrow());
         return $"Picture saved at {path}".AsResult();
     }

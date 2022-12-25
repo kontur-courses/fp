@@ -30,16 +30,16 @@ public class Program
             .BuildServiceProvider();
 
         var validator = container.GetService<IOptionsValidator>();
-        var validatorResult = validator.ValidateOptions(options);
-        if (!validatorResult.IsSuccess)
+        var validationResult = validator.ValidateOptions(options);
+        if (!validationResult.IsSuccess)
         {
-            Console.WriteLine(validatorResult.Error);
+            Console.WriteLine(validationResult.Error);
             return;
         }
 
         var drawer = container.GetService<IDrawer>();
 
-        var result = drawer.DrawCloud(options);
-        Console.WriteLine(result.IsSuccess ? result.GetValueOrThrow() : result.Error);
+        var drawingResult = drawer.DrawCloud(options);
+        Console.WriteLine(drawingResult.IsSuccess ? drawingResult.GetValueOrThrow() : drawingResult.Error);
     }
 }

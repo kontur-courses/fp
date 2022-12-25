@@ -70,18 +70,18 @@ public class FileToDictionaryConverter : IConverter
 
         var boringWordsSet = boringWords.ToHashSet();
 
-        var filteredWords = filter.FilterWords(taggedWords, options, boringWordsSet);
+        var filteredWordsResult = filter.FilterWords(taggedWords, options, boringWordsSet);
 
-        var result = new Dictionary<string, int>();
-        filteredWords.GetValueOrThrow().ForEach(x =>
+        var wordsAndCountDictionary = new Dictionary<string, int>();
+        filteredWordsResult.GetValueOrThrow().ForEach(x =>
         {
-            if (result.ContainsKey(x))
-                result[x] += 1;
+            if (wordsAndCountDictionary.ContainsKey(x))
+                wordsAndCountDictionary[x] += 1;
 
-            else result.Add(x, 1);
+            else wordsAndCountDictionary.Add(x, 1);
         });
 
-        return result
+        return wordsAndCountDictionary
             .ToList()
             .OrderByDescending(x => x.Value)
             .ToDictionary(x => x.Key, x => x.Value)
