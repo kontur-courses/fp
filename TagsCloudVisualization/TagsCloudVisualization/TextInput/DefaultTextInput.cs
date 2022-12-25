@@ -1,4 +1,6 @@
-﻿namespace TagsCloudVisualization.TextInput;
+﻿using ResultOf;
+
+namespace TagsCloudVisualization.TextInput;
 
 public class DefaultTextInput : ITextInput
 {
@@ -9,11 +11,10 @@ public class DefaultTextInput : ITextInput
         this.path = path;
     }
 
-    public string GetInputString()
+    public Result<string> GetInputString()
     {
-        if (!File.Exists(path))
-            throw new Exception("File doesn't exist");
-
-        return File.ReadAllText(path);
+        // if (!File.Exists(path))
+        //     throw new Exception("File doesn't exist");
+        return Result.Of(() => File.ReadAllText(path));
     }
 }

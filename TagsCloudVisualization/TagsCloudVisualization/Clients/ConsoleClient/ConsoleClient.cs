@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using CommandLine;
+using ResultOf;
 using TagsCloudVisualization.CloudDrawer;
 using TagsCloudVisualization.TextInput;
 
@@ -21,13 +22,12 @@ public class ConsoleClient
         using (var scope = AppContainer.GetScope())
         {
             var textInput = scope.Resolve<ITextInput>();
-            var text = textInput.GetInputString();
-
             var generator = scope.Resolve<ICloudGenerator>();
-            var cloud = generator.GenerateCloud(text);
-
             var drawer = scope.Resolve<ICloudDrawer>();
-            drawer.Draw(cloud);
+
+            textInput.GetInputString()
+                .Then(generator.GenerateCloud)
+                .Then(drawer.Draw);
         }
     }
 }

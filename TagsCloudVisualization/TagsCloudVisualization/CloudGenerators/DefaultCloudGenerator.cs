@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudVisualization;
 
@@ -15,7 +16,7 @@ public class DefaultCloudGenerator : ICloudGenerator
         this.font = font;
     }
 
-    public List<TextLabel> GenerateCloud(string text)
+    public Result<List<TextLabel>> GenerateCloud(string text)
     {
         var rects = new List<TextLabel>();
         var wordFreq = Preprocessor.Preprocessing(text);
@@ -36,6 +37,6 @@ public class DefaultCloudGenerator : ICloudGenerator
             });
         }
 
-        return rects;
+        return rects.AsResult();
     }
 }

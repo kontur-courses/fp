@@ -1,6 +1,8 @@
-﻿namespace TagsCloudVisualization.TextInput;
+﻿using ResultOf;
+
+namespace TagsCloudVisualization.TextInput;
 
 public interface ITextInput
 {
-    string GetInputString();
+    Result<string> GetInputString();
 }
