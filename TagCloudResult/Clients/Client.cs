@@ -34,19 +34,18 @@ public abstract class Client
             var wordRectangle = Result.Of(() => Font.ChangeSize(fontSize * word.Frequency))
                 .Then(font => wordMeasurer.MeasureWord(word, font))
                 .Then(rectangleSize => _layouter.PutRectangle(Curve, rectangleSize))
-                .Then(rectangle => new WordRectangle(word) { Rectangle = rectangle })
-                .OnFail(PrintError);
+                .Then(rectangle => new WordRectangle(word) { Rectangle = rectangle });
             wordRectangles.Add(wordRectangle.Value);
         }
 
         Font = Font.ChangeSize(fontSize);
-        var image = _drawer.CreateImage(wordRectangles, ImageSize, Font, colors).OnFail(PrintError);
-        return image.Value;
+        var image = _drawer.CreateImage(wordRectangles, ImageSize, Font, colors);
+        return image.GetValueOrThrow();
     }
 
-    public void Save(Bitmap image, IEnumerable<string> destinationPaths)
+    public Result<IEnumerable<Result<None>>> Save(Bitmap image, IEnumerable<string> destinationPaths)
     {
-        foreach (var destinationPath in destinationPaths) Save(image, destinationPath).OnFail(PrintError);
+        return Result.Of(() => destinationPaths.Select(destinationPath => Save(image, destinationPath)));
     }
 
     public Result<None> Save(Bitmap image, string destinationPath)
