@@ -2,5 +2,5 @@
 
 public interface ITextProvider
 {
-    IEnumerable<string> GetText();
+    Result<IEnumerable<string>> GetText();
 }

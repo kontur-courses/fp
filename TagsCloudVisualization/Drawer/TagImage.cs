@@ -21,12 +21,13 @@ public class TagImage : IDrawImage
     }
 
 
-    public void Draw(Graphics graphics)
+    public Result<None> Draw(Graphics graphics)
     {
         using var brush = new SolidBrush(colorGenerator.Generate());
-        var fontSettings = fontSettingsProvider.GetSettings();
-        using var font = new Font(fontSettings.Family, fontSettings.Size);
-        DrawText(graphics, font, brush);
+        return brush.AsResult()
+            .Then(fontSettingsProvider.GetSettings)
+            .Then(settings => new Font(settings.Family, settings.Size))
+            .Then(font => DrawText(graphics, font, brush));
     }
 
     public IDrawImage Offset(Size size)
@@ -35,13 +36,16 @@ public class TagImage : IDrawImage
             colorGenerator);
     }
 
-    private void DrawText(Graphics graphics, Font font, Brush brush)
+    private Result<None> DrawText(Graphics graphics, Font font, Brush brush)
     {
-        var textSize = graphics.MeasureString(tag.Text, font);
-        var state = graphics.Save();
-        graphics.TranslateTransform(Bounds.Left, Bounds.Top);
-        graphics.ScaleTransform(Bounds.Width / textSize.Width, Bounds.Height / textSize.Height);
-        graphics.DrawString(tag.Text, font, brush, PointF.Empty);
-        graphics.Restore(state);
+        return Result.Of(() =>
+        {
+            var textSize = graphics.MeasureString(tag.Text, font);
+            var state = graphics.Save();
+            graphics.TranslateTransform(Bounds.Left, Bounds.Top);
+            graphics.ScaleTransform(Bounds.Width / textSize.Width, Bounds.Height / textSize.Height);
+            graphics.DrawString(tag.Text, font, brush, PointF.Empty);
+            graphics.Restore(state);
+        });
     }
 }

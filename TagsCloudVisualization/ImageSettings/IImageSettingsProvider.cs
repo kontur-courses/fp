@@ -2,5 +2,5 @@
 
 public interface IImageSettingsProvider
 {
-    ImageSettings GetSettings();
+    Result<ImageSettings> GetSettings();
 }

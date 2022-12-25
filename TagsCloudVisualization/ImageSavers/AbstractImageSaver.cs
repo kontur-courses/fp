@@ -5,9 +5,9 @@ namespace TagsCloudVisualization.ImageSavers;
 
 public abstract class AbstractImageSaver
 {
-    public void Save(string fullpath, Bitmap image)
+    public Result<None> Save(string fullpath, Bitmap image)
     {
-        image.Save(Path.ChangeExtension(fullpath,Extension), Format);
+        return Result.Of(() => image.Save(Path.ChangeExtension(fullpath, Extension), Format), "Can't save image");
     }
 
     protected abstract string Extension { get; }

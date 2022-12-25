@@ -10,7 +10,7 @@ public class FontSettingsProvider : IFontSettingsProvider
         this.size = size;
         this.family = family;
     }
-    public FontSettings GetSettings()
+    public Result<FontSettings> GetSettings()
     {
         return new FontSettings(size, family);
     }

@@ -13,10 +13,10 @@ public class Options
     [Option('d', "directory", HelpText = "Set output directory")]
     public string OutputDirectory { get; set; }
 
-    [Option('h', "height", HelpText = "Set height of image", Default = 300)]
+    [Option('h', "height", HelpText = "Set height of image", Default = 400)]
     public int Height { get; set; }
 
-    [Option('w', "width", HelpText = "Set width of image", Default = 300)]
+    [Option('w', "width", HelpText = "Set width of image", Default = 400)]
     public int Width { get; set; }
 
     [Option("extension", HelpText = "Set extension to image file", Default = "png")]

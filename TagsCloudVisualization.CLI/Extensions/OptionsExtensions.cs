@@ -10,22 +10,23 @@ namespace TagsCloudVisualization.CLI.Extensions;
 
 public static class OptionsExtensions
 {
-    public static TagsCloudVisualizationSettings GetVisualizationSettings(this Options options)
+    public static Result<TagsCloudVisualizationSettings> GetVisualizationSettings(this Options options)
     {
-        return new TagsCloudVisualizationSettings()
-        {
-            Filepath = Path.Combine(Options.DefaultDirectory,options.Filepath),
-            OutputDirectory = options.OutputDirectory ?? Options.DefaultOutputDirectory,
-            ImageSettingsProvider = new ImageSettingsProvider(
-                Color.FromName(options.BackgroundColor),
-                options.Width,
-                options.Height),
-            FontSettingsProvider = new FontSettingsProvider(options.FontSize, options.FontFamily),
-            ColorGenerator = GetColorGenerator(options.ColorAlgorithm),
-            ImageSaver = GetImageSaver(options.ImageFileExtension),
-            CloudLayouter = GetCloudLayouterAlgorithm(options.LayoterAlgoritm),
-            TagCount = options.TagCount
-        };
+        return Result.Of(() =>
+            new TagsCloudVisualizationSettings()
+            {
+                Filepath = Path.Combine(Options.DefaultDirectory, options.Filepath),
+                OutputDirectory = options.OutputDirectory ?? Options.DefaultOutputDirectory,
+                ImageSettingsProvider = new ImageSettingsProvider(
+                    Color.FromName(options.BackgroundColor),
+                    options.Width,
+                    options.Height),
+                FontSettingsProvider = new FontSettingsProvider(options.FontSize, options.FontFamily),
+                ColorGenerator = GetColorGenerator(options.ColorAlgorithm),
+                ImageSaver = GetImageSaver(options.ImageFileExtension),
+                CloudLayouter = GetCloudLayouterAlgorithm(options.LayoterAlgoritm),
+                TagCount = options.TagCount
+            });
     }
 
     private static IColorGenerator GetColorGenerator(string name)

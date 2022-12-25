@@ -14,7 +14,8 @@ public class ImageSettingsProvider : IImageSettingsProvider
         this.width = width;
         this.height = height;
     }
-    public ImageSettings GetSettings()
+
+    public Result<ImageSettings> GetSettings()
     {
         return new ImageSettings(backgroundColor, new Size(width, height));
     }

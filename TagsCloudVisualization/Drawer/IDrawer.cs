@@ -2,5 +2,5 @@
 
 public interface IDrawer
 {
-    void Draw(IReadOnlyCollection<IDrawImage> drawImages,string filepath);
+    Result<None> Draw(IReadOnlyCollection<IDrawImage> drawImages,string filepath);
 }

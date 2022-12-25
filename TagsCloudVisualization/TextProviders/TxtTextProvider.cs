@@ -1,20 +1,13 @@
 ﻿namespace TagsCloudVisualization.TextProviders;
 
-public class TxtTextProvider : ITextProvider
+public class TxtTextProvider : TextFromFileProvider
 {
-    private readonly string path;
-
-    public TxtTextProvider(string path)
+    public TxtTextProvider(string path) : base(path)
     {
-        this.path = path;
     }
-    public IEnumerable<string> GetText()
+    
+    protected override IEnumerable<string> GetFromSource(string path)
     {
-        if (!File.Exists(path))
-        {
-            throw new FileNotFoundException("Such txt file not found");
-        }
-
         return File.ReadLines(path);
     }
 }

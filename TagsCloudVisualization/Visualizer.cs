@@ -27,13 +27,14 @@ public class Visualizer
         this.drawer = drawer;
     }
 
-    public void Visualize(string path, int tagCount)
+    public Result<None> Visualize(string path, int tagCount)
     {
-        var text = textProvider.GetText();
-        var processedText = preprocessor.Process(text);
-        var tags = tagConverter.Convert(processedText);
-        var tagImages = tags.Select(x => tagFactory.Create(x)).Take(tagCount).ToList();
-        drawer.Draw(tagImages,path);
+        return tagCount.AsResult()
+            .Validate(c => c > 0, $"{nameof(tagCount)} should be positive")
+            .Then(textProvider.GetText)
+            .Then(preprocessor.Process)
+            .Then(tagConverter.Convert)
+            .Then(tags => tags.Select(x => tagFactory.Create(x)).Take(tagCount).ToArray())
+            .Then(tags => drawer.Draw(tags.Select(r => r.Value).ToArray(), path));
     }
-    
 }

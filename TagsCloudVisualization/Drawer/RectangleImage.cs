@@ -15,9 +15,10 @@ public class RectangleImage : IDrawImage
 
     public Rectangle Bounds { get; }
 
-    public void Draw(Graphics graphics)
+    public Result<None> Draw(Graphics graphics)
     {
-        graphics.DrawRectangle(new Pen(colorGenerator.Generate()), Bounds);
+        return Result.Of(() => graphics.DrawRectangle(new Pen(colorGenerator.Generate()), Bounds),
+            "Can't draw rectangle");
     }
 
     public IDrawImage Offset(Size size)

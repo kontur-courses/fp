@@ -2,21 +2,14 @@
 
 namespace TagsCloudVisualization.TextProviders;
 
-public class DocTextProvider : ITextProvider
+public class DocTextProvider : TextFromFileProvider
 {
-    private readonly string path;
-
-    public DocTextProvider(string path)
+    public DocTextProvider(string path) : base(path)
     {
-        this.path = path;
     }
-    public IEnumerable<string> GetText()
-    {
-        if (!File.Exists(path))
-        {
-            throw new FileNotFoundException("Such Doc file not found");
-        }
 
+    protected override IEnumerable<string> GetFromSource(string path)
+    {
         yield return DocX.Load(path).Text;
     }
 }

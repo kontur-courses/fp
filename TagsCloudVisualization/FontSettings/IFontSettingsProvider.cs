@@ -2,5 +2,5 @@
 
 public interface IFontSettingsProvider
 {
-    FontSettings GetSettings();
+    Result<FontSettings> GetSettings();
 }
