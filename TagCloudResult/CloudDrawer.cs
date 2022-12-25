@@ -29,13 +29,13 @@ public class CloudDrawer
         return new Bitmap(size.Width, size.Height);
     }
 
-    private Bitmap DrawWords(Bitmap image, IList<WordRectangle> words, Font font, IEnumerable<Color> colors)
+    private Bitmap DrawWords(Bitmap image, IList<WordRectangle> wordsRectangles, Font font, IEnumerable<Color> colors)
     {
         using var graphics = Graphics.FromImage(image);
         graphics.SmoothingMode = SmoothingMode.HighQuality;
         var fontSize = font.Size;
 
-        foreach (var wordRectangle in words)
+        foreach (var wordRectangle in wordsRectangles)
         {
             var color = GetRandomColorFromColors(colors);
             using var brush = new SolidBrush(color);

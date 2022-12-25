@@ -25,7 +25,7 @@ public class Client
         var wordRectangles = new List<WordRectangle>();
         var fontSize = font.Size;
         using var wordMeasurer = new WordMeasurer();
-        foreach (var word in words.OrderByDescending(word => word.Frequency))
+        foreach (var word in words)
         {
             var wordRectangle = Result.Of(() => font.ChangeSize(fontSize * word.Frequency))
                 .Then(font => wordMeasurer.MeasureWord(word, font))

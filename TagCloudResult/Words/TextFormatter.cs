@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
 using MoreLinq.Extensions;
 using ResultOfTask;
 
@@ -14,6 +15,7 @@ public class TextFormatter
             .Then(GetAllWordsFromText)
             .Then(RemoveEmptyWords)
             .Then(StripAllWords)
+            .Then(OrderByFrequency)
             .RefineError("Cannot format given text");
     }
 
@@ -40,7 +42,7 @@ public class TextFormatter
 
     private IEnumerable<Word> RemoveEmptyWords(IEnumerable<Word> words)
     {
-        return words.Where(word => string.IsNullOrWhiteSpace(word.Value) == false).ToList();
+        return words.Where(word => string.IsNullOrWhiteSpace(word.Value) == false);
     }
 
     private IEnumerable<Word> StripAllWords(IEnumerable<Word> words)
@@ -48,5 +50,10 @@ public class TextFormatter
         foreach (var word in words)
             word.Value = word.Value.Trim();
         return words;
+    }
+
+    private IEnumerable<Word> OrderByFrequency(IEnumerable<Word> words)
+    {
+        return words.OrderByDescending(word => word.Frequency);
     }
 }
