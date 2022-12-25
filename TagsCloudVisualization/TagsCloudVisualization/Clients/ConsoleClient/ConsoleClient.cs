@@ -10,14 +10,14 @@ public class ConsoleClient
 {
     public void Run(params string[] args)
     {
-        var optionsResult = Result
+        Result
             .Of(() => Parser.Default.ParseArguments<Options>(args).Value)
             .RefineError("Options error")
-            .OnFail(e => Console.Write(e));
-        if (!optionsResult.IsSuccess)
-            return;
+            .OnFail(WriteError)
+            .Then(AppContainer.Configure)
+            .RefineError("Configuration error")
+            .OnFail(WriteError);
 
-        AppContainer.Configure(optionsResult.Value);
         using (var scope = AppContainer.GetScope())
         {
             var textInput = scope.Resolve<ITextInput>();
@@ -26,8 +26,13 @@ public class ConsoleClient
 
             textInput.GetInputString()
                 .Then(generator.GenerateCloud)
+                .RefineError("Generation error")
+                .OnFail(WriteError)
                 .Then(drawer.Draw)
-                .OnFail(error => Console.Write(error));
+                .RefineError("Drawing error")
+                .OnFail(WriteError);
         }
     }
+
+    private void WriteError(string error) => Console.Write(error);
 }

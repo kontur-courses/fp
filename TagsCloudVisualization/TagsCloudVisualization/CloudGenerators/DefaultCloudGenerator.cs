@@ -30,7 +30,7 @@ public class DefaultCloudGenerator : ICloudGenerator
 
             rects.Add(new TextLabel()
             {
-                Position = new Point(rc.X, rc.Y),
+                Rectangle = rc,
                 Content = word,
                 Font = font
             });

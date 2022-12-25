@@ -25,7 +25,12 @@ public class DefaultCloudDrawer : ICloudDrawer
         int i = 0;
         foreach (var textLabel in wordsInPoint)
         {
-            graphics.DrawString(textLabel.Content, textLabel.Font, brushes[i++ % brushes.Length], textLabel.Position);
+            graphics.DrawString(textLabel.Content, textLabel.Font, brushes[i++ % brushes.Length],
+                textLabel.Rectangle.Location);
+            if (!textLabel
+                    .GetСornersPositions()
+                    .All(point => 0 <= point.X && point.X <= bitmap.Width && 0 <= point.Y && point.Y <= bitmap.Height))
+                throw new Exception("Cloud does not fit into the window");
         }
 
         SaveImage();

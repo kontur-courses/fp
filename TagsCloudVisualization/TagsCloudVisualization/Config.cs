@@ -5,8 +5,8 @@ namespace TagsCloudVisualization;
 public static class Config
 {
     public const int
-        WindowWidth = 600,
-        WindowHeight = 400,
+        WindowWidth = 800,
+        WindowHeight = 600,
         CenterX = 300,
         CenterY = 200;
 
