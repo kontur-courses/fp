@@ -6,7 +6,7 @@ using TagCloudContainer.WordsColoringAlgorithms;
 
 namespace TagsCloudContainerTests
 {
-    public class DefaultWordsStainerPainter
+    public class DefaultWordsStainerPainterTests
     {
         private DefaultWordsPainter painter;
 

@@ -11,7 +11,7 @@ namespace TagCloudContainer
         {
             return !words.Any(str => str.Length > 0)
                 ? Result.OnFail<IEnumerable<string>>("Empty file")
-                : Result.OnSuccess<IEnumerable<string>>(words.Where(word => word.Length > 3));
+                : Result.OnSuccess(words.Where(word => word.Length > 3));
         }
     }
 }

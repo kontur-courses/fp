@@ -98,8 +98,11 @@
     <ItemGroup>
         <Compile Include="BoringWordsDeleterTests.cs" />
         <Compile Include="DefaultCloudLayouterTests.cs" />
-        <Compile Include="DefaultWordsStainerPainter.cs" />
         <Compile Include="InputFileHandlerTests.cs" />
+        <Compile Include="PaintersTests\DefaultWordsStainerPainterTests.cs" />
+        <Compile Include="PaintersTests\GradientDependsOnSizePainterTests.cs" />
+        <Compile Include="PaintersTests\GradientWordsPainterTests.cs" />
+        <Compile Include="PaintersTests\WordsColoringFactoryTests.cs" />
         <Compile Include="RectangleCoordinatesCalculatorTests.cs" />
         <Compile Include="ScaleCoefficientCalculatorTests.cs" />
         <Compile Include="SpiralTests.cs" />

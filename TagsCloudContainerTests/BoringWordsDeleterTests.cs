@@ -1,3 +1,4 @@
+using System;
 using CommandLine;
 using FluentAssertions;
 using NUnit.Framework;
@@ -29,6 +30,14 @@ namespace TagsCloudContainerTests
             var notBoringWords = new[] {"кто", "на", "где", "а", "и"};
             var result = BoringWordsDeleter.DeleteBoringWords(notBoringWords);
             result.Value.Should().BeEmpty();
+        }
+        
+        [Test]
+        public void BoringWordsDeleter_ShouldReturnErrorOnEmptyInput()
+        {
+            var notBoringWords = Array.Empty<string>();
+            var result = BoringWordsDeleter.DeleteBoringWords(notBoringWords);
+            result.Error.Should().Be("Empty file");
         }
 
         [Test]

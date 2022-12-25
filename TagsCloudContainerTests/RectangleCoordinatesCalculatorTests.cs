@@ -27,7 +27,7 @@ namespace TagsCloudContainerTests
         }
 
         [Test]
-        public void CalculateRectangleCoordinates_ShouldThrowArgumentException_WhenSizeLessThanZero()
+        public void CalculateRectangleCoordinates_ShouldReturnError_WhenSizeLessThanZero()
         {
             var size = new Size(-1, -1);
             var center = new Point(0, 0);

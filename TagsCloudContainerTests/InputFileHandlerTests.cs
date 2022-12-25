@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using CommandLine;
 using FluentAssertions;
@@ -40,6 +40,13 @@ namespace TagsCloudContainerTests
 
             var result = InputFileHandler.FormFrequencyDictionary(words);
             result.Value.Should().BeEquivalentTo(new Dictionary<string, int> {{"mary", 2}, {"bloody", 1}, {"june", 1}});
+        }
+
+        [Test]
+        public void FormFrequencyDictionary_ShouldReturnErrorOnEmptyInput()
+        {
+            var result = InputFileHandler.FormFrequencyDictionary(Array.Empty<string>());
+            result.Error.Should().Be("Empty file");
         }
     }
 }

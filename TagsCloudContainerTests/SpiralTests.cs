@@ -25,8 +25,19 @@ namespace TagsCloudContainerTests
             settings.AngleOffset = 1;
             settings.RadiusOffset = 1;
             var spiral = new Spiral(settings);
-            var points = spiral.GetPoints().Select(res=>res.Value).Take(5).ToList();
+            var points = spiral.GetPoints().Select(res => res.Value).Take(5).ToList();
             points.First().Should().BeEquivalentTo(new Point(501, 501));
+        }
+
+        [TestCase("Invalid angle offset", -10, 1, TestName = "|Angle offset|>1")]
+        [TestCase("Invalid radius offset", 1, 10, TestName = "|Radius offset|>1")]
+        public void GetPoints_ShouldReturnError_OnIncorrectOffsets(string textMessage, double angleOffset,
+            double radiusOffset)
+        {
+            settings.AngleOffset = angleOffset;
+            settings.RadiusOffset = radiusOffset;
+            var spiral = new Spiral(settings);
+            spiral.GetPoints().First().Error.Should().BeEquivalentTo(textMessage);
         }
 
         [TestCaseSource(nameof(_getPointsShouldReturnCorrectPointsCases))]
@@ -36,7 +47,7 @@ namespace TagsCloudContainerTests
             settings.AngleOffset = radiusOffset;
             settings.RadiusOffset = angleOffset;
             var spiral = new Spiral(settings);
-            var points = spiral.GetPoints().Select(res=>res.Value).Take(10).ToList();
+            var points = spiral.GetPoints().Select(res => res.Value).Take(10).ToList();
             for (var i = 0; i < 10; i++)
                 points[i].Should().BeEquivalentTo(expectedPoints[i]);
         }
