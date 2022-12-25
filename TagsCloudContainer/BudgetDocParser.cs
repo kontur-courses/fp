@@ -13,7 +13,8 @@ public class BudgetDocParser : IDocParser
 
         using var reader = parser.GetFormattedText(new FormattedTextOptions(FormattedTextMode.PlainText));
         return reader is null
-            ? Result.Fail<List<string>>("Unsupported file format, or empty file")
+            ? Result.Fail<List<string>>("Unsupported file format, or empty file. Supported formats listed here" +
+                                        " https://docs.groupdocs.com/parser/net/supported-document-formats/")
             : reader.ReadToEnd().Split("\r\n", StringSplitOptions.RemoveEmptyEntries)
                 .ToList().AsResult();
     }
