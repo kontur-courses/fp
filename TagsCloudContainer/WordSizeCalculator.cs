@@ -9,7 +9,7 @@ public class WordSizeCalculator : IWordSizeCalculator
     public Result<Dictionary<string, Font>> CalculateSize(Dictionary<string, int> input,
         ICustomOptions options)
     {
-        var result = new Dictionary<string, Font>(input.Count);
+        var sizesDictionary = new Dictionary<string, Font>(input.Count);
         var max = input.First().Value;
         var min = input.Last().Value;
 
@@ -21,9 +21,9 @@ public class WordSizeCalculator : IWordSizeCalculator
             var size = pair.Value == min
                 ? fontMin
                 : (pair.Value / (double)max) * (fontMax - fontMin) + fontMin;
-            result.Add(pair.Key, new Font(options.Font, (int)size));
+            sizesDictionary.Add(pair.Key, new Font(options.Font, (int)size));
         }
 
-        return result.AsResult();
+        return sizesDictionary.AsResult();
     }
 }

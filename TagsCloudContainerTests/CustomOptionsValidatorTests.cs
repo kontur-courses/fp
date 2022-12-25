@@ -123,7 +123,7 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("Invalid font color");
+        result.Error.Should().Be("Unknown font color");
         result.IsSuccess.Should().BeFalse();
     }
 
@@ -135,7 +135,7 @@ public class CustomOptionsValidatorTests
 
         var result = sut.ValidateOptions(options);
 
-        result.Error.Should().Be("Invalid backgroud color");
+        result.Error.Should().Be("Unknown backgroud color");
         result.IsSuccess.Should().BeFalse();
     }
 

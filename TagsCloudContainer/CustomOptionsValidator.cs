@@ -26,10 +26,10 @@ public class CustomOptionsValidator : IOptionsValidator
             return Result.Fail<ICustomOptions>($"{options.WorkingDirectory} does not contain file with excluded words");
         var color = Color.FromName(options.BackgroundColor);
         if (!color.IsKnownColor)
-            return Result.Fail<ICustomOptions>("Invalid backgroud color");
+            return Result.Fail<ICustomOptions>("Unknown backgroud color");
         color = Color.FromName(options.FontColor);
         if (!color.IsKnownColor)
-            return Result.Fail<ICustomOptions>("Invalid font color");
+            return Result.Fail<ICustomOptions>("Unknown font color");
         if (options.MinTagSize < 1)
             return Result.Fail<ICustomOptions>("Font size should be above 0");
         if (options.PictureSize < 1)
