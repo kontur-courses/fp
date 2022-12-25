@@ -11,11 +11,11 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        var parsedArguments = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
         var serviceProvider = DiContainerConfiguration.Build();
         var textFormatter = serviceProvider.GetRequiredService<TextFormatter>();
         var fileReader = serviceProvider.GetRequiredService<FileReader>();
         var client = serviceProvider.GetRequiredService<Client>();
+        var parsedArguments = Result.Of(() => Parser.Default.ParseArguments<CommandLineOptions>(args).Value).OnFail(client.PrintError).Value;
 
         var curve = Helper.GetCurveByName(parsedArguments.Curve).OnFail(client.PrintError);
         var font = Helper.GetFont(parsedArguments.FontFamily, parsedArguments.FontSize).OnFail(client.PrintError);
