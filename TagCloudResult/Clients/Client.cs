@@ -7,7 +7,7 @@ using TagCloudResult.Words;
 
 namespace TagCloudResult.Clients;
 
-public class Client
+public abstract class Client
 {
     private readonly CloudDrawer _drawer;
     private readonly CloudLayouter _layouter;
@@ -20,23 +20,27 @@ public class Client
         _saver = saver;
     }
 
-    public Bitmap Draw(IEnumerable<Word> words, ICurve curve, Size size, Font font, IEnumerable<Color> colors)
+    public Font Font { get; set; }
+    public ICurve Curve { get; set; }
+    public Size ImageSize { get; set; }
+
+    public Bitmap Draw(IEnumerable<Word> words, IEnumerable<Color> colors)
     {
         var wordRectangles = new List<WordRectangle>();
-        var fontSize = font.Size;
+        var fontSize = Font.Size;
         using var wordMeasurer = new WordMeasurer();
         foreach (var word in words)
         {
-            var wordRectangle = Result.Of(() => font.ChangeSize(fontSize * word.Frequency))
+            var wordRectangle = Result.Of(() => Font.ChangeSize(fontSize * word.Frequency))
                 .Then(font => wordMeasurer.MeasureWord(word, font))
-                .Then(rectangleSize => _layouter.PutRectangle(curve, rectangleSize))
+                .Then(rectangleSize => _layouter.PutRectangle(Curve, rectangleSize))
                 .Then(rectangle => new WordRectangle(word) { Rectangle = rectangle })
                 .OnFail(PrintError);
             wordRectangles.Add(wordRectangle.Value);
         }
 
-        font = font.ChangeSize(fontSize);
-        var image = _drawer.CreateImage(wordRectangles, size, font, colors).OnFail(PrintError);
+        Font = Font.ChangeSize(fontSize);
+        var image = _drawer.CreateImage(wordRectangles, ImageSize, Font, colors).OnFail(PrintError);
         return image.Value;
     }
 
@@ -51,9 +55,5 @@ public class Client
             .Then(format => _saver.Save(image, destinationPath, format));
     }
 
-    public void PrintError(string error)
-    {
-        Console.WriteLine(error);
-        Environment.Exit(1);
-    }
+    public abstract void PrintError(string error);
 }

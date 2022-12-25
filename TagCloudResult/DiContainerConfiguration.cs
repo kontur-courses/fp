@@ -19,7 +19,7 @@ public static class DiContainerConfiguration
         services.AddSingleton<CloudLayouter>();
         services.AddSingleton<TextFormatter>();
         services.AddSingleton<IBitmapSaver, HardDriveSaver>();
-        services.AddSingleton<Client>();
+        services.AddSingleton<Client, ConsoleClient>();
         return services.BuildServiceProvider();
     }
 }
