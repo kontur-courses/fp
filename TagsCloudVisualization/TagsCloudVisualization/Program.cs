@@ -1,4 +1,4 @@
 ﻿using TagsCloudVisualization.Clients;
 
-var client = new ConsoleClient(args);
-client.Run();
+var client = new ConsoleClient();
+client.Run(args);

@@ -8,17 +8,16 @@ namespace TagsCloudVisualization.Clients;
 
 public class ConsoleClient
 {
-    private Options options;
-
-    public ConsoleClient(params string[] args)
+    public void Run(params string[] args)
     {
-        options = Parser.Default.ParseArguments<Options>(args).Value;
-    }
+        var optionsResult = Result
+            .Of(() => Parser.Default.ParseArguments<Options>(args).Value)
+            .RefineError("Options error")
+            .OnFail(e => Console.Write(e));
+        if (!optionsResult.IsSuccess)
+            return;
 
-    public void Run()
-    {
-        AppContainer.Configure(options);
-
+        AppContainer.Configure(optionsResult.Value);
         using (var scope = AppContainer.GetScope())
         {
             var textInput = scope.Resolve<ITextInput>();
@@ -27,7 +26,8 @@ public class ConsoleClient
 
             textInput.GetInputString()
                 .Then(generator.GenerateCloud)
-                .Then(drawer.Draw);
+                .Then(drawer.Draw)
+                .OnFail(error => Console.Write(error));
         }
     }
 }

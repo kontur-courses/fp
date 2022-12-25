@@ -21,7 +21,6 @@ public class DefaultCloudGenerator : ICloudGenerator
         var rects = new List<TextLabel>();
         var wordFreq = Preprocessor.Preprocessing(text);
         var g = Graphics.FromImage(new Bitmap(1, 1));
-        var generalCount = wordFreq.Values.Sum();
         foreach (var (word, freq) in wordFreq.OrderByDescending(pair => pair.Value))
         {
             SizeF sz = g.MeasureString(word, font);
