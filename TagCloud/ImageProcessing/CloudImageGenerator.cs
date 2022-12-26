@@ -19,7 +19,7 @@ namespace TagCloud.ImageProcessing
         private Graphics graphics;
 
         public CloudImageGenerator(ICloudLayouter layouter, IImageSettings imageSettings, IWordColoring wordColoring)
-        {                    
+        {
             this.layouter = layouter;
             this.imageSettings = imageSettings;
             this.wordColoring = wordColoring;
@@ -39,17 +39,20 @@ namespace TagCloud.ImageProcessing
 
             graphics.TranslateTransform(width / 2f - layouter.CloudCenter.X, height / 2f - layouter.CloudCenter.Y);
 
-            DrawWords(wordsFrequencies);
+            var drawResult = DrawWords(wordsFrequencies);
+
+            if (!drawResult.IsSuccess)
+                return Result.Fail<Bitmap>($"Can't generate bitmap. {drawResult.Error}");
 
             graphics.Dispose();
 
             if (IsCloudSizeExceedsImageSize())
-                return Result.Fail<Bitmap>("Cloud size exceeds image defined size");
+                return Result.Fail<Bitmap>("Can't generate bitmap. Cloud size exceeds image defined size");
 
             return bitmap;
         }
 
-        private void DrawWords(IReadOnlyDictionary<string, double> wordsFrequencies)
+        private Result<None> DrawWords(IReadOnlyDictionary<string, double> wordsFrequencies)
         {
             double minFrequency = wordsFrequencies.Min(x => x.Value);
 
@@ -63,14 +66,19 @@ namespace TagCloud.ImageProcessing
 
                 var rectangle = layouter.PutNextRectangle(rectangleSize);
 
-                var stringFormat = new StringFormat() 
+                if (!rectangle.IsSuccess)
+                    return Result.Fail<None>(rectangle.Error);
+
+                var stringFormat = new StringFormat()
                 {
-                   Alignment = StringAlignment.Center,
-                   LineAlignment = StringAlignment.Center,
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
                 };
 
-                graphics.DrawString(wordFreq.Key, font, new SolidBrush(wordColoring.GetColor(wordFreq.Value)), rectangle, stringFormat);
+                graphics.DrawString(wordFreq.Key, font, new SolidBrush(wordColoring.GetColor(wordFreq.Value)), rectangle.Value, stringFormat);
             }
+
+            return Result.Ok();
         }
 
         private Font GetWordFontByFrequency(int minFontSize, int maxFontSize, double minFrequency, double maxFrequency, double wordFrequency)

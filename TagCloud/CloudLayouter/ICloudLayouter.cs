@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.CloudLayouter
 {
@@ -6,7 +7,7 @@ namespace TagCloud.CloudLayouter
     {
         Point CloudCenter { get; }
 
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
 
         Size GetCloudSize();
     }

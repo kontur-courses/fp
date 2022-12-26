@@ -40,9 +40,9 @@ namespace TagCloudUnitTests
         [TestCase(0, 0, TestName = "Zero width and height")]
         public void PutNextRectangle_ThrowsArgumentException_WhenSizeIsInvalid(int width, int height)
         {
-            Action action = () => layouter.PutNextRectangle(new Size(width, height));
+            var result = layouter.PutNextRectangle(new Size(width, height));
 
-            action.Should().Throw<ArgumentException>();
+            result.IsSuccess.Should().BeFalse();         
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace TagCloudUnitTests
 
         private IList<Rectangle> GetLayout(IEnumerable<Size> rectanglesSizes)
         {
-            var rectangles = rectanglesSizes.Select(size => layouter.PutNextRectangle(size)).ToList();
+            var rectangles = rectanglesSizes.Select(size => layouter.PutNextRectangle(size).GetValueOrThrow()).ToList();
 
             return rectangles;
         }

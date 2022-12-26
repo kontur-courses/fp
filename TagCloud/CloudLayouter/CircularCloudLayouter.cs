@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TagCloud.PointGenerator;
+using TagCloud.ResultMonade;
 
 namespace TagCloud.CloudLayouter
 {
@@ -21,10 +22,10 @@ namespace TagCloud.CloudLayouter
             CloudCenter = pointGenerator.CentralPoint;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (!IsValidRectangleSize(rectangleSize))
-                throw new ArgumentException("width and height of rectangle must be more than zero");
+                return Result.Fail<Rectangle>("Width and height of rectangle must be more than zero");
 
             Rectangle rectangle;
 
