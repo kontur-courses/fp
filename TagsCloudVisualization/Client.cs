@@ -14,22 +14,23 @@ namespace TagsCloudVisualization
         private readonly ITextFormatter formatter;
         private readonly ICloudLayouter layouter;
         private readonly IPainter painter;
+        private readonly IEnumerable<IFileReader> services;
 
-        public Client(ICloudLayouter layouter, IPainter painter, ITextFormatter formatter)
+        public Client(ICloudLayouter layouter, IPainter painter, ITextFormatter formatter, IEnumerable<IFileReader> services)
         {
             this.layouter = layouter;
             this.painter = painter;
             this.formatter = formatter;
+            this.services = services;
         }
 
         public Result<None> Draw(string destinationPath, FontFamily font)
         {
-            var services = Program.Container.GetServices<IFileReader>();
             foreach (var service in services)
                 if (service.TryReadAllText(out var text))
                     return formatter.Format(text)
-                        .Then(t => MakeRectangles(t, font)
-                            .Then(t => painter.DrawWordsToFile(t, destinationPath)));
+                        .Then(words => MakeRectangles(words, font)
+                            .Then(processedWords => painter.DrawWordsToFile(processedWords, destinationPath)));
 
             return Result.Fail<None>("IFileReader not found!");
         }
