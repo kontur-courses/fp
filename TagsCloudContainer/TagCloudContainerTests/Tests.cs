@@ -20,7 +20,6 @@ namespace TagCloudContainerTests
     {
         private string PathToProj = Environment.CurrentDirectory;
         private ImageSettings imageSettings;
-        private AlgorithmSettings algoSettings;
         private FileSettings fileSettings;
         private ICloudLayouter cloudLayouter;
         private IParser parser;
@@ -36,7 +35,6 @@ namespace TagCloudContainerTests
             TagsCloudContainer.Program.RegisterDependencies(builder);
             var container = builder.Build();
             imageSettings = container.Resolve<ImageSettings>();
-            algoSettings = container.Resolve<AlgorithmSettings>();
             fileSettings = container.Resolve<FileSettings>();
             fileSettings.SourceFilePath = PathToProj + @"\source.txt";
             fileSettings.CustomBoringWordsFilePath = PathToProj + @"\boring.txt";
@@ -77,7 +75,7 @@ namespace TagCloudContainerTests
             FillSourceFile("source.txt", new[] { "Сл ово" });
 
             var wordsCountResult = parser.CountWordsInFile(fileSettings.SourceFilePath);
-
+            
             wordsCountResult.IsSuccess.Should().BeFalse();
             wordsCountResult.Error.Should().Be("Файл некорректен (содержит пробелы в словах)");
         }
