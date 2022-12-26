@@ -1,7 +1,7 @@
 ﻿
 namespace TagCloud.FileReader
 {
-    public enum ValidInputFileFormats
+    public enum InputFileFormats
     {
         txt,
         doc,

@@ -55,7 +55,7 @@ namespace TagCloud
                {
                    var filePath = appConfig.InputTextFilePath;
 
-                   var formats = Enum.GetNames(typeof(ValidInputFileFormats));
+                   var formats = Enum.GetNames(typeof(InputFileFormats));
 
                    if (!formats.Any(t => filePath.Contains(t)))
                        throw new ArgumentException($"Input file <{filePath}> has invalid format");

@@ -85,7 +85,9 @@
     <Compile Include="AppConfiguration\IAppConfigProvider.cs" />
     <Compile Include="App\ConsoleApp.cs" />
     <Compile Include="App\IApp.cs" />
-    <Compile Include="FileReader\ValidInputFileFormats.cs" />
+    <Compile Include="CloudLayouter\CloudForms.cs" />
+    <Compile Include="FileReader\InputFileFormats.cs" />
+    <Compile Include="ImageProcessing\OutputFileFormats.cs" />
     <Compile Include="PointGenerator\ArchimedeanSpiral.cs" />
     <Compile Include="PointGenerator\CirclePointGenerator.cs" />
     <Compile Include="CloudLayouter\CircularCloudLayouter.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="CloudLayouter\RectangleSizeGenerator.cs" />
     <Compile Include="WordColoring\IWordColoring.cs" />
     <Compile Include="WordColoring\RandomColoring.cs" />
+    <Compile Include="WordColoring\WordColorings.cs" />
     <Compile Include="WordConverter\ConvertersExecutor.cs" />
     <Compile Include="WordConverter\IConvertersExecutor.cs" />
     <Compile Include="WordFilter\BoringWordFilter.cs" />
