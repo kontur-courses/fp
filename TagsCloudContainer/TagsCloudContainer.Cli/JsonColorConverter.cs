@@ -13,15 +13,16 @@ public partial class JsonColorConverter : JsonConverter<Color>
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.String)
-            throw ReaderException;
+            throw
+                new ArgumentException("Value of reader is not parsable to color", nameof(reader));
         var s = reader.GetString()!;
-        
+
         if (Enum.TryParse<KnownColor>(s, out var knownColor))
             return Color.FromKnownColor(knownColor);
-        
+
         var regex = HexColorRegex();
         var hexMatch = regex.Match(s);
-        
+
         if (hexMatch.Success)
         {
             var r = Convert.ToInt32(hexMatch.Groups["r"].Value, 16);
@@ -35,11 +36,9 @@ public partial class JsonColorConverter : JsonConverter<Color>
                 return Color.FromArgb(a, r, g, b);
         }
 
-        throw ReaderException;
+        throw
+            new ArgumentException("Value of reader is not parsable to color", nameof(reader));
     }
-
-    private static Exception ReaderException =>
-        new ArgumentException("Value of reader is not parsable to color", "reader");
 
     public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
     {

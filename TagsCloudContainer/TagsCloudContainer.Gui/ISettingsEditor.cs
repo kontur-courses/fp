@@ -2,5 +2,5 @@
 
 public interface ISettingsEditor<T>
 {
-    GuiGraphicsProviderSettings ShowEdit(GuiGraphicsProviderSettings settings);
+    T ShowEdit(T settings);
 }

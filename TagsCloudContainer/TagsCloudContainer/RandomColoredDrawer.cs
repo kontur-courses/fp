@@ -8,14 +8,13 @@ namespace TagsCloudContainer;
 public class RandomColoredDrawer : IDrawer
 {
     private static readonly Dictionary<FontStyle, List<FontFamily>> FontFamilies;
-    private static readonly FontStyle[] FontStyles;
+    private static readonly FontStyle[] FontStyles = Enum.GetValues<FontStyle>();
     private readonly ILayouterAlgorithmProvider algorithmProvider;
     private readonly Graphics graphics;
     private readonly RandomColoredDrawerSettings settings;
 
     static RandomColoredDrawer()
     {
-        FontStyles = Enum.GetValues<FontStyle>();
         var families = new InstalledFontCollection().Families;
         FontFamilies = new();
         foreach (var style in FontStyles)

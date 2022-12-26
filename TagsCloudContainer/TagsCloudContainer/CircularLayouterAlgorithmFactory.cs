@@ -12,7 +12,7 @@ public class CircularLayouterAlgorithmFactory : ILayouterAlgorithmFactory
             .Bind(provider => Result.Success((ILayouterAlgorithmProvider)provider));
     }
 
-    private class CircularLayouterAlgorithmProvider : ILayouterAlgorithmProvider
+    private sealed class CircularLayouterAlgorithmProvider : ILayouterAlgorithmProvider
     {
         private readonly CircularLayouterAlgorithmSettings circularLayouterAlgorithmSettings;
 

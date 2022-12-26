@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions.ValueTasks;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer;
@@ -59,12 +60,12 @@ public class ClassicDrawer : IDrawer
         return Result.Success()
             .Tap(() => graphics.FillRectangle(classicDrawerSettings.BackgroundBrush,
                 classicDrawerSettings.ImageRectangle))
-            .Tap(() => tagPropertyItems.ForeachWithCounterFromZero((item, index) => DrawTag(
+            .Bind(() => Result.Combine(tagPropertyItems.Select((item, index) => DrawTag(
                 withoutBordersLocationAddition,
                 rectangleBorderPen,
                 index + 1,
                 numbersFont,
-                item)));
+                item))));
     }
 
     private Result DrawTag(Size withoutBordersLocationAddition, Pen rectangleBorderPen, int index, Font numbersFont,

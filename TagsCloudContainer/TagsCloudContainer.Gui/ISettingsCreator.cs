@@ -1,6 +1,6 @@
 ﻿namespace TagsCloudContainer.Gui;
 
-public interface ISettingsCreator<TSetting>
+public interface ISettingsCreator<out TSetting>
 {
     TSetting? ShowCreate();
 }
