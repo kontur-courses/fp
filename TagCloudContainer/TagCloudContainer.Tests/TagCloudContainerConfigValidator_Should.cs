@@ -5,99 +5,61 @@ using TagCloudContainer.Configs;
 using TagCloudContainer.Core;
 using TagCloudContainer.Core.Interfaces;
 using TagCloudContainer.Forms.Validators;
+using TagCloudContainer.Utils;
 
 namespace TagCloudContainer.Tests;
 
 [TestFixture]
 public class TagCloudContainerConfigValidator_Should
 {
+    private ITagCloudContainerConfig _tagCloudContainerConfig;
+    private TagCloudContainerConfigValidator _tagCloudContainerConfigValidator;
+    
+    [SetUp]
+    public void SetUp()
+    {
+        _tagCloudContainerConfigValidator = new TagCloudContainerConfigValidator();
+        _tagCloudContainerConfig = new TagCloudContainerConfig()
+        {
+            NeedValidateWords = true,
+            StandartFontSize = new Size(10, 10),
+            ImageName = "image.png"
+        };
+        
+        var wordsFilePath = PathAssistant.GetFullFilePath("words.txt");
+        var excludeWordsFilePath = PathAssistant.GetFullFilePath("boring_words.txt");
+        _tagCloudContainerConfig.WordsFilePath = wordsFilePath.IsSuccess ? wordsFilePath.GetValueOrThrow() : null;
+        _tagCloudContainerConfig.ExcludeWordsFilePath = excludeWordsFilePath.IsSuccess ? excludeWordsFilePath.GetValueOrThrow() : null;
+    }
+    
     [Test]
     public void ValidateContainerConfig_CorrectParameters_ShouldBeOk()
     {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig();
-
-        validator
-            .Validate(tagCloudContainerConfig)
+        _tagCloudContainerConfigValidator
+            .Validate(_tagCloudContainerConfig)
             .IsSuccess
             .Should()
             .BeTrue();
     }
     
     [Test]
-    public void ValidateContainerConfig_IncorrectMainDirectoryPath_ShouldBeFail()
+    public void ValidateContainerConfig_IncorrectWordsFilePath_ShouldBeFail()
     {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig()
-        {
-            MainDirectoryPath = Path.Combine(TagCloudContainerConfig.GetMainDirectoryPath(), Guid.NewGuid().ToString("N"))
-        };
+        _tagCloudContainerConfig.WordsFilePath = null;
         
-        validator
-            .Validate(tagCloudContainerConfig)
-            .Should()
-            .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Incorrect path to main directory"));
-    }
-    
-    [Test]
-    public void ValidateContainerConfig_Null_ShouldBeFail()
-    {
-        var validator = new TagCloudContainerConfigValidator();
-        
-        validator
-            .Validate(null)
-            .Should()
-            .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Tag cloud config is null"));
-    }
-    
-    [Test]
-    public void ValidateContainerConfig_EmptyCenterPoint_ShouldBeFail()
-    {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig() { Center = Point.Empty };
-        
-        validator
-            .Validate(tagCloudContainerConfig)
-            .Should()
-            .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Center point can't be empty"));
-    }
-    
-    [Test]
-    public void ValidateContainerConfig_EmptyStandartSize_ShouldBeFail()
-    {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig() { StandartSize = Size.Empty };
-
-        validator
-            .Validate(tagCloudContainerConfig)
-            .Should()
-            .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Standart size can't be empty"));
-    }
-    
-    [Test]
-    public void ValidateWordReaderConfig_IncorrectFilePath_ShouldBeFail()
-    {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig();
-        tagCloudContainerConfig.SetFilePath("test.cs");
-
-        validator
-            .Validate(tagCloudContainerConfig)
+       _tagCloudContainerConfigValidator
+            .Validate(_tagCloudContainerConfig)
             .Should()
             .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Words file does not exist"));
     }
     
     [Test]
-    public void ValidateWordReaderConfig_IncorrectExcludingWordsFilePath_ShouldBeFail()
+    public void ValidateContainerConfig_IncorrectExcludeWordsFilePath_ShouldBeFail()
     {
-        var validator = new TagCloudContainerConfigValidator();
-        var tagCloudContainerConfig = new TagCloudContainerConfig();
-        tagCloudContainerConfig.SetExcludeWordsFilePath("");
-
-        validator
-            .Validate(tagCloudContainerConfig)
+        _tagCloudContainerConfig.ExcludeWordsFilePath = null;
+        _tagCloudContainerConfigValidator
+            .Validate(_tagCloudContainerConfig)
             .Should()
             .BeEquivalentTo(Result.Fail<ITagCloudContainerConfig>("Exclude words file does not exist"));
     }
-    
 }
