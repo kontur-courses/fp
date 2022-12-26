@@ -49,30 +49,46 @@ namespace TagCloudContainerTests
         }
 
         [Test]
-        public void ParserReturnsResultFail_WhenFileDontExist()
+        public void ParserCountWordsReturnsResultFail_WhenFileDontExist()
         {
             var path = PathToProj + "rnd.asd";
             if (File.Exists(path))
                 File.Delete(path);
             var wordsCountResult = parser.CountWordsInFile(path);
-            var wordsResult = parser.FindWordsInFile(path);
 
             wordsCountResult.IsSuccess.Should().BeFalse();
-            wordsCountResult.Error.Should().Be("Файла не существует");
-            wordsResult.IsSuccess.Should().BeFalse();
-            wordsResult.Error.Should().Be("Файла не существует");
+            wordsCountResult.Error.Should().Be($"Файла не существует\t{path}");
         }
 
         [Test]
-        public void ParserReturnsResultFail_WhenWhiteSpacesInWords()
+        public void ParserFindWordsReturnsResultFail_WhenFileDontExist()
+        {
+            var path = PathToProj + "rnd.asd";
+            if (File.Exists(path))
+                File.Delete(path);
+            var wordsResult = parser.FindWordsInFile(path);
+            wordsResult.IsSuccess.Should().BeFalse();
+            wordsResult.Error.Should().Be($"Файла не существует\t{path}");
+        }
+
+        [Test]
+        public void ParserCountWordsReturnsResultFail_WhenWhiteSpacesInWords()
         {
             FillSourceFile("source.txt", new[] { "Сл ово" });
-            FillSourceFile("boring.txt", new[] { "чело век" });
+
             var wordsCountResult = parser.CountWordsInFile(fileSettings.SourceFilePath);
-            var wordsResult = parser.FindWordsInFile(fileSettings.CustomBoringWordsFilePath);
 
             wordsCountResult.IsSuccess.Should().BeFalse();
             wordsCountResult.Error.Should().Be("Файл некорректен (содержит пробелы в словах)");
+        }
+
+        [Test]
+        public void ParserFindWordsReturnsResultFail_WhenWhiteSpacesInWords()
+        {
+            FillSourceFile("boring.txt", new[] { "чело век" });
+
+            var wordsResult = parser.FindWordsInFile(fileSettings.CustomBoringWordsFilePath);
+
             wordsResult.IsSuccess.Should().BeFalse();
             wordsResult.Error.Should().Be("Файл некорректен (содержит пробелы в словах)");
         }
