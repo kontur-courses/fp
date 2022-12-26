@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.App.Actions
@@ -23,11 +24,13 @@ namespace TagsCloudContainer.App.Actions
         {
             SettingsForm.For(imageSettings).ShowDialog();
             var settingResult = imageSettings.CheckIsSettingValid();
-            if (!settingResult.IsSuccess)
-            {
-                MessageBox.Show(settingResult.Error);
-                imageSettings.SetDefaultSetting();
-            }
+            imageSettings
+                .CheckIsSettingValid()
+                .OnFail((error) =>
+                {
+                    MessageBox.Show(error);
+                    imageSettings.SetDefaultSetting();
+                });
             imageHolder.RecreateImage(imageSettings);
         }
     }

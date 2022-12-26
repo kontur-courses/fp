@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.App.Actions
@@ -30,9 +31,9 @@ namespace TagsCloudContainer.App.Actions
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
             {
-                var saveImage = imageHolder.SaveImage(dialog.FileName);
-                if (!saveImage.IsSuccess)
-                    MessageBox.Show(saveImage.Error);
+                imageHolder
+                    .SaveImage(dialog.FileName)
+                    .OnFail((error) => MessageBox.Show(error));
             }
         }
     }

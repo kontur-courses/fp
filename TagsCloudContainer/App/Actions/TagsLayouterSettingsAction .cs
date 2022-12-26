@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using ResultOf;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.App.Layouter;
 
@@ -20,12 +21,13 @@ namespace TagsCloudContainer.App.Actions
         public void Perform()
         {
             SettingsForm.For(settings).ShowDialog();
-            var settingResult = settings.CheckIsSettingValid();
-            if (!settingResult.IsSuccess)
-            {
-                MessageBox.Show(settingResult.Error);
-                settings.SetDefaultSetting();
-            }
+            settings
+                .CheckIsSettingValid()
+                .OnFail((error) =>
+                {
+                    MessageBox.Show(error);
+                    settings.SetDefaultSetting();
+                });
         }
     }
 }
