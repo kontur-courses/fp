@@ -1,4 +1,4 @@
-﻿using TagsCloudContainer.Core.Extensions;
+﻿using TagsCloudContainer.Core.Results;
 using TagsCloudContainer.Core.WordsParser.Interfaces;
 
 namespace TagsCloudContainer.Core.WordsParser
@@ -14,30 +14,17 @@ namespace TagsCloudContainer.Core.WordsParser
             _wordReader = wordReader;
         }
 
-        public Dictionary<string, int> AnalyzeWords()
-        {         
-            var words = new List<string>();
-            var wordsCount = new Dictionary<string, int>();
+        public Result<Dictionary<string, int>> AnalyzeWords()
+        {
+            return _wordReader.ReadWords()
+                .Then(words => words.Select(word => word.ToLower()))
+                .Then(normalizedWords => _filter.RemoveBoringWords(normalizedWords))
+                .Then(CountWords);
+        }
 
-            while (true)
-            {
-                var word = _wordReader.ReadWord();
-
-                if (word is null)
-                    break;
-
-                words.Add(word.ToLower());
-            }
-
-            var filteredWords = _filter.RemoveBoringWords(words.ToHashSet());
-
-
-            foreach (var fWord in filteredWords.Where(fWord => words.Contains(fWord)))
-            {
-                wordsCount.SetOrUpdate(fWord);
-            }
-
-            return wordsCount;
+        private static Dictionary<string, int> CountWords(IEnumerable<string> words)
+        {
+            return words.GroupBy(word => word).ToDictionary(group => group.Key, group => group.Count());
         }
     }
 }

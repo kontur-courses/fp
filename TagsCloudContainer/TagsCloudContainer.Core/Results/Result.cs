@@ -110,9 +110,15 @@
             this Result<TInput> input,
             Func<string, string> replaceError)
         {
-            return input.IsSuccess 
-                ? input 
-                : Fail<TInput>(replaceError(input.Error));
+            if (input.IsSuccess) return input;
+            return Fail<TInput>(replaceError(input.Error));
+        }
+
+        public static Result<TInput> RefineError<TInput>(
+            this Result<TInput> input,
+            string errorMessage)
+        {
+            return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

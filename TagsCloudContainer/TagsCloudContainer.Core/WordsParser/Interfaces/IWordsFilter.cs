@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Core.WordsParser.Interfaces
+﻿using TagsCloudContainer.Core.Results;
+
+namespace TagsCloudContainer.Core.WordsParser.Interfaces
 {
     public interface IWordsFilter
     {
-        public HashSet<string> RemoveBoringWords(HashSet<string> words);
+        public Result<IEnumerable<string>> RemoveBoringWords(IEnumerable<string> words);
     }
 }

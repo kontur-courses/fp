@@ -6,26 +6,17 @@ namespace TagsCloudContainer.Core.WordsParser.FileReaders
 {
     public class OdtFileReader : IFileReader
     {
-        private readonly IEnumerator<IContent>? _odtElements;
+        private readonly string _filePath;
+
         public OdtFileReader(string filePath)
         {
-            var doc = new TextDocument();
-            doc.Load(filePath);
-            _odtElements = doc.Content.Cast<IContent>().GetEnumerator();
+            _filePath = filePath;
         }
-        public string? ReadWord()
+        public IEnumerable<string> ReadWords()
         {
-            if (_odtElements is null)
-                return null;
-
-
-            while (_odtElements.MoveNext())
-            {
-                if (_odtElements.Current.Node.InnerText.Length != 0)
-                    return _odtElements.Current.Node.InnerText;
-            }
-
-            return null;
+           using var doc = new TextDocument();
+           doc.Load(_filePath);
+           return doc.Content.Cast<IContent>().Select(s => s.Node.InnerText);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Core.WordsParser.Interfaces
+﻿using TagsCloudContainer.Core.Results;
+
+namespace TagsCloudContainer.Core.WordsParser.Interfaces
 {
     public interface IWordsAnalyzer
     {
-        public Dictionary<string, int> AnalyzeWords();
+        public Result<Dictionary<string, int>> AnalyzeWords();
     }
 }

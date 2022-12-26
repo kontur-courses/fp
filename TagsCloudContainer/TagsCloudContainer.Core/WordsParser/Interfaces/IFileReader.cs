@@ -2,6 +2,6 @@
 {
     public interface IFileReader
     {
-        public string? ReadWord();
+        public IEnumerable<string> ReadWords();
     }
 }

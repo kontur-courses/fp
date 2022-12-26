@@ -1,9 +1,11 @@
-﻿namespace TagsCloudContainer.Core.TagsClouds.Interfaces
+﻿using TagsCloudContainer.Core.Results;
+
+namespace TagsCloudContainer.Core.TagsClouds.Interfaces
 {
     public interface ITagsCloud
     {
-        public void CreateTagCloud();
+        public Result<None> CreateTagCloud();
 
-        public void SaveTagCloud();
+        public Result<None> SaveTagCloud();
     }
 }

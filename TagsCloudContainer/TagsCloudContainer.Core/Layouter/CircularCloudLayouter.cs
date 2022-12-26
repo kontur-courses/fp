@@ -57,25 +57,17 @@ namespace TagsCloudContainer.Core.Layouter
                     };
                     var distance = GetDistanceToCenter(newRectangle);
 
-                    if (distance < bestDistance && !IntersectsWithOtherRectangles(newRectangle))
-                    {
-                        bestDistance = distance;
-                        bestRectangle = newRectangle;
-                    }
+                    if (!(distance < bestDistance) || IntersectsWithOtherRectangles(newRectangle)) 
+                        continue;
+
+                    bestDistance = distance;
+                    bestRectangle = newRectangle;
                 }
             }
 
             return bestRectangle;
         }
-
-        private double GetDistanceToCenter(Rectangle rectangle)
-        {
-            var rectangleCenter = new Point(rectangle.X + rectangle.Width / 2,
-                                            rectangle.Y + rectangle.Height / 2);
-
-            return GetDistance(rectangleCenter, center);
-        }
-
+        
         private bool IntersectsWithOtherRectangles(Rectangle rectangle)
         {
             return _rectangles.Any(previous => previous.IntersectsWith(rectangle));
@@ -98,7 +90,11 @@ namespace TagsCloudContainer.Core.Layouter
             var offset = GetOffset(rectangleSize, previous, direction);
             return new Point(previous.X + offset.X, previous.Y + offset.Y);
         }
-
+        private double GetDistanceToCenter(Rectangle rectangle)
+        {
+            var rectangleCenter = new Point(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2);
+            return GetDistance(rectangleCenter, center);
+        }
         private static double GetDistance(Point p1, Point p2)
         {
             return Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));

@@ -6,26 +6,20 @@ namespace TagsCloudContainer.Core.WordsParser.FileReaders
 {
     public class DocxReader : IFileReader
     {
-        private readonly IEnumerator<OpenXmlElement>? _docxElements;
+        private readonly string _filePath;
 
         public DocxReader(string filePath)
         {
-            _docxElements = WordprocessingDocument.Open(filePath, true)
-                .MainDocumentPart?.Document.Body?.GetEnumerator();
+            _filePath = filePath;
         }
 
-        public string? ReadWord()
+        public IEnumerable<string> ReadWords()
         {
-            if (_docxElements is null)
-                return null;
+            using var doc = WordprocessingDocument.Open(_filePath, true);
+            var words = doc.MainDocumentPart?.Document.Body?.Select(p => p.InnerText);
+            doc.Close();
 
-            while (_docxElements.MoveNext())
-            {
-                if (_docxElements.Current.InnerText.Length != 0)
-                    return _docxElements.Current.InnerText;
-            }
-
-            return null;
+            return words ?? new List<string>();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using TagsCloudContainer.Core.Options.Interfaces;
+using TagsCloudContainer.Core.Results;
 using TagsCloudContainer.Core.WordsParser.Interfaces;
 
 namespace TagsCloudContainer.Core.WordsParser
@@ -21,19 +22,16 @@ namespace TagsCloudContainer.Core.WordsParser
                 .ToHashSet();
         }
 
-        public HashSet<string> RemoveBoringWords(HashSet<string> words)
-        {
-            var wordsInfo = GetWordsInfo(words.ToHashSet(), _myStemLocation);
-            var filteredWords = words
-                .Where(word => !_boringWords.Contains(word) && !IsWordBoringPartOfSpeech(word, wordsInfo))
-                .ToHashSet();
+        public Result<IEnumerable<string>> RemoveBoringWords(IEnumerable<string> words) =>
+            Result.Of(() => GetWordsInfo(words.ToHashSet(), _myStemLocation))
+                .Then(wordsInfo => words.Where(word => !IsBoringWord(word, wordsInfo)));
 
-            return filteredWords;
-        }
+        private bool IsBoringWord(string word, IEnumerable<string> wordsInfo)
+            => _boringWords.Contains(word) || IsWordBoringPartOfSpeech(word, wordsInfo);
 
         private static IEnumerable<string> GetWordsInfo(IEnumerable<string> words, string? myStemLocation)
         {
-            if (myStemLocation is null)
+            if (myStemLocation is null || myStemLocation == "")
                 return words;
 
             var myStem = new Process
@@ -69,12 +67,8 @@ namespace TagsCloudContainer.Core.WordsParser
 
         private static bool IsWordBoringPartOfSpeech(string word, IEnumerable<string> wordsInfo)
         {
-            var boringWordInfos = wordsInfo
-                .Where(wordInfo => wordInfo.Contains(word))
-                .Where(wordInfo => BoringPartsOfSpeech.Any(wordInfo.Contains))
-                .ToList();
-
-            return boringWordInfos.Count != 0;
+            return wordsInfo.Where(wordInfo => wordInfo.Contains(word))
+                .Any(wordInfo => BoringPartsOfSpeech.Any(wordInfo.Contains));
         }
     }
 }

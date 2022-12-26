@@ -5,10 +5,10 @@ namespace TagsCloudContainer.Core.CLI
     public class CommandLineOptions
     {
         [Option("width", Required = false, HelpText = "Set output image width.", Default = 500)]
-        public int Width { get; set; }
+        public string Width { get; set; }
 
         [Option("height", Required = false, HelpText = "Set output image height.", Default = 500)]
-        public int Height { get; set; }
+        public string Height { get; set; }
 
         [Option("font", Required = false, HelpText = "Set output text font.", Default = "Times New Roman")]
         public string FontFamily { get; set; }
