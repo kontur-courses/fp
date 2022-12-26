@@ -35,8 +35,7 @@ public partial class JsonColorConverter : JsonConverter<Color>
                 return Color.FromArgb(a, r, g, b);
         }
 
-        throw
-            new ArgumentException("Value of reader is not parsable to color", nameof(reader));
+        throw new ArgumentException("Value of reader is not parsable to color", nameof(reader));
     }
 
     public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)

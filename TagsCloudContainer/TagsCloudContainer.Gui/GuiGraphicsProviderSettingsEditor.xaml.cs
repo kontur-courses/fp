@@ -3,8 +3,7 @@ using System.Windows;
 
 namespace TagsCloudContainer.Gui;
 
-public partial class GuiGraphicsProviderSettingsEditor : ISettingsEditor<GuiGraphicsProviderSettings>,
-    INotifyPropertyChanged
+public partial class GuiGraphicsProviderSettingsEditor : ISettingsEditor<GuiGraphicsProviderSettings>
 {
     public GuiGraphicsProviderSettingsEditor()
     {

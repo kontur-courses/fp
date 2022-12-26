@@ -30,13 +30,17 @@ public class JsonSettingsFactory : ISettingsFactory
     {
         return Result.Success(new Settings())
             .BindIf(!File.Exists(jsonSettingsFileName), _ => Result.Try(SaveDefaultSettings))
-            .BindIf(File.Exists(jsonSettingsFileName), _ => Result.Try(ReadSettings));
+            .BindIf(File.Exists(jsonSettingsFileName), _ => ReadSettings());
     }
 
-    private Settings ReadSettings()
+    private Result<Settings> ReadSettings()
     {
-        using var fileStream = File.OpenRead(jsonSettingsFileName);
-        return JsonSerializer.Deserialize<Settings>(fileStream, options) ?? throw new InvalidOperationException("Cannot parse file");
+        return Result.Try(() => File.OpenRead(jsonSettingsFileName))
+            .Bind(stream => (settings: JsonSerializer.Deserialize<Settings>(stream, options), stream))
+            .AnyWayDispose(result => result.IsSuccess ? result.Value.stream : null)
+            .Ensure(result =>
+                Result.SuccessIf(() => result.settings != null, $"Cannot parse file {jsonSettingsFileName}"))
+            .Bind(result => result.settings!);
     }
 
     private Settings SaveDefaultSettings()

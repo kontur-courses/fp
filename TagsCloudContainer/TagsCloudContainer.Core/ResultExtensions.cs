@@ -14,9 +14,9 @@ public static class ResultExtensions
         return result.Bind(value => Result.Success(resolve(value)));
     }
 
-    public static T FinallyDispose<T>(this T result, Func<T, IDisposable> disposeResolver) where T : IResult
+    public static T AnyWayDispose<T>(this T result, Func<T, IDisposable?> disposeResolver) where T : IResult
     {
-        disposeResolver(result).Dispose();
+        disposeResolver(result)?.Dispose();
         return result;
     }
     

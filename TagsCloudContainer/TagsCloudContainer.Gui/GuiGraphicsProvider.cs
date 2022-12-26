@@ -47,6 +47,6 @@ public class GuiGraphicsProvider : IGraphicsProvider
             .OnSuccessTry(() => bitmap!.Dispose())
             .BindIf(settings.Save, () => cache.TrySaveRandomFile(settings.SavePath, "png"))
             .Bind(() => imageListProvider.AddImageBits(cache.ToArray()))
-            .FinallyDispose(_ => cache);
+            .AnyWayDispose(_ => cache);
     }
 }

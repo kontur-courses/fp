@@ -41,6 +41,6 @@ public class CliGraphicsProvider : IGraphicsProvider
         return Result.Try(() => bitmap!.Save(cache, ImageFormat.Png))
             .OnSuccessTry(() => bitmap!.Dispose())
             .Bind(() => cache.TrySaveRandomFile(settings.BasePath, "png"))
-            .FinallyDispose(_ => cache);
+            .AnyWayDispose(_ => cache);
     }
 }
