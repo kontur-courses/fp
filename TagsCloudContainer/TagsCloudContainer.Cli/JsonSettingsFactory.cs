@@ -36,7 +36,7 @@ public class JsonSettingsFactory : ISettingsFactory
     private Settings ReadSettings()
     {
         using var fileStream = File.OpenRead(jsonSettingsFileName);
-        return JsonSerializer.Deserialize<Settings>(fileStream, options) ?? throw new InvalidOperationException();
+        return JsonSerializer.Deserialize<Settings>(fileStream, options) ?? throw new InvalidOperationException("Cannot parse file");
     }
 
     private Settings SaveDefaultSettings()
@@ -47,7 +47,7 @@ public class JsonSettingsFactory : ISettingsFactory
         return resultSettings;
     }
 
-    private class SettingsTypeResolver : DefaultJsonTypeInfoResolver
+    private sealed class SettingsTypeResolver : DefaultJsonTypeInfoResolver
     {
         private static readonly Dictionary<Type, JsonDerivedType[]> JsonDerivedTypes;
 

@@ -13,8 +13,7 @@ public partial class JsonColorConverter : JsonConverter<Color>
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.String)
-            throw
-                new ArgumentException("Value of reader is not parsable to color", nameof(reader));
+            throw new ArgumentException("Value of reader is not parsable to color", nameof(reader));
         var s = reader.GetString()!;
 
         if (Enum.TryParse<KnownColor>(s, out var knownColor))

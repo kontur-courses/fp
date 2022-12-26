@@ -39,6 +39,4 @@ public partial class GuiGraphicsProviderSettingsEditor : ISettingsEditor<GuiGrap
         DialogResult = true;
         Close();
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 }
