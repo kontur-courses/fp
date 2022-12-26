@@ -8,6 +8,7 @@ public class HardDriveSaver : IBitmapSaver
 {
     public Result<None> Save(Bitmap bitmap, string filename, ImageFormat format)
     {
-        return Result.OfAction(() => bitmap.Save(filename, format));
+        return Result.OfAction(() => bitmap.Save(filename, format))
+            .RefineError($"Couldn't save file '{filename} on disk.'");
     }
 }
