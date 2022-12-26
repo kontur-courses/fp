@@ -6,6 +6,7 @@ using TagCloudContainer.Core.Models;
 using TagCloudContainer.Core.Utils;
 using TagCloudContainer.Forms.Interfaces;
 using TagCloudContainer.Forms.Validators;
+using TagCloudContainer.Utils;
 
 namespace TagCloudContainer.Forms;
 
@@ -14,56 +15,62 @@ public static class Register
     public static IContainer Registry()
     {
         var builder = new ContainerBuilder();
-        IContainer container;
+        var (selectedValues, tagCloudPlacerConfig, tagCloudContainerConfig) = GetSettingsInstancesWithDefaultValues();
 
         builder.RegisterType<TagCloud>();
         builder.RegisterType<Settings>();
 
-        var tagCloudContainerConfig = GetTagCloudContainerConfigWithDefaultPropertiesValues();
-
         builder.RegisterInstance(tagCloudContainerConfig).As<ITagCloudContainerConfig>();
-        builder.RegisterInstance(tagCloudContainerConfig).As<ITagCloudFormConfig>();
+        builder.RegisterInstance(tagCloudPlacerConfig).As<ITagCloudPlacerConfig>();
+        builder.RegisterInstance(selectedValues).As<ISelectedValues>();
 
         builder.RegisterType<TagCloudContainerConfigValidator>().As<IConfigValidator<ITagCloudContainerConfig>>();
-        builder.RegisterType<TagCloudFormConfigValidator>().As<IConfigValidator<ITagCloudFormConfig>>();
+        builder.RegisterType<TagCloudPlacerConfigValidator>().As<IConfigValidator<ITagCloudPlacerConfig>>();
+        builder.RegisterType<SelectedValuesValidator>().As<IConfigValidator<ISelectedValues>>();
         builder.RegisterType<ImageCreator>().As<IImageCreator>().SingleInstance();
         builder.RegisterType<SizeInvestigator>().As<ISizeInvestigator>().SingleInstance();
-        builder.RegisterType<WordValidator>().As<IWordValidator>().SingleInstance();
+        builder.RegisterType<LinesValidator>().As<ILinesValidator>().SingleInstance();
         builder.RegisterType<TagCloudPlacer>().As<ITagCloudPlacer>().SingleInstance();
         builder.RegisterType<WordsReader>().As<IWordsReader>().SingleInstance();
         builder.RegisterType<TagCloudProvider>().As<ITagCloudProvider>().SingleInstance();
-            
-        try
-        {
-            container = builder.Build();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        
-        return container;
+
+        return builder
+            .Build()
+            .AsResult()
+            .OnFail(error => Console.WriteLine(error))
+            .GetValueOrThrow();
     }
 
-    private static ITagCloudContainerConfig GetTagCloudContainerConfigWithDefaultPropertiesValues()
+    private static (ISelectedValues, ITagCloudPlacerConfig, ITagCloudContainerConfig) GetSettingsInstancesWithDefaultValues()
     {
-        return new TagCloudContainerConfig()
+        var availableColor = Colors.GetAll().First().Value;
+        
+        var tagCloudPlacerConfig = new TagCloudPlacerConfig()
         {
-            Random = true,
-            StandartSize = new Size(10, 10),
-            ImageSize = Screens.Sizes.First(),
-            Center = new Point(1, 1),
-            NearestToTheCenterPoints = new SortedList<float, Point>(),
-            PutRectangles = new List<Rectangle>(),
-            FilePath = Path.Combine(TagCloudContainerConfig.GetMainDirectoryPath(), "words.txt"),
-            ExcludeWordsFilePath = Path.Combine(TagCloudContainerConfig.GetMainDirectoryPath(), "boring_words.txt"),
-            MainDirectoryPath = TagCloudContainerConfig.GetMainDirectoryPath(),
-            ImageName = "TagCloudResult.png",
-            NeedValidate = true,
-            FontFamily = "Arial",
-            Color = Colors.GetAll().First().Value,
-            BackgroundColor = Colors.GetAll().First().Value,
+            FieldCenter = new Point(10, 10),
+            NearestToTheFieldCenterPoints = new SortedList<float, Point>(),
+            PutRectangles = new List<Rectangle>()
         };
+        var selectedValues = new SelectedValues()
+        {
+            WordsColor = availableColor,
+            BackgroundColor = availableColor,
+            FontFamily = "Arial",
+            PlaceWordsRandomly = false,
+            ImageSize = Screens.Sizes.First()
+        };
+        
+        var tagCloudContainerConfig = new TagCloudContainerConfig()
+        {
+            ImageName = "TagCloudResult.png",
+        };
+        
+        var wordsFilePath = PathAssistant.GetFullFilePath("words.txt");
+        var excludeWordsFilePath = PathAssistant.GetFullFilePath("boring_words.txt");
+
+        tagCloudContainerConfig.WordsFilePath = wordsFilePath.IsSuccess ? wordsFilePath.GetValueOrThrow() : null;
+        tagCloudContainerConfig.ExcludeWordsFilePath = excludeWordsFilePath.IsSuccess ? excludeWordsFilePath.GetValueOrThrow() : null;
+        
+        return (selectedValues, tagCloudPlacerConfig, tagCloudContainerConfig);
     }
 }
