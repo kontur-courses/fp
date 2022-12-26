@@ -46,5 +46,13 @@ namespace TagCloudUnitTests
 
             actualText.IsSuccess.Should().BeFalse();
         }
+
+        [Test]
+        public void ReadAllText_IsNotSuccess_WhenFileHasInvalidContent()
+        {
+            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\NotDocxText.docx");
+
+            actualText.IsSuccess.Should().BeFalse();
+        }
     }
 }

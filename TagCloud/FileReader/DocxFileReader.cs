@@ -11,23 +11,27 @@ namespace TagCloud.FileReader
         public Result<string> ReadAllText(string filePath)
         {
             if (!filePath.EndsWith(".doc") && !filePath.EndsWith(".docx"))
-                return Result.Fail<string>($"File {filePath} isn't format .doc or .docx");
+                return Result.Fail<string>($"Input file {filePath} isn't format .doc or .docx");
 
             if (!File.Exists(filePath))
-                return Result.Fail<string>($"File {filePath} doesn't exist");
+                return Result.Fail<string>($"Input file {filePath} doesn't exist");
 
             var sb = new StringBuilder();
 
-            using (WordprocessingDocument wordDocument =
-                    WordprocessingDocument.Open(filePath, false))
-            {
-                var paragraphs = wordDocument.MainDocumentPart.RootElement.Descendants<Paragraph>();
+            Result<WordprocessingDocument> wordDocument = 
+                Result.Of(() => WordprocessingDocument.Open(filePath, false));
 
-                foreach (var paragraph in paragraphs)
-                    sb.AppendLine(paragraph.InnerText);
+            if (!wordDocument.IsSuccess)
+                return Result.Fail<string>($"Input file {filePath} has invalid content");
 
-                return sb.ToString().Trim();
-            }
+            var paragraphs = wordDocument.Value.MainDocumentPart.RootElement.Descendants<Paragraph>();
+
+            foreach (var paragraph in paragraphs)
+                sb.AppendLine(paragraph.InnerText);
+
+            wordDocument.Value.Close();
+
+            return sb.ToString().Trim();
         }
     }
 }

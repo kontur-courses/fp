@@ -8,15 +8,15 @@ namespace TagCloud.FileReader
         public Result<string> ReadAllText(string filePath)
         {
             if (!filePath.EndsWith(".txt"))
-                return Result.Fail<string>($"File {filePath} isn't format .txt");
+                return Result.Fail<string>($"Input file {filePath} isn't format .txt");
 
             if (!File.Exists(filePath))
-                return Result.Fail<string>($"File {filePath} doesn't exist");
+                return Result.Fail<string>($"Input file {filePath} doesn't exist");
 
             var text = Result.Of(() => File.ReadAllText(filePath));
 
             if (text.IsSuccess && text.Value.Length == 0)
-                return Result.Fail<string>($"File {filePath} is empty");
+                return Result.Fail<string>($"Input file {filePath} is empty");
 
             return text;
         }
