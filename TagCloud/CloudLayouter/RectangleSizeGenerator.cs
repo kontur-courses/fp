@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 namespace TagCloud.CloudLayouter
 {
     public static class RectangleSizeGenerator
     {
-        private static readonly Random Random = new Random();
-
         public static IReadOnlyList<Size> GetConstantSizes(int count, Size size)
         {
             var result = new List<Size>();
