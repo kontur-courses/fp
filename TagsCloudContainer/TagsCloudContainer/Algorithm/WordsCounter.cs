@@ -26,7 +26,7 @@ namespace TagsCloudContainer.Algorithm
             var notBoringTypes = new[] { "сущ", "прил", "гл" };
 
             return !wordsCount.IsSuccess || !customBoringWords.IsSuccess ? 
-                Result.Fail<Dictionary<string, int>>(wordsCount.Error + customBoringWords.Error) 
+                Result.Fail<Dictionary<string, int>>(wordsCount.Error + '\t' + customBoringWords.Error) 
                 : Result.Ok(wordsCount.Value
                     .Where(pair =>
                         !customBoringWords.Value.Contains(pair.Key) && 

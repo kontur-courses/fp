@@ -46,7 +46,8 @@ namespace TagsCloudContainer.Algorithm
         private Result<Rectangle> GetNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                return Result.Fail<Rectangle>("Размеры не могут быть отрицательными");
+                return Result.Fail<Rectangle>($"Размеры не могут быть отрицательными" +
+                                              $"\tWidth:{rectangleSize.Width}\tHeight:{rectangleSize.Height}");
 
             var rect = FindFreePlaceForNewRectangle(rectangleSize);
             TryMoveRectangleCloserToCenter(ref rect);
