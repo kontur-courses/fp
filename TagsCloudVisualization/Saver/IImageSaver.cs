@@ -8,6 +8,6 @@ namespace TagsCloudVisualization.Saver
         public string FileName { get; set; }
         public string FileExtension { get; set; }
 
-        public void Save(Image image);
+        public Result<None> Save(Image image);
     }
 }

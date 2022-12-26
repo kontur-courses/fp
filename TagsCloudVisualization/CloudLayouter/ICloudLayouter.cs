@@ -8,6 +8,6 @@ namespace TagsCloudVisualization.CloudLayouter
     {
         public List<Rectangle> Rectangles { get; }
         public ISpiral Spiral { get; }
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Autofac;
 using CommandLine;
 using TagsCloudVisualization.CloudLayouter;
@@ -62,9 +63,12 @@ namespace TagsCloudVisualization
             var visualizer = container.Resolve<IImageVisualizer>();
             var saver = container.Resolve<IImageSaver>();
 
-            saver.Save(visualizer.CreateImage());
+            var visualizerResult = visualizer.CreateImage();
+
+            if (visualizerResult.IsSuccess)
+                saver.Save(visualizerResult.Value);
+            else
+                Console.WriteLine(visualizerResult.Error);
         }
     }
 }
-
-

@@ -4,6 +4,6 @@ namespace TagsCloudVisualization.Visualizer
 {
     internal interface IImageVisualizer
     {
-        public Image CreateImage();
+        public Result<Image> CreateImage();
     }
 }

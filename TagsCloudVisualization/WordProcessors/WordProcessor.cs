@@ -14,10 +14,15 @@ namespace TagsCloudVisualization.WordProcessors
                    !Settings.ExcludedWords.Contains(word);
         }
 
-        public string[] Process(string[] words)
+        public Result<string[]> Process(string[] words)
         {
-            return words.Where(WordIsAllowed)
-                 .Select(word => word.ToLower()).ToArray();
+            var processResult = Result.Of(() => words.Where(WordIsAllowed)
+                .Select(word => word.ToLower()).ToArray());
+
+            if (processResult.IsSuccess)
+                return processResult;
+
+            return Result.Fail<string[]>(processResult.Error);
         }
 
         public WordProcessor(IProcessingSettings settings)

@@ -16,15 +16,14 @@ namespace TagsCloudVisualization.WordProcessors.WordProcessingSettings
             int maxLength = defaultMaxWordLength)
         {
 
-            ExcludedWords = ParseWord(excludedWords);
+            ExcludedWords = ParseWord(excludedWords).Value;
             MinWordLength = minLength;
             MaxWordLength = maxLength;
         }
 
-        private string[] ParseWord(string words)
+        private Result<string[]> ParseWord(string words)
         {
-            return words.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            return Result.Of(() => words.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries));
         }
-
     }
 }

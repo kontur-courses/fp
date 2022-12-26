@@ -12,11 +12,11 @@ namespace TagsCloudVisualization.FontSettings
 
         public FontSettings(string fontFamily, string fontColor)
         {
-            FontFamily = TryGetFontFamily(fontFamily);
+            FontFamily = GetFontFamily(fontFamily);
             FontColor = fontColor;
         }
 
-        private FontFamily TryGetFontFamily(string fontFamily)
+        private FontFamily GetFontFamily(string fontFamily)
         {
             try
             {
@@ -25,8 +25,10 @@ namespace TagsCloudVisualization.FontSettings
             catch (ArgumentException)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Font {fontFamily} cannot be found. The default value has been set: {defaultFontFamily}");
+                Console.WriteLine(
+                    $"Font {fontFamily} cannot be found. The default value has been set: {defaultFontFamily}");
                 Console.ResetColor();
+
                 return new FontFamily(defaultFontFamily);
             }
         }

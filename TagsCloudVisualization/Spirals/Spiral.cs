@@ -27,7 +27,7 @@ namespace TagsCloudVisualization.Spirals
             if (Points.Count >= count)
                 return Points;
 
-            var currentPoint = Points[Points.Count - 1];
+            var currentPoint = Points[^1];
             var i = Points.Count;
 
             while (i < count)

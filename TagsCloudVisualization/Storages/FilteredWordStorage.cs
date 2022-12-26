@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TagsCloudVisualization.TextReaders;
 using TagsCloudVisualization.WordProcessors;
 
@@ -10,7 +11,10 @@ namespace TagsCloudVisualization.Storages
 
         public FilteredWordStorage(ITextReader reader, IWordProcessor filter)
         {
-            Words = filter.Process(reader.Read());
+            var readingResult = reader.Read();
+            if (!readingResult.IsSuccess)
+                return;
+            Words = filter.Process(readingResult.Value).Value;
         }
     }
 }

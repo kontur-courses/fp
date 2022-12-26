@@ -14,7 +14,7 @@ namespace TagsCloudVisualization.Storages
 
         public WordStorage(ITextReader reader)
         { 
-            Words = reader.Read();
+            Words = reader.Read().Value;
         }
     }
 }

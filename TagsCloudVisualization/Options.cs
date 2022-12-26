@@ -36,6 +36,5 @@ namespace TagsCloudVisualization
         [Option("exclude", Required = false, HelpText = "Specify excluded words. " +
                                                         "Example: --exclude Привет, мы, скучные, слова", Default = "")]
         public string ExcludedWords { get; set; }
-
     }
 }
