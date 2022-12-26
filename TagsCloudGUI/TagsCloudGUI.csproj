@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DIBuilder.cs" />
     <Compile Include="ExludedWordsForm.cs">
       <SubType>Form</SubType>
     </Compile>

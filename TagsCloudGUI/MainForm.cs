@@ -47,16 +47,15 @@ namespace TagsCloudGUI
                     ShowErrorMessage(parsedResult);
                     return;
                 }
+
                 circularCloudSettingsProvider.CircularCloudSettings.StepSize = parsedResult.Value;
                 circularCloudSettingsProvider.CircularCloudSettings.StepSize =
                     circularCloudSettingsProvider.CircularCloudSettings.StepSize <= 0
                         ? 1
                         : circularCloudSettingsProvider.CircularCloudSettings.StepSize;
-                var bitmapResult = drawer.DrawImage(fileText);
-                if(bitmapResult.IsSuccess)
-                    pic_main.BackgroundImage = bitmapResult.Value;
-                else
-                    ShowErrorMessage(bitmapResult);
+                var setImageResult = drawer.DrawImage(fileText).Then(img => pic_main.BackgroundImage = img);
+                if(!setImageResult.IsSuccess)
+                    ShowErrorMessage(setImageResult);
             }
             catch (Exception ex)
             {
@@ -68,16 +67,11 @@ namespace TagsCloudGUI
         {
             var heigthResult = TryToParse(box_heightPic.Text);
             var widthResult = TryToParse(box_widthPic.Text);
-            if (!heigthResult.IsSuccess)
+            if (!heigthResult.IsSuccess || !widthResult.IsSuccess)
             {
-                ShowErrorMessage(heigthResult);
-                return;
+               ShowErrorMessage(Result.Fail<None>("Введенные размеры не являются числом"));
             }
-            if (!widthResult.IsSuccess)
-            {
-                ShowErrorMessage(widthResult);
-                return;
-            }
+
             var heigth = heigthResult.Value;
             var width = widthResult.Value;
             var image = pic_main.BackgroundImage;
