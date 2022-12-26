@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TagsCloudContainer.Algorithm;
+﻿using TagsCloudContainer.Algorithm;
 using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudContainer.Visualisator;

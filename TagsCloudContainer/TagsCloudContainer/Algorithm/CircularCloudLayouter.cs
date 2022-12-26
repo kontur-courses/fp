@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TagsCloudContainer.Extensions;
+﻿using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Infrastructure;
 using TagsCloudVisualization;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing.Imaging;
 using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.Extensions

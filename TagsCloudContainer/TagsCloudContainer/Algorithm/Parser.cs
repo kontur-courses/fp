@@ -1,6 +1,4 @@
-﻿using DeepMorphy;
-using TagsCloudContainer.Extensions;
-using TagsCloudContainer.Infrastructure;
+﻿using TagsCloudContainer.Infrastructure;
 
 namespace TagsCloudContainer.Algorithm
 {
