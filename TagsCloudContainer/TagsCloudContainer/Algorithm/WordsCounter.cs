@@ -17,24 +17,31 @@ namespace TagsCloudContainer.Algorithm
 
         public Result<Dictionary<string, int>> CountWords(string pathToSource, string pathToCustomBoringWords)
         {
-            var wordsCount = parser
+            var wordsCountRes = parser
                 .CountWordsInFile(pathToSource)
                 .RefineError("Источник слов");
-            var customBoringWords = parser
+            var customBoringWordsRes = parser
                 .FindWordsInFile(pathToCustomBoringWords)
                 .RefineError("Источник скучных слов");
+
+            return !wordsCountRes.IsSuccess || !customBoringWordsRes.IsSuccess ? 
+                Result.Fail<Dictionary<string, int>>(wordsCountRes.Error + '\t' + customBoringWordsRes.Error) 
+                : Result.Ok(
+                    RemoveBoringWords(wordsCountRes.Value, customBoringWordsRes.Value)
+                        .OrderByDescending(pair => pair.Value)
+                        .ToDictionary(e => e.Key, e => e.Value));
+        }
+
+        private IEnumerable<KeyValuePair<string, int>> RemoveBoringWords(Dictionary<string, int> wordsCount,
+             HashSet<string> customBoringWords)
+        {
             var notBoringTypes = new[] { "сущ", "прил", "гл" };
 
-            return !wordsCount.IsSuccess || !customBoringWords.IsSuccess ? 
-                Result.Fail<Dictionary<string, int>>(wordsCount.Error + '\t' + customBoringWords.Error) 
-                : Result.Ok(wordsCount.Value
-                    .Where(pair =>
-                        !customBoringWords.Value.Contains(pair.Key) && 
-                        notBoringTypes.Any(type =>
-                            morph.GetGrams(pair.Key)["чр"].Contains(type)))
-                    .OrderByDescending(pair => pair.Value)
-                    .ToDictionary(e => e.Key, e => e.Value));
-
+            return wordsCount
+                .Where(pair =>
+                    !customBoringWords.Contains(pair.Key) &&
+                    notBoringTypes.Any(type =>
+                        morph.GetGrams(pair.Key)["чр"].Contains(type)));
         }
     }
 }
