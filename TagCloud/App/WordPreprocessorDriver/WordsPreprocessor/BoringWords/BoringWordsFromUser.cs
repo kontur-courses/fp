@@ -11,17 +11,13 @@ public class BoringWordsFromUser : IBoringWords
         usersWords = new List<string>();
     }
 
-    public Result<None> IsBoring(IWord word)
+    public bool IsBoring(IWord word)
     {
-        return Result.Of(() =>
-                usersWords.Any(boringWord => boringWord == word.Value))
-            .Then(result => result
-                ? Result.Ok()
-                : Result.Fail<None>("Word is not boring"));
+        return usersWords.Any(boringWord => boringWord == word.Value);
     }
 
-    public Result<None> AddBoringWord(string word)
+    public void AddBoringWord(string word)
     {
-        return Result.OfAction(() => usersWords.Add(word));
+        usersWords.Add(word);
     }
 }

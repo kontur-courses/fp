@@ -4,7 +4,7 @@ public interface IFileEncoder
 {
     Result<string> GetText(string fileName);
 
-    Result<None> IsSuitableFileType(string fileName);
+    bool IsSuitableFileType(string fileName);
 
     string GetExpectedFileType();
 }

@@ -23,11 +23,9 @@ public class FileEncoderСheater : IFileEncoder
             : Result.Fail<string>("File not found");
     }
 
-    public Result<None> IsSuitableFileType(string fileName)
+    public bool IsSuitableFileType(string fileName)
     {
-        return fileName.EndsWith(fileType)
-            ? Result.Ok()
-            : Result.Fail<None>("Not suitable file type");
+        return fileName.EndsWith(fileType);
     }
 
     public string GetExpectedFileType()

@@ -6,17 +6,15 @@ public class TxtEncoder : IFileEncoder
 
     public Result<string> GetText(string fileName)
     {
-        return IsSuitableFileType(fileName)
-            .Then(_ => Result.Of(() => File.ReadAllText(fileName))
-                .RefineError("Can not read words from file"));
+        var result = IsSuitableFileType(fileName)
+            ? Result.Of(() => File.ReadAllText(fileName))
+            : Result.Fail<string>("Filetype is not suitable");
+        return result.RefineError("Can not read words from file");
     }
 
-    public Result<None> IsSuitableFileType(string fileName)
+    public bool IsSuitableFileType(string fileName)
     {
-        return fileName.EndsWith(FileType)
-            ? Result.Ok()
-            : Result.Fail<None>($"File is not suitable. Expected {FileType} filetype, " +
-                                $"but was found {fileName.Split('.').LastOrDefault() ?? string.Empty}");
+        return fileName.EndsWith(FileType);
     }
 
     public string GetExpectedFileType()

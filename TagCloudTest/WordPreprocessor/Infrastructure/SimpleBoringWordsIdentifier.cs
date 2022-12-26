@@ -6,10 +6,8 @@ namespace TagCloudTest.WordPreprocessor.Infrastructure;
 
 public class SimpleBoringWordsIdentifier : IBoringWords
 {
-    public Result<None> IsBoring(IWord word)
+    public bool IsBoring(IWord word)
     {
-        return word.Value == "boring"
-            ? Result.Ok()
-            : Result.Fail<None>("Word is not boring");
+        return word.Value == "boring";
     }
 }

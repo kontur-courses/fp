@@ -7,7 +7,7 @@ public class CloudDrawer : ICloudDrawer
 {
     public Result<Bitmap> DrawWords(List<IDrawingWord> words, IDrawingSettings settings)
     {
-        return FindSizeByRectangles(words)
+        return Result.Of(() =>  FindSizeByRectangles(words))
             .Then(size => Result.FailIf(size, size.Height > settings.PictureSize.Height,
                 $"Height {settings.PictureSize.Height} can not be less than required {size.Height}"))
             .Then(size => Result.FailIf(size, size.Width > settings.PictureSize.Width,
@@ -15,17 +15,17 @@ public class CloudDrawer : ICloudDrawer
             .Then(_ => Draw(words, settings.PictureSize.Width, settings.PictureSize.Height, settings.BgColor));
     }
 
-    private static Result<Size> FindSizeByRectangles(IReadOnlyCollection<IDrawingWord> words)
+    private static Size FindSizeByRectangles(IReadOnlyCollection<IDrawingWord> words)
     {
-        return Result.Of(() =>
-        {
-            var width = words.Max(word => word.Rectangle.Right);
-            var height = words.Max(word => word.Rectangle.Bottom);
-            return new Size(width, height);
-        });
+        if (words.Count == 0)
+            return new Size(0, 0);
+        
+        var width = words.Max(word => word.Rectangle.Right);
+        var height = words.Max(word => word.Rectangle.Bottom);
+        return new Size(width, height);
     }
 
-    private static Result<Bitmap> Draw(
+    private static Bitmap Draw(
         IEnumerable<IDrawingWord> drawingWords,
         int width, int height,
         Color bgColor)
@@ -36,8 +36,6 @@ public class CloudDrawer : ICloudDrawer
 
         foreach (var word in drawingWords)
         {
-            if (word == null)
-                return Result.Fail<Bitmap>("Word can not be null");
             graphics.DrawString(
                 word.Value,
                 word.Font,
@@ -45,6 +43,6 @@ public class CloudDrawer : ICloudDrawer
                 word.Rectangle.Location);
         }
 
-        return Result.Ok(myBitmap);
+        return myBitmap;
     }
 }

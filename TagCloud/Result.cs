@@ -117,7 +117,7 @@ public static class Result
         return input;
     }
 
-    public static Result<TInput> ReturnOnFail<TInput>(
+    public static Result<TInput> OnFailChangeTo<TInput>(
         this Result<TInput> input,
         Func<string, Result<TInput>> handleError)
     {

@@ -38,7 +38,7 @@ public class FromFileInputWordsStreamTest
     [Test]
     public void GetAllWordsFromStream_ShouldThrowException_WhenIncorrectFileType()
     {
-        sut.GetAllWordsFromStream(GetContext("", filetype: "docx"))
+        sut.GetAllWordsFromStream(GetContext("", filepath: "incorrect", filetype: "docx"))
             .IsSuccess.Should().BeFalse();
     }
 

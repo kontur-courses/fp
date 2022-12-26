@@ -83,7 +83,7 @@ public class ConsoleClient : IClient
                 .RefineError("Can not recognize font sizes"))
             .Then(sizes => selector.SetWordsSizes(sizes[0], sizes[1]))
             .RefineError("Can not get font sizes from console")
-            .ReturnOnFail(e => TryAgain(e, () => CollectFontSizes(selector)));
+            .OnFailChangeTo(e => TryAgain(e, () => CollectFontSizes(selector)));
     }
 
     private static Result<None> CollectWordsColors(IWordsVisualisationSelector visualisationSelector)
@@ -99,7 +99,7 @@ public class ConsoleClient : IClient
             .Then(colors => FailIf(colors, colors.Length == 0, "Colors count can not be 0"))
             .Then(visualisationSelector.AddWordPossibleColors)
             .RefineError("Can not get colors from console")
-            .ReturnOnFail(e => TryAgain(e, () => CollectWordsColors(visualisationSelector)));
+            .OnFailChangeTo(e => TryAgain(e, () => CollectWordsColors(visualisationSelector)));
     }
 
     private Result<BoringWordsFromUser> GetBoringWords()
@@ -109,7 +109,7 @@ public class ConsoleClient : IClient
             .Then(GetWordsFromFile)
             .Then(CreateBoringWords)
             .RefineError("Can not get users boring words")
-            .ReturnOnFail(e => TryAgain(e, GetBoringWords));
+            .OnFailChangeTo(e => TryAgain(e, GetBoringWords));
     }
 
     private static Result<BoringWordsFromUser> CreateBoringWords(IEnumerable<string> words)
@@ -148,7 +148,7 @@ public class ConsoleClient : IClient
     {
         return WriteToConsole(Phrases.AskingBgColor)
             .Then(_ => GetColorFromConsole())
-            .ReturnOnFail(e => TryAgain(e, GetBgColor));
+            .OnFailChangeTo(e => TryAgain(e, GetBgColor));
     }
 
     private static Result<Color> GetColorFromConsole()
@@ -162,7 +162,7 @@ public class ConsoleClient : IClient
     {
         return WriteToConsole(Phrases.AskingImageSize)
             .Then(_ => GetImageSizeFromConsole())
-            .ReturnOnFail(e => TryAgain(e, GetImageSize));
+            .OnFailChangeTo(e => TryAgain(e, GetImageSize));
     }
 
     private static Result<Size> GetImageSizeFromConsole()
@@ -178,7 +178,7 @@ public class ConsoleClient : IClient
         return WriteLineToConsole(Phrases.AskingFullPathToOutImage)
             .Then(_ => WriteToConsole(Phrases.GetArrow(0)))
             .Then(_ => ReadLineFromConsole())
-            .ReturnOnFail(e => TryAgain(e, GetOutImagePath));
+            .OnFailChangeTo(e => TryAgain(e, GetOutImagePath));
     }
 
     private static Result<string> GetFilePath()
@@ -186,7 +186,7 @@ public class ConsoleClient : IClient
         return
             WriteLineToConsole(Phrases.AskingFullPathToText)
                 .Then(_ => GetFilePathFromConsole())
-                .ReturnOnFail(e => TryAgain(e, GetFilePath));
+                .OnFailChangeTo(e => TryAgain(e, GetFilePath));
     }
 
     private static Result<string> GetFilePathFromConsole()

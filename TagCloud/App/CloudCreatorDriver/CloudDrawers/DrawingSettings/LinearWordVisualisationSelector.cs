@@ -25,20 +25,21 @@ public class LinearWordVisualisationSelector : IWordsVisualisationSelector
     {
         var fontDelta = maxSize - minSize;
         var tfDelta = maxTf - minTf;
-        return Result.FailIf(possibleColors, possibleColors.Count == 0, "Possible colors are not initialised")
-            .Then(_ => Result.FailIf(tfDelta, Math.Abs(tfDelta) < 1e-5, "TfDelta can not be 0"))
-            .Then(_ => Result.Of(() =>
+        return Result.FailIf(possibleColors, possibleColors.Count == 0, "Possible colors are empty")
+            .Then(_ =>
             {
+                if (Math.Abs(tfDelta) < 1e-10)
+                    return new DrawingWord(word, new Font(wordsFont, maxSize), possibleColors.Last(), rectangle) as
+                        IDrawingWord;
                 var size = minSize + (int)Math.Floor(fontDelta * (word.Tf - minTf) / tfDelta);
                 var colorIdx = (int)Math.Floor(1d * (possibleColors.Count - 1) * (word.Tf - minTf) / tfDelta);
-                return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle) as
-                    IDrawingWord;
-            }));
+                return new DrawingWord(word, new Font(wordsFont, size), possibleColors[colorIdx], rectangle);
+            });
     }
 
-    public Result<None> AddWordPossibleColors(IEnumerable<Color> colors)
+    public void AddWordPossibleColors(IEnumerable<Color> colors)
     {
-        return Result.OfAction(() => possibleColors.AddRange(colors));
+        possibleColors.AddRange(colors);
     }
 
     public Result<None> SetWordsSizes(int min, int max)

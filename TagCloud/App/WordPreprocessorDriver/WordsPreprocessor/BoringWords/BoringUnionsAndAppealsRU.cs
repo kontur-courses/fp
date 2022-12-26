@@ -19,15 +19,10 @@ public class BoringUnionsAndAppealsRu : IBoringWords
         "он", "она", "оно", "они", "им", "ей", "ему", "её", "его", "их"
     };
 
-    public Result<None> IsBoring(IWord word)
+    public bool IsBoring(IWord word)
     {
-        return Result.Of(() => word.Value)
-            .Then(wordValue =>
-                Unions.Contains(wordValue)
-                || Prepositions.Contains(wordValue)
-                || Appeals.Contains(wordValue))
-            .Then(result => result
-                ? Result.Ok()
-                : Result.Fail<None>("Word is not boring"));
+        return Unions.Contains(word.Value)
+                || Prepositions.Contains(word.Value)
+                || Appeals.Contains(word.Value);
     }
 }

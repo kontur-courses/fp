@@ -28,23 +28,23 @@ public class DrawingSettings : IDrawingSettings
     {
         return HasWordVisualisationSelector()
             ? Result.Ok(visualisationSelector)
-            : Result.Fail<IWordsVisualisationSelector>("Selector was not initialised");
+            : Result.Fail<IWordsVisualisationSelector>("Selector hasn't visualisation rules");
     }
 
     public Result<IDrawingWord> GetDrawingWordFromSelector(IWord word, Rectangle rectangle)
     {
         return HasWordVisualisationSelector()
             ? visualisationSelector.GetWordVisualisation(word, rectangle)
-            : Result.Fail<IDrawingWord>("Selector was not initialised");
+            : Result.Fail<IDrawingWord>("Selector hasn't visualisation rules");
     }
 
-    public Result<IEnumerable<IWordVisualisation>> GetWordVisualisations()
+    public IEnumerable<IWordVisualisation> GetWordVisualisations()
     {
         return wordVisualisations;
     }
 
-    public Result<IWordVisualisation> GetDefaultVisualisation()
+    public IWordVisualisation GetDefaultVisualisation()
     {
-        return Result.Ok(defaultVisualisation);
+        return defaultVisualisation;
     }
 }

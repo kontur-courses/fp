@@ -14,7 +14,7 @@ public interface IDrawingSettings
 
     Result<IDrawingWord> GetDrawingWordFromSelector(IWord word, Rectangle rectangle);
 
-    Result<IEnumerable<IWordVisualisation>> GetWordVisualisations();
+    IEnumerable<IWordVisualisation> GetWordVisualisations();
 
-    Result<IWordVisualisation> GetDefaultVisualisation();
+    IWordVisualisation GetDefaultVisualisation();
 }
