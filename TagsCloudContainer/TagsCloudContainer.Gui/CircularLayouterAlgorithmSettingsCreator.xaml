@@ -1,0 +1,24 @@
+﻿<Window x:Class="TagsCloudContainer.Gui.CircularLayouterAlgorithmSettingsCreator"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:tagsCloudContainer="clr-namespace:TagsCloudContainer;assembly=TagsCloudContainer"
+        mc:Ignorable="d"
+        Title="CircularLayouterAlgorithmSettings" MinHeight="450" MinWidth="200"
+        d:DataContext="{d:DesignInstance Type=tagsCloudContainer:CircularLayouterAlgorithmSettings, IsDesignTimeCreatable=True}">
+    <Grid>
+        <StackPanel>
+            <Label>Center</Label>
+            <TextBox Text="{Binding Center, Converter={StaticResource PointConverter}}" />
+            <Label>PolarStepK</Label>
+            <TextBox Text="{Binding PolarStepK}" />
+            <Label>AngleStep</Label>
+            <TextBox Text="{Binding AngleStep}" />
+            <Label>StartAngle</Label>
+            <TextBox Text="{Binding StartAngle}" />
+            <Button Click="Cancel">Cancel</Button>
+            <Button Click="Submit">Submit</Button>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,12 @@
+﻿<Application x:Class="TagsCloudContainer.Gui.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TagsCloudContainer.Gui"
+             Startup="App_OnStartup">
+    <Application.Resources>
+        <local:BrushConverter x:Key="BrushConverter" />
+        <local:RectangleConverter x:Key="RectangleConverter" />
+        <local:EnumConverter x:Key="EnumConverter" />
+        <local:PointConverter x:Key="PointConverter" />
+    </Application.Resources>
+</Application>
