@@ -14,7 +14,7 @@ namespace TagCloud.FileReader
                 return Result.Fail<string>($"File {filePath} doesn't exist");
 
             if (Path.GetExtension(filePath) != ".doc" && Path.GetExtension(filePath) != ".docx")
-                return Result.Fail<string>($"File {filePath} has invalid format");
+                return Result.Fail<string>($"File {filePath} isn't format .doc or .docx");
 
             var sb = new StringBuilder();
 
@@ -25,8 +25,6 @@ namespace TagCloud.FileReader
 
                 foreach (var paragraph in paragraphs)
                     sb.AppendLine(paragraph.InnerText);
-
-                wordDocument.Close();
 
                 return sb.ToString().Trim();
             }

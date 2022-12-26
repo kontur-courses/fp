@@ -11,7 +11,7 @@ namespace TagCloud.FileReader
                 return Result.Fail<string>($"File {filePath} doesn't exist");
 
             if (Path.GetExtension(filePath) != ".txt")
-                return Result.Fail<string>($"File {filePath} has invalid format");
+                return Result.Fail<string>($"File {filePath} isn't format .txt");
 
             var text = Result.Of(() => File.ReadAllText(filePath));
 
