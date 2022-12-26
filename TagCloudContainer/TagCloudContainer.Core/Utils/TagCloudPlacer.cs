@@ -10,32 +10,33 @@ public class TagCloudPlacer : ITagCloudPlacer
     private List<Rectangle> _putRectangles = new List<Rectangle>();
 
     private readonly ITagCloudContainerConfig _tagCloudContainerConfig;
-    private readonly ITagCloudFormConfig _tagCloudFormConfig;
+    private readonly ITagCloudPlacerConfig _tagCloudPlacerConfig;
     private readonly ISizeInvestigator _sizeInvestigator;
+    private readonly ISelectedValues _selectedValues;
 
     public TagCloudPlacer(
         ITagCloudContainerConfig tagCloudContainerConfig,
-        ITagCloudFormConfig tagCloudFormConfig,
-        ISizeInvestigator sizeInvestigator)
+        ISizeInvestigator sizeInvestigator,
+        ITagCloudPlacerConfig tagCloudPlacerConfig,
+        ISelectedValues selectedValues)
     {
-        _tagCloudContainerConfig =
-            tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
-        _tagCloudFormConfig =
-            tagCloudFormConfig ?? throw new ArgumentNullException("Tag cloud form config can't be null");
-        _sizeInvestigator = 
-            sizeInvestigator ?? throw new ArgumentNullException("Size investigator can't be null");
+        _tagCloudContainerConfig = tagCloudContainerConfig;
+        _tagCloudPlacerConfig = tagCloudPlacerConfig;
+        _selectedValues = selectedValues;
+        
+        _sizeInvestigator = sizeInvestigator;
     }
 
     public Result<Word> PlaceInCloud(Word word)
     {
-        _nearestToTheCenterPoints = _tagCloudContainerConfig.NearestToTheCenterPoints;
-        _putRectangles = _tagCloudContainerConfig.PutRectangles;
+        _nearestToTheCenterPoints = _tagCloudPlacerConfig.NearestToTheFieldCenterPoints;
+        _putRectangles = _tagCloudPlacerConfig.PutRectangles;
 
         if (_nearestToTheCenterPoints.Count == 0)
-            AddFreePoint(_tagCloudContainerConfig.Center);
+            AddFreePoint(_tagCloudPlacerConfig.FieldCenter);
 
-        var wordFontSize = new Font(_tagCloudFormConfig.FontFamily,
-            word.Weight * _tagCloudContainerConfig.StandartSize.Width);
+        var wordFontSize = new Font(_selectedValues.FontFamily,
+            word.Weight * _tagCloudContainerConfig.StandartFontSize.Width);
         try
         {
             word.Size = TextRenderer
@@ -112,8 +113,8 @@ public class TagCloudPlacer : ITagCloudPlacer
 
     private float CountDistanceFromCenter(Point point)
     {
-        var distanceFromCenter = new Vector2(point.X - _tagCloudContainerConfig.Center.X,
-            point.Y - _tagCloudContainerConfig.Center.Y);
+        var distanceFromCenter = new Vector2(point.X - _tagCloudPlacerConfig.FieldCenter.X,
+            point.Y - _tagCloudPlacerConfig.FieldCenter.Y);
         return distanceFromCenter.Length();
     }
 }

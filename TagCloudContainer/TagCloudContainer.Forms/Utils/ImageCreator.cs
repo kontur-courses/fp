@@ -5,21 +5,20 @@ namespace TagCloudContainer;
 
 public class ImageCreator : IImageCreator
 {
-    private readonly ITagCloudFormConfig _tagCloudFormConfig;
+    private readonly ISelectedValues _selectedValues;
     
-    public ImageCreator(ITagCloudFormConfig tagCloudFormConfig)
+    public ImageCreator(ISelectedValues selectedValues)
     {
-        _tagCloudFormConfig = 
-            tagCloudFormConfig ?? throw new ArgumentNullException("Tag cloud form config can't be null");
+        _selectedValues = selectedValues;
     }
     
     public void Save(Form form, string path)
     {
-        using (Bitmap bitmap = new Bitmap(_tagCloudFormConfig.ImageSize.Width, _tagCloudFormConfig.ImageSize.Height))
+        using (Bitmap bitmap = new Bitmap(_selectedValues.ImageSize.Width, _selectedValues.ImageSize.Height))
         {
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.CopyFromScreen(new Point(form.DesktopLocation.X, form.DesktopLocation.Y), new Point(0, 0), _tagCloudFormConfig.ImageSize);
+                g.CopyFromScreen(new Point(form.DesktopLocation.X, form.DesktopLocation.Y), new Point(0, 0), _selectedValues.ImageSize);
             }
             bitmap.Save(path, ImageFormat.Png);
         }

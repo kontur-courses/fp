@@ -5,16 +5,15 @@ namespace TagCloudContainer.Core.Utils;
 
 public class SizeInvestigator : ISizeInvestigator
 {
-    private ITagCloudContainerConfig _tagCloudContainerConfig;
+    private readonly ISelectedValues _selectedValues;
 
-    public SizeInvestigator(ITagCloudContainerConfig tagCloudContainerConfig)
+    public SizeInvestigator(ISelectedValues selectedValues)
     {
-        _tagCloudContainerConfig = 
-            tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
+        _selectedValues = selectedValues;
     }
     
     public bool DidFit(Word word) => 
-        OutOfBounds(_tagCloudContainerConfig.ImageSize, new Rectangle(word.Position, word.Size));
+        OutOfBounds(_selectedValues.ImageSize, new Rectangle(word.Position, word.Size));
 
     private bool OutOfBounds(Size formSize, Rectangle rectangle)
     {

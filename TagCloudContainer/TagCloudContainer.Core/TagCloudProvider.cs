@@ -8,27 +8,23 @@ public class TagCloudProvider : ITagCloudProvider
 {
     private readonly ITagCloudPlacer _tagCloudPlacer;
     private readonly IEnumerable<Word> _words;
-    private readonly ITagCloudContainerConfig _tagCloudContainerConfig;
+    private readonly ISelectedValues _selectedValues;
 
     public TagCloudProvider(
         ITagCloudPlacer tagCloudPlacer, 
         IWordsReader wordsReader, 
-        ITagCloudContainerConfig tagCloudContainerConfig)
+        ITagCloudContainerConfig tagCloudContainerConfig,
+        ISelectedValues selectValues)
     {
-        if (wordsReader == null)
-            throw new ArgumentNullException("Word reader can't be null");
-        
-        _tagCloudPlacer = tagCloudPlacer ?? throw new ArgumentNullException("Tag cloud placer can't be null");
-        _tagCloudContainerConfig = tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
-        
-        var wordsFilePath = _tagCloudContainerConfig.FilePath;
-        _words = wordsReader.GetWordsFromFile(wordsFilePath);
+        _tagCloudPlacer = tagCloudPlacer;
+        _selectedValues = selectValues;
+        _words = wordsReader.GetWordsFromFile(tagCloudContainerConfig.WordsFilePath);
     }
 
     public Result<List<Word>> GetPreparedWords()
     {
         var result = (new List<Word>()).AsResult();
-        var arrangedWords = WordsArranger.ArrangeWords(_words.ToList(), _tagCloudContainerConfig.Random);
+        var arrangedWords = WordsArranger.ArrangeWords(_words.ToList(), _selectedValues.PlaceWordsRandomly);
 
         if (!arrangedWords.IsSuccess)
             return Result.Fail<List<Word>>(arrangedWords.Error);

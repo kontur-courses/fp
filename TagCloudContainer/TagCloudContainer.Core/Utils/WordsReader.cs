@@ -1,39 +1,31 @@
-﻿using TagCloudContainer.Core;
-using TagCloudContainer.Core.Interfaces;
+﻿using TagCloudContainer.Core.Interfaces;
 using TagCloudContainer.Core.Models;
 
 namespace TagCloudContainer;
 
 public class WordsReader : IWordsReader
 {
-    private readonly Dictionary<string, Word> _words = new Dictionary<string, Word>();
-    private readonly IWordValidator _wordValidator;
-    private readonly ITagCloudContainerConfig _tagCloudContainerConfig;
+    private readonly Dictionary<string, Word> _words;
+    private readonly ILinesValidator _linesValidator;
 
-    public WordsReader(IWordValidator wordValidator, ITagCloudContainerConfig tagCloudContainerConfig)
+    public WordsReader(ILinesValidator linesValidator)
     {
-        _tagCloudContainerConfig = 
-            tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
-        _wordValidator = 
-            wordValidator ?? throw new ArgumentNullException("Word validator can't be null");
+        _linesValidator = linesValidator;
+        _words = new Dictionary<string, Word>();
     }
     
     public IEnumerable<Word> GetWordsFromFile(string filePath)
     {
         Read(filePath);
-        var wordsList = _words.Values.ToList();
-        return wordsList.OrderByDescending(w => w.Weight);
+        return _words.Values.ToList().OrderByDescending(w => w.Weight);
     }
 
     private void Read(string filePath)
     {
-        var lines = File
-            .ReadLines(filePath)
-            .Distinct();
-        lines = _tagCloudContainerConfig.NeedValidate ? _wordValidator.Validate(lines) : lines;
-
-        foreach (var word in lines)
-            AddWord(word);
+        _linesValidator
+            .Validate(File.ReadLines(filePath).Distinct())
+            .ToList()
+            .ForEach(AddWord);
     }
 
     private void AddWord(string wordValue)

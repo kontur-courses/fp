@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using TagCloudContainer.Core.Models;
+﻿using TagCloudContainer.Core.Models;
 
 namespace TagCloudContainer.Core.Utils;
 
@@ -10,13 +9,8 @@ public static class WordsArranger
         { true, ShuffleWords },
         { false, WrapWords },
     };
-
-    public static Result<List<Word>> ArrangeWords(List<Word> words, bool random)
-    {
-        if (words == null)
-            return Result.Fail<List<Word>>("Words collection is null");
-        return _wordsWrappers[random](words);
-    }
+    
+    public static Result<List<Word>> ArrangeWords(List<Word> words, bool random) => _wordsWrappers[random](words);
 
     private static Result<List<Word>> ShuffleWords(List<Word> words)
     {
