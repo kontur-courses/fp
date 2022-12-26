@@ -55,12 +55,7 @@ namespace TagCloud
                {
                    var filePath = appConfig.InputTextFilePath;
 
-                   var formats = Enum.GetNames(typeof(InputFileFormats));
-
-                   if (!formats.Any(t => filePath.Contains(t)))
-                       throw new ArgumentException($"Input file <{filePath}> has invalid format");
-
-                   if (filePath.Contains(".docx") && filePath.Contains(".doc"))
+                   if (filePath.EndsWith(".doc") || filePath.EndsWith(".docx"))
                        return new DocxFileReader();
 
                    return new TxtFileReader();
@@ -97,14 +92,12 @@ namespace TagCloud
 
             switch (appConfig.CloudForm.ToLower())
             {
-                case "circle":
-                    builder.RegisterType<CirclePointGenerator>().As<IPointGenerator>();
-                    break;
                 case "ellipse":
                     builder.RegisterType<EllipsePointGenerator>().As<IPointGenerator>();
                     break;
                 default:
-                    throw new ArgumentException($"Cloud form <{appConfig.CloudForm}> isn't supported");
+                    builder.RegisterType<CirclePointGenerator>().As<IPointGenerator>();
+                    break;
             }
         }
 
@@ -131,11 +124,9 @@ namespace TagCloud
                 case "gradient":
                     coloring = new GradientColoring();
                     break;
-                case "black":
+                default:
                     coloring = new BlackColoring();
                     break;
-                default:
-                    throw new ArgumentException($"Word coloring <{appConfig.ImageSettings.WordColoringAlgorithmName}> isn't supported");
             }
 
             builder.Register(c => coloring).As<IWordColoring>();
