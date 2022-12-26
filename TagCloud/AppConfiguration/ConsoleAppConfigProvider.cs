@@ -66,7 +66,7 @@ namespace TagCloud.AppConfiguration
             var wordColorings = Enum.GetNames(typeof(WordColorings));
             if (!wordColorings.Contains(options.WordColoring.ToLower()))
                 return Result.Fail<Options>($"Word coloring {options.WordColoring} isn't supported. " +
-                    $"Supported forms are: {string.Join(", ", wordColorings)}");
+                    $"Supported colorings are: {string.Join(", ", wordColorings)}");
 
             return options;
         }   

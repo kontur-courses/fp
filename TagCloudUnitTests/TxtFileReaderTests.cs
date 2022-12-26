@@ -6,7 +6,6 @@ using TagCloud.FileReader;
 
 namespace TagCloudUnitTests
 {
-
     public class TxtFileReaderTests
     {
         private TxtFileReader fileReader;
