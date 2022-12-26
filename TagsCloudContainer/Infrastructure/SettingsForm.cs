@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Windows.Forms;
 
 namespace TagsCloudContainer.Infrastructure
@@ -33,7 +33,7 @@ namespace TagsCloudContainer.Infrastructure
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Text = @"Настройки";
+            Text = "РќР°СЃС‚СЂРѕР№РєРё";
         }
     }
 }

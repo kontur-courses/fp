@@ -1,4 +1,4 @@
-using System.Drawing;
+п»їusing System.Drawing;
 using ResultOf;
 
 namespace TagsCloudContainer.App.Layouter
@@ -26,7 +26,7 @@ namespace TagsCloudContainer.App.Layouter
         public Result<CloudLayouterSettings> CheckIsSettingValid()
         {
            return (Center.X < 0 ||Center.Y < 0)
-                ? Result.Fail<CloudLayouterSettings>("Настройки неверные. Координаты точки должны быть положительными числами")
+                ? Result.Fail<CloudLayouterSettings>("РќР°СЃС‚СЂРѕР№РєРё РЅРµРІРµСЂРЅС‹Рµ. РљРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РєРё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹РјРё С‡РёСЃР»Р°РјРё")
                 : Result.Ok(this);
         }
     }

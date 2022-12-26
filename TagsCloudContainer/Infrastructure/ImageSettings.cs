@@ -1,4 +1,4 @@
-using ResultOf;
+п»їusing ResultOf;
 
 namespace TagsCloudContainer.Infrastructure
 {
@@ -21,7 +21,7 @@ namespace TagsCloudContainer.Infrastructure
         public Result<ImageSettings> CheckIsSettingValid()
         {
             return (Width < 0 || Height < 0)
-                ? Result.Fail<ImageSettings>("Настройки неверные. Высота и ширина должны быть положительными числами")
+                ? Result.Fail<ImageSettings>("РќР°СЃС‚СЂРѕР№РєРё РЅРµРІРµСЂРЅС‹Рµ. Р’С‹СЃРѕС‚Р° Рё С€РёСЂРёРЅР° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹РјРё С‡РёСЃР»Р°РјРё")
                 : Result.Ok(this);
         }
     }
