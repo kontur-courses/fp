@@ -10,11 +10,11 @@ namespace TagCloud.FileReader
     {
         public Result<string> ReadAllText(string filePath)
         {
+            if (!filePath.EndsWith(".doc") && !filePath.EndsWith(".docx"))
+                return Result.Fail<string>($"File {filePath} isn't format .doc or .docx");
+
             if (!File.Exists(filePath))
                 return Result.Fail<string>($"File {filePath} doesn't exist");
-
-            if (Path.GetExtension(filePath) != ".doc" && Path.GetExtension(filePath) != ".docx")
-                return Result.Fail<string>($"File {filePath} isn't format .doc or .docx");
 
             var sb = new StringBuilder();
 

@@ -7,11 +7,11 @@ namespace TagCloud.FileReader
     {
         public Result<string> ReadAllText(string filePath)
         {
+            if (!filePath.EndsWith(".txt"))
+                return Result.Fail<string>($"File {filePath} isn't format .txt");
+
             if (!File.Exists(filePath))
                 return Result.Fail<string>($"File {filePath} doesn't exist");
-
-            if (Path.GetExtension(filePath) != ".txt")
-                return Result.Fail<string>($"File {filePath} isn't format .txt");
 
             var text = Result.Of(() => File.ReadAllText(filePath));
 
