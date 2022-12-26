@@ -69,7 +69,7 @@ namespace TagCloud.AppConfiguration
                     $"Supported forms are: {string.Join(", ", wordColorings)}");
 
             return options;
-        }
+        }   
 
         private Result<IAppConfig> CreateAppConfig(Options options)
         {
