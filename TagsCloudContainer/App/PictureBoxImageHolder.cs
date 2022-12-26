@@ -38,9 +38,10 @@ namespace TagsCloudContainer
             Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
         }
 
-        public void SaveImage(string fileName)
+        public Result<None> SaveImage(string fileName)
         {
-            FailIfNotInitialized().Then(image => image.Save(fileName));
+            return FailIfNotInitialized()
+                .Then(image => image.Save(fileName));
         }
     }
 }

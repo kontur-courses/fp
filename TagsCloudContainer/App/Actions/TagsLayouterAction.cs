@@ -43,12 +43,19 @@ namespace TagsCloudContainer.App.Actions
                     MessageBox.Show(imageSize.Error);
                     return;
                 }
-
+                var graphics = imageHolder.StartDrawing();
+                if (!graphics.IsSuccess)
+                {
+                    MessageBox.Show(graphics.Error);
+                    return;
+                }
                 var result = textReader.ReadText(dialog.FileName)
                     .Then(text => tagsLayouter.PutAllTags(text, imageSize.Value))
-                    .Then(tags => tagsPainter.Paint(tags));
+                    .Then(tags => tagsPainter.Paint(tags, imageSize.Value, graphics.Value));
                 if (!result.IsSuccess)
                     MessageBox.Show(result.Error);
+                else
+                    imageHolder.UpdateUi();
             }
         }
     }

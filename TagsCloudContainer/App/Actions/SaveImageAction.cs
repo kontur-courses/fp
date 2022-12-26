@@ -29,7 +29,11 @@ namespace TagsCloudContainer.App.Actions
             };
             var res = dialog.ShowDialog();
             if (res == DialogResult.OK)
-                imageHolder.SaveImage(dialog.FileName);
+            {
+                var saveImage = imageHolder.SaveImage(dialog.FileName);
+                if (!saveImage.IsSuccess)
+                    MessageBox.Show(saveImage.Error);
+            }
         }
     }
 }

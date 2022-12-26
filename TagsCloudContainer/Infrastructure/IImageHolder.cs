@@ -9,6 +9,6 @@ namespace TagsCloudContainer.Infrastructure
         Result<Graphics> StartDrawing();
         void UpdateUi();
         void RecreateImage(ImageSettings settings);
-        void SaveImage(string fileName);
+        Result<None> SaveImage(string fileName);
     }
 }
