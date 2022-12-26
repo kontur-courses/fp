@@ -55,7 +55,7 @@ public class Client
 
     public Result<None> Save(Bitmap image, string destinationPath)
     {
-        return Result.Of(() => Helper.GetImageFormat(destinationPath))
-            .Then(format => _saver.Save(image, destinationPath, format.Value));
+        return Helper.GetImageFormat(destinationPath)
+            .Then(format => _saver.Save(image, destinationPath, format));
     }
 }
