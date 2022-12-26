@@ -1,22 +1,26 @@
-﻿namespace TagsCloudContainer.Infrastructure
+﻿using JetBrains.Annotations;
+
+namespace TagsCloudContainer.Infrastructure
 {
-    public struct Result<T>
+    public readonly struct Result<T>
     {
         public Result(string error, T value = default(T))
         {
             Error = error;
             Value = value;
         }
-        public string Error { get; }
+        public string? Error { get; }
         public T Value { get; }
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
+            if (IsSuccess) 
+                return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;
     }
 
+    [PublicAPI]
     public static class Result
     {
         public static Result<T> AsResult<T>(this T value)
@@ -34,7 +38,7 @@
             return new Result<T>(e);
         }
 
-        public static Result<T> Of<T>(Func<T> f, string error = null)
+        public static Result<T> Of<T>(Func<T> f, string? error = null)
         {
             try
             {
@@ -77,7 +81,7 @@
         {
             return input.IsSuccess
                 ? input
-                : Of(() => input.GetValueOrThrow(), errorHandler(input.Error));
+                : Of(input.GetValueOrThrow, errorHandler(input.Error));
         }
 
         public static Result<TInput> RefineError<TInput>(
