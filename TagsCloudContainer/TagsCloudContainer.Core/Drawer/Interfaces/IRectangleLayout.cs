@@ -1,4 +1,6 @@
-﻿namespace TagsCloudContainer.Core.Drawer.Interfaces
+﻿using TagsCloudContainer.Core.Results;
+
+namespace TagsCloudContainer.Core.Drawer.Interfaces
 {
     public interface IRectangleLayout
     {
@@ -6,6 +8,6 @@
 
         public void SaveLayout();
 
-        public void PlaceWords(Dictionary<string, int> words);
+        public Result<None> PlaceWords(Dictionary<string, int> words);
     }
 }

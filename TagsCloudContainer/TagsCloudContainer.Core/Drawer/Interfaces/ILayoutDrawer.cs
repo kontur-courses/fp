@@ -5,7 +5,7 @@ namespace TagsCloudContainer.Core.Drawer.Interfaces
 {
     public interface ILayoutDrawer
     {
-        public void AddRectangle(WordRectangle rectangles);
+        public void AddTags(IEnumerable<Tag> tags);
 
         public void Draw(Graphics graphics);
     }

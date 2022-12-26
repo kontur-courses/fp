@@ -1,11 +1,13 @@
-﻿namespace TagsCloudContainer.Core.Options
+﻿using System.Drawing;
+
+namespace TagsCloudContainer.Core.Options
 {
     public class FontOptions 
     {
         public string FontFamily { get; set; }
-        public string FontColor { get; set; }
+        public Color FontColor { get; }
 
-        public FontOptions(string fontFamily, string fontColor)
+        public FontOptions(string fontFamily, Color fontColor)
         {
             FontFamily = fontFamily;
             FontColor = fontColor;

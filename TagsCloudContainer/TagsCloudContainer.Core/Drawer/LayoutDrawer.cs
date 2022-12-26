@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Text.RegularExpressions;
 using TagsCloudContainer.Core.Layouter;
 using TagsCloudContainer.Core.Drawer.Interfaces;
 
@@ -7,49 +6,26 @@ namespace TagsCloudContainer.Core.Drawer
 {
     public class LayoutDrawer : ILayoutDrawer
     {
-        private static readonly Regex ColorParser = new(@"argb\((?<alpha>\d{1,3}),(?<red>\d{1,3}),(?<green>\d{1,3}),(?<blue>\d{1,3})\)", RegexOptions.Compiled);
-
-        private readonly Random _random;
-        private readonly List<WordRectangle> _rectangles;
-
+        private IEnumerable<Tag> layoutTags;
+        
         public LayoutDrawer()
         {
-            _random = new Random();
-            _rectangles = new List<WordRectangle>();
+            layoutTags = new List<Tag>();
         }
 
-        public void AddRectangle(WordRectangle rectangle)
+        public void AddTags(IEnumerable<Tag> tags)
         {
-            _rectangles.Add(rectangle);
+            layoutTags = tags;
         }
 
         public void Draw(Graphics graphics)
         {
-            foreach (var rectangle in _rectangles)
+            foreach (var tag in layoutTags)
             {
-                var brush = new SolidBrush(StringToArgbColor(rectangle.FontColor));
-                using var font = new Font(rectangle.FontFamily, rectangle.FontSize);
-                graphics.DrawString(rectangle.Text, font, brush, rectangle.Rectangle.Location);
+                var brush = new SolidBrush(tag.FontColor);
+                using var font = new Font(tag.FontFamily, tag.FontSize);
+                graphics.DrawString(tag.Text, font, brush, tag.Rectangle.Location);
             }
-        }
-
-        private Color StringToArgbColor(string color)
-        {
-            if (color == "random")
-            {
-                return Color.FromArgb(
-                    _random.Next(255), 
-                    _random.Next(255), 
-                    _random.Next(255));
-            }
-
-            var match = ColorParser.Match(color).Groups;
-
-            return Color.FromArgb(
-                int.Parse(match["alpha"].Value), 
-                int.Parse(match["red"].Value), 
-                int.Parse(match["green"].Value), 
-                int.Parse(match["blue"].Value));
         }
     }
 }

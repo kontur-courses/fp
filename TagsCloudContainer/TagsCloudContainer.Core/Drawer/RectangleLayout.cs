@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagsCloudContainer.Core.Options;
+using TagsCloudContainer.Core.Results;
 using TagsCloudContainer.Core.Layouter;
 using TagsCloudContainer.Core.Drawer.Interfaces;
 using TagsCloudContainer.Core.Options.Interfaces;
@@ -27,28 +28,35 @@ namespace TagsCloudContainer.Core.Drawer
             _bitmap = new Bitmap(imageOptions.Width, imageOptions.Height);
             _graphics = Graphics.FromImage(_bitmap);
         }
-
-        public void PlaceWords(Dictionary<string, int> words)
+        public Result<None> PlaceWords(Dictionary<string, int> words) =>
+            Result.Of(() => MakeTags(words))
+                .Then(PlaceTags)
+                .Then(TagsInsideImage)
+                .Then(tags => _drawer.AddTags(tags));
+        private IEnumerable<Tag> MakeTags(Dictionary<string, int> words)
         {
-            _layouter.SetCenter(new Point(_imageOptions.Width / 2, _imageOptions.Height / 2));
+            var tags = new List<Tag>();
+
             foreach (var (word, count) in words)
+                tags.Add(new Tag(word, CalculateFontSize(count), _fontOptions.FontFamily, _fontOptions.FontColor));
+
+            return tags;
+        }
+
+        private IEnumerable<Tag> PlaceTags(IEnumerable<Tag> tags)
+        {
+            foreach (var tag in tags)
             {
-                var fontSize = CalculateFontSize(count);
-                var rectangle = _layouter.PutNextRectangle(GetWordSize(word, fontSize, _fontOptions.FontFamily));
-
-                _drawer.AddRectangle(new WordRectangle(rectangle, word, fontSize, _fontOptions.FontFamily, _fontOptions.FontColor));
+                var tagSize = GetTagSize(tag);
+                tag.Rectangle = _layouter.PutNextRectangle(tagSize);
             }
+
+            return tags;
         }
 
-        private Size GetWordSize(string word, int fontSize, string fontFamily)
-        {
-            return _graphics.MeasureString(word, new Font(fontFamily, fontSize)).ToSize();
-        }
-
-        private static int CalculateFontSize(int wordCount)
-        {
-            return (int)(Math.Log(Math.Max(wordCount, 6), 6) * 10);
-        }
+        private Size GetTagSize(Tag tag) => _graphics.MeasureString(tag.Text, new Font(tag.FontFamily, tag.FontSize)).ToSize();
+       
+        private static int CalculateFontSize(int wordCount) => (int)(Math.Log(Math.Max(wordCount, 6), 6) * 10);
 
         public void DrawLayout()
         {
@@ -63,5 +71,14 @@ namespace TagsCloudContainer.Core.Drawer
             _bitmap.Save(fullPath);
             Console.WriteLine($"Tag cloud visualization saved to file {fullPath}");
         }
+
+        private Result<IEnumerable<Tag>> TagsInsideImage(IEnumerable<Tag> tags) =>
+            tags.Any(tag => RectangleInsideImage(tag.Rectangle))
+                ? Result.Fail<IEnumerable<Tag>>("Some tags are outside of the image. Change image size.")
+                : Result.Ok(tags);
+
+        private bool RectangleInsideImage(Rectangle rectangle) =>
+            _imageOptions.Width < rectangle.Right || 0 > rectangle.Left ||
+            _imageOptions.Height < rectangle.Bottom || 0 > rectangle.Top;
     }
 }
