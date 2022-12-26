@@ -2,6 +2,7 @@
 using TagCloudContainer.Core.Interfaces;
 using TagCloudContainer.Core.Models;
 using TagCloudContainer.Forms.Interfaces;
+using TagCloudContainer.Utils;
 
 namespace TagCloudContainer.Forms;
 
@@ -9,26 +10,28 @@ public partial class Settings : Form
 {
     private readonly TagCloud _tagCloud;
     private readonly ITagCloudContainerConfig _tagCloudContainerConfig;
-    private readonly ITagCloudFormConfig _tagCloudFormConfig;
-    private readonly IConfigValidator<ITagCloudFormConfig> _tagCloudFormConfigValidator;
+    private readonly ISelectedValues _selectedValues;
+    private readonly ITagCloudPlacerConfig _tagCloudPlacerConfig;
+    private readonly IConfigValidator<ITagCloudPlacerConfig> _tagCloudPlacerConfigValidator;
     private readonly IConfigValidator<ITagCloudContainerConfig> _tagCloudContainerConfigValidator;
+    private readonly IConfigValidator<ISelectedValues> _selectedValuesValidator;
 
     public Settings(
         TagCloud tagCloud, 
         ITagCloudContainerConfig tagCloudContainerConfig,
-        ITagCloudFormConfig tagCloudFormConfig,
-        IConfigValidator<ITagCloudFormConfig> tagCloudFormConfigValidator,
+        ITagCloudPlacerConfig tagCloudPlacerConfig,
+        ISelectedValues selectedValues,
+        IConfigValidator<ITagCloudPlacerConfig> tagCloudPlacerConfigValidator,
+        IConfigValidator<ISelectedValues> selectedValuesValidator,
         IConfigValidator<ITagCloudContainerConfig> tagCloudContainerConfigValidator)
     {
-        _tagCloud = tagCloud ?? throw new ArgumentNullException("Tag cloud can't be null");
-        _tagCloudContainerConfig = 
-            tagCloudContainerConfig ?? throw new ArgumentNullException("Tag cloud config can't be null");
-        _tagCloudFormConfig = 
-            tagCloudFormConfig ?? throw new ArgumentNullException("Tag cloud form config can't be null");
-        _tagCloudFormConfigValidator = 
-            tagCloudFormConfigValidator ?? throw new ArgumentNullException("Tag cloud config validator can't be null");
-        _tagCloudContainerConfigValidator = 
-            tagCloudContainerConfigValidator ?? throw new ArgumentNullException("Tag cloud form config validator can't be null");
+        _tagCloud = tagCloud;
+        _tagCloudContainerConfig = tagCloudContainerConfig;
+        _tagCloudPlacerConfig = tagCloudPlacerConfig;
+        _selectedValues = selectedValues;
+        _tagCloudPlacerConfigValidator = tagCloudPlacerConfigValidator;
+        _tagCloudContainerConfigValidator = tagCloudContainerConfigValidator;
+        _selectedValuesValidator = selectedValuesValidator;
 
         InitializeComponent();
     }
@@ -59,17 +62,20 @@ public partial class Settings : Form
         if (!colorResult.IsSuccess || !backgroundColorResult.IsSuccess)
             return;
 
-        _tagCloudFormConfig.Color = colorResult.GetValueOrThrow();
-        _tagCloudFormConfig.BackgroundColor = backgroundColorResult.GetValueOrThrow();
-        _tagCloudFormConfig.FontFamily = Fonts.Text;
-        _tagCloudFormConfig.ImageSize = userSelectedSize;
+        _selectedValues.WordsColor = colorResult.GetValueOrThrow();
+        _selectedValues.BackgroundColor = backgroundColorResult.GetValueOrThrow();
+        _selectedValues.FontFamily = Fonts.Text;
+        _selectedValues.ImageSize = userSelectedSize;
+        _selectedValues.PlaceWordsRandomly = random;
         
-        _tagCloudContainerConfig.SetFilePath("words.txt");
-        _tagCloudContainerConfig.SetExcludeWordsFilePath("boring_words.txt");
+        var wordsFilePath = PathAssistant.GetFullFilePath("words.txt");
+        var excludeWordsFilePath = PathAssistant.GetFullFilePath("boring_words.txt");
+
+        _tagCloudContainerConfig.WordsFilePath = wordsFilePath.IsSuccess ? wordsFilePath.GetValueOrThrow() : null;
+        _tagCloudContainerConfig.ExcludeWordsFilePath = excludeWordsFilePath.IsSuccess ? excludeWordsFilePath.GetValueOrThrow() : null;
         
-        _tagCloudContainerConfig.NearestToTheCenterPoints = new SortedList<float, Point>();
-        _tagCloudContainerConfig.PutRectangles = new List<Rectangle>();
-        _tagCloudContainerConfig.Random = random;
+        _tagCloudPlacerConfig.NearestToTheFieldCenterPoints = new SortedList<float, Point>();
+        _tagCloudPlacerConfig.PutRectangles = new List<Rectangle>();
     }
 
     private void RunTagCloudForm(bool random)
@@ -77,7 +83,7 @@ public partial class Settings : Form
         AddUserSelectedValues(random);
         ValidateUserParameters();
         
-        _tagCloud.ChangeSize(_tagCloudFormConfig.ImageSize);
+        _tagCloud.ChangeSize(_selectedValues.ImageSize);
         _tagCloud.ShowDialog(this);
     }
 
@@ -94,8 +100,11 @@ public partial class Settings : Form
         _tagCloudContainerConfigValidator
             .Validate(_tagCloudContainerConfig)
             .OnFail(error => MessageBox.Show("Invalid container options: " + error, "Ошибка"));
-        _tagCloudFormConfigValidator
-            .Validate(_tagCloudFormConfig)
-            .OnFail(error => MessageBox.Show("Invalid form options: " + error, "Ошибка"));
+        _tagCloudPlacerConfigValidator
+            .Validate(_tagCloudPlacerConfig)
+            .OnFail(error => MessageBox.Show("Invalid place config options: " + error, "Ошибка"));
+        _selectedValuesValidator 
+            .Validate(_selectedValues)
+            .OnFail(error => MessageBox.Show("Invalid selected values: " + error, "Ошибка"));
     }
 }
