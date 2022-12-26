@@ -16,8 +16,9 @@ namespace TagsCloudContainer.App.Layouter
 
         public Result<None> Paint(IEnumerable<TagInfo> tags, Size imageSize, Graphics graphics)
         {
-           graphics.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Width, imageSize.Height);
-           return DrawTags(tags,imageSize,graphics);
+            return Result.OfAction(() =>
+                   graphics.FillRectangle(new SolidBrush(palette.BackgroundColor), 0, 0, imageSize.Width, imageSize.Height))
+               .Then(_ => DrawTags(tags, imageSize, graphics));
         }
 
         private Result<None> DrawTags(IEnumerable<TagInfo> tags, Size imageSize, Graphics graphics)
