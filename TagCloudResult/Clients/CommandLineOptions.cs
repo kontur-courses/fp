@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using CommandLine;
+using ResultOfTask;
 
 namespace TagCloudResult.Clients;
 
@@ -8,7 +9,7 @@ public class CommandLineOptions
     [Option('i', "input", Required = true, HelpText = "Input file with words")]
     public string InputFile { get; set; }
 
-    [Option('o', "output", Required = false, HelpText = "Output image")]
+    [Option('o', "output", Required = true, HelpText = "Output image")]
     public IEnumerable<string> OutputFiles { get; set; }
 
     [Option('c', "colors", Required = false, Default = null, HelpText = "Colors to be used in image")]
@@ -28,4 +29,12 @@ public class CommandLineOptions
 
     [Option('a', "algorithm", Required = false, Default = "Spiral", HelpText = "Algorithm for generating image")]
     public string Curve { get; set; }
+
+    public static Result<ParserResult<CommandLineOptions>> Parse(string[] args)
+    {
+        var parsedArguments = Parser.Default.ParseArguments<CommandLineOptions>(args);
+        return parsedArguments.Errors.Any()
+            ? Result.Fail<ParserResult<CommandLineOptions>>("Couldn't parse arguments")
+            : Result.Ok(parsedArguments);
+    }
 }
