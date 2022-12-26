@@ -14,7 +14,7 @@ namespace TagsCloudVisualization.TagsCloudVisualizationTests
         {
             var text = new[] {"Я", "Я", "Я", "Я", "Я", "Я", "Я", "Я" };
             var frCounter = new FrequencyCounter(new WordStorage(text));
-            frCounter.GetFrequency().Should().BeEquivalentTo(new Dictionary<string, int>() { { "Я", 8 } });
+            frCounter.GetFrequency().Value.Should().BeEquivalentTo(new Dictionary<string, int>() { { "Я", 8 } });
         }
 
         [Test]
@@ -30,15 +30,15 @@ namespace TagsCloudVisualization.TagsCloudVisualizationTests
                 { "5", 2 },
             };
             var frCounter = new FrequencyCounter(new WordStorage(text));
-            frCounter.GetFrequency().Should().BeEquivalentTo(expected);
+            frCounter.GetFrequency().Value.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void GetFrequency_ShouldBeEmpty_WhenTextIsEmpty()
         {
-            var text = new string[] {};
+            var text = new string[] { };
             var frCounter = new FrequencyCounter(new WordStorage(text));
-            frCounter.GetFrequency().Should().BeEmpty();
+            frCounter.GetFrequency().Value.Should().BeEmpty();
         }
     }
 }

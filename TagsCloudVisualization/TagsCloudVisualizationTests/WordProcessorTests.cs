@@ -19,7 +19,7 @@ namespace TagsCloudVisualization.TagsCloudVisualizationTests
         {
             var settings = new ProcessingSettings("яблоко, банан", 3, 10);
             var processor = new WordProcessor(settings);
-            processor.Process(ParseWord(text)).Should().BeEquivalentTo(ParseWord(expected));
+            processor.Process(ParseWord(text)).Value.Should().BeEquivalentTo(ParseWord(expected));
         }
 
         public string[] ParseWord(string words)

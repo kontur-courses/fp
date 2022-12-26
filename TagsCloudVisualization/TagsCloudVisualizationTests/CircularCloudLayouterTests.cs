@@ -32,16 +32,15 @@ namespace TagsCloudVisualization.TagsCloudVisualizationTests
         [TestCase(0, 1, TestName = "Zero width, correct height")]
         public void PutNextRectangle_ThrowsArgumentException_IncorrectArguments(int width, int height)
         {
-            var action = () => layouter.PutNextRectangle(new Size(width, height));
-            action.Should().Throw<ArgumentException>()
-                .WithMessage("Sides of the rectangle should not be non-positive");
+            var actionResult = layouter.PutNextRectangle(new Size(width, height));
+            actionResult.Error.Should().Be("Sides of the rectangle should not be non-positive");
         }
 
         [Test]
         public void PutNextRectangle_TopLeftCornerShouldBeInCenter_WhenOneRectangleSizeWasGiven()
         {
             var rectangle = layouter.PutNextRectangle(new Size(20, 10));
-            var topLeftCorner = new Point(rectangle.Left, rectangle.Top);
+            var topLeftCorner = new Point(rectangle.Value.Left, rectangle.Value.Top);
             topLeftCorner.Should().Be(center);
         }
 
