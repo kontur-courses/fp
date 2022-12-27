@@ -19,9 +19,6 @@ namespace TagsCloudContainer.Infrastructure.WordPreparers
 
         public Result<string[]> Prepare(IEnumerable<string> words)
         {
-            if (words is null)
-                return Result.Fail($"nameof{words} is null");
-
             return Result.OkIf(words is not null, $"nameof{words} is null")
                          .Bind(OpenNLPPOSFacade.Initialize)
                          .Bind(() => GetPreparedWords(words));   

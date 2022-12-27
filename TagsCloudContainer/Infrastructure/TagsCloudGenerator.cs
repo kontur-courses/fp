@@ -41,11 +41,11 @@ namespace TagsCloudContainer.Infrastructure
             foreach (var wordRectangle in wordRectangles)
             {
                 var result = fontSizeProvider.GetFontSize(wordRectangle.Word)
-                                             .OnSuccess(r =>
-                                             {
-                                                 var font = new Font(fontSettings.FontFamily, r.Value);
-                                                 wordPlates.Add(new WordPlate() { Font = font, WordRectangle = wordRectangle });
-                                             });
+                    .OnSuccess(r =>
+                    {
+                        var font = new Font(fontSettings.FontFamily, r.Value);
+                        wordPlates.Add(new WordPlate() { Font = font, WordRectangle = wordRectangle });
+                    });
                 if (result.IsFailed)
                     return result.ToResult();
             }
@@ -58,12 +58,12 @@ namespace TagsCloudContainer.Infrastructure
             foreach (var word in words)
             {
                 var result = provider.GetFontSize(word)
-                                     .OnSuccess(r =>
-                                     {
-                                         var font = new Font(settings.FontFamily, r.Value);
-                                         var floatSize = graphics.MeasureString(word, font);
-                                         wordLayoutBuilder.AddWord(word, new Size((int)Math.Ceiling(floatSize.Width), (int)Math.Ceiling(floatSize.Height)));
-                                     });
+                    .OnSuccess(r =>
+                    {
+                        var font = new Font(settings.FontFamily, r.Value);
+                        var floatSize = graphics.MeasureString(word, font);
+                        wordLayoutBuilder.AddWord(word, new Size((int)Math.Ceiling(floatSize.Width), (int)Math.Ceiling(floatSize.Height)));
+                    });
                 if (result.IsFailed)
                     return result.ToResult();
             }
