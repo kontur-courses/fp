@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using ResultOf;
 
 namespace TagsCloudVisualization.CloudDrawer;
 
 public interface ICloudDrawer
 {
-    void Draw(List<TextLabel> wordsInPoint);
+    Result<bool> TryDraw(List<TextLabel> wordsInPoint);
 }

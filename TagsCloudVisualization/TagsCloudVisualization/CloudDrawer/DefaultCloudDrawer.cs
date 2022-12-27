@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using ResultOf;
 
 namespace TagsCloudVisualization.CloudDrawer;
 
@@ -20,7 +21,7 @@ public class DefaultCloudDrawer : ICloudDrawer
         brushes = colors.Select(c => new SolidBrush(c)).ToArray();
     }
 
-    public void Draw(List<TextLabel> wordsInPoint)
+    public Result<bool> TryDraw(List<TextLabel> wordsInPoint)
     {
         int i = 0;
         foreach (var textLabel in wordsInPoint)
@@ -30,10 +31,11 @@ public class DefaultCloudDrawer : ICloudDrawer
             if (!textLabel
                     .GetСornersPositions()
                     .All(point => 0 <= point.X && point.X <= bitmap.Width && 0 <= point.Y && point.Y <= bitmap.Height))
-                throw new Exception("Cloud does not fit into the window");
+                return Result.Fail<bool>("Cloud does not fit into the window");
         }
 
         SaveImage();
+        return true;
     }
 
     public void SaveImage()

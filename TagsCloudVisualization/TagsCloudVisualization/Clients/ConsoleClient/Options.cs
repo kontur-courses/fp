@@ -21,7 +21,6 @@ public class Options
     public IEnumerable<Color> Colors { get; set; }
 
     [Option('f', "font", Required = false, Default = Config.DefaultFont, HelpText = "Font")]
-    [Range(1, int.MaxValue)]
     public string Font { get; set; }
 
     [Option('s', "font-size", Required = false, Default = Config.DefaultFontSize, HelpText = "Font size")]

@@ -11,12 +11,12 @@ public class ConsoleClient
 {
     public void Run(params string[] args)
     {
-        var configuration = Result
-            .Of(() => Parse(args))
-            .RefineError("Options error")
-            .Then(AppContainer.Configure)
-            .RefineError("Configuration error")
-            .OnFail(PrintError);
+        var configuration =
+            Parse(args)
+                .RefineError("Options error")
+                .Then(AppContainer.Configure)
+                .RefineError("Configuration error")
+                .OnFail(Console.Write);
 
         if (!configuration.IsSuccess)
             return;
@@ -31,19 +31,17 @@ public class ConsoleClient
                 .RefineError("Input error")
                 .Then(generator.GenerateCloud)
                 .RefineError("Generation error")
-                .Then(drawer.Draw)
+                .Then(drawer.TryDraw)
                 .RefineError("Drawing error")
-                .OnFail(PrintError);
+                .OnFail(Console.Write);
         }
     }
 
-    private void PrintError(string error) => Console.Write(error);
-
-    private Options Parse(string[] args)
+    private Result<Options> Parse(string[] args)
     {
         var val = Parser.Default.ParseArguments<Options>(args).Value;
         if (val is null)
-            throw new System.Exception("Invalid option");
-        return val;
+            return Result.Fail<Options>("Invalid option");
+        return val.AsResult();
     }
 }
