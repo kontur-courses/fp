@@ -44,7 +44,7 @@ public class DrawingCloudCreator : ICloudCreator
     private Point GetPoint(string word, int fontsize)
     {
         using var font = new Font(drawer.FontFamily, fontsize);
-        return layouter.PutNextRectangle(drawer.Graphics.MeasureString(word, font).ToSize()).Location;
+        return layouter.PutNextRectangle(drawer.Graphics.MeasureString(word, font).ToSize()).Value.Location;
     }
 
     private int GetFontSize(int count, int minCount, int maxCount)

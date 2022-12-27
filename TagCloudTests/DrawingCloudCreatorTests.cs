@@ -2,6 +2,7 @@
 using System.Drawing;
 using FakeItEasy;
 using FluentAssertions;
+using FluentResults;
 using NUnit.Framework;
 using TagCloud;
 using TagCloud.Abstractions;
@@ -19,7 +20,7 @@ public class DrawingCloudCreatorTests
 
         var fakeLayouter = A.Fake<ICloudLayouter>();
         A.CallTo(() => fakeLayouter.PutNextRectangle(A<Size>.Ignored))
-            .ReturnsNextFromSequence(TagsAndRectangles.Select(t => t.Item2).ToArray());
+            .ReturnsNextFromSequence(TagsAndRectangles.Select(t => Result.Ok(t.Item2)).ToArray());
         layouters[testId] = fakeLayouter;
 
         var fakeDrawer = A.Fake<ICloudDrawer>();

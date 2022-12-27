@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Drawing;
+using FluentResults;
 using QuadTrees;
 using QuadTrees.Wrappers;
 using TagCloud.Abstractions;
@@ -26,25 +27,30 @@ public class BaseCloudLayouter : ICloudLayouter
         .GetAllObjects()
         .Select(rw => rw.Rect).ToImmutableArray();
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (!rectangleSize.IsPositive())
-            throw new ArgumentException($"Width and height of the rectangle must be positive, but {rectangleSize}");
+            return Result.Fail($"Width and height of the rectangle must be positive, but {rectangleSize}.");
 
-        var rectangle = CreateNewRectangle(rectangleSize);
-        while (rectanglesQuadTree.GetObjects(rectangle).Any())
-            rectangle = CreateNewRectangle(rectangleSize);
+        Rectangle? rectangle = null;
+        while (rectangle is null)
+        {
+            var createResult = CreateNewRectangle(rectangleSize);
+            if (createResult.IsFailed) return createResult;
+            var possibleRect = createResult.Value;
+            if (!rectanglesQuadTree.GetObjects(possibleRect).Any())
+                rectangle = possibleRect;
+        }
 
-        rectanglesQuadTree.Add(new QuadTreeRectWrapper(rectangle));
+        rectanglesQuadTree.Add(new QuadTreeRectWrapper(rectangle.Value));
 
         return rectangle;
     }
 
-    private Rectangle CreateNewRectangle(Size size)
+    private Result<Rectangle> CreateNewRectangle(Size size)
     {
         if (!pointEnumerator.MoveNext())
-            throw new InvalidOperationException(
-                "You are trying to put a new rectangle, but the points sequence has ended");
+            return Result.Fail("You are trying to put a new rectangle, but the points sequence has ended.");
 
         var point = new Point(pointEnumerator.Current.X - size.Width / 2,
             pointEnumerator.Current.Y - size.Height / 2);

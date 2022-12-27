@@ -31,50 +31,21 @@ public class BaseCloudLayouterTests
 
     private readonly ConcurrentDictionary<string, BaseCloudLayouter> layouterByTestId = new();
 
-    [TestCase(0, 0)]
-    [TestCase(10, 10)]
-    [TestCase(10, -10)]
-    [TestCase(-10, 10)]
-    [TestCase(-10, -10)]
-    public void Constructor_DontThrowException(int x, int y)
-    {
-        var point = new Point(x, y);
-
-        var act = () => new BaseCloudLayouter(point, fakePointGenerator);
-
-        act.Should().NotThrow<Exception>();
-    }
-
     [TestCase(0, 0, TestName = "{m}IsEmpty")]
     [TestCase(0, 10, TestName = "{m}WithZeroWidth")]
     [TestCase(10, 0, TestName = "{m}WithZeroHeight")]
     [TestCase(-10, 10, TestName = "{m}WithNegativeWidth")]
     [TestCase(10, -10, TestName = "{m}WithNegativeHeight")]
-    public void PutNextRectangle_ThrowArgumentException_OnSize(int width, int height)
+    public void PutNextRectangle_ReturnCorrectFail_OnSize(int width, int height)
     {
         var layouter = layouterByTestId[TestContext.CurrentContext.Test.ID];
         var size = new Size(width, height);
 
-        var act = () => layouter.PutNextRectangle(size);
+        var fail = layouter.PutNextRectangle(size);
 
-        act.Should().Throw<ArgumentException>()
-            .WithMessage($"Width and height of the rectangle must be positive, but {size}");
-    }
-
-    [TestCase(1, TestName = "{m}CorrectSize")]
-    [TestCase(5, TestName = "{m}MultipleRectangles")]
-    public void PutNextRectangle_DontThrowException_On(int rectanglesCount)
-    {
-        var layouter = layouterByTestId[TestContext.CurrentContext.Test.ID];
-        var size = new Size(10, 10);
-
-        var act = () =>
-        {
-            for (var i = 0; i < rectanglesCount; i++)
-                layouter.PutNextRectangle(size);
-        };
-
-        act.Should().NotThrow<Exception>();
+        fail.IsFailed.Should().BeTrue();
+        fail.Errors.Should().ContainSingle()
+            .Subject.Message.Should().Be($"Width and height of the rectangle must be positive, but {size}.");
     }
 
     [Test]
@@ -86,9 +57,10 @@ public class BaseCloudLayouterTests
         var expectedPosition = new Point(cloudCenter.X - size.Width / 2, cloudCenter.Y - size.Height / 2);
         var expectedRectangle = new Rectangle(expectedPosition, size);
 
-        var rectangle = layouter.PutNextRectangle(size);
+        var result = layouter.PutNextRectangle(size);
 
-        rectangle.Should().BeEquivalentTo(expectedRectangle);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(expectedRectangle);
     }
 
     [TestCase(2)]
@@ -118,12 +90,10 @@ public class BaseCloudLayouterTests
         var size = new Size(10, 10);
         layouter.PutNextRectangle(size);
 
-        var act1 = () => layouter.PutNextRectangle(size);
-        var act2 = () => layouter.PutNextRectangle(size);
-
-        act1.Should().Throw<InvalidOperationException>()
-            .WithMessage("You are trying to put a new rectangle, but the points sequence has ended");
-        act2.Should().Throw<InvalidOperationException>()
-            .WithMessage("You are trying to put a new rectangle, but the points sequence has ended");
+        var fail = layouter.PutNextRectangle(size);
+        
+        fail.IsFailed.Should().BeTrue();
+        fail.Errors.Should().ContainSingle()
+            .Subject.Message.Should().Be("You are trying to put a new rectangle, but the points sequence has ended.");
     }
 }
