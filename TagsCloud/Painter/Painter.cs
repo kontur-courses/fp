@@ -8,7 +8,7 @@ namespace TagCloud.Painter
         protected Bitmap? Bitmap = null;
         private readonly Random random = new();
         
-        public abstract void Paint(IEnumerable<T> figures, Image bitmap, Action colorChanger);
+        public abstract void Paint(IEnumerable<T> figures, Image bitmap, Action? colorChanger);
         public abstract Size GetBitmapSize(IEnumerable<T> figures);
 
         public void SetRandomRectangleColor()

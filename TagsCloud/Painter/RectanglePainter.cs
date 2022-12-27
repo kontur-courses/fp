@@ -4,7 +4,7 @@ namespace TagCloud.Painter
 {
     public class RectanglePainter : Painter<Rectangle>
     {
-        public override void Paint(IEnumerable<Rectangle> figures, Image bitmap, Action colorChanger = null)
+        public override void Paint(IEnumerable<Rectangle> figures, Image bitmap, Action? colorChanger)
         {
 #pragma warning disable CA1416
             var graphics = Graphics.FromImage(bitmap);
@@ -14,8 +14,10 @@ namespace TagCloud.Painter
             {
                 colorChanger?.Invoke();
                 graphics.FillRectangle(RectangleColor, figure);
-#pragma warning restore CA1416
             }
+            
+            graphics.Dispose();
+#pragma warning restore CA1416
         }
 
         public override Size GetBitmapSize(IEnumerable<Rectangle> figures)
