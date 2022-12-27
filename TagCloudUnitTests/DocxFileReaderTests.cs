@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System.IO;
-using System;
 using TagCloud.FileReader;
 
 namespace TagCloudUnitTests
@@ -11,7 +9,7 @@ namespace TagCloudUnitTests
     {
         private DocxFileReader fileReader;
 
-        private readonly string solutionDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.Parent.FullName;
+        private readonly string solutionDirectory = DirectoryHandler.GetSolutionDirectory().FullName;
 
         [SetUp]
         public void Setup()
@@ -22,7 +20,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_ReturnsAllFileText_WhenFileExists()
         {
-            var expectedText = "This is docx file.";
+           var expectedText = "This is docx file.";
 
             var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\TestText.docx");
 
@@ -34,7 +32,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_IsNotSuccess_WhenFileDoesNotExist()
         {
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\blablabla");
+            var actualText = fileReader.ReadAllText(solutionDirectory + @"\blablabla.docx");
 
             actualText.IsSuccess.Should().BeFalse();
         }
@@ -50,7 +48,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_IsNotSuccess_WhenFileHasInvalidContent()
         {
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\NotDocxText.docx");
+            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\NotDocxTestText.docx");
 
             actualText.IsSuccess.Should().BeFalse();
         }
