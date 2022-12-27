@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TagCloud.ResultImplementation;
 
 namespace TagsCloud.WPF.PictureSaver.Implementation;
 
@@ -43,12 +45,20 @@ public class PictureSaverCanvas : IPictureSaver
         SaveRtbAsPngbmp(rtb, filename);
     }
 
-    private static void SaveRtbAsPngbmp(BitmapSource bmp, string filename)
+    private static Result<bool> SaveRtbAsPngbmp(BitmapSource bmp, string filename)
     {
         var enc = new PngBitmapEncoder();
         enc.Frames.Add(BitmapFrame.Create(bmp));
 
-        using var stm = File.Create(filename);
-        enc.Save(stm);
+        try
+        {
+            using var stm = File.Create(filename);
+            enc.Save(stm);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<bool>($"{e.Message}");
+        }
     }
 }

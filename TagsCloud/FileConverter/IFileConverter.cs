@@ -1,6 +1,8 @@
-﻿namespace TagCloud.FileConverter;
+﻿using TagCloud.ResultImplementation;
+
+namespace TagCloud.FileConverter;
 
 public interface IFileConverter
 {
-    string Convert(string path);
+    Result<string> Convert(string path);
 }

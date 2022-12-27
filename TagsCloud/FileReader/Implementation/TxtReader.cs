@@ -1,6 +1,18 @@
-﻿namespace TagCloud.FileReader.Implementation;
+﻿using TagCloud.ResultImplementation;
+
+namespace TagCloud.FileReader.Implementation;
 
 public class TxtReader : IFileReader
 {
-    public string[] Read(string path) => File.ReadAllLines(path);
+    public Result<string[]> Read(string path)
+    {
+        try
+        {
+            return File.ReadAllLines(path);
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<string[]>($"{e.Message}");
+        }
+    }
 }

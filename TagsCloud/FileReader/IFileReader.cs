@@ -1,6 +1,8 @@
-﻿namespace TagCloud.FileReader;
+﻿using TagCloud.ResultImplementation;
+
+namespace TagCloud.FileReader;
 
 public interface IFileReader
 {
-    string[] Read(string path);
+    Result<string[]> Read(string path);
 }

@@ -31,7 +31,7 @@ public sealed class CircularCloudLayouter : CloudLayouter<Rectangle>
 
         var figure = GetNextFigure(rectangleSize);
         Figures.Add(figure);
-        return Result.Ok(figure);
+        return figure;
     }
 
     private Rectangle GetNextFigure(Size size)

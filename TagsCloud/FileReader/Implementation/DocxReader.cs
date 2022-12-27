@@ -1,4 +1,5 @@
 ﻿using TagCloud.FileConverter;
+using TagCloud.ResultImplementation;
 
 namespace TagCloud.FileReader.Implementation;
 
@@ -11,9 +12,11 @@ public class DocxReader : IFileReader
         this.converter = converter;
     }
 
-    public string[] Read(string path)
+    public Result<string[]> Read(string path)
     {
         var newPath = converter.Convert(path);
-        return File.ReadAllLines(newPath).Skip(1).ToArray();
+        return newPath.IsSuccess
+            ? File.ReadAllLines(newPath.Value).Skip(1).ToArray()
+            : Result.Fail<string[]>(newPath.Error);
     }
 }
