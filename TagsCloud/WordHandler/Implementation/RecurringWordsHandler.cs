@@ -4,8 +4,8 @@ public class RecurringWordsHandler : IWordHandler
 {
     public Dictionary<string, int> WordCount = new();
 
-    public string[] ProcessWords(IEnumerable<string> words) =>
-        words.Where(word => ProcessWord(word) is not null).ToArray();
+    public IEnumerable<string> ProcessWords(IEnumerable<string> words) =>
+        words.Where(word => ProcessWord(word) is not null);
 
     public string? ProcessWord(string word)
     {

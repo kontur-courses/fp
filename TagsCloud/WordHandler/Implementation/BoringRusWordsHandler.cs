@@ -15,7 +15,8 @@ public class BoringRusWordsHandler : IWordHandler
         "столько",
     };
 
-    public string[] ProcessWords(IEnumerable<string> words) => words.Where(word => ProcessWord(word) is not null).ToArray();
+    public IEnumerable<string> ProcessWords(IEnumerable<string> words) =>
+        words.Where(word => ProcessWord(word) is not null);
 
     public string? ProcessWord(string word) => prepositions.Contains(word) || pronouns.Contains(word) ? null : word;
 }

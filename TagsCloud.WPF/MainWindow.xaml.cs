@@ -68,7 +68,7 @@ public partial class MainWindow
     }
 
     private string[] ProcessWords(string[] getWordsFromTxt) => 
-        wordHandlers.Aggregate(getWordsFromTxt, (current, handler) => handler.ProcessWords(current));
+        wordHandlers.Aggregate(getWordsFromTxt, (current, handler) => handler.ProcessWords(current).ToArray());
 
     private void DrawRectangle(object? sender, EventArgs e)
     {
