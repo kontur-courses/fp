@@ -1,6 +1,8 @@
-﻿namespace TagCloudPainter.FileReader;
+﻿using TagCloudPainter.ResultOf;
+
+namespace TagCloudPainter.FileReader;
 
 public interface IFileReader
 {
-    public IEnumerable<string> ReadFile(string path);
+    public Result<IEnumerable<string>> ReadFile(string path);
 }
