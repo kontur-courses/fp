@@ -26,13 +26,14 @@ namespace TagsCloudContainer.Infrastructure
 
         public Result<WordPlate[]> GeneratePlates(IEnumerable<string> words, PointF center, WordFontSettings fontSettings)
         {
-            var fontSizeProvider = fontSizeProviderFactory.CreateDefault(fontSettings.FontSizeSettings);
+            if (!words.Any())
+                return Result.Fail($"{nameof(words)} is empty");
 
+            var fontSizeProvider = fontSizeProviderFactory.CreateDefault(fontSettings.FontSizeSettings);
             wordLayoutBuilder.Clear();
 
-            var result = AddWordsToBuilder(words, fontSizeProvider, fontSettings).Bind(() => wordLayoutBuilder.Build(center))
-                                                                                 .Bind(wordRectangles => CreateWordPlates(wordRectangles, fontSizeProvider, fontSettings));
-            return result;
+            return AddWordsToBuilder(words, fontSizeProvider, fontSettings).Bind(() => wordLayoutBuilder.Build(center))
+                                                                           .Bind(wordRectangles => CreateWordPlates(wordRectangles, fontSizeProvider, fontSettings));
         }
 
         private static Result<WordPlate[]> CreateWordPlates(WordRectangle[] wordRectangles, IWordFontSizeProvider fontSizeProvider, WordFontSettings fontSettings)
