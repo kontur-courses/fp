@@ -38,7 +38,7 @@ namespace TagsCloudContainer.Sandbox
             builder.RegisterInstance(programOptions.FontOptions).As<FontOptions>();
             builder.RegisterInstance(programOptions.FilterOptions).As<IFilterOptions>();
             builder.RegisterType<WordsAnalyzer>().As<IWordsAnalyzer>();
-            builder.RegisterType<WordsReader>().As<IWordsReader>().WithParameter("filePath", programOptions.FilePath);
+            builder.RegisterType<FileReader>().As<IFileReader>().WithParameter("filePath", programOptions.FilePath);
             builder.RegisterType<WordsFilter>().As<IWordsFilter>();
             builder.RegisterType<CircularCloudLayouter>().As<ILayouter>()
                 .WithParameter("center",

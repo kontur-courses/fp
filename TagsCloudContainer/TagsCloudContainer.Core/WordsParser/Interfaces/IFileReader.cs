@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.Core.WordsParser.Interfaces
+﻿using TagsCloudContainer.Core.Results;
+
+namespace TagsCloudContainer.Core.WordsParser.Interfaces
 {
     public interface IFileReader
     {
-        public IEnumerable<string> ReadWords();
+        public Result<IEnumerable<string>> ReadWords();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using TagsCloudContainer.Core.WordsParser.Interfaces;
 
-namespace TagsCloudContainer.Core.WordsParser.FileReaders
+namespace TagsCloudContainer.Core.WordsParser.ExtensionReaders
 {
-    public class TxtReader : IFileReader
+    public class TxtReader : IExtensionReader
     {
         private readonly string _filePath;
 

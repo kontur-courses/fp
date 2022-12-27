@@ -5,7 +5,7 @@ using TagsCloudContainer.Core.Layouter;
 
 namespace TagsCloudContainer.Core.Tests
 {
-    public class Tests
+    public class CircularCloudLayouterTests
     {
         private Point _center;
         private CircularCloudLayouter _sut;
@@ -15,9 +15,7 @@ namespace TagsCloudContainer.Core.Tests
         {
             var options = new TestOptions(500, 500);
             _center = new Point(options.Width / 2, options.Height / 2);
-
             _sut = new CircularCloudLayouter(_center);
-            //_sut.SetCenter(new Point(_center.X, _center.Y));
         }
 
         [Test]
@@ -44,17 +42,7 @@ namespace TagsCloudContainer.Core.Tests
                     rectangles[i].IntersectsWith(rectangles[j]).Should().BeFalse();
             
         }
-
-        [Test]
-        [TestCase(-1, -1)]
-        [TestCase(0, 0)]
-        public void PutNextRectangle_TryPutNonPositiveRectangle_ShouldThrow(int width, int height)
-        {
-            var action = () => { _sut.PutNextRectangle(new Size(width, height)); };
-            action.Should().Throw<ArgumentException>()
-                            .WithMessage("Rectangle size is not positive.");
-        }
-
+        
         [Test]
         public void PutNextRectangle_CorrectRectSizeAfterInsertion_ShouldBeEqual()
         {

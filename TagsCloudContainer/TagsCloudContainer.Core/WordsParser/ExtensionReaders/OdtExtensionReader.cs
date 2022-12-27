@@ -2,13 +2,13 @@
 using AODL.Document.TextDocuments;
 using TagsCloudContainer.Core.WordsParser.Interfaces;
 
-namespace TagsCloudContainer.Core.WordsParser.FileReaders
+namespace TagsCloudContainer.Core.WordsParser.ExtensionReaders
 {
-    public class OdtFileReader : IFileReader
+    public class OdtExtensionReader : IExtensionReader
     {
         private readonly string _filePath;
 
-        public OdtFileReader(string filePath)
+        public OdtExtensionReader(string filePath)
         {
             _filePath = filePath;
         }

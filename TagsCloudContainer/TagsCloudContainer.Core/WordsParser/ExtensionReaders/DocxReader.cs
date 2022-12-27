@@ -1,10 +1,9 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using TagsCloudContainer.Core.WordsParser.Interfaces;
 
-namespace TagsCloudContainer.Core.WordsParser.FileReaders
+namespace TagsCloudContainer.Core.WordsParser.ExtensionReaders
 {
-    public class DocxReader : IFileReader
+    public class DocxReader : IExtensionReader
     {
         private readonly string _filePath;
 

@@ -6,17 +6,17 @@ namespace TagsCloudContainer.Core.WordsParser
     public class WordsAnalyzer : IWordsAnalyzer
     {
         private readonly IWordsFilter _filter;
-        private readonly IWordsReader _wordReader;
+        private readonly IFileReader _fileReader;
 
-        public WordsAnalyzer(IWordsFilter filter, IWordsReader wordReader)
+        public WordsAnalyzer(IWordsFilter filter, IFileReader fileReader)
         {
             _filter = filter;
-            _wordReader = wordReader;
+            _fileReader = fileReader;
         }
 
         public Result<Dictionary<string, int>> AnalyzeWords()
         {
-            return _wordReader.ReadWords()
+            return _fileReader.ReadWords()
                 .Then(words => words.Select(word => word.ToLower()))
                 .Then(normalizedWords => _filter.RemoveBoringWords(normalizedWords))
                 .Then(CountWords);

@@ -1,18 +1,18 @@
 ﻿using System.Text.RegularExpressions;
 using TagsCloudContainer.Core.Results;
+using TagsCloudContainer.Core.WordsParser.ExtensionReaders;
 using TagsCloudContainer.Core.WordsParser.Interfaces;
-using TagsCloudContainer.Core.WordsParser.FileReaders;
 
 namespace TagsCloudContainer.Core.WordsParser
 {
-    public class WordsReader : IWordsReader
+    public class FileReader : IFileReader
     {
         private static readonly Regex ExtensionRegex = new(@".*?(?<extension>\.[^.]*?)$");
         private delegate Result<IEnumerable<string>> ReadWordsMethod();
-        private IFileReader? _fileExtensionReader;
+        private IExtensionReader? _fileExtensionReader;
         private readonly string _filePath;
 
-        public WordsReader(string filePath)
+        public FileReader(string filePath)
         {
             _filePath = filePath;
         }
@@ -24,7 +24,7 @@ namespace TagsCloudContainer.Core.WordsParser
             {
                 ".txt" => new TxtReader(_filePath),
                 ".docx" => new DocxReader(_filePath),
-                ".odt" => new OdtFileReader(_filePath),
+                ".odt" => new OdtExtensionReader(_filePath),
                 _ => null
             };
 
