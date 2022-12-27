@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using TagCloudPainter.Coloring;
 using TagCloudPainter.Common;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Painters;
 
@@ -16,8 +17,17 @@ public class CloudPainter : ICloudPainter
 
     private ImageSettings ImageSettings { get; }
 
-    public Bitmap PaintTagCloud(IEnumerable<Tag> tags)
+    public Result<Bitmap> PaintTagCloud(IEnumerable<Tag> tags)
     {
+        if (ImageSettings == null)
+            return Result.Fail<Bitmap>("ImageSettings not setted");
+
+        if (ImageSettings.Size.Width <= 0 || ImageSettings.Size.Height <= 0)
+            return Result.Fail<Bitmap>("size is negative or zero");
+
+        if (tags.Any(p => IsRectangleOutsideOfBorders(p.Rectangle)))
+            return Result.Fail<Bitmap>("the tag cloud did not fit on the image of the given size");
+
         var btm = new Bitmap(ImageSettings.Size.Width, ImageSettings.Size.Height);
         var g = Graphics.FromImage(btm);
         g.Clear(ImageSettings.BackgroundColor);
@@ -37,5 +47,13 @@ public class CloudPainter : ICloudPainter
         }
 
         return btm;
+    }
+
+    private bool IsRectangleOutsideOfBorders(Rectangle rectangle)
+    {
+        return rectangle.X < 0
+               || rectangle.Y < 0
+               || rectangle.X + rectangle.Width >= ImageSettings.Size.Width
+               || rectangle.Y + rectangle.Height >= ImageSettings.Size.Height;
     }
 }

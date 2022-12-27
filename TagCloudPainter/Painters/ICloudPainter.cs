@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using TagCloudPainter.Common;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Painters;
 
 public interface ICloudPainter
 {
-    Bitmap PaintTagCloud(IEnumerable<Tag> tags);
+    Result<Bitmap> PaintTagCloud(IEnumerable<Tag> tags);
 }

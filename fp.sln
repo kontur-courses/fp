@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagCloudConsoleApplication"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagCloudPainter", "TagCloudPainter\TagCloudPainter.csproj", "{215BFC39-B251-4410-B9C0-83BC98C60DF4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagCloudPainter.Tests", "TagCloudPainter.Tests\TagCloudPainter.Tests.csproj", "{984997B0-F8F0-491E-B39B-EC02EC89DA8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TagCloudPainter.Tests", "TagCloudPainter.Tests\TagCloudPainter.Tests.csproj", "{B8E71464-D5D4-4737-95CB-39AD8DA85381}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +49,10 @@ Global
 		{215BFC39-B251-4410-B9C0-83BC98C60DF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{215BFC39-B251-4410-B9C0-83BC98C60DF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{215BFC39-B251-4410-B9C0-83BC98C60DF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{984997B0-F8F0-491E-B39B-EC02EC89DA8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{984997B0-F8F0-491E-B39B-EC02EC89DA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{984997B0-F8F0-491E-B39B-EC02EC89DA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{984997B0-F8F0-491E-B39B-EC02EC89DA8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E71464-D5D4-4737-95CB-39AD8DA85381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E71464-D5D4-4737-95CB-39AD8DA85381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E71464-D5D4-4737-95CB-39AD8DA85381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E71464-D5D4-4737-95CB-39AD8DA85381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
