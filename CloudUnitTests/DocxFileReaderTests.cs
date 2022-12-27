@@ -9,8 +9,6 @@ namespace TagCloudUnitTests
     {
         private DocxFileReader fileReader;
 
-        private readonly string solutionDirectory = DirectoryHandler.GetSolutionDirectory().FullName;
-
         [SetUp]
         public void Setup()
         {
@@ -22,7 +20,7 @@ namespace TagCloudUnitTests
         {
            var expectedText = "This is docx file.";
 
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\TestText.docx");
+            var actualText = fileReader.ReadAllText("TestText.docx");
 
             actualText.IsSuccess.Should().BeTrue();
 
@@ -32,7 +30,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_IsNotSuccess_WhenFileDoesNotExist()
         {
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\blablabla.docx");
+            var actualText = fileReader.ReadAllText("blablabla.docx");
 
             actualText.IsSuccess.Should().BeFalse();
         }
@@ -40,7 +38,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_IsNotSuccess_WhenFileHasInvalidFormat()
         {
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\TestText.txt");
+            var actualText = fileReader.ReadAllText("TestText.txt");
 
             actualText.IsSuccess.Should().BeFalse();
         }
@@ -48,7 +46,7 @@ namespace TagCloudUnitTests
         [Test]
         public void ReadAllText_IsNotSuccess_WhenFileHasInvalidContent()
         {
-            var actualText = fileReader.ReadAllText(solutionDirectory + @"\TestTextFiles\NotDocxTestText.docx");
+            var actualText = fileReader.ReadAllText("NotDocxTestText.docx");
 
             actualText.IsSuccess.Should().BeFalse();
         }
