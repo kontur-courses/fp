@@ -2,6 +2,7 @@
 using Autofac;
 using CommandLine;
 using TagCloudConsoleApplication.Options;
+using TagCloudPainter.ResultOf;
 using TagCloudPainter.Savers;
 
 namespace TagCloudConsoleApplication;
@@ -13,10 +14,9 @@ internal class Program
         Parser.Default.ParseArguments<TagCloudOptions>(args)
             .WithParsed(o =>
             {
-                var container = new Configurator().Confiugre(o);
-
-                var format = GetImageFormat(o.OutputPath);
-                container.Resolve<ITagCloudSaver>().SaveTagCloud(o.InputPath, o.OutputPath, format);
+                new Configurator().Confiugre(o).Then(p => p.Resolve<ITagCloudSaver>())
+                    .Then(p => p.SaveTagCloud(o.InputPath, o.OutputPath, GetImageFormat(o.OutputPath)))
+                    .OnFail(Console.WriteLine);
             });
     }
 

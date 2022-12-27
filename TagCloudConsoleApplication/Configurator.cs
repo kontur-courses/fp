@@ -11,6 +11,7 @@ using TagCloudPainter.Layouters;
 using TagCloudPainter.Lemmaizers;
 using TagCloudPainter.Painters;
 using TagCloudPainter.Preprocessors;
+using TagCloudPainter.ResultOf;
 using TagCloudPainter.Savers;
 using TagCloudPainter.Sizers;
 
@@ -18,14 +19,17 @@ namespace TagCloudConsoleApplication;
 
 public class Configurator
 {
-    public IContainer Confiugre(TagCloudOptions o)
+    public Result<IContainer> Confiugre(TagCloudOptions o)
     {
         var builder = new ContainerBuilder();
 
         var imageSettings = GetImageSettings(o);
 
+        if (!imageSettings.IsSuccess)
+            return Result.Fail<IContainer>($"{imageSettings.Error}");
+
         builder.RegisterType<ImageSettingsProvider>().As<IImageSettingsProvider>()
-            .WithProperty("ImageSettings", imageSettings);
+            .WithProperty("ImageSettings", imageSettings.GetValueOrThrow());
 
         builder.RegisterType<ParseSettingsProvider>().As<IParseSettingsProvider>()
             .WithProperty("ParseSettings", new ParseSettings()).SingleInstance();
@@ -49,7 +53,7 @@ public class Configurator
 
         builder.RegisterType<TagCloudSaver>().As<ITagCloudSaver>();
 
-        return builder.Build();
+        return builder.Build().AsResult();
     }
 
     private void RegisterWordColoring(ContainerBuilder builder, TagCloudOptions o)
@@ -78,12 +82,22 @@ public class Configurator
             });
     }
 
-    private static ImageSettings GetImageSettings(TagCloudOptions options)
+    private static Result<ImageSettings> GetImageSettings(TagCloudOptions options)
     {
+        if (options.ImageHeight <= 0 || options.ImageWidth <= 0)
+            return Result.Fail<ImageSettings>("imageHeight or imageWidth <= 0");
+
+        if (options.FontSize <= 0)
+            return Result.Fail<ImageSettings>("FontSize <= 0");
+
+        var font = new Font(options.FontFamily, options.FontSize, FontStyle.Bold, GraphicsUnit.Point);
+        if (font.FontFamily.Name != options.FontFamily)
+            return Result.Fail<ImageSettings>("Font wasn't found on the system.");
+
         return new ImageSettings
         {
             BackgroundColor = options.BackgroundColor,
-            Font = new Font(options.FontFamily, options.FontSize, FontStyle.Bold, GraphicsUnit.Point),
+            Font = font,
             Size = new Size(options.ImageWidth, options.ImageHeight)
         };
     }
