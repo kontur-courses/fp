@@ -10,7 +10,7 @@ public class MorphWordsProcessorTests
 {
     private readonly MorphWordsProcessor processor = new(new[]
     {
-        "мест", "предл", "союз", "част", "межд", "неизв"
+        "сущ", "прил", "гл", "прич", "деепр", "нареч", "числ"
     });
 
     [Test]
