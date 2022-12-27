@@ -6,8 +6,8 @@ namespace TagCloud;
 
 public class MorphWordsProcessor : IWordsProcessor
 {
-    private readonly IEnumerable<string> partsOfSpeech;
     private readonly MorphAnalyzer morph;
+    private readonly IEnumerable<string> partsOfSpeech;
 
     public MorphWordsProcessor(IEnumerable<string> partsOfSpeech)
     {

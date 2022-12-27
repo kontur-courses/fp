@@ -40,13 +40,13 @@ public class DrawerSettings
         if (minFontSize <= 0 || minFontSize > maxFontSize)
             errors.Add(new Error(
                 $"MinFontSize should be greater than 0 and less than MaxFontSize, but {minFontSize}."));
-        
+
         if (maxFontSize <= 0 || maxFontSize < minFontSize)
             errors.Add(new Error(
                 $"MaxFontSize should be greater than 0 and MinFontSize, but {maxFontSize}."));
 
         CheckColor(textColorName, errors, out var textColor);
-        
+
         CheckColor(backgroundColorName, errors, out var backgroundColor);
 
         CheckFontFamily(fontFamilyName, errors, out var fontFamily);

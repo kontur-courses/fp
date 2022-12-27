@@ -91,7 +91,7 @@ public class BaseCloudLayouterTests
         layouter.PutNextRectangle(size);
 
         var fail = layouter.PutNextRectangle(size);
-        
+
         fail.IsFailed.Should().BeTrue();
         fail.Errors.Should().ContainSingle()
             .Subject.Message.Should().Be("You are trying to put a new rectangle, but the points sequence has ended.");

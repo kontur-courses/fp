@@ -29,7 +29,9 @@ public class TxtLinesWordsLoaderTests
     {
         var filepath = Path.Combine(Dir, $"{TestContext.CurrentContext.Test.Name}.txt");
         using (var file = File.Open(filepath, FileMode.OpenOrCreate))
+        {
             file.Flush();
+        }
 
         filepathById[TestContext.CurrentContext.Test.ID] = filepath;
     }
@@ -51,14 +53,17 @@ public class TxtLinesWordsLoaderTests
             .Subject.Message.Should()
             .Be($"Could not find file '{Path.GetFullPath(filepath)}'.");
     }
-    
+
     [Test]
     public void Load_ReturnCorrectFail_OnNotSupportedFile()
     {
         const string notSupportedExtension = ".docx";
         var filepath = Path.Combine(Dir, $"{TestContext.CurrentContext.Test.Name}{notSupportedExtension}");
         using (var file = File.Open(filepath, FileMode.OpenOrCreate))
+        {
             file.Flush();
+        }
+
         var loader = new TxtLinesWordsLoader(filepath);
 
         var fail = loader.Load();
@@ -107,7 +112,7 @@ public class TxtLinesWordsLoaderTests
         File.WriteAllLines(filepath, newLines);
 
         var resultAfter = loader.Load();
-        
+
         resultBefore.IsSuccess.Should().BeTrue();
         resultBefore.Value.Should().Equal(lines);
         resultAfter.IsSuccess.Should().BeTrue();

@@ -19,6 +19,7 @@ Parser.Default.ParseArguments<Options>(args)
             var client = ConfigureContainer(o, result.Value).Resolve<Client>();
             result = client.Execute(o.Result);
         }
+
         PrintResult(result);
     });
 
@@ -36,6 +37,7 @@ void PrintResult(IResultBase result)
         color = ConsoleColor.Green;
         reasons = result.Successes;
     }
+
     Console.ForegroundColor = color;
     Console.WriteLine(string.Join(Environment.NewLine, reasons.Select(e => e.Message)));
     Console.ForegroundColor = default;
@@ -67,7 +69,7 @@ void ConfigureProcessors(ContainerBuilder builder, Options options)
 {
     var trimToLowerProcessor = new FuncWordsProcessor(words => words.Select(w => w.Trim().ToLower()));
     builder.RegisterInstance(trimToLowerProcessor).As<IWordsProcessor>();
-    
+
     builder.RegisterInstance(new MorphWordsProcessor(options.SelectedPartsOfSpeech)).As<IWordsProcessor>();
 }
 

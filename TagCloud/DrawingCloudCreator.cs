@@ -39,7 +39,7 @@ public class DrawingCloudCreator : ICloudCreator
             var fontsize = GetFontSize(t.Weight, minCount, maxCount);
             return new DrawableTag(t, fontsize, GetPoint(t.Text, fontsize));
         });
-        
+
         return drawableTags.ToList();
     }
 

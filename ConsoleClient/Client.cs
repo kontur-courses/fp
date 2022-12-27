@@ -29,7 +29,7 @@ public class Client
     {
         var loadResult = loader.Load();
         if (loadResult.IsFailed) return Result.Fail(loadResult.Errors);
-        
+
         var words = loadResult.Value;
         foreach (var processor in processors)
         {
@@ -37,15 +37,15 @@ public class Client
             if (processResult.IsFailed) return Result.Fail(processResult.Errors);
             words = processResult.Value;
         }
-        
+
         var toTagsResult = tagger.ToTags(words);
         if (toTagsResult.IsFailed) return Result.Fail(toTagsResult.Errors);
         var tags = toTagsResult.Value;
-        
+
         var createCloudResult = creator.CreateTagCloud(tags);
         if (createCloudResult.IsFailed) return Result.Fail("Occured internal error.");
         var drawableTags = createCloudResult.Value;
-        
+
         var bitmap = drawer.Draw(drawableTags);
         bitmap.Save(resultFilepath);
         return Result.Ok().WithSuccess($"All Ok. Tag Cloud saved to '{Path.GetFullPath(resultFilepath)}'.");
