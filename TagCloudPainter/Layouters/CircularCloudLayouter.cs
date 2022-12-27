@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagCloudPainter.Extensions;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Layouters;
 
@@ -18,17 +19,21 @@ public class CircularCloudLayouter : ICloudLayouter
 
     public List<Rectangle> Rectangles => rectangles.ToList();
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width == 0 || rectangleSize.Height == 0)
-            throw new ArgumentException();
+            return Result.Fail<Rectangle>("incorrect rectangle size");
 
         var location = helixPointLayouter.GetPoint();
-        var rectangle = new Rectangle(location, rectangleSize);
+
+        if (!location.IsSuccess)
+            return Result.Fail<Rectangle>($"{location.Error}");
+
+        var rectangle = new Rectangle(location.Value, rectangleSize);
         while (rectangle.IsIntersectsOthersRectangles(rectangles))
         {
             location = helixPointLayouter.GetPoint();
-            rectangle = new Rectangle(location, rectangleSize);
+            rectangle = new Rectangle(location.Value, rectangleSize);
         }
 
         var movingPoint = GetMovingToPointVector(rectangle, center);

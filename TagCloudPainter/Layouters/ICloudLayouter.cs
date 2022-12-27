@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Layouters;
 
 public interface ICloudLayouter
 {
-    Rectangle PutNextRectangle(Size rectangleSize);
+    Result<Rectangle> PutNextRectangle(Size rectangleSize);
 }

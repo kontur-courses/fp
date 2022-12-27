@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Layouters;
 
@@ -12,15 +13,14 @@ public class HelixPointLayouter
 
     public HelixPointLayouter(Point center, double angleStep, double radiusStep)
     {
-        if (radiusStep <= 0 || angleStep == 0)
-            throw new ArgumentOutOfRangeException();
         this.center = center;
         this.angleStep = angleStep;
         this.radiusStep = radiusStep;
     }
 
-    public Point GetPoint()
+    public Result<Point> GetPoint()
     {
+        if (radiusStep <= 0 || angleStep == 0) return Result.Fail<Point>("radius or angel < 0");
         var x = center.X + GetX(radius, angle);
         var y = center.Y + GetY(radius, angle);
         var location = new Point(x, y);
@@ -29,7 +29,13 @@ public class HelixPointLayouter
         return location;
     }
 
-    private static int GetX(double r, double a) => (int)(r * Math.Cos(a));
+    private static int GetX(double r, double a)
+    {
+        return (int)(r * Math.Cos(a));
+    }
 
-    private static int GetY(double r, double a) => (int)(r * Math.Sin(a));
+    private static int GetY(double r, double a)
+    {
+        return (int)(r * Math.Sin(a));
+    }
 }
