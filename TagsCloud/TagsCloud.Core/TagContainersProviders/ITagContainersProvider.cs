@@ -2,5 +2,5 @@
 
 public interface ITagContainersProvider
 {
-	public IEnumerable<TagContainer> GetContainers(int? count = null);
+	public List<Result<TagContainer>> GetContainers(int? count = null);
 }

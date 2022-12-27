@@ -7,6 +7,7 @@ namespace TagsCloud.Core.TagContainersProviders;
 
 public class TagContainersProvider : ITagContainersProvider
 {
+	private readonly Graphics graphics = Graphics.FromImage(new Bitmap(1, 1));
 	private readonly ISettingsGetter<ImageSettings> imageSettingsProvider;
 	private readonly ICloudLayouter layouter;
 	private readonly ITagsPreprocessor preprocessor;
@@ -19,30 +20,34 @@ public class TagContainersProvider : ITagContainersProvider
 		this.imageSettingsProvider = imageSettingsProvider;
 	}
 
-	public IEnumerable<TagContainer> GetContainers(int? count)
+	public List<Result<TagContainer>> GetContainers(int? count)
 	{
 		var imageSettings = imageSettingsProvider.Get();
 		var tags = preprocessor.GetTags(count);
-		var containers = new List<TagContainer>();
 
-		using var graphics = Graphics.FromImage(new Bitmap(1, 1));
+		return tags
+			.Select(tag => GetNextContainer(tag, imageSettings))
+			.TakeWhile(tagResult => tagResult.IsSuccess)
+			.ToList();
+	}
 
-		foreach (var tag in tags)
-		{
-			var fontSize = imageSettings.MinFontSize + (int)Math.Pow(tag.Count, 1.5);
+	private Result<TagContainer> GetNextContainer(Tag tag, ImageSettings imageSettings)
+	{
+		var fontSize = imageSettings.MinFontSize + (int)Math.Pow(tag.Count, 1.5);
 
-			var size = GetContainerSize(tag, new Font(imageSettings.FontFamily, fontSize));
+		var size = GetContainerSize(tag, new Font(imageSettings.FontFamily, fontSize));
 
-			containers.Add(new TagContainer(tag, layouter.PutNextRectangle(size), fontSize));
-		}
+		return layouter
+			.PutNextRectangle(size)
+			.Then(rectangle => new TagContainer(tag, rectangle, fontSize));
 
-		return containers;
+		return new TagContainer(tag, layouter.PutNextRectangle(size), fontSize);
+	}
 
-		Size GetContainerSize(Tag tag, Font font)
-		{
-			var sizeF = graphics.MeasureString(tag.Word, font);
+	private Size GetContainerSize(Tag tag, Font font)
+	{
+		var sizeF = graphics.MeasureString(tag.Word, font);
 
-			return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
-		}
+		return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
 	}
 }

@@ -11,4 +11,5 @@ public class ImageSettings
 	public FontFamily FontFamily { get; set; }
 	public int MinFontSize { get; set; }
 	public ImageFormat Format { get; set; }
+	public bool AutoSize { get; set; }
 }

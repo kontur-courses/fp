@@ -10,19 +10,26 @@ public class SpiralCloudLayouter : ICloudLayouter
 
 	private readonly ISpiral spiral;
 
-	public SpiralCloudLayouter(Point center, double spiralStepInPixels, double angleStepInDegrees)
+	private SpiralCloudLayouter(Point center, ISpiral spiral)
 	{
-		spiral = new ArchimedeanSpiral(center, spiralStepInPixels, angleStepInDegrees);
+		this.spiral = spiral;
 		placedRectangles = new List<Rectangle>();
 	}
 
-	public Rectangle PutNextRectangle(Size rectangleSize)
+	public Result<Rectangle> PutNextRectangle(Size rectangleSize)
 	{
 		var rectangleOnSpiral = GetRectangleOnSpiral(rectangleSize);
 
 		placedRectangles.Add(rectangleOnSpiral);
 
 		return rectangleOnSpiral;
+	}
+
+	public static Result<ICloudLayouter> GetLayouter(Point center, double spiralStepInPixels, double angleStepInDegrees)
+	{
+		return ArchimedeanSpiral.GetSpiral(center, spiralStepInPixels, angleStepInDegrees)
+			.RefineError("Can't create spiral layouter")
+			.Then(spiral => new SpiralCloudLayouter(center, spiral) as ICloudLayouter);
 	}
 
 	private Rectangle GetRectangleOnSpiral(Size rectangleSize)

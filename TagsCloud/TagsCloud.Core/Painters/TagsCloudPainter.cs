@@ -13,23 +13,35 @@ public class TagsCloudPainter : ITagsCloudPainter
 		this.settingsProvider = settingsProvider;
 	}
 
-	public Bitmap Draw(IEnumerable<TagContainer> tagContainers)
+	public Result<Bitmap> Draw(List<TagContainer> tagContainers)
 	{
 		var imageSettings = settingsProvider.Get();
-		var cloudBorder = GetCloudBorder(tagContainers.ToList(), 100);
-		var cloud = new Bitmap(cloudBorder.Width, cloudBorder.Height);
+		var cloudBorder = GetCloudBorder(tagContainers, 100);
+
+		if (cloudBorder.Width > 20_000 || cloudBorder.Height > 20_000)
+			return Result.Fail<Bitmap>("Tag cloud occupied to much spaces, reduce tags count or font size");
+
+		if (!CloudPlacedInImage(cloudBorder.Size, imageSettings))
+			return Result
+				.Fail<Bitmap>(
+					$"Tag cloud did not placed on the image of the given size, minimal image size should be: ({cloudBorder.Width}, {cloudBorder.Height})");
+
+		var image = imageSettings.AutoSize
+			? new Bitmap(cloudBorder.Width, cloudBorder.Height)
+			: new Bitmap(imageSettings.ImageSize.Width, imageSettings.ImageSize.Height);
 
 		using var backgroundBrush = new SolidBrush(imageSettings.Pallet.BackgroundColor);
 		using var fontBrush = new SolidBrush(imageSettings.Pallet.GetNextColor());
-		using var containerBorderPen = new Pen(Color.Crimson);
-		using var graphics = Graphics.FromImage(cloud);
+		using var graphics = Graphics.FromImage(image);
 
-		graphics.FillRectangle(backgroundBrush, cloudBorder);
+		graphics.FillRectangle(backgroundBrush, new Rectangle(new Point(0, 0), image.Size));
 
 		foreach (var tagContainer in tagContainers)
 		{
-			var place = new Rectangle(new Point(tagContainer.Border.X + cloudBorder.Width / 2,
-				tagContainer.Border.Y + cloudBorder.Height / 2), tagContainer.Border.Size);
+			var place = new Rectangle(new Point(
+					tagContainer.Border.X + image.Width / 2,
+					tagContainer.Border.Y + image.Height / 2),
+				tagContainer.Border.Size);
 			using var font = new Font(imageSettings.FontFamily, tagContainer.FontSize);
 
 			graphics.DrawString(
@@ -41,7 +53,7 @@ public class TagsCloudPainter : ITagsCloudPainter
 			fontBrush.Color = imageSettings.Pallet.GetNextColor();
 		}
 
-		return new Bitmap(cloud, imageSettings.ImageSize);
+		return image;
 	}
 
 	private static Rectangle GetCloudBorder(IReadOnlyCollection<TagContainer> tagContainers, int padding = 0)
@@ -56,5 +68,15 @@ public class TagsCloudPainter : ITagsCloudPainter
 		var height = maxY - minY;
 
 		return new Rectangle(0, 0, width, height);
+	}
+
+	private static bool CloudPlacedInImage(Size cloudSize, ImageSettings settings)
+	{
+		if (settings.AutoSize) return true;
+
+		var imageSize = settings.ImageSize;
+
+		return cloudSize.Width <= imageSize.Width ||
+		       cloudSize.Height <= imageSize.Height;
 	}
 }

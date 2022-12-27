@@ -15,46 +15,75 @@ namespace TagsCloud.CLI;
 
 public static class Builder
 {
-	public static Container Build(Options options)
+	public static Result<Container> Build(Options options)
 	{
 		var container = new Container();
 
-		RegisterWordsFilters(container, options);
-		RegisterTransformers(container);
-		RegisterPreprocessor(container, options.PathToWordsFile);
-		RegisterImageSettingsProvider(container);
-		RegisterLayouter(container, options);
-
-
-		container.Register<ITagsCloudPainter, TagsCloudPainter>();
-		container.Register<ITagContainersProvider, TagContainersProvider>();
-
-		container.RegisterInstance(typeof(ImageSaver), new ImageSaver(options.PathToImage, ImageFormat.Png));
-
-		container.Verify();
-
-		return container;
+		return container.AsResult()
+			.Then(_ => RegisterWordsFilters(container, options))
+			.Then(_ => RegisterTransformers(container))
+			.Then(_ => RegisterPreprocessor(container, options))
+			.Then(_ => RegisterImageSettingsProvider(container))
+			.Then(_ => RegisterLayouter(container, options))
+			.Then(_ => RegisterPainter(container))
+			.Then(_ => RegisterContainerProvider(container))
+			.Then(_ => RegisterImageSaver(container, options))
+			.Then(_ => Verify(container))
+			.Then(_ => container);
 	}
 
-	private static void RegisterPreprocessor(Container container, string pathToWords)
+	private static Result<Container> Verify(Container container)
 	{
-		container.Register<IWordReader>(() => new WordReaderFromTxt(pathToWords));
-		container.Register<ITagsPreprocessor, TagPreprocessor>();
+		return Result
+			.OfAction(container.Verify)
+			.ReplaceError(e => $"Can't Verify container: {e}")
+			.Then(_ => container);
 	}
 
-	private static void RegisterWordsFilters(Container container, Options options)
+	private static void RegisterPainter(Container container)
+	{
+		container.Register<ITagsCloudPainter, TagsCloudPainter>();
+	}
+
+	private static void RegisterContainerProvider(Container container)
+	{
+		container.Register<ITagContainersProvider, TagContainersProvider>();
+	}
+
+	private static void RegisterImageSaver(Container container, Options options)
+	{
+		container.RegisterInstance(typeof(ImageSaver), new ImageSaver(options.PathToImage, ImageFormat.Png));
+	}
+
+	private static Result<None> RegisterPreprocessor(Container container, Options options)
+	{
+		var readerResult = WordReaderFromTxt.GetReader(options.PathToWordsFile);
+		if (readerResult.IsFail) return readerResult.Then(_ => new None()).RefineError("Can't read file with tags");
+
+		container.Register<IWordReader>(() => readerResult.Value);
+		container.Register<ITagsPreprocessor, TagPreprocessor>();
+
+		return Result.Ok();
+	}
+
+	private static Result<None> RegisterWordsFilters(Container container, Options options)
 	{
 		var filters = new List<IWordFilter> { new MinLengthFilter(3) };
 
 		if (options.PathToExcludedWords is not null)
 		{
-			var boringWordsReader = new WordReaderFromTxt(options.PathToExcludedWords);
-			filters.Add(new BoringWordsFilter(boringWordsReader));
+			var readerResult = WordReaderFromTxt.GetReader(options.PathToExcludedWords);
+			if (readerResult.IsFail)
+				return readerResult.Then(_ => new None()).RefineError("Can't read file with excluded words");
+
+			filters.Add(new BoringWordsFilter(readerResult.Value));
 		}
 
 		container.Collection.Register<IWordFilter>(filters);
 
 		container.Register<IWordFiltersComposer, WordFilterComposer>();
+
+		return Result.Ok();
 	}
 
 	private static void RegisterImageSettingsProvider(Container container)
@@ -70,14 +99,16 @@ public static class Builder
 		container.Register<IWordTransformersComposer, WordTransformersComposer>();
 	}
 
-	private static void RegisterLayouter(Container container, Options options)
+	private static Result<None> RegisterLayouter(Container container, Options options)
 	{
-		ICloudLayouter layouter = options.Layouter switch
+		var layouterResult = options.Layouter switch
 		{
-			"spiral" => new SpiralCloudLayouter(new Point(0, 0), 100, 10),
-			_ => new CircularCloudLayouter(new Point(0, 0))
+			"spiral" => SpiralCloudLayouter.GetLayouter(new Point(0, 0), 100, 10),
+			_ => CircularCloudLayouter.GetLayouter(new Point(0, 0))
 		};
 
-		container.RegisterInstance(typeof(ICloudLayouter), layouter);
+		return layouterResult
+			.RefineError("Can't register layouter")
+			.Then(layouter => container.RegisterInstance(typeof(ICloudLayouter), layouter));
 	}
 }

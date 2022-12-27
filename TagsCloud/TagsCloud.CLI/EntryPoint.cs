@@ -1,5 +1,7 @@
-﻿using System.Drawing;
+﻿using System.Collections.Immutable;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using CommandLine;
 using TagsCloud.Core;
 using TagsCloud.Core.Painters;
@@ -11,53 +13,92 @@ namespace TagsCloud.CLI;
 
 public class EntryPoint
 {
+	private static readonly ImmutableHashSet<string> InstalledFonts =
+		new InstalledFontCollection().Families.Select(f => f.Name).ToImmutableHashSet();
+
 	private static void Main(string[] args)
 	{
 		if (args.Length == 0)
 		{
-			args = new[] { "-wNumb.txt", "-sExample.png", "--excluding=BoringWords.txt" };
+			args = GetDefaultOptions();
 			Console.WriteLine(
-				"Example with default options: \"-w Numb.txt -s Example.png --excluding BoringWords.txt\"");
+				$"Example with default options: {args.Aggregate((s1, s2) => $"{s1} {s2}")}");
 		}
 
 		Parser.Default.ParseArguments<Options>(args)
-			.WithParsed(RunOptions);
+			.WithParsed(RunWithResult);
 	}
 
-	private static void RunOptions(Options options)
+	private static string[] GetDefaultOptions()
 	{
-		var container = Builder.Build(options);
+		return new[]
+		{
+			"-w", "Numb.txt",
+			"-s", "Example.png",
+			"--excluding", "BoringWords.txt",
+			"--font-name", "Times New Roman",
+			"--use-auto-size"
+		};
+	}
 
-		var imageSettings = GetImageSettings(options);
+	private static void RunWithResult(Options options)
+	{
+		var buildResult = Builder.Build(options);
+		if (buildResult.IsFail)
+		{
+			Console.WriteLine($"Build error> {buildResult.ErrorMessage}");
+			return;
+		}
 
+		var container = buildResult.Value;
 		var settingsProvider = container.GetInstance<ISettingsSetter<ImageSettings>>();
-		settingsProvider.Set(imageSettings);
-
-		var containerCreator = container.GetInstance<ITagContainersProvider>();
+		var containersProvider = container.GetInstance<ITagContainersProvider>();
 		var painter = container.GetInstance<ITagsCloudPainter>();
 		var saver = container.GetInstance<ImageSaver>();
 
-		var tags = containerCreator.GetContainers();
-		var bitmap = painter.Draw(tags);
-		saver.Save(bitmap);
+		var runResult = GetImageSettings(options)
+			.Then(settings => SendImageSettings(settings, settingsProvider))
+			.Then(_ => GetContainers(containersProvider))
+			.Then(tags => painter.Draw(tags))
+			.Then(image => Result.OfAction(() => saver.Save(image)));
 
-		Console.WriteLine($"OK> Image save as {options.PathToImage}");
+		var message = runResult.IsSuccess
+			? $"OK> Image save as {options.PathToImage}"
+			: $"Error> {runResult.ErrorMessage}";
+
+		Console.WriteLine(message);
 	}
 
-	private static ImageSettings GetImageSettings(Options options)
+	private static Result<ImageSettings> GetImageSettings(Options options)
 	{
-		var fontColor = options.FontColor is null ? Color.BlueViolet : Color.FromName(options.FontColor);
-		var backgroundColor =
-			options.BackgroundColor is null ? Color.AliceBlue : Color.FromName(options.BackgroundColor);
+		var fontColor = Color.FromName(options.FontColor);
+		if (!fontColor.IsKnownColor)
+			return Result.Fail<ImageSettings>($"Unknown font color name: {options.FontColor}");
+
+		var backgroundColor = Color.FromName(options.BackgroundColor);
+		if (!backgroundColor.IsKnownColor)
+			return Result.Fail<ImageSettings>($"Unknown background color name: {options.BackgroundColor}");
+
 		ITagCLoudPallet pallet = options.UseRandomColor
 			? new RandomPallet(backgroundColor)
 			: new MonocolorPallet(fontColor, backgroundColor);
 
-		var fontFamily = options.FontName is null ? FontFamily.GenericMonospace : new FontFamily(options.FontName);
-		var fontSize = options.MinFontSize ?? 14;
+		if (FontNotInstalled(options.FontName))
+			return Result.Fail<ImageSettings>($"Unknown font name: {options.FontName}");
 
-		var width = options.ImageWidth ?? 1000;
-		var height = options.ImageHeight ?? 1000;
+		var fontFamily = new FontFamily(options.FontName);
+
+		var fontSize = options.MinFontSize;
+		if (fontSize <= 0)
+			return Result.Fail<ImageSettings>($"Font size should be greater than 0, but was {fontSize}");
+
+		var width = options.ImageWidth;
+		if (width <= 0)
+			return Result.Fail<ImageSettings>($"Image width should be greater than 0, but was {width}");
+
+		var height = options.ImageHeight;
+		if (height <= 0)
+			return Result.Fail<ImageSettings>($"Image height should be greater than 0, but was {height}");
 
 		return new ImageSettings
 		{
@@ -65,7 +106,27 @@ public class EntryPoint
 			FontFamily = fontFamily,
 			MinFontSize = fontSize,
 			Format = ImageFormat.Png,
-			Pallet = pallet
+			Pallet = pallet,
+			AutoSize = options.UseAutoSize
 		};
+	}
+
+	private static void SendImageSettings(ImageSettings settings, ISettingsSetter<ImageSettings> settingsProvider)
+	{
+		settingsProvider.Set(settings);
+	}
+
+	private static Result<List<TagContainer>> GetContainers(ITagContainersProvider containersProvider)
+	{
+		var containerResults = containersProvider.GetContainers();
+
+		return containerResults.Last().IsFail
+			? Result.Fail<List<TagContainer>>($"{containerResults.Last().ErrorMessage}")
+			: containerResults.Select(result => result.Value).ToList().AsResult();
+	}
+
+	private static bool FontNotInstalled(string fontName)
+	{
+		return !InstalledFonts.Contains(fontName);
 	}
 }

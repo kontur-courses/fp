@@ -6,108 +6,121 @@ namespace TagsCloud.Core.Layouters;
 
 public class CircularCloudLayouter : ICloudLayouter
 {
-    private readonly Point center;
-    private readonly List<Rectangle> placedRectangles;
+	private readonly Point center;
+	private readonly List<Rectangle> placedRectangles;
 
-    private readonly ISpiral spiral;
+	private readonly ISpiral spiral;
 
-    public CircularCloudLayouter(Point center)
-    {
-        this.center = center;
-        spiral = new ArchimedeanSpiral(center, 10, 1);
-        placedRectangles = new List<Rectangle>();
-    }
+	private CircularCloudLayouter(Point center, ISpiral spiral)
+	{
+		this.center = center;
+		this.spiral = spiral;
+		placedRectangles = new List<Rectangle>();
+	}
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
-    {
-        var rectangleOnSpiral = GetRectangleOnSpiral(rectangleSize);
-        var shiftedRectangle = BinaryShiftToCenter(rectangleOnSpiral);
+	public Result<Rectangle> PutNextRectangle(Size rectangleSize)
+	{
+		if (rectangleSize.Width <= 0)
+			return Result.Fail<Rectangle>($"Rectangle width should be greater than 0, but was {rectangleSize.Width}");
 
-        placedRectangles.Add(shiftedRectangle);
+		if (rectangleSize.Height <= 0)
+			return Result.Fail<Rectangle>($"Rectangle height should be greater than 0, but was {rectangleSize.Height}");
 
-        return shiftedRectangle;
-    }
+		var rectangleOnSpiral = GetRectangleOnSpiral(rectangleSize);
+		var shiftedRectangle = BinaryShiftToCenter(rectangleOnSpiral);
 
-    private Rectangle GetRectangleOnSpiral(Size rectangleSize)
-    {
-        Rectangle newRectangle;
+		placedRectangles.Add(shiftedRectangle);
 
-        do
-        {
-            newRectangle = RectangleCreator.GetRectangle(spiral.GetNextPoint(), rectangleSize);
-        } while (IntersectsWithPlacedRectangles(newRectangle));
+		return shiftedRectangle;
+	}
 
-        return newRectangle;
-    }
+	public static Result<ICloudLayouter> GetLayouter(Point center)
+	{
+		return ArchimedeanSpiral.GetSpiral(center, 10, 1)
+			.RefineError("Can't create circular layouter")
+			.Then(spiral => new CircularCloudLayouter(center, spiral) as ICloudLayouter);
+	}
 
-    private Rectangle BinaryShiftToCenter(Rectangle rectangle)
-    {
-        if (placedRectangles.Count == 0) return rectangle;
+	private Rectangle GetRectangleOnSpiral(Size rectangleSize)
+	{
+		Rectangle newRectangle;
 
-        var newLocation = BinaryShiftToPoint(rectangle, center);
-        newLocation = BinaryAxisShift(RectangleCreator.GetRectangle(newLocation, rectangle.Size));
+		do
+		{
+			newRectangle = RectangleCreator.GetRectangle(spiral.GetNextPoint(), rectangleSize);
+		} while (IntersectsWithPlacedRectangles(newRectangle));
 
-        return RectangleCreator.GetRectangle(newLocation, rectangle.Size);
-    }
+		return newRectangle;
+	}
 
-    private Point BinaryShiftToPoint(Rectangle rectangle, Point destination)
-    {
-        var shiftedRectangle = rectangle;
-        var left = 0.0;
-        var (right, _) = CoordinatesConverter.ToPolar(rectangle.Center().Minus(destination));
+	private Rectangle BinaryShiftToCenter(Rectangle rectangle)
+	{
+		if (placedRectangles.Count == 0) return rectangle;
 
-        while (right > left)
-        {
-            var (polarRadius, polarAngle)
-                = CoordinatesConverter.ToPolar(shiftedRectangle.Center().Minus(destination));
+		var newLocation = BinaryShiftToPoint(rectangle, center);
+		newLocation = BinaryAxisShift(RectangleCreator.GetRectangle(newLocation, rectangle.Size));
 
-            var shiftStep = Math.Ceiling((right - left) / 2);
-            var nextLocation = CoordinatesConverter.ToCartesian(polarRadius - shiftStep, polarAngle).Plus(destination);
+		return RectangleCreator.GetRectangle(newLocation, rectangle.Size);
+	}
 
-            if (CanPlaceRectangleWithoutIntersectsWithPlaced(nextLocation, shiftedRectangle.Size))
-            {
-                right -= shiftStep;
-                shiftedRectangle = RectangleCreator.GetRectangle(nextLocation, shiftedRectangle.Size);
-            }
-            else
-            {
-                left += shiftStep;
-            }
-        }
+	private Point BinaryShiftToPoint(Rectangle rectangle, Point destination)
+	{
+		var shiftedRectangle = rectangle;
+		var left = 0.0;
+		var (right, _) = CoordinatesConverter.ToPolar(rectangle.Center().Minus(destination));
 
-        return shiftedRectangle.Center();
-    }
+		while (right > left)
+		{
+			var (polarRadius, polarAngle)
+				= CoordinatesConverter.ToPolar(shiftedRectangle.Center().Minus(destination));
 
-    private Point BinaryAxisShift(Rectangle rectangle)
-    {
-        var newRectangle = rectangle;
-        var nextLocation = rectangle.Center();
+			var shiftStep = Math.Ceiling((right - left) / 2);
+			var nextLocation = CoordinatesConverter.ToCartesian(polarRadius - shiftStep, polarAngle).Plus(destination);
 
-        while (true)
-        {
-            nextLocation = BinaryShiftToPoint(
-                RectangleCreator.GetRectangle(nextLocation, newRectangle.Size)
-                , new Point(center.X, newRectangle.Center().Y));
+			if (CanPlaceRectangleWithoutIntersectsWithPlaced(nextLocation, shiftedRectangle.Size))
+			{
+				right -= shiftStep;
+				shiftedRectangle = RectangleCreator.GetRectangle(nextLocation, shiftedRectangle.Size);
+			}
+			else
+			{
+				left += shiftStep;
+			}
+		}
 
-            nextLocation = BinaryShiftToPoint(
-                RectangleCreator.GetRectangle(nextLocation, newRectangle.Size)
-                , new Point(newRectangle.Center().X, center.Y));
+		return shiftedRectangle.Center();
+	}
 
-            if (nextLocation == newRectangle.Center()) break;
+	private Point BinaryAxisShift(Rectangle rectangle)
+	{
+		var newRectangle = rectangle;
+		var nextLocation = rectangle.Center();
 
-            newRectangle = RectangleCreator.GetRectangle(nextLocation, newRectangle.Size);
-        }
+		while (true)
+		{
+			nextLocation = BinaryShiftToPoint(
+				RectangleCreator.GetRectangle(nextLocation, newRectangle.Size)
+				, new Point(center.X, newRectangle.Center().Y));
 
-        return newRectangle.Center();
-    }
+			nextLocation = BinaryShiftToPoint(
+				RectangleCreator.GetRectangle(nextLocation, newRectangle.Size)
+				, new Point(newRectangle.Center().X, center.Y));
 
-    private bool CanPlaceRectangleWithoutIntersectsWithPlaced(Point location, Size size)
-    {
-        return !IntersectsWithPlacedRectangles(RectangleCreator.GetRectangle(location, size));
-    }
+			if (nextLocation == newRectangle.Center()) break;
 
-    private bool IntersectsWithPlacedRectangles(Rectangle rectangle)
-    {
-        return placedRectangles.Any(placedRectangle => placedRectangle.IntersectsWith(rectangle));
-    }
+			newRectangle = RectangleCreator.GetRectangle(nextLocation, newRectangle.Size);
+		}
+
+		return newRectangle.Center();
+	}
+
+	private bool CanPlaceRectangleWithoutIntersectsWithPlaced(Point location, Size size)
+	{
+		return !IntersectsWithPlacedRectangles(RectangleCreator.GetRectangle(location, size));
+	}
+
+	private bool IntersectsWithPlacedRectangles(Rectangle rectangle)
+	{
+		return placedRectangles.Any(placedRectangle => placedRectangle.IntersectsWith(rectangle));
+	}
 }

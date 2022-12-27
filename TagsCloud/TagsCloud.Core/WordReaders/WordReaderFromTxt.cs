@@ -2,15 +2,23 @@
 
 public class WordReaderFromTxt : IWordReader
 {
-	public WordReaderFromTxt(string path)
+	private readonly string path;
+
+	private WordReaderFromTxt(string path)
 	{
 		this.path = path;
 	}
 
-	private readonly string path;
-
 	public IEnumerable<string> ReadWords()
 	{
 		return File.ReadLines(path);
+	}
+
+	public static Result<WordReaderFromTxt> GetReader(string path)
+	{
+		if (!File.Exists(path))
+			return Result.Fail<WordReaderFromTxt>($"Can't find file at path: {path}");
+
+		return new WordReaderFromTxt(path);
 	}
 }
