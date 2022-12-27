@@ -1,8 +1,9 @@
 ﻿using TagCloudPainter.Common;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Builders;
 
 public interface ITagCloudElementsBuilder
 {
-    IEnumerable<Tag> GetTags(Dictionary<string, int> dictionary);
+    Result<IEnumerable<Tag>> GetTags(Dictionary<string, int> dictionary);
 }
