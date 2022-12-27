@@ -6,7 +6,14 @@ using TagCloud;
 using TagCloud.Abstractions;
 
 Parser.Default.ParseArguments<Options>(args)
-    .WithParsed(o => ConfigureContainer(o).Resolve<Client>().Execute(o.Result));
+    .WithParsed(o =>
+    {
+        var client = ConfigureContainer(o).Resolve<Client>();
+        var result = client.Execute(o.Result);
+        if (result.IsFailed)
+            Console.WriteLine(string.Join(Environment.NewLine, result.Errors.Select(e => e.Message)));
+        Console.WriteLine(result.Successes.First().Message);
+    });
 
 
 IContainer ConfigureContainer(Options options)

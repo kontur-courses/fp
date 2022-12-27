@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Abstractions;
+﻿using FluentResults;
+
+namespace TagCloud.Abstractions;
 
 public interface IWordsProcessor
 {
-    IEnumerable<string> Process(IEnumerable<string> words);
+    Result<IEnumerable<string>> Process(IEnumerable<string> words);
 }

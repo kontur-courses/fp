@@ -20,7 +20,7 @@ public class MorphWordsProcessorTests
 
         var result = processor.Process(words);
 
-        result.Should().BeEmpty();
+        result.Value.Should().BeEmpty();
     }
 
     [Test]
@@ -31,7 +31,7 @@ public class MorphWordsProcessorTests
 
         var result = processor.Process(words);
 
-        result.Should().Equal(expected);
+        result.Value.Should().Equal(expected);
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class MorphWordsProcessorTests
 
         var result = processor.Process(words);
 
-        result.Should().BeEmpty();
+        result.Value.Should().BeEmpty();
     }
 
     [Test]
@@ -51,6 +51,6 @@ public class MorphWordsProcessorTests
 
         var result = processor.Process(words);
 
-        result.Should().BeEmpty();
+        result.Value.Should().BeEmpty();
     }
 }

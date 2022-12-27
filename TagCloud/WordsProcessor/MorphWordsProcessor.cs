@@ -1,4 +1,5 @@
 ﻿using DeepMorphy;
+using FluentResults;
 using TagCloud.Abstractions;
 
 namespace TagCloud;
@@ -14,13 +15,13 @@ public class MorphWordsProcessor : IWordsProcessor
         morph = new MorphAnalyzer(true);
     }
 
-    public IEnumerable<string> Process(IEnumerable<string> words)
+    public Result<IEnumerable<string>> Process(IEnumerable<string> words)
     {
         var infos = morph.Parse(words).ToArray();
         words = infos
             .Where(i => i.Tags.Any())
             .Where(i => partsOfSpeech.Any(b => i.BestTag.Has(b)))
             .Select(i => i.BestTag.Lemma);
-        return words;
+        return Result.Ok(words);
     }
 }

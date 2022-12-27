@@ -1,3 +1,4 @@
+using FluentResults;
 using TagCloud.Abstractions;
 
 namespace ConsoleClient;
@@ -24,19 +25,23 @@ public class Client
         this.drawer = drawer;
     }
 
-    public void Execute(string resultFilepath)
+    public Result Execute(string resultFilepath)
     {
         var loadResult = loader.Load();
-        if (loadResult.IsFailed)
-        {
-            Console.WriteLine(string.Join(Environment.NewLine, loadResult.Errors.Select(e => e.Message)));
-            return;
-        }
+        if (loadResult.IsFailed) return Result.Fail(loadResult.Errors);
+        
         var words = loadResult.Value;
-        words = processors.Aggregate(words, (current, processor) => processor.Process(current));
+        foreach (var processor in processors)
+        {
+            var processResult = processor.Process(words);
+            if (processResult.IsFailed) return Result.Fail(processResult.Errors);
+            words = processResult.Value;
+        }
+        
         var tags = tagger.ToTags(words);
         var drawableTags = creator.CreateTagCloud(tags);
         var bitmap = drawer.Draw(drawableTags);
         bitmap.Save(resultFilepath);
+        return Result.Ok().WithSuccess($"All Ok. Tag Cloud saved to '{Path.GetFullPath(resultFilepath)}'.");
     }
 }
