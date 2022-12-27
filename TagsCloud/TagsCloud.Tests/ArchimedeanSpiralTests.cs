@@ -11,45 +11,43 @@ public class ArchimedeanSpiralTests
 	[SetUp]
 	public void SetUp()
 	{
-		spiral = new ArchimedeanSpiral(new Point(0, 0), 1, 1);
+		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), 1, 1);
 	}
 
 	private ArchimedeanSpiral spiral;
 
 	[TestCaseSource(nameof(CentersSource))]
-	public void Constructor_WithCorrectCenter_ShouldNotThrow(Point center)
+	public void Constructor_WithCorrectCenter_ShouldReturnOkResult(Point center)
 	{
-		var action = () => new ArchimedeanSpiral(center, 1, 1);
+		var spiralResult = ArchimedeanSpiral.GetSpiral(center, 1, 1);
 
-		action.Should().NotThrow();
+		spiralResult.IsSuccess.Should().BeTrue();
 	}
 
 	[TestCase(-30, 30, TestName = "Negative spiral step")]
 	[TestCase(30, -30, TestName = "Negative angle step")]
-	[TestCase(30, 370, TestName = "angle step greater than 360 degrees")]
-	public void Constructor_WithCorrectParameters_ShouldNotThrow(double spiralStep, double angleStep)
+	[TestCase(30, 370, TestName = "Angle step greater than 360 degrees")]
+	public void Constructor_WithCorrectParameters_ShouldReturnOkResult(double spiralStep, double angleStep)
 	{
-		var action
-			= () => new ArchimedeanSpiral(Point.Empty, spiralStep, angleStep);
+		var spiralResult = ArchimedeanSpiral.GetSpiral(Point.Empty, spiralStep, angleStep);
 
-		action.Should().NotThrow();
+		spiralResult.IsSuccess.Should().BeTrue();
 	}
 
 	[TestCase(0, 1, TestName = "Zero spiral step")]
 	[TestCase(1, 0, TestName = "Zero angle step")]
-	public void Constructor_WithIncorrectParameters_ShouldThrowArgumentException(double spiralStep, double angleStep)
+	public void Constructor_WithIncorrectParameters_ShouldReturnFailResult(double spiralStep, double angleStep)
 	{
-		var action
-			= () => new ArchimedeanSpiral(Point.Empty, spiralStep, angleStep);
+		var spiralResult = ArchimedeanSpiral.GetSpiral(Point.Empty, spiralStep, angleStep);
 
-		action.Should().Throw<ArgumentException>();
+		spiralResult.IsFail.Should().BeTrue();
 	}
 
 	[TestCase(123, TestName = "Positive step")]
 	[TestCase(-123, TestName = "Negative step")]
 	public void GetNextPoint_LengthBetweenPointsOnSameLine_ShouldBeEqualsSpiralStep(int spiralStep)
 	{
-		spiral = new ArchimedeanSpiral(new Point(0, 0), spiralStep, 360);
+		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), spiralStep, 360);
 
 		var p1 = spiral.GetNextPoint();
 		var p2 = spiral.GetNextPoint();

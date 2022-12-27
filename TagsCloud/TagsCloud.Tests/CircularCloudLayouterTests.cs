@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using TagsCloud.Core;
 using TagsCloud.Core.Helpers;
 using TagsCloud.Core.Layouters;
 
@@ -15,7 +14,7 @@ public class CircularCloudLayouterTests
 	[SetUp]
 	public void SetUp()
 	{
-		layouter = new CircularCloudLayouter(Point.Empty);
+		layouter = CircularCloudLayouter.GetLayouter(Point.Empty).Value;
 		placedRectangles = new List<Rectangle>();
 	}
 
@@ -44,16 +43,18 @@ public class CircularCloudLayouterTests
 		Console.WriteLine(message);
 	}
 
-	private CircularCloudLayouter layouter;
+	private ICloudLayouter layouter;
 	private List<Rectangle> placedRectangles;
-	private readonly DirectoryImageSaver directoryImageSaver = new($"{Environment.CurrentDirectory}\\FailedTestsLayouts", ImageFormat.Png);
+
+	private readonly DirectoryImageSaver directoryImageSaver =
+		new($"{Environment.CurrentDirectory}\\FailedTestsLayouts", ImageFormat.Png);
 
 	[TestCaseSource(nameof(CentersSource))]
-	public void Constructor_WithCorrectCenter_ShouldNotThrow(Point center)
+	public void Constructor_WithCorrectCenter_ShouldReturnOkResult(Point center)
 	{
-		var action = () => new CircularCloudLayouter(center);
+		var layouterResult = CircularCloudLayouter.GetLayouter(center);
 
-		action.Should().NotThrow();
+		layouterResult.IsSuccess.Should().BeTrue();
 	}
 
 	[TestCase(10, 10, TestName = "Square")]
@@ -62,7 +63,7 @@ public class CircularCloudLayouterTests
 	public void PutNextRectangle_FirstRectangle_ShouldBeInCenter(int width, int height)
 	{
 		var rectangleSize = new Size(width, height);
-		var actual = layouter.PutNextRectangle(rectangleSize);
+		var actual = (Rectangle)layouter.PutNextRectangle(rectangleSize);
 		placedRectangles.Add(actual);
 		var expected = RectangleCreator.GetRectangle(Point.Empty, rectangleSize);
 
@@ -75,19 +76,19 @@ public class CircularCloudLayouterTests
 	[TestCase(-10, -10, TestName = "Negative size")]
 	[TestCase(-10, 10, TestName = "Negative width")]
 	[TestCase(10, -10, TestName = "Negative height")]
-	public void PutNextRectangle_IncorrectRectangleSize_ShouldThrowArgumentException(int width, int height)
+	public void PutNextRectangle_IncorrectRectangleSize_ShouldReturnFailResult(int width, int height)
 	{
 		var rectangleSize = new Size(width, height);
-		var action = () => layouter.PutNextRectangle(rectangleSize);
+		var result = layouter.PutNextRectangle(rectangleSize);
 
-		action.Should().NotThrow<ArgumentException>();
+		result.IsFail.Should().BeTrue();
 	}
 
 	[TestCaseSource(nameof(SameRectangleSizesSource))]
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_ShouldNotContainIntersection(List<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
 
 		var intersectionsCount = placedRectangles
 			.Select((rectangle, i) =>
@@ -103,7 +104,7 @@ public class CircularCloudLayouterTests
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_CloudShouldBeDense(IEnumerable<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
 
 		var occupiedSpace = GetOccupiedSpace(placedRectangles);
 
@@ -119,7 +120,7 @@ public class CircularCloudLayouterTests
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_CloudShouldBeLikeACircle(IEnumerable<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
 
 		var occupiedSpace = GetOccupiedSpace(placedRectangles);
 
