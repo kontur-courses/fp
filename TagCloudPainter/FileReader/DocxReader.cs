@@ -14,8 +14,7 @@ public class DocxReader : IFileReader
         if (!File.Exists(path))
             return Result.Fail<IEnumerable<string>>($"path {path} does not exist ");
 
-        return Result.Of(() => WordprocessingDocument.Open(path, false), "Cannot read file").
-            Then(p => p.MainDocumentPart.Document.Body.Descendants<Paragraph>()).
-            Then(p => p.Select(x => x.InnerText));
+        return Result.Of(() => WordprocessingDocument.Open(path, false), "Cannot read file")
+            .Then(p => p.MainDocumentPart.Document.Body.Descendants<Paragraph>()).Then(p => p.Select(x => x.InnerText));
     }
 }

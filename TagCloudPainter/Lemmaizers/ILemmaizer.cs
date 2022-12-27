@@ -1,7 +1,9 @@
-﻿namespace TagCloudPainter.Lemmaizers;
+﻿using TagCloudPainter.ResultOf;
+
+namespace TagCloudPainter.Lemmaizers;
 
 public interface ILemmaizer
 {
-    public string GetMorph(string word);
-    public string GetLemma(string word);
+    public Result<string> GetMorph(string word);
+    public Result<string> GetLemma(string word);
 }

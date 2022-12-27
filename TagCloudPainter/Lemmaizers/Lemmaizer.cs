@@ -1,4 +1,5 @@
 ﻿using MystemHandler;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Lemmaizers;
 
@@ -9,22 +10,27 @@ public class Lemmaizer : ILemmaizer
 
     public Lemmaizer(string pathToMyStem)
     {
-        mt = new MystemMultiThread(1, pathToMyStem);
+        mt = File.Exists(pathToMyStem)
+            ? new MystemMultiThread(1, pathToMyStem)
+            : null;
         mystem = new Mystem.Net.Mystem();
     }
 
-    public string GetMorph(string word)
+    public Result<string> GetMorph(string word)
     {
         if (string.IsNullOrWhiteSpace(word))
-            throw new ArgumentNullException();
+            return Result.Fail<string>("Word is white space or null");
 
         return mystem.Mystem.Analyze(word).Result[0].AnalysisResults[0].Grammeme.Split(',', '=')[0];
     }
 
-    public string GetLemma(string word)
+    public Result<string> GetLemma(string word)
     {
         if (string.IsNullOrWhiteSpace(word))
-            throw new ArgumentNullException();
+            return Result.Fail<string>("Word is white space or null");
+
+        if (mt == null)
+            return Result.Fail<string>("mystem.exe not found at given path");
 
         return mt.StemOneWord(word);
     }

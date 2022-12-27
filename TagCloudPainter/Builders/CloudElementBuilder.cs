@@ -32,7 +32,7 @@ public class CloudElementBuilder : ITagCloudElementsBuilder
                 return Result.Fail<IEnumerable<Tag>>($"{size.Error}");
             var rectangle = _cloudLayouter.PutNextRectangle(size.Value);
 
-            if(!rectangle.IsSuccess)
+            if (!rectangle.IsSuccess)
                 return Result.Fail<IEnumerable<Tag>>($"{rectangle.Error}");
             result.Add(new Tag(word, rectangle.Value, count));
         }

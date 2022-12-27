@@ -12,6 +12,6 @@ public class TxtReader : IFileReader
         if (!File.Exists(path))
             return Result.Fail<IEnumerable<string>>($"path {path} does not exist ");
 
-        return Result.Of(()=>File.ReadAllLines(path).Where(x => x != ""), "Cannot read file");
+        return Result.Of(() => File.ReadAllLines(path).Where(x => x != ""), "Cannot read file");
     }
 }
