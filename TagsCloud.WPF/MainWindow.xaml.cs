@@ -49,7 +49,7 @@ public partial class MainWindow
         fontStyle = FontStyles.Normal;
         customColor = new SolidColorBrush(Colors.Beige);
         recurringWordsHandler = GetRecurringWordsHandler(wordHandlers);
-        words = ProcessWords(reader.Read(path.path).GetValueOrThrow());
+        words = ProcessWords(reader.Read(path.Path).GetValueOrThrow());
         rectanglesCount = words.Length;
         MyCanvas.Focus();
         timer.Interval = TimeSpan.FromSeconds(0);

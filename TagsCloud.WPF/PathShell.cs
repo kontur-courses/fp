@@ -2,9 +2,9 @@
 
 public class PathShell
 {
-    public readonly string path;
+    public readonly string Path;
     public PathShell(string path)
     {
-        this.path = path;
+        Path = path;
     }
 }

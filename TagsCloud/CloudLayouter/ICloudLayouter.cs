@@ -3,8 +3,8 @@ using TagCloud.ResultImplementation;
 
 namespace TagCloud.CloudLayouter
 {
-    public interface ICloudLayouter<out T>
+    public interface ICloudLayouter<T>
     {
-        Result<Rectangle> PutNextRectangle(Size size);
+        Result<T> PutNextRectangle(Size size);
     }
 }

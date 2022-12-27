@@ -12,5 +12,5 @@ public abstract class CloudLayouter<T> : ICloudLayouter<T>
         Figures = new List<T>();
     }
 
-    public abstract Result<Rectangle> PutNextRectangle(Size rectangleSize);
+    public abstract Result<T> PutNextRectangle(Size rectangleSize);
 }
