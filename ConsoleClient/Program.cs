@@ -2,21 +2,47 @@
 using Autofac;
 using CommandLine;
 using ConsoleClient;
+using FluentResults;
 using TagCloud;
 using TagCloud.Abstractions;
 
 Parser.Default.ParseArguments<Options>(args)
     .WithParsed(o =>
     {
-        var client = ConfigureContainer(o).Resolve<Client>();
-        var result = client.Execute(o.Result);
-        if (result.IsFailed)
-            Console.WriteLine(string.Join(Environment.NewLine, result.Errors.Select(e => e.Message)));
-        Console.WriteLine(result.Successes.First().Message);
+        var result = DrawerSettings.Create(new Size(o.ImageWidth, o.ImageHeight),
+            o.MinFontSize, o.MaxFontSize,
+            o.TextColorName,
+            o.BackgroundColorName,
+            o.FontFamilyName);
+        if (!result.IsFailed)
+        {
+            var client = ConfigureContainer(o, result.Value).Resolve<Client>();
+            result = client.Execute(o.Result);
+        }
+        PrintResult(result);
     });
 
+void PrintResult(IResultBase result)
+{
+    ConsoleColor color;
+    IEnumerable<IReason> reasons;
+    if (result.IsFailed)
+    {
+        color = ConsoleColor.Red;
+        reasons = result.Errors;
+    }
+    else
+    {
+        color = ConsoleColor.Green;
+        reasons = result.Successes;
+    }
+    Console.ForegroundColor = color;
+    Console.WriteLine(string.Join(Environment.NewLine, reasons.Select(e => e.Message)));
+    Console.ForegroundColor = default;
+}
 
-IContainer ConfigureContainer(Options options)
+
+IContainer ConfigureContainer(Options options, DrawerSettings settings)
 {
     var builder = new ContainerBuilder();
 
@@ -26,7 +52,7 @@ IContainer ConfigureContainer(Options options)
 
     builder.RegisterType<CountWordsTagger>().As<IWordsTagger>().SingleInstance();
 
-    ConfigureDrawer(builder, options);
+    ConfigureDrawer(builder, settings);
 
     ConfigureLayouter(builder, options);
 
@@ -45,17 +71,10 @@ void ConfigureProcessors(ContainerBuilder builder, Options options)
     builder.RegisterInstance(new MorphWordsProcessor(options.SelectedPartsOfSpeech)).As<IWordsProcessor>();
 }
 
-void ConfigureDrawer(ContainerBuilder builder, Options options)
+void ConfigureDrawer(ContainerBuilder builder, DrawerSettings settings)
 {
-    var drawer = new BaseCloudDrawer(new Size(options.ImageWidth, options.ImageHeight))
-    {
-        FontFamily = new FontFamily(options.FontFamilyName),
-        MaxFontSize = options.MaxFontSize,
-        MinFontSize = options.MinFontSize,
-        TextColor = Color.FromName(options.TextColorName),
-        BackgroundColor = Color.FromName(options.BackgroundColorName)
-    };
-    builder.RegisterInstance(drawer).As<ICloudDrawer>();
+    builder.RegisterInstance(settings).AsSelf();
+    builder.RegisterType<BaseCloudDrawer>().As<ICloudDrawer>();
 }
 
 void ConfigureLayouter(ContainerBuilder builder, Options options)

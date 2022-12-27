@@ -24,7 +24,7 @@ public class DrawingCloudCreator : ICloudCreator
         if (tagsArray.Length == 1)
         {
             var tag = tagsArray[0];
-            var fontsize = drawer.MaxFontSize;
+            var fontsize = drawer.Settings.MaxFontSize;
             return new[] { new DrawableTag(tag, fontsize, GetPoint(tag.Text, fontsize)) };
         }
 
@@ -45,14 +45,14 @@ public class DrawingCloudCreator : ICloudCreator
 
     private Point GetPoint(string word, int fontsize)
     {
-        using var font = new Font(drawer.FontFamily, fontsize);
+        using var font = new Font(drawer.Settings.FontFamily, fontsize);
         return layouter.PutNextRectangle(drawer.Graphics.MeasureString(word, font).ToSize()).Value.Location;
     }
 
     private int GetFontSize(int count, int minCount, int maxCount)
     {
-        var maxSize = drawer.MaxFontSize;
-        var minSize = drawer.MinFontSize;
+        var maxSize = drawer.Settings.MaxFontSize;
+        var minSize = drawer.Settings.MinFontSize;
         return -(int)((double)(minSize * maxCount - minSize * count + maxSize * count - maxSize * minCount) /
                       (minCount - maxCount));
     }

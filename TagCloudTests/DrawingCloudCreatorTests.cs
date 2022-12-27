@@ -25,10 +25,11 @@ public class DrawingCloudCreatorTests
 
         var fakeDrawer = A.Fake<ICloudDrawer>();
         var graphics = Graphics.FromImage(new Bitmap(10, 10));
+        var settings = DrawerSettings.Create(new Size(10, 10),
+            10, 30,
+            fontFamilyName: "Arial");
         A.CallTo(() => fakeDrawer.Graphics).Returns(graphics);
-        A.CallTo(() => fakeDrawer.FontFamily).Returns(new FontFamily("Arial"));
-        A.CallTo(() => fakeDrawer.MaxFontSize).Returns(30);
-        A.CallTo(() => fakeDrawer.MinFontSize).Returns(10);
+        A.CallTo(() => fakeDrawer.Settings).Returns(settings.Value);
         drawers[testId] = fakeDrawer;
 
         creators[testId] = new DrawingCloudCreator(fakeLayouter, fakeDrawer);
@@ -65,7 +66,7 @@ public class DrawingCloudCreatorTests
 
         var result = creator.CreateTagCloud(new[] { TagsAndRectangles[0].Item1 });
 
-        result.Value.Should().ContainSingle().Subject.FontSize.Should().Be(drawer.MaxFontSize);
+        result.Value.Should().ContainSingle().Subject.FontSize.Should().Be(drawer.Settings.MaxFontSize);
     }
 
     [TestCase(0, TestName = "{m}ZeroWeight")]
