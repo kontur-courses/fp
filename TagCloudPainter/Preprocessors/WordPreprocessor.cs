@@ -1,5 +1,6 @@
 ﻿using TagCloudPainter.Common;
 using TagCloudPainter.Lemmaizers;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Preprocessors;
 
@@ -14,17 +15,26 @@ public class WordPreprocessor : IWordPreprocessor
         parseSettings = parseSettingsProvider.ParseSettings;
     }
 
-    public Dictionary<string, int> GetWordsCountDictionary(IEnumerable<string> words)
+    public Result<Dictionary<string, int>> GetWordsCountDictionary(IEnumerable<string> words)
     {
         if (words == null || words.Count() == 0)
-            throw new ArgumentNullException();
+            return Result.Fail<Dictionary<string, int>>("words is null or Empty");
 
         var wordsCount = new Dictionary<string, int>();
         foreach (var word in words)
         {
-            if (IsSkiped(word))
+            var skip = IsSkiped(word);
+            if (!skip.IsSuccess)
+                return Result.Fail<Dictionary<string, int>>($"{skip.Error}");
+
+            if (IsSkiped(word).Value)
                 continue;
-            var key = _lemmaizer.GetLemma(word).ToLower();
+
+            var lemma = _lemmaizer.GetLemma(word);
+            if (!lemma.IsSuccess)
+                return Result.Fail<Dictionary<string, int>>($"{lemma.Error}");
+
+            var key = lemma.Value.ToLower();
             if (wordsCount.ContainsKey(key))
                 wordsCount[key]++;
             else
@@ -34,14 +44,17 @@ public class WordPreprocessor : IWordPreprocessor
         return wordsCount;
     }
 
-    private bool IsSkiped(string word)
+    private Result<bool> IsSkiped(string word)
     {
         if (parseSettings.IgnoredWords.Count > 0 && parseSettings.IgnoredWords.Contains(word))
             return true;
 
         var morpheme = _lemmaizer.GetMorph(word);
 
-        if (parseSettings.IgnoredMorphemes.Contains(morpheme))
+        if (!morpheme.IsSuccess)
+            return Result.Fail<bool>($"{morpheme.Error}");
+
+        if (parseSettings.IgnoredMorphemes.Contains(morpheme.Value))
             return true;
 
         return false;
