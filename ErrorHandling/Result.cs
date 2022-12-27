@@ -91,11 +91,9 @@ namespace ResultOfTask
         }
 
         public static Result<TInput> RefineError<TInput>(
-            this Result<TInput> input, string refine)
+            this Result<TInput> input, string errorMessage)
         {
-            return new Result<TInput>(
-                string.Join(". ", new[] { refine, input.Error }),
-                input.Value);
+            return input.ReplaceError(err => errorMessage + ". " + err);
         }
     }
 }

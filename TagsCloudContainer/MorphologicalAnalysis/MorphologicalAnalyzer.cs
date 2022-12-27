@@ -35,15 +35,13 @@ namespace TagsCloudContainer.MorphologicalAnalysis
 
                 var word = match.Groups[1].Value;
                 var aliasPartSpeech = match.Groups[2].Value;
-                var partSpeech = Result.Of(() => IdentifyPartSpeech(aliasPartSpeech), 
-                    "Incorrect part of speech has been introduced")
-                    .GetValueOrThrow();
+                var partSpeech = IdentifyPartSpeech(aliasPartSpeech).GetValueOrThrow();
 
                 yield return new Word(word, partSpeech);
             }
         }
 
-        private static PartSpeech IdentifyPartSpeech(string alias)
+        private static Result<PartSpeech> IdentifyPartSpeech(string alias)
         {
             return alias switch
             {
@@ -61,7 +59,7 @@ namespace TagsCloudContainer.MorphologicalAnalysis
                 "S" => PartSpeech.Noun,
                 "SPRO" => PartSpeech.PronounNoun,
                 "V" => PartSpeech.Verb,
-                _ => throw new NotImplementedException()
+                _ => Result.Fail<PartSpeech>($"Incorrect part of speech {alias}")
             };
         }
 
@@ -70,7 +68,7 @@ namespace TagsCloudContainer.MorphologicalAnalysis
             return partSpeeches
                 .Select(x => x.ToUpper())
                 .Aggregate(PartSpeech.None,
-                    (acc, next) => acc |= IdentifyPartSpeech(next));
+                    (acc, next) => acc |= IdentifyPartSpeech(next).GetValueOrThrow());
         }
 
         private IEnumerable<string> GetLines()

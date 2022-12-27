@@ -41,7 +41,7 @@ namespace TagsCloudContainer
                 return Result.Fail<Options>("Center of the tag cloud should be on the image.");
 
             if (options.Count < 0)
-                return Result.Fail<Options>("Count of words in cloud should be positive.");
+                return Result.Fail<Options>("Count of words in cloud should be non-negative.");
 
             var inputFullPath = Path.Combine(ProjectPath, options.InputFile);
             if (!File.Exists(inputFullPath))
@@ -49,7 +49,8 @@ namespace TagsCloudContainer
 
             var supportedOutputFormats = new[] { "png", "jpg", "jpeg" };
             if (!supportedOutputFormats.Any(f => options.OutputFile.EndsWith($".{f}")))
-                return Result.Fail<Options>("Unsupported output file format.");
+                return Result.Fail<Options>(
+                    "Unsupported output file format. Supported formats: png, jpg, jpeg");
 
             if (options.MaxFontSize < options.MinFontSize)
                 return Result.Fail<Options>("Max font size must be greater than the min size");
