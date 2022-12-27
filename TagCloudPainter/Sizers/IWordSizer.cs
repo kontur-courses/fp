@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Sizers;
 
 public interface IWordSizer
 {
-    Size GetTagSize(string word, int count);
+    Result<Size> GetTagSize(string word, int count);
 }
