@@ -16,8 +16,8 @@ namespace TagsCloudContainer.Core.Tests
             var options = new TestOptions(500, 500);
             _center = new Point(options.Width / 2, options.Height / 2);
 
-            _sut = new CircularCloudLayouter();
-            _sut.SetCenter(new Point(_center.X, _center.Y));
+            _sut = new CircularCloudLayouter(_center);
+            //_sut.SetCenter(new Point(_center.X, _center.Y));
         }
 
         [Test]

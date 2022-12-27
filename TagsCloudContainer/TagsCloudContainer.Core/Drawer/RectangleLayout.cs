@@ -77,8 +77,8 @@ namespace TagsCloudContainer.Core.Drawer
                 ? Result.Fail<IEnumerable<Tag>>("Some tags are outside of the image. Change image size.")
                 : Result.Ok(tags);
 
-        private bool RectangleInsideImage(Rectangle rectangle) =>
-            _imageOptions.Width < rectangle.Right || 0 > rectangle.Left ||
-            _imageOptions.Height < rectangle.Bottom || 0 > rectangle.Top;
+        private bool RectangleInsideImage(Rectangle rectangle) => 
+           _imageOptions.Width < rectangle.Right || 0 > rectangle.Left ||
+           _imageOptions.Height < rectangle.Bottom || 0 > rectangle.Top;
     }
 }

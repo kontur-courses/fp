@@ -52,8 +52,10 @@ namespace TagsCloudContainer.Sandbox
         private static Result<TagCloudOptions> MakeProgramOptions(IEnumerable<string> args)
         {
             var options = Parser.Default.ParseArguments<CommandLineOptions>(args).Value;
+
             if (options == null)
-                Result.Fail<TagCloudOptions>("");
+               return Result.Fail<TagCloudOptions>("");
+
             var imageOptions = TagsCloudOptionsValidator.ValidateImageOptions(options);
             var fontOptions = TagsCloudOptionsValidator.ValidateFontOptions(options);
             var filterOptions = TagsCloudOptionsValidator.ValidateFilterOptions(options);
