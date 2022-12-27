@@ -24,6 +24,7 @@ public partial class App
         container.RegisterDelegate<IImageListProvider>(r => r.Resolve<MainWindow>());
         container.RegisterDelegate<ISettingsFactory>(r => r.Resolve<MainWindow>());
         container.Register<IGraphicsProvider, GuiGraphicsProvider>(Reuse.Transient);
+        container.Register<IValidator<GuiGraphicsProviderSettings>, GuiGraphicsProviderSettingsValidator>();
         container.RegisterDelegate(r =>
             (GuiGraphicsProviderSettings)r.Resolve<Settings>().GraphicsProviderSettings, Reuse.Transient);
         container

@@ -3,25 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:TagsCloudContainer.Gui"
+        xmlns:tagsCloudContainer="clr-namespace:TagsCloudContainer;assembly=TagsCloudContainer"
         mc:Ignorable="d"
         Title="Random Colored Drawer" MinHeight="450" MinWidth="200"
-        d:DataContext="{d:DesignInstance Type=local:RandomColoredDrawerSettingsCreator, IsDesignTimeCreatable=False}"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        d:DataContext="{d:DesignInstance Type=tagsCloudContainer:RandomColoredDrawerSettings, IsDesignTimeCreatable=False}">
     <Grid>
         <StackPanel>
             <Label>ImageRectangle</Label>
-            <TextBox Text="{Binding DrawerSettings.ImageRectangle, Converter={StaticResource RectangleConverter}}" />
+            <TextBox Text="{Binding ImageRectangle, Converter={StaticResource RectangleConverter}}" />
             <Label>NumbersSize</Label>
-            <TextBox Text="{Binding DrawerSettings.NumbersSize}" />
+            <TextBox Text="{Binding NumbersSize}" />
             <Label>MinimumTextFontSize</Label>
-            <TextBox Text="{Binding DrawerSettings.MinimumTextFontSize}" />
+            <TextBox Text="{Binding MinimumTextFontSize}" />
             <Label>MaximumTextFontSize</Label>
-            <TextBox Text="{Binding DrawerSettings.MaximumTextFontSize}" />
+            <TextBox Text="{Binding MaximumTextFontSize}" />
             <Label>RectangleBorderSize</Label>
-            <TextBox Text="{Binding DrawerSettings.RectangleBorderSize}" />
+            <TextBox Text="{Binding RectangleBorderSize}" />
             <Label>FillRectangles</Label>
-            <TextBox Text="{Binding DrawerSettings.FillRectangles}" />
+            <TextBox Text="{Binding FillRectangles}" />
             <Button Click="Cancel">Cancel</Button>
             <Button Click="Submit">Submit</Button>
         </StackPanel>

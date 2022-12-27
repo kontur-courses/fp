@@ -5,7 +5,7 @@ namespace TagsCloudContainer;
 public static class CircularHelper
 {
     /// <summary>
-    /// Provide archimedes spiral
+    ///     Provide archimedes spiral
     /// </summary>
     /// <param name="polarStepK"></param>
     /// <param name="angleStep"></param>

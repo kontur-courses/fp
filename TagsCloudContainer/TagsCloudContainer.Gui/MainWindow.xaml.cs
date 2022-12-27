@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using CSharpFunctionalExtensions;
 using TagsCloudContainer.Interfaces;
 
@@ -25,7 +27,7 @@ public partial class MainWindow : IImageListProvider, ISettingsFactory
     private readonly Func<ISettingsEditor<GuiGraphicsProviderSettings>> guiGraphicsProviderSettingsEditorFactory;
 
     private readonly Func<MultiDrawer> multiDrawerFactory;
-    
+
     private readonly Func<ISettingsCreator<RandomColoredDrawerSettings>> randomColoredDrawerSettingsCreator;
 
     private readonly Timer timer;
@@ -86,7 +88,6 @@ public partial class MainWindow : IImageListProvider, ISettingsFactory
     private void StartingThrottlingOnWork()
     {
         if (!AutoDraw) return;
-        ImageBytes.Clear();
         timer.Change(TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
     }
 
@@ -128,31 +129,44 @@ public partial class MainWindow : IImageListProvider, ISettingsFactory
 
     private void StartDrawing(object sender, RoutedEventArgs e)
     {
-        ImageBytes.Clear();
-        StartDrawing();
+        timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        _ = StartDrawingAsync();
     }
 
     private void StartDrawingByTimer(object? state)
     {
-        StartDrawing();
+        _ = StartDrawingAsync();
     }
 
-    private void StartDrawing()
+    private async Task StartDrawingAsync()
     {
-        IsEnabled = false;
-        var allWords = Words.Text.ReplaceLineEndings("\n").Split('\n',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var result = Result.Success((drawer: multiDrawerFactory(), selector: funnyWordsSelector))
-            .Bind(
-                tuple => Result.Success((tuple.drawer, tuple.selector, allWords)))
-            .Bind(tuple => (tuple.drawer, wordsResult: tuple.selector.RecognizeFunnyCloudWords(tuple.allWords)))
-            .Ensure(tuple => tuple.wordsResult.IsSuccess, err => err.wordsResult.Error)
-            .Bind(tuple => (tuple.drawer, words: tuple.wordsResult.Value))
-            .Bind(tuple => tuple.drawer.Draw(tuple.words));
-        if (result.IsFailure)
-            MessageBox.Show(this, result.Error, "Failed to draw clouds", MessageBoxButton.OK,
-                MessageBoxImage.Error);
-        IsEnabled = true;
+        Dispatcher.Invoke(() =>
+        {
+            ImageBytes.Clear();
+            ProgressBar.Visibility = Visibility.Visible;
+            ControlPanel.Visibility = Visibility.Collapsed;
+        }, DispatcherPriority.Background);
+
+        await Dispatcher.InvokeAsync(() =>
+            {
+                var allWords = Words.Text.ReplaceLineEndings("\n").Split('\n',
+                    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var result = Result.Success((drawer: multiDrawerFactory(), selector: funnyWordsSelector))
+                    .Bind(
+                        tuple => Result.Success((tuple.drawer, tuple.selector, allWords)))
+                    .Bind(tuple => (tuple.drawer, wordsResult: tuple.selector.RecognizeFunnyCloudWords(tuple.allWords)))
+                    .Ensure(tuple => tuple.wordsResult.IsSuccess, err => err.wordsResult.Error)
+                    .Bind(tuple => (tuple.drawer, words: tuple.wordsResult.Value))
+                    .Bind(tuple => tuple.drawer.Draw(tuple.words));
+                if (result.IsFailure)
+                    MessageBox.Show(this, result.Error, "Failed to draw clouds", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+            }, DispatcherPriority.Background).Task
+            .ContinueWith(_ => Dispatcher.Invoke(() =>
+            {
+                ControlPanel.Visibility = Visibility.Visible;
+                ProgressBar.Visibility = Visibility.Collapsed;
+            }));
     }
 
     private void EditGraphicsProviderSettings(object sender, RoutedEventArgs e)
@@ -173,10 +187,9 @@ public partial class MainWindow : IImageListProvider, ISettingsFactory
     private void CallCreator<T, TBase>(ISettingsCreator<T> editor, ICollection<TBase> collection) where T : TBase
     {
         Hide();
-        var settings = editor.ShowCreate();
-        if (settings is null) return;
-        collection.Add(settings);
-        Show();
-        StartingThrottlingOnWork();
+        editor.ShowCreate()
+            .Tap(x => collection.Add(x))
+            .Tap(StartingThrottlingOnWork)
+            .Anyway(_ => Show());
     }
 }

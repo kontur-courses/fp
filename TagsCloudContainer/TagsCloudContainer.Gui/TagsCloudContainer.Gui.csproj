@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TagsCloudContainer.Interfaces\TagsCloudContainer.Interfaces.csproj" />
-        <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj" />
+        <ProjectReference Include="..\TagsCloudContainer.Interfaces\TagsCloudContainer.Interfaces.csproj"/>
+        <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -8,9 +8,20 @@ public static class FileExtensions
     {
         return Result.Success($"{Path.GetRandomFileName()}.{extensions}")
             .Bind(file => Path.Combine(directory, file))
-            .BindIf(predicate: file => !Directory.Exists(Path.GetDirectoryName(file)), func:
-                file => Result.Try(() => Directory.CreateDirectory(Path.GetDirectoryName(file)!))
-                    .Bind(_ => file))
+            .BindIf(file => !Directory.Exists(Path.GetDirectoryName(file)), file => Result
+                .Try(() => Directory.CreateDirectory(Path.GetDirectoryName(file)!))
+                .Bind(_ => file))
             .OnSuccessTry(file => File.WriteAllBytes(file, cache.ToArray()));
+    }
+
+    public static Result CheckWritingAccessToDirectory(string path)
+    {
+        var f = Path.Combine(path, Path.GetRandomFileName());
+        return Directory.Exists(path)
+            ? Result.Try(() =>
+            {
+                using var _ = File.Create(f, 1, FileOptions.DeleteOnClose);
+            })
+            : Result.Success();
     }
 }

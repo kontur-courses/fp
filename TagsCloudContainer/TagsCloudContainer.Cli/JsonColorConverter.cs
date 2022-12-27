@@ -13,7 +13,7 @@ public partial class JsonColorConverter : JsonConverter<Color>
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.String)
-            throw new ArgumentException("Value of reader is not parsable to color", nameof(reader));
+            return Color.Empty;
         var s = reader.GetString()!;
 
         if (Enum.TryParse<KnownColor>(s, out var knownColor))
@@ -35,7 +35,7 @@ public partial class JsonColorConverter : JsonConverter<Color>
                 return Color.FromArgb(a, r, g, b);
         }
 
-        throw new ArgumentException("Value of reader is not parsable to color", nameof(reader));
+        return Color.Empty;
     }
 
     public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)

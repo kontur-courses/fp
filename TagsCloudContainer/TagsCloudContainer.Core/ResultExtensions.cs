@@ -4,9 +4,26 @@ namespace CSharpFunctionalExtensions;
 
 public static class ResultExtensions
 {
+    public static Result CombineCheck(this Result result, Func<Result> check)
+    {
+        return Result.Combine(result, check());
+    }
+
+    public static Result CombineCheck(this Result result, Func<Result> check, string error)
+    {
+        return Result.Combine(result, check().MapError(_ => error));
+    }
+
+    public static Result CombineCheck(this Result result, Func<bool> check, string error)
+    {
+        return Result.Combine(result, Result.SuccessIf(check, error));
+    }
+
     public static Result<TK> SuccessIfCast<T, TK>(this T value)
     {
-        return value is TK castedValue ? Result.Success(castedValue) : Result.Failure<TK>($"Cannot cast {typeof(T)} to {typeof(TK)}");
+        return value is TK castedValue
+            ? Result.Success(castedValue)
+            : Result.Failure<TK>($"Cannot cast {typeof(T)} to {typeof(TK)}");
     }
 
     public static Result<TK> Bind<T, TK>(this Result<T> result, Func<T, TK> resolve)
@@ -19,7 +36,7 @@ public static class ResultExtensions
         disposeResolver(result)?.Dispose();
         return result;
     }
-    
+
     public static T Anyway<T>(this T result, Action<Result<T>> action) where T : IResult
     {
         action(result);

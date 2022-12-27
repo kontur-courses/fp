@@ -1,21 +1,26 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using CSharpFunctionalExtensions;
+using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.Gui;
 
 public partial class RandomColoredDrawerSettingsCreator : ISettingsCreator<RandomColoredDrawerSettings>
 {
-    public RandomColoredDrawerSettingsCreator()
+    private readonly IValidator<RandomColoredDrawerSettings> validator;
+
+    public RandomColoredDrawerSettingsCreator(IValidator<RandomColoredDrawerSettings> validator)
     {
+        this.validator = validator;
         InitializeComponent();
-        DataContext = this;
     }
 
-    public RandomColoredDrawerSettings DrawerSettings { get; } = new();
+    public RandomColoredDrawerSettings Settings { get; } = new();
 
-    public RandomColoredDrawerSettings? ShowCreate()
+    public Result<RandomColoredDrawerSettings> ShowCreate()
     {
-        var result = ShowDialog() ?? false;
-        return result ? DrawerSettings : null;
+        DataContext = Settings;
+        return Result.SuccessIf(ShowDialog() ?? false, Settings, string.Empty);
     }
 
     private void Cancel(object sender, RoutedEventArgs e)
@@ -26,7 +31,9 @@ public partial class RandomColoredDrawerSettingsCreator : ISettingsCreator<Rando
 
     private void Submit(object sender, RoutedEventArgs e)
     {
-        DialogResult = true;
-        Close();
+        validator.Validate(Settings)
+            .Tap(() => DialogResult = true)
+            .Tap(Close)
+            .TapError(errors => MessageBox.Show(this, errors, "Errors", MessageBoxButton.OK, MessageBoxImage.Error));
     }
 }

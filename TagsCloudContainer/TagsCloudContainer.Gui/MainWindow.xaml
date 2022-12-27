@@ -9,10 +9,12 @@
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=False}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
-        <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Vertical" HorizontalAlignment="Left">
-                <CheckBox Click="AutoDrawIsChanged">Auto draw mode</CheckBox>
-                <Button Click="StartDrawing">Start drawing</Button>
+        <DockPanel Name="ControlPanel">
+            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Click="AutoDrawIsChanged">Auto draw mode</CheckBox>
+                    <Button Click="StartDrawing">Start drawing</Button>
+                </StackPanel>
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -33,7 +35,7 @@
                 <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" />
                 <DockPanel Grid.Column="2">
-                    <TextBox DockPanel.Dock="Top">Drawer settings</TextBox>
+                    <Label DockPanel.Dock="Top">Drawer settings</Label>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" VerticalAlignment="Bottom">
                         <Button Click="RemoveSelectedDrawerSettings">Remove selected</Button>
                         <Button Click="NewClassicDrawerSettings">New Classic Drawer</Button>
@@ -46,7 +48,7 @@
                 <GridSplitter Grid.Column="3" ShowsPreview="False" Width="3"
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" />
                 <DockPanel Grid.Column="4">
-                    <TextBox DockPanel.Dock="Top">Layouter algorithm settings</TextBox>
+                    <Label DockPanel.Dock="Top">Layouter algorithm settings</Label>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" VerticalAlignment="Bottom">
                         <Button Click="RemoveSelectedLayouterAlgorithmSettings">Remove selected</Button>
                         <Button Click="NewCircularLayouterAlgorithmSettings">New</Button>
@@ -57,7 +59,7 @@
                 <GridSplitter Grid.Column="5" ShowsPreview="False" Width="3"
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" />
                 <DockPanel Grid.Column="6">
-                    <TextBox DockPanel.Dock="Top">Graphics provider</TextBox>
+                    <Label DockPanel.Dock="Top">Graphics provider</Label>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" VerticalAlignment="Bottom">
                         <Button Click="EditGraphicsProviderSettings">Edit</Button>
                     </StackPanel>
@@ -65,18 +67,13 @@
                 <GridSplitter Grid.Column="7" ShowsPreview="False" Width="3"
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" />
                 <DockPanel Grid.Column="8">
-                    <TextBox DockPanel.Dock="Top">Images</TextBox>
+                    <Label DockPanel.Dock="Top">Images</Label>
                     <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                   ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <ItemsControl ItemsSource="{Binding ImageBytes}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                                                  ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                        <Viewbox StretchDirection="Both" Stretch="Uniform">
-                                            <Image Source="{Binding }" />
-                                        </Viewbox>
-                                    </ScrollViewer>
+                                    <Image Source="{Binding }" MaxWidth="1000" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -84,5 +81,9 @@
                 </DockPanel>
             </Grid>
         </DockPanel>
+        <StackPanel Name="ProgressBar" VerticalAlignment="Center" Visibility="Collapsed">
+            <ProgressBar Height="10" VerticalAlignment="Center" IsIndeterminate="True" />
+            <Label>Loading...</Label>
+        </StackPanel>
     </Grid>
 </Window>

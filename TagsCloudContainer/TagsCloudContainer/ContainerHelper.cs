@@ -16,6 +16,9 @@ public static class ContainerHelper
         container.Register<IDrawerFactory, RandomColoredDrawerFactory>();
         container.Register<ILayouterAlgorithmFactory, CircularLayouterAlgorithmFactory>();
         container.RegisterDelegate(r => r.Resolve<ISettingsFactory>().Build().Value, Reuse.Transient);
+        container.Register<IValidator<RandomColoredDrawerSettings>, RandomColoredDrawerSettingsValidator>();
+        container.Register<IValidator<ClassicDrawerSettings>, ClassicDrawerSettingsValidator>();
+        container.Register<IValidator<CircularLayouterAlgorithmSettings>, CircularLayouterAlgorithmSettingsValidator>();
         return container;
     }
 }

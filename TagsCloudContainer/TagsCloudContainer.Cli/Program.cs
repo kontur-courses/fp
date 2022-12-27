@@ -39,6 +39,7 @@ public class Program
         }
 
         var result = Result.Success(GetServices())
+            .Check(tuple => tuple.settingsValidator.Validate())
             .BindTry(
                 tuple => Result.Success((tuple.drawer, tuple.selector, allWords: File.ReadAllLines(WordsFileName))))
             .Bind(tuple => (tuple.drawer, wordsResult: tuple.selector.RecognizeFunnyCloudWords(tuple.allWords)))
@@ -51,7 +52,7 @@ public class Program
         return 1;
     }
 
-    private (IFunnyWordsSelector selector, MultiDrawer drawer) GetServices()
+    private (IFunnyWordsSelector selector, MultiDrawer drawer, SettingsValidator settingsValidator) GetServices()
     {
         var container = ContainerHelper.RegisterDefaultSingletonContainer();
         container.Register<IGraphicsProvider, CliGraphicsProvider>(Reuse.Singleton);
@@ -60,9 +61,12 @@ public class Program
         var jsonSettingsFactory = new JsonSettingsFactory(JsonSettingsFilename);
         container.RegisterDelegate<ISettingsFactory>(_ => jsonSettingsFactory,
             Reuse.Singleton);
+        container.Register<SettingsValidator>();
+        container.Register<IValidator<CliGraphicsProviderSettings>, CliGraphicsProviderSettingsValidator>();
 
         var selector = container.Resolve<IFunnyWordsSelector>();
         var drawer = container.Resolve<MultiDrawer>();
-        return (selector, drawer);
+        var settingsValidator = container.Resolve<SettingsValidator>();
+        return (selector, drawer, settingsValidator);
     }
 }

@@ -1,21 +1,25 @@
 ﻿using System.Windows;
+using CSharpFunctionalExtensions;
+using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.Gui;
 
 public partial class CircularLayouterAlgorithmSettingsCreator : ISettingsCreator<CircularLayouterAlgorithmSettings>
 {
-    public CircularLayouterAlgorithmSettingsCreator()
+    private readonly IValidator<CircularLayouterAlgorithmSettings> validator;
+
+    public CircularLayouterAlgorithmSettingsCreator(IValidator<CircularLayouterAlgorithmSettings> validator)
     {
+        this.validator = validator;
         InitializeComponent();
     }
 
     private CircularLayouterAlgorithmSettings Settings { get; } = new();
 
-    CircularLayouterAlgorithmSettings? ISettingsCreator<CircularLayouterAlgorithmSettings>.ShowCreate()
+    Result<CircularLayouterAlgorithmSettings> ISettingsCreator<CircularLayouterAlgorithmSettings>.ShowCreate()
     {
         DataContext = Settings;
-        var result = ShowDialog() ?? false;
-        return result ? Settings : null;
+        return Result.SuccessIf(ShowDialog() ?? false, Settings, string.Empty);
     }
 
     private void Cancel(object sender, RoutedEventArgs e)
@@ -26,7 +30,9 @@ public partial class CircularLayouterAlgorithmSettingsCreator : ISettingsCreator
 
     private void Submit(object sender, RoutedEventArgs e)
     {
-        DialogResult = true;
-        Close();
+        validator.Validate(Settings)
+            .Tap(() => DialogResult = true)
+            .Tap(Close)
+            .TapError(errors => MessageBox.Show(this, errors, "Errors", MessageBoxButton.OK, MessageBoxImage.Error));
     }
 }

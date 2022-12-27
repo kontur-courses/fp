@@ -1,6 +1,8 @@
-﻿namespace TagsCloudContainer.Gui;
+﻿using CSharpFunctionalExtensions;
 
-public interface ISettingsCreator<out TSetting>
+namespace TagsCloudContainer.Gui;
+
+public interface ISettingsCreator<TSetting>
 {
-    TSetting? ShowCreate();
+    Result<TSetting> ShowCreate();
 }

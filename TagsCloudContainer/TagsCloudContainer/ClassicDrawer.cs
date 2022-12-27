@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using CSharpFunctionalExtensions;
-using CSharpFunctionalExtensions.ValueTasks;
 using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer;
