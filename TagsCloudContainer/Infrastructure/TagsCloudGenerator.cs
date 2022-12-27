@@ -58,14 +58,14 @@ namespace TagsCloudContainer.Infrastructure
             foreach (var word in words)
             {
                 var result = provider.GetFontSize(word)
-                    .OnSuccess(r =>
+                    .Bind(fontSize =>
                     {
-                        var font = new Font(settings.FontFamily, r.Value);
+                        var font = new Font(settings.FontFamily, fontSize);
                         var floatSize = graphics.MeasureString(word, font);
-                        wordLayoutBuilder.AddWord(word, new Size((int)Math.Ceiling(floatSize.Width), (int)Math.Ceiling(floatSize.Height)));
+                        return wordLayoutBuilder.AddWord(word, new Size((int)Math.Ceiling(floatSize.Width), (int)Math.Ceiling(floatSize.Height)));
                     });
                 if (result.IsFailed)
-                    return result.ToResult();
+                    return result;
             }
 
             return Result.Ok();

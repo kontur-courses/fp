@@ -14,17 +14,11 @@ namespace TagsCloudContainer.Infrastructure.WordLayoutBuilders
     {
         private readonly List<(string Word, SizeF Size)> words = new List<(string Word, SizeF Size)>();
 
-        public IWordLayoutBuilder AddWord(string word, SizeF size)
+        public Result AddWord(string word, SizeF size)
         {
-            if (size.IsEmpty)
-                throw new ArgumentException("Size can't be empty");
-
-            if (words.Any(pair => pair.Word == word))
-                throw new ArgumentException($"Word '{word}' has already added to builder");
-
-            words.Add((word, size));
-
-            return this;
+            return Result.OkIf(!size.IsEmpty, "Size can't be empty")
+                         .Bind(() => Result.OkIf(words.All(pair => pair.Word != word), $"Word '{word}' has already added to builder"))
+                         .OnSuccess(r => words.Add((word, size)));
         }
 
         public Result<WordRectangle[]> Build(PointF center)

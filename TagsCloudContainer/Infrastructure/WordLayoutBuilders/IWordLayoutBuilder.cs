@@ -10,7 +10,7 @@ namespace TagsCloudContainer.Infrastructure.WordLayoutBuilders
 {
     public interface IWordLayoutBuilder
     {
-        public IWordLayoutBuilder AddWord(string word, SizeF size);
+        public Result AddWord(string word, SizeF size);
         public Result<WordRectangle[]> Build(PointF center);
         public void Clear();
     }
