@@ -15,13 +15,11 @@ namespace TagsCloudContainer
 
         private static void Main(string[] args)
         {
-            var options = Result.Of(
-                () => Parser.Default.ParseArguments<Options>(args).Value,
-                "Command line arguments cannot be parsed")
+            Result.Of(() => Parser.Default.ParseArguments<Options>(args).Value)
                 .Then(ValidateOptions)
-                .GetValueOrThrow();
-            var app = CreateApp(options);
-            app.Run();
+                .Then(options => CreateApp(options))
+                .Then(app => app.Run())
+                .OnFail(Console.WriteLine);
         }
 
         private static IApp CreateApp(Options options)

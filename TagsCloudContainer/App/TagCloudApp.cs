@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using TagsCloudContainer.CloudLayouter;
 using TagsCloudContainer.CounterNamespace;
 using TagsCloudContainer.Extensions;
@@ -23,36 +25,54 @@ namespace TagsCloudContainer.App
             this.analyzer = analyzer;
         }
 
-        public void Run()
+        public Result<None> Run()
         {
-            FillCloud();
-            visualizer.Visualize();
-            visualizer.Save();
+            return Result.Of(() => FillCloud())
+                .Then(none => visualizer.Visualize())
+                .Then(none => visualizer.Save())
+                .RefineError("Could not run App");
         }
 
-        private Counter<Word> GetCounterSelectedWords()
+        private Result<Counter<Word>> GetCounterSelectedWords()
         {
             var partSpeech = MorphologicalAnalyzer.GetPartSpeech(options.PartSpeeches);
-            var words = analyzer.GetWords().Where(word => partSpeech.HasFlag(word.PartSpeech));
-            return new Counter<Word>(words);
+            if (!partSpeech.IsSuccess)
+                return Result.Fail<Counter<Word>>(partSpeech.Error);
+            var words = analyzer.GetWords();
+            var selectedWords = new List<Word>();
+            foreach (var word in words)
+            {
+                if (!word.IsSuccess)
+                    return Result.Fail<Counter<Word>>(word.Error);
+                if (partSpeech.Value.HasFlag(word.Value.PartSpeech))
+                    selectedWords.Add(word.Value);
+            }
+            return new Counter<Word>(selectedWords);
         }
 
-        private void FillCloud()
+        private Result<None> FillCloud()
         {
             var counter = GetCounterSelectedWords();
-            var words = counter.GetMostPopular(options.Count).ToList();
-            var minAmount = counter.GetAmount(words.Last());
-            var maxAmount = counter.GetAmount(words.First());
+            if (!counter.IsSuccess)
+                return Result.Fail<None>(counter.Error);
+            var words = counter.Value.GetMostPopular(options.Count).ToList();
+            var minAmount = counter.Value.GetAmount(words.Last());
+            var maxAmount = counter.Value.GetAmount(words.First());
             foreach (var word in words)
             {
                 if (visualizer is TagCloudVisualizer tagCloudVisualizer)
                 {
                     var font = tagCloudVisualizer
-                        .GetFontByWeightWord(counter.GetAmount(word), minAmount, maxAmount);
-                    var size = tagCloudVisualizer.MeasureString(word.Text, font).Ceiling();
-                    cloud.PutNextCloudItem(word.Text, size, font).GetValueOrThrow();
+                        .GetFontByWeightWord(counter.Value.GetAmount(word), minAmount, maxAmount);
+                    if (!font.IsSuccess)
+                        return Result.Fail<None>(font.Error);
+                    var size = tagCloudVisualizer.MeasureString(word.Text, font.Value).Ceiling();
+                    var item = cloud.PutNextCloudItem(word.Text, size, font.Value);
+                    if (!item.IsSuccess)
+                        return Result.Fail<None>(item.Error);
                 }
             }
+            return Result.Ok();
         }
     }
 }

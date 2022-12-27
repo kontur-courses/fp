@@ -25,7 +25,7 @@ namespace TagsCloudContainer.MorphologicalAnalysis
             process = InitProcess();
         }
 
-        public IEnumerable<Word> GetWords()
+        public IEnumerable<Result<Word>> GetWords()
         {
             foreach (var line in GetLines())
             {
@@ -35,9 +35,11 @@ namespace TagsCloudContainer.MorphologicalAnalysis
 
                 var word = match.Groups[1].Value;
                 var aliasPartSpeech = match.Groups[2].Value;
-                var partSpeech = IdentifyPartSpeech(aliasPartSpeech).GetValueOrThrow();
 
-                yield return new Word(word, partSpeech);
+                var partSpeech = IdentifyPartSpeech(aliasPartSpeech);
+                if (!partSpeech.IsSuccess)
+                    yield return Result.Fail<Word>(partSpeech.Error);
+                yield return new Word(word, partSpeech.Value);
             }
         }
 
@@ -63,12 +65,17 @@ namespace TagsCloudContainer.MorphologicalAnalysis
             };
         }
 
-        public static PartSpeech GetPartSpeech(IEnumerable<string> partSpeeches)
+        public static Result<PartSpeech> GetPartSpeech(IEnumerable<string> partSpeeches)
         {
-            return partSpeeches
-                .Select(x => x.ToUpper())
-                .Aggregate(PartSpeech.None,
-                    (acc, next) => acc |= IdentifyPartSpeech(next).GetValueOrThrow());
+            var resultPartSpeech = PartSpeech.Noun;
+            foreach (var partSpeech in partSpeeches.Select(x => x.ToUpper()))
+            {
+                var identify = IdentifyPartSpeech(partSpeech);
+                if (!identify.IsSuccess)
+                    return Result.Fail<PartSpeech>(identify.Error);
+                resultPartSpeech |= identify.Value;
+            }
+            return resultPartSpeech;
         }
 
         private IEnumerable<string> GetLines()

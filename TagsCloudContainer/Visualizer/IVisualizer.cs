@@ -2,7 +2,7 @@
 {
     public interface IVisualizer
     {
-        public void Visualize();
+        public Result<None> Visualize();
         public void Save();
     }
 }

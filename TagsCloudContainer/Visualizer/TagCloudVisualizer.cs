@@ -20,21 +20,23 @@ namespace TagsCloudContainer.Visualizer
             graphics = Graphics.FromImage(bitmap);
         }
 
-        public void Visualize()
+        public Result<None> Visualize()
         {
             var foregroundBrush = Result.Of(
-                () => new SolidBrush(Color.FromName(options.ForegroundColor)),
-                "Incorrect foreground color")
-                .GetValueOrThrow();
+                () => new SolidBrush(Color.FromName(options.ForegroundColor)));
+            if (!foregroundBrush.IsSuccess)
+                return Result.Fail<None>("Incorrect foreground color");
             var backgroundBrush = Result.Of(
-                () => new SolidBrush(Color.FromName(options.BackgroundColor)),
-                "Incorrect background color")
-                .GetValueOrThrow();
+                () => new SolidBrush(Color.FromName(options.BackgroundColor)));
+            if (!backgroundBrush.IsSuccess)
+                return Result.Fail<None>("Incorrect background color");
 
-            graphics.FillRectangle(backgroundBrush, 0, 0, options.Width, options.Height);
+            graphics.FillRectangle(backgroundBrush.Value, 0, 0, options.Width, options.Height);
             foreach (var item in cloud.Items)
                 graphics.DrawString(
-                    item.Word, item.Font, foregroundBrush, item.Rectangle);
+                    item.Word, item.Font, foregroundBrush.Value, item.Rectangle);
+
+            return Result.Ok();
         }
 
         public void Save()
@@ -48,14 +50,14 @@ namespace TagsCloudContainer.Visualizer
             return graphics.MeasureString(text, font);
         }
 
-        public Font GetFontByWeightWord(int weight, int minWeight, int maxWeight)
+        public Result<Font> GetFontByWeightWord(int weight, int minWeight, int maxWeight)
         {
             var fontSize = Math.Max(options.MinFontSize,
                 options.MaxFontSize * (weight - minWeight) / (maxWeight - minWeight));
-            var fontFamily = Result.Of(
-                () => new FontFamily(options.FontFamily), "Incorrect Font Family")
-                .GetValueOrThrow();
-            return new Font(fontFamily, fontSize);
+            var fontFamily = Result.Of(() => new FontFamily(options.FontFamily));
+            if (!fontFamily.IsSuccess)
+                return Result.Fail<Font>("Incorrect Font Family");
+            return new Font(fontFamily.Value, fontSize);
         }
     }
 }
