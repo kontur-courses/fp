@@ -1,10 +1,11 @@
-﻿using TagCloud.Abstractions;
+﻿using FluentResults;
+using TagCloud.Abstractions;
 
 namespace TagCloud;
 
 public class CountWordsTagger : IWordsTagger
 {
-    public IEnumerable<ITag> ToTags(IEnumerable<string> words)
+    public Result<IEnumerable<ITag>> ToTags(IEnumerable<string> words)
     {
         return words
             .GroupBy(w => w)

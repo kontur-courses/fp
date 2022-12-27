@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Abstractions;
+﻿using FluentResults;
+
+namespace TagCloud.Abstractions;
 
 public interface IWordsTagger
 {
-    IEnumerable<ITag> ToTags(IEnumerable<string> words);
+    Result<IEnumerable<ITag>> ToTags(IEnumerable<string> words);
 }

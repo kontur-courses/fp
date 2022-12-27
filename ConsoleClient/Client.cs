@@ -38,7 +38,10 @@ public class Client
             words = processResult.Value;
         }
         
-        var tags = tagger.ToTags(words);
+        var toTagsResult = tagger.ToTags(words);
+        if (toTagsResult.IsFailed) return Result.Fail(toTagsResult.Errors);
+        var tags = toTagsResult.Value;
+        
         var drawableTags = creator.CreateTagCloud(tags);
         var bitmap = drawer.Draw(drawableTags);
         bitmap.Save(resultFilepath);

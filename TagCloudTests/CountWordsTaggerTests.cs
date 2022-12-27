@@ -16,7 +16,7 @@ public class CountWordsTaggerTests
 
         var result = tagger.ToTags(words);
 
-        result.Should().BeEmpty();
+        result.Value.Should().BeEmpty();
     }
 
     [TestCase(1)]
@@ -30,7 +30,7 @@ public class CountWordsTaggerTests
 
         var result = tagger.ToTags(words);
 
-        result.Should().ContainSingle().Subject.Should().BeEquivalentTo(new Tag(word, count));
+        result.Value.Should().ContainSingle().Subject.Should().BeEquivalentTo(new Tag(word, count));
     }
 
     [Test]
@@ -43,6 +43,6 @@ public class CountWordsTaggerTests
 
         var result = tagger.ToTags(words);
 
-        result.Should().BeInDescendingOrder(t => t.Weight);
+        result.Value.Should().BeInDescendingOrder(t => t.Weight);
     }
 }
