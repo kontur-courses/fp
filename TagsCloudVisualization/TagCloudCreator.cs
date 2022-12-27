@@ -32,7 +32,12 @@ namespace TagsCloudVisualization
                 var tagsByRectangles = tags.Zip(rectangles, (k, v) => new { k, v })
                     .ToDictionary(x => x.k, x => x.v);
 
-                bitmaps.Add(DrawingHelper.DrawTagCloud(tagsByRectangles, cloudConfiguration).GetValueOrThrow());
+                var result = DrawingHelper.DrawTagCloud(tagsByRectangles, cloudConfiguration);
+
+                if (!result.IsSuccess)
+                    return Result.Fail<List<Bitmap>>(result.Error);
+                
+                bitmaps.Add(result.Value);
             }
 
             return Result.Ok(bitmaps);

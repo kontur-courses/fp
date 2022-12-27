@@ -1,6 +1,5 @@
 ﻿using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using TagsCloudVisualization.Configurations;
@@ -12,18 +11,20 @@ namespace TagsCloudVisualization
     {
         public static void Main(string[] args)
         {
-            var options = Parser.Default.ParseArguments<Options>(args).Value;
-            options.RunOptions();
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton(CloudConfiguration.Default);
-            serviceCollection.AddSingleton(DistributionConfiguration.Default);
-            serviceCollection.AddScoped<ICloudLayouter, CircularCloudLayouter>();
-            serviceCollection.AddScoped<ICloudCreator, TagCloudCreator>();
-
-            var provider = serviceCollection.BuildServiceProvider();
+            var options = Result
+                .Of(() => Parser.Default.ParseArguments<Options>(args).Value)
+                .Then(opt => opt.RunOptions())
+                .GetValueOrThrow();
             
+            var provider = new ServiceCollection().AsResult()
+                .Then(ConfigureServices)
+                .Then(x => x.BuildServiceProvider())
+                .GetValueOrThrow();
+
             var cloudCreator = provider.GetService<ICloudCreator>();
+
+            if (cloudCreator == null) 
+                return;
             
             var bitmaps = Result.Of(() => File.ReadAllLines(options.WordsFilePath))
                 .ReplaceError(error => $"File not found / Not available - {error}")
@@ -34,6 +35,15 @@ namespace TagsCloudVisualization
 
             for (var i = 0; i < bitmaps.Length; i++)
                 bitmaps[i].Save(options.SaveTagCloudImagePath + $"cloud_{i}.{ImageFormat.Png}");
+        }
+        
+        private static Result<IServiceCollection> ConfigureServices(IServiceCollection serviceCollection)
+        {
+            return serviceCollection.AsResult()
+                .Then(service => service.AddSingleton(CloudConfiguration.Default))
+                .Then(service => service.AddSingleton(DistributionConfiguration.Default))
+                .Then(service => service.AddScoped<ICloudLayouter, CircularCloudLayouter>())
+                .Then(service => service.AddScoped<ICloudCreator, TagCloudCreator>());
         }
     }
 }

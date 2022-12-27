@@ -22,7 +22,7 @@ namespace TagsCloudVisualization
         [Option('a', "amount", Required = false, HelpText = "Количество изображений")]
         private int AmountImagesArgument { get; set; }
         
-        public void RunOptions()
+        public Result<Options> RunOptions()
         {
             if (!string.IsNullOrEmpty(WordsFilePathArgument))
                 WordsFilePath = WordsFilePathArgument;
@@ -32,6 +32,8 @@ namespace TagsCloudVisualization
             
             if (AmountImagesArgument != 0)
                 AmountImages = AmountImagesArgument;
+
+            return Result.Ok(this);
         }
     }
 }
