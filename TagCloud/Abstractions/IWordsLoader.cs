@@ -1,6 +1,8 @@
-﻿namespace TagCloud.Abstractions;
+﻿using FluentResults;
+
+namespace TagCloud.Abstractions;
 
 public interface IWordsLoader
 {
-    IEnumerable<string> Load();
+    Result<IEnumerable<string>> Load();
 }

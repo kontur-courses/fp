@@ -13,7 +13,7 @@ IContainer ConfigureContainer(Options options)
 {
     var builder = new ContainerBuilder();
 
-    ConfigureLoader(builder, options);
+    builder.RegisterInstance(new TxtLinesWordsLoader(options.Source)).As<IWordsLoader>();
 
     ConfigureProcessors(builder, options);
 
@@ -28,23 +28,6 @@ IContainer ConfigureContainer(Options options)
     builder.RegisterType<Client>().AsSelf().SingleInstance();
 
     return builder.Build();
-}
-
-void ConfigureLoader(ContainerBuilder builder, Options options)
-{
-    var extension = Path.GetExtension(options.Source);
-
-    switch (extension)
-    {
-        case ".txt":
-            builder.RegisterInstance(new TxtLinesWordsLoader(options.Source)).As<IWordsLoader>();
-            break;
-        case ".docx" or ".doc":
-            builder.RegisterInstance(new DocLinesWordsLoader(options.Source)).As<IWordsLoader>();
-            break;
-        default:
-            throw new ArgumentException($"Extension {extension} not support");
-    }
 }
 
 void ConfigureProcessors(ContainerBuilder builder, Options options)

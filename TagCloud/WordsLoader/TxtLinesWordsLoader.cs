@@ -1,4 +1,5 @@
-﻿using TagCloud.Abstractions;
+﻿using FluentResults;
+using TagCloud.Abstractions;
 
 namespace TagCloud;
 
@@ -8,14 +9,18 @@ public class TxtLinesWordsLoader : IWordsLoader
 
     public TxtLinesWordsLoader(string filepath)
     {
-        if (!File.Exists(filepath))
-            throw new FileNotFoundException($"Could not find file '{Path.GetFullPath(filepath)}'.");
-
         this.filepath = filepath;
     }
 
-    public IEnumerable<string> Load()
+    public Result<IEnumerable<string>> Load()
     {
-        return File.ReadAllLines(filepath);
+        if (!File.Exists(filepath))
+            return Result.Fail(new Error($"Could not find file '{Path.GetFullPath(filepath)}'."));
+
+        var extension = Path.GetExtension(filepath);
+        if (extension != ".txt")
+            return Result.Fail(new Error($"Only files extension '.txt' are supported, but '{extension}'."));
+        
+        return Result.Try(() => File.ReadAllLines(filepath).Select(s => s));
     }
 }

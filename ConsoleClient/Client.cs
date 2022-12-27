@@ -26,7 +26,13 @@ public class Client
 
     public void Execute(string resultFilepath)
     {
-        var words = loader.Load();
+        var loadResult = loader.Load();
+        if (loadResult.IsFailed)
+        {
+            Console.WriteLine(string.Join(Environment.NewLine, loadResult.Errors.Select(e => e.Message)));
+            return;
+        }
+        var words = loadResult.Value;
         words = processors.Aggregate(words, (current, processor) => processor.Process(current));
         var tags = tagger.ToTags(words);
         var drawableTags = creator.CreateTagCloud(tags);

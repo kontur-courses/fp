@@ -38,28 +38,35 @@ public class TxtLinesWordsLoaderTests
     private const string Dir = "TestTxtFiles";
 
     [Test]
-    public void Constructor_ThrowFileNotFoundException_OnNonExistentFile()
-    {
-        var filepath = filepathById[TestContext.CurrentContext.Test.ID];
-        File.Delete(filepath);
-
-        var act = () => new TxtLinesWordsLoader(filepath);
-
-        act.Should().Throw<FileNotFoundException>()
-            .WithMessage($"Could not find file '{Path.GetFullPath(filepath)}'.");
-    }
-
-    [Test]
-    public void Load_ThrowFileNotFoundException_IfFileDeletedAfterLoaderInit()
+    public void Load_ReturnCorrectFail_OnNonExistentFile()
     {
         var filepath = filepathById[TestContext.CurrentContext.Test.ID];
         var loader = new TxtLinesWordsLoader(filepath);
         File.Delete(filepath);
 
-        var act = () => loader.Load();
+        var fail = loader.Load();
 
-        act.Should().Throw<FileNotFoundException>()
-            .WithMessage($"Could not find file '{Path.GetFullPath(filepath)}'.");
+        fail.IsFailed.Should().BeTrue();
+        fail.Errors.Should().ContainSingle()
+            .Subject.Message.Should()
+            .Be($"Could not find file '{Path.GetFullPath(filepath)}'.");
+    }
+    
+    [Test]
+    public void Load_ReturnCorrectFail_OnNotSupportedFile()
+    {
+        const string notSupportedExtension = ".docx";
+        var filepath = Path.Combine(Dir, $"{TestContext.CurrentContext.Test.Name}{notSupportedExtension}");
+        using (var file = File.Open(filepath, FileMode.OpenOrCreate))
+            file.Flush();
+        var loader = new TxtLinesWordsLoader(filepath);
+
+        var fail = loader.Load();
+
+        fail.IsFailed.Should().BeTrue();
+        fail.Errors.Should().ContainSingle()
+            .Subject.Message.Should()
+            .Be($"Only files extension '.txt' are supported, but '{notSupportedExtension}'.");
     }
 
     [Test]
@@ -70,7 +77,8 @@ public class TxtLinesWordsLoaderTests
 
         var result = loader.Load();
 
-        result.Should().BeEmpty();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEmpty();
     }
 
     [Test]
@@ -83,7 +91,8 @@ public class TxtLinesWordsLoaderTests
 
         var result = loader.Load();
 
-        result.Should().Equal(lines);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Equal(lines);
     }
 
     [Test]
@@ -98,8 +107,10 @@ public class TxtLinesWordsLoaderTests
         File.WriteAllLines(filepath, newLines);
 
         var resultAfter = loader.Load();
-
-        resultBefore.Should().Equal(lines);
-        resultAfter.Should().Equal(newLines);
+        
+        resultBefore.IsSuccess.Should().BeTrue();
+        resultBefore.Value.Should().Equal(lines);
+        resultAfter.IsSuccess.Should().BeTrue();
+        resultAfter.Value.Should().Equal(newLines);
     }
 }
