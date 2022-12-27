@@ -8,6 +8,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using TagCloudPainter.Extensions;
 using TagCloudPainter.Layouters;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Tests;
 
@@ -26,9 +27,10 @@ public class CircularCloudLayouterTests
     public void PutNextRectangle_Should_Fail_On(int width, int height)
     {
         var size = new Size(width, height);
-        Action putNextRectangle = () => circularCloudLayouter.PutNextRectangle(size);
 
-        putNextRectangle.Should().Throw<ArgumentException>();
+        var result = circularCloudLayouter.PutNextRectangle(size);
+
+        result.Should().BeEquivalentTo(Result.Fail<Rectangle>("incorrect rectangle size"));
     }
 
     [Test]
@@ -37,7 +39,7 @@ public class CircularCloudLayouterTests
         var firstRectangle = circularCloudLayouter.PutNextRectangle(new Size(10, 1));
         var secondRectangle = circularCloudLayouter.PutNextRectangle(new Size(10, 1));
 
-        var result = firstRectangle.IntersectsWith(secondRectangle);
+        var result = firstRectangle.GetValueOrThrow().IntersectsWith(secondRectangle.GetValueOrThrow());
 
         result.Should().BeFalse();
     }
@@ -51,7 +53,7 @@ public class CircularCloudLayouterTests
         var rectangles = circularCloudLayouter.Rectangles;
         var rectangle = circularCloudLayouter.PutNextRectangle(new Size(10, 2));
 
-        var result = rectangle.IsIntersectsOthersRectangles(rectangles);
+        var result = rectangle.GetValueOrThrow().IsIntersectsOthersRectangles(rectangles);
 
         return result;
     }
@@ -64,7 +66,7 @@ public class CircularCloudLayouterTests
         var rectangles = circularCloudLayouter.Rectangles;
         var rectangle = circularCloudLayouter.PutNextRectangle(new Size(10, 2));
 
-        var result = rectangle.IsIntersectsOthersRectangles(rectangles);
+        var result = rectangle.GetValueOrThrow().IsIntersectsOthersRectangles(rectangles);
         result.Should().BeFalse();
     }
 

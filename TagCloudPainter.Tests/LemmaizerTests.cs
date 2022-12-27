@@ -1,8 +1,8 @@
-using System;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloudPainter.Lemmaizers;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Tests;
 
@@ -18,14 +18,23 @@ public class Tests
         Lemmaizer = new Lemmaizer(path);
     }
 
+    [Test]
+    public void GetLemma_Should_Fail_On_MyStemPath()
+    {
+        var lemmaizer = new Lemmaizer(".");
+        var result = lemmaizer.GetLemma("Слово");
+
+        result.Should().BeEquivalentTo(Result.Fail<string>("mystem.exe not found at given path"));
+    }
+
     [TestCase(null, TestName = "{m}_null")]
     [TestCase(" ", TestName = "{m}_WhiteSpace")]
     [TestCase("", TestName = "{m}_EmptyString")]
     public void GetLemma_Should_Fail_On(string word)
     {
-        Action action = () => Lemmaizer.GetLemma(word);
+        var result = Lemmaizer.GetLemma(word);
 
-        action.Should().Throw<ArgumentNullException>();
+        result.Should().BeEquivalentTo(Result.Fail<string>("Word is white space or null"));
     }
 
     [TestCase(null, TestName = "{m}_null")]
@@ -33,9 +42,9 @@ public class Tests
     [TestCase("", TestName = "{m}_EmptyString")]
     public void GetMorph_Should_Fail_On(string word)
     {
-        Action action = () => Lemmaizer.GetMorph(word);
+        var result = Lemmaizer.GetMorph(word);
 
-        action.Should().Throw<ArgumentNullException>();
+        result.Should().BeEquivalentTo(Result.Fail<string>("Word is white space or null"));
     }
 
     [TestCase("красивый", ExpectedResult = "A", TestName = "{m}_A_On_Adjective")]
@@ -53,7 +62,7 @@ public class Tests
     [TestCase("поет", ExpectedResult = "V", TestName = "{m}_V_On_VERB")]
     public string GetMorph_Should_Return(string str)
     {
-        var word = Lemmaizer.GetMorph(str);
+        var word = Lemmaizer.GetMorph(str).GetValueOrThrow();
 
         return word;
     }
@@ -65,7 +74,7 @@ public class Tests
     [TestCase("такому", ExpectedResult = "такой", TestName = "{m}_Pronoun_Adjective")]
     public string GetLemma_Should_Return_NormalForm_On(string str)
     {
-        var word = Lemmaizer.GetLemma(str);
+        var word = Lemmaizer.GetLemma(str).GetValueOrThrow();
 
         return word;
     }

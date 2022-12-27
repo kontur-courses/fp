@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestFiles\Test.docx" />
+    <None Remove="TestFiles\Test.pdf" />
     <None Remove="TestFiles\Test.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="TestFiles\Test.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFiles\Test.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestFiles\Test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
@@ -7,6 +6,7 @@ using NUnit.Framework;
 using TagCloudPainter.Common;
 using TagCloudPainter.Lemmaizers;
 using TagCloudPainter.Preprocessors;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Tests;
 
@@ -18,9 +18,7 @@ public class WordPreprocessorTest
     [SetUp]
     public void Setup()
     {
-        var directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-        var path = Path.Combine(directoryInfo.Parent.Parent.Parent.Parent.FullName +
-                                @"\TagCloudPainter\Lemmaizers\mystem.exe");
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "Lemmaizers", "mystem.exe");
 
         var lemmaizer = new Lemmaizer(path);
         ParseSettings = new ParseSettings();
@@ -32,15 +30,15 @@ public class WordPreprocessorTest
     [Test]
     public void GetWordsCountDictionary_Should_Fail_On_null()
     {
-        Action action = () => WordPreprocessor.GetWordsCountDictionary(null);
-        action.Should().Throw<ArgumentNullException>();
+        var result = WordPreprocessor.GetWordsCountDictionary(null);
+        result.Should().BeEquivalentTo(Result.Fail<Dictionary<string, int>>("words is null or Empty"));
     }
 
     [Test]
     public void GetWordsCountDictionary_Should_Fail_On_EmptyIEnumerable()
     {
-        Action action = () => WordPreprocessor.GetWordsCountDictionary(new List<string>());
-        action.Should().Throw<ArgumentNullException>();
+        var result = WordPreprocessor.GetWordsCountDictionary(new List<string>());
+        result.Should().BeEquivalentTo(Result.Fail<Dictionary<string, int>>("words is null or Empty"));
     }
 
     [TestCase("но", TestName = "{m}_CONJ")]
@@ -53,7 +51,7 @@ public class WordPreprocessorTest
     public void GetWordsCountDictionary_Should_Skip(string word)
     {
         var words = new List<string> { word };
-        var result = WordPreprocessor.GetWordsCountDictionary(words);
+        var result = WordPreprocessor.GetWordsCountDictionary(words).GetValueOrThrow();
         result.Should().BeEmpty();
     }
 
@@ -64,7 +62,7 @@ public class WordPreprocessorTest
         ParseSettings.IgnoredWords.Add("слово2");
         ParseSettings.IgnoredWords.Add("слово3");
 
-        var result = WordPreprocessor.GetWordsCountDictionary(ParseSettings.IgnoredWords.ToList());
+        var result = WordPreprocessor.GetWordsCountDictionary(ParseSettings.IgnoredWords.ToList()).GetValueOrThrow();
 
         result.Should().BeEmpty();
     }
@@ -74,7 +72,7 @@ public class WordPreprocessorTest
     {
         var list = new List<string> { "Слово", "Идти" };
 
-        var result = WordPreprocessor.GetWordsCountDictionary(list);
+        var result = WordPreprocessor.GetWordsCountDictionary(list).GetValueOrThrow();
 
         result.Keys.ToList().Should().BeEquivalentTo(new List<string> { "слово", "идти" });
     }
@@ -84,7 +82,7 @@ public class WordPreprocessorTest
     {
         var list = new List<string> { "Слово", "Слово", "Слово" };
 
-        var result = WordPreprocessor.GetWordsCountDictionary(list);
+        var result = WordPreprocessor.GetWordsCountDictionary(list).GetValueOrThrow();
 
         result.Count.Should().Be(1);
     }

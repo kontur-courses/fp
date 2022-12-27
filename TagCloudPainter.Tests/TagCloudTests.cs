@@ -12,6 +12,7 @@ using TagCloudPainter.Layouters;
 using TagCloudPainter.Lemmaizers;
 using TagCloudPainter.Painters;
 using TagCloudPainter.Preprocessors;
+using TagCloudPainter.ResultOf;
 using TagCloudPainter.Savers;
 using TagCloudPainter.Sizers;
 
@@ -20,17 +21,18 @@ namespace TagCloudPainter.Tests;
 public class TagCloudTests
 {
     public TagCloudSaver Saver { get; set; }
+    public ImageSettings Settings { get; set; }
 
     [SetUp]
     public void SetUp()
     {
-        var settings = new ImageSettings
+        Settings = new ImageSettings
         {
             BackgroundColor = Color.Black,
             Font = new Font("Arial", 10, FontStyle.Bold, GraphicsUnit.Point),
             Size = new Size(500, 500)
         };
-        var imageProvider = new ImageSettingsProvider { ImageSettings = settings };
+        var imageProvider = new ImageSettingsProvider { ImageSettings = Settings };
         var parserProvider = new ParseSettingsProvider { ParseSettings = new ParseSettings() };
         var reader = new TxtReader();
         var lemmaizer = new Lemmaizer(myStamPath());
@@ -58,11 +60,21 @@ public class TagCloudTests
     {
         var input = "text.txt";
         var output = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "Output.png");
-        var save = () => Saver.SaveTagCloud(input, output, ImageFormat.Png);
+        var save = Saver.SaveTagCloud(input, output, ImageFormat.Png);
 
-        save.Should().Throw<FileNotFoundException>();
+        save.Should().BeEquivalentTo(Result.Fail<None>($"path {input} does not exist "));
     }
 
+    [Test]
+    public void TagCloud_Shouild_Fail_If_Rectangle_OutOfImageBounds()
+    {
+        Settings.Size = new Size(50, 50);
+        var input = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "Test.txt");
+        var output = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "Output.png");
+        var save = Saver.SaveTagCloud(input, output, ImageFormat.Png);
+
+        save.Should().BeEquivalentTo(Result.Fail<None>("the tag cloud did not fit on the image of the given size"));
+    }
 
     private string myStamPath()
     {

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TagCloudPainter.Builders;
 using TagCloudPainter.Common;
 using TagCloudPainter.Layouters;
+using TagCloudPainter.ResultOf;
 using TagCloudPainter.Sizers;
 
 namespace TagCloudPainter.Tests;
@@ -36,29 +37,32 @@ public class CloudElementBuilderTests
     [Test]
     public void GetTag_ShouldFail_On_Null_Dictionary()
     {
-        Action action = () => Builder.GetTags(null);
+        var tags = Builder.GetTags(null);
 
-        action.Should().Throw<ArgumentNullException>();
+        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("dict is null or empty"));
     }
 
     [Test]
     public void GetTag_ShouldFail_On_Empty_Dictionary()
     {
-        Action action = () => Builder.GetTags(new Dictionary<string, int>());
+        var tags = Builder.GetTags(new Dictionary<string, int>());
 
-        action.Should().Throw<ArgumentNullException>();
+        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("dict is null or empty"));
     }
 
-    [TestCase(null, 1, TestName = "{m}_null_word")]
     [TestCase("", 1, TestName = "{m}_EmptyWord")]
     [TestCase(" ", 1, TestName = "{m}_WhiteSpaceWord")]
     [TestCase("word", 0, TestName = "{m}_ZeroCount")]
     [TestCase("word", -1, TestName = "{m}_NegativeCount")]
     public void GetTag_ShouldFail_On_DictionaryWith(string word, int count)
     {
-        Action action = () => Builder.GetTags(new Dictionary<string, int>());
+        var dict = new Dictionary<string, int>
+        {
+            [word] = count
+        };
+        var tags = Builder.GetTags(dict);
 
-        action.Should().Throw<ArgumentNullException>();
+        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("word is empty or word count < 1"));
     }
 
     [Test]
@@ -73,12 +77,12 @@ public class CloudElementBuilderTests
         var tags = new List<Tag>();
         foreach (var (word, count) in words)
         {
-            var size = Sizer.GetTagSize(word, count);
-            var rectangle = Layouter.PutNextRectangle(size);
+            var size = Sizer.GetTagSize(word, count).GetValueOrThrow();
+            var rectangle = Layouter.PutNextRectangle(size).GetValueOrThrow();
             tags.Add(new Tag(word, rectangle, count));
         }
 
-        var result = Builder.GetTags(words).ToList();
+        var result = Builder.GetTags(words).GetValueOrThrow().ToList();
 
         result.Should().BeEquivalentTo(tags);
     }

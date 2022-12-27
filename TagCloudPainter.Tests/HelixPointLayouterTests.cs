@@ -4,26 +4,22 @@ using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using TagCloudPainter.Layouters;
+using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.Tests;
 
 public class HelixPointLayouterTests
 {
-    [TestCase(0, TestName = "{m}_ZeroRadiusStep")]
-    [TestCase(-1, TestName = "{m}_NegativeRadiusStep")]
-    public void Constructor_Should_Fail_On(double radiusStep)
+    [TestCase(0, Math.PI / 2, TestName = "{m}_ZeroRadiusStep")]
+    [TestCase(-1, Math.PI / 2, TestName = "{m}_NegativeRadiusStep")]
+    [TestCase(1, 0, TestName = "{m}_ZeroAngleStep")]
+    public void GetPoint_Should_Fail_On(double radiusStep, double angleStep)
     {
-        Action action = () => new HelixPointLayouter(new Point(0, 0), Math.PI / 2, radiusStep);
+        var pointLayouter = new HelixPointLayouter(new Point(0, 0), angleStep, radiusStep);
 
-        action.Should().Throw<ArgumentOutOfRangeException>();
-    }
+        var result = pointLayouter.GetPoint();
 
-    [Test]
-    public void Constructor_Should_Fail_On_ZeroAngleStep()
-    {
-        Action action = () => new HelixPointLayouter(new Point(0, 0), 0, 1);
-
-        action.Should().Throw<ArgumentOutOfRangeException>();
+        result.Should().BeEquivalentTo(Result.Fail<Point>("radius or angel < 0"));
     }
 
     [TestCase(0, 0, TestName = "{m}_On_ZeroCenter")]
@@ -32,7 +28,7 @@ public class HelixPointLayouterTests
     {
         var center = new Point(x, y);
         var helixPointLayouter = new HelixPointLayouter(center, 1, 1);
-        var point = helixPointLayouter.GetPoint();
+        var point = helixPointLayouter.GetPoint().GetValueOrThrow();
 
         point.Should().BeEquivalentTo(center);
     }
@@ -55,7 +51,7 @@ public class HelixPointLayouterTests
             var y = center.Y + (int)(radius * Math.Sin(angle));
             var point = new Point(x, y);
             pointsList.Add(point);
-            helixPointList.Add(helixPointLayouter.GetPoint());
+            helixPointList.Add(helixPointLayouter.GetPoint().GetValueOrThrow());
         }
 
         pointsList.Should().BeEquivalentTo(helixPointList);
