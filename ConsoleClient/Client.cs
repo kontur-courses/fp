@@ -42,7 +42,10 @@ public class Client
         if (toTagsResult.IsFailed) return Result.Fail(toTagsResult.Errors);
         var tags = toTagsResult.Value;
         
-        var drawableTags = creator.CreateTagCloud(tags);
+        var createCloudResult = creator.CreateTagCloud(tags);
+        if (createCloudResult.IsFailed) return Result.Fail("Occured internal error.");
+        var drawableTags = createCloudResult.Value;
+        
         var bitmap = drawer.Draw(drawableTags);
         bitmap.Save(resultFilepath);
         return Result.Ok().WithSuccess($"All Ok. Tag Cloud saved to '{Path.GetFullPath(resultFilepath)}'.");

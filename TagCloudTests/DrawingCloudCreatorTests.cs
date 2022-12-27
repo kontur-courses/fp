@@ -53,7 +53,7 @@ public class DrawingCloudCreatorTests
 
         var result = creator.CreateTagCloud(Array.Empty<ITag>());
 
-        result.Should().BeEmpty();
+        result.Value.Should().BeEmpty();
     }
 
     [Test]
@@ -65,20 +65,21 @@ public class DrawingCloudCreatorTests
 
         var result = creator.CreateTagCloud(new[] { TagsAndRectangles[0].Item1 });
 
-        result.Should().ContainSingle().Subject.FontSize.Should().Be(drawer.MaxFontSize);
+        result.Value.Should().ContainSingle().Subject.FontSize.Should().Be(drawer.MaxFontSize);
     }
 
     [TestCase(0, TestName = "{m}ZeroWeight")]
     [TestCase(-1, TestName = "{m}NegativeWeight")]
-    public void CreateTagCloud_ThrowArgumentException_OnTagWithInvalidWeight(int weight)
+    public void CreateTagCloud_ReturnCorrectFail_OnTagWith(int weight)
     {
         var creator = creators[TestContext.CurrentContext.Test.ID];
         var tags = new[] { new Tag("word", 1), new Tag("word", weight) };
 
-        var act = () => creator.CreateTagCloud(tags);
+        var fail = creator.CreateTagCloud(tags);
 
-        act.Should().Throw<ArgumentException>()
-            .WithMessage($"Weight of Tag should be greater than 0, but {weight}");
+        fail.IsFailed.Should().BeTrue();
+        fail.Errors.Should().ContainSingle()
+            .Subject.Message.Should().Be($"Weight of Tag should be greater than 0, but {weight}");
     }
 
     [Test]
@@ -93,7 +94,7 @@ public class DrawingCloudCreatorTests
         putNextRectangleCall.Invokes((Size s) => sizes.Add(s));
         var tags = new Tag[] { new("word", 10), new("word", 1) };
 
-        var drawableTags = creator.CreateTagCloud(tags).ToArray();
+        var drawableTags = creator.CreateTagCloud(tags).Value.ToArray();
 
         putNextRectangleCall.MustHaveHappened(2, Times.Exactly);
         sizes[0].Area().Should().BeGreaterThan(sizes[1].Area());
@@ -108,7 +109,7 @@ public class DrawingCloudCreatorTests
         var creator = creators[testId];
         var tags = new Tag[] { new("word", 10), new("word", 6), new("word", 2) };
 
-        var drawableTags = creator.CreateTagCloud(tags).ToArray();
+        var drawableTags = creator.CreateTagCloud(tags).Value.ToArray();
 
         drawableTags.Should().HaveCount(3);
         drawableTags[1].FontSize.Should().Be((drawableTags[0].FontSize + drawableTags[2].FontSize) / 2);
@@ -121,7 +122,7 @@ public class DrawingCloudCreatorTests
         var creator = creators[testId];
         var tags = TagsAndRectangles.Select(tr => tr.Item1);
 
-        var drawableTags = creator.CreateTagCloud(tags).ToArray();
+        var drawableTags = creator.CreateTagCloud(tags).Value.ToArray();
 
         drawableTags.Should().HaveCount(4);
         drawableTags[1].FontSize.Should().Be((drawableTags[0].FontSize + drawableTags[2].FontSize) / 2);
@@ -140,7 +141,7 @@ public class DrawingCloudCreatorTests
         putNextRectangleCall.Invokes((Size s) => sizes.Add(s));
         var tags = TagsAndRectangles.Select(tr => tr.Item1);
 
-        var drawableTags = creator.CreateTagCloud(tags).ToArray();
+        var drawableTags = creator.CreateTagCloud(tags).Value.ToArray();
 
         putNextRectangleCall.MustHaveHappened(4, Times.Exactly);
         drawableTags.Should().HaveCount(4);
@@ -157,7 +158,7 @@ public class DrawingCloudCreatorTests
         var tags = TagsAndRectangles.Select(tr => tr.Item1);
         var locations = TagsAndRectangles.Select(tr => tr.Item2);
 
-        var drawableTags = creator.CreateTagCloud(tags).ToArray();
+        var drawableTags = creator.CreateTagCloud(tags).Value.ToArray();
 
         var putNextRectangleCall =
             A.CallTo(() => layouter.PutNextRectangle(A<Size>.Ignored));

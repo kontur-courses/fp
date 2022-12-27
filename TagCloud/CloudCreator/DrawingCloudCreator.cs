@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using FluentResults;
 using TagCloud.Abstractions;
 
 namespace TagCloud;
@@ -14,7 +15,7 @@ public class DrawingCloudCreator : ICloudCreator
         this.drawer = drawer;
     }
 
-    public IEnumerable<IDrawableTag> CreateTagCloud(IEnumerable<ITag> tags)
+    public Result<IEnumerable<IDrawableTag>> CreateTagCloud(IEnumerable<ITag> tags)
     {
         var tagsArray = tags.ToArray();
 
@@ -31,14 +32,15 @@ public class DrawingCloudCreator : ICloudCreator
         var minCount = tagsArray.Min(t => t.Weight);
 
         if (minCount <= 0)
-            throw new ArgumentException($"Weight of Tag should be greater than 0, but {minCount}");
+            return Result.Fail($"Weight of Tag should be greater than 0, but {minCount}");
 
         var drawableTags = tagsArray.Select(t =>
         {
             var fontsize = GetFontSize(t.Weight, minCount, maxCount);
             return new DrawableTag(t, fontsize, GetPoint(t.Text, fontsize));
         });
-        return drawableTags;
+        
+        return drawableTags.ToList();
     }
 
     private Point GetPoint(string word, int fontsize)
