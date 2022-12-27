@@ -14,10 +14,4 @@
         <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="..\HomeExercise.md">
-            <Link>HomeExercise.md</Link>
-        </Content>
-    </ItemGroup>
-
 </Project>
