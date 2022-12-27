@@ -1,8 +1,9 @@
 using System.Drawing;
 using FluentAssertions;
 using TagCloud.FigurePatterns.Implementation;
+using TagsCloud.Tests;
 
-namespace TagsCloud.Tests
+namespace TagCloud.Should
 {
     [TestFixture]
     public class SpiralPatternShould
@@ -22,30 +23,6 @@ namespace TagsCloud.Tests
             // ReSharper disable once ObjectCreationAsStatement
             var createSpiralPattern = (Action) (() => new SpiralPatterPointProvider(Point.Empty, steps));
             createSpiralPattern.Should().Throw<ArgumentException>();
-        }
-
-        [TestCaseSource(typeof(TestData), nameof(TestData.IncorrectStepCount))]
-        [Parallelizable(scope: ParallelScope.All)] 
-        public void StepSetter_SetIncorrectStep_ArgumentException(int steps)
-        {
-            var setStep = (Action) (() => spiralPatterPointProvider.Step = steps);
-            setStep.Should().Throw<ArgumentException>();
-        }
-        
-        [TestCaseSource(typeof(TestData), nameof(TestData.CorrectStepCount))]
-        [Parallelizable(scope: ParallelScope.None)] 
-        public void Ctor_CorrectStep_EqualSteps(int steps)
-        {
-            var spiralInstance = new SpiralPatterPointProvider(Point.Empty, steps);
-            spiralInstance.Step.Should().Be(steps);
-        }
-
-        [TestCaseSource(typeof(TestData), nameof(TestData.CorrectStepCount))]
-        [Parallelizable(scope: ParallelScope.None)] 
-        public void StepGetter_CorrectStep_EqualSteps(int steps)
-        {
-            spiralPatterPointProvider.Step = steps;
-            spiralPatterPointProvider.Step.Should().Be(steps);
         }
     }
 }

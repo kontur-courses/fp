@@ -4,26 +4,15 @@ namespace TagCloud.FigurePatterns.Implementation
 {
     public class SpiralPatterPointProvider : IFigurePatternPointProvider
     {
-        public double Step
-        {
-            get => step;
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentException("Most to be greater then zero", nameof(Step));
-                step = value;
-            }
-        }
-
-        private double step;
-        private Point center;
+        private readonly double step;
+        private readonly Point center;
         private double angle;
         private readonly IEnumerator<Point> enumerator;
 
         public SpiralPatterPointProvider(Point center, double step)
         {
             this.center = center;
-            Step = step;
+            this.step = step;
             angle = 0;
             enumerator = Order().GetEnumerator();
         }
