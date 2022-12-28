@@ -15,6 +15,7 @@ namespace TagsCloudContainer.Core.TagsClouds
             _wordsAnalyzer = wordsAnalyzer;
             _rectangleLayout = rectangleLayout;
         }
+
         public Result<None> CreateTagCloud() =>
             _wordsAnalyzer.AnalyzeWords()
                 .Then(_rectangleLayout.PlaceWords)

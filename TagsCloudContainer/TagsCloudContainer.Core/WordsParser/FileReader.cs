@@ -18,6 +18,7 @@ namespace TagsCloudContainer.Core.WordsParser
         }
 
         private Result<IEnumerable<string>> ReadWordsFromFile() => CheckFileExisting().Then(_ => _fileExtensionReader?.ReadWords())!;
+
         private Result<ReadWordsMethod> GetReadFileMethod(string extension)
         {
             _fileExtensionReader = extension switch

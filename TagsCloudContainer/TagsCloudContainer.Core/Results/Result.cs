@@ -7,6 +7,7 @@
             Error = error;
             Value = value;
         }
+
         public static implicit operator Result<T>(T v)
         {
             return Result.Ok(v);
@@ -33,6 +34,7 @@
         {
             return new Result<T>(null, value);
         }
+
         public static Result<None> Ok()
         {
             return Ok<None>(null);

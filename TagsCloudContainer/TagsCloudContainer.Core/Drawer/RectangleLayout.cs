@@ -33,6 +33,7 @@ namespace TagsCloudContainer.Core.Drawer
                 .Then(PlaceTags)
                 .Then(TagsInsideImage)
                 .Then(tags => _drawer.AddTags(tags));
+
         private IEnumerable<Tag> MakeTags(Dictionary<string, int> words)
         {
             var tags = new List<Tag>();
