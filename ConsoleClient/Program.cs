@@ -7,17 +7,18 @@ using TagCloud;
 using TagCloud.Abstractions;
 
 Parser.Default.ParseArguments<Options>(args)
-    .WithParsed(o =>
+    .WithParsed(options =>
     {
-        var result = DrawerSettings.Create(new Size(o.ImageWidth, o.ImageHeight),
-            o.MinFontSize, o.MaxFontSize,
-            o.TextColorName,
-            o.BackgroundColorName,
-            o.FontFamilyName);
-        if (!result.IsFailed)
+        var result = DrawerSettings.Create(new Size(options.ImageWidth, options.ImageHeight),
+            options.MinFontSize, options.MaxFontSize,
+            options.TextColorName,
+            options.BackgroundColorName,
+            options.FontFamilyName);
+        if (result.IsSuccess)
         {
-            var client = ConfigureContainer(o, result.Value).Resolve<Client>();
-            result = client.Execute(o.Result);
+            var settings = result.Value;
+            var client = ConfigureContainer(options, settings).Resolve<Client>();
+            result = client.Execute(options.Result);
         }
 
         PrintResult(result);
