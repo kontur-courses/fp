@@ -30,7 +30,7 @@ public class CircularCloudLayouterTests
 
         var result = circularCloudLayouter.PutNextRectangle(size);
 
-        result.Should().BeEquivalentTo(Result.Fail<Rectangle>("incorrect rectangle size"));
+        result.Should().BeEquivalentTo(Result.Fail<Rectangle>("The height or width of the rectangle cannot be zero"));
     }
 
     [Test]

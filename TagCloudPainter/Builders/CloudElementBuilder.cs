@@ -19,7 +19,7 @@ public class CloudElementBuilder : ITagCloudElementsBuilder
     public Result<IEnumerable<Tag>> GetTags(Dictionary<string, int> dict)
     {
         if (dict is null || dict.Count == 0)
-            return Result.Fail<IEnumerable<Tag>>("dict is null or empty");
+            return Result.Fail<IEnumerable<Tag>>("builder didn't get words after preprocessing");
 
         var result = new List<Tag>();
         foreach (var (word, count) in dict)

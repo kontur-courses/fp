@@ -73,7 +73,7 @@ public class TagCloudTests
         var output = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "Output.png");
         var save = Saver.SaveTagCloud(input, output, ImageFormat.Png);
 
-        save.Should().BeEquivalentTo(Result.Fail<None>("the tag cloud did not fit on the image of the given size"));
+        save.Should().BeEquivalentTo(Result.Fail<None>("The tag cloud did not fit on the image of the given size"));
     }
 
     private string myStamPath()

@@ -23,10 +23,10 @@ public class CloudPainter : ICloudPainter
             return Result.Fail<Bitmap>("ImageSettings not setted");
 
         if (ImageSettings.Size.Width <= 0 || ImageSettings.Size.Height <= 0)
-            return Result.Fail<Bitmap>("size is negative or zero");
+            return Result.Fail<Bitmap>("Image settings size is negative or zero");
 
         if (tags.Any(p => IsRectangleOutsideOfBorders(p.Rectangle)))
-            return Result.Fail<Bitmap>("the tag cloud did not fit on the image of the given size");
+            return Result.Fail<Bitmap>("The tag cloud did not fit on the image of the given size");
 
         var btm = new Bitmap(ImageSettings.Size.Width, ImageSettings.Size.Height);
         var g = Graphics.FromImage(btm);

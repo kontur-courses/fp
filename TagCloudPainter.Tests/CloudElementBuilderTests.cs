@@ -39,7 +39,7 @@ public class CloudElementBuilderTests
     {
         var tags = Builder.GetTags(null);
 
-        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("dict is null or empty"));
+        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("builder didn't get words after preprocessing"));
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class CloudElementBuilderTests
     {
         var tags = Builder.GetTags(new Dictionary<string, int>());
 
-        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("dict is null or empty"));
+        tags.Should().BeEquivalentTo(Result.Fail<IEnumerable<Tag>>("builder didn't get words after preprocessing"));
     }
 
     [TestCase("", 1, TestName = "{m}_EmptyWord")]

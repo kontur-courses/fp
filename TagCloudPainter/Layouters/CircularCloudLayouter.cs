@@ -22,7 +22,7 @@ public class CircularCloudLayouter : ICloudLayouter
     public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width == 0 || rectangleSize.Height == 0)
-            return Result.Fail<Rectangle>("incorrect rectangle size");
+            return Result.Fail<Rectangle>("The height or width of the rectangle cannot be zero");
 
         var location = helixPointLayouter.GetPoint();
 
