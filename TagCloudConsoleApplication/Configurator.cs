@@ -110,6 +110,6 @@ public class Configurator
     private static string GetInputFormat(string input)
     {
         var index = input.LastIndexOf('.');
-        return input.Substring(index + 1);
+        return input[(index + 1)..];
     }
 }
