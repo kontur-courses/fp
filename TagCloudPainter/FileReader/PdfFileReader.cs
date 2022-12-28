@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using TagCloudPainter.Extensions;
 using TagCloudPainter.ResultOf;
 
 namespace TagCloudPainter.FileReader;
@@ -9,12 +10,11 @@ public class PdfFileReader : IFileReader
 {
     public Result<IEnumerable<string>> ReadFile(string path)
     {
-        if (!path.EndsWith("pdf"))
-            return Result.Fail<IEnumerable<string>>("file is not in pdf format");
+        return path.ValidatePath("pdf").Then(GetStrings);
+    }
 
-        if (!File.Exists(path))
-            return Result.Fail<IEnumerable<string>>($"path {path} does not exist ");
-
+    private Result<IEnumerable<string>> GetStrings(string path)
+    {
         using (var reader = new PdfReader(path))
         {
             var sb = new StringBuilder();
