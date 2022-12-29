@@ -11,7 +11,7 @@ public class ArchimedeanSpiralTests
 	[SetUp]
 	public void SetUp()
 	{
-		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), 1, 1);
+		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), 1, 1).GetValueOrThrow();
 	}
 
 	private ArchimedeanSpiral spiral;
@@ -47,7 +47,7 @@ public class ArchimedeanSpiralTests
 	[TestCase(-123, TestName = "Negative step")]
 	public void GetNextPoint_LengthBetweenPointsOnSameLine_ShouldBeEqualsSpiralStep(int spiralStep)
 	{
-		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), spiralStep, 360);
+		spiral = ArchimedeanSpiral.GetSpiral(new Point(0, 0), spiralStep, 360).GetValueOrThrow();
 
 		var p1 = spiral.GetNextPoint();
 		var p2 = spiral.GetNextPoint();

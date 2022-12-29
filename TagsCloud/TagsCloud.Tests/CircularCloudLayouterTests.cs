@@ -63,7 +63,7 @@ public class CircularCloudLayouterTests
 	public void PutNextRectangle_FirstRectangle_ShouldBeInCenter(int width, int height)
 	{
 		var rectangleSize = new Size(width, height);
-		var actual = (Rectangle)layouter.PutNextRectangle(rectangleSize);
+		var actual = layouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
 		placedRectangles.Add(actual);
 		var expected = RectangleCreator.GetRectangle(Point.Empty, rectangleSize);
 
@@ -88,7 +88,7 @@ public class CircularCloudLayouterTests
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_ShouldNotContainIntersection(List<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size).GetValueOrThrow()).ToList();
 
 		var intersectionsCount = placedRectangles
 			.Select((rectangle, i) =>
@@ -104,7 +104,7 @@ public class CircularCloudLayouterTests
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_CloudShouldBeDense(IEnumerable<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size).GetValueOrThrow()).ToList();
 
 		var occupiedSpace = GetOccupiedSpace(placedRectangles);
 
@@ -120,7 +120,7 @@ public class CircularCloudLayouterTests
 	[TestCaseSource(nameof(RandomRectangleSizesSource))]
 	public void PutNextRectangle_CloudShouldBeLikeACircle(IEnumerable<Size> sizes)
 	{
-		placedRectangles = sizes.Select(size => (Rectangle)layouter.PutNextRectangle(size)).ToList();
+		placedRectangles = sizes.Select(size => layouter.PutNextRectangle(size).GetValueOrThrow()).ToList();
 
 		var occupiedSpace = GetOccupiedSpace(placedRectangles);
 
