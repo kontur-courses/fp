@@ -6,12 +6,11 @@ public record Result<T>(T Value, string? ErrorMessage = null)
 
 	public bool IsSuccess => ErrorMessage is null;
 
-	public static implicit operator T(Result<T> result)
+	public T GetValueOrThrow()
 	{
-		if (result.IsFail)
-			throw new ArgumentException("Trying cast Error result to value");
+		if (IsSuccess) return Value;
 
-		return result.Value;
+		throw new InvalidOperationException($"No value. Only Error {ErrorMessage}");
 	}
 
 	public static implicit operator Result<T>(T value) => new(value);
