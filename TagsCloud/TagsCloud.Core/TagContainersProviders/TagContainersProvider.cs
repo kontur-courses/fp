@@ -40,8 +40,6 @@ public class TagContainersProvider : ITagContainersProvider
 		return layouter
 			.PutNextRectangle(size)
 			.Then(rectangle => new TagContainer(tag, rectangle, fontSize));
-
-		return new TagContainer(tag, layouter.PutNextRectangle(size), fontSize);
 	}
 
 	private Size GetContainerSize(Tag tag, Font font)
