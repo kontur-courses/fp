@@ -24,7 +24,7 @@ public class TagImage : IDrawImage
     public Result<None> Draw(Graphics graphics)
     {
         using var brush = new SolidBrush(colorGenerator.Generate());
-        return brush.AsResult()
+        return Result.Ok()
             .Then(fontSettingsProvider.GetSettings)
             .Then(settings => new Font(settings.Family, settings.Size))
             .Then(font => DrawText(graphics, font, brush));
