@@ -5,22 +5,24 @@ using TagsCloudVisualization.CLI;
 using TagsCloudVisualization.CLI.Extensions;
 
 var result = Parser.Default.ParseArguments<Options>(args);
-
-var directoryPath = Path.GetFullPath(result.Value.OutputDirectory?? Options.DefaultOutputDirectory);
-if (!Directory.Exists(directoryPath))
+if (!result.Errors.Any())
 {
-    Directory.CreateDirectory(directoryPath);
+    var directoryPath = Path.GetFullPath(result.Value.OutputDirectory ?? Options.DefaultOutputDirectory);
+    if (!Directory.Exists(directoryPath))
+    {
+        Directory.CreateDirectory(directoryPath);
+    }
+
+    var services = new ServiceCollection();
+    var filepath = Path.Combine(directoryPath, CreateFileName());
+
+    result.Value.GetVisualizationSettings()
+        .Then(settings => services.AddTagCloudVisualization(settings))
+        .Then(s => s.BuildServiceProvider().GetRequiredService<Visualizer>())
+        .Then(visualizer => visualizer.Visualize(filepath, result.Value.TagCount))
+        .OnSuccess(() => Console.WriteLine("Tags cloud generated"))
+        .OnFail(Console.WriteLine);
 }
-
-var services = new ServiceCollection();
-var filepath = Path.Combine(directoryPath, CreateFileName());
-
-result.Value.GetVisualizationSettings()
-    .Then(settings => services.AddTagCloudVisualization(settings))
-    .Then(s => s.BuildServiceProvider().GetRequiredService<Visualizer>())
-    .Then(visualizer => visualizer.Visualize(filepath, result.Value.TagCount))
-    .OnSuccess(() => Console.WriteLine("Tags cloud generated"))
-    .OnFail(Console.WriteLine);
 
 string CreateFileName()
 {
