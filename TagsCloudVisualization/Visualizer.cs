@@ -34,7 +34,7 @@ public class Visualizer
             .Then(textProvider.GetText)
             .Then(preprocessor.Process)
             .Then(tagConverter.Convert)
-            .Then(tags => tags.Take(tagCount).Select(x => tagFactory.Create(x).Then(Result.Ok<IDrawImage>)).ToArray())
-            .Then(tags => drawer.Draw(tags.Select(r => r.Value).ToArray(), path));
+            .Then(tags => tags.Take(tagCount).Select(x => tagFactory.Create(x).Value).ToArray())
+            .Then(tags => drawer.Draw(tags, path));
     }
 }
