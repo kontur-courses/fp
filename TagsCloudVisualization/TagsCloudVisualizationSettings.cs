@@ -3,26 +3,30 @@ using TagsCloudVisualization.ColorGenerator;
 using TagsCloudVisualization.FontSettings;
 using TagsCloudVisualization.ImageSavers;
 using TagsCloudVisualization.ImageSettings;
+using TagsCloudVisualization.TextProviders;
 
 namespace TagsCloudVisualization;
 
 public class TagsCloudVisualizationSettings
 {
-    public string Filepath { get; set; }
-    
-    public string OutputDirectory { get; set; }
+    public string Filepath { get; set; } = string.Empty;
+    public string OutputDirectory { get; set; } = string.Empty;
 
-    public IImageSettingsProvider ImageSettingsProvider { get; set; }
+    public int Height { get; set; }
 
-    public IFontSettingsProvider FontSettingsProvider { get; set; }
+    public int Width { get; set; }
 
-    public ICloudLayouter CloudLayouter { get; set; }
+    public string BackgroundColor { get; set; } = string.Empty;
 
-    public IColorGenerator ColorGenerator { get; set; }
+    public string FontFamily { get; set; } = string.Empty;
 
-    public AbstractImageSaver ImageSaver { get; set; }
-    
+    public int FontSize { get; set; }
+
+    public string LayoterAlgorithm { get; set; } = string.Empty;
+
+    public string ColorAlgorithm { get; set; } = string.Empty;
+
+    public string ImageFileExtension { get; set; } = string.Empty;
     public IReadOnlyCollection<string> BoringWords { get; set; } = Array.Empty<string>();
-    
     public int TagCount { get; set; }
 }
