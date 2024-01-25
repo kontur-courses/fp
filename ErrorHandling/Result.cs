@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 
 namespace ResultOfTask
 {
@@ -58,21 +59,29 @@ namespace ResultOfTask
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
-            throw new NotImplementedException();
+            return input.Then(n => Of(()=> continuation(n)));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
         {
-            throw new NotImplementedException();
+            if (input.IsSuccess)
+            {
+                return continuation(input.Value);
+            }
+
+            return Fail<TOutput>(input.Error);
         }
 
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
         {
-            throw new NotImplementedException();
+            if (!input.IsSuccess)
+                handleError(input.Error);
+
+            return input;
         }
     }
 }
