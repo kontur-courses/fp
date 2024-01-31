@@ -18,8 +18,8 @@ public class CLITests
     {
         var action = () => ApplicationArguments.Setup([
             """
-            -i="/Users/draginsky/Rider/di/TagsCloudContainer/src/words.txt"
-            -o="/Users/draginsky/Rider/di/TagsCloudContainer/out/res"
+            -i="/Users/draginsky/Rider/fp/TagsCloudResult/src/words.txt"
+            -o="/Users/draginsky/Rider/fp/TagsCloudResult/out/res"
             """
         ]);
         action.Should().Throw<ArgumentNullException>();

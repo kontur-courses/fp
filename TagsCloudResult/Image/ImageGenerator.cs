@@ -1,3 +1,4 @@
+using ResultSharp;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -8,6 +9,7 @@ using TagsCloudResult.UI;
 using Color = SixLabors.ImageSharp.Color;
 using PointF = SixLabors.ImageSharp.PointF;
 using Rectangle = System.Drawing.Rectangle;
+using Size = System.Drawing.Size;
 
 namespace TagsCloudResult.Image;
 
@@ -16,7 +18,7 @@ public class ImageGenerator : IDisposable
     private readonly Image<Rgba32> image;
     private readonly string outputPath;
     private readonly int fontSize;
-    private readonly FontFamily family;
+    private readonly Result<FontFamily, Exception> fontResult;
     private readonly ImageEncoder encoder;
     private readonly Color scheme;
 
@@ -42,7 +44,8 @@ public class ImageGenerator : IDisposable
             (byte)args.Scheme[3]
         );
         fontSize = args.FontSize;
-        family = new FontCollection().Add(args.FontPath);
+        fontResult = Result.Try(() => new FontCollection().Add(args.FontPath))
+            .Or(Result<FontFamily, Exception>.Err(new Exception($"Font {args.FontPath} doesn't exist")));
 
         SetBackground(Color.FromRgb(
             (byte)args.Background[0],
@@ -53,7 +56,7 @@ public class ImageGenerator : IDisposable
 
     private Font FontCreator(int size)
     {
-        return family.CreateFont(size, FontStyle.Italic);
+        return fontResult.Unwrap().CreateFont(size, FontStyle.Italic);
     }
 
     private void SetBackground(Color color)
@@ -86,12 +89,13 @@ public class ImageGenerator : IDisposable
         image.Save(outputPath, encoder);
     }
 
-    public System.Drawing.Size GetOuterRectangle(string word, int frequency)
+    public Result<Size> GetOuterRectangle(string word, int frequency)
     {
+        if (fontResult.IsErr) return Result<Size>.Err(fontResult.UnwrapErr().Message);
         var textOption = new TextOptions(FontCreator(fontSize + frequency));
         var size = TextMeasurer.MeasureSize(word, textOption);
 
-        return new System.Drawing.Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3);
+        return Result<Size>.Ok(new Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3));
     }
 
     public void Dispose()

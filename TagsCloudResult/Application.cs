@@ -13,13 +13,31 @@ public class Application(
 {
     public void Run(ApplicationArguments args)
     {
-        var text = textHandler.ReadText(args.Input);
-        var freqDict = wordDataSet.CreateFrequencyDict(text);
+        var textResult = textHandler.ReadText(args.Input);
+        if (textResult.IsErr)
+        {
+            Console.WriteLine(textResult.UnwrapErr());
+            return;
+        }
+        
+        var boringResult = textHandler.ReadText(args.Exclude);
+        if (boringResult.IsErr)
+        {
+            Console.WriteLine(boringResult.UnwrapErr());
+            return;
+        }
+        
+        var freqDict = wordDataSet.CreateFrequencyDict(textResult.Unwrap());
         freqDict = wordHandler.Preprocessing(
-            freqDict, textHandler.ReadText(args.Exclude), w => w.Length > 3
+            freqDict, boringResult.Unwrap(), w => w.Length > 3
         );
 
-        visualizer.GenerateTagCloud(freqDict);
+        var visualizeResult = visualizer.GenerateTagCloud(freqDict);
+        if (visualizeResult.IsErr)
+        {
+            Console.WriteLine(visualizeResult.UnwrapErr());
+            return;
+        }
         ui.View(args.Output  + "." + args.Format);
     }
 }

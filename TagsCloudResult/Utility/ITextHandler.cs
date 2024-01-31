@@ -1,6 +1,8 @@
+using ResultSharp;
+
 namespace TagsCloudResult.Utility;
 
 public interface ITextHandler
 {
-    string ReadText(string filePath);
+    Result<string> ReadText(string filePath);
 }

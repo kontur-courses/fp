@@ -9,15 +9,17 @@ namespace TagsCloudResult;
 public static class Program
 {
     /*
-    -i="/Users/draginsky/Rider/di/TagsCloudContainer/src/words.txt"
-    -o="/Users/draginsky/Rider/di/TagsCloudContainer/out/res"
-    --fontpath="/Users/draginsky/Rider/di/TagsCloudContainer/src/JosefinSans-Regular.ttf"
+    -i="/Users/draginsky/Rider/fp/TagsCloudResult/src/words.txt"
+    -o="/Users/draginsky/Rider/fp/TagsCloudResult/out/res"
+    --fontpath="/Users/draginsky/Rider/fp/TagsCloudResult/src/JosefinSans-Regular.ttf"
      */
     public static void Main(string[] args)
     {
         using var container = ContainerInit(args);
-        
-        container.GetService<Application>()!.Run(container.GetService<ApplicationArguments>()!);
+
+        var app = container.GetService<Application>()!;
+
+        app.Run(container.GetService<ApplicationArguments>()!);
     }
 
     private static ServiceProvider ContainerInit(string[] args)
@@ -27,7 +29,7 @@ public static class Program
         services.AddSingleton<IUI, CLI>();
         
         services.AddSingleton(ApplicationArguments.Setup(args));
-
+        
         services.AddTransient<ICircularCloudLayouter, CircularCloudLayouter>();
         services.AddTransient<ImageGenerator>();
         services.AddTransient<TagCloudVisualizer>();

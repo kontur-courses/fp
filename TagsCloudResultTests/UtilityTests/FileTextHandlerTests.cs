@@ -21,10 +21,29 @@ public class FileTextHandlerTests
     [TestCase("src/boringWords.txt", "One, Two, Three, Two, Three, Three", TestName = "InTxtFormat")]
     public void ReadText_Should_CorrectReadAllText_(string input, string expected)
     {
-        var actual = new FileTextHandler().ReadText(Utility.GetAbsoluteFilePath(input));
+        var actual = new FileTextHandler().ReadText(Utility.GetAbsoluteFilePath(input)).Unwrap();
         
-        Console.WriteLine(actual);
-
         actual.Should().BeEquivalentTo(expected);
+    }
+    
+    [Test]
+    public void ReadText_Should_ReturnFailOnWrongFilepath()
+    {
+        var actual = new FileTextHandler().ReadText(Utility.GetAbsoluteFilePath("wrong"));
+        
+        actual.IsErr.Should().BeTrue();
+    }
+    
+    [Test]
+    public void ReadText_Should_ReturnFailOnInaccessibleFile()
+    {
+        var path = Utility.GetAbsoluteFilePath("words.txt");
+        var handle = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        
+        var actual = new FileTextHandler().ReadText(path);
+        
+        actual.IsErr.Should().BeTrue();
+        
+        handle.Close();
     }
 }

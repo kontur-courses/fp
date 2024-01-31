@@ -7,17 +7,35 @@ namespace TagsCloudResultTests.UtilityTests;
 public class WordHandlerTests
 {
     [Test]
+    public void PreprocessingExcludeRule_Should_Lowercase()
+    {
+        var before = new List<(string word, int count)>
+        {
+            ("woRD", 3)
+        };
+
+        var actual = new WordHandler().Preprocessing(before);
+        
+        var expected = new List<(string word, int count)>
+        {
+            ("word", 3)
+        };
+
+        actual.Should().BeEquivalentTo(expected);
+    }
+    
+    [Test]
     public void PreprocessingExcludeRule_Should_ExcludeShortWords()
     {
         var before = new List<(string word, int count)>
-            {
-                ("run", 3),
-                ("table", 1),
-                ("chair", 10),
-                ("of", 2),
-                ("a", 220),
-                ("second", 2)
-            };
+        {
+            ("run", 3),
+            ("table", 1),
+            ("chair", 10),
+            ("of", 2),
+            ("a", 220),
+            ("second", 2)
+        };
 
         var actual = new WordHandler().Preprocessing(before, excludeRule: w => w.Length > 2);
         
@@ -46,10 +64,12 @@ public class WordHandlerTests
         };
 
         var actual = new WordHandler().Preprocessing(before, 
-            new FileTextHandler().ReadText(Utility.GetAbsoluteFilePath("src/boringWords.txt")));
+            new FileTextHandler().ReadText(Utility.GetAbsoluteFilePath("src/boringWords.txt")).Unwrap());
         
         var expected = new List<(string word, int count)>
         {
+            ("the", 3),
+            ("of", 2),
             ("a", 220),
             ("second", 2)
         };
