@@ -7,7 +7,7 @@ using TagsCloudResult.TagCloud;
 using TagsCloudResult.UI;
 using TagsCloudResult.Utility;
 
-namespace TagsCloudResultTests;
+namespace TagsCloudResultTests.TagCloudTests;
 
 [TestFixture]
 public class CircularCloudLayouterTests

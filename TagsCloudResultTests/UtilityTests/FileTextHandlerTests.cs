@@ -37,7 +37,7 @@ public class FileTextHandlerTests
     [Test]
     public void ReadText_Should_ReturnFailOnInaccessibleFile()
     {
-        var path = Utility.GetAbsoluteFilePath("words.txt");
+        var path = Utility.GetAbsoluteFilePath("src/words.txt");
         var handle = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         
         var actual = new FileTextHandler().ReadText(path);

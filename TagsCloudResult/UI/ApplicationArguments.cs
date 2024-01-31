@@ -1,4 +1,6 @@
 using Fclp;
+using ResultSharp;
+using static TagsCloudResult.Utility.Utility;
 
 namespace TagsCloudResult.UI;
 
@@ -13,9 +15,9 @@ public class ApplicationArguments
     public List<int> Center { get; set; } = [960, 540];
     public List<int> Background { get; set; } = [255, 255, 255];
     public List<int> Scheme { get; set; } = [0, 0, 0, 255];
-    public string Exclude { get; set; } = Utility.Utility.GetAbsoluteFilePath("src/boringWords.txt");
-    
-    public static ApplicationArguments Setup(string[] args)
+    public string Exclude { get; set; } = GetAbsoluteFilePath("src/boringWords.txt");
+
+    public static Result<ApplicationArguments> Setup(string[] args)
     {
         var p = new FluentCommandLineParser<ApplicationArguments>();
 
@@ -66,17 +68,16 @@ public class ApplicationArguments
 
         p.Setup(arg => arg.Exclude)
             .As('e', "exclude")
-            .SetDefault(Utility.Utility.GetAbsoluteFilePath("src/boringWords.txt"))
+            .SetDefault(GetAbsoluteFilePath("src/boringWords.txt"))
             .WithDescription("Exclude words path");
 
         p.SetupHelp("?", "help")
             .Callback(text => Console.WriteLine(text));
 
-        var result = p.Parse(args);
+        var parsed = p.Parse(args);
 
-        if (result.HelpCalled) Environment.Exit(0);
-        if (result.HasErrors) throw new ArgumentNullException();
-
-        return p.Object;
+        return parsed.HelpCalled ? Result<ApplicationArguments>.Err("Help command called") :
+            parsed.HasErrors ? Result<ApplicationArguments>.Err("Wrong command line arguments, retry again") :
+            Result.Ok(p.Object);
     }
 }

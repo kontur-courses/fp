@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ResultSharp;
 using TagsCloudResult.Image;
 using TagsCloudResult.TagCloud;
 using TagsCloudResult.UI;
@@ -15,20 +16,29 @@ public static class Program
      */
     public static void Main(string[] args)
     {
-        using var container = ContainerInit(args);
+        var containerResult = ContainerInit(args);
+        if (containerResult.IsErr)
+        {
+            Console.WriteLine(containerResult.UnwrapErr());
+            return;
+        }
+
+        using var container = containerResult.Unwrap();
 
         var app = container.GetService<Application>()!;
 
         app.Run(container.GetService<ApplicationArguments>()!);
     }
 
-    private static ServiceProvider ContainerInit(string[] args)
+    private static Result<ServiceProvider> ContainerInit(string[] args)
     {
         ServiceCollection services = [];
         
         services.AddSingleton<IUI, CLI>();
-        
-        services.AddSingleton(ApplicationArguments.Setup(args));
+
+        var appArgs = ApplicationArguments.Setup(args);
+        if (appArgs.IsErr) return Result<ServiceProvider>.Err(appArgs.UnwrapErr());
+        services.AddSingleton(appArgs.Unwrap());
         
         services.AddTransient<ICircularCloudLayouter, CircularCloudLayouter>();
         services.AddTransient<ImageGenerator>();
@@ -40,7 +50,7 @@ public static class Program
         
         services.AddSingleton<Application>();
 
-        return services.BuildServiceProvider();
+        return Result<ServiceProvider>.Ok(services.BuildServiceProvider());
     }
 }
 

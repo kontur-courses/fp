@@ -82,11 +82,14 @@ public class ImageGenerator : IDisposable
         image.Save(outputPath, encoder);
     }
 
-    public void DrawTagCloud(List<(string word, int frequency, Rectangle outline)> wordsFrequenciesOutline)
+    public Result DrawTagCloud(List<(string word, int frequency, Rectangle outline)> wordsFrequenciesOutline)
     {
+        if (fontResult.IsErr) return Result.Err(fontResult.UnwrapErr().Message);
         foreach (var wordFrequencyOutline in wordsFrequenciesOutline)
             DrawWord(wordFrequencyOutline.word, wordFrequencyOutline.frequency, wordFrequencyOutline.outline);
         image.Save(outputPath, encoder);
+
+        return Result.Ok();
     }
 
     public Result<Size> GetOuterRectangle(string word, int frequency)
@@ -96,6 +99,15 @@ public class ImageGenerator : IDisposable
         var size = TextMeasurer.MeasureSize(word, textOption);
 
         return Result<Size>.Ok(new Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3));
+    }
+
+    public Result RectangleOutOfResolution(Rectangle rectangle)
+    {
+        var tmp = new Rectangle(rectangle.Location, rectangle.Size);
+
+        rectangle.Intersect(new Rectangle(0, 0, image.Width, image.Height));
+
+        return tmp.Equals(rectangle) ? Result.Ok() : Result.Err("Tag cloud out of image resolution");
     }
 
     public void Dispose()
