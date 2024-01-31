@@ -12,8 +12,15 @@ public class FileTextHandler : ITextHandler
         if (filePath.EndsWith(".doc") || filePath.EndsWith(".docx"))
         {
             var document = new Document();
-            document.LoadFromFile(filePath);
-            var text = document.GetText();
+            var textResult = Result.Try(() =>
+            {
+                document.LoadFromFile(filePath);
+                return document.GetText();
+            });
+            
+            if (textResult.IsErr) return Result<string>.Err($"Spire.Doc library exception:\n{textResult.UnwrapErr()}");
+
+            var text = textResult.Unwrap();
             return Result<string>.Ok(text[(text.IndexOf('\n') + 1)..].Trim());
         }
 

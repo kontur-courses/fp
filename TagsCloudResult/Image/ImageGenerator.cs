@@ -71,7 +71,7 @@ public class ImageGenerator : IDisposable
         );
     }
 
-    public void DrawLayout(IEnumerable<Rectangle> rectangles)
+    public Result DrawLayout(IEnumerable<Rectangle> rectangles)
     {
         foreach (var tmpRect in rectangles)
         {
@@ -79,7 +79,15 @@ public class ImageGenerator : IDisposable
             image.Mutate(x => x.Draw(Color.Red, 2f, rectangle));
         }
 
-        image.Save(outputPath, encoder);
+        var saveResult = Result.Try<object>(() =>
+        {
+            image.Save(outputPath, encoder);
+            return null!;
+        });
+
+        return saveResult.IsErr
+            ? Result.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
+            : Result.Ok();
     }
 
     public Result DrawTagCloud(List<(string word, int frequency, Rectangle outline)> wordsFrequenciesOutline)
@@ -87,9 +95,16 @@ public class ImageGenerator : IDisposable
         if (fontResult.IsErr) return Result.Err(fontResult.UnwrapErr().Message);
         foreach (var wordFrequencyOutline in wordsFrequenciesOutline)
             DrawWord(wordFrequencyOutline.word, wordFrequencyOutline.frequency, wordFrequencyOutline.outline);
-        image.Save(outputPath, encoder);
+        
+        var saveResult = Result.Try<object>(() =>
+        {
+            image.Save(outputPath, encoder);
+            return null!;
+        });
 
-        return Result.Ok();
+        return saveResult.IsErr
+            ? Result.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
+            : Result.Ok();
     }
 
     public Result<Size> GetOuterRectangle(string word, int frequency)

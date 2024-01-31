@@ -24,7 +24,8 @@ public class TagCloudVisualizer(ICircularCloudLayouter circularCloudLayouter, Im
             wordsFrequenciesOutline.Add((kvp.word, kvp.count, rectangle));
         }
 
-        imageGenerator.DrawTagCloud(wordsFrequenciesOutline);
+        var drawTagCloudResult = imageGenerator.DrawTagCloud(wordsFrequenciesOutline);
+        if (drawTagCloudResult.IsErr) return Result.Err(drawTagCloudResult.UnwrapErr());
         
         return rectangleOutOfResult.IsOk ? Result.Ok() : Result.Err(rectangleOutOfResult.UnwrapErr());
     }

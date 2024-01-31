@@ -33,13 +33,13 @@ public static class Program
     private static Result<ServiceProvider> ContainerInit(string[] args)
     {
         ServiceCollection services = [];
-        
+
         services.AddSingleton<IUI, CLI>();
 
         var appArgs = ApplicationArguments.Setup(args);
         if (appArgs.IsErr) return Result<ServiceProvider>.Err(appArgs.UnwrapErr());
         services.AddSingleton(appArgs.Unwrap());
-        
+
         services.AddTransient<ICircularCloudLayouter, CircularCloudLayouter>();
         services.AddTransient<ImageGenerator>();
         services.AddTransient<TagCloudVisualizer>();
@@ -47,10 +47,10 @@ public static class Program
         services.AddSingleton<ITextHandler, FileTextHandler>();
         services.AddSingleton<WordHandler>();
         services.AddTransient<WordDataSet>();
-        
+
         services.AddSingleton<Application>();
 
-        return Result<ServiceProvider>.Ok(services.BuildServiceProvider());
+        return Result.Ok(services.BuildServiceProvider());
     }
 }
 
