@@ -9,7 +9,7 @@ namespace ResultOf
         }
     }
 
-    public struct Result<T>
+    public readonly struct Result<T>
     {
         public Result(string error, T value = default(T))
         {
