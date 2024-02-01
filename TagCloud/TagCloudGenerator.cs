@@ -21,19 +21,30 @@ public class TagCloudGenerator
         this.measurer = measurer;
     }
 
-    public void Generate()
+    public Result<None> Generate()
     {
-        var rectangles = new List<TextRectangle>();
+        var wordsResult = handler.Handle();
+        if (!wordsResult.IsSuccess) 
+            return Result.Fail<None>(wordsResult.Error);
         
-        foreach (var (word, count) in handler.Handle().OrderByDescending(pair => pair.Value))
-        {
-            var (size, font) = measurer.GetTextRectangleSize(word, count);
-            rectangles.Add(new TextRectangle(
-                layouter.PutNextRectangle(size),
-                word,
-                font
-            ));
-        }
-        drawer.Draw(rectangles);
+        var rectangles = wordsResult.Value
+            .OrderByDescending(pair => pair.Value)
+            .Select(PutTextInRectangle)
+            .ToList();
+        if (rectangles.Any(result => !result.IsSuccess))
+            return Result.Fail<None>("Can't place some rectangles");
+        
+        return drawer.Draw(rectangles.Select(result => result.Value).ToList());
+    }
+
+    private Result<TextRectangle> PutTextInRectangle(KeyValuePair<string, int> pair)
+    {
+        var measureResult = Result.Of(() => measurer.GetTextRectangleSize(pair.Key, pair.Value));
+        if (!measureResult.IsSuccess)
+            return Result.Fail<TextRectangle>(measureResult.Error);
+
+        var (size, font) = measureResult.Value;
+        return layouter.PutNextRectangle(size)
+            .Then(rect => new TextRectangle(rect, pair.Key, font));
     }
 }

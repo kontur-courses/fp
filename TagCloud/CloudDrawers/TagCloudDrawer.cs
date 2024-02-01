@@ -19,7 +19,7 @@ public class TagCloudDrawer : ICloudDrawer
         this.name = name;
     }
 
-    public void Draw(List<TextRectangle> rectangles)
+    public Result<None> Draw(List<TextRectangle> rectangles)
     {
         if (rectangles.Count == 0)
             throw new ArgumentException("Empty rectangles list");
@@ -30,7 +30,7 @@ public class TagCloudDrawer : ICloudDrawer
 
         using var bitmap = new Bitmap(containingRect.Width + 2, containingRect.Height + 2);
         using var graphics = Graphics.FromImage(bitmap);
-
+        
         graphics.DrawStrings(
             selector, 
             rectangles
@@ -38,7 +38,7 @@ public class TagCloudDrawer : ICloudDrawer
                 .ToArray()
         );
         
-        SaveToFile(bitmap);
+        return Result.OfAction(() => SaveToFile(bitmap));
     }
 
     private void SaveToFile(Bitmap bitmap)

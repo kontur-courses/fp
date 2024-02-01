@@ -15,12 +15,12 @@ public class CircularCloudLayouter
         this.shaper = shaper;
     }
 
-    public Rectangle PutNextRectangle(Size size)
+    public Result<Rectangle> PutNextRectangle(Size size)
     {
         if (size.Width <= 0)
-            throw new ArgumentException("Size width must be positive number");
+            return Result.Fail<Rectangle>("Size width must be positive number");
         if (size.Height <= 0)
-            throw new ArgumentException("Size height must be positive number");
+            return Result.Fail<Rectangle>("Size height must be positive number");
         
         Rectangle rectangle = Rectangle.Empty;
         foreach (var point in shaper.GetPossiblePoints())

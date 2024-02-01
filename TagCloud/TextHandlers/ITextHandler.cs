@@ -2,5 +2,5 @@
 
 public interface ITextHandler
 {
-    Dictionary<string, int> Handle();
+    Result<Dictionary<string, int>> Handle();
 }

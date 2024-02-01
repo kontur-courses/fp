@@ -73,7 +73,7 @@ public class CircularCloudLayouterTests
     [TestCase(-1, -1, TestName = "WithNegativeWidthAndHeight")]
     public void PutNextRectangle_ShouldThrow_ThenTryPutRectangle(int width, int height)
     {
-        Assert.Throws<ArgumentException>(() => layouter.PutNextRectangle(new Size(width, height)));
+        layouter.PutNextRectangle(new Size(width, height)).IsSuccess.Should().BeFalse();
     }
 
     private void CircleShapeAssertion(IEnumerable<Rectangle> rectangles, double accuracy)

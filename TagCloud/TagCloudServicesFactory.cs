@@ -50,10 +50,11 @@ public static class TagCloudServicesFactory
         return services;
     }
 
-    public static bool ConfigureServiceAndTryGet<T>(Options option, out T value)
+    public static Result<T> ConfigureServiceAndGet<T>(Options option)
     {
-        using var serviceProvider = ConfigureService(option).BuildServiceProvider();
-        value = serviceProvider.GetService<T>();
-        return value != null;
+        var result = Result.Of(() => ConfigureService(option), "Services configuration error");
+        if (!result.IsSuccess) return Result.Fail<T>(result.Error);
+        using var serviceProvider = result.Value.BuildServiceProvider();
+        return Result.FailIfNull(() => serviceProvider.GetService<T>());
     }
 }
