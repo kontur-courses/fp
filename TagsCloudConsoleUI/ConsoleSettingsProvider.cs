@@ -81,15 +81,28 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
 
     private static Font GetFont()
     {
-        var fontName = Prompt.GetString("Enter font name", promptColor: ConsoleColor.DarkGreen) ??
-                       "Microsoft Sans Serif";
+        string fontName;
+        while (true)
+        {
+            fontName = Prompt.GetString("Enter font name", "", promptColor: ConsoleColor.DarkGreen)!;
+            if (IsFontInstalled(fontName))
+                break;
+            Console.WriteLine("A font with the provided name doesn't exist. Try again.");
+        }
+
         while (true)
         {
             var fontSizeStr = Prompt.GetString("Enter font size in pt", promptColor: ConsoleColor.DarkGreen);
             if (float.TryParse(fontSizeStr, out var fontSize) && fontSize > 0)
                 return new Font(fontName, fontSize);
-            Console.WriteLine("Font size must be a correct positive number. Try again.");
+            Console.WriteLine("Font size must be a positive number. Try again.");
         }
+    }
+
+    private static bool IsFontInstalled(string fontName)
+    {
+        using var testFont = new Font(fontName, 8);
+        return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private WordColorerAlgorithm GetWordColorer()
@@ -101,7 +114,7 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
         while (true)
         {
             var input = Prompt.GetString(sb.ToString(), "", ConsoleColor.DarkGreen);
-            if (Enum.TryParse(input, out WordColorerAlgorithm algorithm))
+            if (Enum.TryParse(input, ignoreCase: true, out WordColorerAlgorithm algorithm))
             {
                 if (algorithm != WordColorerAlgorithm.Default)
                     _isCustomColoringUsed = true;
@@ -121,7 +134,7 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
         while (true)
         {
             var input = Prompt.GetString(sb.ToString(), "", ConsoleColor.DarkGreen);
-            if (Enum.TryParse(input, out CloudBuildingAlgorithm algorithm))
+            if (Enum.TryParse(input, ignoreCase: true, out CloudBuildingAlgorithm algorithm))
                 return algorithm;
 
             Console.WriteLine("The provided algorithm does not exist. Try again.");
