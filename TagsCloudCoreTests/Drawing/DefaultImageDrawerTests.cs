@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using FluentAssertions;
 using TagsCloudCore.Drawing;
 
 namespace TagsCloudCoreTests.Drawing;
@@ -12,9 +13,12 @@ public class DefaultImageDrawerTests
     [TestCase("", "filename")]
     [TestCase("  ", "filename")]
     [TestCase(@"\:\", "filename")]
-    public void SaveImage_ThrowsArgumentException_OnInvalidParameters(string dirPath, string filename)
+    public void SaveImage_ReturnsFailedResult_OnInvalidParameters(string dirPath, string filename)
     {
-        Assert.Throws<ArgumentException>(() =>
-            DefaultImageDrawer.SaveImage(new Bitmap(1, 1), dirPath, filename, ImageFormat.Png));
+        var result = DefaultImageDrawer.SaveImage(new Bitmap(1, 1), dirPath, filename, ImageFormat.Png);
+
+        result.IsSuccess
+            .Should()
+            .BeFalse();
     }
 }

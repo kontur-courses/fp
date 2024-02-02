@@ -6,19 +6,14 @@ namespace TagsCloudCore.WordProcessing.WordInput;
 
 public class DocxFileWordParser : IWordProvider
 {
-    public string[] GetWords(string resourceLocation)
+    public Result<string[]> GetWords(string resourceLocation)
     {
-        using var wordDocument = WordprocessingDocument.Open(resourceLocation, false);
-
-        var body = wordDocument.MainDocumentPart?.Document.Body;
-
-        if (body is null)
-            throw new IOException(
-                $"Failed to read from file {resourceLocation} Most likely the file path is incorrect or the file is corrupted.");
-
-        return body.Elements<Paragraph>()
-            .Select(paragraph => paragraph.InnerText)
-            .ToArray();
+        return Result.Of(() => WordprocessingDocument.Open(resourceLocation, false))
+            .Then(doc => doc.MainDocumentPart?.Document.Body)
+            .Then(body => body?.Elements<Paragraph>()
+                .Select(paragraph => paragraph.InnerText)
+                .ToArray() ?? Result.Fail<string[]>(
+                $"Failed to read from doc/docx file {resourceLocation} Most likely the file path is incorrect or the file is corrupted."));
     }
 
     public WordProviderType Info => WordProviderType.Docx;

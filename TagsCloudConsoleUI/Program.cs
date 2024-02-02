@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Imaging;
 using Autofac;
+using TagsCloudCore;
 using TagsCloudCore.BuildingOptions;
 using TagsCloudCore.Common;
 using TagsCloudCore.Common.Enums;
@@ -34,11 +35,11 @@ public static class Program
     private static void BuildTagCloud(IImageDrawer imageDrawer, WordColorerAlgorithm colorerAlgorithm, string dirPath,
         string fileName, ImageFormat imageFormat)
     {
-        var bitmap = imageDrawer.DrawImage(colorerAlgorithm);
-        var saveImageResult = DefaultImageDrawer.SaveImage(bitmap, dirPath, fileName, imageFormat);
+        var result = imageDrawer.DrawImage(colorerAlgorithm)
+            .Then(bitmap => DefaultImageDrawer.SaveImage(bitmap, dirPath, fileName, imageFormat));
         
-        Console.WriteLine(saveImageResult.IsSuccess
+        Console.WriteLine(result.IsSuccess
             ? $"The image has been saved to \"{dirPath}\""
-            : saveImageResult.Error);
+            : $"Failed to save the generated image: {result.Error}");
     }
 }

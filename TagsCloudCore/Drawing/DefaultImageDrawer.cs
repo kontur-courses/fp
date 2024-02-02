@@ -10,7 +10,7 @@ namespace TagsCloudCore.Drawing;
 
 public class DefaultImageDrawer : IImageDrawer
 {
-    private readonly IReadOnlyDictionary<string, WordData> _distributedWords;
+    private readonly Result<IReadOnlyDictionary<string, WordData>> _distributedWords;
     private readonly DrawingOptions _drawingOptions;
     private readonly IEnumerable<IWordColorer> _wordColorers;
 
@@ -22,22 +22,26 @@ public class DefaultImageDrawer : IImageDrawer
         _wordColorers = wordColorers;
     }
 
-    public Bitmap DrawImage(WordColorerAlgorithm colorerAlgorithm)
+    public Result<Bitmap> DrawImage(WordColorerAlgorithm colorerAlgorithm)
     {
+        if (!_distributedWords.IsSuccess)
+            return Result.Fail<Bitmap>($"Cannot draw the image. {_distributedWords.Error}");
+        
         var bitmap = new Bitmap(_drawingOptions.ImageSize.Width, _drawingOptions.ImageSize.Height);
         var offset = new Point(_drawingOptions.ImageSize.Width / 2, _drawingOptions.ImageSize.Height / 2);
         var graphics = Graphics.FromImage(bitmap);
         graphics.FillRectangle(new SolidBrush(_drawingOptions.BackgroundColor), 0, 0, bitmap.Width, bitmap.Height);
-
-        foreach (var (value, word) in _distributedWords)
+        
+        foreach (var (value, word) in _distributedWords.Value)
         {
             var sizeAdd = _drawingOptions.FrequencyScaling * (word.Frequency - 1);
             var newFont = new Font(_drawingOptions.Font.FontFamily, _drawingOptions.Font.Size + sizeAdd,
                 _drawingOptions.Font.Style);
 
             var colorer = _wordColorers.SingleOrDefault(c => c.Match(colorerAlgorithm));
-
-            var color = colorer!.AlgorithmName == WordColorerAlgorithm.Default
+            if (colorer is null)
+                return Result.Fail<Bitmap>("Couldn't find the required colorer algorithm among the registered ones.");
+            var color = colorer.AlgorithmName == WordColorerAlgorithm.Default
                 ? _drawingOptions.FontColor
                 : colorer.GetWordColor(value, word.Frequency);
 

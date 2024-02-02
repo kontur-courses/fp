@@ -5,17 +5,19 @@ namespace TagsCloudCore.WordProcessing.WordFiltering;
 
 public class DefaultWordFilter : IWordFilter
 {
-    private readonly HashSet<string> _wordsToExclude;
+    private readonly IWordProvider _wordsToExcludeSource;
+    private readonly string _resourceLocation;
 
-    public DefaultWordFilter(IWordProvider wordsToExclude, string resourceLocation)
+    public DefaultWordFilter(IWordProvider wordsToExcludeSource, string resourceLocation)
     {
-        _wordsToExclude = WordProcessingUtils.RemoveDuplicates(wordsToExclude.GetWords(resourceLocation).Select(w => w.ToLower()));
+        _wordsToExcludeSource = wordsToExcludeSource;
+        _resourceLocation = resourceLocation;
     }
 
-    public string[] FilterWords(string[] words)
+    public Result<string[]> FilterWords(string[] words)
     {
-        return words
-            .Where(w => !_wordsToExclude.Contains(w))
-            .ToArray();
+        return _wordsToExcludeSource.GetWords(_resourceLocation)
+            .Then(toExclude => WordProcessingUtils.RemoveDuplicates(toExclude.Select(w => w.ToLower())))
+            .Then(toExclude => words.Where(w => !toExclude.Contains(w)).ToArray());
     }
 }

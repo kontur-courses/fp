@@ -11,7 +11,7 @@ public class DefaultWordCloudDistributor : IWordCloudDistributorProvider
 {
     private readonly ICloudLayouter _cloudLayouter;
     private readonly DrawingOptions _drawingOptions;
-    private readonly Dictionary<string, int> _words;
+    private readonly Result<IReadOnlyDictionary<string, int>> _words;
 
     public DefaultWordCloudDistributor(IProcessedWordProvider processedWord,
         ICommonOptionsProvider commonOptionsProvider,
@@ -23,19 +23,27 @@ public class DefaultWordCloudDistributor : IWordCloudDistributorProvider
         _drawingOptions = drawingOptionsProvider.DrawingOptions;
     }
 
-    public IReadOnlyDictionary<string, WordData> DistributedWords => DistributeWords().AsReadOnly();
+    public Result<IReadOnlyDictionary<string, WordData>> DistributedWords => DistributeWords();
 
-    private Dictionary<string, WordData> DistributeWords()
+    private Result<IReadOnlyDictionary<string, WordData>> DistributeWords()
     {
+        if (!_words.IsSuccess)
+            return Result.Fail<IReadOnlyDictionary<string, WordData>>(_words.Error);
+        
         var distributed = new Dictionary<string, WordData>();
-
-        foreach (var (word, frequency) in _words)
+        
+        foreach (var (word, frequency) in _words.Value)
         {
-            var newWord = new WordData(_cloudLayouter.PutNextRectangle(DrawingUtils.GetStringSize(word, frequency,
-                _drawingOptions.FrequencyScaling, _drawingOptions.Font)), frequency);
+            var stringSizeResult = DrawingUtils.GetStringSize(word, frequency,
+                _drawingOptions.FrequencyScaling, _drawingOptions.Font);
+
+            if (!stringSizeResult.IsSuccess)
+                return Result.Fail<IReadOnlyDictionary<string, WordData>>(stringSizeResult.Error);
+            
+            var newWord = new WordData(_cloudLayouter.PutNextRectangle(stringSizeResult.Value), frequency);
             distributed.Add(word, newWord);
         }
 
-        return distributed;
+        return distributed.AsReadOnly();
     }
 }

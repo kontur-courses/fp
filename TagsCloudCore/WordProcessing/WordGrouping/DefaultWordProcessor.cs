@@ -18,14 +18,25 @@ public class DefaultWordProcessor : IProcessedWordProvider
         _filters = filters;
     }
 
-    public Dictionary<string, int> ProcessedWords => ProcessWords();
+    public Result<IReadOnlyDictionary<string, int>> ProcessedWords => ProcessWords();
 
-    private Dictionary<string, int> ProcessWords()
+    private Result<IReadOnlyDictionary<string, int>> ProcessWords()
     {
         var provider = _wordProviders.SingleOrDefault(p => p.Match(_wordProviderInfo.Type));
-        var words = provider!.GetWords(_wordProviderInfo.ResourceLocation).Select(w => w.ToLower()).ToArray();
-        var filtered = _filters.Aggregate(words, (current, filter) => filter.FilterWords(current));
-        return GroupWords(filtered);
+        var getWordsResult = provider!.GetWords(_wordProviderInfo.ResourceLocation);
+        if (!getWordsResult.IsSuccess)
+            return Result.Fail<IReadOnlyDictionary<string, int>>(getWordsResult.Error);
+        
+        var words = getWordsResult.Value.Select(w => w.ToLower()).ToArray();
+        
+        foreach (var filter in _filters)
+        {
+            var filterResult = filter.FilterWords(words);
+            if (!filterResult.IsSuccess)
+                return Result.Fail<IReadOnlyDictionary<string, int>>(filterResult.Error);
+            words = filterResult.Value;
+        }
+        return GroupWords(words);
     }
 
     private static Dictionary<string, int> GroupWords(IEnumerable<string> filtered)

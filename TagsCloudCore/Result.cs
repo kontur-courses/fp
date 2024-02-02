@@ -9,6 +9,9 @@ public class None
 
 public readonly struct Result<T>
 {
+    public string Error { get; }
+    public T Value { get; }
+    
     public Result(string error, T value = default!)
     {
         Error = error;
@@ -20,16 +23,14 @@ public readonly struct Result<T>
         return Result.Ok(v);
     }
 
-    public string Error { get; }
-    internal T Value { get; }
-
     public T GetValueOrThrow()
     {
-        if (IsSuccess) return Value;
+        if (IsSuccess) 
+            return Value;
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }
 
-    public bool IsSuccess => Error == null;
+    public bool IsSuccess => Error is null;
 }
 
 public static class Result
@@ -54,7 +55,7 @@ public static class Result
         return new Result<T>(e);
     }
 
-    public static Result<T> Of<T>(Func<T> f, string error = null!)
+    public static Result<T> Of<T>(Func<T> f, string? error = null)
     {
         try
         {
@@ -66,7 +67,7 @@ public static class Result
         }
     }
 
-    public static Result<None> OfAction(Action f, string error = null!)
+    public static Result<None> OfAction(Action f, string? error = null)
     {
         try
         {
@@ -106,7 +107,8 @@ public static class Result
         this Result<TInput> input,
         Action<string> handleError)
     {
-        if (!input.IsSuccess) handleError(input.Error);
+        if (!input.IsSuccess)
+            handleError(input.Error);
         return input;
     }
 

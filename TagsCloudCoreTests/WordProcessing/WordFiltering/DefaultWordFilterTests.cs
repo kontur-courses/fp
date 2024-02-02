@@ -15,6 +15,6 @@ public class DefaultWordFilterTests
         var filter = new DefaultWordFilter(wordProvider, "");
         var filtered = filter.FilterWords(new[] {"word1", "1234", "word2", "a", "another", "test"});
 
-        CollectionAssert.AreEqual(new[] {"1234", "a", "another", "test"}, filtered);
+        CollectionAssert.AreEqual(new[] {"1234", "a", "another", "test"}, filtered.Value);
     }
 }

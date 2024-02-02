@@ -2,5 +2,5 @@
 
 public interface IWordFilter
 {
-    public string[] FilterWords(string[] words);
+    public Result<string[]> FilterWords(string[] words);
 }

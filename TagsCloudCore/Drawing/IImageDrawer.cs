@@ -5,5 +5,5 @@ namespace TagsCloudCore.Drawing;
 
 public interface IImageDrawer
 {
-    public Bitmap DrawImage(WordColorerAlgorithm colorerAlgorithm);
+    public Result<Bitmap> DrawImage(WordColorerAlgorithm colorerAlgorithm);
 }

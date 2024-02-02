@@ -4,7 +4,7 @@ namespace TagsCloudCore.WordProcessing.WordInput;
 
 public interface IWordProvider
 {
-    public string[] GetWords(string resourceLocation);
+    public Result<string[]> GetWords(string resourceLocation);
 
     WordProviderType Info { get; }
 

@@ -25,7 +25,7 @@ public class DefaultWordProcessorTests
 
         var result = processor.ProcessedWords;
 
-        CollectionAssert.AreEqual(new Dictionary<string, int> {{"1", 3}, {"4", 2}}, result);
+        CollectionAssert.AreEqual(new Dictionary<string, int> {{"1", 3}, {"4", 2}}, result.Value);
     }
 
     private static DefaultWordFilter GetWordFilter(string[] wordsToExclude)

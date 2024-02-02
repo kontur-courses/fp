@@ -10,10 +10,14 @@ public class DrawingUtilsTests
     [TestCase(2, 0)]
     [TestCase(2, -2)]
     [TestCase(-2, 2)]
-    public void GetStringSize_ThrowsArgumentException_OnIncorrectParameters(int frequency, int frequencyScaling)
+    public void GetStringSize_ReturnsFailedResult_OnIncorrectParameters(int frequency, int frequencyScaling)
     {
-        Assert.Throws<ArgumentException>(() =>
-            DrawingUtils.GetStringSize("word", frequency, frequencyScaling, new Font(FontFamily.GenericMonospace, 20)));
+        var result = DrawingUtils.GetStringSize("word", frequency, frequencyScaling,
+            new Font(FontFamily.GenericMonospace, 20));
+
+        result.IsSuccess
+            .Should()
+            .BeFalse();
     }
 
     [TestCase("word", 2, 3, "longer_word", 2, 3)]
@@ -29,10 +33,10 @@ public class DrawingUtilsTests
 
     {
         var size1 = DrawingUtils.GetStringSize(word1, frequency1, frequencyScaling1,
-            new Font(FontFamily.GenericMonospace, 20));
+            new Font(FontFamily.GenericMonospace, 20)).Value;
 
         var size2 = DrawingUtils.GetStringSize(word2, frequency2, frequencyScaling2,
-            new Font(FontFamily.GenericMonospace, 20));
+            new Font(FontFamily.GenericMonospace, 20)).Value;
 
         var area1 = size1.Height * size1.Width;
         var area2 = size2.Height * size2.Width;
