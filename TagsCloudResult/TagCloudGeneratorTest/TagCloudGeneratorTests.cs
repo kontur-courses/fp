@@ -122,7 +122,7 @@ namespace TagCloudGeneratorTest
             settings.PointDistributor = new Spiral(new Point(settings.ImageSize.Width / 2, settings.ImageSize.Height / 2), 1, 0.1);
             settings.ImageName = "currentBitmap.png";
        
-            return tagCloudDrawer.DrawWordsCloud(filePath, settings);
+            return tagCloudDrawer.DrawWordsCloud(filePath, settings).Value;
         }
     }
 }

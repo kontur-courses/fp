@@ -19,7 +19,8 @@ public class Program
                  {
                      AddSettings(o, visualizingSettings);
                      var image = drawer.DrawWordsCloud(o.Path, visualizingSettings);
-                     drawer.SaveImage(image, visualizingSettings);
+                     if (image.IsSuccess)
+                        drawer.SaveImage(image.Value, visualizingSettings);
                  });
     }
 

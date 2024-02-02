@@ -20,10 +20,10 @@ namespace TagCloudGenerator
             this.wordCounter = wordCounter;
         }
 
-        public Bitmap DrawWordsCloud(string filePath, VisualizingSettings visualizingSettings)
+        public Result<Bitmap> DrawWordsCloud(string filePath, VisualizingSettings visualizingSettings)
         {          
             if (filePath == null)
-                throw new ArgumentNullException(nameof(filePath));
+                return new Result<Bitmap>(null, "There is no path to the file");
 
             var words = new List<string>();
             var extension = Path.GetExtension(filePath);
@@ -50,61 +50,73 @@ namespace TagCloudGenerator
             if (imageScaler.NeedScale(visualizingSettings, unscaledImageSize))
             {
                 var bitmap = imageScaler.DrawScaleCloud(visualizingSettings, rectangles, unscaledImageSize, smallestSizeOfRectangles);
-                Console.WriteLine("The tag cloud is drawn");
-                return bitmap;
+
+                if (bitmap == null)
+                    return new Result<Bitmap>(null, "Failed to draw an image");
+
+                Console.WriteLine("The tag cloud is drawn");            
+                return new Result<Bitmap>(bitmap, null);
             }
-            
-            return Draw(wordsWithCount, visualizingSettings, rectangles);
+
+            var image = Draw(wordsWithCount, visualizingSettings, rectangles);
+            if (image == null)
+                    return new Result<Bitmap>(null, "Failed to draw an image");
+
+            return new Result<Bitmap>(Draw(wordsWithCount, visualizingSettings, rectangles), null);
         }      
 
         public void SaveImage(Bitmap bitmap, VisualizingSettings visualizingSettings)
         {
-            if (bitmap == null) 
-                return;
-
+            if (bitmap == null)
+                return;           
+                
             var extension = Path.GetExtension(visualizingSettings.ImageName);
             var format = GetImageFormat(extension);
 
-            bitmap.Save(visualizingSettings.ImageName, format);
-            
+            if (!format.IsSuccess)
+            {
+                Console.WriteLine(format.Error);
+                return;
+            }               
+
+            bitmap.Save(visualizingSettings.ImageName, format.Value);        
             Console.WriteLine($"The image is saved, the path to the image: {Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)}");
         }
 
-        private ImageFormat GetImageFormat(string fileName)
+        private Result<ImageFormat> GetImageFormat(string fileName)
         {
             var extension = Path.GetExtension(fileName);
 
             if (string.IsNullOrEmpty(extension))
-                throw new ArgumentException(
-                    string.Format("Unable to determine file extension for fileName: {0}", fileName));
+                return new Result<ImageFormat>(null, string.Format("Unable to determine file extension for fileName: {0}", fileName));
 
             switch (extension.ToLower())
             {
                 case @".bmp":
-                    return ImageFormat.Bmp;
+                    return new Result<ImageFormat>(ImageFormat.Bmp, null);
 
                 case @".gif":
-                    return ImageFormat.Gif;
+                    return new Result<ImageFormat>(ImageFormat.Gif, null);
 
                 case @".ico":
-                    return ImageFormat.Icon;
+                    return new Result<ImageFormat>(ImageFormat.Icon, null);
 
                 case @".jpg":
                 case @".jpeg":
-                    return ImageFormat.Jpeg;
+                    return new Result<ImageFormat>(ImageFormat.Jpeg, null);
 
                 case @".png":
-                    return ImageFormat.Png;
+                    return new Result<ImageFormat>(ImageFormat.Png, null);
 
                 case @".tif":
                 case @".tiff":
-                    return ImageFormat.Tiff;
+                    return new Result<ImageFormat>(ImageFormat.Tiff, null);
 
                 case @".wmf":
-                    return ImageFormat.Wmf;
+                    return new Result<ImageFormat>(ImageFormat.Wmf, null);
 
                 default:
-                    throw new NotImplementedException();
+                    return new Result<ImageFormat>(null, string.Format("Unable to determine file extension for fileName: {0}", fileName));
             }
         }
     
