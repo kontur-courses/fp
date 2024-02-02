@@ -19,6 +19,12 @@ public static class DrawingUtils
         return Size.Ceiling(Graphics.MeasureString(word, newFont));
     }
 
+    public static bool IsFontInstalled(string fontName)
+    {
+        using var testFont = new Font(fontName, 8);
+        return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+    }
+    
     public static bool TryParseRgb(string rgbString, out Color color, char separator = ' ')
     {
         var numbers = rgbString.Split(separator);

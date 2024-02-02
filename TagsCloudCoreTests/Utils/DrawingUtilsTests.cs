@@ -68,4 +68,15 @@ public class DrawingUtilsTests
 
         CollectionAssert.AreEqual(new[] {123, 43, 5}, new[] {color.R, color.G, color.B});
     }
+
+    [TestCase("nosuchfont", false)]
+    [TestCase("Arial", true)]
+    public void IsFontInstalled_ReturnsCorrectResult_OnDifferentInputData(string fontName, bool expected)
+    {
+        var result = DrawingUtils.IsFontInstalled(fontName);
+
+        result
+            .Should()
+            .Be(expected);
+    }
 }

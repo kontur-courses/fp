@@ -85,7 +85,7 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
         while (true)
         {
             fontName = Prompt.GetString("Enter font name", "", promptColor: ConsoleColor.DarkGreen)!;
-            if (IsFontInstalled(fontName))
+            if (DrawingUtils.IsFontInstalled(fontName))
                 break;
             Console.WriteLine("A font with the provided name doesn't exist. Try again.");
         }
@@ -97,12 +97,6 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
                 return new Font(fontName, fontSize);
             Console.WriteLine("Font size must be a positive number. Try again.");
         }
-    }
-
-    private static bool IsFontInstalled(string fontName)
-    {
-        using var testFont = new Font(fontName, 8);
-        return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private WordColorerAlgorithm GetWordColorer()

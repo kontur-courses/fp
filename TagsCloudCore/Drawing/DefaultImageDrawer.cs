@@ -32,26 +32,34 @@ public class DefaultImageDrawer : IImageDrawer
         var graphics = Graphics.FromImage(bitmap);
         graphics.FillRectangle(new SolidBrush(_drawingOptions.BackgroundColor), 0, 0, bitmap.Width, bitmap.Height);
         
+        var colorer = _wordColorers.SingleOrDefault(c => c.Match(colorerAlgorithm));
+        if (colorer is null)
+            return Result.Fail<Bitmap>("Couldn't find the required colorer algorithm among the registered ones.");
+        
         foreach (var (value, word) in _distributedWords.Value)
         {
             var sizeAdd = _drawingOptions.FrequencyScaling * (word.Frequency - 1);
             var newFont = new Font(_drawingOptions.Font.FontFamily, _drawingOptions.Font.Size + sizeAdd,
                 _drawingOptions.Font.Style);
-
-            var colorer = _wordColorers.SingleOrDefault(c => c.Match(colorerAlgorithm));
-            if (colorer is null)
-                return Result.Fail<Bitmap>("Couldn't find the required colorer algorithm among the registered ones.");
+            
             var color = colorer.AlgorithmName == WordColorerAlgorithm.Default
                 ? _drawingOptions.FontColor
                 : colorer.GetWordColor(value, word.Frequency);
 
-            graphics.DrawString(value, newFont, new SolidBrush(color),
-                word.Rectangle with {X = word.Rectangle.X + offset.X, Y = word.Rectangle.Y + offset.Y});
+            var shiftedRectangle = word.Rectangle with {X = word.Rectangle.X + offset.X, Y = word.Rectangle.Y + offset.Y};
+            if (!IsRectangleWithinBorders(shiftedRectangle, bitmap))
+                return Result.Fail<Bitmap>("Tag cloud went beyond the image borders!");
+            graphics.DrawString(value, newFont, new SolidBrush(color), shiftedRectangle);
         }
 
         return bitmap;
     }
-
+    
+    private static bool IsRectangleWithinBorders(Rectangle shiftedRectangle, Image bitmap)
+        => shiftedRectangle is {Left: >= 0, Top: >= 0} 
+               && shiftedRectangle.Bottom <= bitmap.Height 
+               && shiftedRectangle.Right <= bitmap.Width;
+    
     public static Result<None> SaveImage(Bitmap bitmap, string dirPath, string filename, ImageFormat imageFormat)
     {
         if (string.IsNullOrWhiteSpace(filename) || filename.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
