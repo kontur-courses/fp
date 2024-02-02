@@ -12,20 +12,20 @@ public class BoringTextParser : ITextParser
         this.textSettings = textSettings ?? throw new ArgumentNullException(nameof(textSettings));
     }
 
-    public List<string> ParseText(string text)
+    public Result<List<string>> ParseText(string text)
     {
         var boringWords = GetBoringWords(textSettings.BoringText);
         var words = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
-        return words.Select(word => word.ToLower()).Where(word => !boringWords.Contains(word)).ToList();
+        var parssedText = boringWords
+            .Then(boringWords => words.Select(word => word.ToLower()).Where(word => !boringWords.Contains(word)).ToList());
+
+        return parssedText;
     }
 
-    public HashSet<string> GetBoringWords(string text)
+    public Result<HashSet<string>> GetBoringWords(string text)
     {
-        var words = text.Split(Environment.NewLine);
-        var boringWords = new HashSet<string>();
-
-        foreach (var word in words)
-            boringWords.Add(word.ToLower());
+        var words = Result.Of(() => text.Split(Environment.NewLine));
+        var boringWords = words.Then((words) => words.Select(word => word.ToLower()).ToHashSet());
 
         return boringWords;
     }

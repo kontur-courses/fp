@@ -68,7 +68,7 @@ public class DrawTagCloudAction : IUiAction
         var wordsText = textFileReader.ReadFile(wordsFilePath).GetValueOrThrow();
         tagsCloudSettings.TextSettings.BoringText = textFileReader
             .ReadFile(filesSourceSettings.BoringTextFilePath).GetValueOrThrow();
-        var parsedWords = textParser.ParseText(wordsText);
+        var parsedWords = textParser.ParseText(wordsText).GetValueOrThrow();
         var cloud = GetCloud(parsedWords);
         DrawCloud(cloud);
     }

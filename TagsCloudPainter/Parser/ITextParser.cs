@@ -2,5 +2,5 @@
 
 public interface ITextParser
 {
-    List<string> ParseText(string text);
+    Result<List<string>> ParseText(string text);
 }

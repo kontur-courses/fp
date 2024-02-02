@@ -24,9 +24,9 @@ public class BoringTextParserTests
     {
         var boringWords = boringTextParser
             .GetBoringWords(
-                boringText)
+                boringText).GetValueOrThrow()
             .ToHashSet();
-        var parsedText = boringTextParser.ParseText("Скучные Слова что в и");
+        var parsedText = boringTextParser.ParseText("Скучные Слова что в и").GetValueOrThrow();
         var isBoringWordsInParsedText = parsedText.Where(boringWords.Contains).Any();
         isBoringWordsInParsedText.Should().BeFalse();
     }
@@ -34,14 +34,14 @@ public class BoringTextParserTests
     [Test]
     public void ParseText_ShouldReturnNotEmptyWordsList_WhenPassedNotEmptyText()
     {
-        var parsedText = boringTextParser.ParseText("Скучные Слова что в и");
+        var parsedText = boringTextParser.ParseText("Скучные Слова что в и").GetValueOrThrow();
         parsedText.Count.Should().BeGreaterThan(0);
     }
 
     [Test]
     public void ParseText_ShouldReturnWordsInLowerCase()
     {
-        var parsedText = boringTextParser.ParseText("Скучные Слова что в и");
+        var parsedText = boringTextParser.ParseText("Скучные Слова что в и").GetValueOrThrow();
         var isAnyWordNotLowered = parsedText.Any(word => !word.Equals(word, StringComparison.CurrentCultureIgnoreCase));
         isAnyWordNotLowered.Should().BeFalse();
     }
@@ -49,7 +49,7 @@ public class BoringTextParserTests
     [Test]
     public void ParseText_ShouldReturnWordsListWithTheSameAmountAsInText()
     {
-        var parsedText = boringTextParser.ParseText("Скучные Слова что в и");
+        var parsedText = boringTextParser.ParseText("Скучные Слова что в и").GetValueOrThrow();
         parsedText.Count.Should().Be(2);
     }
 }
