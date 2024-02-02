@@ -1,19 +1,36 @@
+using ResultOf;
 using Spire.Doc;
 
 namespace TagCloud.FileReader;
 
 public class DocReader : IFileReader
 {
-    public IEnumerable<string> ReadLines(string inputPath)
-    {
-        if (!File.Exists(inputPath))
-            throw new ArgumentException("Source file doesn't exist");
+    public IList<string> GetAvailableExtensions() => new List<string>() { "doc", "docx" };
 
-        var document = new Document(inputPath, FileFormat.Auto);
+    public Result<IEnumerable<string>> ReadLines(string inputPath)
+    {
+        return FileExists(inputPath, out var error)
+            ? Result.Ok(ReadFile(inputPath))
+            : Result.Fail<IEnumerable<string>>(error);
+    }
+
+    private IEnumerable<string> ReadFile(string inputPath)
+    {
+        using var document = new Document(inputPath, FileFormat.Auto);
         var text = document.GetText();
 
         return text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(1);
     }
 
-    public IList<string> GetAvailableExtensions() => new List<string>() { "doc", "docx" };
+    private bool FileExists(string inputPath, out string error)
+    {
+        if (!File.Exists(inputPath))
+        {
+            error = $"File {inputPath} doesn't exist";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
 }

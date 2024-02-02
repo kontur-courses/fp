@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagCloud.AppSettings;
 
 namespace TagCloud.PointGenerator;
 
@@ -6,18 +7,15 @@ public class SpiralGenerator : IPointGenerator
 {
     private readonly Point startPoint;
     private readonly int spiralDensity;
-    private readonly double angleShift;
+    private const double angleShift = 0.01;
     private double currentAngle;
 
     public string GeneratorName => "Spiral";
 
-    public SpiralGenerator(Point startPoint, int spiralDensity = 1, double angleShift = 0.01)
+    public SpiralGenerator(IAppSettings settings)
     {
-        if (startPoint.X < 0 || startPoint.Y < 0)
-            throw new ArgumentException("Spiral center point coordinates should be non-negative");
-        this.startPoint = startPoint;
-        this.spiralDensity = spiralDensity;
-        this.angleShift = angleShift;
+        startPoint = new Point(settings.CloudWidth/2, settings.CloudHeight/2);
+        spiralDensity = settings.CloudDensity;
     }
 
     public Point GetNextPoint()

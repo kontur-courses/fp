@@ -1,3 +1,5 @@
+using ResultOf;
+
 namespace TagCloud.PointGenerator;
 
 public class PointGeneratorProvider : IPointGeneratorProvider
@@ -9,11 +11,11 @@ public class PointGeneratorProvider : IPointGeneratorProvider
         registeredGenerators = ArrangeLayouters(generators);
     }
 
-    public IPointGenerator CreateGenerator(string generatorName)
+    public Result<IPointGenerator> CreateGenerator(string generatorName)
     {
-        if (registeredGenerators.ContainsKey(generatorName))
-            return registeredGenerators[generatorName];
-        throw new ArgumentException($"{generatorName} layouter is not supported");
+        return registeredGenerators.ContainsKey(generatorName)
+            ? Result.Ok(registeredGenerators[generatorName])
+            : Result.Fail<IPointGenerator>($"{generatorName} layouter is not supported");
     }
 
     private Dictionary<string, IPointGenerator> ArrangeLayouters(IEnumerable<IPointGenerator> generators)

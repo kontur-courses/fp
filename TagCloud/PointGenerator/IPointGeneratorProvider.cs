@@ -1,6 +1,8 @@
+using ResultOf;
+
 namespace TagCloud.PointGenerator;
 
 public interface IPointGeneratorProvider
 {
-    IPointGenerator CreateGenerator(string generatorName);
+    Result<IPointGenerator> CreateGenerator(string generatorName);
 }

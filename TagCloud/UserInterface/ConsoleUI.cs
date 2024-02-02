@@ -1,3 +1,4 @@
+using ResultOf;
 using TagCloud.AppSettings;
 using TagCloud.Drawer;
 using TagCloud.FileReader;
@@ -31,11 +32,13 @@ public class ConsoleUI : IUserInterface
 
     public void Run(IAppSettings appSettings)
     {
-        var words = readerProvider.CreateReader($"{appSettings.InputPath}").ReadLines(appSettings.InputPath);
-        var preprocessed = preprocessor.HandleWords(words);
-        var filtered = filter.FilterWords(preprocessed);
-        var ranked = ranker.RankWords(filtered);
-        using var bitmap = drawer.DrawTagCloud(ranked);
-        saver.Save(bitmap, appSettings.OutputPath, appSettings.ImageExtension);
+        readerProvider.CreateReader($"{appSettings.InputPath}")
+            .Then(file => file.ReadLines(appSettings.InputPath))
+            .Then(preprocessor.HandleWords)
+            .Then(filter.FilterWords)
+            .Then(ranker.RankWords)
+            .Then(drawer.DrawTagCloud)
+            .Then(bitmap => saver.Save(bitmap, appSettings.OutputPath, appSettings.ImageExtension))
+            .OnFail(error => Console.WriteLine(error));
     }
 }

@@ -1,3 +1,5 @@
+using ResultOf;
+
 namespace TagCloud.FileReader;
 
 public class FileReaderProvider : IFileReaderProvider
@@ -9,12 +11,12 @@ public class FileReaderProvider : IFileReaderProvider
         this.readers = ArrangeReaders(readers);
     }
 
-    public IFileReader CreateReader(string inputPath)
+    public Result<IFileReader> CreateReader(string inputPath)
     {
         var extension = inputPath.Split(".").Last();
-        if (readers.ContainsKey(extension))
-            return readers[extension];
-        throw new ArgumentException($"{extension} file type is not supported");
+        return readers.ContainsKey(extension)
+            ? Result.Ok(readers[extension])
+            : Result.Fail<IFileReader>($"Reading of file {inputPath} with extension {extension} is not supported");
     }
 
     private Dictionary<string, IFileReader> ArrangeReaders(IEnumerable<IFileReader> readers)

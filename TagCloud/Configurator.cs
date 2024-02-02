@@ -17,21 +17,16 @@ public class Configurator
 {
     public static IAppSettings Parse(string[] args, ContainerBuilder builder)
     {
-        var settings = Parser.Default.ParseArguments<Settings>(args).WithParsed(o =>
+        var sets = Parser.Default.ParseArguments<Settings>(args);
+        if (sets as Parsed<Settings> == null)
+            Environment.Exit(-1);
+        var settings = sets.WithParsed(o =>
         {
             if (o.UseRandomPalette)
                 builder.RegisterType<RandomPalette>().As<IPalette>();
             else
                 builder.Register(p =>
                     new CustomPalette(Color.FromName(o.ForegroundColor), Color.FromName(o.BackgroundColor)));
-            var filter = new WordFilter().UsingFilter((word) => word.Length > 3);
-            if (string.IsNullOrEmpty(o.BoringWordsFile))
-                builder.Register(c => filter).As<IFilter>();
-            else
-            {
-                var boringWords = new TxtReader().ReadLines(o.BoringWordsFile);
-                builder.Register(c => filter.UsingFilter((word) => !boringWords.Contains(word)));
-            }
         });
 
         return settings.Value;
@@ -45,20 +40,17 @@ public class Configurator
         builder.RegisterType<CloudDrawer>().As<IDrawer>();
         builder.RegisterType<WordRankerByFrequency>().As<IWordRanker>();
         builder.RegisterType<DefaultPreprocessor>().As<IPreprocessor>();
+        builder.RegisterType<SpiralGenerator>().As<IPointGenerator>();
+        builder.RegisterType<CirclesGenerator>().As<IPointGenerator>();
 
         builder.RegisterType<ConsoleUI>().As<IUserInterface>();
 
         builder.Register(c => new WordFilter().UsingFilter((word) => word.Length > 3)).As<IFilter>();
-        builder.Register(c =>
-                new SpiralGenerator(new Point(settings.CloudWidth / 2, settings.CloudWidth / 2), settings.CloudDensity))
-            .As<IPointGenerator>();
-        builder.Register(c => new CirclesGenerator(new Point(settings.CloudWidth / 2, settings.CloudWidth / 2)))
-            .As<IPointGenerator>();
         builder.Register(c => new FileReaderProvider(c.Resolve<IEnumerable<IFileReader>>())).As<IFileReaderProvider>();
         builder.Register(c => new PointGeneratorProvider(c.Resolve<IEnumerable<IPointGenerator>>()))
             .As<IPointGeneratorProvider>();
 
-        builder.Register(c => settings).AsImplementedInterfaces();
+        builder.Register(c => settings).As<IAppSettings>();
 
         return builder;
     }

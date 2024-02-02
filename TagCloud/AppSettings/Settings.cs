@@ -16,27 +16,24 @@ public class Settings : IAppSettings
     [Option('f', "fontType", Default = "SansSerif", HelpText = "Font type of words")]
     public string FontType { get; set; }
 
-    [Option('W', "width", Default = 1920, HelpText = "Width of cloud")]
+    [Option('W', "width", Default = 1920, HelpText = "Width of cloud in pixels")]
     public int CloudWidth { get; set; }
 
-    [Option('H', "height", Default = 1080, HelpText = "Height of cloud")]
+    [Option('H', "height", Default = 1080, HelpText = "Height of cloud in pixels")]
     public int CloudHeight { get; set; }
 
     [Option('l', "layouter", Default = "Spiral", HelpText = "Cloud layouter algorithm")]
     public string LayouterType { get; set; }
 
-    [Option('d', "density", Default = 1, HelpText = "Density of cloud")]
+    [Option('d', "density", Default = 1, HelpText = "Density of cloud, integer")]
     public int CloudDensity { get; set; }
 
     [Option('r', "randomPalette", Default = true, HelpText = "Use random colors")]
     public bool UseRandomPalette { get; set; }
 
-    [Option("background", Default = "White", HelpText = "Cloud layouter algorithm")]
+    [Option("background", Default = "White", HelpText = "Bckground color name")]
     public string BackgroundColor { get; set; }
 
-    [Option("foreground", Default = "Black", HelpText = "Cloud layouter algorithm")]
+    [Option("foreground", Default = "Black", HelpText = "Foreground color name")]
     public string ForegroundColor { get; set; }
-
-    [Option("boringWordsFile", Default = null, HelpText = "Cloud layouter algorithm")]
-    public string BoringWordsFile { get; set; }
 }

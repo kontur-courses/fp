@@ -1,8 +1,9 @@
 using System.Drawing;
+using ResultOf;
 
 namespace TagCloud.Drawer;
 
 public interface IDrawer
 {
-    Bitmap DrawTagCloud(IEnumerable<(string word, int rank)> words);
+    Result<Bitmap> DrawTagCloud(IEnumerable<(string word, int rank)> words);
 }

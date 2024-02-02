@@ -1,4 +1,5 @@
 using System.Drawing;
+using TagCloud.AppSettings;
 
 namespace TagCloud.PointGenerator;
 
@@ -6,18 +7,15 @@ public class CirclesGenerator : IPointGenerator
 {
     private readonly Point startPoint;
     private int density;
-    private readonly double angleShift;
+    private const double angleShift = 0.01;
     private double currentAngle;
 
     public string GeneratorName => "Circular";
 
-    public CirclesGenerator(Point startPoint, int density = 1, double angleShift = 0.01)
+    public CirclesGenerator(IAppSettings settings)
     {
-        if (startPoint.X < 0 || startPoint.Y < 0)
-            throw new ArgumentException("Circle center point coordinates should be non-negative");
-        this.startPoint = startPoint;
-        this.density = density * 200;
-        this.angleShift = angleShift;
+        startPoint = new Point(settings.CloudWidth/2, settings.CloudHeight/2);
+        density = settings.CloudDensity * 200;
     }
 
     public Point GetNextPoint()

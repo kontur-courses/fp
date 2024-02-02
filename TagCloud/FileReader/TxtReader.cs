@@ -1,21 +1,29 @@
 using System.Xml.XPath;
+using ResultOf;
+using Spire.Doc;
 
 namespace TagCloud.FileReader;
 
 public class TxtReader : IFileReader
 {
-    private List<string> extensions = new() { "txt" };
+    public IList<string> GetAvailableExtensions() => new List<string>() { "txt" };
 
-    public IEnumerable<string> ReadLines(string inputPath)
+    public Result<IEnumerable<string>> ReadLines(string inputPath)
     {
-        if (!File.Exists(inputPath))
-            throw new ArgumentException("Source file doesn't exist");
-
-        return File.ReadLines(inputPath);
+        return FileExists(inputPath, out var error)
+            ? Result.Ok(File.ReadLines(inputPath))
+            : Result.Fail<IEnumerable<string>>(error);
     }
 
-    public IList<string> GetAvailableExtensions()
+    private bool FileExists(string inputPath, out string error)
     {
-        return extensions;
+        if (!File.Exists(inputPath))
+        {
+            error = $"File {inputPath} doesn't exist";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
     }
 }

@@ -1,6 +1,8 @@
+using ResultOf;
+
 namespace TagCloud.FileReader;
 
 public interface IFileReaderProvider
 {
-    IFileReader CreateReader(string inputPath);
+    Result<IFileReader> CreateReader(string inputPath);
 }

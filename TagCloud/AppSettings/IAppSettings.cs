@@ -13,5 +13,4 @@ public interface IAppSettings
     public bool UseRandomPalette { get; }
     public string BackgroundColor { get; }
     public string ForegroundColor { get; }
-    public string BoringWordsFile { get; }
 }
