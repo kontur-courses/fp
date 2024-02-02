@@ -2,5 +2,5 @@
 
 public interface IFormatFileReader<TFormat>
 {
-    public TFormat ReadFile(string path);
+    public Result<TFormat> ReadFile(string path);
 }

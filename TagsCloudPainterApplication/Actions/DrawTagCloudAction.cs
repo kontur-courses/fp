@@ -65,8 +65,9 @@ public class DrawTagCloudAction : IUiAction
         tagsCloudSettings.CloudSettings.BackgroundColor = palette.BackgroundColor;
         tagsCloudSettings.TagSettings.TagColor = palette.PrimaryColor;
 
-        var wordsText = textFileReader.ReadFile(wordsFilePath);
-        tagsCloudSettings.TextSettings.BoringText = textFileReader.ReadFile(filesSourceSettings.BoringTextFilePath);
+        var wordsText = textFileReader.ReadFile(wordsFilePath).GetValueOrThrow();
+        tagsCloudSettings.TextSettings.BoringText = textFileReader
+            .ReadFile(filesSourceSettings.BoringTextFilePath).GetValueOrThrow();
         var parsedWords = textParser.ParseText(wordsText);
         var cloud = GetCloud(parsedWords);
         DrawCloud(cloud);

@@ -1,4 +1,6 @@
-﻿namespace TagsCloudPainter.FileReader;
+﻿using System.Linq;
+
+namespace TagsCloudPainter.FileReader;
 
 public class TextFileReader : IFormatFileReader<string>
 {
@@ -6,21 +8,21 @@ public class TextFileReader : IFormatFileReader<string>
 
     public TextFileReader(IEnumerable<IFileReader> fileReaders)
     {
-        this.fileReaders = fileReaders;
+        this.fileReaders = fileReaders ?? throw new ArgumentNullException(nameof(fileReaders));
     }
 
-    public string ReadFile(string path)
+    public Result<string> ReadFile(string path)
     {
         if (!File.Exists(path))
-            throw new FileNotFoundException();
+            return Result.Fail<string>($"{path} file was not found");
 
-        var fileExtension = Path.GetExtension(path);
-        var fileReader =
-            fileReaders.FirstOrDefault(fileReader => fileReader.SupportedExtensions.Contains(fileExtension));
+        var fileExtension = Result.Of(() => Path.GetExtension(path));
+        var fileReader = fileExtension.Then((extension) => 
+            Result.Of(() => fileReaders.FirstOrDefault(fileReader => fileReader.SupportedExtensions.Contains(extension))));
 
-        return fileReader is not null
-            ? fileReader.ReadFile(path)
-            : throw new ArgumentException($"Incorrect file extension {fileExtension}. " +
+        return fileReader.Value is not null
+            ? fileReader.Then((reader) => reader.ReadFile(path))
+            : Result.Fail<string>($"Incorrect file extension {fileExtension}. " +
                                           $"Supported file extensions: txt, doc, docx");
     }
 }

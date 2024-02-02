@@ -36,12 +36,13 @@ public class TextFileReaderTests
     [TestCaseSource(nameof(ReadTextFiles))]
     public string ReadFile_ShouldReturnFileText(string path)
     {
-        return textFileReader.ReadFile(path);
+        return textFileReader.ReadFile(path).GetValueOrThrow();
     }
 
     [Test]
-    public void ReadFile_ThrowsFileNotFoundExceptio_WhenPassedNonexistentPath()
+    public void ReadFile_Fails_WhenPassedNonexistentPath()
     {
-        Assert.Throws<FileNotFoundException>(() => textFileReader.ReadFile(""));
+        var result = textFileReader.ReadFile("");
+        Assert.That(result.IsSuccess, Is.False);
     }
 }
