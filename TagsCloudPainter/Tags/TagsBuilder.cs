@@ -11,34 +11,37 @@ public class TagsBuilder : ITagsBuilder
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
-    public List<Tag> GetTags(List<string> words)
+    public Result<List<Tag>> GetTags(List<string> words)
     {
         var countedWords = CountWords(words);
-        var tags = new List<Tag>();
-
-        foreach (var wordWithCount in countedWords)
-        {
-            var tagFontSize = GetTagFontSize(_settings.TagFontSize, wordWithCount.Value, countedWords.Count);
-            var tag = new Tag(wordWithCount.Key, tagFontSize, wordWithCount.Value);
-            tags.Add(tag);
-        }
+        var tags = countedWords.Then(countedWords => countedWords
+        .Select(wordWithCount => GetTag(wordWithCount.Key, _settings.TagFontSize, wordWithCount.Value, countedWords.Count)
+        .GetValueOrThrow())
+        .ToList());
 
         return tags;
     }
 
-    private static Dictionary<string, int> CountWords(List<string> words)
+    private static Result<Dictionary<string, int>> CountWords(List<string> words)
     {
-        var countedWords = new Dictionary<string, int>();
-
-        foreach (var word in words)
-            if (!countedWords.TryAdd(word, 1))
-                countedWords[word] += 1;
+        var countedWords = Result.Of(() => words
+        .GroupBy(word => word)
+        .ToDictionary(group => group.Key, group => group.Count()));
 
         return countedWords;
     }
 
-    private static float GetTagFontSize(int fontSize, int tagCount, int wordsAmount)
+    private static Result<Tag> GetTag(string tagValue, int fontSize, int tagWordsAmout, int allWordsAmout)
     {
-        return (float)tagCount / wordsAmount * fontSize * 100;
+        tagValue = null;
+        var tagFontSize = GetTagFontSize(fontSize, tagWordsAmout, allWordsAmout);
+        var tag = tagFontSize.Then(tagFontSize => new Tag(tagValue, tagFontSize, tagWordsAmout));
+
+        return tag;
+    }
+
+    private static Result<float> GetTagFontSize(int fontSize, int tagCount, int wordsAmount)
+    {
+        return Result.Of(() => (float)tagCount / wordsAmount * fontSize * 100);
     }
 }

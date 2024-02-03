@@ -2,5 +2,5 @@
 
 public interface ITagsBuilder
 {
-    public List<Tag> GetTags(List<string> words);
+    public Result<List<Tag>> GetTags(List<string> words);
 }

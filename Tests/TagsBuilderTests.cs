@@ -20,7 +20,7 @@ public class TagsBuilderTests
     public void GetTags_ShouldReturnTagsWithGivenWords()
     {
         var words = new List<string> { "tag" };
-        var tags = tagsBuilder.GetTags(words);
+        var tags = tagsBuilder.GetTags(words).GetValueOrThrow();
 
         tags[0].Value.Should().Be("tag");
     }
@@ -29,7 +29,7 @@ public class TagsBuilderTests
     public void GetTags_ShouldReturnTagsWithDifferentValues()
     {
         var words = new List<string> { "tag", "tag" };
-        var tags = tagsBuilder.GetTags(words);
+        var tags = tagsBuilder.GetTags(words).GetValueOrThrow();
 
         tags.Count.Should().Be(1);
     }
@@ -38,7 +38,7 @@ public class TagsBuilderTests
     public void GetTags_ShouldReturnTagsWithCorrectCount()
     {
         var words = new List<string> { "tag", "tag" };
-        var tags = tagsBuilder.GetTags(words);
+        var tags = tagsBuilder.GetTags(words).GetValueOrThrow();
 
         tags[0].Count.Should().Be(2);
     }

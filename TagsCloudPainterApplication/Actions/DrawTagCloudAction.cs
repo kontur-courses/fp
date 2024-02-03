@@ -89,7 +89,7 @@ public class DrawTagCloudAction : IUiAction
 
     private TagsCloud GetCloud(List<string> words)
     {
-        var tags = tagsBuilder.GetTags(words);
+        var tags = tagsBuilder.GetTags(words).GetValueOrThrow();
         cloudLayouter.Reset();
         cloudLayouter.PutTags(tags);
         var cloud = cloudLayouter.GetCloud();
