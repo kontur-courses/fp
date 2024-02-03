@@ -1,5 +1,6 @@
 using System.Drawing;
 using TagCloud;
+using TagCloud.CloudDrawers;
 using TagCloud.Extensions;
 
 namespace TagCloudTests;

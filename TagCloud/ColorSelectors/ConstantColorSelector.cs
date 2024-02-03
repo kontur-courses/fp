@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
-using TagCloudTests;
 
-namespace TagCloud;
+namespace TagCloud.ColorSelectors;
 
 public class ConstantColorSelector : IColorSelector
 {

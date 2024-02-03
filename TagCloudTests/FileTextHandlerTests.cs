@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using TagCloud.Excluders;
 using TagCloud.TextHandlers;
 using TagCloud.WordFilters;
 using TagCloudTests.TestData;

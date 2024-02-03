@@ -1,4 +1,4 @@
-﻿namespace TagCloud.Excluders;
+﻿namespace TagCloud.WordFilters;
 
 public interface IWordFilter
 {

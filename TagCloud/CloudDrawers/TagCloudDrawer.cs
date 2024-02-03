@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
+using TagCloud.ColorSelectors;
 using TagCloud.Extensions;
-using TagCloudTests;
 
-namespace TagCloud;
+namespace TagCloud.CloudDrawers;
 
 public class TagCloudDrawer : ICloudDrawer
 {

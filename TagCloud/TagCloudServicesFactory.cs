@@ -1,11 +1,9 @@
 ﻿using System.Drawing;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
-using TagCloud.Excluders;
+using TagCloud.CloudDrawers;
+using TagCloud.ColorSelectors;
 using TagCloud.TextHandlers;
 using TagCloud.WordFilters;
-using TagCloudApplication;
-using TagCloudTests;
 using ColorConverter = TagCloud.Extensions.ColorConverter;
 
 namespace TagCloud;
@@ -40,10 +38,11 @@ public static class TagCloudServicesFactory
             services.AddSingleton<IColorSelector>(provider => new ConstantColorSelector(Color.Black));
 
         services.AddSingleton<IWordFilter, MyStemWordFilter>();
-                
+
+        var stream = File.Open(options.SourcePath, FileMode.Open);
         services.AddSingleton<ITextHandler>(provider => 
             new FileTextHandler(
-                stream: File.Open(options.SourcePath, FileMode.Open), 
+                stream,
                 filter: provider.GetService<IWordFilter>()
             )
         );
@@ -52,7 +51,7 @@ public static class TagCloudServicesFactory
 
     public static Result<T> ConfigureServiceAndGet<T>(Options option)
     {
-        var result = Result.Of(() => ConfigureService(option), "Services configuration error");
+        var result = Result.Of(() => ConfigureService(option));
         if (!result.IsSuccess) return Result.Fail<T>(result.Error);
         using var serviceProvider = result.Value.BuildServiceProvider();
         return Result.FailIfNull(() => serviceProvider.GetService<T>());

@@ -8,12 +8,12 @@ public class ColorConverterTestData
     {
         get
         {
-            yield return new TestCaseData("#FFFFFF").Returns(Color.FromArgb(255, 255, 255));
-            yield return new TestCaseData("#FF0000").Returns(Color.FromArgb(255, 0, 0));
-            yield return new TestCaseData("#00FF00").Returns(Color.FromArgb(0, 255, 0));
-            yield return new TestCaseData("#0000FF").Returns(Color.FromArgb(0, 0, 255));
-            yield return new TestCaseData("#808080").Returns(Color.FromArgb(128, 128, 128));
-            yield return new TestCaseData("#123456").Returns(Color.FromArgb(18, 52, 86));
+            yield return new TestCaseData("#FFFFFF",  Color.FromArgb(255, 255, 255));
+            yield return new TestCaseData("#FF0000",  Color.FromArgb(255, 0, 0));
+            yield return new TestCaseData("#00FF00",  Color.FromArgb(0, 255, 0));
+            yield return new TestCaseData("#0000FF",  Color.FromArgb(0, 0, 255));
+            yield return new TestCaseData("#808080",  Color.FromArgb(128, 128, 128));
+            yield return new TestCaseData("#123456",  Color.FromArgb(18, 52, 86));
         }
     }
     

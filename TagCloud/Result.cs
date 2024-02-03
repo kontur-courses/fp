@@ -1,7 +1,4 @@
-﻿using System;
-using CommandLine;
-
-namespace TagCloud
+﻿namespace TagCloud
 {
     public class None
     {
@@ -15,7 +12,7 @@ namespace TagCloud
         public Result(string error, T value = default(T))
         {
             Error = error;
-            Value = value;
+            this.value = value;
         }
         public static implicit operator Result<T>(T v)
         {
@@ -23,10 +20,11 @@ namespace TagCloud
         }
 
         public string Error { get; }
-        internal T Value { get; }
+        private readonly T value;
+        public T Value => GetValueOrThrow();
         public T GetValueOrThrow()
         {
-            if (IsSuccess) return Value;
+            if (IsSuccess) return value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
         public bool IsSuccess => Error == null;

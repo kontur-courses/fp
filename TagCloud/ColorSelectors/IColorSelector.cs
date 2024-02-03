@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagCloudTests;
+namespace TagCloud.ColorSelectors;
 
 public interface IColorSelector
 {

@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using TagCloud;
+using TagCloud.CloudDrawers;
+using TagCloud.ColorSelectors;
 
 namespace TagCloudTests;
 

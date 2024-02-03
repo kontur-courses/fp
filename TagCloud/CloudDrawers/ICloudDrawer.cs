@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using TagCloud;
-
-namespace TagCloudTests;
+﻿namespace TagCloud.CloudDrawers;
 
 public interface ICloudDrawer
 {

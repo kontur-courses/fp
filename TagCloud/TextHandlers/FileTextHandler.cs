@@ -1,6 +1,5 @@
-﻿using MyStemWrapper;
-using TagCloud.Excluders;
-using TagCloud.Extensions;
+﻿using TagCloud.Extensions;
+using TagCloud.WordFilters;
 
 namespace TagCloud.TextHandlers;
 

@@ -1,8 +1,5 @@
-﻿using System.Drawing;
-using Microsoft.Extensions.DependencyInjection;
+﻿using TagCloud.CloudDrawers;
 using TagCloud.TextHandlers;
-using TagCloudApplication;
-using TagCloudTests;
 
 namespace TagCloud;
 

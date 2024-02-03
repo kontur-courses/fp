@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using TagCloudTests;
+using TagCloud.ColorSelectors;
 
 namespace TagCloud.Extensions;
 

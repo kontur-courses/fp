@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace TagCloud.Extensions;
+﻿namespace TagCloud.Extensions;
 
 public static class EnumerableExtension
 {
@@ -19,7 +17,7 @@ public static class EnumerableExtension
         foreach (var element in source) action(element);
     }
     
-    public static Dictionary<T, int> CountValues<T>(this IEnumerable<T> source)
+    public static Dictionary<T, int> CountValues<T>(this IEnumerable<T> source) where T : notnull
     {
         var counter = new Dictionary<T, int>();
         foreach (var element in source)
