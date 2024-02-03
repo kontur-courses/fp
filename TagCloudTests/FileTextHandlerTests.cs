@@ -14,6 +14,7 @@ public class FileTextHandlerTests
     {
         handler = new FileTextHandler(new MemoryStream(Encoding.UTF8.GetBytes(input)), new MyStemWordFilter());
         handler.Handle()
+            .Value
             .Should()
             .BeEquivalentTo(output);
     }

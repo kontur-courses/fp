@@ -20,6 +20,7 @@ public class FileTextHandler : ITextHandler
 
         return EnumerableExtension
             .RepeatUntilNull(sr.ReadLine)
+            .Select(s => s!.ToLower())
             .CountValues()
             .AsResult()
             .Then(filter.ExcludeWords!);
