@@ -1,12 +1,10 @@
-using System.Xml.XPath;
 using ResultOf;
-using Spire.Doc;
 
 namespace TagCloud.FileReader;
 
 public class TxtReader : IFileReader
 {
-    public IList<string> GetAvailableExtensions() => new List<string>() { "txt" };
+    public IEnumerable<string> GetAvailableExtensions() => new List<string>() { "txt" };
 
     public Result<IEnumerable<string>> ReadLines(string inputPath)
     {
@@ -19,7 +17,7 @@ public class TxtReader : IFileReader
     {
         if (!File.Exists(inputPath))
         {
-            error = $"File {inputPath} doesn't exist";
+            error = $"Input file {inputPath} doesn't exist";
             return false;
         }
 

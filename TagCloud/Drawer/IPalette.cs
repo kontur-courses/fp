@@ -4,6 +4,7 @@ namespace TagCloud.Drawer;
 
 public interface IPalette
 {
+    string Name { get; }
     Color ForegroundColor { get; }
-    Color BackgroudColor { get; }
+    Color BackgroundColor { get; }
 }

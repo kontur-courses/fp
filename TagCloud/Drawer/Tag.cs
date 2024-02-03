@@ -4,9 +4,9 @@ namespace TagCloud.Drawer;
 
 public class Tag
 {
-    public string Value;
+    public readonly string Value;
     public Rectangle Position;
-    public int FontSize;
+    public readonly int FontSize;
 
     public Tag(string value, Rectangle position, int fontSize)
     {

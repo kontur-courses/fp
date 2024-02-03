@@ -1,8 +1,9 @@
 using System.Drawing;
+using ResultOf;
 
 namespace TagCloud.FileSaver;
 
 public interface ISaver
 {
-    void Save(Bitmap bitmap, string outputPath, string imageFormat);
+    Result<None> Save(Bitmap bitmap, string outputPath, string imageFormat);
 }

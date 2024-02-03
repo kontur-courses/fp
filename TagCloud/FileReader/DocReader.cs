@@ -5,7 +5,7 @@ namespace TagCloud.FileReader;
 
 public class DocReader : IFileReader
 {
-    public IList<string> GetAvailableExtensions() => new List<string>() { "doc", "docx" };
+    public IEnumerable<string> GetAvailableExtensions() => new List<string>() { "doc", "docx" };
 
     public Result<IEnumerable<string>> ReadLines(string inputPath)
     {
@@ -26,7 +26,7 @@ public class DocReader : IFileReader
     {
         if (!File.Exists(inputPath))
         {
-            error = $"File {inputPath} doesn't exist";
+            error = $"Input file {inputPath} doesn't exist";
             return false;
         }
 

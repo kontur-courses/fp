@@ -1,17 +1,24 @@
+using TagCloud.AppSettings;
 using TagCloud.Layouter;
 using TagCloud.PointGenerator;
 
 [TestFixture]
-public class CircularCloudLayouter_Should
+public class CloudLayouter_Should
 {
     private const int Width = 1920;
     private const int Height = 1080;
+    private const int Density = 1;
+    private Settings settings;
     private CloudLayouter sut;
-    
+
     [SetUp]
     public void Setup()
     {
-        sut = new CloudLayouter(new SpiralGenerator(new Point(Width / 2, Height / 2)));
+        settings = new Settings();
+        settings.CloudHeight = Height;
+        settings.CloudWidth = Width;
+        settings.CloudDensity = Density;
+        sut = new CloudLayouter(new SpiralGenerator(settings));
     }
 
     [Test]

@@ -7,14 +7,14 @@ public class SpiralGenerator : IPointGenerator
 {
     private readonly Point startPoint;
     private readonly int spiralDensity;
-    private const double angleShift = 0.01;
+    private const double angleShift = 0.1;
     private double currentAngle;
 
     public string GeneratorName => "Spiral";
 
     public SpiralGenerator(IAppSettings settings)
     {
-        startPoint = new Point(settings.CloudWidth/2, settings.CloudHeight/2);
+        startPoint = new Point(settings.CloudWidth / 2, settings.CloudHeight / 2);
         spiralDensity = settings.CloudDensity;
     }
 

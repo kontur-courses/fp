@@ -1,9 +1,8 @@
 using Autofac;
 using CommandLine;
+using ResultOf;
 using TagCloud.AppSettings;
-using TagCloud.Drawer;
 using TagCloud.FileReader;
-using TagCloud.Filter;
 using TagCloud.UserInterface;
 
 namespace TagCloudTests;
@@ -19,11 +18,9 @@ public class ConsoleUI_Should
     {
         settings = Parser.Default.ParseArguments<Settings>(new List<string>()).Value;
 
-        var builder = new ContainerBuilder();
-        builder = Configurator.BuildWithSettings(settings, builder);
+        var builder = Configurator.ConfigureBuilder(settings);
+
         builder.RegisterType<FakeReader>().As<IFileReader>();
-        builder.RegisterType<RandomPalette>().As<IPalette>();
-        builder.RegisterType<WordFilter>().As<IFilter>();
 
         var container = builder.Build();
         sut = container.Resolve<IUserInterface>();
@@ -41,12 +38,17 @@ public class ConsoleUI_Should
 
     private class FakeReader : IFileReader
     {
-        public IEnumerable<string> ReadLines(string inputPath)
+        public Result<IEnumerable<string>> ReadLines(string inputPath)
+        {
+            return Result.Ok(GetText());
+        }
+
+        private IEnumerable<string> GetText()
         {
             yield return "test";
         }
 
-        public IList<string> GetAvailableExtensions()
+        public IEnumerable<string> GetAvailableExtensions()
         {
             return new List<string>() { "txt" };
         }

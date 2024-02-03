@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using TagCloud.FileReader;
 
 namespace TagCloudTests;
@@ -26,8 +25,23 @@ public class FileReader_Should
 
         var result = sut.ReadLines(inputPath);
 
-        result.Should().BeEquivalentTo(expected);
+        result.IsSuccess.Should().BeTrue();
+        result.GetValueOrThrow().Should().BeEquivalentTo(expected);
 
         File.Delete(inputPath);
+    }
+
+    [Test]
+    public void ReturnFail_WhenFileDoesntExist()
+    {
+        var path = "FileReaderTest.txt";
+
+        if (File.Exists(path))
+            File.Delete(path);
+
+        var result = sut.ReadLines(path);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo($"Input file {path} doesn't exist");
     }
 }

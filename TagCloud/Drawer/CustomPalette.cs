@@ -1,18 +1,18 @@
 using System.Drawing;
+using TagCloud.AppSettings;
 
 namespace TagCloud.Drawer;
 
 public class CustomPalette : IPalette
 {
-    private Color foregroundColor;
-    private Color backgroundColor;
+    public string Name => "Custom";
 
-    public CustomPalette(Color foregroundColor, Color backgroundColor)
+    public Color ForegroundColor { get; }
+    public Color BackgroundColor { get; }
+
+    public CustomPalette(IAppSettings settings)
     {
-        this.foregroundColor = foregroundColor;
-        this.backgroundColor = backgroundColor;
+        ForegroundColor = Color.FromName(settings.ForegroundColor);
+        BackgroundColor = Color.FromName(settings.BackgroundColor);
     }
-
-    public Color ForegroundColor => foregroundColor;
-    public Color BackgroudColor => backgroundColor;
 }

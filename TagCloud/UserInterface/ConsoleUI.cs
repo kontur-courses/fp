@@ -39,6 +39,6 @@ public class ConsoleUI : IUserInterface
             .Then(ranker.RankWords)
             .Then(drawer.DrawTagCloud)
             .Then(bitmap => saver.Save(bitmap, appSettings.OutputPath, appSettings.ImageExtension))
-            .OnFail(error => Console.WriteLine(error));
+            .OnFail(Console.WriteLine);
     }
 }

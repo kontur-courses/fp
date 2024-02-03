@@ -10,7 +10,7 @@ public interface IAppSettings
     public int CloudHeight { get; }
     public string LayouterType { get; }
     public int CloudDensity { get; }
-    public bool UseRandomPalette { get; }
+    public string ImagePalette { get; }
     public string BackgroundColor { get; }
     public string ForegroundColor { get; }
 }

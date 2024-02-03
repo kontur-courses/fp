@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Text;
 using ResultOf;
 using TagCloud.AppSettings;
 using TagCloud.Layouter;
@@ -9,38 +10,48 @@ namespace TagCloud.Drawer;
 public class CloudDrawer : IDrawer
 {
     private readonly IPointGeneratorProvider pointGeneratorProvider;
-    private readonly IPalette palette;
+    private readonly IPaletteProvider paletteProvider;
     private readonly IAppSettings appSettings;
     private int minimalRank;
     private int maximalRank;
     private const int MaximalFontSize = 50;
     private const int LengthSizeMultiplier = 35;
 
-    public CloudDrawer(IPointGeneratorProvider pointGeneratorProvider, IPalette palette, IAppSettings appSettings)
+    public CloudDrawer(IPointGeneratorProvider pointGeneratorProvider, IPaletteProvider paletteProvider,
+        IAppSettings appSettings)
     {
         this.pointGeneratorProvider = pointGeneratorProvider;
-        this.palette = palette;
+        this.paletteProvider = paletteProvider;
         this.appSettings = appSettings;
     }
 
     public Result<Bitmap> DrawTagCloud(IEnumerable<(string word, int rank)> words)
     {
-        var pointGenerator = pointGeneratorProvider.CreateGenerator(appSettings.LayouterType).Value;
-        var layouter = new CloudLayouter(pointGenerator);
+        var pointGenerator = pointGeneratorProvider.CreateGenerator(appSettings.LayouterType);
+
+        if (!pointGenerator.IsSuccess)
+            return Result.Fail<Bitmap>(pointGenerator.Error);
+
+        var palette = paletteProvider.CreatePalette(appSettings.ImagePalette);
+
+        if (!palette.IsSuccess)
+            return Result.Fail<Bitmap>(palette.Error);
+
+        var layouter = new CloudLayouter(pointGenerator.Value);
         var tags = PlaceWords(words, layouter);
 
         return !ValidateImageBorders(tags)
             ? Result.Fail<Bitmap>(
                 $"Tags don't fit to given image size of {appSettings.CloudWidth}x{appSettings.CloudHeight}")
-            : Result.Ok(DrawTags(tags));
+            : Result.Ok(DrawTags(tags, palette.Value));
     }
 
-    private Bitmap DrawTags(IEnumerable<Tag> tags)
+    private Bitmap DrawTags(IEnumerable<Tag> tags, IPalette palette)
     {
         var imageSize = new Size(appSettings.CloudWidth, appSettings.CloudHeight);
         var image = new Bitmap(imageSize.Width, imageSize.Height);
         using var graphics = Graphics.FromImage(image);
-        using var background = new SolidBrush(palette.BackgroudColor);
+        using var background = new SolidBrush(palette.BackgroundColor);
         graphics.FillRectangle(background, 0, 0, imageSize.Width, imageSize.Height);
         foreach (var tag in tags)
         {

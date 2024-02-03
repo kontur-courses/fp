@@ -14,7 +14,7 @@ public class CirclesGenerator : IPointGenerator
 
     public CirclesGenerator(IAppSettings settings)
     {
-        startPoint = new Point(settings.CloudWidth/2, settings.CloudHeight/2);
+        startPoint = new Point(settings.CloudWidth / 2, settings.CloudHeight / 2);
         density = settings.CloudDensity * 200;
     }
 

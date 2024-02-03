@@ -13,7 +13,7 @@ public class Settings : IAppSettings
     [Option('e', "extensionImage", Default = "png", HelpText = "Output image file format")]
     public string ImageExtension { get; set; }
 
-    [Option('f', "fontType", Default = "SansSerif", HelpText = "Font type of words")]
+    [Option('f', "fontType", Default = "Arial", HelpText = "Font type of words")]
     public string FontType { get; set; }
 
     [Option('W', "width", Default = 1920, HelpText = "Width of cloud in pixels")]
@@ -28,8 +28,8 @@ public class Settings : IAppSettings
     [Option('d', "density", Default = 1, HelpText = "Density of cloud, integer")]
     public int CloudDensity { get; set; }
 
-    [Option('r', "randomPalette", Default = true, HelpText = "Use random colors")]
-    public bool UseRandomPalette { get; set; }
+    [Option('p', "imagePalette", Default = "Random", HelpText = "Image coloring method")]
+    public string ImagePalette { get; set; }
 
     [Option("background", Default = "White", HelpText = "Bckground color name")]
     public string BackgroundColor { get; set; }

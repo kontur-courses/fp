@@ -7,12 +7,11 @@ public class Program
 {
     static void Main(string[] args)
     {
-        var builder = new ContainerBuilder();
-        var settings = Configurator.Parse(args, builder);
+        var settings = Configurator.Parse(args);
 
-        builder = Configurator.BuildWithSettings(settings, builder);
-
-        var container = builder.Build();
-        container.Resolve<IUserInterface>().Run(settings);
+        Configurator.ConfigureBuilder(settings)
+            .Build()
+            .Resolve<IUserInterface>()
+            .Run(settings);
     }
 }
