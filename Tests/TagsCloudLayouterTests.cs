@@ -51,7 +51,7 @@ public class TagsCloudLayouterTests
     public void PutNextTag_ShouldReturnRectangleOfTheTagValueSize()
     {
         var tag = new Tag("ads", 10, 5);
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize);
+        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize).GetValueOrThrow();
 
         var resultRectangle = tagsCloudLayouter.PutNextTag(tag);
 

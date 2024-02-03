@@ -4,5 +4,5 @@ namespace TagsCloudPainter.Sizer;
 
 public interface IStringSizer
 {
-    Size GetStringSize(string value, string fontName, float fontSize);
+    Result<Size> GetStringSize(string value, string fontName, float fontSize);
 }

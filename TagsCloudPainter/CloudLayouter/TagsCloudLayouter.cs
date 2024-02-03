@@ -31,7 +31,7 @@ public class TagsCloudLayouter : ICloudLayouter
 
     public Rectangle PutNextTag(Tag tag)
     {
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize);
+        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize).GetValueOrThrow();
         if (tagSize.Height <= 0 || tagSize.Width <= 0)
             throw new ArgumentException("either width or height of rectangle size is not possitive");
 
