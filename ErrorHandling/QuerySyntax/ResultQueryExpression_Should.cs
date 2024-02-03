@@ -42,7 +42,7 @@ namespace ResultOfTask
         [Test]
         public void SupportQueryExpressions_WithComplexSelect()
         {
-            // ��� ��������, ���� �������� ������ ������ Query Expressions ��� ResultPattern<T>
+            // ��� ��������, ���� �������� ������ ������ Query Expressions ��� Result<T>
             // �������� �������� �� ������������� i � select
             var res =
                 from i in "1358571172".ParseIntResult()
