@@ -2,27 +2,28 @@ using Aspose.Drawing.Imaging;
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
 using TagCloud.Utils.Extensions;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class ImageFormatCommand : ICommand
 {
-    private readonly FileSettings fileSettings;
+    private readonly FileSettings _fileSettings;
 
     public ImageFormatCommand(FileSettings fileSettings)
     {
-        this.fileSettings = fileSettings;
+        _fileSettings = fileSettings;
     }
     
     public string Trigger => "format";
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length != 1
-            || !parameters[0].TryConvertToImageFormat(out var format))
-            throw new ArgumentException("Данный формат недоступен\n" + GetHelp());
-
-        fileSettings.ImageFormat = format;
-        return false;
+        return Result
+            .Of(() => parameters[0])
+            .ReplaceError(_ => "Данный формат недоступен\n" + GetHelp())
+            .Then(strFormat => strFormat.ConvertToImageFormat())
+            .Then(format => _fileSettings.ImageFormat = format)
+            .Then(() => false);
     }
 
     public string GetHelp()
@@ -30,7 +31,7 @@ public class ImageFormatCommand : ICommand
         return GetShortHelp() + Environment.NewLine +
                "Параметры:\n" +
                "string - название шрифта\n" +
-               $"Актуальное значение: {fileSettings.ImageFormat}";
+               $"Актуальное значение: {_fileSettings.ImageFormat}";
     }
 
     public string GetShortHelp()

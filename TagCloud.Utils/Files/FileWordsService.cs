@@ -2,6 +2,8 @@ using TagCloud.Utils.Files.Interfaces;
 
 namespace TagCloud.Utils.Files;
 
+
+//todo вынести fileService and wordService, чтобы разделить ответственность
 public class FileWordsService : IWordsService
 {
     public IEnumerable<string> GetWords(string path)

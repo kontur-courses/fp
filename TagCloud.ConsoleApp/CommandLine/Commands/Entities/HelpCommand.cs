@@ -1,5 +1,6 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.ConsoleApp.CommandLine.Interfaces;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
@@ -8,7 +9,7 @@ public class HelpCommand : ICommand
     public ICommandService CommandService { get; set; }
     public string Trigger => "help";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
         if (parameters.Length == 2 && CommandService.TryGetCommand(parameters[0], out var command))
             Console.WriteLine(command.GetHelp());

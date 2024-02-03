@@ -1,27 +1,27 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class PathToFileCommand : ICommand
 {
-    private readonly FileSettings fileSettings;
+    private readonly FileSettings _fileSettings;
 
     public PathToFileCommand(FileSettings fileSettings)
     {
-        this.fileSettings = fileSettings;
+        _fileSettings = fileSettings;
     }
     
     public string Trigger => "path";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length < 1)
-            throw new ArgumentException(GetHelp());
-
-        fileSettings.OutPathToFile = parameters[0];
-
-        return false;
+        return Result
+            .Of(() => parameters[0])
+            .ReplaceError(_ => GetHelp())
+            .Then(path => _fileSettings.OutPathToFile = path)
+            .Then(() => false);
     }
 
     public string GetHelp()
@@ -29,7 +29,7 @@ public class PathToFileCommand : ICommand
         return GetShortHelp() + Environment.NewLine +
                "Параметры:\n" +
                "string - pathToFile\n" +
-               $"Актуальное значение {fileSettings.OutPathToFile}";
+               $"Актуальное значение {_fileSettings.OutPathToFile}";
     }
 
     public string GetShortHelp()

@@ -145,35 +145,35 @@ namespace ResultOfTask
         [Test]
         public void ReplaceError_IfFail()
         {
-            Result.Fail<None>("error")
+            ResultPattern.Fail<None>("error")
                 .ReplaceError(e => "replaced")
-                .Should().BeEquivalentTo(Result.Fail<None>("replaced"));
+                .Should().BeEquivalentTo(ResultPattern.Fail<None>("replaced"));
         }
 
         [Test]
         public void ReplaceError_DoNothing_IfSuccess()
         {
-            Result.Ok(42)
+            ResultPattern.Ok(42)
                 .ReplaceError(e => "replaced")
-                .Should().BeEquivalentTo(Result.Ok(42));
+                .Should().BeEquivalentTo(ResultPattern.Ok(42));
         }
 
         [Test]
         public void ReplaceError_DontReplace_IfCalledBeforeError()
         {
-            Result.Ok(42)
+            ResultPattern.Ok(42)
                 .ReplaceError(e => "replaced")
-                .Then(n => Result.Fail<int>("error"))
-                .Should().BeEquivalentTo(Result.Fail<int>("error"));
+                .Then(n => ResultPattern.Fail<int>("error"))
+                .Should().BeEquivalentTo(ResultPattern.Fail<int>("error"));
         }
 
         [Test]
         public void RefineError_AddErrorMessageBeforePreviousErrorText()
         {
-            var calculation = Result.Fail<None>("No connection");
+            var calculation = ResultPattern.Fail<None>("No connection");
             calculation
                 .RefineError("Posting results to db")
-                .Should().BeEquivalentTo(Result.Fail<None>("Posting results to db. No connection"));
+                .Should().BeEquivalentTo(ResultPattern.Fail<None>("Posting results to db. No connection"));
         }
         */
     }

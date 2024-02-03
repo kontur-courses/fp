@@ -1,30 +1,28 @@
 using Aspose.Drawing;
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class SizeCommand : ICommand
 {
-    private readonly LayoutSettings layoutSettings;
+    private readonly LayoutSettings _layoutSettings;
     
     public SizeCommand(LayoutSettings layoutSettings)
     {
-        this.layoutSettings = layoutSettings;
+        _layoutSettings = layoutSettings;
     }
     
     public string Trigger => "size";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length < 2
-            || !int.TryParse(parameters[0], out var width)
-            || !int.TryParse(parameters[1], out var height))
-            throw new ArgumentException(GetHelp());
-
-        layoutSettings.Dimensions = new Size(width, height);
-
-        return false;
+        return Result
+            .Of(() => (int.Parse(parameters[0]), int.Parse(parameters[1])))
+            .ReplaceError(_ => GetHelp())
+            .Then(parsed => _layoutSettings.Dimensions = new Size(parsed.Item1, parsed.Item2))
+            .Then(() => false);
     }
 
     public string GetHelp()
@@ -33,7 +31,7 @@ public class SizeCommand : ICommand
                "Параметры:\n" +
                "int - width\n" +
                "int - height\n" +
-               $"Актуальное значение {layoutSettings.Dimensions}";
+               $"Актуальное значение {_layoutSettings.Dimensions}";
     }
 
     public string GetShortHelp()

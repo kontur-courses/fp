@@ -1,31 +1,29 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
 using TagCloud.Utils.Extensions;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class ColorCommand : ICommand
 {
-    private readonly VisualizerSettings visualizerSettings;
+    private readonly VisualizerSettings _visualizerSettings;
 
     public ColorCommand(VisualizerSettings visualizerSettings)
     {
-        this.visualizerSettings = visualizerSettings;
+        _visualizerSettings = visualizerSettings;
     }
     
     public string Trigger => "color";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length < 3
-            || !int.TryParse(parameters[0], out var red)
-            || !int.TryParse(parameters[1], out var green)
-            || !int.TryParse(parameters[2], out var blue)
-            || !(red, green, blue).TryParseColor(out var color))
-            throw new ArgumentException(GetHelp());
-
-        visualizerSettings.Color = color;
-        return false;
+        return Result
+            .Of(() => (int.Parse(parameters[0]), int.Parse(parameters[1]), int.Parse(parameters[2])))
+            .ReplaceError(_ => GetHelp())
+            .Then(parsed => parsed.ParseColor())
+            .Then(color => _visualizerSettings.Color = color)
+            .Then(() => false);
     }
 
     public string GetHelp()
@@ -35,7 +33,7 @@ public class ColorCommand : ICommand
                "int - red channel\n" +
                "int - green channel\n" +
                "int - blue channel\n" +
-               $"Актуальное значение {visualizerSettings.Color}";
+               $"Актуальное значение {_visualizerSettings.Color}";
     }
     
     public string GetShortHelp()

@@ -1,20 +1,12 @@
 using Aspose.Drawing;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.Utils.Extensions;
 
 public static class TupleExtensions
 {
-    public static bool TryParseColor(this (int red, int green, int blue) from, out Color color)
+    public static Result<Color> ParseColor(this (int red, int green, int blue) from)
     {
-        try
-        {
-            color = Color.FromArgb(255, from.red, from.green, from.blue);
-            return true;
-        }
-        catch (Exception e)
-        {
-            color = default;
-            return false;
-        }
+        return Result.Of(() => Color.FromArgb(255, from.red, from.green, from.blue));
     }
 }

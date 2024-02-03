@@ -1,5 +1,6 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
@@ -14,14 +15,13 @@ public class FileNameCommand : ICommand
     
     public string Trigger => "filename";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length < 1)
-            throw new ArgumentException(GetHelp());
-
-        fileSettings.OutFileName = parameters[0];
-
-        return false;
+        return Result
+            .Of(() => parameters[0])
+            .ReplaceError(_ => GetHelp())
+            .Then(name => fileSettings.OutFileName = name)
+            .Then(() => false);
     }
 
     public string GetHelp()

@@ -1,26 +1,27 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class ExcludeCommand : ICommand
 {
-    private readonly WordSettings wordSettings;
+    private readonly WordSettings _wordSettings;
     
     public ExcludeCommand(WordSettings wordSettings)
     {
-        this.wordSettings = wordSettings;
+        _wordSettings = wordSettings;
     }
     
     public string Trigger => "exclude";
-    public bool Execute(string[] parameters)
+    
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length < 1)
-            throw new ArgumentException(GetHelp());
-
-        wordSettings.Excluded.AddRange(parameters);
-        
-        return false;
+        return parameters.Length < 1
+            ? Result.Fail<bool>(GetHelp())
+            : Result
+                .OfAction(() => _wordSettings.Excluded.AddRange(parameters))
+                .Then(() => false);
     }
 
     public string GetHelp()
@@ -28,7 +29,7 @@ public class ExcludeCommand : ICommand
         return GetShortHelp() + Environment.NewLine +
                "Параметры:\n" +
                "string[] - список слов, которые надо исключить через пробел\n" +
-               "Сейчас исключено " + string.Join(", ", wordSettings.Excluded);
+               "Сейчас исключено " + string.Join(", ", _wordSettings.Excluded);
     }
     
     public string GetShortHelp()

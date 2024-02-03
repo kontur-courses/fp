@@ -1,11 +1,12 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class ExitCommand : ICommand
 {
     public string Trigger => "exit";
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
         return true;
     }

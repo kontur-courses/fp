@@ -2,31 +2,33 @@ using Aspose.Drawing;
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
 using TagCloud.Utils.Extensions;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class FontFamilyCommand : ICommand
 {
-    private readonly VisualizerSettings visualizerSettings;
+    private readonly VisualizerSettings _visualizerSettings;
 
     public FontFamilyCommand(VisualizerSettings visualizerSettings)
     {
-        this.visualizerSettings = visualizerSettings;
+        _visualizerSettings = visualizerSettings;
     }
     
     public string Trigger => "fontfamily";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length == 0)
-            throw new ArgumentException("Введите название шрифта");
-        
-        if (!parameters[0].TryParseFontFamily(out var fontFamily))
-            throw new ArgumentException("Данный шрифт не поддерживается в системе\n" + GetHelp());
-
-        visualizerSettings.Font = new Font(fontFamily, visualizerSettings.Font.Size);
-
-        return false;
+        return Result
+            .OfAction(() =>
+            {
+                var a = parameters[0];
+                Console.WriteLine(a.Length);
+            })
+            .ReplaceError(_ => GetHelp())
+            .Then(_ => string.Join(" ", parameters).ParseFontFamily())
+            .Then(ff => _visualizerSettings.Font = new Font(ff, _visualizerSettings.Font.Size))
+            .Then(() => false);
     }
 
     public string GetHelp()
@@ -34,7 +36,7 @@ public class FontFamilyCommand : ICommand
         return GetShortHelp() + Environment.NewLine +
                "Параметры:\n" +
                "string - название шрифта\n" +
-               $"Актуальное значение: {visualizerSettings.Font.FontFamily.Name}\n" +
+               $"Актуальное значение: {_visualizerSettings.Font.FontFamily.Name}\n" +
                "Доступные шрифты в системе: " + string.Join(", ", FontFamily.Families.Select(f => f.Name));
     }
 

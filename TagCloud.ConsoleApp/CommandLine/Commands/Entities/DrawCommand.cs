@@ -3,15 +3,16 @@ using TagCloud.Domain.Settings;
 using TagCloud.Domain.Visualizer.Interfaces;
 using TagCloud.Utils.Files.Interfaces;
 using TagCloud.Utils.Images.Interfaces;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class DrawCommand : ICommand
 {
-    private readonly IVisualizer visualizer;
-    private readonly IImageWorker imageWorker;
-    private readonly FileSettings fileSettings;
-    private readonly IWordsService wordsService;
+    private readonly IVisualizer _visualizer;
+    private readonly IImageWorker _imageWorker;
+    private readonly FileSettings _fileSettings;
+    private readonly IWordsService _wordsService;
 
     public DrawCommand(
         IVisualizer visualizer, 
@@ -19,22 +20,28 @@ public class DrawCommand : ICommand
         FileSettings fileSettings,
         IWordsService wordsService)
     {
-        this.visualizer = visualizer;
-        this.imageWorker = imageWorker;
-        this.fileSettings = fileSettings;
-        this.wordsService = wordsService;
+        _visualizer = visualizer;
+        _imageWorker = imageWorker;
+        _fileSettings = fileSettings;
+        _wordsService = wordsService;
     }
     
     public string Trigger => "draw";
     
-    public bool Execute(string[] parameters)
+    public Result<bool> Execute(string[] parameters)
     {
-        using var image = visualizer.Visualize(wordsService.GetWords(fileSettings.FileFromWithPath));
-        imageWorker.SaveImage(image, fileSettings.OutPathToFile, fileSettings.ImageFormat, fileSettings.OutFileName);
-        
-        Console.WriteLine($"Изображение было сохранено по пути {Path.GetFullPath(Path.Combine(fileSettings.OutPathToFile, fileSettings.OutFileName))}");
-
-        return true;
+        return Result.OfAction(() => 
+            {
+                using var image = _visualizer.Visualize(_wordsService.GetWords(_fileSettings.FileFromWithPath));
+                _imageWorker.SaveImage(
+                    image, 
+                    _fileSettings.OutPathToFile,
+                    _fileSettings.ImageFormat, 
+                    _fileSettings.OutFileName);
+            
+                Console.WriteLine($"Изображение было сохранено по пути {Path.GetFullPath(Path.Combine(_fileSettings.OutPathToFile, _fileSettings.OutFileName))}"); 
+            })
+            .Then(() => true);
     }
 
     public string GetHelp()

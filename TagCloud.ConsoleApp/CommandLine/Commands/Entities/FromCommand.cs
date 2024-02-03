@@ -1,34 +1,35 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
+using TagCloud.Utils.ResultPattern;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
 public class FromCommand : ICommand
 {
-    private readonly FileSettings fileSettings;
+    private readonly FileSettings _fileSettings;
 
     public FromCommand(FileSettings fileSettings)
     {
-        this.fileSettings = fileSettings;
+        _fileSettings = fileSettings;
     }
     
     public string Trigger => "from";
-    public bool Execute(string[] parameters)
+    
+    public Result<bool> Execute(string[] parameters)
     {
-        if (parameters.Length != 1)
-            throw new ArgumentException(GetHelp());
-
-        fileSettings.FileFromWithPath = parameters[0];
-
-        return false;
+        return Result
+            .Of(() => parameters[0])
+            .ReplaceError(_ => GetHelp())
+            .Then(path => _fileSettings.FileFromWithPath = path)
+            .Then(() => false);
     }
 
     public string GetHelp()
     {
         return GetShortHelp() + Environment.NewLine +
                "Параметры:\n" +
-               "stirng - pathToFIle\n" +
-               $"Актуальное значение {fileSettings.FileFromWithPath}";
+               "string - pathToFIle\n" +
+               $"Актуальное значение {_fileSettings.FileFromWithPath}";
     }
 
     public string GetShortHelp()
