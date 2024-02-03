@@ -43,6 +43,7 @@ public class TextFileReaderTests
     public void ReadFile_Fails_WhenPassedNonexistentPath()
     {
         var result = textFileReader.ReadFile("");
+
         Assert.That(result.IsSuccess, Is.False);
     }
 }
