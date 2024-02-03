@@ -9,11 +9,11 @@ public static class StringExtensions
 {
     public static Result<ImageFormat> ConvertToImageFormat(this string str)
     {
-        var format = typeof(ImageFormat)
-            .GetProperty(str, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
-            ?.GetValue(null) as ImageFormat;
-
-        return format ?? Result.Fail<ImageFormat>($"Формат {str} не доступен");
+        return Result
+            .Of(() => typeof(ImageFormat)
+                .GetProperty(str, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase)
+                ?.GetValue(null) as ImageFormat)
+            .Then(format => format is null ? Result.Fail<ImageFormat>($"Формат {str} недоступен") : format);
     }
 
     public static Result<FontFamily> ParseFontFamily(this string str)
