@@ -36,9 +36,11 @@ public class CloudDrawerTests
     };
 
     [TestCaseSource(nameof(DrawArgumentException))]
-    public void Draw_ShouldThrowArgumentException(TagsCloud cloud, int width, int height)
+    public void Draw_ShouldFail(TagsCloud cloud, int width, int height)
     {
-        Assert.Throws<ArgumentException>(() => drawer.DrawCloud(cloud, width, height));
+        var result = drawer.DrawCloud(cloud, width, height);
+
+        Assert.That(result.IsSuccess, Is.False);
     }
 
     private static IEnumerable<TestCaseData> DrawNoException => new[]
@@ -55,8 +57,10 @@ public class CloudDrawerTests
     };
 
     [TestCaseSource(nameof(DrawNoException))]
-    public void Draw_ShouldNotThrow(TagsCloud cloud, int width, int height)
+    public void Draw_ShouldNotFail(TagsCloud cloud, int width, int height)
     {
-        Assert.DoesNotThrow(() => drawer.DrawCloud(cloud, width, height));
+        var result = drawer.DrawCloud(cloud, width, height);
+
+        Assert.That(result.IsSuccess, Is.True);
     }
 }

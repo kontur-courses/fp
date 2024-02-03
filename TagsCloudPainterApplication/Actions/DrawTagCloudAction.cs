@@ -98,10 +98,11 @@ public class DrawTagCloudAction : IUiAction
 
     private void DrawCloud(TagsCloud cloud)
     {
-        using var bitmap = cloudDrawer.DrawCloud(cloud, imageSettings.Width, imageSettings.Height);
+        var bitmap = cloudDrawer.DrawCloud(cloud, imageSettings.Width, imageSettings.Height);
         using (var graphics = imageHolder.StartDrawing())
         {
-            graphics.DrawImage(bitmap, new Point(0, 0));
+            graphics.DrawImage(bitmap.GetValueOrThrow(), new Point(0, 0));
+            bitmap.Then(bitmap => bitmap.Dispose());
         }
 
         imageHolder.UpdateUi();

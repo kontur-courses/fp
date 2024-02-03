@@ -16,12 +16,12 @@ public class CloudDrawer : ICloudDrawer
         this.cloudSettings = cloudSettings ?? throw new ArgumentNullException(nameof(cloudSettings));
     }
 
-    public Bitmap DrawCloud(TagsCloud cloud, int imageWidth, int imageHeight)
+    public Result<Bitmap> DrawCloud(TagsCloud cloud, int imageWidth, int imageHeight)
     {
         if (cloud.Tags.Count == 0)
-            throw new ArgumentException("rectangles are empty");
+            return Result.Fail<Bitmap>("rectangles are empty");
         if (imageWidth <= 0 || imageHeight <= 0)
-            throw new ArgumentException("either width or height of rectangle size is not positive");
+            return Result.Fail<Bitmap>("either width or height of image is not positive");
 
         var drawingScale = CalculateObjectDrawingScale(cloud.GetWidth(), cloud.GetHeight(), imageWidth, imageHeight);
         var bitmap = new Bitmap(imageWidth, imageHeight);
@@ -37,8 +37,8 @@ public class CloudDrawer : ICloudDrawer
                 var font = new Font(tagSettings.TagFontName, tag.Item1.FontSize);
                 graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location);
             }
-        }
-        ;
+        };
+
         return bitmap;
     }
 

@@ -4,5 +4,5 @@ namespace TagsCloudPainter.Drawer;
 
 public interface ICloudDrawer
 {
-    public Bitmap DrawCloud(TagsCloud cloud, int imageWidth, int imageHeight);
+    public Result<Bitmap> DrawCloud(TagsCloud cloud, int imageWidth, int imageHeight);
 }
