@@ -33,7 +33,6 @@ public class TagsBuilder : ITagsBuilder
 
     private static Result<Tag> GetTag(string tagValue, int fontSize, int tagWordsAmout, int allWordsAmout)
     {
-        tagValue = null;
         var tagFontSize = GetTagFontSize(fontSize, tagWordsAmout, allWordsAmout);
         var tag = tagFontSize.Then(tagFontSize => new Tag(tagValue, tagFontSize, tagWordsAmout));
 
