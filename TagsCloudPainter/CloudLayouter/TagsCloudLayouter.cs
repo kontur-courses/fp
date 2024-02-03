@@ -29,27 +29,40 @@ public class TagsCloudLayouter : ICloudLayouter
         cloud = new TagsCloud(cloudSettings.CloudCenter, []);
     }
 
-    public Rectangle PutNextTag(Tag tag)
+    public Result<Rectangle> PutNextTag(Tag tag)
     {
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize).GetValueOrThrow();
-        if (tagSize.Height <= 0 || tagSize.Width <= 0)
-            throw new ArgumentException("either width or height of rectangle size is not possitive");
+        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize);
+        tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
+        ? throw new ArgumentException("either width or height of rectangle size is not possitive")
+        : tagSize);
 
-        var nextRectangle = formPointer.GetNextPoint().GetRectangle(tagSize);
-        while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(nextRectangle)))
-            nextRectangle = formPointer.GetNextPoint().GetRectangle(tagSize);
+        var nextRectangle = tagSize
+            .Then(tagSize => formPointer.GetNextPoint().GetRectangle(tagSize))
+            .Then(nextRectangle =>
+            {
+                while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(nextRectangle)))
+                    nextRectangle = formPointer.GetNextPoint().GetRectangle(tagSize.GetValueOrThrow());
 
-        cloud.AddTag(tag, nextRectangle);
+                return nextRectangle;
+            });
+        
+        nextRectangle.Then(nextRectangle => cloud.AddTag(tag, nextRectangle));
 
         return nextRectangle;
     }
 
-    public void PutTags(List<Tag> tags)
+    public Result<None> PutTags(List<Tag> tags)
     {
-        if (tags.Count == 0)
-            throw new ArgumentException("пустые размеры");
+        if (tags is null || tags.Count == 0)
+            return Result.Fail<None>("tags are empty");
         foreach (var tag in tags)
-            PutNextTag(tag);
+        {
+            var nextTag = PutNextTag(tag);
+            if (!nextTag.IsSuccess)
+                return Result.Fail<None>(nextTag.Error);
+        }
+
+        return Result.Ok();
     }
 
     public TagsCloud GetCloud()

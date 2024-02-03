@@ -40,11 +40,14 @@ public class TagsCloudLayouterTests
     };
 
     [TestCaseSource(nameof(PutNextTagArgumentException))]
-    public void PutNextRectangle_ShouldThrowArgumentException_WhenGivenTagWith(Size size)
+    public void PutNextRectangle_ShouldFail_WhenGivenTagWith(Size size)
     {
         A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<string>.Ignored, A<float>.Ignored))
             .Returns(size);
-        Assert.Throws<ArgumentException>(() => tagsCloudLayouter.PutNextTag(new Tag("a", 2, 1)));
+
+        var result = tagsCloudLayouter.PutNextTag(new Tag("a", 2, 1));
+
+        Assert.That(result.IsSuccess, Is.False);
     }
 
     [Test]
@@ -53,7 +56,7 @@ public class TagsCloudLayouterTests
         var tag = new Tag("ads", 10, 5);
         var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize).GetValueOrThrow();
 
-        var resultRectangle = tagsCloudLayouter.PutNextTag(tag);
+        var resultRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
 
         resultRectangle.Size.Should().Be(tagSize);
     }
@@ -63,8 +66,8 @@ public class TagsCloudLayouterTests
     {
         var firstTag = new Tag("ads", 10, 5);
         var secondTag = new Tag("ads", 10, 5);
-        var firstPutRectangle = tagsCloudLayouter.PutNextTag(firstTag);
-        var secondPutRectangle = tagsCloudLayouter.PutNextTag(secondTag);
+        var firstPutRectangle = tagsCloudLayouter.PutNextTag(firstTag).GetValueOrThrow();
+        var secondPutRectangle = tagsCloudLayouter.PutNextTag(secondTag).GetValueOrThrow();
 
         var doesRectanglesIntersect = firstPutRectangle.IntersectsWith(secondPutRectangle);
 
@@ -76,16 +79,18 @@ public class TagsCloudLayouterTests
     {
         var center = tagsCloudLayouter.GetCloud().Center;
         var tag = new Tag("ads", 10, 5);
-        var firstRectangle = tagsCloudLayouter.PutNextTag(tag);
+        var firstRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
         var firstRectangleCenter = firstRectangle.GetCenter();
 
         firstRectangleCenter.Should().Be(center);
     }
 
     [Test]
-    public void PutTags_ThrowsArgumentNullException_WhenGivenEmptyDictionary()
+    public void PutTags_Fails_WhenGivenEmptyDictionary()
     {
-        Assert.Throws<ArgumentException>(() => tagsCloudLayouter.PutTags([]));
+        var result = tagsCloudLayouter.PutTags([]);
+
+        Assert.That(result.IsSuccess, Is.False);
     }
 
     [Test]

@@ -5,7 +5,7 @@ namespace TagsCloudPainter.CloudLayouter;
 
 public interface ICloudLayouter : IResetable
 {
-    Rectangle PutNextTag(Tag tag);
+    Result<Rectangle> PutNextTag(Tag tag);
     TagsCloud GetCloud();
-    void PutTags(List<Tag> tags);
+    Result<None> PutTags(List<Tag> tags);
 }
