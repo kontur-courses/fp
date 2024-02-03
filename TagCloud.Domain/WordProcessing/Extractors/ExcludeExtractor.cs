@@ -5,15 +5,15 @@ namespace TagCloud.Domain.WordProcessing.Extractors;
 
 public class ExcludeExtractor : IWordExtractor
 {
-    private readonly WordSettings wordSettings;
+    private readonly WordSettings _wordSettings;
     
     public ExcludeExtractor(WordSettings wordSettings)
     {
-        this.wordSettings = wordSettings;
+        _wordSettings = wordSettings;
     }
     
     public bool IsSuitable(string word)
     {
-        return wordSettings.Excluded.All(excluded => !excluded.Equals(word, StringComparison.InvariantCulture));
+        return _wordSettings.Excluded.All(excluded => !excluded.Equals(word, StringComparison.InvariantCulture));
     }
 }

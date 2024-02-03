@@ -6,12 +6,12 @@ namespace TagCloud.ConsoleApp.CommandLine;
 
 public class CommandService : ICommandService
 {
-    private readonly Dictionary<string, ICommand> commands = new();
+    private readonly Dictionary<string, ICommand> _commands = new();
     
     public CommandService(IEnumerable<ICommand> commands)
     {
         foreach (var command in commands) 
-            this.commands[command.Trigger] = command;
+            _commands[command.Trigger] = command;
     }
 
     public void Run()
@@ -39,12 +39,12 @@ public class CommandService : ICommandService
 
     public IEnumerable<ICommand> GetCommands()
     {
-        return commands.Values;
+        return _commands.Values;
     }
 
     public bool TryGetCommand(string name, out ICommand command)
     {
-        return commands.TryGetValue(name, out command);
+        return _commands.TryGetValue(name, out command);
     }
 
     private Result<bool> Execute(string input)
@@ -52,9 +52,9 @@ public class CommandService : ICommandService
         var parameters = input.Split(' ');
         
         if (parameters.Length == 0 
-            || !commands.TryGetValue(parameters[0], out var command)
+            || !_commands.TryGetValue(parameters[0], out var command)
             || parameters.Length == 2 && parameters[1] == "--help")
-            return commands["help"].Execute(parameters);
+            return _commands["help"].Execute(parameters);
 
         return command.Execute(parameters
             .Skip(1)

@@ -1,9 +1,9 @@
 using TagCloud.ConsoleApp.CommandLine.Commands.Interfaces;
 using TagCloud.Domain.Settings;
 using TagCloud.Domain.Visualizer.Interfaces;
-using TagCloud.Utils.Files.Interfaces;
 using TagCloud.Utils.Images.Interfaces;
 using TagCloud.Utils.ResultPattern;
+using TagCloud.Utils.Words.Interfaces;
 
 namespace TagCloud.ConsoleApp.CommandLine.Commands.Entities;
 
@@ -30,17 +30,17 @@ public class DrawCommand : ICommand
     
     public Result<bool> Execute(string[] parameters)
     {
-        return Result.OfAction(() => 
-            {
-                using var image = _visualizer.Visualize(_wordsService.GetWords(_fileSettings.FileFromWithPath));
-                _imageWorker.SaveImage(
-                    image, 
-                    _fileSettings.OutPathToFile,
-                    _fileSettings.ImageFormat, 
-                    _fileSettings.OutFileName);
-            
-                Console.WriteLine($"Изображение было сохранено по пути {Path.GetFullPath(Path.Combine(_fileSettings.OutPathToFile, _fileSettings.OutFileName))}"); 
-            })
+        return _wordsService.GetWords(_fileSettings.FileFromWithPath)
+            .Then(words => _visualizer.Visualize(words))
+            .Then(image => _imageWorker.SaveImage(
+                image,
+                _fileSettings.OutPathToFile,
+                _fileSettings.ImageFormat,
+                _fileSettings.OutFileName))
+            .Then(_ => Console.WriteLine(
+                $"Изображение было сохранено по пути {
+                    Path.GetFullPath(Path.Combine(_fileSettings.OutPathToFile, _fileSettings.OutFileName))
+                }"))
             .Then(() => true);
     }
 
