@@ -25,9 +25,18 @@ namespace TagsCloudContainer
                 .WithParsed(o => appSettings = CommandLineOptions.ParseArgs(o));
 
             var text = reader.ReadText(appSettings.TextFile);
+
+            if (!text.IsSuccess)
+            {
+                Console.WriteLine("Error: " + text.Error);
+                return;
+            }
+            var goodText = text.Value;
+
+
             var layouter = serviceProvider.GetService<TagsCloudLayouter>();
 
-            analyzer.Analyze(text, appSettings.FilterFile);
+            analyzer.Analyze(goodText, appSettings.FilterFile);
 
             layouter.Initialize(appSettings.DrawingSettings, analyzer.GetAnalyzedText());
 

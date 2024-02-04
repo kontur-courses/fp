@@ -1,7 +1,9 @@
-﻿namespace TagsCloudContainer.TextTools
+﻿using ResultOf;
+
+namespace TagsCloudContainer.TextTools
 {
     public interface ITextReader
     {
-        public string ReadText(string filePath);
+        public Result<string> ReadText(string filePath);
     }
 }
