@@ -1,7 +1,6 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 
-namespace TagsCloudVisualization.Extensions;
+namespace TagsCloudVisualizationTests.Utils;
 
 public static class BitmapExtensions
 {

@@ -57,7 +57,7 @@ public class CircularCloudLayouterTests
     {
         var rectSize = new Size(2, 2);
 
-        layouter.PutNextRectangle(rectSize).Size.Should().Be(rectSize);
+        layouter.PutNextRectangle(rectSize).GetValueOrThrow().Size.Should().Be(rectSize);
     }
     
     [Test]
@@ -66,7 +66,7 @@ public class CircularCloudLayouterTests
         var rectSize = new Size(2, 2);
         var centerWithOffset = new Point(center.X - rectSize.Width / 2, center.Y - rectSize.Height / 2);
 
-        layouter.PutNextRectangle(rectSize).Location.Should().Be(centerWithOffset);
+        layouter.PutNextRectangle(rectSize).GetValueOrThrow().Location.Should().Be(centerWithOffset);
     }
 
     [Test]

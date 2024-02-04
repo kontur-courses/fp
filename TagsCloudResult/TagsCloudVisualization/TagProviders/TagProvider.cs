@@ -1,4 +1,5 @@
-﻿using TagsCloudVisualization.Extensions;
+﻿using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.WordsAnalyzers;
 using TagsCloudVisualization.WordsProcessors;
 using TextReader = TagsCloudVisualization.TextReaders.TextReader;
@@ -16,16 +17,17 @@ public class TagProvider : ITagProvider
         this.processor = processor;
     }
     
-    public IEnumerable<Tag> GetTags()
+    public Result<IEnumerable<Tag>> GetTags()
     {
-        var words = textReader.GetText().GetAllWords();
-        var wordsWithFreq = new Dictionary<string, int>();
+        return textReader.GetText().Then(x => x.GetAllWords()).Then(words =>
+        {
+            var wordsWithFreq = new Dictionary<string, int>();
 
-        foreach (var word in processor.Process(words))
-            wordsWithFreq[word] = wordsWithFreq.TryGetValue(word, out var value) ? value + 1 : 1;
+            foreach (var word in processor.Process(words))
+                wordsWithFreq[word] = wordsWithFreq.TryGetValue(word, out var value) ? value + 1 : 1;
 
-        var max = wordsWithFreq.Max(x => x.Value);
-
-        return wordsWithFreq.Select(x => new Tag(x.Key, (double)x.Value / max)).OrderByDescending(x => x.Coeff);
+            var max = wordsWithFreq.Max(x => x.Value);
+            return (IEnumerable<Tag>)wordsWithFreq.Select(x => new Tag(x.Key, (double) x.Value / max)).OrderByDescending(x => x.Coeff);
+        });
     }
 }

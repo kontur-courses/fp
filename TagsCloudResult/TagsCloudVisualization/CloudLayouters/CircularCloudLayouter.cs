@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.Common;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointsProviders;
 
@@ -8,18 +9,17 @@ public class CircularCloudLayouter : BaseCloudLayouter<ArchimedeanSpiralPointsPr
 {
     public CircularCloudLayouter(ArchimedeanSpiralPointsProvider pointsProvider) : base(pointsProvider) {}
 
-    protected override Point FindPositionForRectangle(Size rectangleSize)
+    protected override Result<Point> FindPositionForRectangle(Size rectangleSize)
     {
         var offsetToCenter = new Size(-rectangleSize.Width / 2, -rectangleSize.Height / 2);
-        var point = PointsProvider
-            .GetPoints()
-            .Select(x => x.WithOffset(offsetToCenter))
-            .First(x => IsPlaceSuitableForRectangle(new Rectangle(x, rectangleSize)));
-
-        return MovePointToCenter(point, rectangleSize);
+        return PointsProvider.GetPoints()
+            .Then(points => points
+                .Select(x => x.WithOffset(offsetToCenter))
+                .First(x => IsPlaceSuitableForRectangle(new Rectangle(x, rectangleSize))))
+            .Then(point => MovePointToCenter(point, rectangleSize));
     }
-
-    private Point MovePointToCenter(Point point, Size rectangleSize)
+    
+    private Result<Point> MovePointToCenter(Point point, Size rectangleSize)
     {
         point = MovePointAlongXAxis(point, rectangleSize);
         point = MovePointAlongYAxis(point, rectangleSize); 

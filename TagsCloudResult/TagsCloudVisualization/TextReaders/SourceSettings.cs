@@ -2,5 +2,5 @@
 
 public class SourceSettings
 {
-    public string Path { get; set; } = @"../src/textSample.txt";
+    public string Path { get; set; } = @"";
 }

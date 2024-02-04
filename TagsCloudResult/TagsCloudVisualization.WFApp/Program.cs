@@ -27,7 +27,7 @@ public static class Program
         container.RegisterType<ArchimedeanSpiralSettings>().SingleInstance();
 
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
-        container.RegisterType<TxtTextReader>().As<TextReader>();
+        container.RegisterType<DocTextReader>().As<TextReader>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
         container.RegisterType<TagsSettings>().SingleInstance();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();

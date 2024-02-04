@@ -1,6 +1,8 @@
-﻿namespace TagsCloudVisualization.WordsAnalyzers;
+﻿using TagsCloudVisualization.Common;
+
+namespace TagsCloudVisualization.WordsAnalyzers;
 
 public interface ITagProvider
 {
-    public IEnumerable<Tag> GetTags();
+    public Result<IEnumerable<Tag>> GetTags();
 }

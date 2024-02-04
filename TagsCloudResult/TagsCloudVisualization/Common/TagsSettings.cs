@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace TagsCloudVisualization.Common;
 
-public class TagsSettings
+public record TagsSettings
 {
     [TypeConverter(typeof(FontConverter.FontNameConverter))]
     public string Font { get; init; } = "Arial";

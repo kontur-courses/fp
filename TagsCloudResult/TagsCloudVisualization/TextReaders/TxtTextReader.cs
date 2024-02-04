@@ -1,4 +1,6 @@
-﻿namespace TagsCloudVisualization.TextReaders;
+﻿using TagsCloudVisualization.Common;
+
+namespace TagsCloudVisualization.TextReaders;
 
 public class TxtTextReader : TextReader
 {
@@ -6,9 +8,9 @@ public class TxtTextReader : TextReader
     {
     }
 
-    public override string GetText()
+    protected override Result<string> ReadText(string path)
     {
-        using var reader = new StreamReader(Settings.Path);
+        using var reader = new StreamReader(path);
         return reader.ReadToEnd();
     }
 }

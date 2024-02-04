@@ -24,7 +24,7 @@ public class SourceSettingsAction : IUiAction
             CheckFileExists = false,
             InitialDirectory = Path.GetFullPath("/"),
             DefaultExt = "txt",
-            Filter = "Текстовый файл (*.txt)|*.txt" 
+            Filter = "Текстовый файл (*.txt)|*.txt|DOC (*.doc)|*.doc|DOCX (*.docx)|*.docx" 
         };
         var res = dialog.ShowDialog();
         

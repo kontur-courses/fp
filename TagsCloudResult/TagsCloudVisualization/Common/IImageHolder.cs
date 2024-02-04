@@ -4,9 +4,9 @@ namespace TagsCloudVisualization.Common;
 
 public interface IImageHolder
 {
-    Size GetImageSize();
-    Graphics StartDrawing();
-    void UpdateUi();
-    void RecreateImage(ImageSettings settings);
-    void SaveImage(string fileName);
+    Result<Size> GetImageSize();
+    Result<Graphics> StartDrawing();
+    Result<None> UpdateUi();
+    Result<None> RecreateImage(ImageSettings settings);
+    Result<None> SaveImage(string fileName);
 }

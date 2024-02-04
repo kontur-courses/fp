@@ -1,8 +1,6 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
-using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.WordsAnalyzers;
 
 namespace TagsCloudVisualization;
@@ -22,16 +20,19 @@ public class TagsCloudVisualizator
         this.imageHolder = imageHolder;
     }
 
-    public void DrawTagsCloud()
+    public Result<None> DrawTagsCloud()
     {
-        using (var graphics = imageHolder.StartDrawing())
-        {
-            FillBackground(graphics);
-            DrawTags(graphics);
-            graphics.Save();
-        }
-
-        imageHolder.UpdateUi();
+        return imageHolder.StartDrawing()
+            .Then(graphics =>
+            {
+                using (graphics)
+                {
+                    FillBackground(graphics);
+                    DrawTags(graphics, tagProvider.GetTags().GetValueOrThrow());
+                    graphics.Save();
+                }
+            })
+            .Then(_ => imageHolder.UpdateUi());
     }
 
     private void FillBackground(Graphics graphics)
@@ -39,15 +40,15 @@ public class TagsCloudVisualizator
         graphics.Clear(tagsSettings.BackgroundColor);
     }
 
-    private void DrawTags(Graphics graphics)
+    private void DrawTags(Graphics graphics, IEnumerable<Tag> tags)
     {
         using (layouter)
         {
             var fontsize = 42;
-            foreach (var tag in tagProvider.GetTags())
+            foreach (var tag in tags)
             {
                 var font = new Font(tagsSettings.Font, fontsize * (float) tag.Coeff);
-                var rectangle = layouter.PutNextRectangle(graphics.MeasureString(tag.Word, font).ToSize());
+                var rectangle = layouter.PutNextRectangle(graphics.MeasureString(tag.Word, font).ToSize()).GetValueOrThrow();
                 var color = tag.Coeff > 0.75 ? tagsSettings.PrimaryColor :
                     tag.Coeff > 0.35 ? tagsSettings.SecondaryColor : tagsSettings.TertiaryColor;
                 graphics.DrawString(tag.Word, font, new SolidBrush(color), rectangle.Location);

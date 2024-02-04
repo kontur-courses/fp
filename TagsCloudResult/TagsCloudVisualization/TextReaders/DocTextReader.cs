@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using TagsCloudVisualization.Common;
 
 namespace TagsCloudVisualization.TextReaders;
 
@@ -9,10 +10,15 @@ public class DocTextReader : TextReader
     {
     }
 
-    public override string GetText()
+    protected override Result<string> ReadText(string path)
     {
-        using var document = WordprocessingDocument.Open(Settings.Path, false);
-        var body = document.MainDocumentPart.Document.Body;
-        return string.Join("\n", body.Descendants<Text>().Select(t => t.Text));
+        using var document = WordprocessingDocument.Open(path, false);
+        return GetBody(document)
+            .Then(body => string.Join("\n", body.Descendants<Text>().Select(t => t.Text)));
+    }
+
+    private static Result<Body> GetBody(WordprocessingDocument document)
+    {
+        return Result.Of(() => document.MainDocumentPart.Document.Body, "Тело источника пусто. Предоставьте другой файл.");
     }
 }

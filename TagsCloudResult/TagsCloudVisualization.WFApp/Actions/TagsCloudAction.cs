@@ -1,4 +1,5 @@
-﻿using TagsCloudVisualization.PointsProviders;
+﻿using TagsCloudVisualization.Common;
+using TagsCloudVisualization.PointsProviders;
 using TagsCloudVisualization.WFApp.Common;
 using TagsCloudVisualization.WFApp.Infrastructure;
 
@@ -22,6 +23,6 @@ public class TagsCloudAction : IUiAction
     public void Perform()
     {
         SettingsForm.For(settings).ShowDialog();
-        tagsCloudVisualizator.DrawTagsCloud();
+        tagsCloudVisualizator.DrawTagsCloud().OnFail(x => throw new Exception(x));
     }
 }

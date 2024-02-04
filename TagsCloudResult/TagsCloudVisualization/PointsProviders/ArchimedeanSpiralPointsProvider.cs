@@ -10,24 +10,34 @@ public class ArchimedeanSpiralPointsProvider : IPointsProvider
 
     public ArchimedeanSpiralPointsProvider(ArchimedeanSpiralSettings settings)
     {
-        if (settings.DeltaAngle == 0 || settings.Distance == 0)
-            throw new ArgumentException("deltaAngle and distance should not equals zero");
         this.settings = settings;
     }
 
-    public IEnumerable<Point> GetPoints()
+    public Result<IEnumerable<Point>> GetPoints()
+    {
+        return ValidateSettings(settings)
+            .Then(CalculatePoints);
+    }
+
+    private IEnumerable<Point> CalculatePoints(ArchimedeanSpiralSettings settings)
     {
         for (var angle = 0d; ; angle += settings.DeltaAngle)
         {
-            var point = Start;
+            var point = this.settings.Center;
             point.Offset(PolarToCartesian(settings.Distance * angle, angle));
 
             yield return point;
         }
     }
-    
+
     public static Point PolarToCartesian(double distance, double angle)
     {
         return new Point((int)(distance * Math.Cos(angle)), (int)(distance * Math.Sin(angle)));
+    }
+
+    private static Result<ArchimedeanSpiralSettings> ValidateSettings(ArchimedeanSpiralSettings settings)
+    {
+        return Result.Validate(settings, x => x.DeltaAngle != 0 && x.Distance != 0,
+            "Параметры DeltaAngle и Distance не должны быть равны нулю. Пожалуйста, укажите корректные параметры.");
     }
 }

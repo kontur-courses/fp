@@ -2,6 +2,7 @@
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointsProviders;
+using TagsCloudVisualizationTests.Utils;
 
 namespace TagsCloudVisualizationTests;
 

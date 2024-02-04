@@ -5,38 +5,40 @@ namespace TagsCloudVisualization.WFApp.Common;
 
 public class PictureBoxImageHolder : PictureBox, IImageHolder
 {
-    public Size GetImageSize()
+    public Result<Size> GetImageSize()
     {
-        FailIfNotInitialized();
-        return Image.Size;
+        return ValidateImageCreation()
+            .Then(x => x.Size);
     }
 
-    public Graphics StartDrawing()
+    public Result<Graphics> StartDrawing()
     {
-        FailIfNotInitialized();
-        return Graphics.FromImage(Image);
+        return ValidateImageCreation()
+            .Then(Graphics.FromImage);
     }
 
-    private void FailIfNotInitialized()
+    private Result<Image> ValidateImageCreation()
     {
-        if (Image == null)
-            throw new InvalidOperationException("Call PictureBoxImageHolder.RecreateImage before other method call!");
+        return Result.Validate(Image, x => x != null,
+            "Call PictureBoxImageHolder.RecreateImage before other method call!");
     }
 
-    public void UpdateUi()
+    public Result<None> UpdateUi()
     {
         Refresh();
         Application.DoEvents();
+        return Result.Ok();
     }
 
-    public void RecreateImage(ImageSettings imageSettings)
+    public Result<None> RecreateImage(ImageSettings imageSettings)
     {
         Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
+        return Result.Ok();
     }
 
-    public void SaveImage(string fileName)
+    public Result<None> SaveImage(string fileName)
     {
-        FailIfNotInitialized();
-        Image.Save(fileName);
+        return ValidateImageCreation()
+            .Then(x => x.Save(fileName));
     }
 }
