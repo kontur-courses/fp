@@ -21,11 +21,17 @@ public class TagsCloud
 
     public int GetWidth()
     {
+        if (Tags.Count == 1)
+            return Tags.First().Item2.Width;
+
         return Tags.Max(pair => pair.Item2.X) - Tags.Min(pair => pair.Item2.X);
     }
 
     public int GetHeight()
     {
+        if (Tags.Count == 1)
+            return Tags.First().Item2.Height;
+
         return Tags.Max(pair => pair.Item2.Y) - Tags.Min(pair => pair.Item2.Y);
     }
 }
