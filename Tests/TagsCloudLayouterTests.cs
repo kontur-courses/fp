@@ -2,6 +2,7 @@
 using FakeItEasy;
 using FluentAssertions;
 using TagsCloudPainter.CloudLayouter;
+using TagsCloudPainter.Drawer;
 using TagsCloudPainter.Extensions;
 using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
@@ -32,14 +33,48 @@ public class TagsCloudLayouterTests
     private ITagSettings tagSettings;
     private IStringSizer stringSizer;
 
-    private static IEnumerable<TestCaseData> PutNextTagArgumentException => new[]
+    private static IEnumerable<TestCaseData> ConstructorArgumentNullExceptions => new[]
+    {
+        new TestCaseData(null, 
+            A.Fake<ArchimedeanSpiralPointer>(),
+            A.Fake<TagSettings>(),
+            A.Fake<StringSizer>())
+        .SetName("WhenGivenNullCloudSettings"),
+        new TestCaseData(A.Fake<CloudSettings>(),
+            null,
+            A.Fake<TagSettings>(),
+            A.Fake<StringSizer>())
+        .SetName("WhenGivenNullFormPointer"),
+        new TestCaseData(A.Fake<CloudSettings>(),
+            A.Fake<ArchimedeanSpiralPointer>(),
+            null,
+            A.Fake<StringSizer>())
+        .SetName("WhenGivenNullTagSettings"),
+        new TestCaseData(A.Fake<CloudSettings>(),
+            A.Fake<ArchimedeanSpiralPointer>(),
+            A.Fake<TagSettings>(),
+            null)
+        .SetName("WhenGivenNullStringSizer"),
+    };
+
+    [TestCaseSource(nameof(ConstructorArgumentNullExceptions))]
+    public void Constructor_ShouldThrowArgumentNullException_(
+        ICloudSettings cloudSettings,
+        IFormPointer formPointer,
+        ITagSettings tagSettings,
+        IStringSizer stringSizer)
+    {
+        Assert.Throws<ArgumentNullException>(() => new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer));
+    }
+
+    private static IEnumerable<TestCaseData> FailingSizes => new[]
     {
         new TestCaseData(new Size(0, 10)).SetName("WidthNotPossitive"),
         new TestCaseData(new Size(10, 0)).SetName("HeightNotPossitive"),
         new TestCaseData(new Size(0, 0)).SetName("HeightAndWidthNotPossitive")
     };
 
-    [TestCaseSource(nameof(PutNextTagArgumentException))]
+    [TestCaseSource(nameof(FailingSizes))]
     public void PutNextRectangle_ShouldFail_WhenGivenTagWith(Size size)
     {
         A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<FontFamily>.Ignored, A<float>.Ignored))
@@ -101,5 +136,19 @@ public class TagsCloudLayouterTests
         var rectanglesAmount = tagsCloudLayouter.GetCloud().Tags.Count;
 
         rectanglesAmount.Should().Be(2);
+    }
+
+    private static IEnumerable<TestCaseData> FailingTags => new[]
+    {
+        new TestCaseData(new List<Tag>()).SetName("WhenGivenEmptyTags"),
+        new TestCaseData(null).SetName("WhenGivenNullTags"),
+    };
+
+    [TestCaseSource(nameof(FailingTags))]
+    public void PutTags_ShouldFail_(List<Tag> tags)
+    {
+        var result = tagsCloudLayouter.PutTags(tags);
+
+        Assert.That(result.IsSuccess, Is.False);
     }
 }

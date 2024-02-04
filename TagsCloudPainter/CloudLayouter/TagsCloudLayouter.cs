@@ -34,7 +34,7 @@ public class TagsCloudLayouter : ICloudLayouter
     {
         var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize);
         tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
-        ? throw new ArgumentException("Either width or height of rectangle size is not possitive")
+        ? Result.Fail<Size>("Either width or height of rectangle size is not possitive")
         : tagSize);
 
         var nextRectangle = tagSize
@@ -56,6 +56,7 @@ public class TagsCloudLayouter : ICloudLayouter
     {
         if (tags is null || tags.Count == 0)
             return Result.Fail<None>("Tags are empty");
+
         foreach (var tag in tags)
         {
             var nextTag = PutNextTag(tag);
