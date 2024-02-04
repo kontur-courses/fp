@@ -15,6 +15,9 @@ public class BoringTextParser : ITextParser
 
     public Result<List<string>> ParseText(string text)
     {
+        if (text is null)
+            return Result.Fail<List<string>>("Can't parse nullable text");
+
         var boringWords = GetBoringWords(textSettings.BoringText);
         var words = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
         var parssedText = boringWords
