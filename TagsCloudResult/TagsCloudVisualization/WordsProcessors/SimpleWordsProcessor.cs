@@ -1,9 +1,11 @@
-﻿namespace TagsCloudVisualization.WordsProcessors;
+﻿using TagsCloudVisualization.Common;
+
+namespace TagsCloudVisualization.WordsProcessors;
 
 public class SimpleWordsProcessor : IWordsProcessor
 {
-    public IEnumerable<string> Process(IEnumerable<string> words)
+    public Result<IEnumerable<string>> Process(IEnumerable<string> words)
     {
-        return words.Select(x => x.ToLower()).Where(y => y.Length > 3);
+        return words.Select(x => x.ToLower()).Where(y => y.Length > 3).AsResult();
     }
 }

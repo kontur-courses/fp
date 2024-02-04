@@ -1,6 +1,8 @@
-﻿namespace TagsCloudVisualization.WordsProcessors;
+﻿using TagsCloudVisualization.Common;
+
+namespace TagsCloudVisualization.WordsProcessors;
 
 public interface IWordsProcessor
 {
-    public IEnumerable<string> Process(IEnumerable<string> words);
+    public Result<IEnumerable<string>> Process(IEnumerable<string> words);
 }

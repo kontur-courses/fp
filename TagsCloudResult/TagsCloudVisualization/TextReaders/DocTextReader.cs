@@ -19,6 +19,7 @@ public class DocTextReader : TextReader
 
     private static Result<Body> GetBody(WordprocessingDocument document)
     {
-        return Result.Of(() => document.MainDocumentPart.Document.Body, "Тело источника пусто. Предоставьте другой файл.");
+        return Result.Of(() => document.MainDocumentPart.Document.Body, 
+            "Тело источника пусто. Пожалуйста, предоставьте другой файл.");
     }
 }

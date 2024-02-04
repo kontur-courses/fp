@@ -1,6 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using NUnit.Framework.Interfaces;
 using TagsCloudVisualization.CloudLayouters;
+using TagsCloudVisualization.Common;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointsProviders;
 using TagsCloudVisualizationTests.Utils;
@@ -44,12 +45,13 @@ public class CircularCloudLayouterTests
     [TestCase(0, 2, TestName = "rectangle size width is zero")]
     [TestCase(2, 0, TestName = "rectangle size height is zero")]
     [TestCase(0, 0, TestName = "rectangle size width and height is zero")]
-    public void PutNextRectangle_ThrowsException_OnIncorrectArguments(int rectWidth, int rectHeight)
+    public void PutNextRectangle_ReturnsFail_OnIncorrectArguments(int rectWidth, int rectHeight)
     {
         var rectSize = new Size(rectWidth, rectHeight);
-        var a = () => layouter.PutNextRectangle(rectSize);
         
-        a.Should().Throw<ArgumentException>();
+        layouter.PutNextRectangle(rectSize)
+            .Should()
+            .Be(Result.Fail<Rectangle>("Rectangle width and height should be positive"));
     }
     
     [Test]

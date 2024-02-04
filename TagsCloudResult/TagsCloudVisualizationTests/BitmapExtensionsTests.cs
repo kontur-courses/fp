@@ -1,7 +1,4 @@
 ﻿using System.Drawing.Imaging;
-using TagsCloudVisualization.CloudLayouters;
-using TagsCloudVisualization.Extensions;
-using TagsCloudVisualization.PointsProviders;
 using TagsCloudVisualizationTests.Utils;
 
 namespace TagsCloudVisualizationTests;
@@ -57,5 +54,4 @@ public class BitmapExtensionsTests
         
         a.Should().Throw<ArgumentException>();
     }
-    
 }

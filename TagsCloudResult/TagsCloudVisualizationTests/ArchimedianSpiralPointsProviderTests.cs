@@ -1,4 +1,5 @@
-﻿using TagsCloudVisualization.PointsProviders;
+﻿using TagsCloudVisualization.Common;
+using TagsCloudVisualization.PointsProviders;
 
 namespace TagsCloudVisualizationTests;
 
@@ -6,14 +7,16 @@ public class ArchimedianSpiralPointsProviderTests
 {
      [TestCase(0, 2, TestName = "spiralDeltaAngle is zero")]
      [TestCase(5 * Math.PI / 180, 0, TestName = "spiralDistance is zero")]
-     public void Constructor_ThrowsException_OnIncorrectArguments(double spiralDeltaAngle, double spiralDistance)
+     public void GetPoints_ReturnsFail_OnIncorrectSettings(double spiralDeltaAngle, double spiralDistance)
      {
-         var a = () => 
+         var pointsProvider =
              new ArchimedeanSpiralPointsProvider(new ArchimedeanSpiralSettings {Center = Point.Empty,
                  DeltaAngle = spiralDeltaAngle, 
                  Distance = spiralDistance});
-         
-         a.Should().Throw<ArgumentException>();
+
+         pointsProvider.GetPoints()
+             .Should()
+             .Be(Result.Fail<IEnumerable<Point>>("Параметры DeltaAngle и Distance не должны быть равны нулю. Пожалуйста, укажите корректные параметры."));
      }
 
      [TestCase(0, 0, 0, 0)]

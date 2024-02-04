@@ -32,13 +32,12 @@ public class TextReaderFactory : ITextReaderFactory
     private static Result<string> ValidatePathExists(string path)
     {
         return Result.Validate(path, File.Exists,
-            $@"Файла источника по указанному пути не существует: {Path.GetFullPath(path)}");
+            $@"Файла источника по указанному пути не существует: {Path.GetFullPath(path)}.");
     }
 
     private Result<TextReader> ResolveTextReader()
     {
-        return Result.Of(
-            () => context.ResolveNamed<TextReader>(Path.GetExtension(settings.Path)),
+        return Result.Of(() => context.ResolveNamed<TextReader>(Path.GetExtension(settings.Path)),
             "Указанный тип файлов не поддерживается в качестве источника.");
     }
 }

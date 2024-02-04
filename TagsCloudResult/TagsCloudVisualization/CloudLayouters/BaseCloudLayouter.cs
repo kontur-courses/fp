@@ -14,16 +14,14 @@ public abstract class BaseCloudLayouter<TPointsProvider> : ITagsCloudLayouter
 
     protected BaseCloudLayouter(TPointsProvider pointsProvider)
     {
-        if (pointsProvider is null)
-            throw new ArgumentNullException(nameof(pointsProvider));
-        
+        ArgumentNullException.ThrowIfNull(pointsProvider);
+
         PointsProvider = pointsProvider;
         rectangles = new List<Rectangle>();
     }
     
     public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
-        
         return ValidateRectangleSize(rectangleSize)
             .Then(FindPositionForRectangle)
             .Then(position =>

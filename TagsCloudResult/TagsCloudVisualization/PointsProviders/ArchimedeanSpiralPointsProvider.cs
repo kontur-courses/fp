@@ -19,11 +19,11 @@ public class ArchimedeanSpiralPointsProvider : IPointsProvider
             .Then(CalculatePoints);
     }
 
-    private IEnumerable<Point> CalculatePoints(ArchimedeanSpiralSettings settings)
+    private static IEnumerable<Point> CalculatePoints(ArchimedeanSpiralSettings settings)
     {
         for (var angle = 0d; ; angle += settings.DeltaAngle)
         {
-            var point = this.settings.Center;
+            var point = settings.Center;
             point.Offset(PolarToCartesian(settings.Distance * angle, angle));
 
             yield return point;
