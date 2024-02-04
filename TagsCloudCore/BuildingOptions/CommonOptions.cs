@@ -6,4 +6,5 @@ namespace TagsCloudCore.BuildingOptions;
 public record CommonOptions(
     WordProviderInfo WordProviderInfo,
     WordColorerAlgorithm WordColorer,
-    CloudBuildingAlgorithm CloudBuildingAlgorithm);
+    CloudBuildingAlgorithm CloudBuildingAlgorithm,
+    WordProviderInfo WordFilterInfo);

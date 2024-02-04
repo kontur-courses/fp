@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloudCore.BuildingOptions;
-using TagsCloudCore.Common;
 using TagsCloudCore.Common.Enums;
 using TagsCloudCore.Drawing.Colorers;
 using TagsCloudCore.TagCloudForming;
@@ -10,22 +9,23 @@ namespace TagsCloudCore.Drawing;
 
 public class DefaultImageDrawer : IImageDrawer
 {
-    private readonly Result<IReadOnlyDictionary<string, WordData>> _distributedWords;
+    private readonly IWordCloudDistributorProvider _distributedWordsProvider;
     private readonly DrawingOptions _drawingOptions;
     private readonly IEnumerable<IWordColorer> _wordColorers;
 
     public DefaultImageDrawer(IWordCloudDistributorProvider cloudDistributorProvider,
         IDrawingOptionsProvider drawingOptionsProvider, IEnumerable<IWordColorer> wordColorers)
     {
-        _distributedWords = cloudDistributorProvider.DistributedWords;
+        _distributedWordsProvider = cloudDistributorProvider;
         _drawingOptions = drawingOptionsProvider.DrawingOptions;
         _wordColorers = wordColorers;
     }
 
     public Result<Bitmap> DrawImage(WordColorerAlgorithm colorerAlgorithm)
     {
-        if (!_distributedWords.IsSuccess)
-            return Result.Fail<Bitmap>($"Cannot draw the image. {_distributedWords.Error}");
+        var wordsDistributionResult = _distributedWordsProvider.DistributeWords();
+        if (!wordsDistributionResult.IsSuccess)
+            return Result.Fail<Bitmap>($"Cannot draw the image. {wordsDistributionResult.Error}");
         
         var bitmap = new Bitmap(_drawingOptions.ImageSize.Width, _drawingOptions.ImageSize.Height);
         var offset = new Point(_drawingOptions.ImageSize.Width / 2, _drawingOptions.ImageSize.Height / 2);
@@ -36,7 +36,7 @@ public class DefaultImageDrawer : IImageDrawer
         if (colorer is null)
             return Result.Fail<Bitmap>("Couldn't find the required colorer algorithm among the registered ones.");
         
-        foreach (var (value, word) in _distributedWords.Value)
+        foreach (var (value, word) in wordsDistributionResult.Value)
         {
             var sizeAdd = _drawingOptions.FrequencyScaling * (word.Frequency - 1);
             var newFont = new Font(_drawingOptions.Font.FontFamily, _drawingOptions.Font.Size + sizeAdd,

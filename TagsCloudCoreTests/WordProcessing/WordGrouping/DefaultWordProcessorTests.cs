@@ -13,17 +13,17 @@ public class DefaultWordProcessorTests
     public void ProcessedWords_ReturnsCorrectlyProcessedWords_OnCorrectInputData()
     {
         var options = Substitute.For<ICommonOptionsProvider>();
-        options.CommonOptions.Returns(new CommonOptions(new WordProviderInfo(WordProviderType.Txt, ""), WordColorerAlgorithm.Default,
-            CloudBuildingAlgorithm.Circular));
+        options.CommonOptions.Returns(new CommonOptions(new WordProviderInfo(WordProviderType.Txt, "dfg"), WordColorerAlgorithm.Default,
+            CloudBuildingAlgorithm.Circular, new WordProviderInfo(WordProviderType.Txt, "dfgh")));
         var source = Substitute.For<IWordProvider>();
-        source.GetWords("").Returns(new[] {"1", "2", "4", "4", "1", "1", "5"});
+        source.GetWords(Arg.Any<string>()).Returns(new[] {"1", "2", "4", "4", "1", "1", "5"});
         source.Match(WordProviderType.Txt).Returns(true);
         var filter1 = GetWordFilter(new[] {"2"});
         var filter2 = GetWordFilter(new[] {"5"});
         var processor = new DefaultWordProcessor(options, new[] {filter1, filter2},
             new [] {source});
 
-        var result = processor.ProcessedWords;
+        var result = processor.ProcessWords();
 
         CollectionAssert.AreEqual(new Dictionary<string, int> {{"1", 3}, {"4", 2}}, result.Value);
     }
@@ -31,7 +31,8 @@ public class DefaultWordProcessorTests
     private static DefaultWordFilter GetWordFilter(string[] wordsToExclude)
     {
         var wordProvider = Substitute.For<IWordProvider>();
-        wordProvider.GetWords("").Returns(wordsToExclude);
-        return new DefaultWordFilter(wordProvider, "");
+        wordProvider.GetWords(Arg.Any<string>()).Returns(wordsToExclude);
+        wordProvider.Match(WordProviderType.Txt).Returns(true);
+        return new DefaultWordFilter(new []{wordProvider});
     }
 }

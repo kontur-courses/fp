@@ -21,7 +21,7 @@ public static class DiContainerBuilder
         containerBuilder.RegisterType<DefaultImageDrawer>().As<IImageDrawer>().SingleInstance();
 
         containerBuilder
-            .RegisterInstance(new DefaultWordFilter(new TxtFileWordParser(), AppSettings.PathToBoringWordsFilter!))
+            .RegisterType<DefaultWordFilter>()
             .As<IWordFilter>()
             .SingleInstance();
 

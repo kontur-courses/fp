@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NSubstitute;
 using TagsCloudCore;
+using TagsCloudCore.Common.Enums;
 using TagsCloudCore.WordProcessing.WordFiltering;
 using TagsCloudCore.WordProcessing.WordInput;
 
@@ -13,9 +14,10 @@ public class DefaultWordFilterTests
     {
         var wordProvider = Substitute.For<IWordProvider>();
         wordProvider.GetWords(Arg.Any<string>()).Returns(new[] {"word1", "word2", "123"});
-
-        var filter = new DefaultWordFilter(wordProvider, "");
-        var filtered = filter.FilterWords(new[] {"word1", "1234", "word2", "a", "another", "test"});
+        wordProvider.Match(Arg.Any<WordProviderType>()).Returns(true);
+        var filter = new DefaultWordFilter(new[] {wordProvider});
+        var filtered = filter.FilterWords(new[] {"word1", "1234", "word2", "a", "another", "test"},
+            new WordProviderInfo(WordProviderType.Txt, "doesn'texist"));
 
         CollectionAssert.AreEqual(new[] {"1234", "a", "another", "test"}, filtered.Value);
     }
@@ -25,9 +27,10 @@ public class DefaultWordFilterTests
     {
         var wordProvider = Substitute.For<IWordProvider>();
         wordProvider.GetWords(Arg.Any<string>()).Returns(Result.Fail<string[]>("123"));
-        var filter = new DefaultWordFilter(wordProvider, "");
+        wordProvider.Match(Arg.Any<WordProviderType>()).Returns(true);
+        var filter = new DefaultWordFilter(new []{wordProvider});
 
-        var result = filter.FilterWords(Array.Empty<string>());
+        var result = filter.FilterWords(Array.Empty<string>(), new WordProviderInfo(WordProviderType.Txt, "doesntexist"));
 
         result.Error
             .Should()

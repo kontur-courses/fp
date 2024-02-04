@@ -41,11 +41,13 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
 
     private CommonOptions GetCommonOptions()
     {
-        var wordProvider = GetWordProvider();
+        var wordProvider = GetWordProvider("Enter the path to the file with words", false);
         var wordColorer = GetWordColorer();
         var cloudLayouter = GetCloudBuildingAlgorithm();
-
-        return new CommonOptions(wordProvider, wordColorer, cloudLayouter);
+        var wordFilter =
+            GetWordProvider(
+                "Enter the path to the file with words to exclude. Leave it empty if you don't want to filter any words.", true);
+        return new CommonOptions(wordProvider, wordColorer, cloudLayouter, wordFilter);
     }
 
     private Color GetFontColor()
@@ -135,11 +137,13 @@ public class ConsoleSettingsProvider : IDrawingOptionsProvider, ICommonOptionsPr
         }
     }
 
-    private static WordProviderInfo GetWordProvider()
+    private static WordProviderInfo GetWordProvider(string prompt, bool allowEmptyResponse)
     {
         while (true)
         {
-            var path = Prompt.GetString("Enter the path to the file with words", promptColor: ConsoleColor.DarkGreen);
+            var path = Prompt.GetString(prompt, promptColor: ConsoleColor.DarkGreen);
+            if (path is null && allowEmptyResponse)
+                return new WordProviderInfo(WordProviderType.Txt, "");
             if (!File.Exists(path))
             {
                 Console.WriteLine("Provided path is invalid. Try again.");

@@ -11,28 +11,27 @@ public class DefaultWordCloudDistributor : IWordCloudDistributorProvider
 {
     private readonly ICloudLayouter _cloudLayouter;
     private readonly DrawingOptions _drawingOptions;
-    private readonly Result<IReadOnlyDictionary<string, int>> _words;
+    private readonly IProcessedWordProvider _processedWordProvider;
 
-    public DefaultWordCloudDistributor(IProcessedWordProvider processedWord,
+    public DefaultWordCloudDistributor(IProcessedWordProvider processedWordProvider,
         ICommonOptionsProvider commonOptionsProvider,
         IDrawingOptionsProvider drawingOptionsProvider)
     {
-        _words = processedWord.ProcessedWords;
+        _processedWordProvider = processedWordProvider;
         _cloudLayouter =
             CloudAlgorithmProvider.RegisteredProviders[commonOptionsProvider.CommonOptions.CloudBuildingAlgorithm];
         _drawingOptions = drawingOptionsProvider.DrawingOptions;
     }
-
-    public Result<IReadOnlyDictionary<string, WordData>> DistributedWords => DistributeWords();
-
-    private Result<IReadOnlyDictionary<string, WordData>> DistributeWords()
+    
+    public Result<IReadOnlyDictionary<string, WordData>> DistributeWords()
     {
-        if (!_words.IsSuccess)
-            return Result.Fail<IReadOnlyDictionary<string, WordData>>(_words.Error);
+        var wordProcessingResult = _processedWordProvider.ProcessWords();
+        if (!wordProcessingResult.IsSuccess)
+            return Result.Fail<IReadOnlyDictionary<string, WordData>>(wordProcessingResult.Error);
         
         var distributed = new Dictionary<string, WordData>();
         
-        foreach (var (word, frequency) in _words.Value)
+        foreach (var (word, frequency) in wordProcessingResult.Value)
         {
             var stringSizeResult = DrawingUtils.GetStringSize(word, frequency,
                 _drawingOptions.FrequencyScaling, _drawingOptions.Font);

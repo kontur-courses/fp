@@ -7,31 +7,29 @@ namespace TagsCloudCore.WordProcessing.WordGrouping;
 public class DefaultWordProcessor : IProcessedWordProvider
 {
     private readonly IEnumerable<IWordFilter> _filters;
-    private readonly WordProviderInfo _wordProviderInfo;
+    private readonly CommonOptions _options;
     private readonly IEnumerable<IWordProvider> _wordProviders;
 
     public DefaultWordProcessor(ICommonOptionsProvider commonOptionsProvider, IEnumerable<IWordFilter> filters,
         IEnumerable<IWordProvider> wordProviders)
     {
-        _wordProviderInfo = commonOptionsProvider.CommonOptions.WordProviderInfo;
+        _options = commonOptionsProvider.CommonOptions;
         _wordProviders = wordProviders;
         _filters = filters;
     }
 
-    public Result<IReadOnlyDictionary<string, int>> ProcessedWords => ProcessWords();
-
-    private Result<IReadOnlyDictionary<string, int>> ProcessWords()
+    public Result<IReadOnlyDictionary<string, int>> ProcessWords()
     {
-        var provider = _wordProviders.SingleOrDefault(p => p.Match(_wordProviderInfo.Type));
-        var getWordsResult = provider!.GetWords(_wordProviderInfo.ResourceLocation);
+        var provider = _wordProviders.SingleOrDefault(p => p.Match(_options.WordProviderInfo.Type));
+        var getWordsResult = provider!.GetWords(_options.WordProviderInfo.ResourceLocation);
         if (!getWordsResult.IsSuccess)
             return Result.Fail<IReadOnlyDictionary<string, int>>(getWordsResult.Error);
         
-        var words = getWordsResult.Value.Select(w => w.ToLower()).ToArray();
+        var words = getWordsResult.Value.Select(w => w.Trim()).Select(w => w.ToLower()).ToArray();
         
         foreach (var filter in _filters)
         {
-            var filterResult = filter.FilterWords(words);
+            var filterResult = filter.FilterWords(words, _options.WordFilterInfo);
             if (!filterResult.IsSuccess)
                 return Result.Fail<IReadOnlyDictionary<string, int>>(filterResult.Error);
             words = filterResult.Value;

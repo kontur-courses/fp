@@ -2,5 +2,5 @@
 
 public interface IProcessedWordProvider
 {
-    public Result<IReadOnlyDictionary<string, int>> ProcessedWords { get; }
+    public Result<IReadOnlyDictionary<string, int>> ProcessWords();
 }
