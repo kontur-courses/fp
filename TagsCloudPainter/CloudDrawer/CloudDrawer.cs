@@ -43,7 +43,7 @@ public class CloudDrawer : ICloudDrawer
             }
         };
 
-        return bitmap;
+        return bitmap.AsResult();
     }
 
     public static Result<float> CalculateObjectDrawingScale(float width, float height, float imageWidth, float imageHeight)

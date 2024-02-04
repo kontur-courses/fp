@@ -31,12 +31,21 @@ public class CloudDrawerTests
         new TestCaseData(new TagsCloud(new Point(0, 0),
                 new List<(Tag, Rectangle)> { (new Tag("a", 1, 1), new Rectangle(1, 1, 1, 1)) }), 0, 0)
             .SetName("WhenGivenNotPositiveImageHeightAndWidth"),
-        new TestCaseData(new TagsCloud(new Point(0, 0), new List<(Tag, Rectangle)>()), 1, 1)
-            .SetName("WhenGivenCloudWithEmptyTagsDictionary")
+        new TestCaseData(new TagsCloud(new Point(0, 0),
+                new List<(Tag, Rectangle)> { (new Tag("a", 1, 1), new Rectangle(0, 0, 0, 1)) }), 0, 0)
+            .SetName("WhenCloudHasNotPositiveWidth"),
+        new TestCaseData(new TagsCloud(new Point(0, 0),
+                new List<(Tag, Rectangle)> { (new Tag("a", 1, 1), new Rectangle(0, 0, 1, 0)) }), 0, 0)
+            .SetName("WhenCloudHasNotPositiveHeight"),
+        new TestCaseData(new TagsCloud(new Point(0, 0),
+                new List<(Tag, Rectangle)> { (new Tag("a", 1, 1), new Rectangle(0, 0, 0, 0)) }), 0, 0)
+            .SetName("WhenCloudHasNotPositiveWidthAndHeight"),
+        new TestCaseData(new TagsCloud(new Point(0, 0), []), 1, 1)
+            .SetName("WhenGivenCloudWithEmptyTagsDictionary"),
     };
 
     [TestCaseSource(nameof(DrawArgumentException))]
-    public void Draw_ShouldFail(TagsCloud cloud, int width, int height)
+    public void Draw_ShouldFail_(TagsCloud cloud, int width, int height)
     {
         var result = drawer.DrawCloud(cloud, width, height);
 
@@ -57,7 +66,7 @@ public class CloudDrawerTests
     };
 
     [TestCaseSource(nameof(DrawNoException))]
-    public void Draw_ShouldNotFail(TagsCloud cloud, int width, int height)
+    public void Draw_ShouldSuccess_(TagsCloud cloud, int width, int height)
     {
         var result = drawer.DrawCloud(cloud, width, height);
 
