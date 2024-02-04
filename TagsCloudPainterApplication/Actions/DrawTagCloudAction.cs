@@ -58,47 +58,35 @@ public class DrawTagCloudAction : IUiAction
 
     public void Perform()
     {
-        var wordsFilePath = GetFilePath();
+        var wordsFilePath = GetFilePath().OnFail(HandleError);
         if (!wordsFilePath.IsSuccess)
-        {
-            MessageBox.Show(wordsFilePath.Error);
             return;
-        }
 
         SettingsForm.For(tagsCloudSettings).ShowDialog();
         tagsCloudSettings.CloudSettings.BackgroundColor = palette.BackgroundColor;
         tagsCloudSettings.TagSettings.TagColor = palette.PrimaryColor;
 
-        var wordsText = textFileReader.ReadFile(wordsFilePath.GetValueOrThrow());
+        var wordsText = textFileReader.ReadFile(wordsFilePath.GetValueOrThrow())
+            .OnFail(error => HandleError("File reading error: " + error));
         if (!wordsText.IsSuccess)
-        {
-            MessageBox.Show("File reading error: " + wordsText.Error);
             return;
-        }
-        var boringText = textFileReader.ReadFile(filesSourceSettings.BoringTextFilePath);
+
+        var boringText = textFileReader.ReadFile(filesSourceSettings.BoringTextFilePath)
+            .OnFail(error => HandleError("File reading error: " + error));
         if (!boringText.IsSuccess)
-        {
-            MessageBox.Show("File reading error: " + boringText.Error);
             return;
-        }
+
         tagsCloudSettings.TextSettings.BoringText = boringText.GetValueOrThrow();
-        var parsedWords = textParser.ParseText(wordsText.GetValueOrThrow());
+        var parsedWords = textParser.ParseText(wordsText.GetValueOrThrow())
+            .OnFail(error => HandleError("File parsing error: " + error));
         if (!parsedWords.IsSuccess)
-        {
-            MessageBox.Show("File parsing error: " + parsedWords.Error);
             return;
-        }
-        var cloud = GetCloud(parsedWords.GetValueOrThrow());
+
+        var cloud = GetCloud(parsedWords.GetValueOrThrow()).OnFail(HandleError);
         if (!cloud.IsSuccess)
-        {
-            MessageBox.Show(cloud.Error);
             return;
-        }
-        var drawingResult = DrawCloud(cloud.GetValueOrThrow());
-        if (!drawingResult.IsSuccess)
-        {
-            MessageBox.Show(drawingResult.Error);
-        }
+
+        var drawingResult = DrawCloud(cloud.GetValueOrThrow()).OnFail(HandleError);
     }
 
     private static Result<string> GetFilePath()
@@ -148,5 +136,10 @@ public class DrawTagCloudAction : IUiAction
         imageHolder.UpdateUi();
 
         return Result.Ok();
+    }
+
+    private void HandleError(string error)
+    {
+        MessageBox.Show(error);
     }
 }
