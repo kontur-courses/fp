@@ -8,9 +8,9 @@ public class TxtTextReader : TextReader
     {
     }
 
-    protected override Result<string> ReadText(string path)
+    public override Result<string> GetText()
     {
-        using var reader = new StreamReader(path);
+        using var reader = new StreamReader(Settings.Path);
         return reader.ReadToEnd();
     }
 }

@@ -6,6 +6,7 @@ using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.TextReaders;
 using TagsCloudVisualization.WFApp.Actions;
 using TagsCloudVisualization.WFApp.Common;
+using TagsCloudVisualization.WFApp.Factories;
 using TagsCloudVisualization.WFApp.Infrastructure;
 using TagsCloudVisualization.WordsAnalyzers;
 using TagsCloudVisualization.WordsProcessors;
@@ -27,7 +28,13 @@ public static class Program
         container.RegisterType<ArchimedeanSpiralSettings>().SingleInstance();
 
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
-        container.RegisterType<DocTextReader>().As<TextReader>();
+        // container.RegisterType<TxtTextReader>().Keyed<TextReader>(FileExtension.Txt);
+        // container.RegisterType<DocTextReader>().Keyed<TextReader>(FileExtension.Doc).Keyed<TextReader>(FileExtension.Docx);
+        container.RegisterType<TxtTextReader>().Named<TextReader>(".txt");
+        container.RegisterType<DocTextReader>().Named<TextReader>(".doc").Named<TextReader>(".docx");
+        
+        
+        container.RegisterType<TextReaderFactory>().As<ITextReaderFactory>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
         container.RegisterType<TagsSettings>().SingleInstance();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();

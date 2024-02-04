@@ -10,9 +10,9 @@ public class DocTextReader : TextReader
     {
     }
 
-    protected override Result<string> ReadText(string path)
+    public override Result<string> GetText()
     {
-        using var document = WordprocessingDocument.Open(path, false);
+        using var document = WordprocessingDocument.Open(Settings.Path, false);
         return GetBody(document)
             .Then(body => string.Join("\n", body.Descendants<Text>().Select(t => t.Text)));
     }
