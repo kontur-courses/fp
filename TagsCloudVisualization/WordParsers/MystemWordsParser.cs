@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -44,9 +45,18 @@ public class MystemWordsParser : IInterestingWordsParser
                 StandardOutputEncoding = Encoding.UTF8,
             }
         };
-        process.Start();
-        process.StandardInput.Write(text);
-        process.StandardInput.Close();
+        try
+        {
+            process.Start();
+            process.StandardInput.Write(text);
+            process.StandardInput.Close();
+        }
+        catch (Win32Exception e)
+        {
+            return Result.Fail<List<WordAnalysis>>(
+                $"Can't find mystem.exe in working directory: {AppDomain.CurrentDomain.BaseDirectory}. " +
+                "You can download it here https://yandex.ru/dev/mystem/");
+        }
 
         var wordsAnalysis = Result.Of(() => DeserializeInterestingWordsAnalysis(process))
             .RefineError("Error occured during deserialization");
@@ -74,7 +84,7 @@ public class MystemWordsParser : IInterestingWordsParser
                     unpackedAnalysis["gr"]));
             }
         }
-        
+
         return wordsAnalysis;
     }
 

@@ -19,6 +19,8 @@ public class LayoutDrawer
         this.rectangleLayouter = rectangleLayouter;
         this.palette = palette;
         this.font = font;
+        if (string.Compare(font.OriginalFontName, font.Name, StringComparison.InvariantCultureIgnoreCase) != 0)
+            Console.WriteLine($"Font \"{font.OriginalFontName}\" was not found. Using \"{font.Name}\" instead");
     }
 
     public Result<Bitmap> CreateLayoutImageFromFile(string inputFilePath,

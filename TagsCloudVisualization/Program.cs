@@ -82,7 +82,7 @@ public class Program
         using var provider = services.BuildServiceProvider();
 
         var layoutDrawer = provider.GetRequiredService<LayoutDrawer>();
-
+        
         layoutDrawer
             .CreateLayoutImageFromFile(InputFilePath, new Size(ImageWidth, ImageHeight), MinimalFontSize)
             .Then(bitmap => bitmap.SaveImage(OutputFilePath, SaveImageFormat))

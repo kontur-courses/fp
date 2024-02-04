@@ -53,5 +53,4 @@ public class LayoutDrawer_Should
         result.IsSuccess.Should().BeFalse();
         Approvals.Verify(result.Error);
     }
-    
 }
