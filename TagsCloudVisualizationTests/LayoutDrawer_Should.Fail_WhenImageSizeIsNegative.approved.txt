@@ -1,0 +1,1 @@
+﻿Can't create layout image. Can't create image with negative width or height

@@ -1,0 +1,1 @@
+﻿Can't create layout image. Can't get interesting words. Could not find a part of the path 'C:\Absolute\Non\Existing\Path'.
