@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultLibrary;
+using System.Drawing;
 using TagsCloudPainter.Settings.Cloud;
 using TagsCloudPainter.Settings.FormPointer;
 
@@ -12,10 +13,6 @@ public class ArchimedeanSpiralPointer : IFormPointer
 
     public ArchimedeanSpiralPointer(ICloudSettings cloudSettings, ISpiralPointerSettings spiralPointerSettings)
     {
-        if (spiralPointerSettings.Step <= 0
-            || spiralPointerSettings.RadiusConst <= 0
-            || spiralPointerSettings.AngleConst <= 0)
-            throw new ArgumentException("either step or radius or angle is not possitive");
         this.cloudSettings = cloudSettings ?? throw new ArgumentNullException(nameof(cloudSettings));
         this.spiralPointerSettings =
             spiralPointerSettings ?? throw new ArgumentNullException(nameof(spiralPointerSettings));
@@ -25,13 +22,20 @@ public class ArchimedeanSpiralPointer : IFormPointer
     private double Angle => сurrentDifference * spiralPointerSettings.AngleConst;
     private double Radius => сurrentDifference * spiralPointerSettings.RadiusConst;
 
-    public Point GetNextPoint()
+    public Result<Point> GetNextPoint()
     {
+        if (spiralPointerSettings.Step <= 0)
+            return Result.Fail<Point>("Step is not possitive");
+        if (spiralPointerSettings.RadiusConst <= 0)
+            return Result.Fail<Point>("RadiusConst is not possitive");
+        if(spiralPointerSettings.AngleConst <= 0)
+            return Result.Fail<Point>("AngleConst is not possitive");
+
         сurrentDifference += spiralPointerSettings.Step;
         var x = cloudSettings.CloudCenter.X + (int)(Radius * Math.Cos(Angle));
         var y = cloudSettings.CloudCenter.Y + (int)(Radius * Math.Sin(Angle));
 
-        return new Point(x, y);
+        return Result.Of(() => new Point(x, y));
     }
 
     public void Reset()

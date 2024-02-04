@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using ResultLibrary;
+using System.Drawing;
 
 namespace TagsCloudPainter.FormPointer;
 
 public interface IFormPointer : IResetable
 {
-    Point GetNextPoint();
+    Result<Point> GetNextPoint();
 }

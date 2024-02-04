@@ -34,15 +34,15 @@ public class TagsCloudLayouter : ICloudLayouter
     {
         var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize);
         tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
-        ? throw new ArgumentException("either width or height of rectangle size is not possitive")
+        ? throw new ArgumentException("Either width or height of rectangle size is not possitive")
         : tagSize);
 
         var nextRectangle = tagSize
-            .Then(tagSize => formPointer.GetNextPoint().GetRectangle(tagSize))
+            .Then(tagSize => formPointer.GetNextPoint().Then(point => point.GetRectangle(tagSize)))
             .Then(nextRectangle =>
             {
                 while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(nextRectangle)))
-                    nextRectangle = formPointer.GetNextPoint().GetRectangle(tagSize.GetValueOrThrow());
+                    nextRectangle = formPointer.GetNextPoint().GetValueOrThrow().GetRectangle(tagSize.GetValueOrThrow());
 
                 return nextRectangle;
             });
@@ -55,7 +55,7 @@ public class TagsCloudLayouter : ICloudLayouter
     public Result<None> PutTags(List<Tag> tags)
     {
         if (tags is null || tags.Count == 0)
-            return Result.Fail<None>("tags are empty");
+            return Result.Fail<None>("Tags are empty");
         foreach (var tag in tags)
         {
             var nextTag = PutNextTag(tag);
