@@ -68,15 +68,6 @@ public class CircularCloudLayouterTests
     }
 
     [Test]
-    public void PutNextRectangle_TwoRectangles_ReturnsTwoRectangles()
-    {
-        sut.PutNextRectangle(new Size(15, 15));
-        sut.PutNextRectangle(new Size(10, 10));
-
-        sut.Rectangles.Count.Should().Be(2);
-    }
-
-    [Test]
     public void PutNextRectangle_TwoRectangles_ReturnsTwoNotIntersectedRectangles()
     {
         var firstRectangle = sut.PutNextRectangle(new Size(15, 15));
@@ -91,12 +82,13 @@ public class CircularCloudLayouterTests
     [TestCase(200, TestName = "PutNextRectangle_200Rectangles_RectanglesWithNoIntersects")]
     public void PutNextRectangle_ManyRectangles_RectanglesWithNoIntersects(int rectanglesCount)
     {
+        var rectangles = new Rectangle[rectanglesCount];
         for (var i = 0; i < rectanglesCount; i++)
         {
-            sut.PutNextRectangle(new Size(10, 10));
+            rectangles[i] = sut.PutNextRectangle(new Size(10, 10)).GetValueOrThrow();
         }
 
-        HasIntersectedRectangles(sut.Rectangles).Should().BeFalse();
+        HasIntersectedRectangles(rectangles).Should().BeFalse();
     }
 
     private bool HasIntersectedRectangles(IList<Rectangle> rectangles)

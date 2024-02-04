@@ -2,20 +2,23 @@
 
 namespace TagsCloudVisualization.Settings;
 
-public class SpiralSettings
+public class SpiralSettings : ISettings
 {
-    public Result<double> DeltaAngle { get; }
-    public Result<double> DeltaRadius { get; }
+    public double DeltaAngle { get; }
+    public double DeltaRadius { get; }
 
-    public SpiralSettings(double deltaAngle, double deltaRadius) 
+    public SpiralSettings(double deltaAngle, double deltaRadius)
     {
-        if (deltaRadius <= 0)
-            DeltaRadius = Result.Fail<double>($"Delta radius must be positive, but {deltaRadius}");
-        else
-            DeltaRadius = Result.Ok(deltaRadius);
-        if (deltaAngle <= 0)
-            DeltaAngle = Result.Fail<double>($"Delta angle must be positive, but {deltaAngle}");
-        else
-            DeltaAngle = Result.Ok(deltaAngle);
+        DeltaAngle = deltaAngle;
+        DeltaRadius = deltaRadius;
+    }
+
+    public Result<bool> Check()
+    {
+        if (DeltaRadius <= 0)
+            return Result.Fail<bool>($"Delta radius must be positive, but {DeltaRadius}");
+        if (DeltaAngle <= 0)
+            return Result.Fail<bool>($"Delta angle must be positive, but {DeltaAngle}");
+        return Result.Ok(true);
     }
 }

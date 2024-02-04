@@ -5,5 +5,6 @@ namespace TagsCloudVisualization.PointCreators;
 
 public interface IPointCreator
 {
-    public IEnumerable<Result<Point>> GetPoints();
+    public Point GetNextPoint();
+    public Result<bool> CheckForCorrectness();
 }

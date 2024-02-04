@@ -19,32 +19,32 @@ public class Visualizer : IVisualizer
         this.backgroundSettings = backgroundSettings;
     }
 
-    public Result<Bitmap> Vizualize(IEnumerable<Result<Tag>> tags)
+    public Result<Bitmap> Vizualize(Result<IList<Tag>> tags)
     {
-        if (!imageSettings.Width.IsSuccess)
-            return Result.Fail<Bitmap>(imageSettings.Width.Error);
-        if (!imageSettings.Height.IsSuccess)
-            return Result.Fail<Bitmap>(imageSettings.Height.Error);
-        if (!backgroundSettings.BackgroundColor.IsSuccess)
-            return Result.Fail<Bitmap>(backgroundSettings.BackgroundColor.Error);
+        var checkImageSettings = imageSettings.Check();
+        if (!checkImageSettings.IsSuccess)
+            return Result.Fail<Bitmap>(checkImageSettings.Error);
+        var checkBackgroundSettings = backgroundSettings.Check();
+        if (!checkBackgroundSettings.IsSuccess)
+            return Result.Fail<Bitmap>(checkBackgroundSettings.Error);
         var generator = GetColorGenerator();
         if (!generator.IsSuccess)
             return Result.Fail<Bitmap>(generator.Error);
+        if (!tags.IsSuccess)
+            return Result.Fail<Bitmap>(tags.Error);
 
-        var bitmap = new Bitmap(imageSettings.Width.Value, imageSettings.Height.Value);
+        var bitmap = new Bitmap(imageSettings.Width, imageSettings.Height);
         var graphics = Graphics.FromImage(bitmap);
-        graphics.Clear(backgroundSettings.BackgroundColor.Value);
+        graphics.Clear(Color.FromName(backgroundSettings.BackgroundColor));
 
-        foreach (var tag in tags)
+        foreach (var tag in tags.Value)
         {
-            if (!tag.IsSuccess)
-                return Result.Fail<Bitmap>(tag.Error);
-            if (!IsRectangleInImage(tag.Value.Rectangle))
+            if (!IsRectangleInImage(tag.Rectangle))
                 return Result.Fail<Bitmap>("Tag cloud doesn't fit in image size");
-            graphics.DrawString(tag.Value.Content, 
-                new Font(tag.Value.Font, tag.Value.Size), 
+            graphics.DrawString(tag.Content, 
+                new Font(tag.Font, tag.Size), 
                 new SolidBrush(generator.Value.GetColor()),
-                tag.Value.Rectangle);
+                tag.Rectangle);
         }
         return bitmap;
     }
@@ -59,7 +59,7 @@ public class Visualizer : IVisualizer
 
     private bool IsRectangleInImage(Rectangle rectangle)
     {
-        return rectangle.Left >= 0 && rectangle.Right <= imageSettings.Width.Value 
-            && rectangle.Top >= 0 && rectangle.Bottom <= imageSettings.Height.Value;
+        return rectangle.Left >= 0 && rectangle.Right <= imageSettings.Width 
+            && rectangle.Top >= 0 && rectangle.Bottom <= imageSettings.Height;
     }
 }

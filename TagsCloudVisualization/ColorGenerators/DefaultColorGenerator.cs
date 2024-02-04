@@ -11,8 +11,7 @@ public class DefaultColorGenerator : IColorGenerator
     public DefaultColorGenerator(ColorGeneratorSettings settings)
     {
         isMatch = IsCanGetColorFromString(settings.Color);
-        if (isMatch)
-            color = Color.FromName(settings.Color);
+        color = Color.FromName(settings.Color);
     }
 
     public Color GetColor()

@@ -3,41 +3,42 @@ using System.Drawing;
 
 namespace TagsCloudVisualization.Settings;
 
-public class TagsLayouterSettings
+public class TagsLayouterSettings : ISettings
 {
-    public Result<FontFamily> FontFamily { get; }
-    public Result<int> MinSize { get; }
-    public Result<int> MaxSize { get; }
+    public string FontFamily { get; }
+    public int MinSize { get; }
+    public int MaxSize { get; }
 
     public TagsLayouterSettings(string font, int minSize, int maxSize)
     {
-        FontFamily = GetFontFamily(font);
-        if (maxSize < minSize)
-            MaxSize = Result.Fail<int>($"Max font size can't be less then min font size");
-        else if (maxSize <= 0)
-        {
-            MaxSize = Result.Fail<int>($"Font sizes must be positive, but max size: {maxSize}");
-        }
-        else if (minSize <= 0)
-        {
-            MinSize = Result.Fail<int>($"Font sizes must be positive, but min size: {minSize}");
-        }
-        else
-        {
-            MaxSize = Result.Ok(maxSize);
-            MinSize = Result.Ok(minSize);
-        }
+        FontFamily = font;
+        MinSize = minSize;
+        MaxSize = maxSize;
     }
 
-    private Result<FontFamily> GetFontFamily(string fontName)
+    private bool IsCanGetFontFamily(string fontName)
     {
         try
         {
-            return Result.Ok(new FontFamily(fontName));
+            new FontFamily(fontName);
+            return true;
         }
         catch (ArgumentException)
         {
-            return Result.Fail<FontFamily>($"Font with name {fontName} doesn't supported");
+            return false;
         }
+    }
+
+    public Result<bool> Check()
+    {
+        if (!IsCanGetFontFamily(FontFamily))
+            return Result.Fail<bool>($"Font with name {FontFamily} doesn't supported");
+        else if (MaxSize < MinSize)
+            return Result.Fail<bool>($"Max font size can't be less then min font size");
+        else if (MaxSize <= 0)
+            return Result.Fail<bool>($"Font sizes must be positive, but max size: {MaxSize}");
+        else if (MinSize <= 0)
+            return Result.Fail<bool>($"Font sizes must be positive, but min size: {MinSize}");
+        return Result.Ok(true);
     }
 }

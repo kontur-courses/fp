@@ -2,20 +2,24 @@
 
 namespace TagsCloudVisualization.Settings;
 
-public class ImageSettings
+public class ImageSettings : ISettings
 {
-    public Result<int> Width { get; }
-    public Result<int> Height { get; }
+    public int Width { get; }
+    public int Height { get; }
 
     public ImageSettings(int width, int height)
     {
-        if (width <= 0)
-            Width = Result.Fail<int>($"Width must be positive, but {width}");
-        else
-            Width = Result.Ok(width);
-        if (height <= 0)
-            Height = Result.Fail<int>($"Height must be positive, but {height}");
-        else
-            Height = Result.Ok(height);
+        Width = width;
+        Height = height;
+    }
+
+    public Result<bool> Check()
+    {
+        if (Width <= 0)
+            return Result.Fail<bool>($"Width must be positive, but {Width}");
+        else if (Height <= 0)
+            return Result.Fail<bool>($"Height must be positive, but {Height}");
+        return Result.Ok(true);
+
     }
 }

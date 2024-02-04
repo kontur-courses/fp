@@ -11,8 +11,13 @@ public class TxtReader : IFileReader
 
     public Result<string> ReadText(string path)
     {
-        if (!File.Exists(path))
-            return Result.Fail<string>($"Can't find file with path {Path.GetFullPath(path)}");
-        return Result.Ok(File.ReadAllText(path));
+        try
+        {
+            return Result.Ok(File.ReadAllText(path));
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<string>(e.Message);
+        }
     }
 }

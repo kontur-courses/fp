@@ -30,7 +30,7 @@ public class SpiralTests
         var spiralSettings = new SpiralSettings(deltaAngle, deltaRadius);
 
         var spiral = new Spiral(imageSettings, spiralSettings);
-        spiral.GetPoints().First().IsSuccess.Should().BeFalse();
+        spiral.CheckForCorrectness().IsSuccess.Should().BeFalse();
     }
 
     [Test]
@@ -59,19 +59,16 @@ public class SpiralTests
     [Test]
     public void GetPointsOnSpiral_CorrectValues_FirstPointShoulBeCenterPoint()
     {
-        var points = sut.GetPoints().GetEnumerator();
-        points.MoveNext();
+        var point = sut.GetNextPoint();
 
-        points.Current.GetValueOrThrow().Should().BeEquivalentTo(center);
+        point.Should().BeEquivalentTo(center);
     }
 
     [Test]
     public void GetPointsOnSpiral_CorrectValues_ReturnsCorrectSecondPoint()
     {
-        var points = sut.GetPoints().GetEnumerator();
-        points.MoveNext();
-        points.MoveNext();
+        sut.GetNextPoint();
 
-        points.Current.GetValueOrThrow().Should().BeEquivalentTo(new Point(11, 11));
+        sut.GetNextPoint().Should().BeEquivalentTo(new Point(11, 11));
     }
 }

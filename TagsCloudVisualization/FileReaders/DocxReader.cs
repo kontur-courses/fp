@@ -12,9 +12,14 @@ public class DocxReader : IFileReader
 
     public Result<string> ReadText(string path)
     {
-        if (!File.Exists(path))
-            return Result.Fail<string>($"Can't find file with path {Path.GetFullPath(path)}");
-        var doc = DocX.Load(path);
-        return string.Join(" ", doc.Paragraphs.Select(p => p.Text));
+        try
+        {
+            var doc = DocX.Load(path);
+            return string.Join(" ", doc.Paragraphs.Select(p => p.Text));
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<string>(e.Message);
+        }
     }
 }

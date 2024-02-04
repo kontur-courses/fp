@@ -3,15 +3,19 @@ using System.Drawing;
 
 namespace TagsCloudVisualization.Settings;
 
-public class BackgroundSettings
+public class BackgroundSettings : ISettings
 {
-    public Result<Color> BackgroundColor { get; }
+    public string BackgroundColor { get; }
     
     public BackgroundSettings(string backgroundColor) 
     {
-        if (Enum.IsDefined(typeof(KnownColor), backgroundColor))
-            BackgroundColor = Result.Ok(Color.FromName(backgroundColor));
-        else
-            BackgroundColor = Result.Fail<Color>($"Can't find color with name {backgroundColor} for background");
+        BackgroundColor = backgroundColor;
+    }
+
+    public Result<bool> Check()
+    {
+        if (Enum.IsDefined(typeof(KnownColor), BackgroundColor))
+            return Result.Ok(true);
+        return Result.Fail<bool>($"Can't find color with name {BackgroundColor} for background");
     }
 }

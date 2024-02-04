@@ -21,60 +21,46 @@ public class TagsLayouter : ITagLayouter
         graphics = Graphics.FromHwnd(IntPtr.Zero);
     }
 
-    public IEnumerable<Result<Tag>> GetTags()
+    public Result<IList<Tag>> GetTags()
     {
         var handledText = textHandler.HandleText();
         if (!handledText.IsSuccess)
-        {
-            yield return Result.Fail<Tag>(handledText.Error);
-            yield break;
-        }
-        if (!settings.FontFamily.IsSuccess)
-        {
-            yield return Result.Fail<Tag>(settings.FontFamily.Error);
-            yield break;
-        }
-        if (!settings.MinSize.IsSuccess)
-        {
-            yield return Result.Fail<Tag>(settings.MinSize.Error);
-            yield break;
-        }
-        if (!settings.MaxSize.IsSuccess)
-        {
-            yield return Result.Fail<Tag>(settings.MaxSize.Error);
-            yield break;
-        }
+            return Result.Fail<IList<Tag>>(handledText.Error);
+        var checkSettings = settings.Check();
+        if (!checkSettings.IsSuccess)
+            return Result.Fail<IList<Tag>>(checkSettings.Error);
+
         var sortedWords = handledText.Value.OrderByDescending(p => p.Value);
         var maxWordCount = sortedWords.First().Value;
         var minWordCount = sortedWords.Last().Value;
+        IList<Tag> result = new List<Tag>();
+        var fontFamily = new FontFamily(settings.FontFamily);
 
         foreach (var wordWithCount in sortedWords)
         {
             var fontSize = GetFontSize(minWordCount, maxWordCount, wordWithCount.Value);
-            var rectangle = cloudLayouter.PutNextRectangle(GetWordSize(wordWithCount.Key, fontSize));
+            var rectangle = cloudLayouter.PutNextRectangle(GetWordSize(wordWithCount.Key, fontSize, fontFamily));
             if (!rectangle.IsSuccess)
-            {
-                yield return Result.Fail<Tag>(rectangle.Error);
-                yield break;
-            }
-            yield return new Tag(wordWithCount.Key, 
+                return Result.Fail<IList<Tag>>(rectangle.Error);
+            result.Add(new Tag(wordWithCount.Key, 
                 fontSize,
-                rectangle.GetValueOrThrow(),
-                settings.FontFamily.Value);
+                rectangle.Value,
+                fontFamily));
         }
+        return Result.Ok(result);
     }
 
     private int GetFontSize(int minWordCount, int maxWordCount, int wordCount)
     {
-        return maxWordCount > minWordCount ? settings.MinSize.Value 
-            + (settings.MaxSize.Value - settings.MinSize.Value) 
+        return maxWordCount > minWordCount ? settings.MinSize 
+            + (settings.MaxSize - settings.MinSize) 
             * (wordCount - minWordCount) 
-            / (maxWordCount - minWordCount) : settings.MaxSize.Value;
+            / (maxWordCount - minWordCount) : settings.MaxSize;
     }
 
-    private Size GetWordSize(string content, int fontSize)
+    private Size GetWordSize(string content, int fontSize, FontFamily fontFamily)
     {
-        var sizeF = graphics.MeasureString(content, new Font(settings.FontFamily.Value, fontSize));
+        var sizeF = graphics.MeasureString(content, new Font(fontFamily, fontSize));
         return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
     }
 }

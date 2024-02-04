@@ -7,8 +7,6 @@ namespace TagsCloudVisualizationTests.FileReaderTests;
 [TestFixture]
 public class FileReaderTests
 {
-    private IFileReader[] readers = new IFileReader[] {new DocReader(), new DocxReader(), new TxtReader()};
-
     [Test]
     public void ReadText_FileNotExist_ReturnsFalse()
     {

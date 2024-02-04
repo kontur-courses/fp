@@ -5,5 +5,5 @@ namespace TagsCloudVisualization.CloudLayouters;
 
 public interface ITagLayouter
 {
-    IEnumerable<Result<Tag>> GetTags();
+    Result<IList<Tag>> GetTags();
 }

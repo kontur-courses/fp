@@ -6,48 +6,30 @@ namespace TagsCloudVisualization.PointCreators;
 
 public class Spiral : IPointCreator
 {
-    private readonly Result<Point> center;
-    private readonly Result<double> deltaAngle;
-    private readonly Result<double> deltaRadius;
+    private readonly Point center;
+    private readonly double deltaAngle;
+    private readonly double deltaRadius;
+    private readonly ImageSettings imageSettings;
+    private readonly SpiralSettings spiralSettings;
+    private double angle;
+    private double radius;
 
     public Spiral(ImageSettings imageSettings, SpiralSettings spiralSettings)
     {
-        deltaAngle = spiralSettings.DeltaAngle;
-        if (!imageSettings.Width.IsSuccess || !imageSettings.Height.IsSuccess)
-            center = Result.Fail<Point>($"{imageSettings.Width.Error}. {imageSettings.Height.Error}");
-        else
-            center = new Point(imageSettings.Width.Value / 2, imageSettings.Height.Value / 2);
+        this.imageSettings = imageSettings;
+        this.spiralSettings = spiralSettings;
+        center = new Point(imageSettings.Width / 2, imageSettings.Height / 2);
         deltaAngle = spiralSettings.DeltaAngle;
         deltaRadius = spiralSettings.DeltaRadius;
     }
 
-    public IEnumerable<Result<Point>> GetPoints()
+    public Point GetNextPoint()
     {
-        if (!deltaRadius.IsSuccess)
-        {
-            yield return Result.Fail<Point>(deltaRadius.Error);
-            yield break;
-        }
-        if (!deltaAngle.IsSuccess)
-        {
-            yield return Result.Fail<Point>(deltaAngle.Error);
-            yield break;
-        }
-        if (!center.IsSuccess)
-        {
-            yield return Result.Fail<Point>(center.Error);
-            yield break;
-        }
-        var angle = 0.0;
-        var radius = 0.0;
-        while (true)
-        {
-            var point = ConvertFromPolarCoordinates(angle, radius);
-            point.Offset(center.Value);
-            yield return point;
-            angle += deltaAngle.Value;
-            radius += deltaRadius.Value;
-        }
+        var point = ConvertFromPolarCoordinates(angle, radius);
+        point.Offset(center);
+        angle += deltaAngle;
+        radius += deltaRadius;
+        return point;
     }
 
     public static Point ConvertFromPolarCoordinates(double angle, double radius)
@@ -55,5 +37,16 @@ public class Spiral : IPointCreator
         var x = (int)Math.Ceiling(Math.Cos(angle) * radius);
         var y = (int)Math.Ceiling(Math.Sin(angle) * radius);
         return new Point(x, y);
+    }
+
+    public Result<bool> CheckForCorrectness()
+    {
+        var imageSettingsCheck = imageSettings.Check();
+        if (!imageSettingsCheck.IsSuccess)
+            return Result.Fail<bool>(imageSettingsCheck.Error);
+        var spiralSettingsCheck = spiralSettings.Check();
+        if (!spiralSettingsCheck.IsSuccess)
+            return Result.Fail<bool>(spiralSettingsCheck.Error);
+        return Result.Ok(true);
     }
 }
