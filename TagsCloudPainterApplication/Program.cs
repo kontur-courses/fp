@@ -31,11 +31,22 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        var container = RegisterModules();
+        var container = RegisterModules().OnFail(error => MessageBox.Show("Registrating modules error: " + error));
         if (!container.IsSuccess)
-            MessageBox.Show("Registrating modules error: " + container.Error);
+            return;
 
-        Application.Run(container.GetValueOrThrow().Resolve<MainForm>());
+        var form = GetMainForm(container.GetValueOrThrow()).OnFail(error => MessageBox.Show("Form retrieval error: " + error));
+        if (!form.IsSuccess)
+            return;
+
+        Application.Run(form.GetValueOrThrow());
+    }
+
+    private static Result<MainForm> GetMainForm(IContainer container)
+    {
+        var form = Result.Of(container.Resolve<MainForm>);
+
+        return form;
     }
 
     private static Result<IContainer> RegisterModules()
