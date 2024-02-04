@@ -38,7 +38,16 @@ public class LayoutDrawer
         int minimumFontSize,
         IOrderedEnumerable<(string Word, int Count)> sortedWordsCount)
     {
-        var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
+        Bitmap bitmap;
+        try
+        {
+            bitmap = new Bitmap(imageSize.Width, imageSize.Height);
+        }
+        catch (ArgumentException e)
+        {
+            throw new ArgumentException("Can't create image with negative width or height");
+        }
+        
         using var graphics = Graphics.FromImage(bitmap);
         var mostWordOccurrencies = sortedWordsCount.Max(arg => arg.Count);
 

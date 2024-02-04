@@ -53,4 +53,13 @@ public class LayoutDrawer_Should
         result.IsSuccess.Should().BeFalse();
         Approvals.Verify(result.Error);
     }
+    
+    [Test]
+    public void Fail_WhenImageSizeIsNegative()
+    {
+        var layoutDrawer = new LayoutDrawer(interestingWordsParser, rectangleLayouter, palette, new Font("Arial", 100));
+        var result = layoutDrawer.CreateLayoutImageFromFile("TextFiles/RuWords.txt", new Size(-1, -1), 1);
+        result.IsSuccess.Should().BeFalse();
+        Approvals.Verify(result.Error);
+    }
 }

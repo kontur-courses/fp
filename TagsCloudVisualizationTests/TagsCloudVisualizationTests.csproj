@@ -37,6 +37,9 @@
     <None Update="LayoutDrawer_Should.Fail_WhenFileDoesntExist.ForScenario.Absolute path.approved.txt">
       <DependentUpon>LayoutDrawer_Should.cs</DependentUpon>
     </None>
+    <None Update="LayoutDrawer_Should.Fail_WhenImageSizeIsNegative.approved.txt">
+      <DependentUpon>LayoutDrawer_Should.cs</DependentUpon>
+    </None>
   </ItemGroup>
 
 </Project>
