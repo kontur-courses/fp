@@ -1,0 +1,1 @@
+﻿Can't create layout image. Can't get interesting words. Relative paths are searched realative to .exe file. Try giving an absolute path. Could not find file 'G:\Шпора дз\fp\TagsCloudVisualizationTests\bin\Debug\net6.0\NonExistingPath'.

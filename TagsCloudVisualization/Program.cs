@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
+using TagsCloudVisualization.CustomAttributes;
 
 namespace TagsCloudVisualization;
 
@@ -21,26 +22,32 @@ public class Program
     public string OutputFilePath { get; set; }
 
     [Option("-w", Description = "Image width in pixels")]
+    [MustBePositive]
     private int ImageWidth { get; set; } = 1000;
 
     [Option("-h", Description = "Image height in pixels")]
+    [MustBePositive]
     private int ImageHeight { get; set; } = 1000;
 
-    [Option("-bc", Description = "Image background color from KnownColor enum")]
-    private Color BackgroundColor { get; set; } = Color.Wheat;
+    [Option("-bg", Description = "Image background color from KnownColor enum")]
+    [MustBeEnumName(typeof(KnownColor))]
+    private KnownColor BackgroundColor { get; set; } = KnownColor.Wheat;
 
     [Option("-tc", Description = "Image words colors sequence array from KnownColor enum. " +
                                  "Can be set multiple times for sequence. Example: -tc black -tc white")]
-    private Color[] TextColor { get; set; } = { Color.Black };
+    [MustBeEnumName(typeof(KnownColor))]
+    private KnownColor[] TextColor { get; set; } = { KnownColor.Black };
 
     [Option("-ff", Description = "Font used for words")]
     private string FontFamily { get; set; } = "Arial";
 
     [Option("-fs", Description = "Max font size in em")]
+    [MustBePositive]
     private int FontSize { get; set; } = 50;
 
     [Option("-mfs", Description = "Min font size in em")]
-    private int MinimalFontSize { get; set; } = 0;
+    [MustBePositive]
+    private int MinimalFontSize { get; set; } = 1;
 
     [Option("-img", Description = "Output image format. Choosen from ImageFormat")]
     private ImageFormat SaveImageFormat { get; set; } = ImageFormat.Png;
@@ -54,6 +61,7 @@ public class Program
         { "ADVPRO", "APRO", "INTJ", "CONJ", "PART", "PR", "SPRO" };
 
     [Option("-alg", Description = "Choose algorithm to generate tag cloud. Available: Spiral, Square")]
+    [MustBeEnumName(typeof(Algorithm))]
     private Algorithm Algorithm { get; set; } = Algorithm.Spiral;
 
 
@@ -62,7 +70,8 @@ public class Program
         var services = new ServiceCollection();
         services.AddSingleton(new TagLayoutSettings(Algorithm, RemovedPartsOfSpeech, ExcludedWordsFile));
         services.AddScoped<Font>(x => new Font(FontFamily, FontSize));
-        services.AddScoped<IPalette>(x => new Palette(TextColor, BackgroundColor));
+        services.AddScoped<IPalette>(x => new Palette(TextColor.Select(Color.FromKnownColor).ToArray(),
+            Color.FromKnownColor(BackgroundColor)));
         services.AddScoped<IPointGenerator, LissajousCurvePointGenerator>();
         services.AddScoped<IPointGenerator, SpiralPointGenerator>();
         services.AddScoped<IDullWordChecker, MystemDullWordChecker>();
@@ -73,25 +82,10 @@ public class Program
         using var provider = services.BuildServiceProvider();
 
         var layoutDrawer = provider.GetRequiredService<LayoutDrawer>();
-        try
-        {
-            layoutDrawer
-                .CreateLayoutImageFromFile(InputFilePath, new Size(ImageWidth, ImageHeight), MinimalFontSize)
-                .SaveImage(OutputFilePath, SaveImageFormat);
-        }
-        catch (Exception ex)
-        {
-            if (ex is FileNotFoundException or DirectoryNotFoundException)
-            {
-                Console.WriteLine(ex.Message);
-                if (!Path.IsPathRooted(InputFilePath))
-                    Console.WriteLine("Relative paths are searched realative to .exe file. " +
-                                      "Try giving an absolute path.");
-            }
-            else
-            {
-                throw;
-            }
-        }
+
+        layoutDrawer
+            .CreateLayoutImageFromFile(InputFilePath, new Size(ImageWidth, ImageHeight), MinimalFontSize)
+            .Then(bitmap => bitmap.SaveImage(OutputFilePath, SaveImageFormat))
+            .OnFail(Console.WriteLine);
     }
 }

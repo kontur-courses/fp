@@ -21,26 +21,30 @@ public class LayoutDrawer
         this.font = font;
     }
 
-    public Bitmap CreateLayoutImageFromFile(string inputFilePath,
+    public Result<Bitmap> CreateLayoutImageFromFile(string inputFilePath,
         Size imageSize,
         int minimumFontSize)
     {
+        return interestingWordsParser
+            .GetInterestingWords(inputFilePath)
+            .Then(GetSortedInterestingWordsCount)
+            .Then(rectangles => DrawRectangles(imageSize, minimumFontSize, rectangles))
+            .RefineError("Can't create layout image");
+    }
+
+    private Bitmap DrawRectangles(Size imageSize,
+        int minimumFontSize,
+        IOrderedEnumerable<(string Word, int Count)> sortedWordsCount)
+    {
         var bitmap = new Bitmap(imageSize.Width, imageSize.Height);
         using var graphics = Graphics.FromImage(bitmap);
-
-        inputFilePath = Path.GetFullPath(inputFilePath);
-
-        var sortedWordsCount = interestingWordsParser.GetInterestingWords(inputFilePath)
-            .GroupBy(s => s)
-            .Select(group => new { Word = group.Key, Count = group.Count() })
-            .OrderByDescending(wordCount => wordCount.Count);
         var mostWordOccurrencies = sortedWordsCount.Max(arg => arg.Count);
 
         graphics.Clear(palette.GetBackgroundColor());
-        
+
         foreach (var wordCount in sortedWordsCount)
         {
-            var rectangleFont = new Font(font.FontFamily, 
+            var rectangleFont = new Font(font.FontFamily,
                 Math.Max(font.Size * wordCount.Count / mostWordOccurrencies, minimumFontSize));
             var rectangleSize = graphics.MeasureString(wordCount.Word, rectangleFont);
 
@@ -48,10 +52,24 @@ public class LayoutDrawer
             var x = textRectangle.X + imageSize.Width / 2;
             var y = textRectangle.Y + imageSize.Height / 2;
 
+            if (x < 0 || x > imageSize.Width || y < 0 || y > imageSize.Height)
+                throw new ApplicationException("Words went out of image boundaries");
+
             using var brush = new SolidBrush(palette.GetNextWordColor());
             graphics.DrawString(wordCount.Word, rectangleFont, brush, x, y);
         }
 
         return bitmap;
+    }
+
+    private IOrderedEnumerable<(string Word, int Count)> GetSortedInterestingWordsCount(
+        IEnumerable<string> interestingWords)
+    {
+        var sortedWordsCount = interestingWords
+            .GroupBy(s => s)
+            .Select(group => (Word: group.Key, Count: group.Count()))
+            .OrderByDescending(wordCount => wordCount.Count);
+
+        return sortedWordsCount;
     }
 }

@@ -2,5 +2,5 @@
 
 public interface IInterestingWordsParser
 {
-    IEnumerable<string> GetInterestingWords(string path);
+    Result<IEnumerable<string>> GetInterestingWords(string path);
 }

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ApprovalTests" Version="7.0.0-beta.1" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
@@ -32,6 +33,9 @@
     </None>
     <None Update="TextFiles\ExcludedWords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="LayoutDrawer_Should.Fail_WhenFileDoesntExist.ForScenario.Absolute path.approved.txt">
+      <DependentUpon>LayoutDrawer_Should.cs</DependentUpon>
     </None>
   </ItemGroup>
 
