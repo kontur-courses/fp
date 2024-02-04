@@ -22,7 +22,7 @@ public class TagsBuilderTests
     private TagsBuilder tagsBuilder;
 
     [Test]
-    public void Constructor_ShouldThrowArgumentNullException_WhenGivenNullITextSettings()
+    public void Constructor_ShouldThrowArgumentNullException_WhenGivenNullITagSettings()
     {
         Assert.Throws<ArgumentNullException>(() => new TagsBuilder(null));
     }
