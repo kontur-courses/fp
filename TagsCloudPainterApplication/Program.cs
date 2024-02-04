@@ -1,4 +1,5 @@
 using Autofac;
+using ResultLibrary;
 using TagsCloudPainter.CloudLayouter;
 using TagsCloudPainter.Drawer;
 using TagsCloudPainter.FileReader;
@@ -30,11 +31,22 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
+        var container = RegisterModules();
+        if (!container.IsSuccess)
+            MessageBox.Show("Registrating modules error: " + container.Error);
+
+        Application.Run(container.GetValueOrThrow().Resolve<MainForm>());
+    }
+
+    private static Result<IContainer> RegisterModules()
+    {
         var builder = new ContainerBuilder();
-        builder.RegisterModule(new TagsCloudPainterLibModule());
-        builder.RegisterModule(new ApplicationModule());
-        var container = builder.Build();
-        Application.Run(container.Resolve<MainForm>());
+        var tagsCloudPainterLibRegistration = Result.Of(() => builder.RegisterModule(new TagsCloudPainterLibModule()));
+        var applicationRegistration = tagsCloudPainterLibRegistration
+            .Then((reg) => builder.RegisterModule(new ApplicationModule()));
+        var container = applicationRegistration.Then((reg) => builder.Build());
+
+        return container;
     }
 }
 

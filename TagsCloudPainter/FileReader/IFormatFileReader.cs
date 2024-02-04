@@ -1,4 +1,6 @@
-﻿namespace TagsCloudPainter.FileReader;
+﻿using ResultLibrary;
+
+namespace TagsCloudPainter.FileReader;
 
 public interface IFormatFileReader<TFormat>
 {

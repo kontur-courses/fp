@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultLibrary;
+using System.Drawing;
 using TagsCloudPainter.Tags;
 
 namespace TagsCloudPainter.CloudLayouter;

@@ -1,4 +1,6 @@
-﻿namespace TagsCloudPainter.Tags;
+﻿using ResultLibrary;
+
+namespace TagsCloudPainter.Tags;
 
 public interface ITagsBuilder
 {

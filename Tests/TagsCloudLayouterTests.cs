@@ -23,7 +23,7 @@ public class TagsCloudLayouterTests
         var pointerSettings = new SpiralPointerSettings { AngleConst = 1, RadiusConst = 0.5, Step = 0.1 };
         var formPointer = new ArchimedeanSpiralPointer(cloudSettings, pointerSettings);
         stringSizer = A.Fake<IStringSizer>();
-        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<string>.Ignored, A<float>.Ignored))
+        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<FontFamily>.Ignored, A<float>.Ignored))
             .Returns(new Size(10, 10));
         tagsCloudLayouter = new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer);
     }
@@ -42,7 +42,7 @@ public class TagsCloudLayouterTests
     [TestCaseSource(nameof(PutNextTagArgumentException))]
     public void PutNextRectangle_ShouldFail_WhenGivenTagWith(Size size)
     {
-        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<string>.Ignored, A<float>.Ignored))
+        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<FontFamily>.Ignored, A<float>.Ignored))
             .Returns(size);
 
         var result = tagsCloudLayouter.PutNextTag(new Tag("a", 2, 1));
@@ -54,7 +54,7 @@ public class TagsCloudLayouterTests
     public void PutNextTag_ShouldReturnRectangleOfTheTagValueSize()
     {
         var tag = new Tag("ads", 10, 5);
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize).GetValueOrThrow();
+        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize).GetValueOrThrow();
 
         var resultRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
 

@@ -1,4 +1,5 @@
-﻿using TagsCloudPainter;
+﻿using ResultLibrary;
+using TagsCloudPainter;
 using TagsCloudPainter.CloudLayouter;
 using TagsCloudPainter.Drawer;
 using TagsCloudPainter.FileReader;
@@ -58,22 +59,49 @@ public class DrawTagCloudAction : IUiAction
     public void Perform()
     {
         var wordsFilePath = GetFilePath();
-        if (string.IsNullOrEmpty(wordsFilePath))
+        if (!wordsFilePath.IsSuccess)
+        {
+            MessageBox.Show(wordsFilePath.Error);
             return;
+        }
 
         SettingsForm.For(tagsCloudSettings).ShowDialog();
         tagsCloudSettings.CloudSettings.BackgroundColor = palette.BackgroundColor;
         tagsCloudSettings.TagSettings.TagColor = palette.PrimaryColor;
 
-        var wordsText = textFileReader.ReadFile(wordsFilePath).GetValueOrThrow();
-        tagsCloudSettings.TextSettings.BoringText = textFileReader
-            .ReadFile(filesSourceSettings.BoringTextFilePath).GetValueOrThrow();
-        var parsedWords = textParser.ParseText(wordsText).GetValueOrThrow();
-        var cloud = GetCloud(parsedWords);
-        DrawCloud(cloud);
+        var wordsText = textFileReader.ReadFile(wordsFilePath.GetValueOrThrow());
+        if (!wordsText.IsSuccess)
+        {
+            MessageBox.Show("File reading error: " + wordsText.Error);
+            return;
+        }
+        var boringText = textFileReader.ReadFile(filesSourceSettings.BoringTextFilePath);
+        if (!boringText.IsSuccess)
+        {
+            MessageBox.Show("File reading error: " + boringText.Error);
+            return;
+        }
+        tagsCloudSettings.TextSettings.BoringText = boringText.GetValueOrThrow();
+        var parsedWords = textParser.ParseText(wordsText.GetValueOrThrow());
+        if (!parsedWords.IsSuccess)
+        {
+            MessageBox.Show("File parsing error: " + parsedWords.Error);
+            return;
+        }
+        var cloud = GetCloud(parsedWords.GetValueOrThrow());
+        if (!cloud.IsSuccess)
+        {
+            MessageBox.Show(cloud.Error);
+            return;
+        }
+        var drawingResult = DrawCloud(cloud.GetValueOrThrow());
+        if (!drawingResult.IsSuccess)
+        {
+            MessageBox.Show(drawingResult.Error);
+        }
     }
 
-    private static string GetFilePath()
+    private static Result<string> GetFilePath()
     {
         OpenFileDialog fileDialog = new()
         {
@@ -83,28 +111,42 @@ public class DrawTagCloudAction : IUiAction
             FilterIndex = 0,
             RestoreDirectory = true
         };
-        fileDialog.ShowDialog();
-        return fileDialog.FileName;
+        var dialogResult = fileDialog.ShowDialog();
+        if (dialogResult == DialogResult.Cancel || string.IsNullOrEmpty(fileDialog.FileName))
+            return Result.Fail<string>("File hasn't been selected");
+
+        return fileDialog.FileName.AsResult();
     }
 
-    private TagsCloud GetCloud(List<string> words)
+    private Result<TagsCloud> GetCloud(List<string> words)
     {
-        var tags = tagsBuilder.GetTags(words).GetValueOrThrow();
+        var tags = tagsBuilder.GetTags(words);
+        if (!tags.IsSuccess)
+            return Result.Fail<TagsCloud>(tags.Error);
+
         cloudLayouter.Reset();
-        cloudLayouter.PutTags(tags);
+        var layoutResult = cloudLayouter.PutTags(tags.GetValueOrThrow());
+        if (!layoutResult.IsSuccess)
+            return Result.Fail<TagsCloud>(layoutResult.Error);
+
         var cloud = cloudLayouter.GetCloud();
+
         return cloud;
     }
 
-    private void DrawCloud(TagsCloud cloud)
+    private Result<None> DrawCloud(TagsCloud cloud)
     {
         var bitmap = cloudDrawer.DrawCloud(cloud, imageSettings.Width, imageSettings.Height);
+        if (!bitmap.IsSuccess)
+            return Result.Fail<None>(bitmap.Error);
+
         using (var graphics = imageHolder.StartDrawing())
         {
             graphics.DrawImage(bitmap.GetValueOrThrow(), new Point(0, 0));
             bitmap.Then(bitmap => bitmap.Dispose());
         }
-
         imageHolder.UpdateUi();
+
+        return Result.Ok();
     }
 }

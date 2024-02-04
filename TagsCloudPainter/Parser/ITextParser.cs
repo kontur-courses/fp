@@ -1,4 +1,6 @@
-﻿namespace TagsCloudPainter.Parser;
+﻿using ResultLibrary;
+
+namespace TagsCloudPainter.Parser;
 
 public interface ITextParser
 {

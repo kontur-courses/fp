@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultLibrary;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using TagsCloudPainter.Settings.Cloud;
 using TagsCloudPainter.Settings.Tag;
@@ -24,17 +25,20 @@ public class CloudDrawer : ICloudDrawer
             return Result.Fail<Bitmap>("either width or height of image is not positive");
 
         var drawingScale = CalculateObjectDrawingScale(cloud.GetWidth(), cloud.GetHeight(), imageWidth, imageHeight);
+        if (!drawingScale.IsSuccess)
+            return Result.Fail<Bitmap>(drawingScale.Error);
+
         var bitmap = new Bitmap(imageWidth, imageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         using var pen = new Pen(tagSettings.TagColor);
         {
             graphics.TranslateTransform(-cloud.Center.X, -cloud.Center.Y);
-            graphics.ScaleTransform(drawingScale, drawingScale, MatrixOrder.Append);
+            graphics.ScaleTransform(drawingScale.GetValueOrThrow(), drawingScale.GetValueOrThrow(), MatrixOrder.Append);
             graphics.TranslateTransform(cloud.Center.X, cloud.Center.Y, MatrixOrder.Append);
             graphics.Clear(cloudSettings.BackgroundColor);
             foreach (var tag in cloud.Tags)
             {
-                var font = new Font(tagSettings.TagFontName, tag.Item1.FontSize);
+                var font = new Font(tagSettings.TagFont, tag.Item1.FontSize);
                 graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location);
             }
         };
@@ -42,8 +46,11 @@ public class CloudDrawer : ICloudDrawer
         return bitmap;
     }
 
-    public static float CalculateObjectDrawingScale(float width, float height, float imageWidth, float imageHeight)
+    public static Result<float> CalculateObjectDrawingScale(float width, float height, float imageWidth, float imageHeight)
     {
+        if (width <= 0 || height <= 0)
+            return Result.Fail<float>("Scale can't be calculated of object with not positive width or height");
+
         var scale = 1f;
         var scaleAccuracy = 0.05f;
         var widthScale = scale;

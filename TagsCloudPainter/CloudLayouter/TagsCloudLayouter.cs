@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultLibrary;
+using System.Drawing;
 using TagsCloudPainter.Extensions;
 using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
@@ -31,7 +32,7 @@ public class TagsCloudLayouter : ICloudLayouter
 
     public Result<Rectangle> PutNextTag(Tag tag)
     {
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFontName, tag.FontSize);
+        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize);
         tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
         ? throw new ArgumentException("either width or height of rectangle size is not possitive")
         : tagSize);

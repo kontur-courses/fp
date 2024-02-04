@@ -1,4 +1,5 @@
-﻿using TagsCloudPainter.Settings.Tag;
+﻿using ResultLibrary;
+using TagsCloudPainter.Settings.Tag;
 
 namespace TagsCloudPainter.Tags;
 

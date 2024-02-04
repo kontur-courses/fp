@@ -1,4 +1,4 @@
-﻿namespace TagsCloudPainter
+﻿namespace ResultLibrary
 {
     public class None
     {

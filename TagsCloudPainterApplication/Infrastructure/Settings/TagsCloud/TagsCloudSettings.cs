@@ -40,8 +40,21 @@ public class TagsCloudSettings : ITagsCloudSettings
 
     public string TagFontName
     {
-        get => TagSettings.TagFontName;
-        set => TagSettings.TagFontName = value ?? TagSettings.TagFontName;
+        get => TagSettings.TagFont.Name;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                MessageBox.Show("Tag font name can't be empty");
+            try
+            {
+                TagSettings.TagFont = new FontFamily(value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                TagSettings.TagFont = TagSettings.TagFont;
+            }
+        }
     }
 
     public Point CloudCenter
