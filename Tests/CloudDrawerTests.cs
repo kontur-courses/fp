@@ -1,7 +1,9 @@
 ﻿using System.Drawing;
 using TagsCloudPainter;
 using TagsCloudPainter.Drawer;
+using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
+using TagsCloudPainter.Settings.FormPointer;
 using TagsCloudPainter.Settings.Tag;
 using TagsCloudPainter.Tags;
 
@@ -19,6 +21,19 @@ public class CloudDrawerTests
     }
 
     private ICloudDrawer drawer;
+
+    private static IEnumerable<TestCaseData> ConstructorArgumentNullExceptions => new[]
+    {
+        new TestCaseData(null, new TagSettings()).SetName("WhenGivenNullCloudSettings"),
+        new TestCaseData(new CloudSettings(), null).SetName("WhenGivenNullTagSettings"),
+        new TestCaseData(null, null).SetName("WhenGivenNullCloudSettingsAndTagSettings"),
+    };
+
+    [TestCaseSource(nameof(ConstructorArgumentNullExceptions))]
+    public void Constructor_ShouldThrowArgumentNullException_(ICloudSettings cloudSettings, ITagSettings tagSettings)
+    {
+        Assert.Throws<ArgumentNullException>(() => new CloudDrawer(tagSettings, cloudSettings));
+    }
 
     private static IEnumerable<TestCaseData> DrawArgumentException => new[]
     {
