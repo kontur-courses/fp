@@ -16,7 +16,7 @@ public class ArchimedeanSpiralTests
     };
 
     [TestCaseSource(nameof(ConstructorArgumentExceptions))]
-    public void Constructor_ShouldThrowArgumentException_(ICloudSettings cloudSettings, ISpiralPointerSettings pointerSettings)
+    public void Constructor_ShouldThrowArgumentNullException_(ICloudSettings cloudSettings, ISpiralPointerSettings pointerSettings)
     {
         Assert.Throws<ArgumentNullException>(() => new ArchimedeanSpiralPointer(cloudSettings, pointerSettings));
     }
