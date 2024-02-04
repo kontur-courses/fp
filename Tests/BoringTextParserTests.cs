@@ -1,9 +1,6 @@
 ﻿using FluentAssertions;
-using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Parser;
 using TagsCloudPainter.Settings;
-using TagsCloudPainter.Settings.Cloud;
-using TagsCloudPainter.Settings.FormPointer;
 
 namespace TagsCloudPainterTests;
 

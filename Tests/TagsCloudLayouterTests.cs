@@ -2,7 +2,6 @@
 using FakeItEasy;
 using FluentAssertions;
 using TagsCloudPainter.CloudLayouter;
-using TagsCloudPainter.Drawer;
 using TagsCloudPainter.Extensions;
 using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
@@ -35,26 +34,26 @@ public class TagsCloudLayouterTests
 
     private static IEnumerable<TestCaseData> ConstructorArgumentNullExceptions => new[]
     {
-        new TestCaseData(null, 
-            A.Fake<ArchimedeanSpiralPointer>(),
-            A.Fake<TagSettings>(),
-            A.Fake<StringSizer>())
-        .SetName("WhenGivenNullCloudSettings"),
+        new TestCaseData(null,
+                A.Fake<ArchimedeanSpiralPointer>(),
+                A.Fake<TagSettings>(),
+                A.Fake<StringSizer>())
+            .SetName("WhenGivenNullCloudSettings"),
         new TestCaseData(A.Fake<CloudSettings>(),
-            null,
-            A.Fake<TagSettings>(),
-            A.Fake<StringSizer>())
-        .SetName("WhenGivenNullFormPointer"),
+                null,
+                A.Fake<TagSettings>(),
+                A.Fake<StringSizer>())
+            .SetName("WhenGivenNullFormPointer"),
         new TestCaseData(A.Fake<CloudSettings>(),
-            A.Fake<ArchimedeanSpiralPointer>(),
-            null,
-            A.Fake<StringSizer>())
-        .SetName("WhenGivenNullTagSettings"),
+                A.Fake<ArchimedeanSpiralPointer>(),
+                null,
+                A.Fake<StringSizer>())
+            .SetName("WhenGivenNullTagSettings"),
         new TestCaseData(A.Fake<CloudSettings>(),
-            A.Fake<ArchimedeanSpiralPointer>(),
-            A.Fake<TagSettings>(),
-            null)
-        .SetName("WhenGivenNullStringSizer"),
+                A.Fake<ArchimedeanSpiralPointer>(),
+                A.Fake<TagSettings>(),
+                null)
+            .SetName("WhenGivenNullStringSizer")
     };
 
     [TestCaseSource(nameof(ConstructorArgumentNullExceptions))]
@@ -64,7 +63,8 @@ public class TagsCloudLayouterTests
         ITagSettings tagSettings,
         IStringSizer stringSizer)
     {
-        Assert.Throws<ArgumentNullException>(() => new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer));
+        Assert.Throws<ArgumentNullException>(() =>
+            new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer));
     }
 
     private static IEnumerable<TestCaseData> FailingSizes => new[]
@@ -114,6 +114,7 @@ public class TagsCloudLayouterTests
     {
         var center = tagsCloudLayouter.GetCloud().Center;
         var tag = new Tag("ads", 10, 5);
+
         var firstRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
         var firstRectangleCenter = firstRectangle.GetCenter();
 
@@ -133,6 +134,7 @@ public class TagsCloudLayouterTests
     {
         tagsCloudLayouter.PutNextTag(new Tag("ads", 10, 5));
         tagsCloudLayouter.PutNextTag(new Tag("ads", 10, 5));
+
         var rectanglesAmount = tagsCloudLayouter.GetCloud().Tags.Count;
 
         rectanglesAmount.Should().Be(2);
@@ -141,7 +143,7 @@ public class TagsCloudLayouterTests
     private static IEnumerable<TestCaseData> FailingTags => new[]
     {
         new TestCaseData(new List<Tag>()).SetName("WhenGivenEmptyTags"),
-        new TestCaseData(null).SetName("WhenGivenNullTags"),
+        new TestCaseData(null).SetName("WhenGivenNullTags")
     };
 
     [TestCaseSource(nameof(FailingTags))]

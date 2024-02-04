@@ -1,5 +1,5 @@
-﻿using ResultLibrary;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultLibrary;
 
 namespace TagsCloudPainter.FormPointer;
 

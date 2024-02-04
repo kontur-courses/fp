@@ -21,7 +21,8 @@ public class BoringTextParser : ITextParser
         var boringWords = GetBoringWords(textSettings.BoringText);
         var words = text.Split(_separators, StringSplitOptions.RemoveEmptyEntries);
         var parssedText = boringWords
-            .Then(boringWords => words.Select(word => word.ToLower()).Where(word => !boringWords.Contains(word)).ToList());
+            .Then(boringWords =>
+                words.Select(word => word.ToLower()).Where(word => !boringWords.Contains(word)).ToList());
 
         return parssedText;
     }
@@ -29,7 +30,7 @@ public class BoringTextParser : ITextParser
     public Result<HashSet<string>> GetBoringWords(string text)
     {
         var words = Result.Of(() => text.Split(Environment.NewLine));
-        var boringWords = words.Then((words) => words.Select(word => word.ToLower()).ToHashSet());
+        var boringWords = words.Then(words => words.Select(word => word.ToLower()).ToHashSet());
 
         return boringWords;
     }

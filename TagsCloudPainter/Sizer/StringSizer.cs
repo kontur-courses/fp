@@ -1,5 +1,5 @@
-﻿using ResultLibrary;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultLibrary;
 
 namespace TagsCloudPainter.Sizer;
 
@@ -11,6 +11,7 @@ public class StringSizer : IStringSizer
         using var font = new Font(fontFamily, fontSize);
         {
             var size = Result.Of(() => graphics.MeasureString(value, font).ToSize());
+
             return size;
         }
     }

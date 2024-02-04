@@ -1,9 +1,4 @@
 ﻿using FluentAssertions;
-using System.Drawing;
-using TagsCloudPainter.FormPointer;
-using TagsCloudPainter.Parser;
-using TagsCloudPainter.Settings.Cloud;
-using TagsCloudPainter.Settings.FormPointer;
 using TagsCloudPainter.Settings.Tag;
 using TagsCloudPainter.Tags;
 
@@ -61,7 +56,7 @@ public class TagsBuilderTests
     {
         new TestCaseData(null).SetName("WhenGivenNullWords"),
         new TestCaseData(new List<string> { string.Empty }).SetName("WhenGivenWordsWithEmptyWord"),
-        new TestCaseData(new List<string> { null }).SetName("WhenGivenWordsWithNullWord"),
+        new TestCaseData(new List<string> { null }).SetName("WhenGivenWordsWithNullWord")
     };
 
     [TestCaseSource(nameof(FailingWords))]

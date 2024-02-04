@@ -1,6 +1,6 @@
-﻿using ResultLibrary;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using ResultLibrary;
 using TagsCloudPainter.Settings.Cloud;
 using TagsCloudPainter.Settings.Tag;
 
@@ -34,7 +34,7 @@ public class CloudDrawer : ICloudDrawer
             return Result.Fail<Bitmap>(graphics.Error);
 
         var scalingCloudResult = ScaleCloud(graphics.GetValueOrThrow(), cloud, imageWidth, imageHeight);
-        if(!scalingCloudResult.IsSuccess)
+        if (!scalingCloudResult.IsSuccess)
             return Result.Fail<Bitmap>(scalingCloudResult.Error);
 
         var drawingResult = DrawTags(
@@ -55,14 +55,17 @@ public class CloudDrawer : ICloudDrawer
 
         var scalingResult = new Result<None>();
         scalingResult = scalingResult.Then(res => graphics.TranslateTransform(-cloud.Center.X, -cloud.Center.Y));
-        scalingResult = scalingResult.Then(res => 
-        graphics.ScaleTransform(drawingScale.GetValueOrThrow(), drawingScale.GetValueOrThrow(), MatrixOrder.Append));
-        scalingResult = scalingResult.Then(res => graphics.TranslateTransform(cloud.Center.X, cloud.Center.Y, MatrixOrder.Append));
+        scalingResult = scalingResult.Then(res =>
+            graphics.ScaleTransform(drawingScale.GetValueOrThrow(), drawingScale.GetValueOrThrow(),
+                MatrixOrder.Append));
+        scalingResult = scalingResult.Then(res =>
+            graphics.TranslateTransform(cloud.Center.X, cloud.Center.Y, MatrixOrder.Append));
 
         return scalingResult;
     }
 
-    private static Result<float> CalculateObjectDrawingScale(float width, float height, float imageWidth, float imageHeight)
+    private static Result<float> CalculateObjectDrawingScale(float width, float height, float imageWidth,
+        float imageHeight)
     {
         if (width <= 0 || height <= 0)
             return Result.Fail<float>("Scale can't be calculated of object with not positive width or height");
@@ -75,18 +78,20 @@ public class CloudDrawer : ICloudDrawer
             widthScale = imageWidth / width - scaleAccuracy;
         if (height * scale > imageHeight)
             heightScale = imageHeight / height - scaleAccuracy;
+
         return Math.Min(widthScale, heightScale);
     }
 
-    private static Result<None> DrawTags(Graphics graphics, TagsCloud cloud, FontFamily tagFont, Color backgroundColor, Pen pen)
+    private static Result<None> DrawTags(Graphics graphics, TagsCloud cloud, FontFamily tagFont, Color backgroundColor,
+        Pen pen)
     {
         var drawingResult = new Result<None>();
         drawingResult = drawingResult.Then(res => graphics.Clear(backgroundColor));
         foreach (var tag in cloud.Tags)
         {
             var font = new Font(tagFont, tag.Item1.FontSize);
-            drawingResult = drawingResult.Then(res => 
-            graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
+            drawingResult = drawingResult.Then(res =>
+                graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
         }
 
         return drawingResult;

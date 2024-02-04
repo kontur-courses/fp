@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace TagsCloudPainter.Tags;
+﻿namespace TagsCloudPainter.Tags;
 
 public class Tag
 {

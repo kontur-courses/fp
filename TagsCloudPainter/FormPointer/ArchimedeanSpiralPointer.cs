@@ -1,5 +1,5 @@
-﻿using ResultLibrary;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultLibrary;
 using TagsCloudPainter.Settings.Cloud;
 using TagsCloudPainter.Settings.FormPointer;
 
@@ -28,7 +28,7 @@ public class ArchimedeanSpiralPointer : IFormPointer
             return Result.Fail<Point>("Step is not possitive");
         if (spiralPointerSettings.RadiusConst <= 0)
             return Result.Fail<Point>("RadiusConst is not possitive");
-        if(spiralPointerSettings.AngleConst <= 0)
+        if (spiralPointerSettings.AngleConst <= 0)
             return Result.Fail<Point>("AngleConst is not possitive");
 
         сurrentDifference += spiralPointerSettings.Step;

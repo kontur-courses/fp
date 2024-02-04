@@ -1,9 +1,7 @@
 ﻿using System.Drawing;
 using TagsCloudPainter;
 using TagsCloudPainter.Drawer;
-using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
-using TagsCloudPainter.Settings.FormPointer;
 using TagsCloudPainter.Settings.Tag;
 using TagsCloudPainter.Tags;
 
@@ -26,7 +24,7 @@ public class CloudDrawerTests
     {
         new TestCaseData(null, new TagSettings()).SetName("WhenGivenNullCloudSettings"),
         new TestCaseData(new CloudSettings(), null).SetName("WhenGivenNullTagSettings"),
-        new TestCaseData(null, null).SetName("WhenGivenNullCloudSettingsAndTagSettings"),
+        new TestCaseData(null, null).SetName("WhenGivenNullCloudSettingsAndTagSettings")
     };
 
     [TestCaseSource(nameof(ConstructorArgumentNullExceptions))]
@@ -56,7 +54,7 @@ public class CloudDrawerTests
                 new List<(Tag, Rectangle)> { (new Tag("a", 1, 1), new Rectangle(0, 0, 0, 0)) }), 0, 0)
             .SetName("WhenCloudHasNotPositiveWidthAndHeight"),
         new TestCaseData(new TagsCloud(new Point(0, 0), []), 1, 1)
-            .SetName("WhenGivenCloudWithEmptyTagsDictionary"),
+            .SetName("WhenGivenCloudWithEmptyTagsDictionary")
     };
 
     [TestCaseSource(nameof(DrawArgumentException))]

@@ -79,6 +79,7 @@ public class DependencyInjectionTests
     public void Dependence_SouldBeNotNull(Type dependenceType)
     {
         var dependence = scope.Resolve(dependenceType);
+
         Assert.That(dependence, Is.Not.Null);
     }
 
@@ -86,6 +87,7 @@ public class DependencyInjectionTests
     public void SingleInstanceDependence_ShouldResolveSameReferenceInDifferentScopes(Type dependenceType)
     {
         using var childScope = scope.BeginLifetimeScope();
+
         var dependence1 = scope.Resolve(dependenceType);
         var dependence2 = childScope.Resolve(dependenceType);
 
@@ -97,6 +99,7 @@ public class DependencyInjectionTests
         Type dependenceType)
     {
         using var childScope = scope.BeginLifetimeScope();
+
         var dependence1 = scope.Resolve(dependenceType);
         var dependence2 = childScope.Resolve(dependenceType);
 

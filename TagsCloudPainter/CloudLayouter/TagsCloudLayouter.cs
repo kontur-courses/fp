@@ -1,5 +1,5 @@
-﻿using ResultLibrary;
-using System.Drawing;
+﻿using System.Drawing;
+using ResultLibrary;
 using TagsCloudPainter.Extensions;
 using TagsCloudPainter.FormPointer;
 using TagsCloudPainter.Settings.Cloud;
@@ -34,19 +34,20 @@ public class TagsCloudLayouter : ICloudLayouter
     {
         var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize);
         tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
-        ? Result.Fail<Size>("Either width or height of rectangle size is not possitive")
-        : tagSize);
+            ? Result.Fail<Size>("Either width or height of rectangle size is not possitive")
+            : tagSize);
 
         var nextRectangle = tagSize
             .Then(tagSize => formPointer.GetNextPoint().Then(point => point.GetRectangle(tagSize)))
             .Then(nextRectangle =>
             {
                 while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(nextRectangle)))
-                    nextRectangle = formPointer.GetNextPoint().GetValueOrThrow().GetRectangle(tagSize.GetValueOrThrow());
+                    nextRectangle = formPointer.GetNextPoint().GetValueOrThrow()
+                        .GetRectangle(tagSize.GetValueOrThrow());
 
                 return nextRectangle;
             });
-        
+
         nextRectangle.Then(nextRectangle => cloud.AddTag(tag, nextRectangle));
 
         return nextRectangle;

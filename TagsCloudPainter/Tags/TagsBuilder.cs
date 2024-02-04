@@ -16,9 +16,10 @@ public class TagsBuilder : ITagsBuilder
     {
         var countedWords = CountWords(words);
         var tags = countedWords.Then(countedWords => countedWords
-        .Select(wordWithCount => GetTag(wordWithCount.Key, _settings.TagFontSize, wordWithCount.Value, countedWords.Count)
-        .GetValueOrThrow())
-        .ToList());
+            .Select(wordWithCount =>
+                GetTag(wordWithCount.Key, _settings.TagFontSize, wordWithCount.Value, countedWords.Count)
+                    .GetValueOrThrow())
+            .ToList());
 
         return tags;
     }
@@ -26,8 +27,8 @@ public class TagsBuilder : ITagsBuilder
     private static Result<Dictionary<string, int>> CountWords(List<string> words)
     {
         var countedWords = Result.Of(() => words
-        .GroupBy(word => word)
-        .ToDictionary(group => group.Key, group => group.Count()));
+            .GroupBy(word => word)
+            .ToDictionary(group => group.Key, group => group.Count()));
 
         return countedWords;
     }

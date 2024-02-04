@@ -35,7 +35,8 @@ internal static class Program
         if (!container.IsSuccess)
             return;
 
-        var form = GetMainForm(container.GetValueOrThrow()).OnFail(error => MessageBox.Show("Form retrieval error: " + error));
+        var form = GetMainForm(container.GetValueOrThrow())
+            .OnFail(error => MessageBox.Show("Form retrieval error: " + error));
         if (!form.IsSuccess)
             return;
 
@@ -54,8 +55,8 @@ internal static class Program
         var builder = new ContainerBuilder();
         var tagsCloudPainterLibRegistration = Result.Of(() => builder.RegisterModule(new TagsCloudPainterLibModule()));
         var applicationRegistration = tagsCloudPainterLibRegistration
-            .Then((reg) => builder.RegisterModule(new ApplicationModule()));
-        var container = applicationRegistration.Then((reg) => builder.Build());
+            .Then(reg => builder.RegisterModule(new ApplicationModule()));
+        var container = applicationRegistration.Then(reg => builder.Build());
 
         return container;
     }

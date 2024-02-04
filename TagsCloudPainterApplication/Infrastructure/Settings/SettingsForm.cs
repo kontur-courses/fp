@@ -1,4 +1,4 @@
-﻿ namespace TagsCloudPainterApplication.Infrastructure.Settings;
+﻿namespace TagsCloudPainterApplication.Infrastructure.Settings;
 
 public static class SettingsForm
 {

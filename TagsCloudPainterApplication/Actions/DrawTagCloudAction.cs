@@ -133,6 +133,7 @@ public class DrawTagCloudAction : IUiAction
             graphics.DrawImage(bitmap.GetValueOrThrow(), new Point(0, 0));
             bitmap.Then(bitmap => bitmap.Dispose());
         }
+
         imageHolder.UpdateUi();
 
         return Result.Ok();

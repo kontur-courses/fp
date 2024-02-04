@@ -1,5 +1,4 @@
 ﻿using TagsCloudPainter.FileReader;
-using TagsCloudPainter.Parser;
 
 namespace TagsCloudPainterTests;
 
@@ -60,9 +59,9 @@ public class TextFileReaderTests
     {
         new TestCaseData("").SetName("WhenGivenNonexistentFile"),
         new TestCaseData(@$"{Environment.CurrentDirectory}..\..\..\..\TestFiles\testFile.pdf")
-        .SetName("WhenGivenFileWithUnsupportedExtension"),
+            .SetName("WhenGivenFileWithUnsupportedExtension"),
         new TestCaseData(@$"{Environment.CurrentDirectory}..\..\..\..\TestFiles\image.png")
-        .SetName("WhenGivenFileWithUnsupportedFormat"),
+            .SetName("WhenGivenFileWithUnsupportedFormat")
     };
 
     [TestCaseSource(nameof(FailingFiles))]

@@ -12,11 +12,12 @@ public class ArchimedeanSpiralTests
     {
         new TestCaseData(null, new SpiralPointerSettings()).SetName("WhenGivenNullCloudSettings"),
         new TestCaseData(new CloudSettings(), null).SetName("WhenGivenNullPointerSettings"),
-        new TestCaseData(null, null).SetName("WhenGivenNullCloudSettingsAndPointerSettings"),
+        new TestCaseData(null, null).SetName("WhenGivenNullCloudSettingsAndPointerSettings")
     };
 
     [TestCaseSource(nameof(ConstructorArgumentExceptions))]
-    public void Constructor_ShouldThrowArgumentNullException_(ICloudSettings cloudSettings, ISpiralPointerSettings pointerSettings)
+    public void Constructor_ShouldThrowArgumentNullException_(ICloudSettings cloudSettings,
+        ISpiralPointerSettings pointerSettings)
     {
         Assert.Throws<ArgumentNullException>(() => new ArchimedeanSpiralPointer(cloudSettings, pointerSettings));
     }
@@ -43,7 +44,7 @@ public class ArchimedeanSpiralTests
     private static IEnumerable<TestCaseData> GetNextPointSuccess => new[]
     {
         new TestCaseData(new Point(1, 1), 1, 1, 1).SetName("WhenGivenPositiveStepAndRadiusAndAngle"),
-        new TestCaseData(new Point(1, 1), 100, 100, 100).SetName("WhenGivenPositiveStepAndRadiusAndAngleOfLargeNumbers"),
+        new TestCaseData(new Point(1, 1), 100, 100, 100).SetName("WhenGivenPositiveStepAndRadiusAndAngleOfLargeNumbers")
     };
 
     [TestCaseSource(nameof(GetNextPointSuccess))]

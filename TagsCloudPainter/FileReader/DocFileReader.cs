@@ -12,6 +12,7 @@ public class DocFileReader : IFileReader
         doc.LoadFromFile(path);
         var text = doc.GetText();
         var lastIndexOfSpirePart = text.IndexOf(Environment.NewLine);
+
         return text.Substring(lastIndexOfSpirePart + 2).Trim();
     }
 }
