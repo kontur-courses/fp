@@ -15,9 +15,9 @@ public struct Result<T>
         Value = value;
     }
 
-    public static implicit operator Result<T>(T v)
+    public static implicit operator Result<T>(T value)
     {
-        return Result.Ok(v);
+        return Result.Ok(value);
     }
 
     public string Error { get; }
@@ -49,33 +49,33 @@ public static class Result
         return Ok<None>(null);
     }
 
-    public static Result<T> Fail<T>(string e)
+    public static Result<T> Fail<T>(string error)
     {
-        return new Result<T>(e);
+        return new Result<T>(error);
     }
 
-    public static Result<T> Of<T>(Func<T> f, string error = null)
+    public static Result<T> Of<T>(Func<T> function, string error = null)
     {
         try
         {
-            return Ok(f());
+            return Ok(function());
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            return Fail<T>(error ?? e.Message);
+            return Fail<T>(error ?? exception.Message);
         }
     }
 
-    public static Result<None> OfAction(Action f, string error = null)
+    public static Result<None> OfAction(Action function, string error = null)
     {
         try
         {
-            f();
+            function();
             return Ok();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            return Fail<None>(error ?? e.Message);
+            return Fail<None>(error ?? exception.Message);
         }
     }
 
@@ -128,6 +128,7 @@ public static class Result
         Action<string> handleError)
     {
         if (!input.IsSuccess) handleError(input.Error);
+
         return input;
     }
 
@@ -136,6 +137,7 @@ public static class Result
         Func<string, string> replaceError)
     {
         if (input.IsSuccess) return input;
+
         return Fail<TInput>(replaceError(input.Error));
     }
 
@@ -143,6 +145,6 @@ public static class Result
         this Result<TInput> input,
         string errorMessage)
     {
-        return input.ReplaceError(err => errorMessage + ". " + err);
+        return input.ReplaceError(error => errorMessage + ". " + error);
     }
 }

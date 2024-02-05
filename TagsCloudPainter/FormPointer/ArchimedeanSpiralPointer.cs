@@ -35,7 +35,7 @@ public class ArchimedeanSpiralPointer : IFormPointer
         var x = cloudSettings.CloudCenter.X + (int)(Radius * Math.Cos(Angle));
         var y = cloudSettings.CloudCenter.Y + (int)(Radius * Math.Sin(Angle));
 
-        return Result.Of(() => new Point(x, y));
+        return Result.Ok(new Point(x, y));
     }
 
     public void Reset()
