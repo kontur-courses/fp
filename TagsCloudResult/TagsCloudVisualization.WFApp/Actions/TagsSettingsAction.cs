@@ -14,8 +14,8 @@ public class TagsSettingsAction : IUiAction
     }
 
     public MenuCategory Category => MenuCategory.Settings;
-    public string Name => "Палитра и шрифт...";
-    public string Description => "Цвета и шрифт для рисования тегов";
+    public string Name => Resources.TagsSettingsAction_Name;
+    public string Description => Resources.TagsSettingsAction_Description;
 
     public void Perform()
     {

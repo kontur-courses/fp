@@ -17,8 +17,8 @@ public class ImageSettingsAction : IUiAction
     }
 
     public MenuCategory Category => MenuCategory.Settings;
-    public string Name => "Изображение...";
-    public string Description => "Размеры изображения";
+    public string Name => Resources.ImageSettingsAction_Name;
+    public string Description => Resources.ImageSettingsAction_Description;
 
     public void Perform()
     {

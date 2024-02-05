@@ -14,8 +14,8 @@ public class SourceSettingsAction : IUiAction
     }
 
     public MenuCategory Category => MenuCategory.Settings;
-    public string Name => "Источник...";
-    public string Description => "Изменить источник текста";
+    public string Name => Resources.SourceSettingsAction_Name;
+    public string Description => Resources.SourceSettingsAction_Description;
 
     public void Perform()
     {
@@ -23,8 +23,8 @@ public class SourceSettingsAction : IUiAction
         {
             CheckFileExists = false,
             InitialDirectory = Path.GetFullPath("/"),
-            DefaultExt = "txt",
-            Filter = "Текстовый файл (*.txt)|*.txt|DOC (*.doc)|*.doc|DOCX (*.docx)|*.docx" 
+            DefaultExt = Resources.SourceSettingsAction_Perform_DefaultExt,
+            Filter = Resources.SourceSettingsAction_Perform_Filter 
         };
         var res = dialog.ShowDialog();
         

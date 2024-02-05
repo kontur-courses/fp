@@ -14,7 +14,7 @@ public class SettingsForm<TSettings> : Form
     {
         var okButton = new Button
         {
-            Text = "OK",
+            Text = Resources.Text_OK,
             DialogResult = DialogResult.OK,
             Dock = DockStyle.Bottom,
         };
@@ -30,6 +30,6 @@ public class SettingsForm<TSettings> : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        Text = "Настройки";
+        Text = Resources.SettingsForm_OnLoad_Text;
     }
 }

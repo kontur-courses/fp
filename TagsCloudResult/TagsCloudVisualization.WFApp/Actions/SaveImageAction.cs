@@ -13,18 +13,18 @@ public class SaveImageAction : IUiAction
     }
 
     public MenuCategory Category => MenuCategory.File;
-    public string Name => "Сохранить...";
-    public string Description => "Сохранить изображение в файл";
+    public string Name => Resources.SaveImageAction_Name;
+    public string Description => Resources.SaveImageAction_Description;
 
     public void Perform()
     {
         var dialog = new SaveFileDialog
         {
             CheckFileExists = false,
-            InitialDirectory = "/",
-            DefaultExt = "png",
-            FileName = "tagCloud.png",
-            Filter = "PNG (*.png)|*.png|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp" 
+            InitialDirectory = Path.GetFullPath("/"),
+            DefaultExt = Resources.SaveImageAction_Perform_DefaultExt,
+            FileName = Resources.SaveImageAction_Perform_FileName,
+            Filter = Resources.SaveImageAction_Perform_Filter 
         };
         var res = dialog.ShowDialog();
         if (res == DialogResult.OK)

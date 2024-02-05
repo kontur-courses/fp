@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="ImageSettingsAction_Name" xml:space="preserve">
+        <value>Изображение...</value>
+    </data>
+    <data name="ImageSettingsAction_Description" xml:space="preserve">
+        <value>Размеры изображения</value>
+    </data>
+    <data name="SaveImageAction_Name" xml:space="preserve">
+        <value>Сохранить...</value>
+    </data>
+    <data name="SaveImageAction_Description" xml:space="preserve">
+        <value>Сохранить изображение в файл</value>
+    </data>
+    <data name="SourceSettingsAction_Name" xml:space="preserve">
+        <value>Источник...</value>
+    </data>
+    <data name="SourceSettingsAction_Description" xml:space="preserve">
+        <value>Изменить источник текста</value>
+    </data>
+    <data name="SourceSettingsAction_Perform_Filter" xml:space="preserve">
+        <value>Текстовый файл (*.txt)|*.txt|DOC (*.doc)|*.doc|DOCX (*.docx)|*.docx</value>
+    </data>
+    <data name="SourceSettingsAction_Perform_DefaultExt" xml:space="preserve">
+        <value>txt</value>
+    </data>
+    <data name="SaveImageAction_Perform_Filter" xml:space="preserve">
+        <value>PNG (*.png)|*.png|JPG (*.jpg)|*.jpg|BMP (*.bmp)|*.bmp</value>
+    </data>
+    <data name="SaveImageAction_Perform_FileName" xml:space="preserve">
+        <value>tagCloud.png</value>
+    </data>
+    <data name="SaveImageAction_Perform_DefaultExt" xml:space="preserve">
+        <value>png</value>
+    </data>
+    <data name="TagsCloudAction_Name" xml:space="preserve">
+        <value>Облако тегов</value>
+    </data>
+    <data name="TagsSettingsAction_Name" xml:space="preserve">
+        <value>Палитра и шрифт...</value>
+    </data>
+    <data name="TagsSettingsAction_Description" xml:space="preserve">
+        <value>Цвета и шрифт для рисования тегов</value>
+    </data>
+    <data name="Text_OK" xml:space="preserve">
+        <value>OK</value>
+    </data>
+    <data name="SettingsForm_OnLoad_Text" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
+</root>

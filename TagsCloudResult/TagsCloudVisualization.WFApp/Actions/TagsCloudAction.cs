@@ -18,8 +18,8 @@ public class TagsCloudAction : IUiAction
     }
 
     public MenuCategory Category => MenuCategory.TagsClouds;
-    public string Name => "Облако тегов";
-    public string Description => "Облако тегов";
+    public string Name => Resources.TagsCloudAction_Name;
+    public string Description => Resources.TagsCloudAction_Name;
 
     public void Perform()
     {
