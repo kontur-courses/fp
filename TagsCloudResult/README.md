@@ -1,11 +1,33 @@
-﻿# Примеры раскладки с разными параметрами
-## Rectangles = 500; deltaAngle = 5°; distance = 2
-![example1](https://github.com/tripples25/tdd/blob/8b58d8f0592e3592d28af7ce6bfe3c817a716d16/TagsCloudVisualization/layoutImages/new%20500%20rects%20angle%205%20distance%202.Png?raw=true)
-## Rectangles = 100; deltaAngle = 5°; distance = 2
-![example1](https://github.com/tripples25/tdd/blob/8b58d8f0592e3592d28af7ce6bfe3c817a716d16/TagsCloudVisualization/layoutImages/new%20angle%205%20distance%202.Png?raw=true)
-## Rectangles = 100; deltaAngle = 10°; distance = 2
-![example2](https://github.com/tripples25/tdd/blob/8b58d8f0592e3592d28af7ce6bfe3c817a716d16/TagsCloudVisualization/layoutImages/new%20angle%2010%20distance%202.Png?raw=true)
-## Rectangles = 100; deltaAngle = 5°; distance = 0.5
-![example3](https://github.com/tripples25/tdd/blob/8b58d8f0592e3592d28af7ce6bfe3c817a716d16/TagsCloudVisualization/layoutImages/new%20angle%205%20distance%200.5.Png?raw=true)
-## Rectangles = 100; deltaAngle = 1°; distance = 0.5
-![example4](https://github.com/tripples25/tdd/blob/8b58d8f0592e3592d28af7ce6bfe3c817a716d16/TagsCloudVisualization/layoutImages/new%20angle%201%20distance%200.5.Png?raw=true)
+﻿# TagsCloudVisualizator
+
+Приложение для создания облак тегов на основе текста.
+
+![example1](https://github.com/tripples25/fp/blob/1a4585180188efc9c6a35736650295a4e470f916/TagsCloudResult/layoutImages/sample.png?raw=true)
+
+## Настройки
+
+1. Теги
+
+| Свойство        | Описание                                               |
+|-----------------|--------------------------------------------------------|
+| BackgroundColor | Настраивает фоновый цвет изображения.                  |
+| PrimaryColor    | Настраивает первичный цвет тегов.                      |
+| SecondaryColor  | Настраивает вторичный цвет тегов.                      |
+| TertiaryColor   | Настраивает третичный цвет тегов.                      |
+| Font            | Настраивает используемый для отрисовки тегов шрифт.    |
+| FontSize        | Настраивает максимальный размер шрифта на изображении. |
+
+2. Источник текста
+
+| Поддерживаемые форматы |
+|:----------------------:|
+|          .txt          |
+|          .doc          |
+|          .docx         |
+
+3. Размеры изображения
+
+| Свойство |            Описание            |
+|:--------:|:------------------------------:|
+|  Height  | Определяет высоту изображения. |
+|   Width  | Определяет ширину изображения. |
