@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using ResultLibrary;
+using TagsCloudPainter.Extensions;
 using TagsCloudPainter.Settings.Cloud;
 using TagsCloudPainter.Settings.Tag;
 
@@ -25,24 +26,15 @@ public class CloudDrawer : ICloudDrawer
             return Result.Fail<Bitmap>("either width or height of image is not positive");
 
         var pen = Result.Of(() => new Pen(tagSettings.TagColor));
-        if (!pen.IsSuccess)
-            return Result.Fail<Bitmap>(pen.Error);
-
         var bitmap = Result.Of(() => new Bitmap(imageWidth, imageHeight));
         var graphics = bitmap.Then(Graphics.FromImage);
-        if (!graphics.IsSuccess)
-            return Result.Fail<Bitmap>(graphics.Error);
+        var scalingCloudResult = graphics.Then(graphics => ScaleCloud(graphics, cloud, imageWidth, imageHeight));
+        var drawingResult = graphics.Then(graphics => pen.Then(pen => 
+        DrawTags(graphics, cloud, tagSettings.TagFont, cloudSettings.BackgroundColor, pen)));
 
-        var scalingCloudResult = ScaleCloud(graphics.GetValueOrThrow(), cloud, imageWidth, imageHeight);
-        if (!scalingCloudResult.IsSuccess)
-            return Result.Fail<Bitmap>(scalingCloudResult.Error);
-
-        var drawingResult = DrawTags(
-            graphics.GetValueOrThrow(), cloud,
-            tagSettings.TagFont, cloudSettings.BackgroundColor,
-            pen.GetValueOrThrow());
-        if (!drawingResult.IsSuccess)
-            return Result.Fail<Bitmap>(drawingResult.Error);
+        var failedResult = ResultExtension.GetFirstFailedResult(pen, graphics, scalingCloudResult, drawingResult);
+        if (!failedResult.IsSuccess)
+            return Result.Fail<Bitmap>(failedResult.Error);
 
         return bitmap;
     }
