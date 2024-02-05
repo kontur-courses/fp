@@ -35,7 +35,7 @@ public static class Program
         container.RegisterType<TextReaderFactory>().As<ITextReaderFactory>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();
-        container.RegisterType<ArchimedeanSpiralPointsProvider>().WithParameter("center", new Point(500, 500));
+        container.RegisterType<ArchimedeanSpiralPointsProvider>();
         container.RegisterType<TagsCloudVisualizator>();
 
         container.RegisterType<MainForm>();
