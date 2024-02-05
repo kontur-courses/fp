@@ -1,7 +1,9 @@
-﻿namespace TagsCloudPainter.FileReader;
+﻿using ResultLibrary;
+
+namespace TagsCloudPainter.FileReader;
 
 public interface IFileReader
 {
     public HashSet<string> SupportedExtensions { get; }
-    public string ReadFile(string path);
+    public Result<string> ReadFile(string path);
 }
