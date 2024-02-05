@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.WordsAnalyzers;
 
 namespace TagsCloudVisualization;
@@ -23,36 +25,56 @@ public class TagsCloudVisualizator
     public Result<None> DrawTagsCloud()
     {
         return imageHolder.StartDrawing()
-            .Then(graphics =>
-            {
-                using (graphics)
-                {
-                    FillBackground(graphics);
-                    DrawTags(graphics, tagProvider.GetTags().GetValueOrThrow());
-                    graphics.Save();
-                }
-            })
+            .Then(DrawAndSave)
             .Then(_ => imageHolder.UpdateUi());
     }
 
-    private void FillBackground(Graphics graphics)
+    private Result<GraphicsState> DrawAndSave(Graphics graphics)
     {
-        graphics.Clear(tagsSettings.BackgroundColor);
+        using (graphics)
+        {
+            return FillBackground(graphics)
+                .Then(_ => tagProvider.GetTags())
+                .Then(tags => DrawTags(graphics, tags))
+                .Then(_ => graphics.Save());
+        }
     }
 
-    private void DrawTags(Graphics graphics, IEnumerable<Tag> tags)
+    private Result<None> FillBackground(Graphics graphics)
+    {
+        graphics.Clear(tagsSettings.BackgroundColor);
+        return Result.Ok();
+    }
+
+    private Result<None> DrawTags(Graphics graphics, IEnumerable<Tag> tags)
     {
         using (layouter)
         {
-            var fontsize = 42;
             foreach (var tag in tags)
             {
-                var font = new Font(tagsSettings.Font, fontsize * (float) tag.Coeff);
-                var rectangle = layouter.PutNextRectangle(graphics.MeasureString(tag.Word, font).ToSize()).GetValueOrThrow();
-                var color = tag.Coeff > 0.75 ? tagsSettings.PrimaryColor :
-                    tag.Coeff > 0.35 ? tagsSettings.SecondaryColor : tagsSettings.TertiaryColor;
-                graphics.DrawString(tag.Word, font, new SolidBrush(color), rectangle.Location);
+                var font = CreateTagFont(tag);
+                var tagDraw = font
+                    .Then(x => graphics.MeasureString(tag.Word, x).ToSize())
+                    .Then(x => layouter.PutNextRectangle(x))
+                    .Then(x => graphics.DrawString(tag.Word, font.GetValueOrThrow(),
+                        new SolidBrush(GetTagColor(tag)), x.Location));
+                
+                if (!tagDraw.IsSuccess)
+                    return tagDraw;
             }
         }
+
+        return Result.Ok();
+    }
+
+    private Result<Font> CreateTagFont(Tag tag)
+    {
+        return new Font(tagsSettings.Font, tagsSettings.FontSize * (float) tag.Coeff);
+    }
+
+    private Color GetTagColor(Tag tag)
+    {
+        return tag.Coeff > 0.75 ? tagsSettings.PrimaryColor : tag.Coeff > 0.35 ? tagsSettings.SecondaryColor 
+            : tagsSettings.TertiaryColor;
     }
 }
