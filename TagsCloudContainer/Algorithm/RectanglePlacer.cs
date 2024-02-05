@@ -18,7 +18,7 @@ namespace TagsCloudContainer.Algorithm
         public Result<RectangleF> GetPossibleNextRectangle(List<TextRectangle> cloudRectangles, SizeF rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                return Result.Fail<RectangleF>("the width and height of the rectangle must be positive numbers");
+                return Result.Fail<RectangleF>("The width and height of the rectangle must be positive numbers");
 
             if (algorithmSettings.DeltaRadius == 0 || algorithmSettings.DeltaAngle == 0)
                 return Result.Fail<RectangleF>("DeltaRadius and DeltaAngle cannot be equal to zero");

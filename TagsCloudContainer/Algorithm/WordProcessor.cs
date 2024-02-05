@@ -33,12 +33,12 @@ namespace TagsCloudContainer.Algorithm
 
         public Result<List<string>> GetInterestingWords(string sourceFilePath, string boringFilePath)
         {
-            var boringWords = parser.ReadWordsInFile(boringFilePath).RefineError("The source of the words for the tag cloud");
-            var sourceWords = parser.ReadWordsInFile(sourceFilePath).RefineError("The source of \"boring\" words");
+            var boringWords = parser.ReadWordsInFile(boringFilePath).RefineError("The source of \"boring\" words");
+            var sourceWords = parser.ReadWordsInFile(sourceFilePath).RefineError("The source of the words for the tag cloud");
             var stopWords = StopWords.GetStopWords("ru");
 
             if (!boringWords.IsSuccess || !sourceWords.IsSuccess)
-                return Result.Fail<List<string>>(boringWords.Error + '\t' + sourceWords.Error);
+                return Result.Fail<List<string>>(boringWords.Error + '\n' + sourceWords.Error);
 
             var interestingWords = sourceWords.Value.Where(word => !boringWords.Value.Contains(word) 
                 && !stopWords.Contains(word)).ToList();
