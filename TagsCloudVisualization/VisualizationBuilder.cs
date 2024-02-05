@@ -7,7 +7,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace TagsCloudVisualization;
 
-public class VisualizationBuilder
+public class VisualizationBuilder : IVisualizationBuilder
 {
     private readonly Color backgroundColor;
     private readonly Size canvasSize;

@@ -8,6 +8,7 @@ using TagsCloud.Formatters;
 namespace TagsCloud.Tests;
 
 [TestFixture]
+[TestOf(nameof(FileReadersTests))]
 public partial class FileReadersTests
 {
     [OneTimeSetUp]

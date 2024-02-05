@@ -7,6 +7,7 @@ using static TagsCloud.Tests.TestConfiguration;
 namespace TagsCloud.Tests;
 
 [TestFixture]
+[TestOf(nameof(Layout))]
 public class LayoutTests
 {
     [SetUp]

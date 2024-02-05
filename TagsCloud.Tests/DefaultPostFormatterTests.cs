@@ -5,6 +5,7 @@ using TagsCloud.Formatters;
 namespace TagsCloud.Tests;
 
 [TestFixture]
+[TestOf(nameof(DefaultPostFormatter))]
 public class DefaultPostFormatterTests
 {
     private readonly DefaultPostFormatter defaultFormatter = new();

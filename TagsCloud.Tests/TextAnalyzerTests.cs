@@ -6,6 +6,7 @@ using TagsCloudVisualization;
 namespace TagsCloud.Tests;
 
 [TestFixture]
+[TestOf(nameof(TextAnalyzer))]
 public class TextAnalyzerTests
 {
     [Test]

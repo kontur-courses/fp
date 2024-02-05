@@ -50,6 +50,10 @@ public class CloudOptionsBuilder
             return ResultExtensions.Fail<CloudOptionsBuilder>(
                 $"Font bounds can't be <= 0! LowerBound = {lowerBound}, UpperBound = {upperBound}");
 
+        if (lowerBound >= upperBound)
+            return ResultExtensions.Fail<CloudOptionsBuilder>(
+                $"LowerBound must be < UpperBound! LowerBound = {lowerBound}, UpperBound = {upperBound}");
+
         minFontSize = lowerBound;
         maxFontSize = upperBound;
 
