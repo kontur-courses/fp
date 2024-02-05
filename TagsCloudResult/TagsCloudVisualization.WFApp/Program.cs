@@ -22,27 +22,24 @@ public static class Program
         var container = new ContainerBuilder();
 
         container.RegisterAssemblyTypes(typeof(IUiAction).Assembly).AsImplementedInterfaces();
+        
         container.RegisterType<PictureBoxImageHolder>().As<PictureBoxImageHolder, IImageHolder>().SingleInstance();
         container.RegisterType<ImageSettings>().SingleInstance();
         container.RegisterType<SourceSettings>().SingleInstance();
         container.RegisterType<ArchimedeanSpiralSettings>().SingleInstance();
+        container.RegisterType<TagsSettings>().SingleInstance();
 
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
-        // container.RegisterType<TxtTextReader>().Keyed<TextReader>(FileExtension.Txt);
-        // container.RegisterType<DocTextReader>().Keyed<TextReader>(FileExtension.Doc).Keyed<TextReader>(FileExtension.Docx);
         container.RegisterType<TxtTextReader>().Named<TextReader>(".txt");
         container.RegisterType<DocTextReader>().Named<TextReader>(".doc").Named<TextReader>(".docx");
-        
-        
         container.RegisterType<TextReaderFactory>().As<ITextReaderFactory>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
-        container.RegisterType<TagsSettings>().SingleInstance();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();
         container.RegisterType<ArchimedeanSpiralPointsProvider>().WithParameter("center", new Point(500, 500));
         container.RegisterType<TagsCloudVisualizator>();
 
         container.RegisterType<MainForm>();
-
+        
         ApplicationConfiguration.Initialize();
         Application.Run(container.Build().Resolve<MainForm>());
     }
