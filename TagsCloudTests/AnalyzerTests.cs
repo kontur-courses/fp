@@ -20,7 +20,7 @@ public class AnalyzerTests
     [Test]
     public void WordAnalyzer_WhenEmptyCollection_ShouldBeEmpty()
     {
-        sut.GetFrequencyList(new List<string>()).Should().BeEmpty();
+        sut.GetFrequencyList(new List<string>()).GetValueOrThrow().Should().BeEmpty();
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class AnalyzerTests
     {
         var words = new List<string> { "он", "плохой", "человек" };
         settings.SelectedSpeeches = new List<PartSpeech> { PartSpeech.Noun };
-        sut.GetFrequencyList(words).Should().BeEquivalentTo(new List<WordInfo> { new((string)"человек", (int)1) });
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeEquivalentTo(new List<WordInfo> { new((string)"человек", (int)1) });
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class AnalyzerTests
     {
         var words = new List<string> { "он", "плохой", "человек" };
         settings.BoringWords = new List<string> { "плохой" };
-        sut.GetFrequencyList(words).Should().BeEquivalentTo(new List<WordInfo> { new((string)"он", (int)1), new((string)"человек", (int)1) });
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeEquivalentTo(new List<WordInfo> { new((string)"он", (int)1), new((string)"человек", (int)1) });
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class AnalyzerTests
     {
         var words = new List<string> { "он", "плохой", "человек" };
         settings.ExcludedSpeeches = new List<PartSpeech> { PartSpeech.Noun };
-        sut.GetFrequencyList(words).Should().BeEquivalentTo(new List<WordInfo> { new((string)"он", (int)1), new((string)"плохой", (int)1) });
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeEquivalentTo(new List<WordInfo> { new((string)"он", (int)1), new((string)"плохой", (int)1) });
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class AnalyzerTests
             "читало",
             "читали"
         };
-        sut.GetFrequencyList(words).Should().BeEquivalentTo(new List<WordInfo> { new((string)"человек", (int)6), new((string)"читать", (int)6) });
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeEquivalentTo(new List<WordInfo> { new((string)"человек", (int)6), new((string)"читать", (int)6) });
     }
 
     [Test]
@@ -83,7 +83,7 @@ public class AnalyzerTests
             "красивое",
             "красивые"
         };
-        sut.GetFrequencyList(words).Should().BeInDescendingOrder(info => info.Count);
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeInDescendingOrder(info => info.Count);
     }
 
     [Test]
@@ -95,6 +95,6 @@ public class AnalyzerTests
             "был",
             "красивым"
         };
-        sut.GetFrequencyList(words).Should().BeInAscendingOrder(info => info.Word);
+        sut.GetFrequencyList(words).GetValueOrThrow().Should().BeInAscendingOrder(info => info.Word);
     }
 }
