@@ -4,12 +4,28 @@ namespace TagCloudGenerator.TextProcessors
 {
     public class BoringWordsTextProcessor : ITextProcessor
     {
-        public IEnumerable<string> ProcessText(IEnumerable<string> text)
-        {
-            var wordList = WordList.CreateFromFiles(
-                "../../../Dictionaries/English (American).dic",
-                "../../../Dictionaries/English (American).aff");
+        private readonly string toDicPath;
+        private readonly string toAffPath;
 
+        public BoringWordsTextProcessor(string toDicPath, string toAffPath)
+        {
+            this.toDicPath = toDicPath;
+            this.toAffPath = toAffPath;
+        }
+
+        public Result<IEnumerable<string>> ProcessText(IEnumerable<string> text)
+        {
+            WordList wordList;
+            try
+            {
+                wordList = WordList.CreateFromFiles(toDicPath, toAffPath);
+            }
+            catch
+            {
+                return new Result<IEnumerable<string>>(null, "The path to the dictionary is incorrect or the dictionary is unsuitable");
+            }
+
+            var words = new List<string>();
             foreach (var word in text)
             {
                 var details = wordList.CheckDetails(word);
@@ -24,8 +40,10 @@ namespace TagCloudGenerator.TextProcessors
                         continue;
                 }
 
-                yield return word;
+                words.Add(word);
             }
+
+            return new Result<IEnumerable<string>>(words, null);
         }
     }
 }

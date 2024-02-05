@@ -3,10 +3,18 @@
     public class TxtReader : ITextReader
     {
         public string GetFileExtension() => ".txt";
-        
-        public IEnumerable<string> ReadTextFromFile(string filePath)
+
+        public Result<IEnumerable<string>> ReadTextFromFile(string filePath)
         {
-            return File.ReadAllLines(filePath);
+            try
+            {
+                return new Result<IEnumerable<string>>(File.ReadAllLines(filePath), null);
+            }
+            catch
+            {
+                return new Result<IEnumerable<string>>(null, $"Could not find file {filePath}");
+            }
+
         }
     }
 }

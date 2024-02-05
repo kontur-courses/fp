@@ -11,7 +11,7 @@ namespace TagsCloudVisualization
         private readonly IPointDistributor distributor;
 
         public CircularCloudLayouter(IPointDistributor type)
-        {        
+        {
             distributor = type;
             cloud = new Cloud(distributor.GetCenter());
         }

@@ -13,7 +13,7 @@ namespace TagCloudGenerator
         private ITextReader[] textReaders;
         private WordCounter wordCounter;
 
-        public TagCloudDrawer(WordCounter wordCounter, IEnumerable<ITextProcessor> textProcessors, IEnumerable<ITextReader> textReaders) 
+        public TagCloudDrawer(WordCounter wordCounter, IEnumerable<ITextProcessor> textProcessors, IEnumerable<ITextReader> textReaders)
         {
             this.textProcessors = textProcessors.ToArray();
             this.textReaders = textReaders.ToArray();
@@ -21,25 +21,40 @@ namespace TagCloudGenerator
         }
 
         public Result<Bitmap> DrawWordsCloud(string filePath, VisualizingSettings visualizingSettings)
-        {          
+        {
             if (filePath == null)
                 return new Result<Bitmap>(null, "There is no path to the file");
 
             var words = new List<string>();
             var extension = Path.GetExtension(filePath);
+            var uncorrectedExtension = true;
 
             foreach (var textReader in textReaders)
-            {                
+            {
                 if (extension == textReader.GetFileExtension())
                 {
-                    words = textReader.ReadTextFromFile(filePath).ToList();
-                    break;
-                }                
+                    uncorrectedExtension = false;
+                    var text = textReader.ReadTextFromFile(filePath);
+                    if (text.IsSuccess)
+                    {
+                        words = textReader.ReadTextFromFile(filePath).Value.ToList();
+                        break;
+                    }
+                    else
+                        return new Result<Bitmap>(null, text.Error);
+                }
             }
-            
+
+            if (uncorrectedExtension)
+                return new Result<Bitmap>(null, string.Format("The file is empty or contains an unsuitable format for reading - {0}", extension));
+
+            if (words.Count == 0 && !uncorrectedExtension)
+                return new Result<Bitmap>(null, string.Format("The file is empty"));
+
+
             foreach (var processor in textProcessors)
-                words = processor.ProcessText(words).ToList();
-          
+                words = processor.ProcessText(words).Value.ToList();
+
             var wordsWithCount = wordCounter.CountWords(words);
             ImageScaler imageScaler = new ImageScaler(wordsWithCount);
             var rectangles = GetRectanglesToDraw(wordsWithCount, visualizingSettings);
@@ -54,33 +69,34 @@ namespace TagCloudGenerator
                 if (bitmap == null)
                     return new Result<Bitmap>(null, "Failed to draw an image");
 
-                Console.WriteLine("The tag cloud is drawn");            
+                Console.WriteLine("The tag cloud is drawn");
                 return new Result<Bitmap>(bitmap, null);
             }
 
             var image = Draw(wordsWithCount, visualizingSettings, rectangles);
             if (image == null)
-                    return new Result<Bitmap>(null, "Failed to draw an image");
+                return new Result<Bitmap>(null, "Failed to draw an image");
 
             return new Result<Bitmap>(Draw(wordsWithCount, visualizingSettings, rectangles), null);
-        }      
+        }
 
-        public void SaveImage(Bitmap bitmap, VisualizingSettings visualizingSettings)
+        public Result<bool> SaveImage(Bitmap bitmap, VisualizingSettings visualizingSettings)
         {
             if (bitmap == null)
-                return;           
-                
+                return new Result<bool>(false, "Bitmap is null");
+
             var extension = Path.GetExtension(visualizingSettings.ImageName);
             var format = GetImageFormat(extension);
 
             if (!format.IsSuccess)
             {
                 Console.WriteLine(format.Error);
-                return;
-            }               
+                return new Result<bool>(false, "Uncorrected Image Format");
+            }
 
-            bitmap.Save(visualizingSettings.ImageName, format.Value);        
+            bitmap.Save(visualizingSettings.ImageName, format.Value);
             Console.WriteLine($"The image is saved, the path to the image: {Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)}");
+            return new Result<bool>(true, null);
         }
 
         private Result<ImageFormat> GetImageFormat(string fileName)
@@ -119,7 +135,7 @@ namespace TagCloudGenerator
                     return new Result<ImageFormat>(null, string.Format("Unable to determine file extension for fileName: {0}", fileName));
             }
         }
-    
+
         private Bitmap Draw(Dictionary<string, int> tags, VisualizingSettings settings, RectangleF[] rectangles)
         {
             var bitmap = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height);
@@ -127,7 +143,7 @@ namespace TagCloudGenerator
             using var graphics = Graphics.FromImage(bitmap);
             graphics.Clear(settings.BackgroundColor);
 
-            for (var i = 0; i < rectangles.Length; i++)          
+            for (var i = 0; i < rectangles.Length; i++)
                 foreach (var tag in tags)
                 {
                     var rectangle = rectangles[i];
@@ -143,6 +159,7 @@ namespace TagCloudGenerator
 
         private RectangleF[] GetRectanglesToDraw(Dictionary<string, int> text, VisualizingSettings settings)
         {
+
             using var bitmap = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height);
             using var graphics = Graphics.FromImage(bitmap);
             var layouter = new CircularCloudLayouter(settings.PointDistributor);
@@ -153,7 +170,7 @@ namespace TagCloudGenerator
                 SizeF size = graphics.MeasureString(line.Key, font);
                 var rectangle = layouter.PutNextRectangle(size.ToSize());
 
-                rectangles.Add(rectangle);              
+                rectangles.Add(rectangle);
             }
 
             return rectangles.ToArray();

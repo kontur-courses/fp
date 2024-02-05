@@ -2,10 +2,14 @@
 {
     public class WordsLowerTextProcessor : ITextProcessor
     {
-        public IEnumerable<string> ProcessText(IEnumerable<string> text)
+        public Result<IEnumerable<string>> ProcessText(IEnumerable<string> text)
         {
+            var words = new List<string>();
+
             foreach (string line in text)
-                yield return line.ToLower();
+                words.Add(line.ToLower());
+
+            return new Result<IEnumerable<string>>(words, null);
         }
     }
 }

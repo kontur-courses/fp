@@ -2,7 +2,7 @@
 {
     public interface ITextReader
     {
-        IEnumerable<string> ReadTextFromFile(string filePath);
+        Result<IEnumerable<string>> ReadTextFromFile(string filePath);
         string GetFileExtension();
     }
 }

@@ -5,18 +5,25 @@ namespace TagCloudGenerator.TextReaders
     public class PdfReader : ITextReader
     {
         public string GetFileExtension() => ".pdf";
-       
-        public IEnumerable<string> ReadTextFromFile(string filePath)
+
+        Result<IEnumerable<string>> ITextReader.ReadTextFromFile(string filePath)
         {
-            var text = new List<string>();
-            using (var pdf = PdfDocument.Open(filePath))
+            try
             {
-                foreach (var page in pdf.GetPages())
+                var text = new List<string>();
+                using (var pdf = PdfDocument.Open(filePath))
                 {
-                    text = page.Text.Split(' ').ToList();
-                    text.Remove("");
+                    foreach (var page in pdf.GetPages())
+                    {
+                        text = page.Text.Split(' ').ToList();
+                        text.Remove("");
+                    }
+                    return new Result<IEnumerable<string>>(text, null);
                 }
-                return text;
+            }
+            catch
+            {
+                return new Result<IEnumerable<string>>(null, $"Could not find file {filePath}");
             }
         }
     }

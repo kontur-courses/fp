@@ -6,22 +6,29 @@ namespace TagCloudGenerator.TextReaders
     {
         public string GetFileExtension() => ".docx";
 
-        public IEnumerable<string> ReadTextFromFile(string filePath)
+        Result<IEnumerable<string>> ITextReader.ReadTextFromFile(string filePath)
         {
-            using (WordprocessingDocument wordDocument =
-                      WordprocessingDocument.Open(filePath, false))
+            try
             {
-                var body = wordDocument.MainDocumentPart.Document.Body;
-                var paragraphs = body.ChildElements;
-
-                var text = new List<string>(paragraphs.Count);
-                foreach (var paragraph in paragraphs)
+                using (WordprocessingDocument wordDocument =
+                  WordprocessingDocument.Open(filePath, false))
                 {
-                    if (paragraph.InnerText != "")
-                        text.Add(paragraph.InnerText);
-                }
+                    var body = wordDocument.MainDocumentPart.Document.Body;
+                    var paragraphs = body.ChildElements;
 
-                return text;
+                    var text = new List<string>(paragraphs.Count);
+                    foreach (var paragraph in paragraphs)
+                    {
+                        if (paragraph.InnerText != "")
+                            text.Add(paragraph.InnerText);
+                    }
+
+                    return new Result<IEnumerable<string>>(text, null);
+                }
+            }
+            catch
+            {
+                return new Result<IEnumerable<string>>(null, $"Could not find file {filePath}");
             }
         }
     }

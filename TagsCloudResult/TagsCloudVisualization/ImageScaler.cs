@@ -10,7 +10,7 @@ namespace TagsCloudVisualization
         private Dictionary<string, int> tags;
 
         public ImageScaler() { }
-            
+
         public ImageScaler(Dictionary<string, int> tags) { this.tags = tags; }
 
         public Bitmap DrawScaleCloud(VisualizingSettings settings, RectangleF[] rectangles, Size unscaledImageSize, Size smallestSizeOfRectangles)
@@ -23,23 +23,23 @@ namespace TagsCloudVisualization
 
             if (tags != null)
             {
-                for (var i = 0; i < rectangles.Length; i++)                
+                for (var i = 0; i < rectangles.Length; i++)
                     foreach (var tag in tags)
                     {
                         var rectangle = rectangles[i++];
                         var font = new Font(settings.Font, 24 + (tag.Value * 6));
                         graphics.DrawString(tag.Key, font, brush, rectangle.X, rectangle.Y);
-                    }                
+                    }
             }
             else
             {
                 var pen = new Pen(settings.PenColor);
                 graphics.DrawRectangles(pen, rectangles);
             }
-               
+
             var coefficient = GetScaleCoefficients(unscaledImageSize, settings.ImageSize);
             graphics.ScaleTransform(coefficient, coefficient);
-         
+
             return bitmap;
         }
 
@@ -87,7 +87,7 @@ namespace TagsCloudVisualization
         }
 
         public bool NeedScale(VisualizingSettings settings, Size unscaledImageSize)
-        {            
+        {
             if (unscaledImageSize.Height <= settings.ImageSize.Height &&
                unscaledImageSize.Width <= settings.ImageSize.Width)
                 return false;

@@ -17,20 +17,22 @@ namespace TagCloudGeneratorTest
         private BoringWordsTextProcessor boringWordsTextProcessor;
         private ITextReader textReader;
         private TagCloudDrawer tagCloudDrawer;
+        private readonly string toDicPath = "../../../Dictionaries/English (American).dic";
+        private readonly string toAffPath = "../../../Dictionaries/English (American).aff";
 
         [SetUp]
         public void Setup()
         {
             textProcessor = new WordsLowerTextProcessor();
             counter = new WordCounter();
-            boringWordsTextProcessor = new BoringWordsTextProcessor();       
+            boringWordsTextProcessor = new BoringWordsTextProcessor(toDicPath, toAffPath);
         }
 
         [Test]
         [TestOf(nameof(WordsLowerTextProcessor))]
         public void WhenPassWordsInUppercase_ShouldReturnWordsInLowerCase()
         {
-            var text = textProcessor.ProcessText(new[] { "Cloud"}).ToArray();
+            var text = textProcessor.ProcessText(new[] { "Cloud" }).Value.ToArray();
 
             text[0].Should().Be("cloud");
         }
@@ -40,7 +42,7 @@ namespace TagCloudGeneratorTest
         public void WhenWordIsRepeatedSeveralTimesInText_ItShouldBeOutputOneTime()
         {
             var text = textProcessor.ProcessText(new[] { "cloud", "tag", "cloud" });
-            var dictionary = counter.CountWords(text);
+            var dictionary = counter.CountWords(text.Value);
 
             dictionary["cloud"].Should().Be(2);
         }
@@ -52,12 +54,12 @@ namespace TagCloudGeneratorTest
             new TestCaseData((object)new []{"a", "tag"}).Returns("tag").SetName("WithDeterminer"),
             new TestCaseData((object)new []{"under", "tag"}).Returns("tag").SetName("WithPreposition"),
         };
-    
+
         [TestOf(nameof(BoringWordsTextProcessor))]
         [TestCaseSource(nameof(BoringWordsTestCases))]
         public string WhenPassTextWithBoringWords_ShouldReturnWordsWithoutBoringWords(IEnumerable<string> values)
         {
-            var text = boringWordsTextProcessor.ProcessText(values).ToArray();
+            var text = boringWordsTextProcessor.ProcessText(values).Value.ToArray();
 
             return text[0];
         }
@@ -66,7 +68,7 @@ namespace TagCloudGeneratorTest
         [TestOf(nameof(WordCounter))]
         public void WhenPassTextWithTheMostFrequentlyRepeatedWord_ThisWordShouldBeFirstInDictionary()
         {
-            var text = textProcessor.ProcessText(new[] { "tag", "cloud", "cloud", "cloud", "tag" }).ToArray();
+            var text = textProcessor.ProcessText(new[] { "tag", "cloud", "cloud", "cloud", "tag" }).Value.ToArray();
             var dictionary = counter.CountWords(text);
 
             var result = new List<string>(2);
@@ -85,7 +87,7 @@ namespace TagCloudGeneratorTest
 
         [TestOf(nameof(PdfReader))]
         [TestCaseSource(nameof(PathArguments))]
-        public string[] WhenPassFile_ShouldReturnCorrectResult(string filePath, ITextReader textReader) => textReader.ReadTextFromFile(filePath).ToArray();
+        public string[] WhenPassFile_ShouldReturnCorrectResult(string filePath, ITextReader textReader) => textReader.ReadTextFromFile(filePath).Value.ToArray();
 
         [Test]
         [TestOf(nameof(TagCloudDrawer))]
@@ -114,14 +116,14 @@ namespace TagCloudGeneratorTest
 
         private Bitmap GetCurrentImage()
         {
-            var processors = new []{(ITextProcessor) textProcessor, boringWordsTextProcessor};
-            tagCloudDrawer = new TagCloudDrawer(counter, processors, new []{(ITextReader) new TxtReader(), new DocxReader(), new PdfReader()});
+            var processors = new[] { (ITextProcessor)textProcessor, boringWordsTextProcessor };
+            tagCloudDrawer = new TagCloudDrawer(counter, processors, new[] { (ITextReader)new TxtReader(), new DocxReader(), new PdfReader() });
             var filePath = "../../../TestsData/test7.txt";
             var settings = new TagsCloudVisualization.VisualizingSettings();
             settings.ImageSize = new Size(1300, 1300);
             settings.PointDistributor = new Spiral(new Point(settings.ImageSize.Width / 2, settings.ImageSize.Height / 2), 1, 0.1);
             settings.ImageName = "currentBitmap.png";
-       
+
             return tagCloudDrawer.DrawWordsCloud(filePath, settings).Value;
         }
     }
