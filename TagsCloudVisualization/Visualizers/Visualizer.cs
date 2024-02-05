@@ -21,12 +21,6 @@ public class Visualizer : IVisualizer
 
     public Result<Bitmap> Vizualize(Result<IList<Tag>> tags)
     {
-        var checkImageSettings = imageSettings.Check();
-        if (!checkImageSettings.IsSuccess)
-            return Result.Fail<Bitmap>(checkImageSettings.Error);
-        var checkBackgroundSettings = backgroundSettings.Check();
-        if (!checkBackgroundSettings.IsSuccess)
-            return Result.Fail<Bitmap>(checkBackgroundSettings.Error);
         var generator = GetColorGenerator();
         if (!generator.IsSuccess)
             return Result.Fail<Bitmap>(generator.Error);

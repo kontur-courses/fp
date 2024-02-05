@@ -22,9 +22,6 @@ public class CircularCloudLayouter : ICloudLayouter
             return Result.Fail<Rectangle>("Rectangle width and height must be positive, " +
                 $"but width: {rectangleSize.Width}, height: {rectangleSize.Height}");
         }
-        var isPointCreatorCorrect = pointCreator.CheckForCorrectness();
-        if (!isPointCreatorCorrect.IsSuccess)
-            return Result.Fail<Rectangle>(isPointCreatorCorrect.Error);
         var currentRectangle = CreateNewRectangle(rectangleSize);
         if (!currentRectangle.IsSuccess)
             return Result.Fail<Rectangle>(currentRectangle.Error);

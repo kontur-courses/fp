@@ -26,9 +26,6 @@ public class TagsLayouter : ITagLayouter
         var handledText = textHandler.HandleText();
         if (!handledText.IsSuccess)
             return Result.Fail<IList<Tag>>(handledText.Error);
-        var checkSettings = settings.Check();
-        if (!checkSettings.IsSuccess)
-            return Result.Fail<IList<Tag>>(checkSettings.Error);
 
         var sortedWords = handledText.Value.OrderByDescending(p => p.Value);
         var maxWordCount = sortedWords.First().Value;

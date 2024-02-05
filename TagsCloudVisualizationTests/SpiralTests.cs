@@ -29,8 +29,8 @@ public class SpiralTests
         var imageSettings = new ImageSettings(20, 20);
         var spiralSettings = new SpiralSettings(deltaAngle, deltaRadius);
 
-        var spiral = new Spiral(imageSettings, spiralSettings);
-        spiral.CheckForCorrectness().IsSuccess.Should().BeFalse();
+        var action = () => new Spiral(imageSettings, spiralSettings);
+        action.Should().Throw<ArgumentException>();
     }
 
     [Test]

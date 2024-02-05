@@ -1,8 +1,6 @@
-﻿using Results;
+﻿namespace TagsCloudVisualization.Settings;
 
-namespace TagsCloudVisualization.Settings;
-
-public class SpiralSettings : ISettings
+public class SpiralSettings
 {
     public double DeltaAngle { get; }
     public double DeltaRadius { get; }
@@ -11,14 +9,5 @@ public class SpiralSettings : ISettings
     {
         DeltaAngle = deltaAngle;
         DeltaRadius = deltaRadius;
-    }
-
-    public Result<bool> Check()
-    {
-        if (DeltaRadius <= 0)
-            return Result.Fail<bool>($"Delta radius must be positive, but {DeltaRadius}");
-        if (DeltaAngle <= 0)
-            return Result.Fail<bool>($"Delta angle must be positive, but {DeltaAngle}");
-        return Result.Ok(true);
     }
 }
