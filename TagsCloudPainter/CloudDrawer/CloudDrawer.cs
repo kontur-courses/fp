@@ -29,8 +29,8 @@ public class CloudDrawer : ICloudDrawer
         var bitmap = Result.Of(() => new Bitmap(imageWidth, imageHeight));
         var graphics = bitmap.Then(Graphics.FromImage);
         var scalingCloudResult = graphics.Then(graphics => ScaleCloud(graphics, cloud, imageWidth, imageHeight));
-        var drawingResult = graphics.Then(graphics => pen.Then(pen => 
-        DrawTags(graphics, cloud, tagSettings.TagFont, cloudSettings.BackgroundColor, pen)));
+        var drawingResult = graphics.Then(graphics => pen.Then(pen =>
+            DrawTags(graphics, cloud, tagSettings.TagFont, cloudSettings.BackgroundColor, pen)));
 
         var failedResult = ResultExtension.GetFirstFailedResult(pen, graphics, scalingCloudResult, drawingResult);
         if (!failedResult.IsSuccess)
@@ -82,7 +82,8 @@ public class CloudDrawer : ICloudDrawer
         foreach (var tag in cloud.Tags)
         {
             var font = new Font(tagFont, tag.Item1.FontSize);
-            drawingResult = drawingResult.Then(() => graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
+            drawingResult = drawingResult.Then(() =>
+                graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
         }
 
         return drawingResult;

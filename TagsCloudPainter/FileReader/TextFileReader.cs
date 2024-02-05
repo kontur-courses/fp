@@ -18,8 +18,8 @@ public class TextFileReader : IFormatFileReader<string>
 
         var fileExtension = Result.Of(() => Path.GetExtension(path));
         var fileReader = fileExtension.Then(extension =>
-            Result.Of(() => fileReaders.First(fileReader => fileReader.SupportedExtensions.Contains(extension)), 
-            $"Incorrect file extension {fileExtension}. Supported file extensions: txt, doc, docx"));
+            Result.Of(() => fileReaders.First(fileReader => fileReader.SupportedExtensions.Contains(extension)),
+                $"Incorrect file extension {fileExtension}. Supported file extensions: txt, doc, docx"));
 
         return fileReader.Then(reader => reader.ReadFile(path));
     }
