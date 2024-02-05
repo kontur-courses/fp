@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Imaging;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 
 namespace TagsCloudVisualization.WFApp.Common;
 

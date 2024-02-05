@@ -2,6 +2,7 @@
 using NUnit.Framework.Interfaces;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.PointsProviders;
 using TagsCloudVisualizationTests.Utils;

@@ -1,4 +1,5 @@
 ﻿using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.PointsProviders;
 
 namespace TagsCloudVisualizationTests;

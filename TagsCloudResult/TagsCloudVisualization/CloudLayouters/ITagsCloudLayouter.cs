@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 
 namespace TagsCloudVisualization.CloudLayouters;
 

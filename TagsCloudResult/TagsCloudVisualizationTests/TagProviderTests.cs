@@ -1,5 +1,6 @@
 ﻿using Moq;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.TextReaders;

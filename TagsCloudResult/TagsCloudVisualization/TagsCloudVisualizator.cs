@@ -2,6 +2,7 @@
 using System.Drawing.Drawing2D;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.WordsAnalyzers;
 

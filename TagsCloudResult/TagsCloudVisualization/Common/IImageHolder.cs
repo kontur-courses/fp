@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.Common.ResultOf;
 
 namespace TagsCloudVisualization.Common;
 

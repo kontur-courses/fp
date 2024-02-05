@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TextReaders;
 using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
