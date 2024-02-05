@@ -54,11 +54,11 @@ public class CloudDrawer : ICloudDrawer
             return Result.Fail<None>(drawingScale.Error);
 
         var scalingResult = new Result<None>();
-        scalingResult = scalingResult.Then(res => graphics.TranslateTransform(-cloud.Center.X, -cloud.Center.Y));
-        scalingResult = scalingResult.Then(res =>
+        scalingResult = scalingResult.Then(() => graphics.TranslateTransform(-cloud.Center.X, -cloud.Center.Y));
+        scalingResult = scalingResult.Then(() =>
             graphics.ScaleTransform(drawingScale.GetValueOrThrow(), drawingScale.GetValueOrThrow(),
                 MatrixOrder.Append));
-        scalingResult = scalingResult.Then(res =>
+        scalingResult = scalingResult.Then(() =>
             graphics.TranslateTransform(cloud.Center.X, cloud.Center.Y, MatrixOrder.Append));
 
         return scalingResult;
@@ -86,12 +86,11 @@ public class CloudDrawer : ICloudDrawer
         Pen pen)
     {
         var drawingResult = new Result<None>();
-        drawingResult = drawingResult.Then(res => graphics.Clear(backgroundColor));
+        drawingResult = drawingResult.Then(() => graphics.Clear(backgroundColor));
         foreach (var tag in cloud.Tags)
         {
             var font = new Font(tagFont, tag.Item1.FontSize);
-            drawingResult = drawingResult.Then(res =>
-                graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
+            drawingResult = drawingResult.Then(() => graphics.DrawString(tag.Item1.Value, font, pen.Brush, tag.Item2.Location));
         }
 
         return drawingResult;

@@ -79,6 +79,20 @@ public static class Result
         }
     }
 
+    public static Result<None> Then<TInput>(
+        this Result<TInput> input,
+        Action continuation)
+    {
+        return input.Then(_ => OfAction(() => continuation()));
+    }
+
+    public static Result<TOutput> Then<TInput, TOutput>(
+        this Result<TInput> input,
+        Func<TOutput> continuation)
+    {
+        return input.Then(_ => Of(() => continuation()));
+    }
+
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
         Func<TInput, TOutput> continuation)

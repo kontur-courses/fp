@@ -55,8 +55,8 @@ internal static class Program
         var builder = new ContainerBuilder();
         var tagsCloudPainterLibRegistration = Result.Of(() => builder.RegisterModule(new TagsCloudPainterLibModule()));
         var applicationRegistration = tagsCloudPainterLibRegistration
-            .Then(reg => builder.RegisterModule(new ApplicationModule()));
-        var container = applicationRegistration.Then(reg => builder.Build());
+            .Then(() => builder.RegisterModule(new ApplicationModule()));
+        var container = applicationRegistration.Then(() => builder.Build());
 
         return container;
     }
