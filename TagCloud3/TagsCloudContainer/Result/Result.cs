@@ -24,7 +24,19 @@
         public T GetValueOrThrow()
         {
             if (IsSuccess) return Value;
-            throw new InvalidOperationException($"No value. Only Error {Error}");
+
+            ErrorParser.Critical(Error);
+
+            throw new InvalidOperationException($"Error encountered: {Error}");
+        }
+
+        public T GetValueOrDefault(T defaultValue)
+        {
+            if (IsSuccess) return Value;
+
+            Console.WriteLine($"Error encountered: {Error}. Default value will be used.");
+
+            return defaultValue;
         }
         public bool IsSuccess => Error == null;
     }

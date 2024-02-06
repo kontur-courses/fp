@@ -1,12 +1,15 @@
 ﻿using CommandLine;
+using ResultOf;
 using System.Drawing;
+using System.Drawing.Text;
+using System.Runtime.CompilerServices;
 using TagsCloudContainer.SettingsClasses;
 using TagsCloudContainer.TagCloudBuilder;
 using TagsCloudVisualization;
 
 namespace TagsCloudContainer.CLI
 {
-    class CommandLineOptions
+    public class CommandLineOptions
     {
         [Option('f', "filename", Required = true, HelpText = "Input file name.")]
         public string Filename { get; set; }
@@ -18,13 +21,13 @@ namespace TagsCloudContainer.CLI
         public string FontFamily { get; set; }
 
         [Option("fontsize", Required = false, HelpText = "Set the font size. Must be a positive integer.")]
-        public int FontSize { get; set; }
+        public string FontSize { get; set; }
 
         [Option("colors", Required = false, HelpText = "List of color names. Separated by commas.")]
         public string Colors { get; set; }
 
         [Option("size", Required = false, HelpText = "Set the image size. Must be two positive integer.")]
-        public Size Size { get; set; }
+        public string Size { get; set; }
 
         [Option("exclude", Required = false, HelpText = "File with words to exclude.")]
         public string Filter { get; set; }
@@ -44,46 +47,57 @@ namespace TagsCloudContainer.CLI
             appSettings.OutImagePath = options.Output;
             appSettings.FilterFile = options.Filter;
 
-            appSettings.DrawingSettings.FontFamily = GetFontFamily(options.FontFamily);
-            appSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize);
-            appSettings.DrawingSettings.Size = GetSize(options.Size);
+            appSettings.DrawingSettings.FontFamily = GetFontFamily(options.FontFamily).GetValueOrDefault(new FontFamily("Arial"));
+            appSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize).GetValueOrDefault(12);
+            appSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800,600));
             appSettings.DrawingSettings.Colors = GetColors(options.Colors);
-            appSettings.DrawingSettings.PointsProvider = GetPointsProvider(
-                options.Layout,
-                appSettings.DrawingSettings.Size);
+            appSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider());
             appSettings.DrawingSettings.BgColor = GetBGColor(options.BgColor);
 
             return appSettings;
         }
 
-        private static int GetFontSize(int fontSize)
+        private static Result<int> GetFontSize(string fontSize)
         {
-            if (fontSize > 0)
+            int size;
+            if (int.TryParse(fontSize, out size) && size > 0)
             {
-                return fontSize;
+                return Result.Ok<int>(size);
             }
-            return 12;
+
+            return Result.Fail<int>($"Font size '{fontSize}' is not valid. Should be positive Integer.");
         }
 
-        private static Size GetSize(Size size)
+        private static Result<Size> GetSize(string sizeString)
         {
-            if (size.IsEmpty)
+            if(string.IsNullOrEmpty(sizeString))
             {
-                return new Size(800, 600);
+                return Result.Fail<Size>($"Size is empty. Should be two positive Integer, sepparated by comma.");
             }
-            return size;
+
+            var s = sizeString.Split(',', ' ', StringSplitOptions.RemoveEmptyEntries);
+
+            int width;
+            int height;
+
+            if(s.Count() == 2 && int.TryParse(s[0], out width) && int.TryParse(s[1], out height))
+            {
+                if(width > 0 && height >0)
+                {
+                    return Result.Ok<Size>(new Size(width,height));
+                }
+            }
+            return Result.Fail<Size>( $"Size format '{sizeString}' is not valid. Should be two positive Integer, sepparated by comma." );
         }
 
-        private static IPointsProvider GetPointsProvider(string layout, Size size)
+        private static Result<IPointsProvider> GetPointsProvider(string layout)
         {
-            var center = new Point(size.Width / 2, size.Height / 2);
-            IPointsProvider pointProvider = new SpiralPointsProvider();
-
             if (string.IsNullOrEmpty(layout))
             {
-                pointProvider.Initialize(center);
-                return pointProvider;
+                return Result.Fail<IPointsProvider>("Point provider name is null or empty");
             }
+
+            IPointsProvider pointProvider;
 
             switch (layout.ToLowerInvariant())
             {
@@ -96,30 +110,31 @@ namespace TagsCloudContainer.CLI
                     break;
 
                 case "spiral":
-                    pointProvider = new NormalPointsProvider();
+                    pointProvider = new SpiralPointsProvider();
                     break;
 
                 default:
-                    pointProvider = new SpiralPointsProvider();
-                    break;
+                    return Result.Fail<IPointsProvider>($"Can't find Point provider with name {layout}");
             }
 
-            pointProvider.Initialize(center);
-            return pointProvider;
+            return Result.Ok<IPointsProvider>(pointProvider);
         }
 
-        private static FontFamily GetFontFamily(string fontName)
+        private static Result<FontFamily> GetFontFamily(string fontName)
         {
-            try
+
+            if (string.IsNullOrEmpty(fontName))
             {
-                var fontFamily = new FontFamily(fontName);
-                return fontFamily;
+                return Result.Fail<FontFamily>("Font name is null or empty");
             }
-            catch (ArgumentException)
+
+            var fontsCollection = new InstalledFontCollection();
+            if (!fontsCollection.Families.Any(x => x.Name.ToLowerInvariant() == fontName.ToLowerInvariant()))
             {
-                Console.WriteLine("Font {0} not found. Using default font.", fontName);
-                return new FontFamily("Arial");
+                return Result.Fail<FontFamily>($"Font {fontName} not found. Check the font name and make sure that the font is installed.");
             }
+
+            return Result.Ok<FontFamily>(new FontFamily(fontName));
         }
 
         private static IList<Color> GetColors(string colors)
@@ -141,6 +156,11 @@ namespace TagsCloudContainer.CLI
 
         private static Color GetBGColor(string colorName)
         {
+            if (string.IsNullOrEmpty(colorName))
+            {
+                return Color.Black;
+            }
+
             return Color.FromName(colorName);
         }
     }

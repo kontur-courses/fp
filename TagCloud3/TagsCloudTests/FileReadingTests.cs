@@ -40,21 +40,25 @@ namespace TagsCloudTests
             var sut = serviceProvider.GetRequiredService<ITextReader>();
 
             // Act
-            var actualText = sut.ReadText(filePath);
+            var actualResult = sut.ReadText(filePath);
 
             // Assert
-            actualText.Should().Be(expectedText);
+            actualResult.IsSuccess.Should().BeTrue();
+            actualResult.GetValueOrThrow().Should().Be(expectedText);
         }
 
         [Test]
-        public void ReadTextFromFile_ShouldThrowIOException_WhenFileDoesNotExist()
+        public void ReadTextFromFile_ShouldReturnError_WhenFileDoesNotExist()
         {
             // Arrange
             var filePath = "nonexistent_file.txt";
             var sut = serviceProvider.GetRequiredService<ITextReader>();
 
+            // Act
+            var actualResult = sut.ReadText(filePath);
+
             // Act & Assert
-            Assert.Throws<FileNotFoundException>(() => sut.ReadText(filePath));
+            actualResult.IsSuccess.Should().BeFalse();
         }
     }
 }

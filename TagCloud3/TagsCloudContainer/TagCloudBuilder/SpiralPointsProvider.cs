@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System.Drawing;
 
 namespace TagsCloudVisualization
 {
@@ -10,18 +11,17 @@ namespace TagsCloudVisualization
         private Point Center;
         private const int maxPonitsCount = 10000000;
 
-        public IEnumerable<Point> Points()
+        public IEnumerable<Result<Point>> Points()
         {
-            while (pointNumber < maxPonitsCount)
+            while (++pointNumber < maxPonitsCount)
             {
                 var r = Math.Sqrt(SpiralRadius * pointNumber);
                 var angle = angleStep * pointNumber;
                 var x = r * Math.Cos(angle) + Center.X;
                 var y = r * Math.Sin(angle) + Center.Y;
-                pointNumber++;
-                yield return new Point((int)x, (int)y);
+                yield return Result.Ok<Point>(new Point((int)x, (int)y));
             }
-            throw new ArgumentException("Reach end of placing points");
+            yield return Result.Fail<Point>("Can't get more points");
         }
 
         public void Initialize(Point center)

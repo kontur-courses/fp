@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ResultOf;
 using TagsCloudContainer;
 using TagsCloudContainer.Drawer;
 using TagsCloudContainer.FrequencyAnalyzers;
@@ -21,7 +22,7 @@ namespace WinFormsApp
         private ToolStripMenuItem propertiesToolStripMenu;
 
         private Graphics gr;
-        private Image image;
+        private Result<Image> image;
 
         private TagsCloudLayouter layouter;
         private IEnumerable<(string, int)> text;
@@ -83,7 +84,7 @@ namespace WinFormsApp
                 var reader = serviceProvider.GetService<ITextReader>();
                 var analyzer = serviceProvider.GetService<IAnalyzer>();
 
-                analyzer.Analyze(reader.ReadText(appSettings.TextFile), appSettings.FilterFile);
+                analyzer.Analyze(reader.ReadText(appSettings.TextFile).GetValueOrThrow(), appSettings.FilterFile);
 
                 text = analyzer.GetAnalyzedText();
 
@@ -97,15 +98,21 @@ namespace WinFormsApp
             layouter.Initialize(appSettings.DrawingSettings, text);
             layouter.GetTextImages();
 
-            Size = new Size(appSettings.DrawingSettings.Size.Width + 20, appSettings.DrawingSettings.Size.Height + 50);
+            Size = new Size(appSettings.DrawingSettings.Size.Width + 20, appSettings.DrawingSettings.Size.Height + 100);
             gr = CreateGraphics();
             if (text != null)
             {
                 image = Visualizer.Draw(appSettings.DrawingSettings.Size,
                                         layouter.GetTextImages(),
                                         appSettings.DrawingSettings.BgColor);
-
-                gr.DrawImage(image, new Point(0, 0));
+                if (image.IsSuccess)
+                {
+                    gr.DrawImage(image.GetValueOrDefault(null), new Point(0, 0));
+                }
+                else
+                {
+                    ErrorMessageBox.ShowError(image.Error);
+                }
                 SettingsManager.SettingsManager.SaveSettings(appSettings);
             }
         }
@@ -115,9 +122,9 @@ namespace WinFormsApp
             var saveDialog = new SaveFileDialog();
             saveDialog.Filter = "PNG files (*.png)|*.png";
 
-            if (saveDialog.ShowDialog() == DialogResult.OK)
+            if (saveDialog.ShowDialog() == DialogResult.OK && image.GetValueOrDefault(null) != null)
             {
-                image.Save(saveDialog.FileName);
+                image.GetValueOrThrow().Save(saveDialog.FileName);
             }
         }
 

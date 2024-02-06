@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System.Drawing;
 using TagsCloudVisualization;
 
 namespace TagsCloudContainer.TagCloudBuilder
@@ -15,13 +16,13 @@ namespace TagsCloudContainer.TagCloudBuilder
             Center = center;
         }
 
-        public IEnumerable<Point> Points()
+        public IEnumerable<Result<Point>> Points()
         {
-            while (pointNumber < maxPointsCount)
+            while (++pointNumber < maxPointsCount)
             {
-                yield return new Point((rnd.Next(0, Center.X) + rnd.Next(0, Center.X)), (rnd.Next(0, Center.Y) + rnd.Next(0, Center.Y)));
+                yield return Result.Ok <Point>( new Point((rnd.Next(0, Center.X) + rnd.Next(0, Center.X)), (rnd.Next(0, Center.Y) + rnd.Next(0, Center.Y))));
             }
-            throw new ArgumentException("Reach end of placing points");
+            yield return Result.Fail<Point>("Can't get more points");
         }
     }
 }

@@ -75,9 +75,9 @@ namespace TagsCloudTests
             var textImages = layouter.GetTextImages().ToList();
 
             // Assert
-            textImages.Should().ContainSingle(x => x.Text == "TestWord1");
-            textImages.Should().ContainSingle(x => x.Text == "TestWord2");
-            textImages.Should().ContainSingle(x => x.Text == "TestWord3");
+            textImages.Should().ContainSingle(x => x.GetValueOrThrow().Text == "TestWord1");
+            textImages.Should().ContainSingle(x => x.GetValueOrThrow().Text == "TestWord2");
+            textImages.Should().ContainSingle(x => x.GetValueOrThrow().Text == "TestWord3");
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace TagsCloudTests
 
 
             // Act
-            var textImages = layouter.GetTextImages().Select(x => new Rectangle(x.Position, x.Size));
+            var textImages = layouter.GetTextImages().Select(x => new Rectangle(x.GetValueOrThrow().Position, x.GetValueOrThrow().Size));
             var rectangles = textImages
                  .SelectMany((x, i) => textImages.Skip(i + 1), Tuple.Create)
                  .Where(x => x.Item1.IntersectsWith(x.Item2));

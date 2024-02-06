@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using ResultOf;
+using System.Drawing;
 
 namespace TagsCloudContainer.Drawer
 {
     public static class Visualizer
     {
 
-        public static Image Draw(Size size, IEnumerable<TextImage> textImages, Color? bgColor = null)
+        public static Result<Image> Draw(Size size, IEnumerable<Result<TextImage>> textImages, Color? bgColor = null)
         {
             var image = new Bitmap(size.Width, size.Height);
             var gr = Graphics.FromImage(image);
@@ -14,10 +15,18 @@ namespace TagsCloudContainer.Drawer
 
             foreach (var textImage in textImages)
             {
-                gr.DrawString(textImage.Text, textImage.Font, new SolidBrush(textImage.Color), textImage.Position);
+                if (textImage.IsSuccess)
+                {
+                    gr.DrawString(textImage.Value.Text, textImage.Value.Font, new SolidBrush(textImage.Value.Color), textImage.Value.Position);
+                }
+                else
+                {
+                    return Result.Fail<Image>(textImage.Error);
+                    Console.WriteLine(textImage.Error);
+                }
             }
 
-            return image;
+            return Result.Ok<Image>(image);
         }
     }
 }

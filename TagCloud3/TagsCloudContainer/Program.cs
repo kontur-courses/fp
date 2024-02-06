@@ -24,26 +24,18 @@ namespace TagsCloudContainer
             Parser.Default.ParseArguments<CommandLineOptions>(args)
                 .WithParsed(o => appSettings = CommandLineOptions.ParseArgs(o));
 
-            var text = reader.ReadText(appSettings.TextFile);
-
-            if (!text.IsSuccess)
-            {
-                Console.WriteLine("Error: " + text.Error);
-                return;
-            }
-            var goodText = text.Value;
-
+            var text = reader.ReadText(appSettings.TextFile).GetValueOrThrow();
 
             var layouter = serviceProvider.GetService<TagsCloudLayouter>();
 
-            analyzer.Analyze(goodText, appSettings.FilterFile);
+            analyzer.Analyze(text, appSettings.FilterFile);
 
             layouter.Initialize(appSettings.DrawingSettings, analyzer.GetAnalyzedText());
 
             Visualizer.Draw(appSettings.DrawingSettings.Size,
                             layouter.GetTextImages(),
                             appSettings.DrawingSettings.BgColor)
-                .Save(appSettings.OutImagePath);
+                .GetValueOrThrow().Save(appSettings.OutImagePath);
             Console.WriteLine("Resulting image saved to " + appSettings.OutImagePath);
         }
     }

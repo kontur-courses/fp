@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ResultOf;
 using TagsCloudContainer.SettingsClasses;
 
 namespace WinFormsApp.SettingsManager
@@ -13,19 +14,45 @@ namespace WinFormsApp.SettingsManager
 
         public static AppSettings LoadSettings(string filePath = settingsFile)
         {
-            AppSettings settings = null;
+            AppSettings settings = new();
             if (File.Exists(filePath))
             {
-                var serialized = File.ReadAllText(filePath);
-                settings = JsonConvert.DeserializeObject<AppSettings>(serialized);
+                var tryReadSettings = ReadFromFile(filePath);
+                if (!tryReadSettings.IsSuccess)
+                {
+                    ErrorMessageBox.ShowError(tryReadSettings.Error);
+                    settings = new AppSettings();
+                    settings.DrawingSettings = new CloudDrawingSettings();
+                    SaveSettings(settings);
+                }
+                settings = tryReadSettings.GetValueOrThrow();
+
+                if (settings.DrawingSettings == null)
+                {
+                    ErrorMessageBox.ShowError("Drawing setting not found. Default is loaded.");
+                    settings.DrawingSettings = new CloudDrawingSettings();
+                    SaveSettings(settings);
+                }
             }
-            else
-            {
-                settings = new AppSettings();
-                settings.DrawingSettings = new CloudDrawingSettings();
-                SaveSettings(settings);
-            }
+
             return settings;
+        }
+
+        private static Result<AppSettings> ReadFromFile(string filePath)
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                return Result.Ok<AppSettings>(JsonConvert.DeserializeObject<AppSettings>(json));
+            }
+            catch (JsonException ex)
+            {
+                return Result.Fail<AppSettings>($"Settings file is damaged: {ex.Message}. Default settings is loaded.");
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail<AppSettings>($"Failed to read file: {ex.Message}");
+            }
         }
     }
 }
