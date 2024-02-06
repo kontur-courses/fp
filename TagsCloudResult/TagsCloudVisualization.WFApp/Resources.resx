@@ -66,4 +66,7 @@
     <data name="SettingsForm_OnLoad_Text" xml:space="preserve">
         <value>Настройки</value>
     </data>
+    <data name="MainForm_OnShown_Name" xml:space="preserve">
+        <value>Tags Cloud Visualizator</value>
+    </data>
 </root>

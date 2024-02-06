@@ -202,5 +202,14 @@ namespace TagsCloudVisualization.WFApp {
                 return ResourceManager.GetString("Text_OK", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tags Cloud Visualizator....
+        /// </summary>
+        internal static string MainForm_OnShown_Name {
+            get {
+                return ResourceManager.GetString("MainForm_OnShown_Name", resourceCulture);
+            }
+        }
     }
 }

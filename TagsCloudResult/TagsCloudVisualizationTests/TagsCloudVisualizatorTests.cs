@@ -4,9 +4,6 @@ using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
 using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TagProviders;
-using TagsCloudVisualization.TextReaders;
-using TagsCloudVisualization.WordsProcessors;
-using TextReader = System.IO.TextReader;
 
 namespace TagsCloudVisualizationTests;
 

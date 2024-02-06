@@ -24,6 +24,6 @@ public class MainForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        Text = Resources.TagsCloudAction_Name;
+        Text = Resources.MainForm_OnShown_Name;
     }
 }
