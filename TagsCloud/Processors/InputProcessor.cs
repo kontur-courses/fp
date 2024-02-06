@@ -1,9 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloud.Contracts;
 using TagsCloud.Conveyors;
 using TagsCloud.CustomAttributes;
 using TagsCloud.Entities;
 using TagsCloud.Extensions;
+using TagsCloud.FileReaders;
+using TagsCloud.Filters;
+using TagsCloud.Formatters;
+using TagsCloud.Options;
 using TagsCloud.Results;
 using TagsCloud.TextAnalysisTools;
 using TagsCloudVisualization;

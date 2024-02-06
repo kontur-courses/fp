@@ -1,7 +1,6 @@
 using FakeItEasy;
 using NUnit.Framework;
 using SixLabors.ImageSharp.Formats;
-using TagsCloud.Contracts;
 using TagsCloud.Options;
 using TagsCloud.Processors;
 using TagsCloudVisualization;

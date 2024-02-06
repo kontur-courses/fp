@@ -1,10 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using TagsCloud.Contracts;
 using TagsCloud.CustomAttributes;
 using TagsCloud.Entities;
 using TagsCloud.Extensions;
+using TagsCloud.FontMeasurers;
+using TagsCloud.Options;
+using TagsCloud.Painters;
 using TagsCloud.Results;
 using TagsCloudVisualization;
 

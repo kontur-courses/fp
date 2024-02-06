@@ -1,4 +1,6 @@
-namespace TagsCloud.Contracts;
+using TagsCloud.Formatters;
+
+namespace TagsCloud.FileReaders;
 
 public interface IFileReader
 {

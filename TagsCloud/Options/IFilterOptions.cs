@@ -1,4 +1,4 @@
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Options;
 
 public interface IFilterOptions
 {

@@ -1,6 +1,7 @@
 using FakeItEasy;
 using NUnit.Framework;
-using TagsCloud.Contracts;
+using TagsCloud.FileReaders;
+using TagsCloud.Filters;
 using TagsCloud.Formatters;
 using TagsCloud.Options;
 using TagsCloud.Processors;

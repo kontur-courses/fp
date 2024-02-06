@@ -1,4 +1,3 @@
-using TagsCloud.Contracts;
 using TagsCloud.Entities;
 using TagsCloud.Extensions;
 using TagsCloud.Options;

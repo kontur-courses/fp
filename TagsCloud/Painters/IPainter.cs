@@ -3,7 +3,7 @@ using TagsCloud.Entities;
 using TagsCloud.Results;
 using TagsCloudVisualization;
 
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Painters;
 
 public interface IPainter
 {

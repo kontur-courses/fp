@@ -1,6 +1,6 @@
 using TagsCloud.Entities;
 
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Options;
 
 public interface IInputProcessorOptions : IFilterOptions
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloud.Contracts;
 using TagsCloud.CustomAttributes;
+using TagsCloud.Options;
 using TagsCloudVisualization;
 
 namespace TagsCloud.Filters;

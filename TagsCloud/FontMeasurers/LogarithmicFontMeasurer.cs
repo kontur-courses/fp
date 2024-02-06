@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloud.Contracts;
 using TagsCloud.CustomAttributes;
 using TagsCloud.Entities;
 

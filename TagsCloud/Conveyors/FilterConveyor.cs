@@ -1,4 +1,5 @@
-using TagsCloud.Contracts;
+using TagsCloud.Filters;
+using TagsCloud.Options;
 using TagsCloudVisualization;
 
 namespace TagsCloud.Conveyors;

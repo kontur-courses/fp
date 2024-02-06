@@ -1,6 +1,5 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
-using TagsCloud.Contracts;
 
 namespace TagsCloud.Options;
 

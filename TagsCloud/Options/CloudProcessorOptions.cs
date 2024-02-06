@@ -1,6 +1,5 @@
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using TagsCloud.Contracts;
 using TagsCloud.Entities;
 using TagsCloudVisualization;
 

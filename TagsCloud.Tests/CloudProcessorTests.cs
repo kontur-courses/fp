@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using SixLabors.ImageSharp;
-using TagsCloud.Contracts;
 using TagsCloud.Entities;
 using TagsCloud.FontMeasurers;
 using TagsCloud.Options;

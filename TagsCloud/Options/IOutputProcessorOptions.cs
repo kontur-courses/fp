@@ -1,7 +1,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Options;
 
 public interface IOutputProcessorOptions
 {

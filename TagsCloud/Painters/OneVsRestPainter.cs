@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using SixLabors.ImageSharp;
-using TagsCloud.Contracts;
 using TagsCloud.CustomAttributes;
 using TagsCloud.Entities;
 using TagsCloud.Extensions;

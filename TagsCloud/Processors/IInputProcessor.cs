@@ -1,7 +1,7 @@
 using TagsCloud.Results;
 using TagsCloudVisualization;
 
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Processors;
 
 public interface IInputProcessor
 {

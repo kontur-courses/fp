@@ -1,4 +1,4 @@
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Formatters;
 
 public interface IPostFormatter
 {

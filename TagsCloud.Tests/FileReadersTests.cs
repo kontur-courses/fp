@@ -2,7 +2,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using TagsCloud.Contracts;
+using TagsCloud.FileReaders;
 using TagsCloud.Formatters;
 
 namespace TagsCloud.Tests;

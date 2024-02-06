@@ -1,6 +1,7 @@
+using TagsCloud.Options;
 using TagsCloudVisualization;
 
-namespace TagsCloud.Contracts;
+namespace TagsCloud.Filters;
 
 public interface IFilter
 {

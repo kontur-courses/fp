@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloud.Contracts;
 using TagsCloud.CustomAttributes;
+using TagsCloud.Formatters;
 
 namespace TagsCloud.FileReaders;
 

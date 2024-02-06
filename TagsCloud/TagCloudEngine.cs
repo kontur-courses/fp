@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using TagsCloud.Contracts;
 using TagsCloud.Extensions;
+using TagsCloud.Options;
+using TagsCloud.Processors;
 using TagsCloud.Results;
 using TagsCloudVisualization;
 

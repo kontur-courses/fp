@@ -3,7 +3,6 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
-using TagsCloud.Contracts;
 using TagsCloud.Entities;
 using TagsCloud.Extensions;
 using TagsCloud.Options;
