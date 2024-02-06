@@ -1,4 +1,5 @@
 ﻿using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.WFApp.Common;
 using TagsCloudVisualization.WFApp.Infrastructure;
 
@@ -23,7 +24,10 @@ public class ImageSettingsAction : IUiAction
     public void Perform()
     {
         var dialog = SettingsForm.For(imageSettings).ShowDialog();
+
         if (dialog == DialogResult.OK)
+        {
             imageHolder.RecreateImage(imageSettings);
+        }
     }
 }

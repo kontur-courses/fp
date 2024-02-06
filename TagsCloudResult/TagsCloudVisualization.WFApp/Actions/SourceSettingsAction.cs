@@ -27,8 +27,10 @@ public class SourceSettingsAction : IUiAction
             Filter = Resources.SourceSettingsAction_Perform_Filter 
         };
         var res = dialog.ShowDialog();
-        
+
         if (res == DialogResult.OK)
+        {
             sourceSettings.Path = dialog.FileName;
+        }
     }
 }

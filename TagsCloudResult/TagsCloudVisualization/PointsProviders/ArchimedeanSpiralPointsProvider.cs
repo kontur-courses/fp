@@ -16,7 +16,7 @@ public class ArchimedeanSpiralPointsProvider : IPointsProvider
 
     public Result<IEnumerable<Point>> GetPoints()
     {
-        return ValidateSettings(settings)
+        return settings.Validate()
             .Then(CalculatePoints);
     }
 
@@ -34,11 +34,5 @@ public class ArchimedeanSpiralPointsProvider : IPointsProvider
     public static Point PolarToCartesian(double distance, double angle)
     {
         return new Point((int)(distance * Math.Cos(angle)), (int)(distance * Math.Sin(angle)));
-    }
-
-    private static Result<ArchimedeanSpiralSettings> ValidateSettings(ArchimedeanSpiralSettings settings)
-    {
-        return Result.Validate(settings, x => x.DeltaAngle != 0 && x.Distance != 0,
-            "Параметры DeltaAngle и Distance не должны быть равны нулю. Пожалуйста, укажите корректные параметры.");
     }
 }

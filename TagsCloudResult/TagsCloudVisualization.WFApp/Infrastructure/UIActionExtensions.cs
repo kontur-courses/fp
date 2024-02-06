@@ -2,7 +2,7 @@
 
 public static class UiActionExtensions
 {
-    public static ToolStripItem[] ToMenuItems(this IUiAction[] actions)
+    public static ToolStripItem[] ToMenuItems(this IEnumerable<IUiAction> actions)
     {
         var items = actions.GroupBy(a => a.Category)
             .OrderBy(a => a.Key)
@@ -18,7 +18,7 @@ public static class UiActionExtensions
         return new ToolStripMenuItem(category.GetDescription(), null, menuItems);
     }
 
-    public static ToolStripItem ToMenuItem(this IUiAction action)
+    private static ToolStripItem ToMenuItem(this IUiAction action)
     {
         return
             new ToolStripMenuItem(action.Name, null, (sender, args) => action.Perform())

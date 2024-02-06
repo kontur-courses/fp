@@ -27,7 +27,10 @@ public class SaveImageAction : IUiAction
             Filter = Resources.SaveImageAction_Perform_Filter 
         };
         var res = dialog.ShowDialog();
+
         if (res == DialogResult.OK)
+        {
             imageHolder.SaveImage(dialog.FileName);
+        }
     }
 }

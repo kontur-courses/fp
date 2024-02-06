@@ -1,14 +1,20 @@
-﻿namespace TagsCloudVisualization.WFApp.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using TagsCloudVisualization.Common;
+using TagsCloudVisualization.Common.ResultOf;
+
+namespace TagsCloudVisualization.WFApp.Common;
 
 public static class SettingsForm
 {
     public static SettingsForm<TSettings> For<TSettings>(TSettings settings)
+        where TSettings : ISettings<TSettings>
     {
         return new SettingsForm<TSettings>(settings);
     }
 }
 
 public class SettingsForm<TSettings> : Form
+    where TSettings : ISettings<TSettings>
 {
     public SettingsForm(TSettings settings)
     {
@@ -18,12 +24,18 @@ public class SettingsForm<TSettings> : Form
             DialogResult = DialogResult.OK,
             Dock = DockStyle.Bottom,
         };
-        Controls.Add(okButton);
-        Controls.Add(new PropertyGrid
+        var propertyGrid = new PropertyGrid
         {
             SelectedObject = settings,
             Dock = DockStyle.Fill
+        };
+        propertyGrid.Validating += (_, args) => settings.Validate().OnFail(x =>
+        {
+            args.Cancel = true;
+            throw new ValidationException(x);
         });
+        Controls.Add(okButton);
+        Controls.Add(propertyGrid);
         AcceptButton = okButton;
     }
 
