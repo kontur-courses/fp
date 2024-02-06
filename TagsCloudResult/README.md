@@ -1,8 +1,8 @@
-﻿# TagsCloudVisualizator
+﻿# Tags Cloud Visualizator
 
 Приложение для создания облак тегов на основе текста.
 
-![example1](https://github.com/tripples25/fp/blob/1a4585180188efc9c6a35736650295a4e470f916/TagsCloudResult/layoutImages/sample.png?raw=true)
+![tagcloudsample](layoutImages/sample.png)
 
 ## Настройки
 
