@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TextReaders;
-using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
 namespace TagsCloudVisualization.WFApp.Factories;
 
@@ -16,15 +15,15 @@ public class TextReaderFactory : ITextReaderFactory
         this.settings = settings;
     }
     
-    public Result<TextReader> GetTextReader()
+    public Result<ITextReader> GetTextReader()
     {
         return settings.Validate()
             .Then(ResolveTextReader);
     }
 
-    private Result<TextReader> ResolveTextReader(SourceSettings settings)
+    private Result<ITextReader> ResolveTextReader(SourceSettings settings)
     {
-        return Result.Of(() => context.ResolveNamed<TextReader>(Path.GetExtension(settings.Path)),
+        return Result.Of(() => context.ResolveNamed<ITextReader>(Path.GetExtension(settings.Path)),
             "Указанный тип файлов не поддерживается в качестве источника.");
     }
 }

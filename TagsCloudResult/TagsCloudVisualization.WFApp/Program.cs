@@ -8,7 +8,6 @@ using TagsCloudVisualization.WFApp.Common;
 using TagsCloudVisualization.WFApp.Factories;
 using TagsCloudVisualization.WFApp.Infrastructure;
 using TagsCloudVisualization.WordsProcessors;
-using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
 namespace TagsCloudVisualization.WFApp;
 
@@ -31,8 +30,8 @@ public static class Program
 
         //Регистрация всех остальных зависимостей приложения, используемых основным проектом.
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
-        container.RegisterType<TxtTextReader>().Named<TextReader>(".txt");
-        container.RegisterType<DocTextReader>().Named<TextReader>(".doc").Named<TextReader>(".docx");
+        container.RegisterType<TxtTextReader>().Named<ITextReader>(".txt");
+        container.RegisterType<DocTextReader>().Named<ITextReader>(".doc").Named<ITextReader>(".docx");
         container.RegisterType<TextReaderFactory>().As<ITextReaderFactory>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();

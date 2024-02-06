@@ -3,14 +3,13 @@ using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.TextReaders;
 using TagsCloudVisualization.WordsProcessors;
-using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
 namespace TagsCloudVisualizationTests;
 
 public class TagProviderTests
 {
     private ITagProvider tagProvider;
-    private Mock<TextReader> textReader;
+    private Mock<ITextReader> textReader;
     private Mock<ITextReaderFactory> textReaderFactory;
     private Mock<IWordsProcessor> wordsProcessor;
     
@@ -25,14 +24,14 @@ public class TagProviderTests
     [SetUp]
     public void SetUp()
     {
-        textReader = new Mock<TextReader>(new SourceSettings());
+        textReader = new Mock<ITextReader>(new SourceSettings());
         textReaderFactory = new Mock<ITextReaderFactory>();
         wordsProcessor = new Mock<IWordsProcessor>();
         
         tagProvider = new TagProvider(textReaderFactory.Object, wordsProcessor.Object);
 
         textReader.Setup(x => x.GetText()).Returns(DefaultText);
-        textReaderFactory.Setup(factory => factory.GetTextReader()).Returns(textReader.Object);
+        textReaderFactory.Setup(factory => factory.GetTextReader()).Returns(textReader.Object.AsResult);
         wordsProcessor.Setup(x => x.Process(It.IsAny<IEnumerable<string>>()))
             .Returns(new Func<IEnumerable<string>, Result<IEnumerable<string>>>(x => x.AsResult())); ;
     }
@@ -53,7 +52,7 @@ public class TagProviderTests
     public void GetTags_ResultIsFail_WhenTextReaderFactoryReturnsFail()
     {
         textReaderFactory.Setup(factory => factory.GetTextReader())
-            .Returns(Result.Fail<TextReader>("factory failed"));
+            .Returns(Result.Fail<ITextReader>("factory failed"));
 
         tagProvider.GetTags().Should().Be(Result.Fail<IEnumerable<Tag>>("factory failed"));
     }

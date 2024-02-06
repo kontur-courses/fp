@@ -5,15 +5,18 @@ using TagsCloudVisualization.Common.ResultOf;
 
 namespace TagsCloudVisualization.TextReaders;
 
-public class DocTextReader : TextReader
+public class DocTextReader : ITextReader
 {
-    public DocTextReader(SourceSettings settings) : base(settings)
+    private readonly SourceSettings settings;
+    
+    public DocTextReader(SourceSettings settings)
     {
+        this.settings = settings;
     }
 
-    public override Result<string> GetText()
+    public Result<string> GetText()
     {
-        using var document = WordprocessingDocument.Open(Settings.Path, false);
+        using var document = WordprocessingDocument.Open(settings.Path, false);
         return GetBody(document)
             .Then(body => string.Join("\n", body.Descendants<Text>().Select(t => t.Text)));
     }

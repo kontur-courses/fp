@@ -1,8 +1,3 @@
 ﻿namespace TagsCloudVisualization.Common.ResultOf;
 
-public class None
-{
-    private None()
-    {
-    }
-}
+public abstract class None {}

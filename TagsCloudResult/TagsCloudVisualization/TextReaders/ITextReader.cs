@@ -2,7 +2,7 @@
 
 namespace TagsCloudVisualization.TextReaders;
 
-public interface ITextReaderFactory
+public interface ITextReader
 {
-    public Result<ITextReader> GetTextReader();
+    public Result<string> GetText();
 }

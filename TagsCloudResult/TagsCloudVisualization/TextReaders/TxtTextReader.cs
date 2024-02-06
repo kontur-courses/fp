@@ -2,15 +2,18 @@
 
 namespace TagsCloudVisualization.TextReaders;
 
-public class TxtTextReader : TextReader
+public class TxtTextReader : ITextReader
 {
-    public TxtTextReader(SourceSettings settings) : base(settings)
+    private readonly SourceSettings settings;
+    
+    public TxtTextReader(SourceSettings settings)
     {
+        this.settings = settings;
     }
 
-    public override Result<string> GetText()
+    public  Result<string> GetText()
     {
-        using var reader = new StreamReader(Settings.Path);
+        using var reader = new StreamReader(settings.Path);
         return reader.ReadToEnd();
     }
 }
