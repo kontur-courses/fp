@@ -44,7 +44,7 @@ public class InputProcessorTests
         var processorResult = processor
             .CollectWordGroupsFromFile(badFileName);
 
-        TestHelper.AssertResultFailAndErrorText(processorResult, $"File {badFileName} not found!");
+        TestHelper.AssertResultFailAndErrorText(processorResult, $"File {badFileName} doesn't exist");
     }
 
     [Test]
@@ -74,6 +74,6 @@ public class InputProcessorTests
         var processorResult = processor
             .CollectWordGroupsFromFile(Path.Join(pathToTestData, goodFileName));
 
-        TestHelper.AssertResultFailAndErrorText(processorResult, "Readonly file or incorrect permissions!");
+        TestHelper.AssertResultFailAndErrorText(processorResult, "Can't read file content");
     }
 }

@@ -1,9 +1,9 @@
-using FakeItEasy;
 using NUnit.Framework;
-using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp;
 using TagsCloud.Options;
 using TagsCloud.Processors;
 using TagsCloudVisualization;
+using static TagsCloud.Tests.TestConfiguration;
 
 namespace TagsCloud.Tests;
 
@@ -11,24 +11,24 @@ namespace TagsCloud.Tests;
 [TestOf(nameof(OutputProcessor))]
 public class OutputProcessorTests
 {
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        A.CallTo(() => fakeBuilder.SaveAs(A<string>._, A<IImageEncoder>._))
-         .Throws<Exception>();
-    }
+    private const string notFoundDirectory = "NotFound";
 
-    private readonly IOutputProcessor processor = new OutputProcessor(new OutputProcessorOptions());
-    private readonly IVisualizationBuilder fakeBuilder = A.Fake<IVisualizationBuilder>();
+    private readonly IOutputProcessor processor =
+        new OutputProcessor(
+            new OutputProcessorOptions
+            {
+                ImageSize = new Size(WindowWidth, WindowHeight)
+            });
 
     [Test]
-    public void Processor_Should_ReturnFailResult_WhenFileSavingError()
+    public void Processor_Should_ReturnFailResult_WhenSavingDirectoryNotFound()
     {
+        var testPath = Path.Combine(notFoundDirectory, Path.GetRandomFileName());
         var processorResult = processor
-            .SaveVisualization(new HashSet<WordTagGroup>(), "image.png");
+            .SaveVisualization(new HashSet<WordTagGroup>(), testPath);
 
         TestHelper.AssertResultFailAndErrorText(
             processorResult,
-            "Can't save image! Please, check app permissions.");
+            $"Directory {notFoundDirectory} doesn't exist!");
     }
 }

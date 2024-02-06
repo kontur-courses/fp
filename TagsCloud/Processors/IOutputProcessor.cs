@@ -5,5 +5,5 @@ namespace TagsCloud.Processors;
 
 public interface IOutputProcessor
 {
-    Result<HashSet<WordTagGroup>> SaveVisualization(HashSet<WordTagGroup> wordGroups, string filename);
+    Result<HashSet<WordTagGroup>> SaveVisualization(HashSet<WordTagGroup> wordGroups, string filePath);
 }

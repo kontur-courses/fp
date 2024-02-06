@@ -3,6 +3,7 @@ using TagsCloud.CustomAttributes;
 using TagsCloud.Extensions;
 using TagsCloud.Options;
 using TagsCloud.Results;
+using TagsCloud.Validators;
 using TagsCloudVisualization;
 
 namespace TagsCloud.Processors;
@@ -17,20 +18,17 @@ public class OutputProcessor : IOutputProcessor
         this.outputOptions = outputOptions;
     }
 
-    public Result<HashSet<WordTagGroup>> SaveVisualization(HashSet<WordTagGroup> wordGroups, string filename)
+    public Result<HashSet<WordTagGroup>> SaveVisualization(HashSet<WordTagGroup> wordGroups, string filePath)
     {
-        try
-        {
-            new VisualizationBuilder(outputOptions.ImageSize, outputOptions.BackgroundColor)
-                .CreateImageFrom(wordGroups)
-                .SaveAs(filename, outputOptions.ImageEncoder);
-
-            return wordGroups;
-        }
-        catch
-        {
-            return ResultExtensions
-                .Fail<HashSet<WordTagGroup>>("Can't save image! Please, check app permissions.");
-        }
+        return PathValidator
+               .ValidateDirectory(Path.GetDirectoryName(filePath))
+               .Then(_ =>
+               {
+                   new VisualizationBuilder(outputOptions.ImageSize, outputOptions.BackgroundColor)
+                       .CreateImageFrom(wordGroups)
+                       .SaveAs(filePath, outputOptions.ImageEncoder);
+               })
+               .Then(_ => wordGroups)
+               .RefineError("Can't save image file, because:");
     }
 }

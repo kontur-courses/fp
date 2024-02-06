@@ -9,6 +9,7 @@ using TagsCloud.Formatters;
 using TagsCloud.Options;
 using TagsCloud.Results;
 using TagsCloud.TextAnalysisTools;
+using TagsCloud.Validators;
 using TagsCloudVisualization;
 
 namespace TagsCloud.Processors;
@@ -35,9 +36,6 @@ public class InputProcessor : IInputProcessor
 
     public Result<HashSet<WordTagGroup>> CollectWordGroupsFromFile(string filename)
     {
-        if (!File.Exists(filename))
-            return ResultExtensions.Fail<HashSet<WordTagGroup>>($"File {filename} not found!");
-
         var groupsResult = FindFileReader(filename)
                            .Then(reader => ExtractGroupsFromFile(filename, reader))
                            .Then(CheckForEmptyGroups)
@@ -69,22 +67,20 @@ public class InputProcessor : IInputProcessor
         return wordGroups;
     }
 
-    private Result<HashSet<WordTagGroup>> ExtractGroupsFromFile(string filename, IFileReader reader)
+    private Result<HashSet<WordTagGroup>> ExtractGroupsFromFile(string filePath, IFileReader reader)
     {
-        try
-        {
-            return reader
-                   .ReadContent(filename, postFormatter)
-                   .Where(line => !string.IsNullOrEmpty(line))
-                   .GroupBy(line => line)
-                   .Select(group => new WordTagGroup(group.Key, group.Count()))
-                   .ToHashSet();
-        }
-        catch
-        {
-            return ResultExtensions
-                .Fail<HashSet<WordTagGroup>>("Readonly file or incorrect permissions!");
-        }
+        return PathValidator
+               .ValidateFile(filePath)
+               .Then(_ =>
+               {
+                   return reader
+                          .ReadContent(filePath, postFormatter)
+                          .Where(line => !string.IsNullOrEmpty(line))
+                          .GroupBy(line => line)
+                          .Select(group => new WordTagGroup(group.Key, group.Count()))
+                          .ToHashSet();
+               })
+               .RefineError("Can't read file content, because:");
     }
 
     private string GetSupportedExtensions()
