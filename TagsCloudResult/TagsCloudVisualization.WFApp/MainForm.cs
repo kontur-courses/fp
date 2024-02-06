@@ -10,7 +10,7 @@ public class MainForm : Form
     public MainForm(IEnumerable<IUiAction> actions,
         PictureBoxImageHolder pictureBox,
         ImageSettings imageSettings,
-        ITopLevelMenuItemFactory factory)
+        IToolStripItemFactory factory)
     {
         ClientSize = new Size(imageSettings.Width, imageSettings.Height);
 

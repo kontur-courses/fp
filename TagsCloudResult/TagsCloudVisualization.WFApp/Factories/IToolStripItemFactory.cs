@@ -2,7 +2,7 @@
 
 namespace TagsCloudVisualization.WFApp.Factories;
 
-public interface ITopLevelMenuItemFactory
+public interface IToolStripItemFactory
 {
     public ToolStripItem Create(MenuCategory category, IEnumerable<IUiAction> actions);
 }

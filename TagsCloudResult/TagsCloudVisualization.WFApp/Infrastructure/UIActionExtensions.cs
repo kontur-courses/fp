@@ -4,7 +4,7 @@ namespace TagsCloudVisualization.WFApp.Infrastructure;
 
 public static class UiActionExtensions
 {
-    public static ToolStripItem[] ToMenuItems(this IEnumerable<IUiAction> actions, ITopLevelMenuItemFactory factory)
+    public static ToolStripItem[] ToMenuItems(this IEnumerable<IUiAction> actions, IToolStripItemFactory factory)
     {
         var items = actions.GroupBy(a => a.Category)
             .OrderBy(a => a.Key)
