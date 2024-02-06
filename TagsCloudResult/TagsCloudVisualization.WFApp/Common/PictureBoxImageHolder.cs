@@ -27,7 +27,6 @@ public class PictureBoxImageHolder : PictureBox, IImageHolder
     public Result<None> UpdateUi()
     {
         Refresh();
-        Application.DoEvents();
         return Result.Ok();
     }
 

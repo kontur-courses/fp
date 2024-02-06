@@ -18,15 +18,18 @@ public static class Program
     public static void Main()
     {
         var container = new ContainerBuilder();
-
+        
+        //Регистрация всех действий, отображаемых в приложении. Подключает все наследуемые от IUiAction классы.
         container.RegisterAssemblyTypes(typeof(IUiAction).Assembly).AsImplementedInterfaces();
         
+        //Регистрация всех настроечных классов и класса изображений, как Singleton.
         container.RegisterType<PictureBoxImageHolder>().As<PictureBoxImageHolder, IImageHolder>().SingleInstance();
         container.RegisterType<ImageSettings>().SingleInstance();
         container.RegisterType<SourceSettings>().SingleInstance();
         container.RegisterType<ArchimedeanSpiralSettings>().SingleInstance();
         container.RegisterType<TagsSettings>().SingleInstance();
 
+        //Регистрация всех остальных зависимостей приложения, используемых основным проектом.
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
         container.RegisterType<TxtTextReader>().Named<TextReader>(".txt");
         container.RegisterType<DocTextReader>().Named<TextReader>(".doc").Named<TextReader>(".docx");
@@ -35,7 +38,8 @@ public static class Program
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();
         container.RegisterType<ArchimedeanSpiralPointsProvider>();
         container.RegisterType<TagsCloudVisualizator>();
-
+        
+        //Регистрация основной формы приложения.
         container.RegisterType<MainForm>();
         
         ApplicationConfiguration.Initialize();
