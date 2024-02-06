@@ -16,7 +16,6 @@ public class SizeTypeConverter : TypeConverter
         if (value is string stringValue)
         {
             string[] sizeValues = stringValue.Split(',');
-
             if (sizeValues.Length == 2 &&
                 int.TryParse(sizeValues[0], out int width) &&
                 int.TryParse(sizeValues[1], out int height))

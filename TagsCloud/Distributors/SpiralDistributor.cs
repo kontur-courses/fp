@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using TagsCloud.Result;
 
 
 namespace TagsCloud.Distributors;
@@ -37,6 +36,6 @@ public class SpiralDistributor : IDistributor
         }
 
         var point = new Point((int)x, (int)y);
-        return Result.Result.Ok(point);
+        return Result.Ok(point);
     }
 }

@@ -15,40 +15,35 @@ public class CircularLayouterTests
         [SetUp]
         public void SetUp()
         {
-            center = new Point();
             distributor = new SpiralDistributor(center);
-            var options = new Options { TagsFont = "Arial" };
-            fontCalculator = new SimpleWordFontCalculator(options);
-            tagsCloud = new CircularCloudLayouter(distributor, fontCalculator, center);
+            tagsCloud = new CircularCloudLayouter(distributor);
         }
 
         private Point center;
         private CircularCloudLayouter tagsCloud;
-        private IWordFontCalculator fontCalculator;
         private SpiralDistributor distributor;
 
         [Test]
         public void CircularCloudLayouter_InitializeParams()
         {
-            tagsCloud.GetTagsCollection().GetValueOrThrow().Count().Should().Be(0);
-            tagsCloud.Center.Should().Be(center);
+            tagsCloud.Center.Should().Be(new Point());
         }
 
 
         [Test]
         public void PutNextRectangle_ShouldPlaceFirstOnCenter()
         {
-            tagsCloud.CreateTagCloud(new Dictionary<string, int>() { { "Реваванат", 3 } });
-            tagsCloud.GetTagsCollection().GetValueOrThrow().ToArray()[0].TagRectangle.Location.Should().Be(center);
+            tagsCloud.CreateTagsCloud(new Dictionary<string, Font>() { { "Реваванат", new Font("Arial", 3) } })
+                .GetValueOrThrow().Tags
+                .ToArray()[0].TagRectangle.Location.Should().Be(center);
         }
 
         [Test]
         public void CircularCloudLayouter_ShouldHasNoIntersections_When1000Words()
         {
-            tagsCloud.CreateTagCloud(GetRandomWordsDictionary());
-            tagsCloud.GetTagsCollection().GetValueOrThrow().Any(tag1 =>
-                    tagsCloud.GetTagsCollection().GetValueOrThrow().Any(tag2 =>
-                        tag1.TagRectangle.IntersectsWith(tag2.TagRectangle) && tag1 != tag2))
+            var tags = tagsCloud.CreateTagsCloud(GetRandomWordsDictionary()).GetValueOrThrow().Tags;
+            tags.Any(tag1 => tags.Any(tag2 =>
+                    tag1.TagRectangle.IntersectsWith(tag2.TagRectangle) && tag1 != tag2))
                 .Should().BeFalse();
         }
 
@@ -56,25 +51,26 @@ public class CircularLayouterTests
         public void CircularCloudLayouter_ShouldBeCloseToCircle()
         {
             var randomDict = GetRandomWordsDictionary();
-            tagsCloud.CreateTagCloud(randomDict);
-            tagsCloud.GetTagsCollection().GetValueOrThrow().All(tag =>
-            {
-                var distanceToCenter =
-                    Math.Sqrt(Math.Pow(tag.TagRectangle.X - tagsCloud.Center.X, 2) +
-                              Math.Pow(tag.TagRectangle.Y - tagsCloud.Center.Y, 2));
-                return distanceToCenter <= distributor.Radius;
-            }).Should().BeTrue();
+            tagsCloud.CreateTagsCloud(randomDict).GetValueOrThrow().Tags
+                .All(tag =>
+                {
+                    var distanceToCenter =
+                        Math.Sqrt(Math.Pow(tag.TagRectangle.X - tagsCloud.Center.X, 2) +
+                                  Math.Pow(tag.TagRectangle.Y - tagsCloud.Center.Y, 2));
+                    return distanceToCenter <= distributor.Radius;
+                }).Should().BeTrue();
         }
 
 
-        private Dictionary<string, int> GetRandomWordsDictionary()
+        private Dictionary<string, Font> GetRandomWordsDictionary()
         {
             var random = new Random();
-            var dict = new Dictionary<string, int>();
+            var dict = new Dictionary<string, Font>();
             for (var i = 0; i < 1000; i++)
             {
-                dict[$"{i}"] = random.Next(1, 100);
+                dict[$"{i}"] = new Font("Arial", random.Next(1, 100));
             }
+
             return dict;
         }
     }

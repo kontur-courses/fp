@@ -1,6 +1,4 @@
-﻿using TagsCloud.Result;
-
-namespace TagsCloud.WordValidators;
+﻿namespace TagsCloud.WordValidators;
 
 public interface IWordValidator
 {

@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using TagsCloud.Entities;
-using TagsCloud.Result;
 
 namespace TagsCloud.ColorGenerators;
 

@@ -4,8 +4,6 @@ using Moq;
 using TagsCloud.ColorGenerators;
 using TagsCloud.ConsoleCommands;
 using TagsCloud.Entities;
-using TagsCloud.Layouters;
-using TagsCloud.Result;
 using TagsCloud.TagsCloudPainters;
 
 namespace TagsCloudTests.Painters;
@@ -16,7 +14,7 @@ public class SimpleCloudPainterTests
     public void SetUp()
     {
         var projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName.Replace("\\bin", "");
-        var options = new Options() { OutputFile = Path.Combine(projectDirectory, "Painters", "images", FileName), Background = "Empty"};
+        var options = new Options() { OutputFile = Path.Combine(projectDirectory, "Painters", "images", FileName), Background = "Red"};
         testFilePath = options.OutputFile;
         var color = new Mock<IColorGenerator>();
         color.Setup(c => c.GetTagColor(It.IsAny<Tag>())).Returns(new Result<Color>(null,Color.Black));
@@ -37,22 +35,18 @@ public class SimpleCloudPainterTests
     [Test]
     public void CloudLayouterDrawerConstructor_ThrowsInvalidOperationException_WhenRectanglesLengthIsZero()
     {
-        var layouter = new Mock<ILayouter>();
-        layouter.Setup(l => l.GetTagsCollection()).Returns(new Result<IEnumerable<Tag>>("",new List<Tag>(){}));
-        layouter.Setup(l => l.GetImageSize()).Returns(new Result<Size>(null,new Size(500, 500)));
-        Assert.Throws<InvalidOperationException>(() => painter.DrawCloud(layouter.Object.GetTagsCollection().GetValueOrThrow(),layouter.Object.GetImageSize().GetValueOrThrow()));
+        var cloud = new Cloud(new List<Tag>(){},new Size(500, 500));
+       painter.DrawCloud(cloud).IsSuccess.Should().BeFalse();
     }
 
     [Test]
     public void CloudLayouterDrawer_ShouldCreateImage()
     {
-        var layouter = new Mock<ILayouter>();
-        layouter.Setup(l => l.GetTagsCollection()).Returns(new Result<IEnumerable<Tag>>(null, new List<Tag>()
+        var cloud = new Cloud(new List<Tag>()
         {
             new Tag(new Rectangle(0, 0, 5, 5), new Font("Arial", 10), "Hello")
-        }));
-        layouter.Setup(l => l.GetImageSize()).Returns(new Result<Size>(null,new Size(500, 500)));
-        painter.DrawCloud(layouter.Object.GetTagsCollection().GetValueOrThrow(),layouter.Object.GetImageSize().GetValueOrThrow());
+        }, new Size(500, 500));
+        var s =painter.DrawCloud(cloud);
         File.Exists(testFilePath).Should().BeTrue();
     }
 }

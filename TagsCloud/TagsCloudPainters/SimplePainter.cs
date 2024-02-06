@@ -3,47 +3,56 @@ using System.Drawing.Imaging;
 using TagsCloud.ColorGenerators;
 using TagsCloud.ConsoleCommands;
 using TagsCloud.Entities;
-using TagsCloud.Layouters;
-using TagsCloud.Result;
 
 
 namespace TagsCloud.TagsCloudPainters;
 
 public class SimplePainter : IPainter
 {
-    private readonly IColorGenerator colorGenerator;
-    private readonly string filename;
-    private readonly Size imageSize;
-    private readonly Color backgroundColor;
+    private readonly IColorGenerator _colorGenerator;
+    private readonly string _filename;
+    private readonly Size _imageSize;
+    private readonly string _color;
 
     public SimplePainter(IColorGenerator colorGenerator, Options options)
     {
-        this.colorGenerator = colorGenerator;
-        this.filename = options.OutputFile;
-        this.imageSize = options.ImageSize;
-        this.backgroundColor = Color.FromName(options.Background);
+        this._colorGenerator = colorGenerator;
+        this._filename = options.OutputFile;
+        this._imageSize = options.ImageSize;
+        this._color = options.Background;
     }
 
-    public Result<None> DrawCloud(IEnumerable<Tag> tags, Size size)
+    public Result<None> DrawCloud(Cloud cloud)
     {
-        if (!tags.Any())
-            return Result.Result.Fail<None>("Painter can't draw empty tag collection");
-        
-        var bitmapsize = imageSize.IsEmpty ? size : imageSize;
+        var tags = cloud.Tags;
+        var cloudSize = cloud.CloudSize;
+        if (!Color.FromName(_color).IsKnownColor)
+        {
+            return Result.Fail<None>($"There is no color with this name: {_color}");
+        }
+        var backgroundColor = Color.FromName(_color);
 
-        using var bitmap = new Bitmap(bitmapsize.Width, bitmapsize.Height);
+        if (!cloud.Tags.Any())
+            return Result.Fail<None>("Painter can't draw empty tag collection");
+
+        if (!_imageSize.IsEmpty && (_imageSize.Height < cloudSize.Height || _imageSize.Width < cloudSize.Width))
+            return Result.Fail<None>("Tag cloud cannot fit given size");
+        cloudSize = _imageSize.IsEmpty ? cloudSize : _imageSize;
+        
+        using var bitmap = new Bitmap(cloudSize.Width, cloudSize.Height);
         using var g = Graphics.FromImage(bitmap);
         g.Clear(backgroundColor);
         foreach (var tag in tags)
         {
-            var color = colorGenerator.GetTagColor(tag).GetValueOrThrow();
+            var color = _colorGenerator.GetTagColor(tag).GetValueOrThrow();
             var brush = new SolidBrush(color);
             g.DrawString(tag.Content, tag.Font, brush,
-                GetTagPositionOnImage(tag.TagRectangle.Location, imageSize));
+                GetTagPositionOnImage(tag.TagRectangle.Location, _imageSize));
         }
-        SaveImageToFile(bitmap, filename);
-        
-        return Result.Result.Ok();
+
+        SaveImageToFile(bitmap, _filename);
+
+        return Result.Ok();
     }
 
     private Point GetTagPositionOnImage(Point position, Size size)

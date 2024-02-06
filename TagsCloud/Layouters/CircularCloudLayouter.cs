@@ -1,69 +1,62 @@
 ﻿using System.Drawing;
 using TagsCloud.Distributors;
 using TagsCloud.Entities;
-using TagsCloud.Result;
 using TagsCloud.WordFontCalculators;
 
 namespace TagsCloud.Layouters;
 
 public class CircularCloudLayouter : ILayouter
 {
-    private readonly List<Tag> tags;
-    private IDistributor distributor;
-    private IWordFontCalculator fontCalculator;
     public Point Center { get; private set; }
-    private int leftBorder;
-    private int rightBorder;
-    private int topBorder;
-    private int bottomBorder;
+    private readonly List<Tag> _tags;
+    private readonly IDistributor _distributor;
+    private int _leftBorder;
+    private int _rightBorder;
+    private int _topBorder;
+    private int _bottomBorder;
 
-    public CircularCloudLayouter(IDistributor distributor,
-        IWordFontCalculator fontCalculator,
-        Point center = new Point())
+    public CircularCloudLayouter(IDistributor distributor)
     {
-        this.distributor = distributor;
-        this.fontCalculator = fontCalculator;
-        this.Center = center;
-        tags = new();
+        this._distributor = distributor;
+        this.Center = new Point();
+        _tags = new();
     }
 
-    public Result<None> CreateTagCloud(Dictionary<string, int> tagsDictionary)
+    public Result<Cloud> CreateTagsCloud(Dictionary<string, Font> tagsDictionary)
     {
+        if (!tagsDictionary.Any())
+            return Result.Fail<Cloud>("Dictionary cannot be empty\n");
+
         foreach (var tag in tagsDictionary)
         {
-            var tagFont = fontCalculator.GetWordFont(tag.Key, tag.Value).GetValueOrThrow();
             var rectangle = new Rectangle();
 
             using (Graphics g = Graphics.FromImage(new Bitmap(1, 1)))
             {
-                var sizeF = g.MeasureString(tag.Key, tagFont);
+                var sizeF = g.MeasureString(tag.Key, tag.Value);
                 rectangle.Size = new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
             }
 
-            rectangle.Location = distributor.GetNextPosition().GetValueOrThrow();
-
+            rectangle.Location = _distributor.GetNextPosition().GetValueOrThrow();
             while (CheckIntersection(rectangle))
             {
-                rectangle.Location = distributor.GetNextPosition().GetValueOrThrow();
+                rectangle.Location = _distributor.GetNextPosition().GetValueOrThrow();
             }
 
             rectangle = CompressRectangleToCenter(rectangle);
             UpdateImageSize(rectangle);
-            var newtag = new Tag(rectangle, tagFont, tag.Key);
-            tags.Add(newtag);
+            var newtag = new Tag(rectangle, tag.Value, tag.Key);
+            _tags.Add(newtag);
         }
-        return Result.Result.Ok();
+
+        var cloud = new Cloud(_tags, GetImageSize());
+        return Result.Ok(cloud);
     }
 
-    public Result<IEnumerable<Tag>> GetTagsCollection()
+    private Size GetImageSize()
     {
-        return Result.Result.Ok<IEnumerable<Tag>>(tags);
-    }
-
-    public Result<Size> GetImageSize()
-    {
-        var size = new Size(Math.Abs(rightBorder - leftBorder), Math.Abs(topBorder - bottomBorder));
-        return Result.Result.Ok(size);
+        var size = new Size(Math.Abs(_rightBorder - _leftBorder), Math.Abs(_topBorder - _bottomBorder));
+        return size;
     }
 
     private void UpdateImageSize(Rectangle rec)
@@ -73,15 +66,15 @@ public class CircularCloudLayouter : ILayouter
         var top = rec.Y + rec.Height / 2;
         var bottom = rec.Y - rec.Height / 2;
 
-        rightBorder = right > rightBorder ? right : rightBorder;
-        leftBorder = left < leftBorder ? left : leftBorder;
-        topBorder = top > topBorder ? top : topBorder;
-        bottomBorder = bottom < bottomBorder ? bottom : bottomBorder;
+        _rightBorder = right > _rightBorder ? right : _rightBorder;
+        _leftBorder = left < _leftBorder ? left : _leftBorder;
+        _topBorder = top > _topBorder ? top : _topBorder;
+        _bottomBorder = bottom < _bottomBorder ? bottom : _bottomBorder;
     }
 
     private bool CheckIntersection(Rectangle currentRectangle)
     {
-        return tags.Any(rec => currentRectangle.IntersectsWith(rec.TagRectangle));
+        return _tags.Any(rec => currentRectangle.IntersectsWith(rec.TagRectangle));
     }
 
     private Rectangle CompressRectangleToCenter(Rectangle rectangle)

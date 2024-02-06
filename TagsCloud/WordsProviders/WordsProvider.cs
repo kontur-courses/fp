@@ -1,31 +1,30 @@
-﻿using Autofac.Features.AttributeFilters;
-using TagsCloud.ConsoleCommands;
-using TagsCloud.Result;
+﻿using TagsCloud.ConsoleCommands;
 using TagsCloud.WordValidators;
 
 namespace TagsCloud.WordsProviders;
 
 public class WordsProvider : IWordsProvider
 {
-    private readonly IWordValidator validator;
-    private readonly string filename;
+    private readonly IWordValidator _validator;
+    private readonly string _filename;
 
     public WordsProvider(IWordValidator validator, Options options)
     {
-        this.validator = validator;
-        this.filename = options.InputFile;
+        this._validator = validator;
+        this._filename = options.InputFile;
     }
 
     public Result<Dictionary<string, int>> GetWords()
     {
-        if (!File.Exists(filename))
-            throw new FileNotFoundException(filename);
-        var dict= File.ReadAllText(filename)
+        if (!File.Exists(_filename))
+            return Result.Fail<Dictionary<string, int>>($"No such file or directory {_filename}");
+        
+        var dict= File.ReadAllText(_filename)
             .Split(new string[] { "\n", "\r\n" }, StringSplitOptions.None)
             .GroupBy(word => word.ToLower())
-            .Where(g => validator.IsWordValid(g.Key).GetValueOrThrow())
+            .Where(g => _validator.IsWordValid(g.Key).GetValueOrThrow())
             .OrderByDescending(g2 => g2.Count())
             .ToDictionary(group => group.Key, group => group.Count());
-        return Result.Result.Ok(dict);
+        return Result.Ok(dict);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using TagsCloud.Result;
 
 namespace TagsCloud.Distributors;
 

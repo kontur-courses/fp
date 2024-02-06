@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using TagsCloud.ConsoleCommands;
-using TagsCloud.Result;
 using TagsCloud.WordsProviders;
 using TagsCloud.WordValidators;
 
@@ -27,7 +26,7 @@ public class WordsProviderTests
         options.InputFile =
             Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "input.txt");
         var textReader = new WordsProvider(validator.Object, options);
-        Assert.Throws<FileNotFoundException>(() => textReader.GetWords());
+        textReader.GetWords().IsSuccess.Should().BeFalse();
     }
 
     [Test]
