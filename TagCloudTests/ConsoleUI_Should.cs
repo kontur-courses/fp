@@ -1,5 +1,6 @@
 using Autofac;
 using CommandLine;
+using FakeItEasy;
 using ResultOf;
 using TagCloud.AppSettings;
 using TagCloud.FileReader;
@@ -12,17 +13,22 @@ public class ConsoleUI_Should
 {
     private IAppSettings settings;
     private IUserInterface sut;
+    private IFileReader reader;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
+        reader = A.Fake<IFileReader>();
+        A.CallTo(() => reader.ReadLines(A<string>.Ignored))
+            .Returns(Result.Ok(Enumerable.AsEnumerable(new List<string>() { "test" })));
+        A.CallTo(() => reader.GetAvailableExtensions()).Returns(new List<string>() { "txt" });
+
         settings = Parser.Default.ParseArguments<Settings>(new List<string>()).Value;
 
         var builder = Configurator.ConfigureBuilder(settings);
-
-        builder.RegisterType<FakeReader>().As<IFileReader>();
-
+        builder.Register(c => reader).As<IFileReader>();
         var container = builder.Build();
+
         sut = container.Resolve<IUserInterface>();
     }
 
@@ -34,23 +40,5 @@ public class ConsoleUI_Should
         File.Exists($"{settings.OutputPath}.{settings.ImageExtension}").Should().BeTrue();
 
         File.Delete($"{settings.OutputPath}.{settings.ImageExtension}");
-    }
-
-    private class FakeReader : IFileReader
-    {
-        public Result<IEnumerable<string>> ReadLines(string inputPath)
-        {
-            return Result.Ok(GetText());
-        }
-
-        private IEnumerable<string> GetText()
-        {
-            yield return "test";
-        }
-
-        public IEnumerable<string> GetAvailableExtensions()
-        {
-            return new List<string>() { "txt" };
-        }
     }
 }

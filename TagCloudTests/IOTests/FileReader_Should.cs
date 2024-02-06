@@ -9,18 +9,14 @@ public class FileReader_Should
     private const string inputPath = "test.txt";
     private string text = $"one{Environment.NewLine}two{Environment.NewLine}three{Environment.NewLine}";
 
-    [SetUp]
-    public void SetUp()
-    {
-        using var fileStream = File.Open(inputPath, FileMode.Create);
-        using var writer = new StreamWriter(fileStream);
-
-        writer.Write(text);
-    }
-
     [Test]
     public void ReadWordsFromTxt()
     {
+        using var fileStream = File.Open(inputPath, FileMode.Create);
+        using var writer = new StreamWriter(fileStream);
+        writer.Write(text);
+        writer.Close();
+
         var expected = text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
 
         var result = sut.ReadLines(inputPath);
