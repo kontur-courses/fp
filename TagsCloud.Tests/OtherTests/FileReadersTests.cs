@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using TagsCloud.FileReaders;
 using TagsCloud.Formatters;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.OtherTests;
 
 [TestFixture]
 [TestOf(nameof(FileReadersTests))]
@@ -53,7 +53,6 @@ public partial class FileReadersTests
         foreach (var reader in fileReaders)
         {
             var match = ReaderNamePattern().Match(reader.GetType().Name);
-
             match.Success.Should().Be(true);
             match.Groups[1].Value.ToLower().ShouldBeEquivalentTo(reader.SupportedExtension);
         }

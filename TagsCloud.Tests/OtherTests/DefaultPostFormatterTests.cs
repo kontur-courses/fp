@@ -2,7 +2,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using TagsCloud.Formatters;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.OtherTests;
 
 [TestFixture]
 [TestOf(nameof(DefaultPostFormatter))]

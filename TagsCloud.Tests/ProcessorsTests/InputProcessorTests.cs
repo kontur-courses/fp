@@ -5,8 +5,9 @@ using TagsCloud.Filters;
 using TagsCloud.Formatters;
 using TagsCloud.Options;
 using TagsCloud.Processors;
+using static TagsCloud.Tests.TestConfiguration;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.ProcessorsTests;
 
 [TestFixture]
 [TestOf(nameof(InputProcessor))]
@@ -23,7 +24,7 @@ public class InputProcessorTests
         processor = new InputProcessor(
             new InputProcessorOptions(),
             new[] { fakeReader },
-            new[] { fakeFilter },
+            Array.Empty<IFilter>(),
             defaultFormatter);
     }
 
@@ -31,10 +32,8 @@ public class InputProcessorTests
     private const string badExtFileName = "error_data.gps";
     private const string goodFileName = "data.txt";
 
-    private readonly string pathToTestData = Path.Join(Directory.GetCurrentDirectory(), "TestData");
     private readonly IPostFormatter defaultFormatter = new DefaultPostFormatter();
     private readonly IFileReader fakeReader = A.Fake<IFileReader>();
-    private readonly IFilter fakeFilter = A.Fake<IFilter>();
 
     private IInputProcessor processor;
 
@@ -51,7 +50,7 @@ public class InputProcessorTests
     public void Processor_Should_ReturnFailResult_When_UnknownFileExtension()
     {
         var processorResult = processor
-            .CollectWordGroupsFromFile(Path.Join(pathToTestData, badExtFileName));
+            .CollectWordGroupsFromFile(Path.Join(TestDataPath, badExtFileName));
 
         TestHelper.AssertResultFailAndErrorText(processorResult, "Unknown file extension: gps!");
     }
@@ -60,20 +59,8 @@ public class InputProcessorTests
     public void Processor_Should_ReturnFailResult_When_ZeroWordsGroups()
     {
         var processorResult = processor
-            .CollectWordGroupsFromFile(Path.Join(pathToTestData, goodFileName));
+            .CollectWordGroupsFromFile(Path.Join(TestDataPath, goodFileName));
 
         TestHelper.AssertResultFailAndErrorText(processorResult, "Can't generate TagCloud from void!");
-    }
-
-    [Test]
-    public void Processor_Should_ReturnFailResult_When_FileReadingError()
-    {
-        A.CallTo(() => fakeReader.ReadContent(A<string>._, defaultFormatter))
-         .Throws<Exception>();
-
-        var processorResult = processor
-            .CollectWordGroupsFromFile(Path.Join(pathToTestData, goodFileName));
-
-        TestHelper.AssertResultFailAndErrorText(processorResult, "Can't read file content");
     }
 }

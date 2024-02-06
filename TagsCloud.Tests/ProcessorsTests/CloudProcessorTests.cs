@@ -7,14 +7,17 @@ using TagsCloud.Painters;
 using TagsCloud.Processors;
 using TagsCloudVisualization;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.ProcessorsTests;
 
 [TestFixture]
 [TestOf(nameof(CloudProcessor))]
 public class CloudProcessorTests
 {
-    [SetUp]
-    public void SetUp()
+    private readonly IPainter oneVsRestPainter = new OneVsRestPainter();
+    private readonly Color[] colors = { Color.White, Color.Blue, Color.Red };
+
+    [Test]
+    public void Processor_Should_ReturnFailResult_When_ColorsCountIsBadForPainter()
     {
         var cloudOptions = new CloudProcessorOptions
         {
@@ -23,18 +26,11 @@ public class CloudProcessorTests
             MeasurerType = MeasurerType.Linear
         };
 
-        processor = new CloudProcessor(cloudOptions, new[] { painter }, new[] { measurer });
-    }
+        var processor = new CloudProcessor(
+            cloudOptions,
+            new[] { oneVsRestPainter },
+            Array.Empty<IFontMeasurer>());
 
-    private readonly IPainter painter = new OneVsRestPainter();
-    private readonly IFontMeasurer measurer = new LinearFontMeasurer();
-    private readonly Color[] colors = { Color.White, Color.Blue, Color.Red };
-
-    private ICloudProcessor processor;
-
-    [Test]
-    public void Processor_Should_ReturnFailResult_When_ColorsCountIsBadForPainter()
-    {
         var processorResult = processor
             .SetColors(new HashSet<WordTagGroup>());
 

@@ -11,7 +11,7 @@ namespace TagsCloud.Builders;
 public class CloudOptionsBuilder
 {
     private ColoringStrategy coloringStrategy;
-    private Color[] colors;
+    private Color[] colors = { Color.Black, Color.Yellow };
     private FontFamily fontFamily;
     private ILayout layout;
     private int maxFontSize;
@@ -39,7 +39,7 @@ public class CloudOptionsBuilder
             if (Color.TryParseHex(hex, out var color))
                 colorsSet.Add(color);
 
-        colors = colorsSet.Count == 0 ? new[] { Color.Black } : colorsSet.ToArray();
+        colors = colorsSet.Count == 0 ? colors : colorsSet.ToArray();
         return this;
     }
 
@@ -88,6 +88,12 @@ public class CloudOptionsBuilder
 
     public Result<ICloudProcessorOptions> BuildOptions()
     {
+        if (layout == null)
+            return CreateNotSetErrorResult(nameof(Layout));
+
+        if (fontFamily == default)
+            return CreateNotSetErrorResult(nameof(FontFamily));
+
         return new CloudProcessorOptions
         {
             ColoringStrategy = coloringStrategy,
@@ -99,6 +105,12 @@ public class CloudOptionsBuilder
             Layout = layout,
             Colors = colors
         };
+    }
+
+    private static Result<ICloudProcessorOptions> CreateNotSetErrorResult(string causerName)
+    {
+        return ResultExtensions
+            .Fail<ICloudProcessorOptions>($"You must set {causerName} before building options!");
     }
 
     private Result<CloudOptionsBuilder> TryLoadFontByName(string fontPath)

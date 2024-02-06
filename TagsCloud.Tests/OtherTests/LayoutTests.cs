@@ -4,7 +4,7 @@ using SixLabors.ImageSharp;
 using TagsCloudVisualization;
 using static TagsCloud.Tests.TestConfiguration;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.OtherTests;
 
 [TestFixture]
 [TestOf(nameof(Layout))]

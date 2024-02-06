@@ -3,7 +3,7 @@ using System.Collections;
 using TagsCloud.TextAnalysisTools;
 using TagsCloudVisualization;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.OtherTests;
 
 [TestFixture]
 [TestOf(nameof(TextAnalyzer))]

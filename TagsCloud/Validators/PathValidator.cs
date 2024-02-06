@@ -15,6 +15,9 @@ public static class PathValidator
 
     public static Result<bool> ValidateDirectory(string directoryPath)
     {
+        if (directoryPath == string.Empty)
+            return ResultExtensions.Ok(true);
+
         return !Directory.Exists(directoryPath)
             ? ResultExtensions.Fail<bool>($"Directory {directoryPath} doesn't exist!")
             : CheckDirectoryAvailability(directoryPath);

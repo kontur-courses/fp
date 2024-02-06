@@ -16,8 +16,8 @@ public class InputOptionsBuilder
         "SPRO", "V"
     };
 
-    private HashSet<string> excludedWords;
-    private HashSet<string> languageParts;
+    private HashSet<string> excludedWords = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> languageParts = new(StringComparer.OrdinalIgnoreCase);
     private bool onlyRussian;
     private bool toInfinitive;
     private CaseType wordsCase;

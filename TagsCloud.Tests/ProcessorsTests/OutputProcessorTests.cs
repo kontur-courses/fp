@@ -5,7 +5,7 @@ using TagsCloud.Processors;
 using TagsCloudVisualization;
 using static TagsCloud.Tests.TestConfiguration;
 
-namespace TagsCloud.Tests;
+namespace TagsCloud.Tests.ProcessorsTests;
 
 [TestFixture]
 [TestOf(nameof(OutputProcessor))]
