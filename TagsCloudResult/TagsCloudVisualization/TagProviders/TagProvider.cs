@@ -1,10 +1,7 @@
-﻿using TagsCloudVisualization.Common;
-using TagsCloudVisualization.Common.ResultOf;
+﻿using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.TextReaders;
-using TagsCloudVisualization.WordsAnalyzers;
 using TagsCloudVisualization.WordsProcessors;
-using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
 namespace TagsCloudVisualization.TagProviders;
 

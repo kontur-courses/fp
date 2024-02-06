@@ -4,11 +4,9 @@ using TagsCloudVisualization.Common;
 using TagsCloudVisualization.PointsProviders;
 using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.TextReaders;
-using TagsCloudVisualization.WFApp.Actions;
 using TagsCloudVisualization.WFApp.Common;
 using TagsCloudVisualization.WFApp.Factories;
 using TagsCloudVisualization.WFApp.Infrastructure;
-using TagsCloudVisualization.WordsAnalyzers;
 using TagsCloudVisualization.WordsProcessors;
 using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 

@@ -4,7 +4,6 @@ using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Common;
 using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.TagProviders;
-using TagsCloudVisualization.WordsAnalyzers;
 
 namespace TagsCloudVisualization;
 

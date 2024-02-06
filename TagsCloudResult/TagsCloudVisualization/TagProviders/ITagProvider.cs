@@ -1,7 +1,6 @@
-﻿using TagsCloudVisualization.Common;
-using TagsCloudVisualization.Common.ResultOf;
+﻿using TagsCloudVisualization.Common.ResultOf;
 
-namespace TagsCloudVisualization.WordsAnalyzers;
+namespace TagsCloudVisualization.TagProviders;
 
 public interface ITagProvider
 {

@@ -1,4 +1,4 @@
-﻿namespace TagsCloudVisualization.WordsAnalyzers;
+﻿namespace TagsCloudVisualization.TagProviders;
 
 public class Tag
 {

@@ -4,7 +4,6 @@ using TagsCloudVisualization.Common.ResultOf;
 using TagsCloudVisualization.Extensions;
 using TagsCloudVisualization.TagProviders;
 using TagsCloudVisualization.TextReaders;
-using TagsCloudVisualization.WordsAnalyzers;
 using TagsCloudVisualization.WordsProcessors;
 using TextReader = TagsCloudVisualization.TextReaders.TextReader;
 
