@@ -50,31 +50,38 @@ public class TagsCloudVisualizator
     {
         using (layouter)
         {
-            foreach (var tag in tags)
-            {
-                var font = CreateTagFont(tag);
-                var tagDraw = font
-                    .Then(x => graphics.MeasureString(tag.Word, x).ToSize())
-                    .Then(x => layouter.PutNextRectangle(x))
-                    .Then(x => graphics.DrawString(tag.Word, font.GetValueOrThrow(),
-                        new SolidBrush(GetTagColor(tag)), x.Location));
-                
-                if (!tagDraw.IsSuccess)
-                    return tagDraw;
-            }
+            return tags.Select(tag => Result.Of( () => GetTagSize(tag, graphics))
+                .Then(tagSize => layouter.PutNextRectangle(tagSize))
+                .Then(rectangle => DrawTag(tag, graphics, rectangle.Location)))
+                .FirstOrDefault(x => !x.IsSuccess);
         }
-
-        return Result.Ok();
     }
 
-    private Result<Font> CreateTagFont(Tag tag)
+    private Size GetTagSize(Tag tag, Graphics graphics)
+    {
+        return graphics.MeasureString(tag.Word, CreateTagFont(tag)).ToSize();
+    }
+
+    private void DrawTag(Tag tag, Graphics graphics, Point position)
+    {
+        graphics.DrawString(tag.Word, CreateTagFont(tag), GetTagBrush(tag.Coeff), position);
+    }
+
+    private Font CreateTagFont(Tag tag)
     {
         return new Font(tagsSettings.Font, tagsSettings.FontSize * (float) tag.Coeff);
     }
 
-    private Color GetTagColor(Tag tag)
+    private SolidBrush GetTagBrush(double tagCoeff)
     {
-        return tag.Coeff > 0.75 ? tagsSettings.PrimaryColor : tag.Coeff > 0.35 ? tagsSettings.SecondaryColor 
-            : tagsSettings.TertiaryColor;
+        const double popularTagThreshold = 0.75;
+        const double commonTagThreshold = 0.35;
+        
+        return tagCoeff switch
+        {
+            > popularTagThreshold => new SolidBrush(tagsSettings.PrimaryColor),
+            > commonTagThreshold => new SolidBrush(tagsSettings.SecondaryColor),
+            _ => new SolidBrush(tagsSettings.TertiaryColor)
+        };
     }
 }
