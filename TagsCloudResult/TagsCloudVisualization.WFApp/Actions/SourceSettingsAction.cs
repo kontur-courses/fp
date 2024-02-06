@@ -18,7 +18,7 @@ public class SourceSettingsAction : IUiAction
 
     public void Perform()
     {
-        var dialog = new OpenFileDialog()
+        var dialog = new OpenFileDialog
         {
             CheckFileExists = false,
             InitialDirectory = Path.GetFullPath("/"),

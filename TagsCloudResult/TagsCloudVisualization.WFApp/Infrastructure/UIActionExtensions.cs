@@ -1,30 +1,16 @@
-﻿namespace TagsCloudVisualization.WFApp.Infrastructure;
+﻿using TagsCloudVisualization.WFApp.Factories;
+
+namespace TagsCloudVisualization.WFApp.Infrastructure;
 
 public static class UiActionExtensions
 {
-    public static ToolStripItem[] ToMenuItems(this IEnumerable<IUiAction> actions)
+    public static ToolStripItem[] ToMenuItems(this IEnumerable<IUiAction> actions, ITopLevelMenuItemFactory factory)
     {
         var items = actions.GroupBy(a => a.Category)
             .OrderBy(a => a.Key)
-            .Select(g => CreateTopLevelMenuItem(g.Key, g.ToList()))
-            .Cast<ToolStripItem>()
+            .Select(g => factory.Create(g.Key, g.ToList()))
             .ToArray();
+        
         return items;
-    }
-
-    private static ToolStripMenuItem CreateTopLevelMenuItem(MenuCategory category, IList<IUiAction> items)
-    {
-        var menuItems = items.Select(a => a.ToMenuItem()).ToArray();
-        return new ToolStripMenuItem(category.GetDescription(), null, menuItems);
-    }
-
-    private static ToolStripItem ToMenuItem(this IUiAction action)
-    {
-        return
-            new ToolStripMenuItem(action.Name, null, (sender, args) => action.Perform())
-            {
-                ToolTipText = action.Description,
-                Tag = action
-            };
     }
 }

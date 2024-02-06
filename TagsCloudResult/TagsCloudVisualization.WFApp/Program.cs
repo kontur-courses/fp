@@ -32,6 +32,7 @@ public static class Program
         container.RegisterType<SimpleWordsProcessor>().As<IWordsProcessor>();
         container.RegisterType<TxtTextReader>().Named<ITextReader>(".txt");
         container.RegisterType<DocTextReader>().Named<ITextReader>(".doc").Named<ITextReader>(".docx");
+        container.RegisterType<DefaultTopLevelMenuItemFactory>().As<ITopLevelMenuItemFactory>();
         container.RegisterType<TextReaderFactory>().As<ITextReaderFactory>();
         container.RegisterType<TagProvider>().As<ITagProvider>();
         container.RegisterType<CircularCloudLayouter>().As<ITagsCloudLayouter>();

@@ -1,19 +1,21 @@
 ﻿using TagsCloudVisualization.Common;
 using TagsCloudVisualization.WFApp.Common;
+using TagsCloudVisualization.WFApp.Factories;
 using TagsCloudVisualization.WFApp.Infrastructure;
 
 namespace TagsCloudVisualization.WFApp;
 
 public class MainForm : Form
 {
-    public MainForm(IUiAction[] actions,
+    public MainForm(IEnumerable<IUiAction> actions,
         PictureBoxImageHolder pictureBox,
-        ImageSettings imageSettings)
+        ImageSettings imageSettings,
+        ITopLevelMenuItemFactory factory)
     {
         ClientSize = new Size(imageSettings.Width, imageSettings.Height);
 
         var mainMenu = new MenuStrip();
-        mainMenu.Items.AddRange(actions.ToMenuItems());
+        mainMenu.Items.AddRange(actions.ToMenuItems(factory));
         Controls.Add(mainMenu);
 
         pictureBox.RecreateImage(imageSettings);
