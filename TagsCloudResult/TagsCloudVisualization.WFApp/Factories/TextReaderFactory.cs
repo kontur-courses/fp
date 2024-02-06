@@ -19,24 +19,11 @@ public class TextReaderFactory : ITextReaderFactory
     
     public Result<TextReader> GetTextReader()
     {
-        return ValidatePathNotNullOrEmpty(settings.Path)
-            .Then(ValidatePathExists)
-            .Then(_ => ResolveTextReader());
-    }
-    
-    private static Result<string> ValidatePathNotNullOrEmpty(string path)
-    {
-        return Result.Validate(path, path => !string.IsNullOrEmpty(path),
-            "В качестве пути к файлу источника была предоставлена пустая строка. Пожалуйста, укажите верный путь к файлу.");
+        return settings.Validate()
+            .Then(ResolveTextReader);
     }
 
-    private static Result<string> ValidatePathExists(string path)
-    {
-        return Result.Validate(path, File.Exists,
-            $@"Файла источника по указанному пути не существует: {Path.GetFullPath(path)}.");
-    }
-
-    private Result<TextReader> ResolveTextReader()
+    private Result<TextReader> ResolveTextReader(SourceSettings settings)
     {
         return Result.Of(() => context.ResolveNamed<TextReader>(Path.GetExtension(settings.Path)),
             "Указанный тип файлов не поддерживается в качестве источника.");
