@@ -2,7 +2,7 @@
 
 Приложение для создания облак тегов на основе текста.
 
-![tagcloudsample](layoutImages/sample.png)
+![tag_cloud_sample](layout/images/sample.png)
 
 ## Настройки
 

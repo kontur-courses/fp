@@ -26,6 +26,7 @@ public class SaveImageAction : IUiAction
             FileName = Resources.SaveImageAction_Perform_FileName,
             Filter = Resources.SaveImageAction_Perform_Filter 
         };
+
         var res = dialog.ShowDialog();
 
         if (res == DialogResult.OK)
