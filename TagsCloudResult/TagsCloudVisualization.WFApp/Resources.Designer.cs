@@ -211,5 +211,23 @@ namespace TagsCloudVisualization.WFApp {
                 return ResourceManager.GetString("MainForm_OnShown_Name", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Call PictureBoxImageHolder.RecreateImage before other method call!
+        /// </summary>
+        internal static string PictureBoxImageHolder_ValidateImageCreation_Fail {
+            get {
+                return ResourceManager.GetString("PictureBoxImageHolder_ValidateImageCreation_Fail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Указанный тип файлов не поддерживается в качестве источника.
+        /// </summary>
+        internal static string TextReaderFactory_ResolveTextReader_Fail {
+            get {
+                return ResourceManager.GetString("TextReaderFactory_ResolveTextReader_Fail", resourceCulture);
+            }
+        }
     }
 }

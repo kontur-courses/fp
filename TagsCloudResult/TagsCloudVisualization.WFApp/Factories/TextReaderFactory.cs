@@ -24,6 +24,6 @@ public class TextReaderFactory : ITextReaderFactory
     private Result<ITextReader> ResolveTextReader(SourceSettings settings)
     {
         return Result.Of(() => context.ResolveNamed<ITextReader>(Path.GetExtension(settings.Path)),
-            "Указанный тип файлов не поддерживается в качестве источника.");
+            Resources.TextReaderFactory_ResolveTextReader_Fail);
     }
 }

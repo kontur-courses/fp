@@ -15,6 +15,6 @@ public class ImageSettings : ISettings<ImageSettings>
     private static Result<ImageSettings> ValidateWidthAndHeight(ImageSettings settings)
     {
         return Result.Validate(settings, x => x is {Height: > 0, Width: > 0},
-            "Ширина и высота изображения не могут быть меньше или равны нулю. Пожалуйста, введите корректные настройки.");
+            Resources.ImageSettings_ValidateWidthAndHeight_Fail);
     }
 }

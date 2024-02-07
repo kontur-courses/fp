@@ -15,12 +15,12 @@ public class SourceSettings
     private static Result<SourceSettings> ValidatePathNotNullOrEmpty(SourceSettings settings)
     {
         return Result.Validate(settings, x => !string.IsNullOrEmpty(x.Path),
-            "В качестве пути к файлу источника была предоставлена пустая строка. Пожалуйста, укажите верный путь к файлу.");
+            Resources.SourceSettings_ValidatePathNotNullOrEmpty_Fail);
     }
 
     private static Result<SourceSettings> ValidatePathExists(SourceSettings settings)
     {
         return Result.Validate(settings, x => File.Exists(x.Path),
-            $@"Файла источника по указанному пути не существует: {System.IO.Path.GetFullPath(settings.Path)}.");
+            string.Format(Resources.SourceSettings_ValidatePathExists_Fail, System.IO.Path.GetFullPath(settings.Path)));
     }
 }

@@ -69,4 +69,10 @@
     <data name="MainForm_OnShown_Name" xml:space="preserve">
         <value>Tags Cloud Visualizator</value>
     </data>
+    <data name="PictureBoxImageHolder_ValidateImageCreation_Fail" xml:space="preserve">
+        <value>Call PictureBoxImageHolder.RecreateImage before other method call!</value>
+    </data>
+    <data name="TextReaderFactory_ResolveTextReader_Fail" xml:space="preserve">
+        <value>Указанный тип файлов не поддерживается в качестве источника.</value>
+    </data>
 </root>

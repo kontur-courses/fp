@@ -21,7 +21,7 @@ public class PictureBoxImageHolder : PictureBox, IImageHolder
     private Result<Image> ValidateImageCreation()
     {
         return Result.Validate(Image, x => x != null,
-            "Call PictureBoxImageHolder.RecreateImage before other method call!");
+            Resources.PictureBoxImageHolder_ValidateImageCreation_Fail);
     }
 
     public Result<None> UpdateUi()

@@ -18,6 +18,6 @@ public class ArchimedeanSpiralSettings : ISettings<ArchimedeanSpiralSettings>
     private static Result<ArchimedeanSpiralSettings> ValidateArguments(ArchimedeanSpiralSettings settings)
     {
         return Result.Validate(settings, x => x.DeltaAngle != 0 && x.Distance != 0,
-            "Параметры DeltaAngle и Distance не должны быть равны нулю. Пожалуйста, укажите корректные параметры.");
+            Resources.ArchimedeanSpiralSettings_ValidateArguments_Fail);
     }
 }

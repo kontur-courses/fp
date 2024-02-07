@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="SourceSettings_ValidatePathNotNullOrEmpty_Fail" xml:space="preserve">
+        <value>В качестве пути к файлу источника была предоставлена пустая строка. Пожалуйста, укажите верный путь к файлу.</value>
+    </data>
+    <data name="SourceSettings_ValidatePathExists_Fail" xml:space="preserve">
+        <value>Файла источника по указанному пути не существует: {0}.</value>
+    </data>
+    <data name="DocTextReader_GetBody_Fail" xml:space="preserve">
+        <value>Тело источника пусто. Пожалуйста, предоставьте другой файл.</value>
+    </data>
+    <data name="ArchimedeanSpiralSettings_ValidateArguments_Fail" xml:space="preserve">
+        <value>Параметры DeltaAngle и Distance не должны быть равны нулю. Пожалуйста, укажите корректные параметры.</value>
+    </data>
+    <data name="TagsSettings_ValidateFont_Fail" xml:space="preserve">
+        <value>Данный шрифт отстутствует в системе. Пожалуйста, введите корректное название шрифта.</value>
+    </data>
+    <data name="TagsSettings_ValidateFontSize_Fail" xml:space="preserve">
+        <value>Размер шрифта не может быть меньше или равен нулю. Пожалуйста, введите корректные настройки.</value>
+    </data>
+    <data name="ImageSettings_ValidateWidthAndHeight_Fail" xml:space="preserve">
+        <value>Ширина и высота изображения не могут быть меньше или равны нулю. Пожалуйста, введите корректные настройки.</value>
+    </data>
+    <data name="BaseCloudLayouter_ValidateRectangleSize_Fail" xml:space="preserve">
+        <value>Ширина и высота прямоугольника должны быть больше нуля.</value>
+    </data>
+</root>

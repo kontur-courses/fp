@@ -35,7 +35,7 @@ public abstract class BaseCloudLayouter<TPointsProvider> : ITagsCloudLayouter
     private static Result<Size> ValidateRectangleSize(Size rectangleSize)
     {
         return Result.Validate(rectangleSize, size => size is {Height: > 0, Width: > 0},
-            "Rectangle width and height should be positive");
+            Resources.BaseCloudLayouter_ValidateRectangleSize_Fail);
     }
 
     protected abstract Result<Point> FindPositionForRectangle(Size rectangleSize);

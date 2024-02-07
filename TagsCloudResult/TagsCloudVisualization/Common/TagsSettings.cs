@@ -25,12 +25,12 @@ public record TagsSettings : ISettings<TagsSettings>
     {
         var fontsCollection = new InstalledFontCollection();
         return Result.Validate(settings, x => fontsCollection.Families.Select(fontFamily => fontFamily.Name).Contains(x.Font),
-            "Данный шрифт отстутствует в системе. Пожалуйста, введите корректное название шрифта.");
+            Resources.TagsSettings_ValidateFont_Fail);
     }
 
     private static Result<TagsSettings> ValidateFontSize(TagsSettings settings)
     {
         return Result.Validate(settings, x => x.FontSize > 0,
-            "Размер шрифта не может быть меньше или равен нулю. Пожалуйста, введите корректные настройки.");
+            Resources.TagsSettings_ValidateFontSize_Fail);
     }
 }
