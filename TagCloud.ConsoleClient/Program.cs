@@ -1,25 +1,51 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-var options = Parser.Default.ParseArguments<Options>(args);
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var options = Parser.Default.ParseArguments<Options>(args);
 
-if (options.Errors.Any())
-    return;
+        if (options.Errors.Any())
+            return;
 
-var appOptions = AppOptionsCreator.CreateOptions(options.Value);
+        IConfiguration config = 
+            Result.Of(() => GetConfiguration(PathFinderHelper.GetPathToFile("defaultSettings.json")))
+                  .ReplaceError(errorMessage => "Can't load default settings \n" + errorMessage)
+                  .GetValueOrThrow();
 
-var builder = new ServiceCollection();
-builder.AddClient();
-builder.AddDomain(appOptions.DomainOptions);
-builder.AddInfrastructure();
-var provider = builder.BuildServiceProvider();
+        var appOptions = AppOptionsCreator.CreateOptions(options.Value, config);
 
-var inp = options.Value.InputTextPath;
-var outp = options.Value.OutputImagePath;
+        var provider = GetServiceProvider(appOptions);
 
-var text = provider.GetService<ITextLoader>()?.Load(inp);
+        var inp = options.Value.InputTextPath;
+        var outp = options.Value.OutputImagePath;
 
-var tagCloud = provider.GetService<ITagCloud>();
-var image = tagCloud.CreateCloud(text);
+        var textLoader = provider.GetService<ITextLoader>();
+        var tagCloud = provider.GetService<ITagCloud>();
+        var imageStorage = provider.GetService<IImageStorage>();
 
-provider.GetService<IImageStorage>()?.Save(image, outp);
+        var result = textLoader.Load(inp)
+                      .Then(text => tagCloud.CreateCloud(text))
+                      .Then(image => imageStorage.Save(image, outp))
+                      .OnFail(Console.WriteLine);
+    }
+
+    private static IConfiguration GetConfiguration(string pathToFile)
+    {
+        return new ConfigurationBuilder()
+            .AddJsonFile(pathToFile)
+            .Build();
+    }
+
+    private static ServiceProvider GetServiceProvider(AppOptions options)
+    {
+        var builder = new ServiceCollection();
+        builder.AddClient();
+        builder.AddDomain(options.DomainOptions);
+        builder.AddInfrastructure();
+        return builder.BuildServiceProvider();
+    }
+}

@@ -15,15 +15,7 @@ public class MorphologicalFilter : IWordsFilter
     {
         partsSpeech = options.PartsSpeech;
 
-#if DEBUG
-        var projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
-
-        executablePath = Directory.GetFiles(
-                Directory.GetParent(projectPath).FullName,
-                executableFile, SearchOption.AllDirectories)[0];
-#else
-        executablePath = executableFile; 
-#endif
+        executablePath = PathFinderHelper.GetPathToFile(executableFile);
     }
 
     public string[] Filter(string[] words)

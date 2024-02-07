@@ -1,13 +1,14 @@
-﻿using System.Drawing;
+﻿using Microsoft.Extensions.Configuration;
+using System.Drawing;
 
 public static class AppOptionsCreator
 {
-    public static AppOptions CreateOptions(Options clOptions)
+    public static AppOptions CreateOptions(Options clOptions, IConfiguration defaultConfig)
     {
-        var tagCloudOptions = CreateTagCloudOptions(clOptions);
-        var renderOptions = CreateRenderOptions(clOptions);
-        var wordExtractorOptions = CreateWordExtractionOptions(clOptions);
-        var serviceOptions = CreateServiceOptions(clOptions);
+        var tagCloudOptions      = CreateTagCloudOptions(clOptions, defaultConfig);
+        var renderOptions        = CreateRenderOptions(clOptions, defaultConfig);
+        var wordExtractorOptions = CreateWordExtractionOptions(clOptions, defaultConfig);
+        var serviceOptions       = CreateServiceOptions(clOptions, defaultConfig);
 
         return new AppOptions()
         {
@@ -21,24 +22,24 @@ public static class AppOptionsCreator
         };
     }
 
-    private static TagCloudOptions CreateTagCloudOptions(Options options)
+    private static TagCloudOptions CreateTagCloudOptions(Options options, IConfiguration defaultConfig)
     {
         return new TagCloudOptions 
         { 
-            Center = ParsePoint(options.TagCloudCenter), 
+            Center = ParsePoint(options.TagCloudCenter ?? defaultConfig["CenterPoint"]), 
             MaxTagsCount = -1 
         };
     }
 
-    private static RenderOptions CreateRenderOptions(Options options)
+    private static RenderOptions CreateRenderOptions(Options options, IConfiguration defaultConfig)
     {
-        var fontSizeSpan = ParseFontSize(options.FontSize);
+        var fontSizeSpan = ParseFontSize(options.FontSize ?? defaultConfig["FontSettings:FontSize"]);
 
         return new RenderOptions()
         {
-            ColorScheme = ColorScheme.CalmScheme,
-            FontBase = CreateFontBase(options.FontFamily ?? "Arial"),
-            ImageSize = ParseSize(options.ImageSize),
+            ColorScheme = ColorScheme.Schemes[defaultConfig["ColorScheme"]],
+            FontBase = CreateFontBase(options.FontFamily ?? defaultConfig["FontSettings:FontFamily"]),
+            ImageSize = ParseSize(options.ImageSize ?? defaultConfig["ImageSize"]),
             MinFontSize = fontSizeSpan.min,
             MaxFontSize = fontSizeSpan.max,
         };
@@ -49,39 +50,30 @@ public static class AppOptionsCreator
         return new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
     }
 
-    private static WordExtractionOptions CreateWordExtractionOptions(Options clOptions)
+    private static WordExtractionOptions CreateWordExtractionOptions(Options clOptions, IConfiguration defaultConfig)
     {
         return new WordExtractionOptions() { MinWordLength = 4, PartsSpeech = PartSpeech.Noun | PartSpeech.Verb };
     }
 
     private static Size ParseSize(string str)
     {
-        if (str is null)
-            return new Size(800, 800);
-
         var coords = str.Split("x").Select(int.Parse).ToArray();
         return new Size(coords[0], coords[1]);
     }
 
     private static Point ParsePoint(string str)
     {
-        if (str is null)
-            return new Point(400, 400);
-
         var coords = str.Split("x").Select(int.Parse).ToArray();
         return new Point(coords[0], coords[1]);
     }
 
     private static (int min, int max) ParseFontSize(string str)
     {
-        if (str is null)
-            return (24, 64);
-
         var sizes = str.Split(":").Select(int.Parse).ToArray();
         return (sizes[0], sizes[1]);
     }
 
-    public static ServiceOptions CreateServiceOptions(Options clOptions)
+    public static ServiceOptions CreateServiceOptions(Options clOptions, IConfiguration defaultConfig)
     {
         return new ServiceOptions()
         {

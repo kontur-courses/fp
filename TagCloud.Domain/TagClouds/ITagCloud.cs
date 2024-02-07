@@ -2,5 +2,5 @@
 
 public interface ITagCloud
 {
-    Bitmap CreateCloud(string text);
+    Result<Bitmap> CreateCloud(string text);
 }

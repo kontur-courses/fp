@@ -2,5 +2,5 @@
 
 public interface ITagCloudLayouter
 {
-    Rectangle PutNextRectangle(Size size);
+    Result<Rectangle> PutNextRectangle(Size size);
 }

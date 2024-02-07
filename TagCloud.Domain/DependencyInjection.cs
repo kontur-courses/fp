@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<ITagCloudRenderer, TagCloudRenderer>();
         services.AddScoped<ITagCloudLayouter, TagCloudLayouter>();
         services.AddScoped<IColorProvider, OpacityColorProvider>();
+        services.AddScoped<IOptionsValidator, OptionsValidator>();
 
         switch (options.ServiceOptions.FilterType)
         {
@@ -26,11 +27,11 @@ public static class DependencyInjection
 
         services.AddScoped<IWordsFilter, LengthFilter>();
         services.AddScoped<IWordsFilter, MorphologicalFilter>();
-        
 
         services.AddSingleton(options.TagCloudOptions);
         services.AddSingleton(options.RenderOptions);
         services.AddSingleton(options.WordExtractionOptions);
+        services.AddSingleton(options);
 
         return services;
     }

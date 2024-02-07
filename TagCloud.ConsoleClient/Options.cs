@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using System.Drawing;
 
 public class Options
 {
@@ -21,6 +20,4 @@ public class Options
     public string? TagsCount { get; set; }
     [Option('F', "family", Required = false, HelpText = "Font family (Arial default)")]
     public string? FontFamily { get; set; }
-
-    
 }

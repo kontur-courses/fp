@@ -14,6 +14,12 @@ public class ColorScheme
         FontColor = Color.FromArgb(255, 176, 62, 2)
     };
 
+    public static Dictionary<string, ColorScheme> Schemes => new Dictionary<string, ColorScheme>()
+    {
+        ["Warm"] = WarmScheme,
+        ["Calm"] = CalmScheme
+    };
+
 
     public Color BackgroundColor { get; set; }
     public Color FontColor { get; set; }

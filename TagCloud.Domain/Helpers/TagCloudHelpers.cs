@@ -5,4 +5,3 @@
         return ((double)value - min) / (max - min);
     }
 }
-

@@ -15,10 +15,10 @@ public class TagCloudLayouter : ITagCloudLayouter
         center = options.Center;
     }
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width < 0 || rectangleSize.Height < 0)
-            throw new ArgumentException("Rectangle can't be negative size.");
+            return Result.Fail<Rectangle>("Rectangle can't be negative size.");
 
         currentRectangle = new RectangleF(center, rectangleSize);
 
@@ -28,7 +28,7 @@ public class TagCloudLayouter : ITagCloudLayouter
 
         rectangles.Add(currentRectangle);
 
-        return Rectangle.Truncate(currentRectangle);
+        return Result.Ok(Rectangle.Truncate(currentRectangle));
     }
 
     private void MoveOutOfCenterInDirection(ref RectangleF rect, Vector2 direction)
