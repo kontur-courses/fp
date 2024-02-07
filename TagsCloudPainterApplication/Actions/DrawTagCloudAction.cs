@@ -113,10 +113,7 @@ public class DrawTagCloudAction : IUiAction
             return Result.Fail<TagsCloud>(tags.Error);
 
         cloudLayouter.Reset();
-        var layoutResult = cloudLayouter.PutTags(tags.GetValueOrThrow());
-        if (!layoutResult.IsSuccess)
-            return Result.Fail<TagsCloud>(layoutResult.Error);
-
+        tags.Then(tags => cloudLayouter.PutTags(tags));
         var cloud = cloudLayouter.GetCloud();
 
         return cloud;

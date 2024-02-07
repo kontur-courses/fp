@@ -53,19 +53,9 @@ public class TagsCloudLayouter : ICloudLayouter
         return nextRectangle;
     }
 
-    public Result<None> PutTags(List<Tag> tags)
+    public void PutTags(List<Tag> tags)
     {
-        if (tags is null || tags.Count == 0)
-            return Result.Fail<None>("Tags are empty");
-
-        foreach (var tag in tags)
-        {
-            var nextTag = PutNextTag(tag);
-            if (!nextTag.IsSuccess)
-                return Result.Fail<None>(nextTag.Error);
-        }
-
-        return Result.Ok();
+        tags?.Select(PutNextTag).ToList();
     }
 
     public TagsCloud GetCloud()

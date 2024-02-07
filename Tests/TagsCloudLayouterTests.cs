@@ -122,14 +122,6 @@ public class TagsCloudLayouterTests
     }
 
     [Test]
-    public void PutTags_Fails_WhenGivenEmptyDictionary()
-    {
-        var result = tagsCloudLayouter.PutTags([]);
-
-        Assert.That(result.IsSuccess, Is.False);
-    }
-
-    [Test]
     public void GetCloud_ReturnsAsManyTagsAsWasPut()
     {
         tagsCloudLayouter.PutNextTag(new Tag("ads", 10, 5));
@@ -140,17 +132,15 @@ public class TagsCloudLayouterTests
         rectanglesAmount.Should().Be(2);
     }
 
-    private static IEnumerable<TestCaseData> FailingTags => new[]
+    private static IEnumerable<TestCaseData> PutTagsNoExcepion = new[]
     {
-        new TestCaseData(new List<Tag>()).SetName("WhenGivenEmptyTags"),
-        new TestCaseData(null).SetName("WhenGivenNullTags")
+        new TestCaseData(null).SetName("WhenListOfTagsIsNull"),
+        new TestCaseData(new List<Tag>()).SetName("WhenListOfTagsIsEmpty"),
     };
 
-    [TestCaseSource(nameof(FailingTags))]
-    public void PutTags_ShouldFail_(List<Tag> tags)
+    [TestCaseSource(nameof(PutTagsNoExcepion))]
+    public void PutTags_ShouldNotThrow_(List<Tag> tags)
     {
-        var result = tagsCloudLayouter.PutTags(tags);
-
-        Assert.That(result.IsSuccess, Is.False);
+        Assert.DoesNotThrow(() =>  tagsCloudLayouter.PutTags(tags));
     }
 }

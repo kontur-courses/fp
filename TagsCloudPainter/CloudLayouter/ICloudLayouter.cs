@@ -8,5 +8,5 @@ public interface ICloudLayouter : IResetable
 {
     Result<Rectangle> PutNextTag(Tag tag);
     TagsCloud GetCloud();
-    Result<None> PutTags(List<Tag> tags);
+    void PutTags(List<Tag> tags);
 }
