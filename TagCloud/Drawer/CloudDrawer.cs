@@ -28,7 +28,7 @@ public class CloudDrawer : IDrawer
     public Result<Bitmap> DrawTagCloud(IEnumerable<(string word, int rank)> words)
     {
         var pointGenerator = pointGeneratorProvider.CreateGenerator(appSettings.LayouterType);
-
+        
         if (!pointGenerator.IsSuccess)
             return Result.Fail<Bitmap>(pointGenerator.Error);
 
@@ -40,9 +40,11 @@ public class CloudDrawer : IDrawer
         var layouter = new CloudLayouter(pointGenerator.Value);
         var tags = PlaceWords(words, layouter);
 
-        return !ValidateImageBorders(tags)
+        var cloudSize = CalculateCloudSize(tags);
+
+        return !ValidateCloudSize(cloudSize)
             ? Result.Fail<Bitmap>(
-                $"Tags don't fit to given image size of {appSettings.CloudWidth}x{appSettings.CloudHeight}")
+                $"Tags image with size of {cloudSize.Width}x{cloudSize.Height} don't fit to given size of {appSettings.CloudWidth}x{appSettings.CloudHeight}")
             : Result.Ok(DrawTags(tags, palette.Value));
     }
 
@@ -91,7 +93,7 @@ public class CloudDrawer : IDrawer
         return (int)Math.Round(length * LengthSizeMultiplier * ((double)fontSize / MaximalFontSize));
     }
 
-    private bool ValidateImageBorders(IEnumerable<Tag> tags)
+    private Size CalculateCloudSize(IEnumerable<Tag> tags)
     {
         var tagsPositions = tags.Select(t => t.Position);
         var minX = tagsPositions.Min(p => p.Left);
@@ -102,6 +104,11 @@ public class CloudDrawer : IDrawer
         var width = maxX - minX;
         var height = maxY - minY;
 
-        return width <= appSettings.CloudWidth && height <= appSettings.CloudHeight;
+        return new Size(width, height);
+    }
+
+    private bool ValidateCloudSize(Size size)
+    {
+        return size.Width <= appSettings.CloudWidth && size.Height <= appSettings.CloudHeight;
     }
 }

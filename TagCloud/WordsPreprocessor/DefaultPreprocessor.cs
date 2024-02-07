@@ -4,6 +4,6 @@ public class DefaultPreprocessor : IPreprocessor
 {
     public IEnumerable<string> HandleWords(IEnumerable<string> words)
     {
-        return words.Select(word => word.ToLower());
+        return words.Select(word => word.Trim().ToLowerInvariant());
     }
 }

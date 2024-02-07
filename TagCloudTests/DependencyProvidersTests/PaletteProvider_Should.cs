@@ -35,6 +35,7 @@ public class PaletteProvider_Should
         var result = sut.CreatePalette(wrongPalette);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"Palette with name {wrongPalette} doesn't exist");
+        result.Error.Should()
+            .Be($"Palette with name {wrongPalette} doesn't exist. Available palettes are: {paletteName}");
     }
 }

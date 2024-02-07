@@ -37,12 +37,12 @@ public class Configurator
     {
         var builder = new ContainerBuilder();
 
-        builder.RegisterType<TxtReader>().As<IFileReader>();
-        builder.RegisterType<DocReader>().As<IFileReader>();
-        builder.RegisterType<ImageSaver>().As<ISaver>();
-        builder.RegisterType<CloudDrawer>().As<IDrawer>();
-        builder.RegisterType<WordRankerByFrequency>().As<IWordRanker>();
-        builder.RegisterType<DefaultPreprocessor>().As<IPreprocessor>();
+        builder.RegisterType<TxtReader>().As<IFileReader>().SingleInstance();
+        builder.RegisterType<DocReader>().As<IFileReader>().SingleInstance();
+        builder.RegisterType<ImageSaver>().As<ISaver>().SingleInstance();
+        builder.RegisterType<CloudDrawer>().As<IDrawer>().SingleInstance();
+        builder.RegisterType<WordRankerByFrequency>().As<IWordRanker>().SingleInstance();
+        builder.RegisterType<DefaultPreprocessor>().As<IPreprocessor>().SingleInstance();
         builder.RegisterType<SpiralGenerator>().As<IPointGenerator>();
         builder.RegisterType<CirclesGenerator>().As<IPointGenerator>();
         builder.RegisterType<RandomPalette>().As<IPalette>();
@@ -50,13 +50,14 @@ public class Configurator
 
         builder.RegisterType<ConsoleUI>().As<IUserInterface>();
 
-        builder.Register(c => new WordFilter().UsingFilter((word) => word.Length > 3)).As<IFilter>();
-        builder.Register(c => new FileReaderProvider(c.Resolve<IEnumerable<IFileReader>>())).As<IFileReaderProvider>();
+        builder.Register(c => new WordFilter().UsingFilter((word) => word.Length > 3)).As<IFilter>().SingleInstance();
+        builder.Register(c => new FileReaderProvider(c.Resolve<IEnumerable<IFileReader>>())).As<IFileReaderProvider>()
+            .SingleInstance();
         builder.Register(c => new PointGeneratorProvider(c.Resolve<IEnumerable<IPointGenerator>>()))
             .As<IPointGeneratorProvider>();
         builder.Register(c => new PaletteProvider(c.Resolve<IEnumerable<IPalette>>())).As<IPaletteProvider>();
 
-        builder.Register(c => settings).As<IAppSettings>();
+        builder.Register(c => settings).As<IAppSettings>().SingleInstance();
 
         return builder;
     }

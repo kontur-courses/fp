@@ -9,9 +9,11 @@ public class DocReader : IFileReader
 
     public Result<IEnumerable<string>> ReadLines(string inputPath)
     {
-        return FileExists(inputPath, out var error)
+        var fileExistsResult = FileReaderUtils.FileExists(inputPath);
+
+        return fileExistsResult.IsSuccess
             ? Result.Ok(ReadFile(inputPath))
-            : Result.Fail<IEnumerable<string>>(error);
+            : Result.Fail<IEnumerable<string>>(fileExistsResult.Error);
     }
 
     private IEnumerable<string> ReadFile(string inputPath)

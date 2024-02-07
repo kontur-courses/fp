@@ -14,9 +14,13 @@ public class FileReaderProvider : IFileReaderProvider
     public Result<IFileReader> CreateReader(string inputPath)
     {
         var extension = inputPath.Split(".").Last();
+        var availableFormats =
+            string.Join("", readers.Select(pair => string.Join("", pair.Value.GetAvailableExtensions())));
+
         return readers.ContainsKey(extension)
             ? Result.Ok(readers[extension])
-            : Result.Fail<IFileReader>($"Reading of file {inputPath} with extension {extension} is not supported");
+            : Result.Fail<IFileReader>(
+                $"Reading of file {inputPath} with extension {extension} is not supported. Available file formats are: {availableFormats}");
     }
 
     private Dictionary<string, IFileReader> ArrangeReaders(IEnumerable<IFileReader> readers)

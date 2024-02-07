@@ -37,6 +37,7 @@ public class FileReaderProvider_Should
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should()
-            .Be($"Reading of file {fileName}.{wrongExtension} with extension {wrongExtension} is not supported");
+            .Be(
+                $"Reading of file {fileName}.{wrongExtension} with extension {wrongExtension} is not supported. Available file formats are: {extension}");
     }
 }

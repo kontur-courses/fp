@@ -35,6 +35,6 @@ public class PointGeneratorProvider_Should
         var result = sut.CreateGenerator(wrongName);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"{wrongName} layouter is not supported");
+        result.Error.Should().Be($"{wrongName} layouter is not supported. Available layouters are: {generatorName}");
     }
 }

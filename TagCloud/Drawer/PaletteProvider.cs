@@ -13,9 +13,11 @@ public class PaletteProvider : IPaletteProvider
 
     public Result<IPalette> CreatePalette(string paletteName)
     {
+        var availablePalettes = string.Join("", palettes.Select(pair => pair.Value.Name));
+        
         return palettes.ContainsKey(paletteName)
             ? Result.Ok(palettes[paletteName])
-            : Result.Fail<IPalette>($"Palette with name {paletteName} doesn't exist");
+            : Result.Fail<IPalette>($"Palette with name {paletteName} doesn't exist. Available palettes are: {availablePalettes}");
     }
 
     private Dictionary<string, IPalette> ArrangePalettes(IEnumerable<IPalette> palettes)
