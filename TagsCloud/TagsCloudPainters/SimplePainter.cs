@@ -12,7 +12,7 @@ public class SimplePainter : IPainter
     private readonly IColorGenerator _colorGenerator;
     private readonly string _filename;
     private readonly Size _imageSize;
-    private readonly string _color;
+    private readonly Color _color;
 
     public SimplePainter(IColorGenerator colorGenerator, Options options)
     {
@@ -26,11 +26,7 @@ public class SimplePainter : IPainter
     {
         var tags = cloud.Tags;
         var cloudSize = cloud.CloudSize;
-        if (!Color.FromName(_color).IsKnownColor)
-        {
-            return Result.Fail<None>($"There is no color with this name: {_color}");
-        }
-        var backgroundColor = Color.FromName(_color);
+
 
         if (!cloud.Tags.Any())
             return Result.Fail<None>("Painter can't draw empty tag collection");
@@ -41,7 +37,7 @@ public class SimplePainter : IPainter
         
         using var bitmap = new Bitmap(cloudSize.Width, cloudSize.Height);
         using var g = Graphics.FromImage(bitmap);
-        g.Clear(backgroundColor);
+        g.Clear(_color);
         foreach (var tag in tags)
         {
             var color = _colorGenerator.GetTagColor(tag).GetValueOrThrow();

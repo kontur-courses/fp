@@ -50,7 +50,7 @@ public class CircularCloudLayouter : ILayouter
         }
 
         var cloud = new Cloud(_tags, GetImageSize());
-        return Result.Ok(cloud);
+        return cloud;
     }
 
     private Size GetImageSize()

@@ -36,6 +36,6 @@ public class SpiralDistributor : IDistributor
         }
 
         var point = new Point((int)x, (int)y);
-        return Result.Ok(point);
+        return point;
     }
 }

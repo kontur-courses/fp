@@ -28,6 +28,6 @@ public class SimpleWordFontCalculator : IWordFontCalculator
         }
         var result = wordsDictionary.ToDictionary(entry => entry.Key, 
             entry => new Font(_font, entry.Value));
-        return Result.Ok(result);
+        return result;
     }
 }

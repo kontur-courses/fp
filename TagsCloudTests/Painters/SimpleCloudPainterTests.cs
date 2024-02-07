@@ -14,7 +14,7 @@ public class SimpleCloudPainterTests
     public void SetUp()
     {
         var projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName.Replace("\\bin", "");
-        var options = new Options() { OutputFile = Path.Combine(projectDirectory, "Painters", "images", FileName), Background = "Red"};
+        var options = new Options() { OutputFile = Path.Combine(projectDirectory, "Painters", "images", FileName), Background = Color.Aqua};
         testFilePath = options.OutputFile;
         var color = new Mock<IColorGenerator>();
         color.Setup(c => c.GetTagColor(It.IsAny<Tag>())).Returns(new Result<Color>(null,Color.Black));

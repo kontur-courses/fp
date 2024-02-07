@@ -25,6 +25,6 @@ public class WordsProvider : IWordsProvider
             .Where(g => _validator.IsWordValid(g.Key).GetValueOrThrow())
             .OrderByDescending(g2 => g2.Count())
             .ToDictionary(group => group.Key, group => group.Count());
-        return Result.Ok(dict);
+        return dict;
     }
 }
