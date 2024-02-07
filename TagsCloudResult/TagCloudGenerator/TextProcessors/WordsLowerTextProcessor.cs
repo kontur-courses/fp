@@ -9,7 +9,7 @@
             foreach (string line in text)
                 words.Add(line.ToLower());
 
-            return new Result<IEnumerable<string>>(words, null);
+            return Result<IEnumerable<string>>.Success(words);
         }
     }
 }

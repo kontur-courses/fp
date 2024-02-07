@@ -1,19 +1,21 @@
 ﻿using NUnit.Framework;
-using TagCloudGenerator;
-using TagCloudGenerator.TextReaders;
-using TagCloudGenerator.TextProcessors;
 using TagsCloudVisualization;
 using FluentAssertions;
+using TagCloudGenerator;
+using TagCloudGenerator.TextProcessors;
+using TagCloudGenerator.TextReaders;
+using TagsCloudVisualization.PointDistributors;
+using System.Drawing;
 
-namespace TagCloudGeneratorTest
+namespace TagsCloudVisualizationTest
 {
     [TestFixture]
     public class ResultTests
     {
         private TagCloudDrawer tagCloudDrawer;
         private VisualizingSettings visualizingSettings;
-        private readonly string toDicPath = "../../../Dictionaries/English (American).dic";
-        private readonly string toAffPath = "../../../Dictionaries/English (American).aff";
+        private readonly string toDicPath = "../../../TestsData/English (American).dic";
+        private readonly string toAffPath = "../../../TestsData/English (American).aff";
 
         [SetUp]
         public void Setup()
@@ -32,7 +34,7 @@ namespace TagCloudGeneratorTest
             new TestCaseData("../../../TestsData/testNotFound.pdf").Returns("Could not find file ../../../TestsData/testNotFound.pdf").SetName("ErrorWitPdfFormat"),
             new TestCaseData(null).Returns("There is no path to the file").SetName("WhenFilePathIsNull"),
             new TestCaseData("../../../TestsData/EmptyFile.txt").Returns("The file is empty").SetName("WhenFileIsEmpty"),
-            new TestCaseData("../../../TestsData/test.rtf").Returns("The file is empty or contains an unsuitable format for reading - .rtf").SetName("WhenPathUncorrectedFileFormat")
+            new TestCaseData("../../../TestsData/test.rtf").Returns("File contains an unsuitable format for reading - .rtf").SetName("WhenPathUncorrectedFileFormat")
         };
 
         [TestOf(nameof(TagCloudDrawer))]
@@ -62,6 +64,16 @@ namespace TagCloudGeneratorTest
             var savingImage = tagCloudDrawer.SaveImage(image.Value, visualizingSettings);
 
             savingImage.Error.Should().Be("Uncorrected Image Format");
+        }
+
+        [Test]
+        [TestOf(nameof(CircularCloudLayouter))]
+        public void WhenPassUncorrectedRectangleSize_ShouldReturnCorrectErrorText()
+        {
+            var circularCloudLayouter = new CircularCloudLayouter(new Spiral(new Point(0,0), 1, 0.1));
+            var rectangle = circularCloudLayouter.PutNextRectangle(new Size(0,0));
+
+            rectangle.Error.Should().Be("Incorrect rectangle size");
         }
     }
 }

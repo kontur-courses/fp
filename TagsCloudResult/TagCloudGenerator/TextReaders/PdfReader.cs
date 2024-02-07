@@ -18,12 +18,12 @@ namespace TagCloudGenerator.TextReaders
                         text = page.Text.Split(' ').ToList();
                         text.Remove("");
                     }
-                    return new Result<IEnumerable<string>>(text, null);
+                    return Result<IEnumerable<string>>.Success(text);
                 }
             }
             catch
             {
-                return new Result<IEnumerable<string>>(null, $"Could not find file {filePath}");
+                return Result<IEnumerable<string>>.Failure($"Could not find file {filePath}");
             }
         }
     }

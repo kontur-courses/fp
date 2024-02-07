@@ -8,11 +8,11 @@
         {
             try
             {
-                return new Result<IEnumerable<string>>(File.ReadAllLines(filePath), null);
+                return Result<IEnumerable<string>>.Success(File.ReadAllLines(filePath));
             }
             catch
             {
-                return new Result<IEnumerable<string>>(null, $"Could not find file {filePath}");
+                return Result<IEnumerable<string>>.Failure($"Could not find file {filePath}");
             }
 
         }

@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using TagCloudGenerator;
 
 namespace TagsCloudVisualization
 {
     public interface ICircularCloudLayouter
     {
-        Rectangle PutNextRectangle(Size rectangleSize);
+        Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

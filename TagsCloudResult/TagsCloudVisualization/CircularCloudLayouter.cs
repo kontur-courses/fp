@@ -1,6 +1,6 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
+using TagCloudGenerator;
 using TagsCloudVisualization.PointDistributors;
 
 namespace TagsCloudVisualization
@@ -16,13 +16,13 @@ namespace TagsCloudVisualization
             cloud = new Cloud(distributor.GetCenter());
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                throw new ArgumentException();
+                return Result<Rectangle>.Failure("Incorrect rectangle size");
 
             if (cloud.Rectangles.Count == 0)
-                return AddToCenterPosition(rectangleSize);
+                return Result<Rectangle>.Success(AddToCenterPosition(rectangleSize));
 
             var rectangle = new Rectangle(distributor.GetPosition(), rectangleSize);
 
@@ -33,7 +33,7 @@ namespace TagsCloudVisualization
 
             cloud.Rectangles.Add(rectangle);
 
-            return rectangle;
+            return Result<Rectangle>.Success(rectangle);
         }
 
         private Rectangle AddToCenterPosition(Size rectangleSize)

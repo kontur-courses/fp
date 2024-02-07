@@ -22,7 +22,7 @@ namespace TagCloudGenerator.TextProcessors
             }
             catch
             {
-                return new Result<IEnumerable<string>>(null, "The path to the dictionary is incorrect or the dictionary is unsuitable");
+                return Result<IEnumerable<string>>.Failure("The path to the dictionary is incorrect or the dictionary is unsuitable");
             }
 
             var words = new List<string>();
@@ -43,7 +43,7 @@ namespace TagCloudGenerator.TextProcessors
                 words.Add(word);
             }
 
-            return new Result<IEnumerable<string>>(words, null);
+            return Result<IEnumerable<string>>.Success(words);
         }
     }
 }

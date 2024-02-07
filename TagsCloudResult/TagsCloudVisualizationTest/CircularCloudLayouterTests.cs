@@ -15,7 +15,6 @@ namespace TagsCloudVisualizationTest
     [TestFixture]
     public class CircularCloudLayouterTests
     {
-      //  private readonly CircularCloudLayouter layouter = new CircularCloudLayouter(new Spiral(new Point(0,0), 1, 0.1));
         private static readonly Point Center = new Point(50, 50);
         private RectangleF[] currentRectangles;
 
@@ -52,9 +51,9 @@ namespace TagsCloudVisualizationTest
         {
             CircularCloudLayouter layouter = new CircularCloudLayouter(new Spiral(new Point(width/2, height/2), 1, 0.1));
 
-            Assert.Throws<ArgumentException>(() => layouter.PutNextRectangle(new Size(width, height)));
+            var result = layouter.PutNextRectangle(new Size(width, height));
+            result.Error.Should().Be("Incorrect rectangle size");        
         }
-           
 
         [Test]
         public void WhenPutNewRectangle_ShouldBeAddedToList()
@@ -63,7 +62,7 @@ namespace TagsCloudVisualizationTest
 
             currentRectangles = new RectangleF[]
             {
-                layouter.PutNextRectangle(new Size(40, 20))
+                layouter.PutNextRectangle(new Size(40, 20)).Value
             };
 
             currentRectangles.Length.Should().Be(1);
@@ -84,8 +83,8 @@ namespace TagsCloudVisualizationTest
             CircularCloudLayouter layouter = new CircularCloudLayouter(new Spiral(new Point(0, 0), 1, 0.1));
             currentRectangles = new RectangleF[]
             {
-                layouter.PutNextRectangle(rectangleSize),
-                layouter.PutNextRectangle(newRectangleSize)
+                layouter.PutNextRectangle(rectangleSize).Value,
+                layouter.PutNextRectangle(newRectangleSize).Value
             };
 
             return currentRectangles.First().IntersectsWith(currentRectangles.Last());
@@ -99,7 +98,7 @@ namespace TagsCloudVisualizationTest
 
             currentRectangles = new RectangleF[]
             {
-                layouter.PutNextRectangle(new Size(40, 20))
+                layouter.PutNextRectangle(new Size(40, 20)).Value
             };
 
             currentRectangles.First().Location.X.Should().Be(480);

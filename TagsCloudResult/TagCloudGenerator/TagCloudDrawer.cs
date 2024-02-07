@@ -23,8 +23,65 @@ namespace TagCloudGenerator
         public Result<Bitmap> DrawWordsCloud(string filePath, VisualizingSettings visualizingSettings)
         {
             if (filePath == null)
-                return new Result<Bitmap>(null, "There is no path to the file");
+                return Result<Bitmap>.Failure("There is no path to the file");
 
+            var text = ReadText(filePath);            
+            if (!text.IsSuccess)
+                return Result<Bitmap>.Failure(text.Error);
+
+            var words = text.Value;
+            if (words.Count == 0)
+                return Result<Bitmap>.Failure(string.Format("The file is empty"));
+
+            words = ProcessText(textProcessors, words);           
+            var wordsWithCount = wordCounter.CountWords(words);
+
+            ImageScaler imageScaler = new ImageScaler(wordsWithCount);
+            var rectangles = GetRectanglesToDraw(wordsWithCount, visualizingSettings);
+            var scaleImage = GetScaleImage(rectangles, imageScaler, visualizingSettings);
+
+            if (scaleImage.IsSuccess)
+                return Result<Bitmap>.Success(scaleImage.Value);
+
+            var image = Draw(wordsWithCount, visualizingSettings, rectangles);
+            if (image == null)
+                return Result<Bitmap>.Failure("Failed to draw an image");
+
+            return Result<Bitmap>.Success(Draw(wordsWithCount, visualizingSettings, rectangles));
+        }
+
+        private List<string> ProcessText(ITextProcessor[] textProcessors, List<string> words)
+        {
+            foreach (var processor in textProcessors)
+            {
+                var processedText = processor.ProcessText(words);
+                if (processedText.IsSuccess)
+                    words = processedText.Value.ToList();
+            }
+
+            return words;
+        }
+
+        private Result<Bitmap> GetScaleImage(RectangleF[] rectangles, ImageScaler imageScaler, VisualizingSettings settings)
+        {
+            var smallestSizeOfRectangles = imageScaler.GetMinPoints(rectangles);
+            var unscaledImageSize = imageScaler.GetImageSizeWithRealSizeRectangles(rectangles, smallestSizeOfRectangles);
+
+            if (!imageScaler.NeedScale(settings, unscaledImageSize))
+                return Result<Bitmap>.Failure("Scaling is not required");
+
+            var bitmap = imageScaler.DrawScaleCloud(settings, rectangles, unscaledImageSize, smallestSizeOfRectangles);
+
+            if (bitmap == null)
+                return Result<Bitmap>.Failure("Failed to draw an image");
+
+            Console.WriteLine("The tag cloud is drawn");
+
+            return Result<Bitmap>.Success(bitmap);
+        }
+
+        private Result<List<string>> ReadText(string filePath)
+        {
             var words = new List<string>();
             var extension = Path.GetExtension(filePath);
             var uncorrectedExtension = true;
@@ -41,49 +98,20 @@ namespace TagCloudGenerator
                         break;
                     }
                     else
-                        return new Result<Bitmap>(null, text.Error);
+                        return Result<List<string>>.Failure(text.Error);
                 }
             }
 
             if (uncorrectedExtension)
-                return new Result<Bitmap>(null, string.Format("The file is empty or contains an unsuitable format for reading - {0}", extension));
+                return Result<List<string>>.Failure(string.Format("File contains an unsuitable format for reading - {0}", extension));
 
-            if (words.Count == 0 && !uncorrectedExtension)
-                return new Result<Bitmap>(null, string.Format("The file is empty"));
-
-
-            foreach (var processor in textProcessors)
-                words = processor.ProcessText(words).Value.ToList();
-
-            var wordsWithCount = wordCounter.CountWords(words);
-            ImageScaler imageScaler = new ImageScaler(wordsWithCount);
-            var rectangles = GetRectanglesToDraw(wordsWithCount, visualizingSettings);
-
-            var smallestSizeOfRectangles = imageScaler.GetMinPoints(rectangles);
-            var unscaledImageSize = imageScaler.GetImageSizeWithRealSizeRectangles(rectangles, smallestSizeOfRectangles);
-
-            if (imageScaler.NeedScale(visualizingSettings, unscaledImageSize))
-            {
-                var bitmap = imageScaler.DrawScaleCloud(visualizingSettings, rectangles, unscaledImageSize, smallestSizeOfRectangles);
-
-                if (bitmap == null)
-                    return new Result<Bitmap>(null, "Failed to draw an image");
-
-                Console.WriteLine("The tag cloud is drawn");
-                return new Result<Bitmap>(bitmap, null);
-            }
-
-            var image = Draw(wordsWithCount, visualizingSettings, rectangles);
-            if (image == null)
-                return new Result<Bitmap>(null, "Failed to draw an image");
-
-            return new Result<Bitmap>(Draw(wordsWithCount, visualizingSettings, rectangles), null);
+            return Result<List<string>>.Success(words);
         }
 
         public Result<bool> SaveImage(Bitmap bitmap, VisualizingSettings visualizingSettings)
         {
             if (bitmap == null)
-                return new Result<bool>(false, "Bitmap is null");
+                return Result<bool>.Failure("Bitmap is null");
 
             var extension = Path.GetExtension(visualizingSettings.ImageName);
             var format = GetImageFormat(extension);
@@ -91,12 +119,12 @@ namespace TagCloudGenerator
             if (!format.IsSuccess)
             {
                 Console.WriteLine(format.Error);
-                return new Result<bool>(false, "Uncorrected Image Format");
+                return Result<bool>.Failure("Uncorrected Image Format");
             }
 
             bitmap.Save(visualizingSettings.ImageName, format.Value);
             Console.WriteLine($"The image is saved, the path to the image: {Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase)}");
-            return new Result<bool>(true, null);
+            return Result<bool>.Success(true);
         }
 
         private Result<ImageFormat> GetImageFormat(string fileName)
@@ -104,35 +132,35 @@ namespace TagCloudGenerator
             var extension = Path.GetExtension(fileName);
 
             if (string.IsNullOrEmpty(extension))
-                return new Result<ImageFormat>(null, string.Format("Unable to determine file extension for fileName: {0}", fileName));
+                return Result<ImageFormat>.Failure(string.Format("Unable to determine file extension for fileName: {0}", fileName));
 
             switch (extension.ToLower())
             {
                 case @".bmp":
-                    return new Result<ImageFormat>(ImageFormat.Bmp, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Bmp);
 
                 case @".gif":
-                    return new Result<ImageFormat>(ImageFormat.Gif, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Gif);
 
                 case @".ico":
-                    return new Result<ImageFormat>(ImageFormat.Icon, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Icon);
 
                 case @".jpg":
                 case @".jpeg":
-                    return new Result<ImageFormat>(ImageFormat.Jpeg, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Jpeg);
 
                 case @".png":
-                    return new Result<ImageFormat>(ImageFormat.Png, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Png);
 
                 case @".tif":
                 case @".tiff":
-                    return new Result<ImageFormat>(ImageFormat.Tiff, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Tiff);
 
                 case @".wmf":
-                    return new Result<ImageFormat>(ImageFormat.Wmf, null);
+                    return Result<ImageFormat>.Success(ImageFormat.Wmf);
 
                 default:
-                    return new Result<ImageFormat>(null, string.Format("Unable to determine file extension for fileName: {0}", fileName));
+                    return Result<ImageFormat>.Failure(string.Format("Unable to determine file extension for fileName: {0}", fileName));
             }
         }
 
@@ -159,7 +187,6 @@ namespace TagCloudGenerator
 
         private RectangleF[] GetRectanglesToDraw(Dictionary<string, int> text, VisualizingSettings settings)
         {
-
             using var bitmap = new Bitmap(settings.ImageSize.Width, settings.ImageSize.Height);
             using var graphics = Graphics.FromImage(bitmap);
             var layouter = new CircularCloudLayouter(settings.PointDistributor);
@@ -170,7 +197,7 @@ namespace TagCloudGenerator
                 SizeF size = graphics.MeasureString(line.Key, font);
                 var rectangle = layouter.PutNextRectangle(size.ToSize());
 
-                rectangles.Add(rectangle);
+                rectangles.Add(rectangle.Value);
             }
 
             return rectangles.ToArray();
