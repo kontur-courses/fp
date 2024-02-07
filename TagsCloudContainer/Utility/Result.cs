@@ -24,6 +24,22 @@
                 return Value;
             throw new InvalidOperationException($"Failed operation with error: {Error}");
         }
+
+        public void OnSuccess(Action<T> onSuccess)
+        {
+            if (IsSuccess)
+            {
+                onSuccess(Value);
+            }
+        }
+
+        public void OnFail(Action<string> onFail)
+        {
+            if (!IsSuccess)
+            {
+                onFail(Error);
+            }
+        }
     }
 
     public class None
@@ -65,7 +81,7 @@
                 return Fail<T>(error ?? e.Message);
             }
         }
-        //
+
         public static Result<None> OfAction(Action f, string? error = null)
         {
             try
@@ -78,21 +94,21 @@
                 return Fail<None>(error ?? e.Message);
             }
         }
-        //
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, TOutput> continuation)
         {
             return input.Then(inp => Of(() => continuation(inp)));
         }
-        //
+
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
             Action<TInput> continuation)
         {
             return input.Then(inp => OfAction(() => continuation(inp)));
         }
-        //
+
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
             Func<TInput, Result<TOutput>> continuation)
@@ -101,7 +117,7 @@
                 ? continuation(input.Value)
                 : Fail<TOutput>(input.Error);
         }
-        //
+
         public static Result<TInput> OnFail<TInput>(
             this Result<TInput> input,
             Action<string> handleError)
@@ -110,7 +126,12 @@
                 handleError(input.Error);
             return input;
         }
-        //
+
+        public static void OnSuccess<T>(this Result<T> result, Action<T> onSuccess)
+        {
+            result.OnSuccess(onSuccess);
+        }
+
         public static Result<TInput> ReplaceError<TInput>(
             this Result<TInput> input,
             Func<string, string> replaceError)
@@ -119,7 +140,7 @@
                 ? input
                 : Fail<TInput>(replaceError(input.Error));
         }
-        //
+
         public static Result<TInput> RefineError<TInput>(
             this Result<TInput> input,
             string errorMessage)
