@@ -8,6 +8,7 @@ public class FlowerSpiral : ISpiral
     private readonly double petalLength;
     private readonly float step;
     private int counter;
+
     public FlowerSpiral(double petalLength = 0.5, int petalCount = 4, float step = 0.1f)
     {
         this.petalLength = petalLength;

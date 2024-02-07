@@ -2,7 +2,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using TagsCloud.App.Infrastructure;
 using TagsCloud.App.Settings;
-using TagsCloud.Infrastructure;
 using TagsCloud.Infrastructure.UiActions;
 
 namespace TagsCloud;

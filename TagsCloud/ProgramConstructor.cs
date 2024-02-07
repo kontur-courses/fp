@@ -1,8 +1,6 @@
-using System.Drawing;
 using System.Reflection;
 using Autofac;
 using TagsCloud.App;
-using TagsCloud.App.Actions;
 using TagsCloud.App.Infrastructure;
 using TagsCloud.App.Settings;
 using TagsCloud.CloudLayouter;

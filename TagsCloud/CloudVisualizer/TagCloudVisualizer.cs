@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using TagsCloud.App.Settings;
@@ -10,8 +9,11 @@ namespace TagsCloud.CloudVisualizer;
 
 public class TagCloudVisualizer
 {
+    public const int Border = 35;
+    private readonly string Link = "https://github.com/lepeap/DeepMorphy/blob/master/README.md";
     private readonly Size sizeImage;
     private readonly TagSettings tagSettings;
+
     public TagCloudVisualizer(TagSettings tagSettings, Size imageSize)
     {
         sizeImage = imageSize;
@@ -26,27 +28,34 @@ public class TagCloudVisualizer
         return new Tag(font, wordInfo.Word, textRectangle.GetValueOrThrow(), tagSettings.Color);
     }
 
-    private bool IsRectangleOutOfBounds(Rectangle rectangle, Size imageSize)
+    private Rectangle MakeNeedImageSize(Rectangle rectangle, Rectangle imageRectangle)
     {
-        return rectangle.Left < 0 
-               || rectangle.Top < 0 
-               || rectangle.Right > imageSize.Width 
-               || imageSize.Height < rectangle.Bottom;
+        var leftmost = Math.Min(imageRectangle.Left, rectangle.Left);
+        var rightmost = Math.Max(imageRectangle.Right, rectangle.Right);
+        var topmost = Math.Min(imageRectangle.Top, rectangle.Top);
+        var bottommost = Math.Max(imageRectangle.Bottom, rectangle.Bottom);
+        return new Rectangle(leftmost, topmost, rightmost - leftmost, bottommost - topmost);
     }
 
-   public Result<None> DrawTags(IEnumerable<WordInfo> words, Graphics graphics, ICloudLayouter cloudLayouter)
+    private bool IsRectangleOutOfBounds(Rectangle expectedImage)
     {
+        return sizeImage.Height < expectedImage.Height || sizeImage.Width < expectedImage.Width;
+    }
+
+    public Result<None> DrawTags(IEnumerable<WordInfo> words, Graphics graphics, ICloudLayouter cloudLayouter)
+    {
+        var imageRectangle = new Rectangle(new Point(0, 0), sizeImage);
         foreach (var word in words)
         {
             var tag = GetTag(word, cloudLayouter);
             var brush = new SolidBrush(tag.Color);
-            if (IsRectangleOutOfBounds(tag.Rectangle, sizeImage))
-            {
-                return Result.Fail<None>("Облако тегов вышло за границы изображения.");
-            }
+            imageRectangle = MakeNeedImageSize(tag.Rectangle, imageRectangle);
             graphics.DrawString(tag.Word, tag.Font, brush, tag.Rectangle.Location);
         }
 
-        return Result.Ok();
+        return IsRectangleOutOfBounds(imageRectangle)
+            ? Result.Fail<None>(
+                $"Облако тегов вышло за границы изображения. Поставь размер {imageRectangle.Width + Border * 2}x{imageRectangle.Height + Border * 2}")
+            : Result.Ok();
     }
 }

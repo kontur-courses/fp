@@ -14,7 +14,9 @@ public class FileReader
         return File.Exists(filePath)
             ? parsers.TryGetValue(Path.GetExtension(filePath).Trim('.'), out var parser)
                 ? Result.Ok<IEnumerable<string>>(parser.GetWordList(filePath))
-                : Result.Fail<IEnumerable<string>>($"not found parser for {Path.GetExtension(filePath).Trim('.')}")
-            : Result.Fail<IEnumerable<string>>($"Error: File not found at the specified path '{filePath}'.");
+                : Result.Fail<IEnumerable<string>>(
+                    $"К сожалению, эта программа поддерживает только файлы с расширениями txt, doc и docx.\n "
+                    + $"Попробуйте сконвертировать ваш файл с расширением {Path.GetExtension(filePath).Trim('.')} в один из указанных типов.")
+            : Result.Fail<IEnumerable<string>>($"Файл по пути '{filePath}' не найден");
     }
 }

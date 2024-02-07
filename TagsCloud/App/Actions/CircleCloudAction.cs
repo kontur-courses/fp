@@ -32,6 +32,7 @@ public class CircleCloudAction : IUiAction
             ErrorHandler.HandleError("сначала загрузи файл");
             return;
         }
+
         painter.Paint(settings.File.FullName, spiral).OnFail(ErrorHandler.HandleError);
     }
 }

@@ -62,7 +62,8 @@ public class FileReaderTests
         documentWriter.SaveToFile(FileName, FileFormat.PDF);
         var result = sut.GetWords(FileName);
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"not found parser for {nameof(FileFormat.PDF).ToLower()}");
+        result.Error.Should().Be($"К сожалению, эта программа поддерживает только файлы с расширениями txt, doc и docx.\n " 
+                                 + $"Попробуйте сконвертировать ваш файл с расширением {nameof(FileFormat.PDF).ToLower()} в один из указанных типов.");
     }
     
     [Test]
@@ -71,6 +72,6 @@ public class FileReaderTests
         FileName = "NotFound.pdf";
         var result = sut.GetWords(FileName);
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"Error: File not found at the specified path '{FileName}'.");
+        result.Error.Should().Be($"Файл по пути '{FileName}' не найден");
     }
 }
