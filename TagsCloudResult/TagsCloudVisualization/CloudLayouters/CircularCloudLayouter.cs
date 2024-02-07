@@ -11,51 +11,42 @@ public class CircularCloudLayouter : BaseCloudLayouter<ArchimedeanSpiralPointsPr
 
     protected override Result<Point> FindPositionForRectangle(Size rectangleSize)
     {
-        var offsetToCenter = new Size(-rectangleSize.Width / 2, -rectangleSize.Height / 2);
+        const int sizeDivider = 2;
+        var offsetToCenter = new Size(-rectangleSize.Width / sizeDivider, -rectangleSize.Height / sizeDivider);
+        
         return PointsProvider.GetPoints()
             .Then(points => points
                 .Select(x => x.WithOffset(offsetToCenter))
                 .First(x => IsPlaceSuitableForRectangle(new Rectangle(x, rectangleSize))))
-            .Then(point => MovePointToCenter(point, rectangleSize));
+            .Then(point => MovePointTo(point, Center.WithOffset(offsetToCenter), rectangleSize));
     }
     
-    private Result<Point> MovePointToCenter(Point point, Size rectangleSize)
+    private Result<Point> MovePointTo(Point point, Point toPoint, Size rectangleSize)
     {
-        point = MovePointAlongXAxis(point, rectangleSize);
-        point = MovePointAlongYAxis(point, rectangleSize); 
+        var desiredOffset = new Point(toPoint.X - point.X, toPoint.Y - point.Y);
+        var isSuitablePoint = new Func<Point, bool>(x => IsPlaceSuitableForRectangle(new Rectangle(x, rectangleSize)));
         
-        return point;
+        var newPoint = Result.Of(() => MovePointAlongXAxis(point, desiredOffset).TakeWhile(isSuitablePoint).Last())
+            .Then(movedPoint => MovePointAlongYAxis(movedPoint, desiredOffset).TakeWhile(isSuitablePoint).Last());
+
+        return newPoint.IsSuccess ? newPoint : point;
     }
 
-    private Point MovePointAlongXAxis(Point point, Size rectangleSize)
+    private static IEnumerable<Point> MovePointAlongXAxis(Point point, Point offset)
     {
-        var offsetToCenter = new Size(-rectangleSize.Width / 2, -rectangleSize.Height / 2);
-        var offsetX = Math.Sign(Center.X + offsetToCenter.Width - point.X);
-        while (Center.X + offsetToCenter.Width - point.X != 0 && offsetX != 0)
+        for (var i = 0; i < Math.Abs(offset.X); i++)
         {
-            var newPoint = point.WithOffset(new Size(offsetX, 0));
-            if (!IsPlaceSuitableForRectangle(new Rectangle(newPoint, rectangleSize)))
-                break;
-
-            point = newPoint;
+            yield return point;
+            point.X += Math.Sign(offset.X);
         }
-
-        return point;
     }
-
-    private Point MovePointAlongYAxis(Point point, Size rectangleSize)
+    
+    private static IEnumerable<Point> MovePointAlongYAxis(Point point, Point offset)
     {
-        var offsetToCenter = new Size(-rectangleSize.Width / 2, -rectangleSize.Height / 2);
-        var offsetY = Math.Sign(Center.Y + offsetToCenter.Height - point.Y);
-        while (Center.Y + offsetToCenter.Height - point.Y != 0 && offsetY != 0)
+        for (var i = 0; i < Math.Abs(offset.Y); i++)
         {
-            var newPoint = point.WithOffset(new Size(0, offsetY));
-            if (!IsPlaceSuitableForRectangle(new Rectangle(newPoint, rectangleSize)))
-                break;
-            
-            point = newPoint;
+            yield return point;
+            point.Y += Math.Sign(offset.Y);
         }
-
-        return point;
     }
 }
