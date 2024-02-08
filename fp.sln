@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{754C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summator", "Summator\Summator.csproj", "{2E64584B-4FBC-4E7D-AEF2-003E8251307A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{D9096A97-007B-43A8-B486-94648D5E87FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,18 @@ Global
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9096A97-007B-43A8-B486-94648D5E87FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9096A97-007B-43A8-B486-94648D5E87FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9096A97-007B-43A8-B486-94648D5E87FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9096A97-007B-43A8-B486-94648D5E87FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{480A8774-4409-4BD6-8A03-A90CF6DF4E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{480A8774-4409-4BD6-8A03-A90CF6DF4E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{480A8774-4409-4BD6-8A03-A90CF6DF4E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{480A8774-4409-4BD6-8A03-A90CF6DF4E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5710FF3-D765-4CBD-9D16-EACA9EDED71B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5710FF3-D765-4CBD-9D16-EACA9EDED71B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5710FF3-D765-4CBD-9D16-EACA9EDED71B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5710FF3-D765-4CBD-9D16-EACA9EDED71B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E64584B-4FBC-4E7D-AEF2-003E8251307A} = {754C1CC8-A8B6-46C6-B35C-8A43B80111A0}
