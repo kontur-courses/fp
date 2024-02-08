@@ -46,7 +46,13 @@ namespace TagsCloudContainer.Client
 
         public void SaveImage(string filePath)
         {
-            pictureBox.SaveImage(filePath);
+            var resultSaving = pictureBox.SaveImage(filePath);
+
+            if (!resultSaving.IsSuccess)
+            {
+                MessageBox.Show(resultSaving.Error);
+                return;
+            }
         }
     }
 }

@@ -9,8 +9,20 @@ namespace TagsCloudContainer.Algorithm
             if (!File.Exists(filePath)) 
                 return Result.Fail<List<string>>($"The file with the path {filePath} was not found");
 
+            try
+            {
+                var lines = File.ReadAllLines(filePath);
+                return ReadWordsInLines(lines, filePath);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail<List<string>>($"An error occurred while reading the file with the path {filePath}: {ex.Message}");
+            }
+        }
+
+        private Result<List<string>> ReadWordsInLines(string[] lines,  string filePath)
+        {
             var words = new List<string>();
-            var lines = File.ReadAllLines(filePath);
 
             foreach (var line in lines)
             {
@@ -23,6 +35,5 @@ namespace TagsCloudContainer.Algorithm
 
             return Result.Ok(words);
         }
-
     }
 }

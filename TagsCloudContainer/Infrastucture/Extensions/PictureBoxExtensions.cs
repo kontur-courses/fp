@@ -21,9 +21,16 @@ namespace TagsCloudContainer.Infrastucture.Extensions
             source.Image = new Bitmap(imageSettings.Width, imageSettings.Height, PixelFormat.Format24bppRgb);
         }
 
-        public static void SaveImage(this PictureBox source, string fileName)
+        public static Result<None> SaveImage(this PictureBox source, string fileName)
         {
-            source.Image.Save(fileName);
+            var resultSaving = Result.OfAction(() => source.Image.Save(fileName));
+
+            if (!resultSaving.IsSuccess)
+            {
+                return resultSaving.RefineError($"Failed to save image on path {fileName}");
+            }
+
+            return resultSaving;
         }
     }
 }
