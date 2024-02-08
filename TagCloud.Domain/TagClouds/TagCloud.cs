@@ -3,7 +3,6 @@
 public class TagCloud : ITagCloud
 {
     private readonly IWordExtractor wordExtractor;
-    private readonly IFrequencyDictionaryBuilder<string> frequencyBuilder;
     private readonly ITagCloudLayouter layouter;
     private readonly ITagCloudRenderer renderer;
     private readonly IOptionsValidator validator;
@@ -13,14 +12,12 @@ public class TagCloud : ITagCloud
         ITagCloudLayouter layouter,
         ITagCloudRenderer renderer,
         IWordExtractor wordExtractor,
-        IFrequencyDictionaryBuilder<string> frequencyBuilder,
         DomainOptions domainOptions,
         IOptionsValidator validator)
     {
         this.layouter = layouter;
         this.renderer = renderer;
         this.wordExtractor = wordExtractor;
-        this.frequencyBuilder = frequencyBuilder;
         this.domainOptions = domainOptions;
         this.validator = validator;
     }
@@ -29,8 +26,17 @@ public class TagCloud : ITagCloud
     {
         return validator.ValidateOptions(domainOptions)
             .Then(none => wordExtractor.Extract(text))
-            .Then(words => frequencyBuilder.Build(words))
+            .Then(words => BuildFrequencyDict(words))
             .Then(freqDict => CreateCloud(freqDict));
+    }
+
+    private Dictionary<string, int> BuildFrequencyDict(IEnumerable<string> items)
+    {
+        var dict = items.GroupBy(x => x)
+            .Select(g => (g.Key, g.Count()))
+            .ToDictionary(t => t.Key, t => t.Item2);
+
+        return dict;
     }
 
     private Result<Bitmap> CreateCloud(Dictionary<string, int> frequencyDict)
@@ -62,14 +68,18 @@ public class TagCloud : ITagCloud
 
     private Result<WordLayout> LayoutWord(string word, int frequency, int minFrequency, int maxFrequency)
     {
-        // множитель на который умножается размер шрифта, в зависимости от частоты встречаемости слова. 
-        var sizeMultiplier = TagCloudHelpers.GetMultiplier(frequency, minFrequency, maxFrequency);
         var renderOptions = domainOptions.RenderOptions;
-        var fontSize = GetFontSize(sizeMultiplier, renderOptions.MinFontSize, renderOptions.MaxFontSize);
+        // множитель на который умножается размер шрифта, в зависимости от частоты встречаемости слова. 
 
-        return Result.Of(() => renderer.GetStringSize(word, fontSize))
+        var fontSize = TagCloudHelpers.GetMultiplier(frequency, minFrequency, maxFrequency)
+            .Then(sizeMultiplier => GetFontSize(sizeMultiplier, renderOptions.MinFontSize, renderOptions.MaxFontSize));
+
+        if (!fontSize.IsSuccess)
+            return Result.Fail<WordLayout>($"Can`t calculate the size of the word {word} with frequency {frequency}");
+
+        return Result.Of(() => renderer.GetStringSize(word, fontSize.Value))
             .Then(size => layouter.PutNextRectangle(size))
-            .Then(rect => new WordLayout(word, rect, fontSize));
+            .Then(rect => new WordLayout(word, rect, fontSize.Value));
     }
 
     private int GetFontSize(double freqMultiplier, int minFontSize, int maxFontSize)

@@ -1,7 +1,7 @@
 ﻿public static class TagCloudHelpers
 {
-    public static double GetMultiplier(int value, int min, int max)
+    public static Result<double> GetMultiplier(int value, int min, int max)
     {
-        return ((double)value - min) / (max - min);
+        return Result.Of(() => ((double)value - min) / (max - min));
     }
 }

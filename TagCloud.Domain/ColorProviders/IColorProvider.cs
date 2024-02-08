@@ -2,5 +2,5 @@
 
 public interface IColorProvider
 {
-    Color GetColor(WordLayout layout);
+    Result<Color> GetColor(WordLayout layout);
 }

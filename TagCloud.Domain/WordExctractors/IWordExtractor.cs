@@ -1,4 +1,4 @@
 ﻿public interface IWordExtractor
 {
-    string[] Extract(string text);
+    IEnumerable<string> Extract(string text);
 }

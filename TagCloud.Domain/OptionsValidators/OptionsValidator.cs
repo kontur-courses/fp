@@ -12,8 +12,8 @@ public class OptionsValidator : IOptionsValidator
         if (renderOptions.ImageSize.Width <= 0 || renderOptions.ImageSize.Height <= 0)
             result = result.RefineError($"Invalid image size {renderOptions.ImageSize}");
 
-        if (renderOptions.MaxFontSize < renderOptions.MinFontSize)
-            result = result.RefineError("Minimal font size is greater than maximal font size");
+        if (renderOptions.MaxFontSize <= renderOptions.MinFontSize)
+            result = result.RefineError("Minimal font size is greater than maximal font size or equal");
 
         if (tagCloudOptions.MaxTagsCount < -1)
             result = result.RefineError("Invalid maximal tags count");

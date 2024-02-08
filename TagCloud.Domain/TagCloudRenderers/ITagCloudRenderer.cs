@@ -2,7 +2,7 @@
 
 public interface ITagCloudRenderer
 {
-    Bitmap Render(WordLayout[] wordLayouts);
+    Result<Bitmap> Render(WordLayout[] wordLayouts);
 
     Size GetStringSize(string str, int fontSize);
 }

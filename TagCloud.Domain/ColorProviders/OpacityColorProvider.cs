@@ -11,15 +11,19 @@ public class OpacityColorProvider : IColorProvider
         this.options = options;
     }
 
-    public Color GetColor(WordLayout layout)
+    public Result<Color> GetColor(WordLayout layout)
     {
         var baseC = options.ColorScheme.FontColor;
+        var baseOpacity = 0.4;
+        var addOpacity = 1 - baseOpacity;
 
-        var opacity = 255 * 0.4;
-        opacity += 255 * 0.5 * TagCloudHelpers.GetMultiplier(
-            layout.FontSize, options.MinFontSize, options.MaxFontSize);
+        var opacity = TagCloudHelpers.GetMultiplier(layout.FontSize, options.MinFontSize, options.MaxFontSize)
+                                     .Then(mul => 255 * baseOpacity + 255 * addOpacity * mul);
 
-        var newColor = Color.FromArgb((int)opacity, baseC.R, baseC.G, baseC.B);
+        if (!opacity.IsSuccess)
+            return Result.Fail<Color>($"Can't calculate color for word {layout}");
+
+        var newColor = Color.FromArgb((int)opacity.Value, baseC.R, baseC.G, baseC.B);
 
         return newColor;
     }

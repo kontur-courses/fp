@@ -2,14 +2,10 @@
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddDomain
-        (this IServiceCollection services,
-        DomainOptions options
-        )
+    public static IServiceCollection AddDomain(this IServiceCollection services, DomainOptions options)
     {
         services.AddScoped<ITagCloud, TagCloud>();
         services.AddScoped<IWordExtractor, WordExtractor>();
-        services.AddScoped<IFrequencyDictionaryBuilder<string>, FrequencyDictionaryBuilder<string>>();
         services.AddScoped<ITagCloudRenderer, TagCloudRenderer>();
         services.AddScoped<ITagCloudLayouter, TagCloudLayouter>();
         services.AddScoped<IColorProvider, OpacityColorProvider>();

@@ -60,7 +60,7 @@ public class MorphologicalFilter : IWordsFilter
         };
     }
 
-    (string word, PartSpeech partSpeech) ParseResult(string result)
+    private (string word, PartSpeech partSpeech) ParseResult(string result)
     {
         var match = Regex.Match(result, @"([А-Яа-я]+)\??=([A-Z]+)");
 

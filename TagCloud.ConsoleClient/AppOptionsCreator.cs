@@ -5,10 +5,10 @@ public static class AppOptionsCreator
 {
     public static AppOptions CreateOptions(Options clOptions, IConfiguration defaultConfig)
     {
-        var tagCloudOptions      = CreateTagCloudOptions(clOptions, defaultConfig);
-        var renderOptions        = CreateRenderOptions(clOptions, defaultConfig);
+        var tagCloudOptions = CreateTagCloudOptions(clOptions, defaultConfig);
+        var renderOptions = CreateRenderOptions(clOptions, defaultConfig);
         var wordExtractorOptions = CreateWordExtractionOptions(clOptions, defaultConfig);
-        var serviceOptions       = CreateServiceOptions(clOptions, defaultConfig);
+        var serviceOptions = CreateServiceOptions(clOptions, defaultConfig);
 
         return new AppOptions()
         {
@@ -24,10 +24,10 @@ public static class AppOptionsCreator
 
     private static TagCloudOptions CreateTagCloudOptions(Options options, IConfiguration defaultConfig)
     {
-        return new TagCloudOptions 
-        { 
-            Center = ParsePoint(options.TagCloudCenter ?? defaultConfig["CenterPoint"]), 
-            MaxTagsCount = -1 
+        return new TagCloudOptions
+        {
+            Center = ParsePoint(options.TagCloudCenter ?? defaultConfig["CenterPoint"]),
+            MaxTagsCount = -1
         };
     }
 
@@ -44,7 +44,7 @@ public static class AppOptionsCreator
             MaxFontSize = fontSizeSpan.max,
         };
     }
-    
+
     private static Font CreateFontBase(string fontFamily)
     {
         return new Font(fontFamily, 32, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -80,4 +80,4 @@ public static class AppOptionsCreator
             FilterType = FilterType.MorphologicalFilter
         };
     }
-} 
+}

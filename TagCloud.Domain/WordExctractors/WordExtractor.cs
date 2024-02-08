@@ -9,7 +9,7 @@ public class WordExtractor : IWordExtractor
         this.filter = filter;
     }
 
-    public string[] Extract(string text)
+    public IEnumerable<string> Extract(string text)
     {
         var rawWords = SplitOnWords(text);
 
