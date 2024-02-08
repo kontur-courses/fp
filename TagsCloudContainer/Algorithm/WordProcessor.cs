@@ -21,14 +21,9 @@ namespace TagsCloudContainer.Algorithm
             if (!interestingWords.IsSuccess)
                 return Result.Fail<Dictionary<string, int>>(interestingWords.Error);
 
-            foreach (var word in interestingWords.Value)
-            {
-                if (!wordFrequencies.ContainsKey(word))
-                    wordFrequencies.Add(word, 0);
-                wordFrequencies[word]++;
-            }
+            wordFrequencies = interestingWords.Value.GroupBy(word => word).ToDictionary(group => group.Key, group => group.Count());
 
-            return Result.Ok(wordFrequencies.OrderByDescending(x => x.Value).ToDictionary());
+            return Result.Ok(wordFrequencies);
         }
 
         public Result<List<string>> GetInterestingWords(string sourceFilePath, string boringFilePath)
