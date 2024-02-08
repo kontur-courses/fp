@@ -13,9 +13,9 @@ namespace TagsCloudContainer.TagsCloud
             using (var brush = new SolidBrush(imageSettings.FontColor))
             {
                 graphics.Clear(imageSettings.BackgroundColor);
-                Font font = imageSettings.GetFont();
+                var font = imageSettings.GetFont();
 
-                int OffsetY = 0;
+                var OffsetY = 0;
                 foreach (var word in words)
                 {
                     graphics.DrawString(word, font, brush, new PointF(0, OffsetY));

@@ -22,10 +22,6 @@ namespace TagsCloudContainerTests
 
             var processedWords = preprocessor.Process(words, @"..\\..\\..\\src\\boring_words.txt");
 
-            foreach (var word in processedWords)
-            {
-                Console.WriteLine(word);
-            }
             processedWords.Should().HaveCount(3);
             processedWords.Should().NotContain("a");
             processedWords.Should().NotContain("the");

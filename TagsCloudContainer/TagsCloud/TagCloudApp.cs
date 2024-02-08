@@ -9,7 +9,6 @@ namespace TagsCloudContainer.TagsCloud
         private readonly IPreprocessor _preprocessor;
         private readonly IImageSettings _imageSettings;
         private readonly FileReader _fileReader;
-        private string _fontName;
         private readonly FontSizeCalculator _fontSizeCalculator = new FontSizeCalculator();
         private string outputDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "output");
 
@@ -26,7 +25,7 @@ namespace TagsCloudContainer.TagsCloud
             _fileReader = fileReader;
         }
 
-        public void Run(CommandLineOptions options)
+        public Result<string> Run(CommandLineOptions options)
         {
             var result = _fileReader.ReadFile(options.TextFilePath);
 
@@ -46,15 +45,16 @@ namespace TagsCloudContainer.TagsCloud
                 {
                     var tagCloudImage = tagCloudImageResult.Value;
                     SaveTagCloudImage(tagCloudImage, outputDirectory, uniqueWordCount);
+                    return Result.Ok("Tag cloud image saved successfully.");
                 }
                 else
                 {
-                    Console.WriteLine($"Error generating tag cloud image: {tagCloudImageResult.Error}");
+                    return Result.Fail<string>(tagCloudImageResult.Error);
                 }
             }
             else
             {
-                Console.WriteLine($"Error reading file: {result.Error}");
+                return Result.Fail<string>(result.Error);
             }
         }
 
@@ -65,11 +65,11 @@ namespace TagsCloudContainer.TagsCloud
 
         private void SetFontAndImageSettings(CommandLineOptions options)
         {
-            _fontName = options.FontName;
+            FontName = options.FontName;
             _imageSettings.UpdateImageSettings(options.ImageWidth, options.ImageHeight);
         }
 
-        public Result<None> SaveTagCloudImage(Bitmap tagCloudImage, string outputDirectory, int uniqueWordCount)
+        public Result<string> SaveTagCloudImage(Bitmap tagCloudImage, string outputDirectory, int uniqueWordCount)
         {
             try
             {
@@ -77,14 +77,11 @@ namespace TagsCloudContainer.TagsCloud
                 var outputPath = Path.Combine(outputDirectory, outputFileName);
                 tagCloudImage.Save(outputPath);
 
-                return Result.Ok().Then(_ =>
-                {
-                    Console.WriteLine($"Tag cloud image saved to {outputPath}. Original word count: {uniqueWordCount}");
-                });
+                return Result.Ok($"Tag cloud image saved to {outputPath}. Original word count: {uniqueWordCount}");
             }
             catch (Exception ex)
             {
-                return Result.Fail<None>($"Error saving tag cloud image: {ex.Message}");
+                return Result.Fail<string>($"Error saving tag cloud image: {ex.Message}");
             }
         }
 
@@ -156,14 +153,12 @@ namespace TagsCloudContainer.TagsCloud
 
             foreach (var word in sortedWords)
             {
-                if (uniqueWords.Add(word))
-                {
-                    var fontSize = _fontSizeCalculator.CalculateWordFontSize(word, wordFrequencies);
-                    fontSizes.Add(fontSize);
+                uniqueWords.Add(word);
+                var fontSize = _fontSizeCalculator.CalculateWordFontSize(word, wordFrequencies);
+                fontSizes.Add(fontSize);
 
-                    var font = new Font(fontName, fontSize);
-                    layouter.PutNextRectangle(word, font);
-                }
+                var font = new Font(fontName, fontSize);
+                layouter.PutNextRectangle(word, font);
             }
 
             return fontSizes;

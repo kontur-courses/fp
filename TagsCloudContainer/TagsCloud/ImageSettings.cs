@@ -3,7 +3,7 @@ using TagsCloudContainer.Interfaces;
 
 namespace TagsCloudContainer.TagsCloud
 {
-    public class ImageSettings : IImageSettings
+    public class ImageSettings : IImageSettings, IDisposable
     {
         private readonly Font font;
 
@@ -28,10 +28,25 @@ namespace TagsCloudContainer.TagsCloud
             Height = height;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                font.Dispose();
+            }
+        }
+
         ~ImageSettings()
         {
-            font.Dispose();
+            Dispose(false);
         }
+
 
     }
 }

@@ -11,7 +11,7 @@ namespace TagsCloudContainer.Readers
             {
                 var lines = File.ReadAllLines(filePath);
 
-                var words = lines.SelectMany(line => line.Split(' '));
+                var words = lines.SelectMany(line => line.Split());
 
                 var nonEmptyWords = words.Where(word => !string.IsNullOrEmpty(word));
 
