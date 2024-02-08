@@ -7,40 +7,34 @@ namespace TagsCloudContainer.Algorithm
     {
         private readonly ImageSettings imageSettings;
         private readonly IRectanglePlacer rectanglePlacer;
+        private readonly ICloudSizer cloudSizer;
 
 
-        public CircularCloudLayouter(ImageSettings imageSettings, IRectanglePlacer rectanglePlacer)
+        public CircularCloudLayouter(ImageSettings imageSettings, IRectanglePlacer rectanglePlacer, ICloudSizer cloudSizer)
         {
             this.imageSettings = imageSettings;
             this.rectanglePlacer = rectanglePlacer;
+            this.cloudSizer = cloudSizer;
         }
 
         public Result<List<TextRectangle>> GetRectangles(Dictionary<string, int> wordFrequencies)
         {
             var rectangles = new List<TextRectangle>();
-            var bitmap = new Bitmap(imageSettings.Width, imageSettings.Height);
-            var graphics = Graphics.FromImage(bitmap);
 
-            foreach (var word in wordFrequencies.Keys)
+            foreach (var wordFrequency in wordFrequencies.OrderByDescending(x => x.Value))
             {
-                var fontSize = CalculateFontSize(wordFrequencies, word, imageSettings.Font.Size);
-                var font = new Font(imageSettings.Font.FontFamily, fontSize, imageSettings.Font.Style, imageSettings.Font.Unit);
-                var textSize = graphics.MeasureString(word, font);
-                var rectangle = rectanglePlacer.GetPossibleNextRectangle(rectangles, textSize);
+                var word = wordFrequency.Key;
+                var cloudSize = cloudSizer.GetCloudSize(wordFrequencies, word);
+                var rectangle = rectanglePlacer.GetPossibleNextRectangle(rectangles, cloudSize.Item2);
 
                 if (!rectangle.IsSuccess)
                     return Result.Fail<List<TextRectangle>>(rectangle.Error);
 
-                rectangles.Add(new TextRectangle(rectangle.Value, word, font));
+                rectangles.Add(new TextRectangle(rectangle.Value, word, cloudSize.Item1));
             }
 
             return rectangles.All(textRect => textRect.FitsIntoImage(imageSettings.Width, imageSettings.Height)) ?
                 Result.Ok(rectangles) : Result.Fail<List<TextRectangle>>("The tag cloud goes beyond the boundaries of the image");
-        }
-
-        private float CalculateFontSize(Dictionary<string, int> wordFrequencies, string word, float fontSize)
-        {
-            return fontSize + (wordFrequencies[word] - wordFrequencies.Values.Min()) * 20 / (wordFrequencies.Values.Max());
         }
     }
 }

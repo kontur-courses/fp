@@ -69,28 +69,6 @@ namespace TagsCloudContainerTests
         }
 
         [Test]
-        public void GiveFrequencyWordsDescendingOrder()
-        {
-            var expectedDictonary = new Dictionary<string, int>
-            {
-                { "js", 3 },
-                { "python", 4},
-                { "c#", 5 },
-                { "c++", 2 },
-                { "rust", 2 },
-                { "go", 4 },
-                { "1c", 1 }
-            };
-            sourceFilePath += @"\src\sourceData.txt";
-            boringFilePath += @"\src\emptyData.txt";
-
-            var wordsFrequency = wordProcessor.CalculateFrequencyInterestingWords(sourceFilePath, boringFilePath);
-
-            wordsFrequency.IsSuccess.Should().BeTrue();
-            wordsFrequency.Value.Should().BeInDescendingOrder(word => word.Value);
-        }
-
-        [Test]
         public void ReturnEmptyDictionary_WhenSourceWordFileIsEmpty()
         {
             sourceFilePath += @"\src\emptyData.txt";

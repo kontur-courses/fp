@@ -20,7 +20,9 @@ namespace TagsCloudContainerTests
         {
             algSettings = new AlgorithmSettings();
             imgSettings = new ImageSettings();
-            layouter = new CircularCloudLayouter(imgSettings, new RectanglePlacer(algSettings, imgSettings));
+            layouter = new CircularCloudLayouter(imgSettings,
+                new RectanglePlacer(algSettings, imgSettings),
+                new CloudSizer(imgSettings));
         }
 
         [Test]
@@ -72,15 +74,16 @@ namespace TagsCloudContainerTests
         {
             imgSettings.Height = 10;
             imgSettings.Width = 10;
-            var rectanglePlaces = A.Fake<IRectanglePlacer>();
-            layouter = new CircularCloudLayouter(imgSettings, rectanglePlaces);
+            var rectanglePlacer = A.Fake<IRectanglePlacer>();
+            var cloudSizer = A.Fake<ICloudSizer>();
+            layouter = new CircularCloudLayouter(imgSettings, rectanglePlacer, cloudSizer);
             var testRectangle = new RectangleF(1, 1, 100, 100);
             var wordsFrequencies = new Dictionary<string, int>()
             {
                 {"яблоко" , 1}
             };
 
-            A.CallTo(() => rectanglePlaces.GetPossibleNextRectangle(A<List<TextRectangle>>._, A<SizeF>._))
+            A.CallTo(() => rectanglePlacer.GetPossibleNextRectangle(A<List<TextRectangle>>._, A<SizeF>._))
                 .Returns(Result.Ok(testRectangle));
 
             var textRectangles = layouter.GetRectangles(wordsFrequencies);
