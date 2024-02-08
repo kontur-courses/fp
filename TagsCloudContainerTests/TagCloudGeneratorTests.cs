@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TagsCloudContainer.Interfaces;
+﻿using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.TagsCloud;
 
 namespace TagsCloudContainerTests
@@ -7,24 +6,22 @@ namespace TagsCloudContainerTests
     [TestFixture]
     public class TagCloudGeneratorTests
     {
-        private ITagCloudGenerator tagCloudGenerator;
+        private ITagCloudGenerator sut;
 
-        [SetUp]
-        public void SetUp()
+        public TagCloudGeneratorTests()
         {
-            tagCloudGenerator = new TagCloudGenerator();
+            sut = new TagCloudGenerator();
         }
 
         [Test]
         public void GenerateTagCloud_ValidData_ReturnsImage()
         {
             var words = new[] { "apple", "banana", "orange", "apple", "banana" };
-
             var imageSettings = new ImageSettings();
 
-            var tagCloudImage = tagCloudGenerator.GenerateTagCloud(words, imageSettings);
+            var tagCloudImage = sut.GenerateTagCloud(words, imageSettings);
 
-            tagCloudImage.Should().NotBeNull();
+            Assert.IsNotNull(tagCloudImage);
         }
     }
 }

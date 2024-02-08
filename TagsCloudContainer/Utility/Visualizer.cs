@@ -1,12 +1,21 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace TagsCloudContainer.Utility
 {
     public static class Visualizer
     {
-        public static Bitmap VisualizeRectangles(List<Rectangle> rectangles, HashSet<string> uniqueWords,
-    int bitmapWidth, int bitmapHeight, List<int> fontSizes, string fontName, Color fontColor, Color highlightColor, double percentageToHighlight,
-    Dictionary<string, int> wordFrequencies)
+        public static Bitmap VisualizeRectangles(
+            List<Rectangle> rectangles, 
+            HashSet<string> uniqueWords,
+            int bitmapWidth, 
+            int bitmapHeight, 
+            List<int> fontSizes, 
+            string fontName, 
+            Color fontColor, 
+            Color highlightColor, 
+            double percentageToHighlight,
+            Dictionary<string, int> wordFrequencies)
         {
             var bitmap = new Bitmap(bitmapWidth, bitmapHeight);
             using var graphics = Graphics.FromImage(bitmap);
@@ -40,7 +49,7 @@ namespace TagsCloudContainer.Utility
             EnsureDirectoryExists(pathToDirectory);
 
             var safeFileName = GetSafeFileName(fileName);
-            bitmap.Save(Path.Combine(pathToDirectory, safeFileName), System.Drawing.Imaging.ImageFormat.Png);
+            bitmap.Save(Path.Combine(pathToDirectory, safeFileName), ImageFormat.Png);
         }
 
         private static void EnsureDirectoryExists(string directory)

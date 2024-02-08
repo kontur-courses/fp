@@ -1,5 +1,4 @@
-﻿
-public class FontSizeCalculator
+﻿public class FontSizeCalculator
 {
     private const int BaseFontSize = 30;
     private const int FontSizeMultiplier = 2;
@@ -16,14 +15,7 @@ public class FontSizeCalculator
 
     public Dictionary<string, int> CalculateWordFrequencies(IEnumerable<string> words)
     {
-        var wordFrequencies = new Dictionary<string, int>();
-
-        foreach (var word in words)
-        {
-            wordFrequencies.TryGetValue(word, out var frequency);
-            wordFrequencies[word] = frequency + 1;
-        }
-
-        return wordFrequencies;
+        return words.GroupBy(word => word)
+            .ToDictionary(group => group.Key, group => group.Count());
     }
 }

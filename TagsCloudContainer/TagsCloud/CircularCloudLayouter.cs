@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Interfaces;
 using TagsCloudContainer.Utility;
 
@@ -92,10 +93,7 @@ namespace TagsCloudContainer.TagsCloud
 
         private void ValidateRectangleSize(Size rectangleSize)
         {
-            if (rectangleSize.Width < MinPositiveValue || rectangleSize.Height < MinPositiveValue)
-            {
-                throw new ArgumentException("Width and height of the rectangle must be greater than zero");
-            }
+            rectangleSize.ValidateSize(MinPositiveValue);
         }
 
         private Result<Rectangle> CreateNewRectangle(Size rectangleSize)

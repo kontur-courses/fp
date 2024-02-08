@@ -10,6 +10,18 @@ namespace TagsCloudContainerTests
     {
         private IFileReader fileReader;
 
+        private Dictionary<string, Func<IFileReader>> readerCreators;
+
+        public FileReaderTests()
+        {
+            readerCreators = new Dictionary<string, Func<IFileReader>>(StringComparer.OrdinalIgnoreCase)
+        {
+            { ".docx", () => new DocxReader() },
+            { ".doc", () => new DocReader() },
+            { ".txt", () => new TxtReader() }
+        };
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -26,17 +38,12 @@ namespace TagsCloudContainerTests
             var relativeFilePath = Path.Combine("src", fileName);
             var filePath = Path.Combine(currentDirectory, relativeFilePath);
 
-            IFileReader fileReader = GetFileReader(filePath);
+            fileReader = GetFileReader(filePath);
 
             var result = fileReader.ReadWords(filePath);
 
             result.OnSuccess(words =>
             {
-                foreach (var word in words)
-                {
-                    Console.WriteLine(word);
-                }
-
                 words.Should().NotBeNull().And.NotBeEmpty();
             });
 
@@ -48,18 +55,11 @@ namespace TagsCloudContainerTests
 
         private IFileReader GetFileReader(string filePath)
         {
-            if (Path.GetExtension(filePath).Equals(".docx", StringComparison.OrdinalIgnoreCase))
-            {
-                return new DocxReader();
-            }
-            else if (Path.GetExtension(filePath).Equals(".doc", StringComparison.OrdinalIgnoreCase))
-            {
-                return new DocReader();
-            }
+            var extension = Path.GetExtension(filePath);
+            if (readerCreators.TryGetValue(extension, out var creator))
+                return creator();
             else
-            {
-                return new TxtReader();
-            }
+                throw new NotSupportedException($"File extension '{extension}' is not supported.");
         }
 
         [Test]

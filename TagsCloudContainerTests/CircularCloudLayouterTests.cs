@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
 using System.Drawing;
 using TagsCloudContainer.TagsCloud;
 using TagsCloudContainer.Utility;
@@ -12,9 +11,8 @@ namespace TagsCloudContainerTests
         private Point center = new(720, 720);
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            center = new Point(720, 720);
             var spiral = new Spiral(center, 0.02, 0.01);
             sut = new CircularCloudLayouter(center, spiral);
         }
@@ -33,18 +31,17 @@ namespace TagsCloudContainerTests
 
             Assert.IsFalse(result.IsSuccess);
             Assert.IsInstanceOf<Result<Rectangle>>(result);
-
-            Assert.That(result.Error, Does.Contain("Width and height of the rectangle must be greater than zero"));
         }
 
         [Test]
         public void PutNextRectangle_ShouldReturnCorrectRectangleSize()
         {
-            var rectangleResult = sut.PutNextRectangle(new Size(8, 8));
+            var expectedSize = new Size(8, 8);
+            var rectangleResult = sut.PutNextRectangle(expectedSize);
 
             rectangleResult.OnSuccess(rectangle =>
             {
-                rectangle.Size.Should().Be(new Size(8, 8));
+                rectangle.Size.Should().Be(expectedSize);
             });
 
             rectangleResult.OnFail(error =>

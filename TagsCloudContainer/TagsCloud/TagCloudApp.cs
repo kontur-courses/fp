@@ -9,25 +9,21 @@ namespace TagsCloudContainer.TagsCloud
         private readonly IPreprocessor _preprocessor;
         private readonly IImageSettings _imageSettings;
         private readonly FileReader _fileReader;
-        private readonly FontSizeCalculator _fontSizeCalculator = new FontSizeCalculator();
-
         private string _fontName;
-        private string outputDirectory = @"..\..\..\output";
+        private readonly FontSizeCalculator _fontSizeCalculator = new FontSizeCalculator();
+        private string outputDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "output");
+
         private const double DefaultAngleStep = 0.02;
         private const double DefaultRadiusStep = 0.04;
-        private const int Half = 2;
+        private const int HalfWidthHeight = 2;
+
+        public string FontName { get; set; }
 
         public TagCloudApp(IPreprocessor preprocessor, IImageSettings imageSettings, FileReader fileReader)
         {
             _preprocessor = preprocessor;
             _imageSettings = imageSettings;
             _fileReader = fileReader;
-        }
-
-
-        public void SetFontName(string fontName)
-        {
-            _fontName = fontName;
         }
 
         public void Run(CommandLineOptions options)
@@ -37,7 +33,7 @@ namespace TagsCloudContainer.TagsCloud
             if (result.IsSuccess)
             {
                 var words = result.Value;
-                SetFontAndImageSettings(options.FontName, options.ImageWidth, options.ImageHeight);
+                SetFontAndImageSettings(options);
 
                 var processedWords = _preprocessor.Process(words, options.BoringWordsFilePath);
                 var uniqueWordCount = CountUniqueWords(processedWords);
@@ -49,7 +45,7 @@ namespace TagsCloudContainer.TagsCloud
                 if (tagCloudImageResult.IsSuccess)
                 {
                     var tagCloudImage = tagCloudImageResult.Value;
-                    SaveTagCloudImage(tagCloudImage, outputDirectory, uniqueWordCount).GetValueOrThrow();
+                    SaveTagCloudImage(tagCloudImage, outputDirectory, uniqueWordCount);
                 }
                 else
                 {
@@ -67,10 +63,10 @@ namespace TagsCloudContainer.TagsCloud
             return (Color.FromName(fontColorName), Color.FromName(highlightColorName));
         }
 
-        private void SetFontAndImageSettings(string fontName, int imageWidth, int imageHeight)
+        private void SetFontAndImageSettings(CommandLineOptions options)
         {
-            SetFontName(fontName);
-            _imageSettings.UpdateImageSettings(imageWidth, imageHeight);
+            _fontName = options.FontName;
+            _imageSettings.UpdateImageSettings(options.ImageWidth, options.ImageHeight);
         }
 
         public Result<None> SaveTagCloudImage(Bitmap tagCloudImage, string outputDirectory, int uniqueWordCount)
@@ -81,9 +77,10 @@ namespace TagsCloudContainer.TagsCloud
                 var outputPath = Path.Combine(outputDirectory, outputFileName);
                 tagCloudImage.Save(outputPath);
 
-                Console.WriteLine($"Tag cloud image saved to {outputPath}. Original word count: {uniqueWordCount}");
-
-                return Result.Ok();
+                return Result.Ok().Then(_ =>
+                {
+                    Console.WriteLine($"Tag cloud image saved to {outputPath}. Original word count: {uniqueWordCount}");
+                });
             }
             catch (Exception ex)
             {
@@ -111,14 +108,14 @@ namespace TagsCloudContainer.TagsCloud
 
                     var mostPopularWord = GetMostPopularWord(wordFrequencies);
 
-                    var sortedWords = SortWordsByFrequency(words, wordFrequencies);
+                    var sortedWords = SortWordsByFrequency(wordFrequencies);
 
                     var fontSizes = CalculateAndPutRectangles(layouter, sortedWords, uniqueWords, wordFrequencies, mostPopularWord, fontName);
 
                     var rectangles = layouter.Rectangles.ToList();
 
                     return Result.Ok(Visualizer.VisualizeRectangles(rectangles, uniqueWords, _imageSettings.Width, _imageSettings.Height,
-                        fontSizes, _fontName, fontColor, highlightColor, percentageToHighlight, wordFrequencies: wordFrequencies));
+                        fontSizes, FontName, fontColor, highlightColor, percentageToHighlight, wordFrequencies: wordFrequencies));
                 }
                 else
                 {
@@ -133,12 +130,24 @@ namespace TagsCloudContainer.TagsCloud
 
         private string GetMostPopularWord(Dictionary<string, int> wordFrequencies)
         {
-            return wordFrequencies.OrderByDescending(pair => pair.Value).FirstOrDefault().Key;
+            string mostPopularWord = null;
+            int maxFrequency = int.MinValue;
+
+            foreach (var pair in wordFrequencies)
+            {
+                if (pair.Value > maxFrequency)
+                {
+                    mostPopularWord = pair.Key;
+                    maxFrequency = pair.Value;
+                }
+            }
+
+            return mostPopularWord;
         }
 
-        private IEnumerable<string> SortWordsByFrequency(IEnumerable<string> words, Dictionary<string, int> wordFrequencies)
+        private IEnumerable<string> SortWordsByFrequency(Dictionary<string, int> wordFrequencies)
         {
-            return words.OrderByDescending(word => wordFrequencies[word]);
+            return wordFrequencies.Keys.OrderByDescending(word => wordFrequencies[word]);
         }
 
         private List<int> CalculateAndPutRectangles(CircularCloudLayouter layouter, IEnumerable<string> sortedWords, HashSet<string> uniqueWords, Dictionary<string, int> wordFrequencies, string mostPopularWord, string fontName)
@@ -162,7 +171,7 @@ namespace TagsCloudContainer.TagsCloud
 
         public static Point CalculateCenter(int width, int height)
         {
-            return new Point(width / Half, height / Half);
+            return new Point(width / HalfWidthHeight, height / HalfWidthHeight);
         }
 
         private Result<CircularCloudLayouter> CreateLayouter(double angleStep = DefaultAngleStep, double radiusStep = DefaultRadiusStep)

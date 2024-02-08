@@ -52,6 +52,14 @@
 
     public static class Result
     {
+        public static void OnSuccessWithMessage<T>(this Result<T> result, Action<T> onSuccess, string successMessage)
+        {
+            result.OnSuccess(value =>
+            {
+                onSuccess(value);
+                Console.WriteLine(successMessage);
+            });
+        }
         public static Result<T> AsResult<T>(this T value)
         {
             return Ok(value);

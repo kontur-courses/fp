@@ -11,7 +11,6 @@ namespace TagsCloudContainer.Utility
         private double angle;
         private double radius;
 
-
         public Result<Point> GetNextPoint()
         {
             try
@@ -83,7 +82,10 @@ namespace TagsCloudContainer.Utility
 
         private IEnumerable<Point> GeneratePointsOnSpiral()
         {
-            for (double angle = 0, radius = 0; ; angle += angleStep, radius += radiusStep)
+            double angle = 0;
+            double radius = 0;
+
+            while (true)
             {
                 var pointResult = ConvertFromPolarToCartesian(angle, radius);
 
@@ -98,6 +100,9 @@ namespace TagsCloudContainer.Utility
                     Console.WriteLine($"Error generating point on spiral: {pointResult.Error}");
                     yield break;
                 }
+
+                angle += angleStep;
+                radius += radiusStep;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 using TagsCloudContainer.TagsCloud;
 using TagsCloudContainer.Utility;
 

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using System.Drawing;
+﻿using System.Drawing;
 using TagsCloudContainer.Utility;
 
 namespace TagsCloudContainerTests
@@ -13,7 +12,8 @@ namespace TagsCloudContainerTests
         public void Constructor_ShouldNotThrow_WithValidArguments()
         {
             Action constructorAction = () => new Spiral(center, 0.1, 0.2);
-            constructorAction.Should().NotThrow();
+            
+            Assert.DoesNotThrow(() => constructorAction());
         }
 
         [TestCase(0, 0, TestName = "Constructor_ZeroStep_ThrowsArgumentException")]
@@ -22,7 +22,7 @@ namespace TagsCloudContainerTests
         public void Constructor_InvalidStepValues_ThrowsArgumentException(double angleStep, double radiusStep)
         {
             Action constructorAction = () => new Spiral(center, angleStep, radiusStep);
-            constructorAction.Should().Throw<ArgumentException>();
+            Assert.Throws<ArgumentException>(() => constructorAction());
         }
     }
 }
