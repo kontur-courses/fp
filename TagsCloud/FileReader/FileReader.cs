@@ -11,11 +11,12 @@ public class FileReader
 
     public Result<IEnumerable<string>> GetWords(string filePath)
     {
+        var types =  string.Join(", ", parsers.Select(p => p.Key));
         return File.Exists(filePath)
             ? parsers.TryGetValue(Path.GetExtension(filePath).Trim('.'), out var parser)
                 ? Result.Ok<IEnumerable<string>>(parser.GetWordList(filePath))
                 : Result.Fail<IEnumerable<string>>(
-                    $"К сожалению, эта программа поддерживает только файлы с расширениями txt, doc и docx.\n "
+                    $"К сожалению, эта программа поддерживает только файлы с расширениями: {types}.\n "
                     + $"Попробуйте сконвертировать ваш файл с расширением {Path.GetExtension(filePath).Trim('.')} в один из указанных типов.")
             : Result.Fail<IEnumerable<string>>($"Файл по пути '{filePath}' не найден");
     }

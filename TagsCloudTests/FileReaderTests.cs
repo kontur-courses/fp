@@ -1,3 +1,5 @@
+using System.Reflection;
+using Autofac;
 using FluentAssertions;
 using Spire.Doc;
 using TagsCloud;
@@ -8,13 +10,14 @@ public class FileReaderTests
 {
     private Document documentWriter;
     private FileReader sut;
+    private List<IParser> parsers;
     public string FileName;
     
     [SetUp]
     public void SetUp()
     {
         documentWriter = new Document();
-        var parsers = new List<IParser>() { new DocParser(), new TxtParser(), new DocxParser() };
+        parsers = new List<IParser>() { new DocParser(), new TxtParser(), new DocxParser() };
         sut = new FileReader(parsers);
     }
     
@@ -58,11 +61,12 @@ public class FileReaderTests
     public void FileReader_WhenFileTypeParserDoesNotExist_ShouldBeTrow()
     {
         FileName = "NotFound.pdf";
+        var textTypes = string.Join(", ", parsers.Select(x => x.FileType));
         File.Create(FileName).Close();
         documentWriter.SaveToFile(FileName, FileFormat.PDF);
         var result = sut.GetWords(FileName);
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"К сожалению, эта программа поддерживает только файлы с расширениями txt, doc и docx.\n " 
+        result.Error.Should().Be($"К сожалению, эта программа поддерживает только файлы с расширениями: {textTypes}.\n " 
                                  + $"Попробуйте сконвертировать ваш файл с расширением {nameof(FileFormat.PDF).ToLower()} в один из указанных типов.");
     }
     
