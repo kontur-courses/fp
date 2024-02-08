@@ -33,7 +33,7 @@ public class MorphologicalFilter : IWordsFilter
 
         var parsed = result.Select(ParseResult).ToArray();
 
-        var filtered = parsed.Where(x => partsSpeech.HasFlag(x.partSpeech)).Select(x => x.word).ToArray();
+        var filtered = parsed.Where(x => (partsSpeech & x.partSpeech) != 0).Select(x => x.word).ToArray();
 
         return filtered;
     }

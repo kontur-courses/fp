@@ -21,9 +21,6 @@ public static class DependencyInjection
                 break;
         }
 
-        services.AddScoped<IWordsFilter, LengthFilter>();
-        services.AddScoped<IWordsFilter, MorphologicalFilter>();
-
         services.AddSingleton(options.TagCloudOptions);
         services.AddSingleton(options.RenderOptions);
         services.AddSingleton(options.WordExtractionOptions);
