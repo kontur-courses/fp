@@ -1,0 +1,11 @@
+﻿{
+  "InputFile": "text.txt",
+  "OutputFile": "tagcloud.jpeg",
+  "ImageSize": "8000x8000",
+  "CenterPoint": "4000x4000",
+  "FontSettings": {
+    "FontSize": "24:145",
+    "FontFamily": "Arial"
+  },
+  "ColorScheme" : "Warm"
+}
