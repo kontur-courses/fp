@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using TagsCloud.Distributors;
 using TagsCloud.Entities;
+using TagsCloud.Options;
 using TagsCloud.WordFontCalculators;
 
 namespace TagsCloud.Layouters;
@@ -15,29 +16,25 @@ public class CircularCloudLayouter : ILayouter
     private int _topBorder;
     private int _bottomBorder;
 
-    public CircularCloudLayouter(IDistributor distributor)
+    public CircularCloudLayouter(IDistributor distributor,LayouterOptions options)
     {
-        this._distributor = distributor;
-        this.Center = new Point();
+        _distributor = distributor;
+        Center = options.Center;
         _tags = new();
     }
 
     public Result<Cloud> CreateTagsCloud(Dictionary<string, Font> tagsDictionary)
     {
         if (!tagsDictionary.Any())
-            return Result.Fail<Cloud>("Dictionary cannot be empty\n");
+            return Result.Fail<Cloud>("Dictionary cannot be empty");
 
         foreach (var tag in tagsDictionary)
         {
             var rectangle = new Rectangle();
 
-            using (Graphics g = Graphics.FromImage(new Bitmap(1, 1)))
-            {
-                var sizeF = g.MeasureString(tag.Key, tag.Value);
-                rectangle.Size = new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
-            }
-
+            rectangle.Size = this.GetSizeFromFont(tag.Key, tag.Value);
             rectangle.Location = _distributor.GetNextPosition().GetValueOrThrow();
+            
             while (CheckIntersection(rectangle))
             {
                 rectangle.Location = _distributor.GetNextPosition().GetValueOrThrow();

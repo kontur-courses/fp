@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using FluentAssertions;
-using TagsCloud.ConsoleCommands;
+using TagsCloud.Options;
 using TagsCloud.WordFontCalculators;
 
 namespace TagsCloudTests.WordFontCalculators;
@@ -8,6 +8,15 @@ namespace TagsCloudTests.WordFontCalculators;
 [TestFixture]
 public class SimpleWordFontCalculatorTests
 {
+
+    private SimpleWordFontCalculator simpleWordFontCalculator;
+    
+    [SetUp]
+    public void SetUp()
+    {
+        var options = new LayouterOptions() { FontName = "Arial" };
+        simpleWordFontCalculator = new SimpleWordFontCalculator(options);
+    }
     [Test]
     public void SimpleWordFontCalculator_ShouldReturnFontSizeAsWordCount()
     {
@@ -26,9 +35,20 @@ public class SimpleWordFontCalculatorTests
             { "orange",  new Font("Arial",8) },
             { "grape",  new Font("Arial",12) }
         };
-        var options = new Options() { TagsFont = "Arial" };
-        var fontCalculator = new SimpleWordFontCalculator(options);
-        var result = fontCalculator.GetWordsFont(dict).GetValueOrThrow();
-            result.Should().BeEquivalentTo(dictOutput);
+       
+        simpleWordFontCalculator.GetWordsFont(dict).GetValueOrThrow().Should().BeEquivalentTo(dictOutput);
     }
+
+    [Test]
+    public void SimpleWordFontCalculator_ShouldReturnErrorResult_WhenInputDictionaryContainsNoElements()
+    {
+        simpleWordFontCalculator.GetWordsFont(new Dictionary<string, int>() { }).IsSuccess.Should().BeFalse();
+    }
+    
+    [Test]
+    public void SimpleWordFontCalculator_ShouldReturnErrorResult_WhenInputDictionaryContainsValueEqualZero()
+    {
+        simpleWordFontCalculator.GetWordsFont(new Dictionary<string, int>() { {"apple",0}}).IsSuccess.Should().BeFalse();
+    }
+    
 }

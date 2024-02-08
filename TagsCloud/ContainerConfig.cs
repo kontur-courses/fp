@@ -1,9 +1,10 @@
 ﻿using Autofac;
 using TagsCloud.App;
 using TagsCloud.ColorGenerators;
-using TagsCloud.ConsoleCommands;
+using TagsCloud.ConsoleOptions;
 using TagsCloud.Distributors;
 using TagsCloud.Layouters;
+using TagsCloud.Options;
 using TagsCloud.TagsCloudPainters;
 using TagsCloud.WordsProviders;
 using TagsCloud.WordFontCalculators;
@@ -14,7 +15,7 @@ namespace TagsCloud;
 
 public static class ContainerConfig
 {   
-    public static IContainer Configure(Options options)
+    public static IContainer Configure(LayouterOptions options)
     {
         var builder = new ContainerBuilder();
         builder.RegisterInstance(options).AsSelf();

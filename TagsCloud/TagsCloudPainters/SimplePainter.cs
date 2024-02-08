@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloud.ColorGenerators;
-using TagsCloud.ConsoleCommands;
+using TagsCloud.ConsoleOptions;
 using TagsCloud.Entities;
+using TagsCloud.Options;
 
 
 namespace TagsCloud.TagsCloudPainters;
@@ -14,26 +15,26 @@ public class SimplePainter : IPainter
     private readonly Size _imageSize;
     private readonly Color _color;
 
-    public SimplePainter(IColorGenerator colorGenerator, Options options)
+    public SimplePainter(IColorGenerator colorGenerator, LayouterOptions options)
     {
-        this._colorGenerator = colorGenerator;
-        this._filename = options.OutputFile;
-        this._imageSize = options.ImageSize;
-        this._color = options.Background;
+        _colorGenerator = colorGenerator;
+        _filename = options.OutputFile;
+        _imageSize = options.ImageSize;
+        _color = options.BackgroundColor;
     }
 
     public Result<None> DrawCloud(Cloud cloud)
     {
         var tags = cloud.Tags;
         var cloudSize = cloud.CloudSize;
-
-
+        
         if (!cloud.Tags.Any())
             return Result.Fail<None>("Painter can't draw empty tag collection");
 
         if (!_imageSize.IsEmpty && (_imageSize.Height < cloudSize.Height || _imageSize.Width < cloudSize.Width))
             return Result.Fail<None>("Tag cloud cannot fit given size");
         cloudSize = _imageSize.IsEmpty ? cloudSize : _imageSize;
+        
         
         using var bitmap = new Bitmap(cloudSize.Width, cloudSize.Height);
         using var g = Graphics.FromImage(bitmap);

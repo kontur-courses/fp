@@ -1,24 +1,27 @@
 ﻿using System.Drawing;
+using TagsCloud.Options;
 
 
 namespace TagsCloud.Distributors;
 
 public class SpiralDistributor : IDistributor
 {
-    public double Angle { get; private set; }
-    public double Radius { get; private set; }
-    public double AngleStep { get; private set; }
-    public double RadiusStep { get; private set; }
+    public double Angle = 0;
+    public double Radius = 0;
+    public double AngleStep = 0.1;
+    public double RadiusStep = 0.1;
     public Point Center { get; private set; }
 
-    public SpiralDistributor(Point center = new Point(), double angleStep = 0.1, double radiusStep = 0.1)
+    public SpiralDistributor(LayouterOptions options)
     {
-        if (radiusStep <= 0 || angleStep == 0) throw new ArgumentException();
-        this.Center = center;
-        Radius = 0;
-        Angle = 0;
-        this.AngleStep = angleStep - 2 * Math.PI * (int)(angleStep / 2 * Math.PI);
-        this.RadiusStep = radiusStep;
+        this.Center = options.Center;
+        /*
+         * Radius = 0;
+         * Angle = 0;
+         * this.AngleStep = 0.1;
+         * this.RadiusStep = 0.1;
+         */
+       
     }
 
 

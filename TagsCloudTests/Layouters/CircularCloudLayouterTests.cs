@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 using FluentAssertions;
-using TagsCloud.ConsoleCommands;
 using TagsCloud.Distributors;
 using TagsCloud.Layouters;
-using TagsCloud.WordFontCalculators;
+using TagsCloud.Options;
 
 namespace TagsCloudTests.Layouters;
 
@@ -12,30 +11,43 @@ public class CircularLayouterTests
     [TestFixture]
     public class CircularCloudLayouterTests
     {
+        private LayouterOptions options;
+        private CircularCloudLayouter tagsCloud;
+        private SpiralDistributor distributor;
+
+        private Dictionary<string, Font> simpleDictionary = new()
+        {
+            { "apple", new Font("Arial", 5) },
+            { "pineapple", new Font("Arial", 3) }
+        };
+
         [SetUp]
         public void SetUp()
         {
-            distributor = new SpiralDistributor(center);
-            tagsCloud = new CircularCloudLayouter(distributor);
+            options = new LayouterOptions() { Center = new Point() };
+            distributor = new SpiralDistributor(options);
+            tagsCloud = new CircularCloudLayouter(distributor, options);
         }
-
-        private Point center;
-        private CircularCloudLayouter tagsCloud;
-        private SpiralDistributor distributor;
 
         [Test]
         public void CircularCloudLayouter_InitializeParams()
         {
-            tagsCloud.Center.Should().Be(new Point());
+            tagsCloud.Center.Should().BeEquivalentTo(options.Center);
         }
 
+        [Test]
+        public void CreateTagsCloud_ShouldPlaceFirstOnCenter()
+        {
+            tagsCloud.CreateTagsCloud(simpleDictionary)
+                .GetValueOrThrow().Tags
+                .ToArray()[0].TagRectangle.Location.Should().Be(options.Center);
+        }
 
         [Test]
-        public void PutNextRectangle_ShouldPlaceFirstOnCenter()
+        public void CreateTagsCloud_ShouldCalculateCloudSize()
         {
-            tagsCloud.CreateTagsCloud(new Dictionary<string, Font>() { { "Реваванат", new Font("Arial", 3) } })
-                .GetValueOrThrow().Tags
-                .ToArray()[0].TagRectangle.Location.Should().Be(center);
+            tagsCloud.CreateTagsCloud(simpleDictionary).GetValueOrThrow().CloudSize.Should()
+                .BeEquivalentTo(new Size(20, 11));
         }
 
         [Test]
@@ -59,6 +71,12 @@ public class CircularLayouterTests
                                   Math.Pow(tag.TagRectangle.Y - tagsCloud.Center.Y, 2));
                     return distanceToCenter <= distributor.Radius;
                 }).Should().BeTrue();
+        }
+
+        [Test]
+        public void CreateTagsCloud_ShouldRuturnErrorResult_WhenInputDictionaryIsEmpty()
+        {
+            tagsCloud.CreateTagsCloud(new Dictionary<string, Font>() { }).IsSuccess.Should().BeFalse();
         }
 
 

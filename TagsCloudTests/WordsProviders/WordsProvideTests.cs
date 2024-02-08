@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
-using TagsCloud.ConsoleCommands;
+using TagsCloud.ConsoleOptions;
+using TagsCloud.Options;
 using TagsCloud.WordsProviders;
 using TagsCloud.WordValidators;
 
@@ -22,9 +23,17 @@ public class WordsProviderTests
     [Test]
     public void WordsProvider_ShouldThrowFileNotFoundException_WhenReadTextFromIncorrectFilePath()
     {
-        var options = new Options();
+        var options = new LayouterOptions(){InputFile = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "input.txt")};
         options.InputFile =
             Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "input.txt");
+        var textReader = new WordsProvider(validator.Object, options);
+        textReader.GetWords().IsSuccess.Should().BeFalse();
+    }
+    
+    [Test]
+    public void WordsProvider_ShouldThrowFileNotFoundException_WhenNoTextInFile()
+    {
+        var options = new LayouterOptions(){InputFile = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName.Replace("\\bin",""), "inputempty2.txt")};
         var textReader = new WordsProvider(validator.Object, options);
         textReader.GetWords().IsSuccess.Should().BeFalse();
     }
@@ -32,7 +41,7 @@ public class WordsProviderTests
     [Test]
     public void WordsProvider_ShouldReadTextFromFile()
     {
-        var options = new Options();
+        var options = new LayouterOptions();
         options.InputFile =
             Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName.Replace("\\bin", ""),
                 "WordsProviders", "input.txt");
