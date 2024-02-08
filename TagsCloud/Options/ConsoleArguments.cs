@@ -6,10 +6,10 @@ namespace TagsCloud.ConsoleOptions;
 
 public class ConsoleArguments
 {
-    [Option('i', "inputfile", Default = "C:\\Users\\hellw\\Desktop\\C#\\di\\TagsCloud\\source\\input.txt", HelpText = "Set input file name.")]
+    [Option('i', "inputfile", Default = "", HelpText = "Set input file name.")]
     public string InputFileName { get; set; }
 
-    [Option('o', "outputfile", Default = "C:\\Users\\hellw\\Desktop\\C#\\fp\\TagsCloud\\source\\output.png", HelpText = "Set output file name.")]
+    [Option('o', "outputfile", Default = "", HelpText = "Set output file name.")]
     public string OutputFileName { get; set; }
 
     [Option('f', "fontname", Default = "Arial", HelpText = "Set tagsCloud word Font")]

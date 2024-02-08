@@ -12,7 +12,7 @@ public class App : IApp
     private readonly ILayouter _layouter;
     private readonly IPainter _painter;
 
-    public App(IWordsProvider wordsProvider, IWordFontCalculator fontCalculator,ILayouter layouter, IPainter painter)
+    public App(IWordsProvider wordsProvider, IWordFontCalculator fontCalculator, ILayouter layouter, IPainter painter)
     {
         this._wordsProvider = wordsProvider;
         this._fontCalculator = fontCalculator;
@@ -22,12 +22,9 @@ public class App : IApp
 
     public void Run()
     {
-        var result = _wordsProvider.GetWords()
+        _wordsProvider.GetWords()
             .Then(_fontCalculator.GetWordsFont)
-            .Then(_layouter.CreateTagsCloud).Then(_painter.DrawCloud);
-        if (!result.IsSuccess)
-        {
-            Console.WriteLine(result.Error);
-        }
+            .Then(_layouter.CreateTagsCloud).Then(_painter.DrawCloud)
+            .OnFail(Console.WriteLine);
     }
 }
