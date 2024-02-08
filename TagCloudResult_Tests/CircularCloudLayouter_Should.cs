@@ -3,10 +3,9 @@ using System.Reflection;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using TagCloudDi;
-using TagCloudDi.Layouter;
+using TagCloudResult.Layouter;
 
-namespace TagCloudDi_Tests
+namespace TagCloudResult
 {
     class CircularCloudLayouter_Should
     {
@@ -37,9 +36,9 @@ namespace TagCloudDi_Tests
         public void Throw_WhenPutNewRectangle_WidthOrHeightLessEqualsZero(Size size)
         {
             generator = new ArchimedeanSpiral(new Point(), settings);
-            var action = new Action(() => new CircularCloudLayouter(generator).PutNextRectangle(size));
-            action.Should().Throw<ArgumentException>()
-                .Which.Message.Should().Contain("zero or negative height or width");
+            var result = new CircularCloudLayouter(generator).PutNextRectangle(size);
+            result.IsSuccess.Should().Be(false);
+            result.Error.Should().Contain("zero or negative height or width");
         }
 
         [Test]
@@ -55,7 +54,7 @@ namespace TagCloudDi_Tests
         {
             var generator = new ArchimedeanSpiral(center, settings);
             layouter = new CircularCloudLayouter(generator);
-            layouter.PutNextRectangle(new Size(10, 2));
+            layouter.PutNextRectangle(new Size(10, 2)).IsSuccess.Should().Be(true);
             layouter.Rectangles.Should().HaveCount(1)
                 .And.AllBeEquivalentTo(new Rectangle(
                     new Point(center.X - 10 / 2, center.Y - 2 / 2), new Size(10, 2)));
@@ -92,7 +91,7 @@ namespace TagCloudDi_Tests
                 var x = Math.Max(
                     Math.Abs(centerPoint.X - rectangle.X),
                     rectangle.X + rectangle.Width - centerPoint.X
-                    );
+                );
                 var y = Math.Max(
                     Math.Abs(centerPoint.Y - rectangle.Y),
                     rectangle.Y + rectangle.Height - centerPoint.Y

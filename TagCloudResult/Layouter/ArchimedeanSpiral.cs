@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagCloudDi.Layouter
+namespace TagCloudResult.Layouter
 {
     public class ArchimedeanSpiral(Point centerPoint, Settings settings) : IPointGenerator
     {

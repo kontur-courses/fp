@@ -1,7 +1,7 @@
-﻿namespace TagCloudDi.TextProcessing
+﻿namespace TagCloudResult.TextProcessing
 {
     public interface ITextReader
     {
-        IEnumerable<string> GetWordsFrom(string resource);
+        Result<IEnumerable<string>> GetWordsFrom(string resource);
     }
 }

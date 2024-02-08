@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using CommandLine;
 
-namespace TagCloudDi
+namespace TagCloudResult
 {
     public class Settings
     {
@@ -28,16 +28,16 @@ namespace TagCloudDi
 
         [Option('s', "SavePathWithName", Required = true)]
         public string SavePath { get; set; }
-        
+
         [Option('c', "TextColor", Required = false, Default = "White")]
         public string TextColor { get; set; }
-        
+
         [Option('b', "BackgroundColor", Required = false, Default = "Black")]
         public string BackColor { get; set; }
-        
+
         [Option('i', "ImageFormat", Required = false, Default = "png")]
         public string ImageFormat { get; set; }
-        
+
         public ImageFormat GetFormat() => ImageFormat.ToLower() switch
         {
             "bmp" => System.Drawing.Imaging.ImageFormat.Bmp,
@@ -47,6 +47,5 @@ namespace TagCloudDi
             "jpeg" => System.Drawing.Imaging.ImageFormat.Jpeg,
             _ => throw new NotImplementedException()
         };
-        
     }
 }

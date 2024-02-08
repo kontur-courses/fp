@@ -1,16 +1,15 @@
 ﻿using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
-using TagCloudDi;
-using TagCloudDi.Layouter;
+using TagCloudResult.Layouter;
 
-namespace TagCloudDi_Tests
+namespace TagCloudResult
 {
     [TestFixture]
     public class ArchimedeanSpiral_Should
     {
         private readonly Settings settings = new() { SpiralScale = 1 };
-        
+
         [TestCaseSource(typeof(TestDataArchimedeanSpiral), nameof(TestDataArchimedeanSpiral.Different_CenterPoints))]
         public void ReturnCenterPoint_WhenFirstTime_GetNextPoint(Point point)
         {

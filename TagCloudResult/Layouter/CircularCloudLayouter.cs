@@ -1,24 +1,21 @@
 ﻿using System.Drawing;
 
-namespace TagCloudDi.Layouter
+namespace TagCloudResult.Layouter
 {
     public class CircularCloudLayouter : ILayouter
     {
         private readonly IPointGenerator pointGenerator;
-        public readonly List<Rectangle> Rectangles = [];
+        public List<Rectangle> Rectangles { get; } = [];
 
         public CircularCloudLayouter(IPointGenerator pointGenerator)
         {
             this.pointGenerator = pointGenerator;
         }
 
-        public Rectangle PutNextRectangle(Size rectangleSize)
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                throw new ArgumentException(
-                    $"rectangleSize with zero or negative height or width is prohibited!",
-                    nameof(rectangleSize)
-                );
+                return Result.Fail<Rectangle>($"rectangleSize with zero or negative height or width is prohibited!");
             while (true)
             {
                 var nextPoint = pointGenerator.GetNextPoint();
@@ -30,7 +27,7 @@ namespace TagCloudDi.Layouter
                 break;
             }
 
-            return Rectangles[^1];
+            return Result.Ok(Rectangles[^1]);
         }
 
         private bool IsIntersectsWithOthers(Rectangle rectangle) =>

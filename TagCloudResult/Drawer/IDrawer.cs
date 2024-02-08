@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 
-namespace TagCloudDi.Drawer
+namespace TagCloudResult.Drawer
 {
     public interface IDrawer
     {
-        public Image GetImage();
+        public Result<Image> GetImage();
     }
 }

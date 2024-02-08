@@ -1,7 +1,7 @@
-﻿namespace TagCloudDi.Layouter
+﻿namespace TagCloudResult.Layouter
 {
     public interface IRectanglesGenerator
     {
-        public IEnumerable<RectangleData> GetRectanglesData();
+        public Result<IEnumerable<RectangleData>> GetRectanglesData();
     }
 }

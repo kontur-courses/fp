@@ -72,10 +72,7 @@ namespace TagCloudResult
         [Test]
         public void Then_ReturnsFail_OnException()
         {
-            Func<int, int> continuation = n =>
-            {
-                throw new Exception("123");
-            };
+            Func<int, int> continuation = n => { throw new Exception("123"); };
             var res = Result.Ok(42)
                 .Then(continuation);
             res.Should().BeEquivalentTo(Result.Fail<int>("123"));

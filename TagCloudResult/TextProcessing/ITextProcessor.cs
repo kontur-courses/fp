@@ -1,7 +1,7 @@
-﻿namespace TagCloudDi.TextProcessing
+﻿namespace TagCloudResult.TextProcessing
 {
     public interface ITextProcessor
     {
-        public Dictionary<string, int> GetWordsFrequency();
+        public Result<Dictionary<string, int>> GetWordsFrequency();
     }
 }

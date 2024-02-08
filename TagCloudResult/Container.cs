@@ -1,12 +1,12 @@
 ﻿using System.Drawing;
 using Autofac;
-using TagCloudDi.Applications;
-using TagCloudDi.Drawer;
-using TagCloudDi.Layouter;
-using TagCloudDi.TextProcessing;
+using TagCloudResult.Applications;
+using TagCloudResult.Drawer;
+using TagCloudResult.Layouter;
+using TagCloudResult.TextProcessing;
 using IContainer = Autofac.IContainer;
 
-namespace TagCloudDi
+namespace TagCloudResult
 {
     public static class Container
     {

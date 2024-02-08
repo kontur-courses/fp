@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using NUnit.Framework;
 
-namespace TagCloudDi_Tests
+namespace TagCloudResult
 {
     public class TestDataArchimedeanSpiral
     {

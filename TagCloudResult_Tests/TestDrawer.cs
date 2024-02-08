@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagCloudDi_Tests
+namespace TagCloudResult
 {
     public class Test_Drawer
     {
@@ -18,7 +18,7 @@ namespace TagCloudDi_Tests
                         gr.FillRectangle(brush, rectangle);
                 }
             }
-            
+
             return image;
         }
     }

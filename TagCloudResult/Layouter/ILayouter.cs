@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 
-namespace TagCloudDi.Layouter
+namespace TagCloudResult.Layouter
 {
     public interface ILayouter
     {
-        public Rectangle PutNextRectangle(Size rectangleSize);
+        public Result<Rectangle> PutNextRectangle(Size rectangleSize);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace TagCloudDi.Applications
+﻿namespace TagCloudResult.Applications
 {
     public interface IApplication
     {

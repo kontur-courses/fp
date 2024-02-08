@@ -1,13 +1,19 @@
-﻿using TagCloudDi.Drawer;
+﻿using TagCloudResult.Drawer;
 
-namespace TagCloudDi.Applications
+namespace TagCloudResult.Applications
 {
     public class ConsoleApplication(IDrawer drawer, Settings settings) : IApplication
     {
         public void Run()
         {
-            var image = drawer.GetImage();
-            image.Save($"{settings.SavePath}.{settings.ImageFormat.ToLower()}", settings.GetFormat());
+            var imageResult = drawer.GetImage();
+            if (!imageResult.IsSuccess)
+            {
+                Console.WriteLine(imageResult.Error);
+                return;
+            }
+
+            imageResult.Value.Save($"{settings.SavePath}.{settings.ImageFormat.ToLower()}", settings.GetFormat());
             Console.WriteLine($"Saved to {settings.SavePath + '.' + settings.ImageFormat.ToLower()}");
         }
     }

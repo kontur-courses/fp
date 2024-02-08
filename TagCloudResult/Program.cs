@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using CommandLine;
-using TagCloudDi.Applications;
+using TagCloudResult.Applications;
 
-namespace TagCloudDi
+namespace TagCloudResult
 {
     abstract class MainClass
     {
