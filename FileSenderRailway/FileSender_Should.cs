@@ -7,6 +7,7 @@ using ApprovalTests.Reporters;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -51,7 +52,7 @@ namespace FileSenderRailway
         public void Fail_WhenNotRecognized()
         {
             A.CallTo(() => recognizer.Recognize(file))
-                .Throws(new FormatException("Can't recognize"));
+                .Returns(Result.Fail<Document>("Can't recognize"));
 
             VerifyErrorOnPrepareFile(file, certificate);
         }

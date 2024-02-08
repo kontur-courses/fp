@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using ResultOf;
 
 namespace FileSenderRailway
 {
@@ -23,42 +25,41 @@ namespace FileSenderRailway
             this.now = now;
         }
 
+        private Result<Document> PrepareFileToSend(FileContent file, X509Certificate certificate)
+        {
+            var doc = recognizer.Recognize(file)
+                .Then(IsValidFormatVersion)
+                .Then(IsValidTimestamp)
+                .Then(doc => new Document(doc.Name,
+                    cryptographer.Sign(doc.Content, certificate), doc.Created,
+                    doc.Format))
+                .RefineError("Can't prepare file to send");
+            return doc;
+        }
+
         public IEnumerable<FileSendResult> SendFiles(FileContent[] files, X509Certificate certificate)
         {
-            foreach (var file in files)
-            {
-                string errorMessage = null;
-                try
-                {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
-                    sender.Send(doc);
-                }
-                catch (FormatException e)
-                {
-                    errorMessage = "Can't prepare file to send. " + e.Message;
-                }
-                catch (InvalidOperationException e)
-                {
-                    errorMessage = "Can't send. " + e.Message;
-                }
-                yield return new FileSendResult(file, errorMessage);
-            }
+            return from file in files
+                let doc = PrepareFileToSend(file, certificate).Then(doc => sender.Send(doc))
+                let errorMessage = doc.Error
+                select new FileSendResult(file, errorMessage);
         }
 
-        private bool IsValidFormatVersion(Document doc)
+        private static Result<Document> IsValidFormatVersion(Document doc)
         {
-            return doc.Format == "4.0" || doc.Format == "3.1";
+            return CheckDocument(doc, d => d.Format == "4.0" || d.Format == "3.1", "Invalid format version");
+            ;
         }
 
-        private bool IsValidTimestamp(Document doc)
+        private static Result<Document> CheckDocument(Document doc, Func<Document, bool> usl, string error)
+        {
+            return usl(doc) ? doc : Result.Fail<Document>(error);
+        }
+
+        private Result<Document> IsValidTimestamp(Document doc)
         {
             var oneMonthBefore = now().AddMonths(-1);
-            return doc.Created > oneMonthBefore;
+            return CheckDocument(doc, d => doc.Created > oneMonthBefore, "Too old document");
         }
     }
 }
