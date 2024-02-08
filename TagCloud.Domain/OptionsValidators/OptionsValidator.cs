@@ -4,7 +4,7 @@ public class OptionsValidator : IOptionsValidator
 {
     public Result<None> ValidateOptions(DomainOptions domainOpitons)
     {
-        var result = Result.Fail<None>("");
+        var result = Result.Fail<None>(string.Empty);
         var renderOptions = domainOpitons.RenderOptions;
         var tagCloudOptions = domainOpitons.TagCloudOptions;
         var wordExtractionOptions = domainOpitons.WordExtractionOptions;
