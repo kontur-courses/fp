@@ -1,4 +1,5 @@
 using Autofac;
+using System.Reflection;
 using TagsCloudContainer.Actions;
 using TagsCloudContainer.Algorithm;
 using TagsCloudContainer.Client;
@@ -42,12 +43,9 @@ namespace TagsCloudContainer
             builder.RegisterType<PictureBox>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<CircularCloudLayouter>().As<ICloudLayouter>().InstancePerLifetimeScope();
             builder.RegisterType<RectanglePlacer>().As<IRectanglePlacer>().InstancePerLifetimeScope();
-            builder.RegisterType<SelectBoringWordsFileAction>().As<IUiAction>().InstancePerLifetimeScope();
-            builder.RegisterType<SelectSourceFileAction>().As<IUiAction>().InstancePerLifetimeScope();
-            builder.RegisterType<SaveImageAction>().As<IUiAction>().InstancePerLifetimeScope();
-            builder.RegisterType<AlgorithmSettingsAction>().As<IUiAction>().InstancePerLifetimeScope();
-            builder.RegisterType<ImageSettingsAction>().As<IUiAction>().InstancePerLifetimeScope();
-            builder.RegisterType<DrawTagCloudAction>().As<IUiAction>().InstancePerLifetimeScope();
+            builder.RegisterType<CloudSizer>().As<ICloudSizer>().InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(typeof(IUiAction).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
 
             return builder;
         }
