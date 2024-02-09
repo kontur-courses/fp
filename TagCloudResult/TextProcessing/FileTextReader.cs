@@ -6,7 +6,7 @@
         {
             var words = new List<string>();
             if (!File.Exists(filePath))
-                return ResultIs.Fail<IEnumerable<string>>(
+                return Result.Fail<IEnumerable<string>>(
                     $"Cant't find file with this path {Path.GetFullPath(filePath)}"
                 );
             using var sr = new StreamReader(filePath);
@@ -17,7 +17,7 @@
                 line = sr.ReadLine();
             }
 
-            return ResultIs.Ok(words as IEnumerable<string>);
+            return words;
         }
     }
 }

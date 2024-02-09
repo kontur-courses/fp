@@ -8,11 +8,11 @@ namespace TagCloudResult.Applications
         {
             var imageResult = drawer.GetImage();
             if (!imageResult.IsSuccess)
-                return Result.Fail(imageResult.Error);
+                return imageResult.Fail();
 
             imageResult.Value.Save($"{settings.SavePath}.{settings.ImageFormat.ToLower()}", settings.GetFormat());
             Console.WriteLine($"Saved to {settings.SavePath + '.' + settings.ImageFormat.ToLower()}");
-            
+
             return Result.Ok();
         }
     }

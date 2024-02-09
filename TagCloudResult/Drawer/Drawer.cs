@@ -7,10 +7,10 @@ namespace TagCloudResult.Drawer
     {
         public Result<Image> GetImage()
         {
-            var backColorResult = ResultIs.Of(() => Color.FromName(settings.BackColor), "Wrong background color");
+            var backColorResult = Result.Of(() => Color.FromName(settings.BackColor), "Wrong background color");
             if (!backColorResult.IsSuccess)
                 return backColorResult.Fail<Image>();
-            var colorResult = ResultIs.Of(() => Color.FromName(settings.TextColor), "Wrong text color");
+            var colorResult = Result.Of(() => Color.FromName(settings.TextColor), "Wrong text color");
             if (!colorResult.IsSuccess)
                 return colorResult.Fail<Image>();
             var rectanglesDataResult = rectanglesGenerator.GetRectanglesData();

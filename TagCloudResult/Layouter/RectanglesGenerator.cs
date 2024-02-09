@@ -10,12 +10,12 @@ namespace TagCloudResult.Layouter
         {
             var frequencies = textProcessor.GetWordsFrequency();
             if (!frequencies.IsSuccess)
-                return ResultIs.Fail<IEnumerable<RectangleData>>(frequencies.Error);
+                return frequencies.Fail<IEnumerable<RectangleData>>();
 
-            var fontResult = ResultIs.Of(() => new Font(settings.FontName, settings.FontSize, FontStyle.Regular))
+            var fontResult = Result.Of(() => new Font(settings.FontName, settings.FontSize, FontStyle.Regular))
                 .ReplaceError(x => $"Font with name {settings.FontName} does not exist or not installed");
             if (!fontResult.IsSuccess)
-                return ResultIs.Fail<IEnumerable<RectangleData>>(fontResult.Error);
+                return fontResult.Fail<IEnumerable<RectangleData>>();
 
             var totalAmount = frequencies.Value.Sum(x => x.Value);
             var result = new List<RectangleData>();
@@ -26,12 +26,12 @@ namespace TagCloudResult.Layouter
                 );
                 var rectangleResult = layouter.PutNextRectangle(GetTextSize(frequency.Key, font));
                 if (!rectangleResult.IsSuccess)
-                    return ResultIs.Fail<IEnumerable<RectangleData>>(rectangleResult.Error);
+                    return rectangleResult.Fail<IEnumerable<RectangleData>>();
 
                 result.Add(new RectangleData(rectangleResult.Value, frequency.Key, font.Size));
             }
 
-            return ResultIs.Ok(result as IEnumerable<RectangleData>);
+            return result;
         }
 
         private static Size GetTextSize(string text, Font font)
