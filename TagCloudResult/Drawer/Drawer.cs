@@ -5,27 +5,17 @@ namespace TagCloudResult.Drawer
 {
     public class Drawer(Settings settings, IRectanglesGenerator rectanglesGenerator) : IDrawer
     {
-        private Result<Color> GetColorFromName(string name)
-        {
-            var colorResult = Result.Of(() => Color.FromName(name));
-            return !colorResult.IsSuccess
-                ? Result.Fail<Color>($"No such color")
-                : Result.Ok(colorResult.Value);
-        }
-
         public Result<Image> GetImage()
         {
-            var backColorResult = GetColorFromName(settings.BackColor)
-                .RefineError("Wrong background color");
+            var backColorResult = ResultIs.Of(() => Color.FromName(settings.BackColor), "Wrong background color");
             if (!backColorResult.IsSuccess)
-                return Result.Fail<Image>(backColorResult.Error);
-            var colorResult = GetColorFromName(settings.TextColor)
-                .RefineError("Wrong text color");
+                return backColorResult.Fail<Image>();
+            var colorResult = ResultIs.Of(() => Color.FromName(settings.TextColor), "Wrong text color");
             if (!colorResult.IsSuccess)
-                return Result.Fail<Image>(colorResult.Error);
+                return colorResult.Fail<Image>();
             var rectanglesDataResult = rectanglesGenerator.GetRectanglesData();
             if (!rectanglesDataResult.IsSuccess)
-                return Result.Fail<Image>(rectanglesDataResult.Error);
+                return rectanglesDataResult.Fail<Image>();
 
             var image = new Bitmap(settings.ImageWidth, settings.ImageHeight);
             using var gr = Graphics.FromImage(image);

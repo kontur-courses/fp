@@ -15,7 +15,7 @@ namespace TagCloudResult.Layouter
         public Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Height <= 0 || rectangleSize.Width <= 0)
-                return Result.Fail<Rectangle>($"rectangleSize with zero or negative height or width is prohibited!");
+                return ResultIs.Fail<Rectangle>($"rectangleSize with zero or negative height or width is prohibited!");
             while (true)
             {
                 var nextPoint = pointGenerator.GetNextPoint();
@@ -27,7 +27,7 @@ namespace TagCloudResult.Layouter
                 break;
             }
 
-            return Result.Ok(Rectangles[^1]);
+            return ResultIs.Ok(Rectangles[^1]);
         }
 
         private bool IsIntersectsWithOthers(Rectangle rectangle) =>

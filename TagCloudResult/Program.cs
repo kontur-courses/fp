@@ -8,10 +8,14 @@ namespace TagCloudResult
     {
         public static void Main(string[] args)
         {
-            var settings = Parser.Default.ParseArguments<Settings>(args).Value;
-            var container = Container.SetupContainer(settings);
-            var app = container.Resolve<IApplication>();
-            app.Run();
+            var settingsResult = Parser.Default.ParseArguments<Settings>(args);
+            if (settingsResult.Errors.Any())
+                return;
+            var appResult = ResultIs.Of(() => Container.SetupContainer(settingsResult.Value).Resolve<IApplication>())
+                .RefineError("Impossible to build app")
+                .Then(x => x.Run());
+            if (!appResult.IsSuccess)
+                Console.WriteLine(appResult.Error);
         }
     }
 }
