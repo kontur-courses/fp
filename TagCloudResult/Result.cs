@@ -29,7 +29,6 @@
             return ResultIs.Ok(v);
         }
         
-        
         internal T Value { get; }
         
         public T GetValueOrThrow()
@@ -37,7 +36,6 @@
             if (IsSuccess) return Value;
             throw new InvalidOperationException($"No value. Only Error {Error}");
         }
-        
         
         public Result<T> Fail<T>()
         {
