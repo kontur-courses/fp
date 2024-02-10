@@ -1,4 +1,5 @@
 using MyStemWrapper;
+using TagsCloudContainer.Extensions;
 using TagsCloudContainer.TextAnalysers.WordsFilters;
 
 namespace TagsCloudContainer.TextAnalysers;

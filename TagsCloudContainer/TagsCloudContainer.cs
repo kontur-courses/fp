@@ -1,4 +1,5 @@
 using TagsCloudContainer.CloudGenerators;
+using TagsCloudContainer.Extensions;
 using TagsCloudContainer.FileProviders;
 using TagsCloudContainer.TextAnalysers;
 using TagsCloudContainer.Visualizers;
@@ -23,7 +24,7 @@ public class TagsCloudContainer : ITagsCloudContainer
         this.imageProvider = imageProvider;
     }
 
-    public Result<None> GenerateImageToFile(string inputFile, string outputFile)
+    public Result GenerateImageToFile(string inputFile, string outputFile)
     {
         return fileReader.ReadFile(inputFile)
             .Then(textPreprocessor.Preprocess)

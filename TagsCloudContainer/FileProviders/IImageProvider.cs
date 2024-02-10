@@ -4,5 +4,5 @@ namespace TagsCloudContainer.FileProviders;
 
 public interface IImageProvider
 {
-    public Result<None> SaveImage(Image image, string filePath);
+    public Result SaveImage(Image image, string filePath);
 }

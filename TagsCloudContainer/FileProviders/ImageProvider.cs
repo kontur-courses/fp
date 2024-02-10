@@ -2,9 +2,9 @@ using SixLabors.ImageSharp;
 
 namespace TagsCloudContainer.FileProviders;
 
-public class ImageProvider: IImageProvider
+public class ImageProvider : IImageProvider
 {
-    public Result<None> SaveImage(Image image, string filePath)
+    public Result SaveImage(Image image, string filePath)
     {
         try
         {
@@ -12,7 +12,7 @@ public class ImageProvider: IImageProvider
         }
         catch (Exception e)
         {
-            return Result.Fail<None>("Ошибка при сохранении изображения. " + e.Message); 
+            return Result.Fail("Ошибка при сохранении изображения. " + e.Message);
         }
 
         return Result.Ok();

@@ -30,19 +30,19 @@ public class CircularCloudLayouter : ICloudLayouter
         var rectangle = new Rectangle(location, rectangleSize);
         if (!CheckRectangleInsideImage(rectangle))
             return Result.Fail<Rectangle>($"Облако не помещается в размеры изображения.");
-        
+
         rectangles.Add(rectangle);
         return rectangle;
     }
 
-    public Result<None> UpdateCloud()
+    public Result UpdateCloud()
     {
         center = new Point(imageSettings.ImageSize.Width / 2, imageSettings.ImageSize.Height / 2);
         rectangles = new List<Rectangle>();
 
         return Result.Ok();
     }
-    
+
     private bool CheckRectangleInsideImage(Rectangle rectangle)
     {
         return rectangle is { Left: >= 0, Top: >= 0 } &&

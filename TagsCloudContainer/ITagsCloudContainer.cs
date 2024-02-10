@@ -2,5 +2,5 @@ namespace TagsCloudContainer;
 
 public interface ITagsCloudContainer
 {
-    public Result<None> GenerateImageToFile(string inputFile, string outputFile);
+    public Result GenerateImageToFile(string inputFile, string outputFile);
 }

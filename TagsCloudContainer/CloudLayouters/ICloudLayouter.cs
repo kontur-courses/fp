@@ -6,5 +6,5 @@ public interface ICloudLayouter
 {
     public Result<Rectangle> PutNextRectangle(Size rectangleSize);
 
-    public Result<None> UpdateCloud();
+    public Result UpdateCloud();
 }
