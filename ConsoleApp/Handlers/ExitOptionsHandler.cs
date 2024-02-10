@@ -10,9 +10,14 @@ public class ExitOptionsHandler : IOptionsHandler
         return options is ExitOptions;
     }
 
-    public Result<string> WithParsed(IOptions options)
+    public Result<string> ProcessOptions(IOptions options, CancellationTokenSource? cancellationTokenSource = null)
     {
-        Environment.Exit(0);
-        return "Завершение выполнения программы.";
+        if (cancellationTokenSource != null)
+        {
+            cancellationTokenSource.Cancel();
+            return "Завершение выполнения программы..";
+        }
+
+        return Result.Fail<string>("Ошибка при завершении программы.");
     }
 }
