@@ -26,11 +26,10 @@ public class GenerateCloudOptionsHandler : IOptionsHandler
         return options is GenerateCloudOptions;
     }
 
-    public Result<string> WithParsed(IOptions options)
+    public Result<string> ProcessOptions(IOptions options, CancellationTokenSource? cancellationTokenSource = null)
     {
         if (options is not GenerateCloudOptions opts)
             return Result.Fail<string>("Не удалось определить параметры генерации.");
-
         Map(opts);
         return Execute();
     }

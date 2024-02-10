@@ -2,6 +2,7 @@ using System.Globalization;
 using ConsoleApp.Options;
 using SixLabors.ImageSharp;
 using TagsCloudContainer;
+using TagsCloudContainer.Extensions;
 using TagsCloudContainer.Settings;
 
 namespace ConsoleApp.Handlers;
@@ -20,7 +21,7 @@ public class SetImageOptionsHandler : IOptionsHandler
         return options is SetImageOptions;
     }
 
-    public Result<string> WithParsed(IOptions options)
+    public Result<string> ProcessOptions(IOptions options, CancellationTokenSource cancellationTokenSource = null)
     {
         if (options is not SetImageOptions opts)
             return Result.Fail<string>("Не удалось определить настройки изображения.");
@@ -45,12 +46,13 @@ public class SetImageOptionsHandler : IOptionsHandler
 
     private static Result<Color> FromHex(string hexColor)
     {
-        if (hexColor.Length == 6 && int.TryParse(hexColor, NumberStyles.HexNumber, null, out var colorValue))
+        if (!string.IsNullOrWhiteSpace(hexColor) && hexColor.Length == 6 &&
+            int.TryParse(hexColor, NumberStyles.HexNumber, null, out var colorValue))
         {
             return Color.FromRgb((byte)((colorValue & 0xFF0000) >> 16), (byte)((colorValue & 0x00FF00) >> 8),
                 (byte)(colorValue & 0x0000FF));
         }
 
-        return Result.Fail<Color>("Неверный формат.");
+        return Result.Fail<Color>("Неверный формат цвета.");
     }
 }

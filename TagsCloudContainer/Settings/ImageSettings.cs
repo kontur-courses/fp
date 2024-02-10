@@ -3,7 +3,7 @@ using SixLabors.ImageSharp;
 
 namespace TagsCloudContainer.Settings;
 
-public class ImageSettings: IImageSettings
+public class ImageSettings : IImageSettings
 {
     public Color PrimaryColor { get; set; } = Color.Yellow;
 
