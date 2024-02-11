@@ -19,14 +19,20 @@ namespace TagsCloudContainer
                 .WithParsed(o => appSettings = CommandLineOptions.ParseArgs(o));
 
             var rawText = TextFileReader.ReadText(appSettings.TextFile);
+            if (rawText.IsSuccess)
+            {
+                var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault(), appSettings.FilterFile)
+                    .Then(x => new TagsCloudLayouter(appSettings.DrawingSettings, x).GetTextImages())
+                    .Then(x => Painter.Draw(appSettings.DrawingSettings.Size, x, appSettings.DrawingSettings.BgColor))
+                    .Then(x => ImageSaver.SaveToFile(x.GetValueOrDefault(), appSettings.OutImagePath, "jpg"));
 
-            var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault(), appSettings.FilterFile)
-                .Then(x => new TagsCloudLayouter(appSettings.DrawingSettings, x).GetTextImages())
-                .Then(x => Painter.Draw(appSettings.DrawingSettings.Size, x, appSettings.DrawingSettings.BgColor))
-                .Then(x => ImageSaver.SaveToFile(x.GetValueOrDefault(), appSettings.OutImagePath, "jpg"));
-
-            if (!res.IsSuccess)
-                Console.Write(res.Error);
+                if (!res.IsSuccess)
+                    Console.Write(res.Error);
+            }
+            else
+            {
+                Console.WriteLine(rawText.Error);
+            }
         }
     }
 }

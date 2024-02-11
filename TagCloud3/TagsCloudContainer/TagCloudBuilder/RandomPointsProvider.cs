@@ -6,10 +6,15 @@ namespace TagsCloudContainer.TagCloudBuilder
 {
     public class RandomPointsProvider : IPointsProvider
     {
-        private Random rnd = new Random();
+        private readonly Random rnd = new Random();
         private Point Center;
         private int pointNumber = 0;
         private const int maxPonitsCount = 10000000;
+
+        public RandomPointsProvider(Point center)
+        {
+            Center = center;
+        }
 
         public IEnumerable<Result<Point>> Points()
         {
@@ -18,11 +23,6 @@ namespace TagsCloudContainer.TagCloudBuilder
                 yield return Result<Point>.Ok(new Point(rnd.Next(0, Center.X * 2), rnd.Next(0, Center.Y * 2)));
             }
             yield return Result<Point>.Fail("Can't get more points");
-        }
-
-        public void Initialize(Point center)
-        {
-            Center = center;
         }
     }
 }

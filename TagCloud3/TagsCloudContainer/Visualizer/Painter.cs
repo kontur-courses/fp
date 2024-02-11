@@ -3,20 +3,21 @@ using System.Drawing;
 
 namespace TagsCloudContainer.Drawer
 {
-    public static class Painter
+    public class Painter : IDisposable
     {
+        private Graphics graphics;
         public static Result<Image> Draw(Size size, IEnumerable<Result<TextImage>> textImages, Color? bgColor = null)
         {
             var image = new Bitmap(size.Width, size.Height);
-            var gr = Graphics.FromImage(image);
+            var graphics = Graphics.FromImage(image);
 
-            gr.Clear(bgColor ?? Color.Black);
+            graphics.Clear(bgColor ?? Color.Black);
 
             foreach (var textImage in textImages)
             {
                 if (textImage.IsSuccess)
                 {
-                    gr.DrawString(textImage.Value.Text, textImage.Value.Font, new SolidBrush(textImage.Value.Color), textImage.Value.Position);
+                    graphics.DrawString(textImage.Value.Text, textImage.Value.Font, new SolidBrush(textImage.Value.Color), textImage.Value.Position);
                 }
                 else
                 {
@@ -25,6 +26,12 @@ namespace TagsCloudContainer.Drawer
             }
 
             return Result<Image>.Ok(image);
+        }
+
+        public void Dispose()
+        {
+            graphics?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

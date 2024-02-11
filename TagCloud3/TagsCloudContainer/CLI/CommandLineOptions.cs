@@ -50,7 +50,7 @@ namespace TagsCloudContainer.CLI
             appSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize).GetValueOrDefault(12);
             appSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800, 600));
             appSettings.DrawingSettings.Colors = GetColors(options.Colors);
-            appSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider());
+            appSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider(new Point(0, 0)));
             appSettings.DrawingSettings.BgColor = GetBGColor(options.BgColor);
 
             return appSettings;
@@ -101,15 +101,15 @@ namespace TagsCloudContainer.CLI
             switch (layout.ToLowerInvariant())
             {
                 case "random":
-                    pointProvider = new RandomPointsProvider();
+                    pointProvider = new RandomPointsProvider(new Point(0, 0));
                     break;
 
                 case "normal":
-                    pointProvider = new NormalPointsProvider();
+                    pointProvider = new NormalPointsProvider(new Point(0, 0));
                     break;
 
                 case "spiral":
-                    pointProvider = new SpiralPointsProvider();
+                    pointProvider = new SpiralPointsProvider(new Point(0, 0));
                     break;
 
                 default:

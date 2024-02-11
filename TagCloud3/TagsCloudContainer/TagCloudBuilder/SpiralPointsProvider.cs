@@ -11,6 +11,11 @@ namespace TagsCloudVisualization
         private Point Center;
         private const int maxPonitsCount = 10000000;
 
+        public SpiralPointsProvider(Point center)
+        {
+            Center = center;
+        }
+
         public IEnumerable<Result<Point>> Points()
         {
             while (++pointNumber < maxPonitsCount)
@@ -22,11 +27,6 @@ namespace TagsCloudVisualization
                 yield return Result<Point>.Ok(new Point((int)x, (int)y));
             }
             yield return Result<Point>.Fail("Can't get more points");
-        }
-
-        public void Initialize(Point center)
-        {
-            Center = center;
         }
     }
 }

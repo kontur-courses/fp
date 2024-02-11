@@ -10,6 +10,6 @@ namespace TagsCloudContainer.SettingsClasses
         public IList<Color> Colors = new List<Color>() { Color.AliceBlue };
         public Color BgColor = Color.Black;
         public Size Size = new(600, 600);
-        public IPointsProvider PointsProvider = new SpiralPointsProvider();
+        public IPointsProvider PointsProvider = new SpiralPointsProvider(new Point(300, 300));
     }
 }

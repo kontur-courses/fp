@@ -21,8 +21,8 @@ namespace TagsCloudVisualization
                 throw new ArgumentException("Size should be in positive");
 
             center = new Point(drawingSettings.Size.Width / 2, drawingSettings.Size.Height / 2);
-            pointsProvider = drawingSettings.PointsProvider;
-            pointsProvider.Initialize(center);
+            pointsProvider = (IPointsProvider)Activator.CreateInstance(drawingSettings.PointsProvider.GetType(), center);
+
             this.drawingSettings = drawingSettings;
             this.words = words;
 

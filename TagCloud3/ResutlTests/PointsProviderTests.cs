@@ -14,9 +14,6 @@ namespace ResultTests
         [TestCaseSource(nameof(PointProviders))]
         public void Points_ShouldReturnCorrectNumberOfPoints(IPointsProvider provider)
         {
-            var center = new Point(10, 10);
-            provider.Initialize(center);
-
             var sut = provider.Points().Skip(maxPointsCount - 2).First();
 
             sut.IsSuccess.Should().BeTrue();
@@ -27,9 +24,6 @@ namespace ResultTests
         [TestCaseSource(nameof(PointProviders))]
         public void Points_ShouldReturnFailWhenMaxPointsCountReached(IPointsProvider provider)
         {
-            var center = new Point(10, 10);
-            provider.Initialize(center);
-
             var result = provider.Points().Last();
 
             result.Should().BeOfType<Result<Point>>();
@@ -38,9 +32,9 @@ namespace ResultTests
 
         public static IEnumerable<IPointsProvider> PointProviders()
         {
-            var testCase1 = new NormalPointsProvider();
-            var testCase2 = new RandomPointsProvider();
-            var testCase3 = new SpiralPointsProvider();
+            var testCase1 = new NormalPointsProvider(new Point(300, 300));
+            var testCase2 = new RandomPointsProvider(new Point(300, 300));
+            var testCase3 = new SpiralPointsProvider(new Point(300, 300));
             return new List<IPointsProvider>() { testCase1, testCase2, testCase3 };
         }
     }

@@ -62,9 +62,9 @@ namespace WinFormsApp
 
             providers = new List<IPointsProvider>()
             {
-                new NormalPointsProvider(),
-                new SpiralPointsProvider(),
-                new RandomPointsProvider()
+                new NormalPointsProvider(new Point(300, 300)),
+                new SpiralPointsProvider(new Point(300, 300)),
+                new RandomPointsProvider(new Point(300, 300))
             };
         }
 
