@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.WordProcessing;
 
-namespace TagsCloudContainer.App.Interfaces;
+namespace TagsCloudContainer.App;
 
 public interface IApp
 {

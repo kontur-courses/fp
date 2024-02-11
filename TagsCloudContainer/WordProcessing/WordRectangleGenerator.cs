@@ -21,14 +21,20 @@ public class WordRectangleGenerator
         var rectangles = new List<Rectangle>();
         var settingsFont = _fontProvider.TryGetFont(_settings.FontName, _settings.FontSize);
         if (!settingsFont.IsSuccess)
+        {
             return Result.Fail<List<Rectangle>>(settingsFont.Error);
+        }
+
         foreach (var word in words)
         {
             using var font = new Font(settingsFont.Value.FontFamily, word.Size);
             var size = EditingWordSize(word.Value, font);
             var rectangle = _layouter.PutNextRectangle(size);
             if (!rectangle.IsSuccess)
+            {
                 return Result.Fail<List<Rectangle>>(rectangle.Error);
+            }
+
             rectangles.Add(rectangle.Value);
         }
 
@@ -40,8 +46,14 @@ public class WordRectangleGenerator
         var bitmap = new Bitmap(1, 1);
         var graphics = Graphics.FromImage(bitmap);
         var result = graphics.MeasureString(word, font).ToSize();
-        if (result.Width == 0) result.Width = 1;
-        if (result.Height == 0) result.Height = 1;
+        if (result.Width == 0)
+        {
+            result.Width = 1;
+        }
+        if (result.Height == 0)
+        {
+            result.Height = 1;
+        }
         return result;
     }
 }

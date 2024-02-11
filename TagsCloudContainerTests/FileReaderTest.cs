@@ -4,8 +4,6 @@ namespace TagsCloudContainerTests
     [TestFixture]
     public class FileReaderTest
     {
-        //Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\TextFiles\\" + fileName
-
         [TestCase("Text.txt")]
         [TestCase("Boring.txt")]
         public void GetReader_ShouldCorrectTxtReader(string fileName)

@@ -1,6 +1,6 @@
 ﻿using TagsCloudContainer.WordProcessing;
 
-namespace TagsCloudContainer.FileReader.Interfaces;
+namespace TagsCloudContainer.FileReader;
 
 public interface ITextReader
 {

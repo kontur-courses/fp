@@ -1,6 +1,4 @@
-﻿using TagsCloudContainer.FileReader;
-using TagsCloudContainer.FileReader.Interfaces;
-using TagsCloudContainer.WordProcessing;
+﻿using TagsCloudContainer.WordProcessing;
 
 namespace TagsCloudContainer.FileReader;
 

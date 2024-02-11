@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using TagsCloudContainer.FileReader.Interfaces;
 using TagsCloudContainer.WordProcessing;
 
 namespace TagsCloudContainer.FileReader;

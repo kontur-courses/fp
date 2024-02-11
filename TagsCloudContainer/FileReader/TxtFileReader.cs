@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using TagsCloudContainer.FileReader.Interfaces;
 using TagsCloudContainer.WordProcessing;
 
 namespace TagsCloudContainer.FileReader;

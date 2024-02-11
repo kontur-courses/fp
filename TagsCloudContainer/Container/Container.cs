@@ -1,10 +1,8 @@
 ﻿using System.Drawing;
 using Autofac;
 using TagsCloudContainer.App;
-using TagsCloudContainer.App.Interfaces;
 using TagsCloudContainer.DrawRectangle;
 using TagsCloudContainer.Cloud;
-using TagsCloudContainer.DrawRectangle.Interfaces;
 using TagsCloudContainer.FileReader;
 using TagsCloudContainer.WordProcessing;
 

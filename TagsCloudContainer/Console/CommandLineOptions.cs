@@ -1,8 +1,4 @@
-﻿//NuGet CommandLineParser
-
-using System.Drawing.Imaging;
-using System.Runtime.CompilerServices;
-using CommandLine;
+﻿using CommandLine;
 
 namespace TagsCloudContainer;
 
@@ -12,8 +8,7 @@ public class CommandLineOptions
     public string PathToInputFile { get; set; }
 
     [Option('b', "Boring", Required = false, HelpText = "Укажите путь до файла со скучными словами", Default = "../../../TextFiles/Boring.docx")]
-    public string PathToBoringWordsFile { get; set; }// =
-        //@"C:\Users\nikit\RiderProjects\di\TagsCloudContainer\TextFiles\Boring.txt";
+    public string PathToBoringWordsFile { get; set; }
 
     [Option('c', "Color", Required = false, HelpText = "Цвет слов")]
     public string Color { get; set; } = "White";

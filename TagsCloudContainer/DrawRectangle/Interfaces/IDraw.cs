@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TagsCloudContainer.WordProcessing;
 
-namespace TagsCloudContainer.DrawRectangle.Interfaces;
+namespace TagsCloudContainer.DrawRectangle;
 
 public interface IDraw
 {
