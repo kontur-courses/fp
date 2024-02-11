@@ -3,9 +3,8 @@ using System.Drawing;
 
 namespace TagsCloudContainer.Drawer
 {
-    public static class Visualizer
+    public static class Painter
     {
-
         public static Result<Image> Draw(Size size, IEnumerable<Result<TextImage>> textImages, Color? bgColor = null)
         {
             var image = new Bitmap(size.Width, size.Height);
@@ -21,12 +20,11 @@ namespace TagsCloudContainer.Drawer
                 }
                 else
                 {
-                    return Result.Fail<Image>(textImage.Error);
-                    Console.WriteLine(textImage.Error);
+                    return Result<Image>.Fail(textImage.Error);
                 }
             }
 
-            return Result.Ok<Image>(image);
+            return Result<Image>.Ok(image);
         }
     }
 }

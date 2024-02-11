@@ -2,7 +2,9 @@
 {
     public interface IAnalyzer
     {
-        public void Analyze(string text, string exclude = "");
-        public IEnumerable<(string, int)> GetAnalyzedText();
+        public static IEnumerable<(string, int)> Analyze(string text, IEnumerable<string> excludeWords = null)
+        {
+            return new List<(string, int)>();
+        }
     }
 }

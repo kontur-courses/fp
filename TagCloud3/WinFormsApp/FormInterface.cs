@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ResultOf;
-using TagsCloudContainer;
+﻿using ResultOf;
 using TagsCloudContainer.Drawer;
 using TagsCloudContainer.FrequencyAnalyzers;
 using TagsCloudContainer.SettingsClasses;
+using TagsCloudContainer.TagCloudBuilder;
 using TagsCloudContainer.TextTools;
+using TagsCloudContainer.Visualizer;
 using TagsCloudVisualization;
 using WinFormsApp.SettingsForms;
 
@@ -24,10 +24,7 @@ namespace WinFormsApp
         private Graphics gr;
         private Result<Image> image;
 
-        private TagsCloudLayouter layouter;
-        private IEnumerable<(string, int)> text;
         private AppSettings appSettings;
-        private ServiceProvider serviceProvider;
         private List<IPointsProvider> providers;
 
         public FormInterface()
@@ -63,13 +60,12 @@ namespace WinFormsApp
 
             appSettings = SettingsManager.SettingsManager.LoadSettings();
 
-            var services = DependencyInjectionConfig.AddCustomServices(new ServiceCollection());
-            serviceProvider = services.BuildServiceProvider();
-            layouter = serviceProvider.GetService<TagsCloudLayouter>();
-
-            providers = serviceProvider.GetServices<IPointsProvider>().ToList();
-
-            Size = appSettings.DrawingSettings.Size;
+            providers = new List<IPointsProvider>()
+            {
+                new NormalPointsProvider(),
+                new SpiralPointsProvider(),
+                new RandomPointsProvider()
+            };
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -81,40 +77,43 @@ namespace WinFormsApp
             {
                 appSettings.TextFile = openDialog.FileName;
 
-                var reader = serviceProvider.GetService<ITextReader>();
-                var analyzer = serviceProvider.GetService<IAnalyzer>();
+                var res = RebuildImage();
 
-                analyzer.Analyze(reader.ReadText(appSettings.TextFile).GetValueOrThrow(), appSettings.FilterFile);
-
-                text = analyzer.GetAnalyzedText();
-
-                RedrawImage();
-            }
-        }
-
-        private void RedrawImage()
-        {
-            layouter = new TagsCloudLayouter();
-            layouter.Initialize(appSettings.DrawingSettings, text);
-            layouter.GetTextImages();
-
-            Size = new Size(appSettings.DrawingSettings.Size.Width + 20, appSettings.DrawingSettings.Size.Height + 100);
-            gr = CreateGraphics();
-            if (text != null)
-            {
-                image = Visualizer.Draw(appSettings.DrawingSettings.Size,
-                                        layouter.GetTextImages(),
-                                        appSettings.DrawingSettings.BgColor);
-                if (image.IsSuccess)
+                if (!res.IsSuccess)
                 {
-                    gr.DrawImage(image.GetValueOrDefault(null), new Point(0, 0));
+                    ErrorMessageBox.ShowError(res.Error);
                 }
                 else
                 {
-                    ErrorMessageBox.ShowError(image.Error);
+                    RedrawImage(res);
                 }
+            }
+        }
+
+        private void RedrawImage(Result<Image> image)
+        {
+            if (image.IsSuccess)
+            {
+                Size = appSettings.DrawingSettings.Size;
+                gr = this.CreateGraphics();
+                gr.DrawImage(image.Value, new Point(0, 0));
                 SettingsManager.SettingsManager.SaveSettings(appSettings);
             }
+            else
+            {
+                ErrorMessageBox.ShowError(image.Error);
+            }
+        }
+
+        private Result<Image> RebuildImage()
+        {
+            var rawText = TextFileReader.ReadText(appSettings.TextFile);
+
+            var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault(), appSettings.FilterFile)
+                .Then(x => new TagsCloudLayouter(appSettings.DrawingSettings, x).GetTextImages())
+                .Then(x => Painter.Draw(appSettings.DrawingSettings.Size, x, appSettings.DrawingSettings.BgColor));
+
+            return res.Value;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -122,10 +121,16 @@ namespace WinFormsApp
             var saveDialog = new SaveFileDialog();
             saveDialog.Filter = "PNG files (*.png)|*.png";
 
-            if (saveDialog.ShowDialog() == DialogResult.OK && image.GetValueOrDefault(null) != null)
+            if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                image.GetValueOrThrow().Save(saveDialog.FileName);
+                var res = image.Then(x => ImageSaver.SaveToFile(x, saveDialog.FileName, saveDialog.DefaultExt));
+
+                if (!res.IsSuccess)
+                {
+                    ErrorMessageBox.ShowError(res.Error);
+                }
             }
+
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -143,11 +148,7 @@ namespace WinFormsApp
                 appSettings.DrawingSettings.Colors = colorSelector.Colors;
                 appSettings.DrawingSettings.BgColor = colorSelector.BGColor;
                 SettingsManager.SettingsManager.SaveSettings(appSettings);
-
-                if (text != null)
-                {
-                    RedrawImage();
-                }
+                RedrawImage(RebuildImage());
             }
         }
 
@@ -158,7 +159,7 @@ namespace WinFormsApp
             if (properties.ShowDialog() == DialogResult.OK)
             {
                 appSettings = properties.appSettings;
-                RedrawImage();
+                RedrawImage(RebuildImage());
             }
         }
     }

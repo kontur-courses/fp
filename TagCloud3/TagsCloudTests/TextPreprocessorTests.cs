@@ -6,9 +6,9 @@ namespace TagsCloudTests
 {
     internal class TextPreprocessorTests
     {
-        //private string tempFile;
         private const string excludedWords = "stop\nword";
         private TextPreprocessing textPreprocessor;
+
         [SetUp]
         public void Setup()
         {
@@ -28,28 +28,22 @@ namespace TagsCloudTests
         [Test]
         public void Preprocess_ShouldExcludeCorrectWords()
         {
-            // Arrange
             var inputText = "stop\nword\nexample\none";
             var expectedWords = new[] { "example", "one" };
 
-            // Act
-            var actualWords = new List<string>(textPreprocessor.Preprocess(inputText));
+            var actualWords = new List<string>(textPreprocessor.Preprocess(inputText).GetValueOrDefault());
 
-            // Assert
             actualWords.Should().BeEquivalentTo(expectedWords);
         }
 
         [Test]
         public void Preprocess_ShouldConvertToLowercase()
         {
-            // Arrange
             var inputText = "Example\nONE";
             var expectedWords = new[] { "example", "one" };
 
-            // Act
-            var actualWords = textPreprocessor.Preprocess(inputText).ToList();
+            var actualWords = textPreprocessor.Preprocess(inputText).GetValueOrDefault().ToList();
 
-            // Assert
             actualWords.Should().BeEquivalentTo(expectedWords);
         }
     }

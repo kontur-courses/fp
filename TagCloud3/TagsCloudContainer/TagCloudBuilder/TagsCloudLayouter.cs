@@ -7,16 +7,15 @@ namespace TagsCloudVisualization
 {
     public class TagsCloudLayouter
     {
-        private Point center;
-        private IPointsProvider pointsProvider;
-        private CloudDrawingSettings drawingSettings;
-        private IEnumerable<(string, int)> words;
-        private Graphics graphics;
-        private Image image;
+        private readonly Point center;
+        private readonly IPointsProvider pointsProvider;
+        private readonly CloudDrawingSettings drawingSettings;
+        private readonly IEnumerable<(string, int)> words;
+        private readonly Graphics graphics;
+        private readonly Image image;
+        private ICollection<Rectangle> Cloud;
 
-        private ICollection<Rectangle> Cloud { get; set; }
-
-        public void Initialize(CloudDrawingSettings drawingSettings, IEnumerable<(string, int)> words)
+        public TagsCloudLayouter(CloudDrawingSettings drawingSettings, IEnumerable<(string, int)> words)
         {
             if (drawingSettings.Size.Width <= 0 || drawingSettings.Size.Height <= 0)
                 throw new ArgumentException("Size should be in positive");
@@ -45,7 +44,7 @@ namespace TagsCloudVisualization
                 var rect = PutNextRectangle(size);
                 if (!rect.IsSuccess)
                 {
-                    yield return Result.Fail<TextImage>("Can't place more rectangles. Try to increase canvas size");
+                    yield return Result<TextImage>.Fail("Can't place more rectangles. Try to increase canvas size");
                     yield break;
                 }
 
@@ -54,7 +53,7 @@ namespace TagsCloudVisualization
                 var textImage = new TextImage(
                     word.Item1, font, size, colors[word.Item2], new Point(rect.Value.X, rect.Value.Y));
 
-                yield return Result.Ok(textImage);
+                yield return Result<TextImage>.Ok(textImage);
             }
         }
 
@@ -70,10 +69,14 @@ namespace TagsCloudVisualization
         private Result<Rectangle> PutNextRectangle(Size rectangleSize)
         {
             if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-                return Result.Fail<Rectangle>("Size width and height should be positive");
+            {
+                return Result<Rectangle>.Fail("Size width and height should be positive");
+            }
 
             if (Cloud == null || !Cloud.Any())
-                return Result.Ok<Rectangle>(new Rectangle(center, rectangleSize));
+            {
+                return Result<Rectangle>.Ok(new Rectangle(center, rectangleSize));
+            }
 
             Rectangle rectangle;
             bool placingIsCorrect;
@@ -87,7 +90,7 @@ namespace TagsCloudVisualization
 
                 if (!point.IsSuccess)
                 {
-                    return Result.Fail<Rectangle>("Can't place rectangle. Try increase image size / decrease font size /reduce words count.");
+                    return Result<Rectangle>.Fail("Can't place rectangle. Try increase image size / decrease font size / reduce words count.");
                 }
 
                 enumerator.MoveNext();
@@ -99,7 +102,7 @@ namespace TagsCloudVisualization
 
             } while (!placingIsCorrect);
 
-            return Result.Ok<Rectangle>(rectangle);
+            return Result<Rectangle>.Ok(rectangle);
         }
     }
 }

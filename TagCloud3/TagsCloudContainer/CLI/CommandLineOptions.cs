@@ -2,7 +2,6 @@
 using ResultOf;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Runtime.CompilerServices;
 using TagsCloudContainer.SettingsClasses;
 using TagsCloudContainer.TagCloudBuilder;
 using TagsCloudVisualization;
@@ -49,7 +48,7 @@ namespace TagsCloudContainer.CLI
 
             appSettings.DrawingSettings.FontFamily = GetFontFamily(options.FontFamily).GetValueOrDefault(new FontFamily("Arial"));
             appSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize).GetValueOrDefault(12);
-            appSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800,600));
+            appSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800, 600));
             appSettings.DrawingSettings.Colors = GetColors(options.Colors);
             appSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider());
             appSettings.DrawingSettings.BgColor = GetBGColor(options.BgColor);
@@ -62,17 +61,17 @@ namespace TagsCloudContainer.CLI
             int size;
             if (int.TryParse(fontSize, out size) && size > 0)
             {
-                return Result.Ok<int>(size);
+                return Result<int>.Ok(size);
             }
 
-            return Result.Fail<int>($"Font size '{fontSize}' is not valid. Should be positive Integer.");
+            return Result<int>.Fail($"Font size '{fontSize}' is not valid. Should be positive Integer.");
         }
 
         private static Result<Size> GetSize(string sizeString)
         {
-            if(string.IsNullOrEmpty(sizeString))
+            if (string.IsNullOrEmpty(sizeString))
             {
-                return Result.Fail<Size>($"Size is empty. Should be two positive Integer, sepparated by comma.");
+                return Result<Size>.Fail($"Size is empty. Should be two positive Integer, sepparated by comma.");
             }
 
             var s = sizeString.Split(',', ' ', StringSplitOptions.RemoveEmptyEntries);
@@ -80,21 +79,21 @@ namespace TagsCloudContainer.CLI
             int width;
             int height;
 
-            if(s.Count() == 2 && int.TryParse(s[0], out width) && int.TryParse(s[1], out height))
+            if (s.Count() == 2 && int.TryParse(s[0], out width) && int.TryParse(s[1], out height))
             {
-                if(width > 0 && height >0)
+                if (width > 0 && height > 0)
                 {
-                    return Result.Ok<Size>(new Size(width,height));
+                    return Result<Size>.Ok(new Size(width, height));
                 }
             }
-            return Result.Fail<Size>( $"Size format '{sizeString}' is not valid. Should be two positive Integer, sepparated by comma." );
+            return Result<Size>.Fail($"Size format '{sizeString}' is not valid. Should be two positive Integer, sepparated by comma.");
         }
 
         private static Result<IPointsProvider> GetPointsProvider(string layout)
         {
             if (string.IsNullOrEmpty(layout))
             {
-                return Result.Fail<IPointsProvider>("Point provider name is null or empty");
+                return Result<IPointsProvider>.Fail("Point provider name is null or empty");
             }
 
             IPointsProvider pointProvider;
@@ -114,10 +113,10 @@ namespace TagsCloudContainer.CLI
                     break;
 
                 default:
-                    return Result.Fail<IPointsProvider>($"Can't find Point provider with name {layout}");
+                    return Result<IPointsProvider>.Fail($"Can't find Point provider with name {layout}");
             }
 
-            return Result.Ok<IPointsProvider>(pointProvider);
+            return Result<IPointsProvider>.Ok(pointProvider);
         }
 
         private static Result<FontFamily> GetFontFamily(string fontName)
@@ -125,16 +124,16 @@ namespace TagsCloudContainer.CLI
 
             if (string.IsNullOrEmpty(fontName))
             {
-                return Result.Fail<FontFamily>("Font name is null or empty");
+                return Result<FontFamily>.Fail("Font name is null or empty");
             }
 
             var fontsCollection = new InstalledFontCollection();
             if (!fontsCollection.Families.Any(x => x.Name.ToLowerInvariant() == fontName.ToLowerInvariant()))
             {
-                return Result.Fail<FontFamily>($"Font {fontName} not found. Check the font name and make sure that the font is installed.");
+                return Result<FontFamily>.Fail($"Font {fontName} not found. Check the font name and make sure that the font is installed.");
             }
 
-            return Result.Ok<FontFamily>(new FontFamily(fontName));
+            return Result<FontFamily>.Ok(new FontFamily(fontName));
         }
 
         private static IList<Color> GetColors(string colors)
@@ -144,11 +143,11 @@ namespace TagsCloudContainer.CLI
                 return new List<Color>() { Color.White };
             }
 
-            var c = colors.Split(',').Select(x => Color.FromName(x)).ToList();
+            var parsedColors = colors.Split(',').Select(x => Color.FromName(x)).ToList();
 
-            if (c.Count > 0)
+            if (parsedColors.Count > 0)
             {
-                return c.ToList();
+                return parsedColors.ToList();
             }
 
             return new List<Color>() { Color.White };

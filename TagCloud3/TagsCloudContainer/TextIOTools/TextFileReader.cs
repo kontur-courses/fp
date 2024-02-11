@@ -4,19 +4,19 @@ namespace TagsCloudContainer.TextTools
 {
     public class TextFileReader : ITextReader
     {
-        public Result<string> ReadText(string filePath)
+        public static Result<string> ReadText(string filePath)
         {
-            if(filePath == null)
+            if (string.IsNullOrEmpty(filePath))
             {
-                return Result.Fail<string>($"File path can't be empty");
+                return Result<string>.Fail($"File path can't be empty");
             }
 
             if (!File.Exists(filePath))
             {
-                return Result.Fail<string>($"File {Path.GetFullPath(filePath)} not found");
+                return Result<string>.Fail($"File {Path.GetFullPath(filePath)} not found");
             }
 
-            return Result.Ok<string>(File.ReadAllText(filePath));
+            return Result<string>.Ok(File.ReadAllText(filePath));
         }
     }
 }

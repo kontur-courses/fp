@@ -15,6 +15,8 @@ namespace WinFormsApp.SettingsManager
         public static AppSettings LoadSettings(string filePath = settingsFile)
         {
             AppSettings settings = new();
+            settings.DrawingSettings = new CloudDrawingSettings();
+
             if (File.Exists(filePath))
             {
                 var tryReadSettings = ReadFromFile(filePath);
@@ -25,7 +27,7 @@ namespace WinFormsApp.SettingsManager
                     settings.DrawingSettings = new CloudDrawingSettings();
                     SaveSettings(settings);
                 }
-                settings = tryReadSettings.GetValueOrThrow();
+                settings = tryReadSettings.GetValueOrDefault();
 
                 if (settings.DrawingSettings == null)
                 {
@@ -43,15 +45,15 @@ namespace WinFormsApp.SettingsManager
             try
             {
                 string json = File.ReadAllText(filePath);
-                return Result.Ok<AppSettings>(JsonConvert.DeserializeObject<AppSettings>(json));
+                return Result<AppSettings>.Ok(JsonConvert.DeserializeObject<AppSettings>(json));
             }
             catch (JsonException ex)
             {
-                return Result.Fail<AppSettings>($"Settings file is damaged: {ex.Message}. Default settings is loaded.");
+                return Result<AppSettings>.Fail($"Settings file is damaged: {ex.Message}. Default settings is loaded.");
             }
             catch (Exception ex)
             {
-                return Result.Fail<AppSettings>($"Failed to read file: {ex.Message}");
+                return Result<AppSettings>.Fail($"Failed to read file: {ex.Message}");
             }
         }
     }

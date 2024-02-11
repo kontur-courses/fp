@@ -1,19 +1,21 @@
-﻿namespace TagsCloudContainer.FrequencyAnalyzers
+﻿using ResultOf;
+
+namespace TagsCloudContainer.FrequencyAnalyzers
 {
     public class FrequencyAnalyzer : IAnalyzer
     {
-        private readonly Dictionary<string, int> wordFrequency;
-
-        public FrequencyAnalyzer()
+        public static Result<IEnumerable<(string,int)>> Analyze(string text, string excludedWordsPath = null)
         {
-            wordFrequency = new Dictionary<string, int>();
-        }
+            var wordFrequency = new Dictionary<string, int>();
 
-        public void Analyze(string text, string exclude = "")
-        {
-            var preprocessor = new TextPreprocessing(exclude);
+            var preprocessor = new TextPreprocessing(excludedWordsPath).Preprocess(text);
 
-            foreach (var word in preprocessor.Preprocess(text))
+            if(!preprocessor.IsSuccess)
+            {
+                return Result<IEnumerable<(string, int)>>.Fail(preprocessor.Error);
+            }
+
+            foreach (var word in preprocessor.GetValueOrDefault())
             {
                 if (wordFrequency.ContainsKey(word.ToLower()))
                 {
@@ -24,11 +26,8 @@
                     wordFrequency.Add(word, 1);
                 }
             }
-        }
 
-        public IEnumerable<(string, int)> GetAnalyzedText()
-        {
-            return wordFrequency.Select(p => (p.Key, p.Value));
+            return Result<IEnumerable<(string, int)>>.Ok(wordFrequency.Select(p => (p.Key, p.Value)));
         }
     }
 }

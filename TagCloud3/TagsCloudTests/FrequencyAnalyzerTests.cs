@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text;
-using TagsCloudContainer;
 using TagsCloudContainer.FrequencyAnalyzers;
 
 namespace TagsCloudTests
@@ -9,21 +7,9 @@ namespace TagsCloudTests
     [TestFixture]
     public class FrequencyAnalyzerTests
     {
-        private IAnalyzer sut;
-        private ServiceProvider serviceProvider;
-
-        [SetUp]
-        public void Setup()
-        {
-            var services = DependencyInjectionConfig.AddCustomServices(new ServiceCollection());
-            serviceProvider = services.BuildServiceProvider();
-            sut = serviceProvider.GetRequiredService<IAnalyzer>();
-        }
-
         [Test]
         public void Analyze_ShouldReturnCorrectFrequency_ForSimpleText()
         {
-            // Arrange
             var text = "hello\nworld\nhello";
             var expectedFrequency = new List<(string, int)>
                 {
@@ -31,50 +17,38 @@ namespace TagsCloudTests
                     ( "world", 1 )
                 };
 
-            // Act
-            sut.Analyze(text);
-
-            // Assert
-            sut.GetAnalyzedText().Should().BeEquivalentTo(expectedFrequency);
+            FrequencyAnalyzer.Analyze(text).Value.Should().BeEquivalentTo(expectedFrequency);
         }
 
         [Test]
         public void Analyze_ShouldNotChangeFrequency_ForEmptyText()
         {
-            // Arrange
             var text = string.Empty;
             var expectedFrequency = new List<(string, int)>();
 
-            // Act
-            sut.Analyze(text);
+            var sut = FrequencyAnalyzer.Analyze(text).Value;
 
-            // Assert
-            sut.GetAnalyzedText().Should().BeEquivalentTo(expectedFrequency);
+            sut.Should().BeEquivalentTo(expectedFrequency);
         }
 
         [Test]
         public void GetAnalyzedText_ShouldNotContainExcludedWord()
         {
-            // Arrange
             var text = "hello\nworld\nhello";
             var exclude = "hello";
+            var excludeFile = CreateTempFileWithText(exclude);
 
-
-            // Act
-            sut.Analyze(text, CreateTempFile(exclude));
-
-            // Assert
-            sut.GetAnalyzedText().Should().NotContain(x => x.Item1.Contains(exclude));
+            FrequencyAnalyzer.Analyze(text, excludeFile).GetValueOrDefault().Should().NotContain(x => x.Item1.Contains(exclude));
         }
 
-        private string CreateTempFile(string text)
+        private string CreateTempFileWithText(string text)
         {
-            var tempFile = Path.GetTempFileName();
-            using (var streamWriter = new StreamWriter(tempFile, false, Encoding.UTF8))
+            var tempFilePath = Path.GetTempFileName();
+            using (var streamWriter = new StreamWriter(tempFilePath, false, Encoding.UTF8))
             {
                 streamWriter.Write(text);
             }
-            return tempFile;
+            return tempFilePath;
         }
     }
 }

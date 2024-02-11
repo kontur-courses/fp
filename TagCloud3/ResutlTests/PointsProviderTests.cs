@@ -1,10 +1,10 @@
-﻿using ResultOf;
+﻿using FluentAssertions;
+using ResultOf;
 using System.Drawing;
 using TagsCloudContainer.TagCloudBuilder;
 using TagsCloudVisualization;
-using FluentAssertions;
 
-namespace ResutlTests
+namespace ResultTests
 {
     public class PointsProviderTests
     {
@@ -14,14 +14,11 @@ namespace ResutlTests
         [TestCaseSource(nameof(PointProviders))]
         public void Points_ShouldReturnCorrectNumberOfPoints(IPointsProvider provider)
         {
-            // Arrange
             var center = new Point(10, 10);
             provider.Initialize(center);
 
-            // Act
-            var sut = provider.Points().Skip(maxPointsCount-2).First();
+            var sut = provider.Points().Skip(maxPointsCount - 2).First();
 
-            // Assert
             sut.IsSuccess.Should().BeTrue();
         }
 
@@ -30,16 +27,13 @@ namespace ResutlTests
         [TestCaseSource(nameof(PointProviders))]
         public void Points_ShouldReturnFailWhenMaxPointsCountReached(IPointsProvider provider)
         {
-            // Arrange
             var center = new Point(10, 10);
             provider.Initialize(center);
 
-            // Act
             var result = provider.Points().Last();
 
-            // Assert
             result.Should().BeOfType<Result<Point>>();
-            ((Result<Point>)result).IsSuccess.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
         }
 
         public static IEnumerable<IPointsProvider> PointProviders()

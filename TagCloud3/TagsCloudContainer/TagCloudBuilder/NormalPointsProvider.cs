@@ -20,9 +20,9 @@ namespace TagsCloudContainer.TagCloudBuilder
         {
             while (++pointNumber < maxPointsCount)
             {
-                yield return Result.Ok <Point>( new Point((rnd.Next(0, Center.X) + rnd.Next(0, Center.X)), (rnd.Next(0, Center.Y) + rnd.Next(0, Center.Y))));
+                yield return Result<Point>.Ok( new Point((rnd.Next(0, Center.X) + rnd.Next(0, Center.X)), (rnd.Next(0, Center.Y) + rnd.Next(0, Center.Y))));
             }
-            yield return Result.Fail<Point>("Can't get more points");
+            yield return Result<Point>.Fail("Can't get more points");
         }
     }
 }

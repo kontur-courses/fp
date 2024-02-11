@@ -1,7 +1,5 @@
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text;
-using TagsCloudContainer;
 using TagsCloudContainer.TextTools;
 
 namespace TagsCloudTests
@@ -9,9 +7,36 @@ namespace TagsCloudTests
     [TestFixture]
     public class FileReadingTests
     {
-        private ServiceProvider serviceProvider;
         private string tempFilePath;
         private const string testText = "Expected text from the file";
+
+        [SetUp]
+        public void Setup()
+        {
+            tempFilePath = CreateTempFile();
+        }
+
+        [Test]
+        public void ReadTextFromFile_ShouldReturnCorrectText()
+        {
+            var filePath = tempFilePath;
+            var expectedText = testText;
+
+            var actualResult = TextFileReader.ReadText(filePath);
+
+            actualResult.IsSuccess.Should().BeTrue();
+            actualResult.GetValueOrDefault().Should().Be(expectedText);
+        }
+
+        [Test]
+        public void ReadTextFromFile_ShouldReturnError_WhenFileDoesNotExist()
+        {
+            var filePath = "nonexistent_file.txt";
+
+            var actualResult = TextFileReader.ReadText(filePath);
+
+            actualResult.IsSuccess.Should().BeFalse();
+        }
 
         private string CreateTempFile()
         {
@@ -21,44 +46,6 @@ namespace TagsCloudTests
                 streamWriter.Write(testText);
             }
             return tempFile;
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            var services = DependencyInjectionConfig.AddCustomServices(new ServiceCollection());
-            serviceProvider = services.BuildServiceProvider();
-            tempFilePath = CreateTempFile();
-        }
-
-        [Test]
-        public void ReadTextFromFile_ShouldReturnCorrectText()
-        {
-            // Arrange
-            var filePath = tempFilePath;
-            var expectedText = testText;
-            var sut = serviceProvider.GetRequiredService<ITextReader>();
-
-            // Act
-            var actualResult = sut.ReadText(filePath);
-
-            // Assert
-            actualResult.IsSuccess.Should().BeTrue();
-            actualResult.GetValueOrThrow().Should().Be(expectedText);
-        }
-
-        [Test]
-        public void ReadTextFromFile_ShouldReturnError_WhenFileDoesNotExist()
-        {
-            // Arrange
-            var filePath = "nonexistent_file.txt";
-            var sut = serviceProvider.GetRequiredService<ITextReader>();
-
-            // Act
-            var actualResult = sut.ReadText(filePath);
-
-            // Act & Assert
-            actualResult.IsSuccess.Should().BeFalse();
         }
     }
 }
