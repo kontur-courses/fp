@@ -99,5 +99,6 @@ public class TagsCloudPainterLibModule : Module
         builder.RegisterType<TxtFileReader>().As<IFileReader>().SingleInstance();
         builder.RegisterType<DocFileReader>().As<IFileReader>().SingleInstance();
         builder.RegisterType<StringSizer>().As<IStringSizer>().SingleInstance();
+        builder.RegisterType<TagSizer>().As<ITagSizer>().SingleInstance();
     }
 }

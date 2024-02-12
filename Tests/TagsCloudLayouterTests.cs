@@ -22,32 +22,32 @@ public class TagsCloudLayouterTests
         tagSettings = new TagSettings { TagFontSize = 32 };
         var pointerSettings = new SpiralPointerSettings { AngleConst = 1, RadiusConst = 0.5, Step = 0.1 };
         var formPointer = new ArchimedeanSpiralPointer(cloudSettings, pointerSettings);
-        stringSizer = A.Fake<IStringSizer>();
-        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<FontFamily>.Ignored, A<float>.Ignored))
+        tagsSizer = A.Fake<ITagSizer>();
+        A.CallTo(() => tagsSizer.GetTagSize(A<Tag>.Ignored, A<FontFamily>.Ignored))
             .Returns(new Size(10, 10));
-        tagsCloudLayouter = new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer);
+        tagsCloudLayouter = new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, tagsSizer);
     }
 
     private TagsCloudLayouter tagsCloudLayouter;
     private ITagSettings tagSettings;
-    private IStringSizer stringSizer;
+    private ITagSizer tagsSizer;
 
     private static IEnumerable<TestCaseData> ConstructorArgumentNullExceptions => new[]
     {
         new TestCaseData(null,
                 A.Fake<ArchimedeanSpiralPointer>(),
                 A.Fake<TagSettings>(),
-                A.Fake<StringSizer>())
+                A.Fake<TagSizer>())
             .SetName("WhenGivenNullCloudSettings"),
         new TestCaseData(A.Fake<CloudSettings>(),
                 null,
                 A.Fake<TagSettings>(),
-                A.Fake<StringSizer>())
+                A.Fake<TagSizer>())
             .SetName("WhenGivenNullFormPointer"),
         new TestCaseData(A.Fake<CloudSettings>(),
                 A.Fake<ArchimedeanSpiralPointer>(),
                 null,
-                A.Fake<StringSizer>())
+                A.Fake<TagSizer>())
             .SetName("WhenGivenNullTagSettings"),
         new TestCaseData(A.Fake<CloudSettings>(),
                 A.Fake<ArchimedeanSpiralPointer>(),
@@ -61,35 +61,17 @@ public class TagsCloudLayouterTests
         ICloudSettings cloudSettings,
         IFormPointer formPointer,
         ITagSettings tagSettings,
-        IStringSizer stringSizer)
+        ITagSizer stringSizer)
     {
         Assert.Throws<ArgumentNullException>(() =>
             new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer));
-    }
-
-    private static IEnumerable<TestCaseData> FailingSizes => new[]
-    {
-        new TestCaseData(new Size(0, 10)).SetName("WidthNotPossitive"),
-        new TestCaseData(new Size(10, 0)).SetName("HeightNotPossitive"),
-        new TestCaseData(new Size(0, 0)).SetName("HeightAndWidthNotPossitive")
-    };
-
-    [TestCaseSource(nameof(FailingSizes))]
-    public void PutNextRectangle_ShouldFail_WhenGivenTagWith(Size size)
-    {
-        A.CallTo(() => stringSizer.GetStringSize(A<string>.Ignored, A<FontFamily>.Ignored, A<float>.Ignored))
-            .Returns(size);
-
-        var result = tagsCloudLayouter.PutNextTag(new Tag("a", 2, 1));
-
-        Assert.That(result.IsSuccess, Is.False);
     }
 
     [Test]
     public void PutNextTag_ShouldReturnRectangleOfTheTagValueSize()
     {
         var tag = new Tag("ads", 10, 5);
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize).GetValueOrThrow();
+        var tagSize = tagsSizer.GetTagSize(tag, tagSettings.TagFont).GetValueOrThrow();
 
         var resultRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
 
@@ -110,7 +92,7 @@ public class TagsCloudLayouterTests
     }
 
     [Test]
-    public void PutNextRectangle_ShouldPutRectangleWithCenterInTheCloudCenter()
+    public void PutNextTag_ShouldPutRectangleWithCenterInTheCloudCenter()
     {
         var center = tagsCloudLayouter.GetCloud().Center;
         var tag = new Tag("ads", 10, 5);
@@ -132,15 +114,15 @@ public class TagsCloudLayouterTests
         rectanglesAmount.Should().Be(2);
     }
 
-    private static IEnumerable<TestCaseData> PutTagsNoExcepion = new[]
+    private static readonly IEnumerable<TestCaseData> PutTagsNoExcepion = new[]
     {
         new TestCaseData(null).SetName("WhenListOfTagsIsNull"),
-        new TestCaseData(new List<Tag>()).SetName("WhenListOfTagsIsEmpty"),
+        new TestCaseData(new List<Tag>()).SetName("WhenListOfTagsIsEmpty")
     };
 
     [TestCaseSource(nameof(PutTagsNoExcepion))]
     public void PutTags_ShouldNotThrow_(List<Tag> tags)
     {
-        Assert.DoesNotThrow(() =>  tagsCloudLayouter.PutTags(tags));
+        Assert.DoesNotThrow(() => tagsCloudLayouter.PutTags(tags));
     }
 }

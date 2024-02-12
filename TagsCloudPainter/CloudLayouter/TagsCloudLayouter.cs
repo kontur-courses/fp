@@ -13,49 +13,42 @@ public class TagsCloudLayouter : ICloudLayouter
 {
     private readonly ICloudSettings cloudSettings;
     private readonly IFormPointer formPointer;
-    private readonly IStringSizer stringSizer;
     private readonly ITagSettings tagSettings;
+    private readonly ITagSizer tagSizer;
     private TagsCloud cloud;
 
     public TagsCloudLayouter(
         ICloudSettings cloudSettings,
         IFormPointer formPointer,
         ITagSettings tagSettings,
-        IStringSizer stringSizer)
+        ITagSizer tagSizer)
     {
         this.cloudSettings = cloudSettings ?? throw new ArgumentNullException(nameof(cloudSettings));
         this.formPointer = formPointer ?? throw new ArgumentNullException(nameof(formPointer));
         this.tagSettings = tagSettings ?? throw new ArgumentNullException(nameof(tagSettings));
-        this.stringSizer = stringSizer ?? throw new ArgumentNullException();
+        this.tagSizer = tagSizer ?? throw new ArgumentNullException(nameof(tagSizer));
         cloud = new TagsCloud(cloudSettings.CloudCenter, []);
     }
 
     public Result<Rectangle> PutNextTag(Tag tag)
     {
-        var tagSize = stringSizer.GetStringSize(tag.Value, tagSettings.TagFont, tag.FontSize);
-        tagSize = tagSize.Then(tagSize => tagSize.Height <= 0 || tagSize.Width <= 0
-            ? Result.Fail<Size>("Either width or height of rectangle size is not possitive")
-            : tagSize);
-
-        var nextRectangle = tagSize
-            .Then(tagSize => formPointer.GetNextPoint().Then(point => point.GetRectangle(tagSize)))
-            .Then(nextRectangle =>
-            {
-                while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(nextRectangle)))
-                    nextRectangle = formPointer.GetNextPoint().GetValueOrThrow()
-                        .GetRectangle(tagSize.GetValueOrThrow());
-
-                return nextRectangle;
-            });
+        var tagSize = tagSizer.GetTagSize(tag, tagSettings.TagFont);
+        var nextRectangle = tagSize.Then(GetTagRectangle);
 
         nextRectangle.Then(nextRectangle => cloud.AddTag(tag, nextRectangle));
 
         return nextRectangle;
     }
 
-    public void PutTags(List<Tag> tags)
+    public TagsCloud PutTags(List<Tag> tags)
     {
-        tags?.Select(PutNextTag).ToList();
+        var cloud = new TagsCloud(this.cloud.Center, this.cloud.Tags);
+        var tagSizes = tags?.Select(tag => tagSizer.GetTagSize(tag, tagSettings.TagFont));
+        var tagsRectangles = tagSizes?.Select(tagSize => tagSize.Then(GetTagRectangle));
+        tagsRectangles?.Zip(tags ?? [], (rectangle, tag) => rectangle.Then(rectangle => cloud.AddTag(tag, rectangle)))
+            .ToList();
+
+        return cloud;
     }
 
     public TagsCloud GetCloud()
@@ -67,5 +60,20 @@ public class TagsCloudLayouter : ICloudLayouter
     {
         formPointer.Reset();
         cloud = new TagsCloud(cloudSettings.CloudCenter, []);
+    }
+
+    private Result<Rectangle> GetTagRectangle(Size tagSize)
+    {
+        var tagRectangle = formPointer.GetNextPoint().Then(point => point.GetRectangle(tagSize))
+            .Then(tagRectangle =>
+            {
+                while (cloud.Tags.Any(pair => pair.Item2.IntersectsWith(tagRectangle)))
+                    tagRectangle = formPointer.GetNextPoint().GetValueOrThrow()
+                        .GetRectangle(tagSize);
+
+                return tagRectangle;
+            });
+
+        return tagRectangle;
     }
 }
