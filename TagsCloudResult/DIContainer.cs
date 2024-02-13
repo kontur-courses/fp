@@ -1,11 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using SixLabors.Fonts;
+using TagsCloudResult;
 using TagsCloudResult.Image;
 using TagsCloudResult.TagCloud;
 using TagsCloudResult.UI;
 using TagsCloudResult.Utility;
-
-namespace TagsCloudResult;
 
 public class DIContainer
 {

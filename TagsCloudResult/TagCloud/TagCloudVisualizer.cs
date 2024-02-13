@@ -15,9 +15,8 @@ public class TagCloudVisualizer(ICircularCloudLayouter circularCloudLayouter, Im
 
             var rectangle = circularCloudLayouter.PutNextRectangle(outer);
 
-            var outOfResult = imageGenerator.RectangleOutOfResolution(rectangle);
-            if (outOfResult.IsErr)
-                return outOfResult;
+            if (imageGenerator.RectangleOutOfResolution(rectangle))
+                return MyResult.Err("Tag cloud out of image resolution");
 
             wordsFrequenciesOutline.Add((kvp.word, kvp.count, rectangle));
         }

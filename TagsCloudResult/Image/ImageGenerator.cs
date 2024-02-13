@@ -23,7 +23,7 @@ public class ImageGenerator : IDisposable
 
     public ImageGenerator(ApplicationArguments args)
     {
-        fontFamily = FontFinder.TryGetFont(args).Unwrap();
+        fontFamily = new FontCollection().Add(args.FontPath);
         
         var format = args.Format switch
         {
@@ -53,7 +53,7 @@ public class ImageGenerator : IDisposable
         );
     }
 
-    private Font FontCreator(int size)
+    private Font CreateFont(int size)
     {
         return fontFamily.CreateFont(size, FontStyle.Italic);
     }
@@ -66,7 +66,7 @@ public class ImageGenerator : IDisposable
     private void DrawWord(string word, int frequency, Rectangle rectangle)
     {
         image.Mutate(x => x.DrawText(
-            word, FontCreator(fontSize + frequency), scheme, new PointF(rectangle.X, rectangle.Y))
+            word, CreateFont(fontSize + frequency), scheme, new PointF(rectangle.X, rectangle.Y))
         );
     }
 
@@ -107,19 +107,19 @@ public class ImageGenerator : IDisposable
 
     public Size GetOuterRectangle(string word, int frequency)
     {
-        var textOption = new TextOptions(FontCreator(fontSize + frequency));
+        var textOption = new TextOptions(CreateFont(fontSize + frequency));
         var size = TextMeasurer.MeasureSize(word, textOption);
 
         return new Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3);
     }
 
-    public MyResult RectangleOutOfResolution(Rectangle rectangle)
+    public bool RectangleOutOfResolution(Rectangle rectangle)
     {
         var tmp = new Rectangle(rectangle.Location, rectangle.Size);
 
         rectangle.Intersect(new Rectangle(0, 0, image.Width, image.Height));
 
-        return tmp.Equals(rectangle) ? MyResult.Ok() : MyResult.Err("Tag cloud out of image resolution");
+        return !tmp.Equals(rectangle);
     }
 
     public void Dispose()
