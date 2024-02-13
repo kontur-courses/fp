@@ -46,21 +46,31 @@
         {
             return IsSuccess ? $"Result(Ok, {Value})" : $"Result(Error, {Error})";
         }
+    }
 
-        internal object Then<T1>()
+    public static class ResultExtensions
+    {
+        public static Result<TResult> Then<T, TResult>(this Result<T> input, Func<T, Result<TResult>> continuation)
         {
-            throw new NotImplementedException();
+            return input.IsSuccess
+                ? continuation(input.Value)
+                : Result<TResult>.Fail(input.Error);
         }
 
-        public Result<TResult> Then<TResult>(Func<T, TResult> onSuccess)
+        public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input, Func<TInput, TOutput> continuation)
         {
-            if (IsSuccess)
+            return input.Then(inp => Of(() => continuation(inp)));
+        }
+
+        public static Result<T> Of<T>(Func<T> f, string error = null)
+        {
+            try
             {
-                return Result<TResult>.Ok(onSuccess(Value));
+                return Result<T>.Ok(f());
             }
-            else
+            catch (Exception e)
             {
-                return Result<TResult>.Fail(Error);
+                return Result<T>.Fail(error ?? e.Message);
             }
         }
     }

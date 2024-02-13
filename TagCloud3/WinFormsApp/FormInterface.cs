@@ -109,11 +109,11 @@ namespace WinFormsApp
         {
             var rawText = TextFileReader.ReadText(appSettings.TextFile);
 
-            var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault(), appSettings.FilterFile)
-                .Then(x => new TagsCloudLayouter(appSettings.DrawingSettings, x).GetTextImages())
-                .Then(x => Painter.Draw(appSettings.DrawingSettings.Size, x, appSettings.DrawingSettings.BgColor));
+            var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault())
+                .Then(x => new TagsCloudLayouter(x).GetTextImages())
+                .Then(x => Painter.Draw(x));
 
-            return res.Value;
+            return res;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)

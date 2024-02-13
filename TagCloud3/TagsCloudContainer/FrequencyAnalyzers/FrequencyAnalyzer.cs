@@ -1,16 +1,19 @@
 ﻿using ResultOf;
+using TagsCloudContainer.SettingsClasses;
 
 namespace TagsCloudContainer.FrequencyAnalyzers
 {
     public class FrequencyAnalyzer : IAnalyzer
     {
-        public static Result<IEnumerable<(string,int)>> Analyze(string text, string excludedWordsPath = null)
+        public static Result<IEnumerable<(string, int)>> Analyze(string text)
         {
+            string excludedWordsPath = SettingsStorage.AppSettings.FilterFile;
+
             var wordFrequency = new Dictionary<string, int>();
 
             var preprocessor = new TextPreprocessing(excludedWordsPath).Preprocess(text);
 
-            if(!preprocessor.IsSuccess)
+            if (!preprocessor.IsSuccess)
             {
                 return Result<IEnumerable<(string, int)>>.Fail(preprocessor.Error);
             }

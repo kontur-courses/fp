@@ -15,16 +15,16 @@ namespace TagsCloudVisualization
         private readonly Image image;
         private ICollection<Rectangle> Cloud;
 
-        public TagsCloudLayouter(CloudDrawingSettings drawingSettings, IEnumerable<(string, int)> words)
+        public TagsCloudLayouter(IEnumerable<(string, int)> words)
         {
+            drawingSettings = SettingsStorage.AppSettings.DrawingSettings;
+            this.words = words;
+
             if (drawingSettings.Size.Width <= 0 || drawingSettings.Size.Height <= 0)
                 throw new ArgumentException("Size should be in positive");
 
             center = new Point(drawingSettings.Size.Width / 2, drawingSettings.Size.Height / 2);
             pointsProvider = (IPointsProvider)Activator.CreateInstance(drawingSettings.PointsProvider.GetType(), center);
-
-            this.drawingSettings = drawingSettings;
-            this.words = words;
 
             image = new Bitmap(drawingSettings.Size.Width, drawingSettings.Size.Height);
             graphics = Graphics.FromImage(image);

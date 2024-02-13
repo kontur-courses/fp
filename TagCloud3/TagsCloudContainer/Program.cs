@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using ResultOf;
 using TagsCloudContainer.CLI;
 using TagsCloudContainer.Drawer;
 using TagsCloudContainer.FrequencyAnalyzers;
@@ -13,26 +14,17 @@ namespace TagsCloudContainer
     {
         public static void Main(string[] args)
         {
-            var appSettings = new AppSettings();
-
             Parser.Default.ParseArguments<CommandLineOptions>(args)
-                .WithParsed(o => appSettings = CommandLineOptions.ParseArgs(o));
+                .WithParsed(o => CommandLineOptions.ParseArgs(o));
 
-            var rawText = TextFileReader.ReadText(appSettings.TextFile);
-            if (rawText.IsSuccess)
-            {
-                var res = FrequencyAnalyzer.Analyze(rawText.GetValueOrDefault(), appSettings.FilterFile)
-                    .Then(x => new TagsCloudLayouter(appSettings.DrawingSettings, x).GetTextImages())
-                    .Then(x => Painter.Draw(appSettings.DrawingSettings.Size, x, appSettings.DrawingSettings.BgColor))
-                    .Then(x => ImageSaver.SaveToFile(x.GetValueOrDefault(), appSettings.OutImagePath, "jpg"));
+            var res = TextFileReader.ReadText(SettingsStorage.AppSettings.TextFile)
+                .Then(FrequencyAnalyzer.Analyze)
+                .Then(result => new TagsCloudLayouter(result).GetTextImages())
+                .Then(Painter.Draw)
+                .Then(img => ImageSaver.SaveToFile(img, SettingsStorage.AppSettings.OutImagePath, "jpg"));
 
-                if (!res.IsSuccess)
-                    Console.Write(res.Error);
-            }
-            else
-            {
-                Console.WriteLine(rawText.Error);
-            }
+            if (!res.IsSuccess)
+                Console.Write(res.Error);
         }
     }
 }

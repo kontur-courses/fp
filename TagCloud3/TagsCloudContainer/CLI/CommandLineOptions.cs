@@ -39,21 +39,21 @@ namespace TagsCloudContainer.CLI
 
         public static AppSettings ParseArgs(CommandLineOptions options)
         {
-            var appSettings = new AppSettings();
-            appSettings.DrawingSettings = new();
+            SettingsStorage.AppSettings = new AppSettings();
+            SettingsStorage.AppSettings.DrawingSettings = new();
 
-            appSettings.TextFile = options.Filename;
-            appSettings.OutImagePath = options.Output;
-            appSettings.FilterFile = options.Filter;
+            SettingsStorage.AppSettings.TextFile = options.Filename;
+            SettingsStorage.AppSettings.OutImagePath = options.Output;
+            SettingsStorage.AppSettings.FilterFile = options.Filter;
 
-            appSettings.DrawingSettings.FontFamily = GetFontFamily(options.FontFamily).GetValueOrDefault(new FontFamily("Arial"));
-            appSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize).GetValueOrDefault(12);
-            appSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800, 600));
-            appSettings.DrawingSettings.Colors = GetColors(options.Colors);
-            appSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider(new Point(0, 0)));
-            appSettings.DrawingSettings.BgColor = GetBGColor(options.BgColor);
+            SettingsStorage.AppSettings.DrawingSettings.FontFamily = GetFontFamily(options.FontFamily).GetValueOrDefault(new FontFamily("Arial"));
+            SettingsStorage.AppSettings.DrawingSettings.FontSize = GetFontSize(options.FontSize).GetValueOrDefault(12);
+            SettingsStorage.AppSettings.DrawingSettings.Size = GetSize(options.Size).GetValueOrDefault(new Size(800, 600));
+            SettingsStorage.AppSettings.DrawingSettings.Colors = GetColors(options.Colors);
+            SettingsStorage.AppSettings.DrawingSettings.PointsProvider = GetPointsProvider(options.Layout).GetValueOrDefault(new NormalPointsProvider(new Point(0, 0)));
+            SettingsStorage.AppSettings.DrawingSettings.BgColor = GetBGColor(options.BgColor);
 
-            return appSettings;
+            return SettingsStorage.AppSettings;
         }
 
         private static Result<int> GetFontSize(string fontSize)

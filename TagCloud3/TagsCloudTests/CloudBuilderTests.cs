@@ -8,12 +8,12 @@ namespace TagsCloudTests
     internal class CloudBuilderTests
     {
         private List<(string, int)> words;
-        private CloudDrawingSettings drawingSettings;
 
         [SetUp]
         public void Setup()
         {
-            drawingSettings = new CloudDrawingSettings
+            SettingsStorage.AppSettings = new();
+            SettingsStorage.AppSettings.DrawingSettings = new CloudDrawingSettings
             {
                 Size = new(1000, 1000),
                 FontFamily = new("Arial"),
@@ -26,18 +26,15 @@ namespace TagsCloudTests
         [Test]
         public void Initialize_WithValidSettings_ShouldNotThrowException()
         {
-            Assert.DoesNotThrow(() => new TagsCloudLayouter(drawingSettings, words));
+            Assert.DoesNotThrow(() => new TagsCloudLayouter(words));
         }
 
         [Test]
         public void Initialize_WithInvalidSize_ShouldThrowArgumentException()
         {
-            var invalidDrawingSettings = new CloudDrawingSettings
-            {
-                Size = new Size(-1, 1000)
-            };
+            SettingsStorage.AppSettings.DrawingSettings.Size = new Size(-1, 1000);
 
-            Assert.Throws<ArgumentException>(() => new TagsCloudLayouter(invalidDrawingSettings, words));
+            Assert.Throws<ArgumentException>(() => new TagsCloudLayouter(words));
         }
 
         [Test]
@@ -45,7 +42,7 @@ namespace TagsCloudTests
         {
             var expectedCount = words.Count;
 
-            var actualCount = new TagsCloudLayouter(drawingSettings,words).GetTextImages().Count();
+            var actualCount = new TagsCloudLayouter(words).GetTextImages().Count();
 
             actualCount.Should().Be(expectedCount);
         }
@@ -53,7 +50,7 @@ namespace TagsCloudTests
         [Test]
         public void GetTextImages_ShouldReturnCorrectTextImages()
         {
-            var layouter = new TagsCloudLayouter(drawingSettings, words);
+            var layouter = new TagsCloudLayouter(words);
 
             var textImages = layouter.GetTextImages().ToList();
 
@@ -65,13 +62,13 @@ namespace TagsCloudTests
         [Test]
         public void GetTextImages_ShouldNotContainOverlappingTextImages()
         {
-            var layouter = new TagsCloudLayouter(drawingSettings, words);
+            var layouter = new TagsCloudLayouter(words);
 
             var textImages = layouter.GetTextImages().Select(x => new Rectangle(x.GetValueOrDefault().Position, x.GetValueOrDefault().Size));
             var rectangles = textImages
                  .SelectMany((x, i) => textImages.Skip(i + 1), Tuple.Create)
                  .Where(x => x.Item1.IntersectsWith(x.Item2));
-            
+
             rectangles.Should().BeEmpty();
         }
     }

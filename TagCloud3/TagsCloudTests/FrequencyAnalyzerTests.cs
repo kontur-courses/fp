@@ -1,12 +1,20 @@
 ﻿using FluentAssertions;
 using System.Text;
 using TagsCloudContainer.FrequencyAnalyzers;
+using TagsCloudContainer.SettingsClasses;
 
 namespace TagsCloudTests
 {
     [TestFixture]
     public class FrequencyAnalyzerTests
     {
+        [SetUp]
+        public void SetUp()
+        {
+            SettingsStorage.AppSettings = new();
+            SettingsStorage.AppSettings.DrawingSettings = new();
+        }
+
         [Test]
         public void Analyze_ShouldReturnCorrectFrequency_ForSimpleText()
         {
@@ -36,9 +44,9 @@ namespace TagsCloudTests
         {
             var text = "hello\nworld\nhello";
             var exclude = "hello";
-            var excludeFile = CreateTempFileWithText(exclude);
+            SettingsStorage.AppSettings.FilterFile = CreateTempFileWithText(exclude);
 
-            FrequencyAnalyzer.Analyze(text, excludeFile).GetValueOrDefault().Should().NotContain(x => x.Item1.Contains(exclude));
+            FrequencyAnalyzer.Analyze(text).GetValueOrDefault().Should().NotContain(x => x.Item1.Contains(exclude));
         }
 
         private string CreateTempFileWithText(string text)
