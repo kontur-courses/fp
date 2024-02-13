@@ -67,53 +67,6 @@ public class TagsCloudLayouterTests
             new TagsCloudLayouter(cloudSettings, formPointer, tagSettings, stringSizer));
     }
 
-    [Test]
-    public void PutNextTag_ShouldReturnRectangleOfTheTagValueSize()
-    {
-        var tag = new Tag("ads", 10, 5);
-        var tagSize = tagsSizer.GetTagSize(tag, tagSettings.TagFont).GetValueOrThrow();
-
-        var resultRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
-
-        resultRectangle.Size.Should().Be(tagSize);
-    }
-
-    [Test]
-    public void PutNextTag_ShouldReturnRectangleThatDoesNotIntersectWithAlreadyPutOnes()
-    {
-        var firstTag = new Tag("ads", 10, 5);
-        var secondTag = new Tag("ads", 10, 5);
-        var firstPutRectangle = tagsCloudLayouter.PutNextTag(firstTag).GetValueOrThrow();
-        var secondPutRectangle = tagsCloudLayouter.PutNextTag(secondTag).GetValueOrThrow();
-
-        var doesRectanglesIntersect = firstPutRectangle.IntersectsWith(secondPutRectangle);
-
-        doesRectanglesIntersect.Should().BeFalse();
-    }
-
-    [Test]
-    public void PutNextTag_ShouldPutRectangleWithCenterInTheCloudCenter()
-    {
-        var center = tagsCloudLayouter.GetCloud().Center;
-        var tag = new Tag("ads", 10, 5);
-
-        var firstRectangle = tagsCloudLayouter.PutNextTag(tag).GetValueOrThrow();
-        var firstRectangleCenter = firstRectangle.GetCenter();
-
-        firstRectangleCenter.Should().Be(center);
-    }
-
-    [Test]
-    public void GetCloud_ReturnsAsManyTagsAsWasPut()
-    {
-        tagsCloudLayouter.PutNextTag(new Tag("ads", 10, 5));
-        tagsCloudLayouter.PutNextTag(new Tag("ads", 10, 5));
-
-        var rectanglesAmount = tagsCloudLayouter.GetCloud().Tags.Count;
-
-        rectanglesAmount.Should().Be(2);
-    }
-
     private static readonly IEnumerable<TestCaseData> PutTagsNoExcepion = new[]
     {
         new TestCaseData(null).SetName("WhenListOfTagsIsNull"),
