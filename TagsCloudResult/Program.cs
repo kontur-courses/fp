@@ -16,41 +16,25 @@ public static class Program
      */
     public static void Main(string[] args)
     {
-        var containerResult = ContainerInit(args);
-        if (containerResult.IsErr)
+        var appArgsResult = ApplicationArguments.Setup(args);
+        if (appArgsResult.IsErr)
         {
-            Console.WriteLine(containerResult.UnwrapErr());
+            Console.WriteLine(appArgsResult.UnwrapErr());
             return;
         }
 
-        using var container = containerResult.Unwrap();
+        var fontFamilyResult = FontFinder.TryGetFont(appArgsResult.Unwrap());
+        if (fontFamilyResult.IsErr)
+        {
+            Console.WriteLine(fontFamilyResult.UnwrapErr());
+            return;
+        }
+
+        using var container = DIContainer.ContainerInit(appArgsResult.Unwrap());
 
         var app = container.GetService<Application>()!;
 
         app.Run(container.GetService<ApplicationArguments>()!);
-    }
-
-    private static Result<ServiceProvider> ContainerInit(string[] args)
-    {
-        ServiceCollection services = [];
-
-        services.AddSingleton<IUI, CLI>();
-
-        var appArgs = ApplicationArguments.Setup(args);
-        if (appArgs.IsErr) return Result<ServiceProvider>.Err(appArgs.UnwrapErr());
-        services.AddSingleton(appArgs.Unwrap());
-
-        services.AddTransient<ICircularCloudLayouter, CircularCloudLayouter>();
-        services.AddTransient<ImageGenerator>();
-        services.AddTransient<TagCloudVisualizer>();
-
-        services.AddSingleton<ITextHandler, FileTextHandler>();
-        services.AddSingleton<WordHandler>();
-        services.AddTransient<WordDataSet>();
-
-        services.AddSingleton<Application>();
-
-        return Result.Ok(services.BuildServiceProvider());
     }
 }
 

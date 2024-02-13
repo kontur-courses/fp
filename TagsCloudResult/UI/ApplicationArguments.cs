@@ -1,5 +1,4 @@
 using Fclp;
-using ResultSharp;
 using static TagsCloudResult.Utility.Utility;
 
 namespace TagsCloudResult.UI;
@@ -17,7 +16,7 @@ public class ApplicationArguments
     public List<int> Scheme { get; set; } = [0, 0, 0, 255];
     public string Exclude { get; set; } = GetAbsoluteFilePath("src/boringWords.txt");
 
-    public static Result<ApplicationArguments> Setup(string[] args)
+    public static MyResult<ApplicationArguments> Setup(string[] args)
     {
         var p = new FluentCommandLineParser<ApplicationArguments>();
 
@@ -76,8 +75,8 @@ public class ApplicationArguments
 
         var parsed = p.Parse(args);
 
-        return parsed.HelpCalled ? Result<ApplicationArguments>.Err("Help command called") :
-            parsed.HasErrors ? Result<ApplicationArguments>.Err("Wrong command line arguments, retry again") :
-            Result.Ok(p.Object);
+        return parsed.HasErrors
+            ? MyResult<ApplicationArguments>.Err("Wrong command line arguments, retry again")
+            : MyResult.Ok(p.Object);
     }
 }

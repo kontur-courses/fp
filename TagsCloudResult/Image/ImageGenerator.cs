@@ -1,4 +1,3 @@
-using ResultSharp;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -18,12 +17,14 @@ public class ImageGenerator : IDisposable
     private readonly Image<Rgba32> image;
     private readonly string outputPath;
     private readonly int fontSize;
-    private readonly Result<FontFamily, Exception> fontResult;
+    private readonly FontFamily fontFamily;
     private readonly ImageEncoder encoder;
     private readonly Color scheme;
 
     public ImageGenerator(ApplicationArguments args)
     {
+        fontFamily = FontFinder.TryGetFont(args).Unwrap();
+        
         var format = args.Format switch
         {
             "bmp" => ImageEncodings.Bmp,
@@ -44,8 +45,6 @@ public class ImageGenerator : IDisposable
             (byte)args.Scheme[3]
         );
         fontSize = args.FontSize;
-        fontResult = Result.Try(() => new FontCollection().Add(args.FontPath))
-            .Or(Result<FontFamily, Exception>.Err(new Exception($"Font {args.FontPath} doesn't exist")));
 
         SetBackground(Color.FromRgb(
             (byte)args.Background[0],
@@ -56,7 +55,7 @@ public class ImageGenerator : IDisposable
 
     private Font FontCreator(int size)
     {
-        return fontResult.Unwrap().CreateFont(size, FontStyle.Italic);
+        return fontFamily.CreateFont(size, FontStyle.Italic);
     }
 
     private void SetBackground(Color color)
@@ -71,7 +70,7 @@ public class ImageGenerator : IDisposable
         );
     }
 
-    public Result DrawLayout(IEnumerable<Rectangle> rectangles)
+    public MyResult DrawLayout(IEnumerable<Rectangle> rectangles)
     {
         foreach (var tmpRect in rectangles)
         {
@@ -79,50 +78,48 @@ public class ImageGenerator : IDisposable
             image.Mutate(x => x.Draw(Color.Red, 2f, rectangle));
         }
 
-        var saveResult = Result.Try<object>(() =>
+        var saveResult = MyResult.Try<object>(() =>
         {
             image.Save(outputPath, encoder);
             return null!;
         });
 
         return saveResult.IsErr
-            ? Result.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
-            : Result.Ok();
+            ? MyResult.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
+            : MyResult.Ok();
     }
 
-    public Result DrawTagCloud(List<(string word, int frequency, Rectangle outline)> wordsFrequenciesOutline)
+    public MyResult DrawTagCloud(List<(string word, int frequency, Rectangle outline)> wordsFrequenciesOutline)
     {
-        if (fontResult.IsErr) return Result.Err(fontResult.UnwrapErr().Message);
         foreach (var wordFrequencyOutline in wordsFrequenciesOutline)
             DrawWord(wordFrequencyOutline.word, wordFrequencyOutline.frequency, wordFrequencyOutline.outline);
         
-        var saveResult = Result.Try<object>(() =>
+        var saveResult = MyResult.Try<object>(() =>
         {
             image.Save(outputPath, encoder);
             return null!;
         });
 
         return saveResult.IsErr
-            ? Result.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
-            : Result.Ok();
+            ? MyResult.Err($"\"SixLabors.ImageSharp library exception:\\n{saveResult.UnwrapErr()}\"")
+            : MyResult.Ok();
     }
 
-    public Result<Size> GetOuterRectangle(string word, int frequency)
+    public Size GetOuterRectangle(string word, int frequency)
     {
-        if (fontResult.IsErr) return Result<Size>.Err(fontResult.UnwrapErr().Message);
         var textOption = new TextOptions(FontCreator(fontSize + frequency));
         var size = TextMeasurer.MeasureSize(word, textOption);
 
-        return Result<Size>.Ok(new Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3));
+        return new Size((int)size.Width + fontSize / 3, (int)size.Height + fontSize / 3);
     }
 
-    public Result RectangleOutOfResolution(Rectangle rectangle)
+    public MyResult RectangleOutOfResolution(Rectangle rectangle)
     {
         var tmp = new Rectangle(rectangle.Location, rectangle.Size);
 
         rectangle.Intersect(new Rectangle(0, 0, image.Width, image.Height));
 
-        return tmp.Equals(rectangle) ? Result.Ok() : Result.Err("Tag cloud out of image resolution");
+        return tmp.Equals(rectangle) ? MyResult.Ok() : MyResult.Err("Tag cloud out of image resolution");
     }
 
     public void Dispose()
