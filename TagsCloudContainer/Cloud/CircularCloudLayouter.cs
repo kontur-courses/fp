@@ -8,6 +8,7 @@ public class CircularCloudLayouter
     public List<Rectangle> _rectangles;
     private readonly SpiralFunction spiralFunction;
     private readonly Point _center;
+    private const int ShiftPoint = 1;
 
     public CircularCloudLayouter(Point center)
     {
@@ -19,7 +20,9 @@ public class CircularCloudLayouter
     public Result<Rectangle> PutNextRectangle(Size sizeRectangle)
     {
         if (sizeRectangle.Width < 0 || sizeRectangle.Height < 0 || sizeRectangle.IsEmpty)
+        {
             return Result.Fail<Rectangle>("Высота и ширина должны быть больше 0");
+        }
 
         Rectangle rectangle;
 
@@ -27,37 +30,34 @@ public class CircularCloudLayouter
         {
             var nextPoint = spiralFunction.GetNextPoint();
             rectangle = new Rectangle(nextPoint, sizeRectangle);
-            if(rectangle.IsIntersectOthersRectangles(_rectangles))
-                break;
+            if (rectangle.IsIntersectOthersRectangles(_rectangles))
+            {
+                break;  
+            }
         }
-        rectangle = MoveRectangleToCenter(rectangle);
+        rectangle = MoveRectangleAxis(rectangle);
         _rectangles.Add(rectangle);
+        
         return rectangle.Ok();
     }
-        
-
-    private Rectangle MoveRectangleToCenter(Rectangle rectangle)
+    
+    private Rectangle MoveRectangleAxis(Rectangle rectangle)
     {
-        var newRectangle = MoveRectangleAxis(rectangle, rectangle.GetCenter().X, _center.X, 
-            new Point(rectangle.GetCenter().X < _center.X ? 1 : -1, 0));
-        newRectangle = MoveRectangleAxis(newRectangle, newRectangle.GetCenter().Y, _center.Y, 
-            new Point(0, rectangle.GetCenter().Y < _center.Y ? 1 : -1));
-        return newRectangle;
-    }
-
-    private Rectangle MoveRectangleAxis(Rectangle newRectangle, int currentPosition, int desiredPosition, Point stepPoint)
-    {
-        while (newRectangle.IsIntersectOthersRectangles(_rectangles)  &&  desiredPosition != currentPosition)
+        var currentPosition = rectangle.GetCenter();
+        var point = new Point
         {
-            currentPosition += currentPosition < desiredPosition ? 1 : -1;
-            newRectangle.Location = newRectangle.Location.DecreasingCoordinate(stepPoint);
-        }
-            
-        if (!newRectangle.IsIntersectOthersRectangles(_rectangles))
+            X = rectangle.GetCenter().X < _center.X ? ShiftPoint : -ShiftPoint,
+            Y = rectangle.GetCenter().Y < _center.Y ? ShiftPoint : -ShiftPoint
+        };
+        while (rectangle.IsIntersectOthersRectangles(_rectangles) && _center.X != currentPosition.X 
+                                                                  && _center.Y != currentPosition.Y)
         {
-            newRectangle.Location = newRectangle.Location.IncreasingCoordinate(stepPoint);
+            currentPosition.X += currentPosition.X < _center.X ? ShiftPoint : -ShiftPoint;
+            currentPosition.Y += currentPosition.Y < _center.Y ? ShiftPoint : -ShiftPoint;
+            rectangle.Location = rectangle.Location.DecreasingCoordinate(point);
         }
+        rectangle.Location = rectangle.Location.IncreasingCoordinate(point);
 
-        return newRectangle;
+        return rectangle;
     }
 }
