@@ -5,6 +5,12 @@ namespace TagsCloudContainer.App.AppExtensions;
 
 public class PathImage
 {
+    private enum ImageFormat
+    {
+        Png,
+        Jpeg,
+    }
+    
     public string GetPathForSaveImage(Settings settings)
     {
         var imagesDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\Images";
