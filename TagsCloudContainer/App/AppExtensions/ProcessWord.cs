@@ -26,7 +26,7 @@ public class ProcessWord
         return new WordProcessor(settings).ProcessWords(resultText.Value, resultBoringText.Value);
     }
     
-    private void Exit(string text)
+    public static void Exit(string text)
     {
         Console.WriteLine(text);
         Environment.Exit(1);

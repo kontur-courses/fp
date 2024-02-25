@@ -28,6 +28,7 @@ public class RectangleDraw : IDraw
         var bitmap = CreateBitmap(rectangles.Value);
         var shiftToBitmapCenter = new Size(bitmap.Width / 2, bitmap.Height / 2);
         using var graphics = Graphics.FromImage(bitmap);
+        
         if (!rectangles.IsSuccess)
         {
             return Result.Fail<Bitmap>(rectangles.Error);
@@ -41,24 +42,24 @@ public class RectangleDraw : IDraw
     {
         var pen = new Pen(Settings.Color);
         var count = 0;
+        
         foreach (var word in words)
         {
             var rectangle = new Rectangle(rectangles[count].Location + shiftToBitmapCenter, rectangles[count].Size);
-            if (IsRectangleOutOfBitmap(rectangle, graphics.VisibleClipBounds))
-            {
-                Result.Fail<Bitmap>(
-                    $"Тэг не влез на изображение заданного размера: X: {Settings.CenterX} Y: {Settings.CenterY}");
-            }
-
+            IsRectangleOutOfBitmap(rectangle, graphics.VisibleClipBounds);
             using var font = new Font(Settings.FontName, word.Size);
             graphics.DrawString(word.Value, font, pen.Brush, rectangle);
             count++;
         }
     }
     
-    private bool IsRectangleOutOfBitmap(Rectangle rectangle, RectangleF bitmapBounds)
+    private void IsRectangleOutOfBitmap(Rectangle rectangle, RectangleF bitmapBounds)
     {
-        return rectangle.Left < 0 || rectangle.Right > bitmapBounds.Width ||
-               rectangle.Bottom > bitmapBounds.Height || rectangle.Top < 0;
+        if(rectangle.Left < 0 || rectangle.Top < 0 || rectangle.Right > bitmapBounds.Width ||
+               rectangle.Bottom > bitmapBounds.Height)
+        {
+            Result.Fail<Bitmap>(
+                $"Тэг не влез на изображение заданного размера: X: {Settings.CenterX} Y: {Settings.CenterY}");
+        }
     }
 }

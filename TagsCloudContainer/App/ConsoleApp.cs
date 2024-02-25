@@ -18,16 +18,8 @@ public class ConsoleApp : IApp
     public Result<None> Run()
     {
         var path = new PathImage().GetPathForSaveImage(Settings);
-        var words = new ProcessWord().GetProcessWords(Settings.File, Settings.BoringWordsFileName, Settings);
-        var bitmap = Draw.CreateImage(words).OnFail(Exit);
-        bitmap.Value.Save(path);
+        DrawImage.CreateImage(Settings, Draw).Value.Save(path);
         
         return new Result<None>(null);
-    }
-    
-    private void Exit(string text)
-    {
-        Console.WriteLine(text);
-        Environment.Exit(1);
     }
 }
