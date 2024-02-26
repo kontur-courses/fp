@@ -56,7 +56,7 @@ public class CircularCloudLayouterTest
             {
                 var size = new Size(_random.Next(50, 100), _random.Next(40, 80));
                 var rectangle = _layouter.PutNextRectangle(size);
-                if (rectangle.Value.IsIntersectOthersRectangles(_rectangles))
+                if (!rectangle.Value.IsIntersecting(_rectangles))
                 {
                     isIntersectsWith = true;
                 }

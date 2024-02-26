@@ -23,10 +23,35 @@ public static class Result
             return Fail<T>(error ?? e.Message);
         }
     }
+    
+    public static Result<None> OfAction(Action f, string? error = null)
+    {
+        try
+        {
+            f();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Fail<None>(error ?? e.Message);
+        }
+    }
+    
+    public static Result<None> Ok()
+    {
+        return Ok<None>(null!);
+    }
 
     public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input, Func<TInput, TOutput> continuation)
     {
         return input.Then(i => Of(() => continuation(i)));
+    }
+    
+    public static Result<None> Then<TInput>(
+        this Result<TInput> input,
+        Action<TInput> continuation)
+    {
+        return input.Then(inp => OfAction(() => continuation(inp)));
     }
     
     public static Result<TOutput> Then<TInput, TOutput>(this Result<TInput> input,
