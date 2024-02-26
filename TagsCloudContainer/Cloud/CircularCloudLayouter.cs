@@ -30,7 +30,7 @@ public class CircularCloudLayouter
         {
             var nextPoint = spiralFunction.GetNextPoint();
             rectangle = new Rectangle(nextPoint, sizeRectangle);
-            if (rectangle.IsIntersectOthersRectangles(_rectangles))
+            if (!rectangle.IsIntersecting(_rectangles))
             {
                 break;  
             }
@@ -44,20 +44,18 @@ public class CircularCloudLayouter
     private Rectangle MoveRectangleAxis(Rectangle rectangle)
     {
         var currentPosition = rectangle.GetCenter();
-        var point = new Point
+        var point = currentPosition.GetShiftRectangle(_center, ShiftPoint);
+        
+        while (!IsSuitable(rectangle, currentPosition))
         {
-            X = rectangle.GetCenter().X < _center.X ? ShiftPoint : -ShiftPoint,
-            Y = rectangle.GetCenter().Y < _center.Y ? ShiftPoint : -ShiftPoint
-        };
-        while (rectangle.IsIntersectOthersRectangles(_rectangles) && _center.X != currentPosition.X 
-                                                                  && _center.Y != currentPosition.Y)
-        {
-            currentPosition.X += currentPosition.X < _center.X ? ShiftPoint : -ShiftPoint;
-            currentPosition.Y += currentPosition.Y < _center.Y ? ShiftPoint : -ShiftPoint;
+            currentPosition += new Size(currentPosition.GetShiftRectangle(_center, ShiftPoint));
             rectangle.Location = rectangle.Location.DecreasingCoordinate(point);
         }
         rectangle.Location = rectangle.Location.IncreasingCoordinate(point);
 
         return rectangle;
     }
+
+    private bool IsSuitable(Rectangle rectangle, Point currentPosition) =>
+        rectangle.IsIntersecting(_rectangles) || _center.X == currentPosition.X || _center.Y == currentPosition.Y;
 }
