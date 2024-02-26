@@ -13,53 +13,41 @@ public class RectangleDraw : IDraw
         RectangleGenerator = rectangleGenerator;
         Settings = settings;
     }
-
-    private Bitmap CreateBitmap(List<Rectangle> rectangles)
-    {
-        var width = rectangles.Max(rectangle => rectangle.Right) -
-                    rectangles.Min(rectangle => rectangle.Left);
-        var height = rectangles.Max(rectangle => rectangle.Bottom) -
-                    rectangles.Min(rectangle => rectangle.Top);
-        return new Bitmap(width * 2, height * 2);
-    }
+    
     public Result<Bitmap> CreateImage(List<Word> words)
     {
-        var rectangles = RectangleGenerator.GenerateRectangles(words);
-        var bitmap = CreateBitmap(rectangles.Value);
-        var shiftToBitmapCenter = new Size(bitmap.Width / 2, bitmap.Height / 2);
-        using var graphics = Graphics.FromImage(bitmap);
-        
-        if (!rectangles.IsSuccess)
-        {
-            return Result.Fail<Bitmap>(rectangles.Error);
-        }
-        graphics.Clear(Color.Black);
-        DrawWordsOnCloud(words, rectangles.Value, shiftToBitmapCenter, graphics);
-        return bitmap.Ok();
+        return RectangleGenerator.GenerateRectangles(words)
+            .Then(rectangles =>
+            {
+                var bitmap = RectangleExtension.GetBounds(rectangles);
+                var shiftToBitmapCenter = new Size(bitmap.Width / 2, bitmap.Height / 2);
+                using var graphics = Graphics.FromImage(bitmap);
+
+                graphics.Clear(Color.Black);
+                DrawWordsOnCloud(words, rectangles, shiftToBitmapCenter, graphics);
+
+                return bitmap;
+            });
     }
 
     private void DrawWordsOnCloud(List<Word> words, List<Rectangle> rectangles, Size shiftToBitmapCenter, Graphics graphics)
     {
-        var pen = new Pen(Settings.Color);
-        var count = 0;
-        
-        foreach (var word in words)
+        using var pen = new Pen(Settings.Color);
+
+        for (var i = 0; i < words.Count; i++)
         {
-            var rectangle = new Rectangle(rectangles[count].Location + shiftToBitmapCenter, rectangles[count].Size);
-            IsRectangleOutOfBitmap(rectangle, graphics.VisibleClipBounds);
+            var word = words[i];
+            var rectangle = new Rectangle(rectangles[i].Location + shiftToBitmapCenter, rectangles[i].Size);
+            var isOutOfBitmap = RectangleExtension.IsRectangleOutOfBitmap(rectangle, graphics.VisibleClipBounds);
+
+            if (isOutOfBitmap)
+            {
+                throw new IndexOutOfRangeException(
+                    $"Тэг не влез на изображение заданного размера: X: {Settings.CenterX} Y: {Settings.CenterY}");
+            }
+
             using var font = new Font(Settings.FontName, word.Size);
             graphics.DrawString(word.Value, font, pen.Brush, rectangle);
-            count++;
-        }
-    }
-    
-    private void IsRectangleOutOfBitmap(Rectangle rectangle, RectangleF bitmapBounds)
-    {
-        if(rectangle.Left < 0 || rectangle.Top < 0 || rectangle.Right > bitmapBounds.Width ||
-               rectangle.Bottom > bitmapBounds.Height)
-        {
-            Result.Fail<Bitmap>(
-                $"Тэг не влез на изображение заданного размера: X: {Settings.CenterX} Y: {Settings.CenterY}");
         }
     }
 }
