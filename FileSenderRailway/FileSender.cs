@@ -30,12 +30,7 @@ namespace FileSenderRailway
                 string errorMessage = null;
                 try
                 {
-                    Document doc = recognizer.Recognize(file);
-                    if (!IsValidFormatVersion(doc))
-                        throw new FormatException("Invalid format version");
-                    if (!IsValidTimestamp(doc))
-                        throw new FormatException("Too old document");
-                    doc.Content = cryptographer.Sign(doc.Content, certificate);
+                    var doc = PrepareFileToSend(certificate, file);
                     sender.Send(doc);
                 }
                 catch (FormatException e)
@@ -48,6 +43,18 @@ namespace FileSenderRailway
                 }
                 yield return new FileSendResult(file, errorMessage);
             }
+        }
+
+        private Document PrepareFileToSend(X509Certificate certificate, FileContent file)
+        {
+            Document doc = recognizer.Recognize(file);
+            if (!IsValidFormatVersion(doc))
+                throw new FormatException("Invalid format version");
+            if (!IsValidTimestamp(doc))
+                throw new FormatException("Too old document");
+            doc = new Document(file.Name, doc.Content, DateTime.Now, certificate.ToString());
+            doc.Content = cryptographer.Sign(doc.Content, certificate);
+            return doc;
         }
 
         private bool IsValidFormatVersion(Document doc)

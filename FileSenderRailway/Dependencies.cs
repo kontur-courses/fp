@@ -20,7 +20,7 @@ namespace FileSenderRailway
         void Send(Document document);
     }
 
-    public class Document
+    public class Document //сделать апгрейд до 6 версии(можно будет написать record), в папке solved всегда есть решение. 
     {
         public Document(string name, byte[] content, DateTime created, string format)
         {
@@ -30,10 +30,10 @@ namespace FileSenderRailway
             Content = content;
         }
 
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Format { get; set; }
-        public byte[] Content { get; set; }
+        public string Name { get; private set; }
+        public DateTime Created { get; private set; }
+        public string Format { get; private set; }
+        public byte[] Content { get; private set; }
     }
 
     public class FileContent
