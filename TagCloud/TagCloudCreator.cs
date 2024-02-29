@@ -32,7 +32,8 @@ public class TagCloudCreator : ITagCloudCreator
         var normalizedWords = wordsNormalizer.NormalizeWords(words,
             wordsReader.Get(boringWordsFile)
                 .Then(boringWords => boringWords.ToHashSet()));
-        var wordsForCloud = wordsForCloudGenerator.Generate(normalizedWords);
-        return cloudDrawer.DrawCloud(wordsForCloud);
+        return wordsForCloudGenerator.Generate(normalizedWords)
+            .Then(wordsForCloud => cloudDrawer.DrawCloud(wordsForCloud))
+            .ReplaceErrorIfEmpty("Can't draw cloud");
     }
 }

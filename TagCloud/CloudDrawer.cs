@@ -10,22 +10,19 @@ public class CloudDrawer : ICloudDrawer
         this.pictureSize = pictureSize;
     }
 
-    public Result<Bitmap> DrawCloud(Result<IEnumerable<WordForCloud>> wordsForCloud)
+    public Bitmap DrawCloud(IEnumerable<WordForCloud> wordsForCloud)
     {
-        if (!wordsForCloud.IsSuccess)
-            return wordsForCloud.Then(x => new Bitmap(0, 0));
-        return Result.Of(() =>
+        var bitmap = new Bitmap(pictureSize.Width, pictureSize.Height);
+        var gr = Graphics.FromImage(bitmap);
+        gr.FillRectangle(Brushes.White, 0, 0, pictureSize.Width, pictureSize.Height);
+        foreach (var wordForCloud in wordsForCloud)
         {
-            var bitmap = new Bitmap(pictureSize.Width, pictureSize.Height);
-            var gr = Graphics.FromImage(bitmap);
-            gr.FillRectangle(Brushes.White, 0, 0, pictureSize.Width, pictureSize.Height);
-            foreach (var wordForCloud in wordsForCloud.Value)
-            {
-                gr.DrawString($"{wordForCloud.Word}", wordForCloud.Font,
-                    new SolidBrush(wordForCloud.WordColor), wordForCloud.WordSize);
-            }
+            gr.DrawString($"{wordForCloud.Word}", wordForCloud.Font,
+                new SolidBrush(wordForCloud.WordColor), wordForCloud.WordSize);
+        }
+            
+        gr.Dispose();
 
-            return bitmap;
-        }).ReplaceErrorIfEmpty("Can't draw cloud");
+        return bitmap;
     }
 }

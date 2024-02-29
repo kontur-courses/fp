@@ -22,17 +22,18 @@ public class WordsForCloudGenerator: IWordsForCloudGenerator
         public Result<IEnumerable<WordForCloud>> Generate(Result<List<string>> wordsResult)
         {
             return wordsResult.Then((words) => GetWordsFrequency(words)
-                    .OrderBy(x => x.Value)
-                    .Reverse()
+                    .OrderByDescending(x => x.Value)
                     .ToList())
-                .Then(frequency
-                    => frequency.Select(x =>
+                .Then(frequency => {
+                    var maxFrequency = frequency.FirstOrDefault().Value;
+                    return frequency.Select(x =>
                         GetWordForCloud(fontName,
                             maxFontSize,
                             colorGenerator.GetNextColor(),
                             x.Key,
                             x.Value,
-                            maxFrequency: frequency.FirstOrDefault().Value)));
+                            maxFrequency));
+                });
         }
 
         private static Dictionary<string, int> GetWordsFrequency(List<string> words) =>
