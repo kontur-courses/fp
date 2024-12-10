@@ -2,9 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,4 +13,15 @@
       <PackageReference Include="NUnit" Version="3.12.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Compile Remove="Solved\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Remove="Solved\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Solved\**" />
+    </ItemGroup>
 </Project>
